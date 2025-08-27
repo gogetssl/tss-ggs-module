@@ -50,4 +50,4 @@ Starting at v2.9.0, we provide ["cPanel AutoSSL installation"](https://github.co
 ***
 
 ### License
-This project is licensed under the MIT License
+This project is licensed under the GNU License
