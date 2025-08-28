@@ -15,7 +15,7 @@ The first module integrates TheSSLStore and GoGetSSL APIs, enabling customers to
 Please check the latest [Releases](https://github.com/gogetssl/tss-ggs-module/releases)) and Download files 
 
 ### WIKI
-Check [WIKI]((https://github.com/gogetssl/tss-ggs-module/wiki) for manuals and descriptions of all features
+Check [WIKI](https://github.com/gogetssl/tss-ggs-module/wiki) for manuals and descriptions of all features
 
 ### API Credentials
 - GoGetSSL resellers. Please generate API tokens at [Client area](https://my.gogetssl.com) -> Reseller Modules -> API settings
