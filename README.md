@@ -1,4 +1,4 @@
-![logo-horizontal-457x92_powered](https://github.com/gogetssl/tss-ggs-module/blob/main/tts-ggs-logo-git.png)
+![logo-horizontal-457x92_powered](https://github.com/gogetssl/tss-ggs-module/blob/main/tss-ggs-logo-git.png)
 # The SSL Store & GoGetSSL Module
 Free of charge SSL Addon for WHMCS to automate SSL certificate sales/distribution of via GoGetSSL.com platform
 
