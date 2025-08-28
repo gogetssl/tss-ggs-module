@@ -7,7 +7,7 @@ The first module integrates TheSSLStore and GoGetSSL APIs, enabling customers to
 ***
 
 ### Migration
-The new module supports migration from previous TSS/GGS Modules
+The new module supports migration from previous TSS/GGS Modules. Please contact the [API support team](mailto:apisupport@thesslstore.com) if you have any migration questions or need assistance
 - GoGetSSL, starting at the 2.0.0 version
 - TheSSLStore, starting at the 4.0.0 version
 
