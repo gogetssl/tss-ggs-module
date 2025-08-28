@@ -60,8 +60,5 @@ At the end of September 2025, we will release ["AutoInstall SSL™](https://gith
 ### Sectigo CaaS (ACME) subscription
 We are currently working on integrating the Sectigo ACME Certificate-as-a-Service product into our module, which will enable us to manage ACME subscriptions. Check more about that product [here](https://www.gogetssl.com/sectigo/acme-caas/)
 
-### License
-This project is licensed under the Apache-2.0 license
-
 ### Copyright
 All Rights Reserved. Copyright 2025 Rapid Web Services, LLC.
