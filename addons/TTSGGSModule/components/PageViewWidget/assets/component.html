@@ -1,0 +1,26 @@
+<div :id="cid_" class="lu-widget ">
+    <div class="lu-widget__header" v-if="title_">
+        <div class="lu-widget__top lu-top">
+            <div class="lu-top__title">
+                {{title_}}
+            </div>
+            <div class="lu-top__toolbar" v-if="elements_.toolbar">
+                <component :key="elements_.toolbar.uniq" v-bind="elements_.toolbar.slots" v-bind:is="elements_.toolbar.name"></component>
+            </div>
+        </div>
+    </div>
+    <div class="lu-widget__body">
+        <div :class="css_" class="lu-widget__content">
+            <div class="lu-row">
+                <div class="lu-col-lg-4 lu-col-md-5 lu-col-sm-12">
+                    <component :key="image.uniq" v-bind="image.slots" v-bind:is="image.name"></component>
+                </div>
+                <div class="lu-col-lg-8 lu-col-md-7 lu-col-sm-12">
+                    <div class="lu-row installation-details-info">
+                        <component :key="details.uniq" v-bind="details.slots" v-bind:is="details.name"></component>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

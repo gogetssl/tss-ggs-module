@@ -1,0 +1,20 @@
+<div :id="cid_" class="lu-has-dropdown lu-d-inline-flex" v-if="elements_.items">
+    <button :data-title="title_" :aria-label="title_" @click="toggleDropdown" class="lu-btn lu-btn--icon lu-btn--link lu-btn--default" data-lu-tooltip="" :tooltip-id="tooltip_id_">
+        <i class="lu-btn__icon lu-mdi mdi mdi-dots-vertical"></i>
+    </button>
+    <div @click="toggleDropdown" class="mg-drop-bg-wrapper" v-show="is_drop_open_"></div>
+    <div class="drop lu-drop-element drop-enabled drop-element-attached-top drop-target-attached-right drop-target-attached-bottom drop-open drop-after-open" v-show="is_drop_open_">
+        <div class="drop-content">
+            <div class="lu-dropdown" data-lu-dropdown-menu="">
+                <div class="lu-dropdown__arrow"></div>
+                <ul class="lu-dropdown__menu" :class="elements_.items && elements_.items.length == 1 ? 'lu-single-element' : ''">
+                    <li class="lu-dropdown__header">
+                        <span class="lu-dropdown__title" v-html="translate_('more_actions')"></span>
+                    </li>
+
+                    <component :key="element.uniq" v-bind="element.slots" v-bind:data="data_" v-bind:is="element.name" v-for="element in elements_.items" v-on="$listeners"></component>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

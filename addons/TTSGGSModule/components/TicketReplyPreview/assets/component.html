@@ -1,0 +1,37 @@
+<div :id="cid_" class="lu-row lu-border-grey lu-border-style-solid lu-border-width-1 lu-m-b-1x" :class="css_">
+    <div class="lu-col-md-2 lu-border-right-width-2 lu-border-right-grey lu-border-style-solid lu-border-0">
+        <h6 class="lu-font-weight-bold text-center lu-m-t-2x">{{userName_}}</h6>
+        <div class="text-center lu-m-t-2x">
+            <component v-bind="avatarImage.slots" v-bind:is="avatarImage.name" v-on="$listeners"></component>
+        </div>
+        <div class="text-center lu-m-t-2x" :class="elements_.buttons && elements_.buttons.length == 1 ? 'lu-single-element' : ''">
+            <component :key="elements_.uniq" v-bind:data="{id:replyId_}" v-bind="button.slots" v-bind:is="button.name" v-for="button in elements_.buttons" v-on="$listeners"></component>
+        </div>
+    </div>
+    <div class="lu-col-md-10">
+        <small>{{translations_['date']}}: {{posted_}}</small>
+        <p v-html="message"></p>
+        <hr>
+        <div :class="attachments && attachments.length == 1 ? 'lu-single-element' : ''">
+            <div class="lu-d-inline-block lu-p-h-1x text-center" v-for="attachment in attachments">
+                <span class="lu-i-c-17x text-center">
+                    <img :src="attachment.showUrl" @click="showImage(attachment.showUrl, attachment.name)" alt="attachment" role="button" class="ticketattachmentthumb">
+                </span>
+                <span class="lu-text-secondary lu-font-weight-bold lu-d-block text-center">{{ attachment.name }}</span>
+                <div class="lu-m-t-1x text-center">
+                    <a :href="attachment.downloadUrl" download>{{translations_['download_attachment']}}</a> |
+                    <a v-on:click="deleteAttachment(attachment.deleteUrl)" role='button' class="lu-text-danger">{{translations_['delete_attachment']}}</a>
+                </div>
+            </div>
+        </div>
+        <div class="lu-d-inline-block lu-p-h-1x text-center" v-for="attachment in storageAttachments">
+            <span class="lu-i-c-17x text-center">
+                <img :src="storagePath + attachment" @click="showImage(storagePath + attachment, attachment)" alt="attachment" role="button" class="ticketattachmentthumb">
+            </span>
+            <span class="lu-text-secondary lu-font-weight-bold lu-d-block text-center">{{ attachment }}</span>
+            <div class="lu-m-t-1x text-center">
+                <a :href="storagePath + attachment" download>{{translations_['download_attachment']}}</a>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,14 @@
+<input
+        :id="cid_"
+        :class="css_"
+        :name="name_"
+        :placeholder="placeholder"
+        :type="type_"
+        class="lu-form-control"
+        ref="name_"
+        v-model="value_"
+        @input="onChange"
+        :disabled="disabled_ != '' ? true : false"
+        :readonly="readonly_ != '' ? true : false"
+        :autocomplete="autocomplete_"
+/>

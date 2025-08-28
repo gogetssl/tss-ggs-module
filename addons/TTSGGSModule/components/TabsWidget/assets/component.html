@@ -1,0 +1,52 @@
+<div :id="cid_" class="lu-widget" data-component="tabs-container">
+    <div class="lu-widget__header">
+        <div class="lu-widget__top lu-top" v-if="title_ || elements_.toolbar">
+            <div class="lu-top__title">
+                {{title_}}
+            </div>
+            <div class="lu-top__toolbar" v-if="elements_.toolbar">
+                <component :key="elements_.toolbar.uniq" v-bind="elements_.toolbar.slots" v-bind:is="elements_.toolbar.name"></component>
+            </div>
+        </div>
+        <div class="lu-widget__nav" :class="[{'swiper-container swiper-container-horizontal swiper-container-false' : !disableSwiper_}]" :data-content-slider="!disableSwiper_">
+            <ul class="swiper-wrapper lu-nav lu-nav--md lu-nav--h lu-nav--tabs lu-nav--arrow" :class="elements_.tabs && elements_.tabs.length == 1 ? 'lu-single-element' : ''">
+                <li :class="['lu-nav__item swiper-slide swiper-slide-active swiper-slide-visible', {'is-active' : tab.cid == selectedTabId}]"
+                    v-bind:key="tab.uniq"
+                    v-for="(tab, index) in elements_.tabs"
+                    v-if="tab.slots">
+                    <a :href="'#tab-'+tab.cid" class="lu-nav__link" data-toggle="lu-tab" @click.middle="onClickMiddle" @mousedown.middle.prevent.stop>
+                        <span class="lu-nav__link-text">{{tab.slots.title}}</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="lu-widget__body">
+        <div class="lu-tab-content" :class="elements_.tabs && elements_.tabs.length == 1 ? 'lu-single-element' : ''">
+            <component
+                    :id="'tab-'+tab.cid"
+                    v-bind="tab.slots"
+                    :class="['lu-tab-pane', {'is-active' : tab.cid == selectedTabId}]"
+                    v-bind:is="tab.name"
+                    v-bind:key="tab.uniq"
+                    v-on:setActiveTab="onSetActiveTab"
+                    v-on:setErroredTab="onSetErroredTab"
+                    v-on:resetFormErrors="onResetErroredTab"
+                    v-on:reload-parent="onReloadParent"
+                    v-for="(tab,index) in elements_.tabs">
+            </component>
+        </div>
+    </div>
+</div>
+
+<!--
+<div class="lu-widget ">
+    <div class="lu-widget__body">
+        <div class="lu-top__toolbar">
+            <component v-for="button in elements.buttons" v-bind:is="button.name"
+                       v-bind="button.slots"
+                       v-bind:data="row">
+            </component>
+        </div>
+    </div>
+</div>-->

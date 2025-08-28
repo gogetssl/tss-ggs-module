@@ -1,0 +1,31 @@
+{
+  "repositories":[
+    {
+      "type":"vcs",
+      "url":"git@git.mglocal:whmcs-products/module-framework.git"
+    }
+  ],
+  "require":{
+    "modulesgarden/whmcs-framework":"*"
+  },
+  "scripts": {
+    "fw-install": [
+      "\\ModulesGarden\\ModuleFramework\\Install\\Installer::run"
+    ]
+  },
+  "autoload": {
+    "psr-4": {
+      "ModulesGarden\\TTSGGSModule\\Core\\": "./core",
+      "ModulesGarden\\TTSGGSModule\\App\\": "./app",
+      "ModulesGarden\\TTSGGSModule\\Packages\\": "./packages",
+      "ModulesGarden\\TTSGGSModule\\Components\\": "./components",
+      "ModulesGarden\\TTSGGSModule\\Install\\": "./install"
+    }
+  },
+  "extra": {
+    "packages": [
+      "Samples",
+      "ModuleSettings"
+    ]
+  }
+}

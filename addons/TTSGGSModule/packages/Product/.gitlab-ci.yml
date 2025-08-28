@@ -1,0 +1,2 @@
+include:
+  - remote: http://quality.internal.modulesgarden.com/templates/Code-Quality.yml

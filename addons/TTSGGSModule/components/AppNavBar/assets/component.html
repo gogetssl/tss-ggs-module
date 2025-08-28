@@ -1,0 +1,38 @@
+<div :id="cid_" class="">
+    <div class="lu-app-header lu-app-header--responsive lu-navbar">
+        <a :href="mainUrl_" class="lu-navbar__brand lu-brand lu-brand--product" v-if="moduleName_">
+            <div :class="moduleUrlClassLogo" class="lu-brand__logo lu-i-c-5x">
+                <img :alt="moduleName_" :src="moduleLogo_" class="lu-i-c-3x">
+            </div>
+            <div class="lu-brand__text">
+                {{moduleName_}}
+            </div>
+        </a>
+        <button class="lu-navbar__burger lu-navbar-right lu-btn" data-target=".lu-app-navbar" data-toggle="offCanvas">
+            <span class="lu-btn__icon lu-burger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </span>
+        </button>
+    </div>
+    <div class="lu-app-navbar lu-navbar lu-navbar--responsive lu-off-canvas-responsive lu-off-canvas-responsive--right" v-if="navbar_.slots && (navbar_.slots.elements || moduleName_)">
+        <div class="lu-navbar__top" v-if="moduleName_">
+            <a :href="mainUrl_" class="lu-navbar__brand lu-brand lu-brand--product">
+                <div :class="moduleUrlClassLogo" class="lu-brand__logo lu-i-c-6x">
+                    <img :alt="moduleName_" :src="moduleLogo_" class="lu-i-c-4x">
+                </div>
+                <div class="lu-brand__text" :data-title="moduleAdditionalInfo" :aria-label="moduleAdditionalInfo">
+                    <!--{{moduleName_}}-->
+                </div>
+            </a>
+            <a class="lu-navbar__brand lu-brand lu-is-right" href="https://www.modulesgarden.com" target="_blank">
+                <div class="lu-brand__logo">
+                    <!--<img :src="vendorLogo_" alt="ModulesGarden" width="150">-->
+                </div>
+            </a>
+        </div>
+
+        <component v-if="navbar_.slots && navbar_.slots.elements" v-bind="navbar_.slots" v-bind:is="navbar_.name" v-if="navbar_"></component>
+    </div>
+</div>

@@ -1,0 +1,10 @@
+<div :id="cid_" class="lu-col-sm-20p" role='button'>
+    <a @click="onClick" @click.middle="onClickMiddle" @mousedown.middle.prevent.stop class="lu-tile lu-tile--btn" :class="[active_ ? 'lu-is-checked' : '']">
+        <div class="lu-i-c-6x">
+            <i class="lu-btn__icon lu-preloader lu-preloader--sm" v-if="isLoading_"></i>
+            <img :alt="title_" :src="img_" v-else-if="img_"/>
+            <i class="lu-btn__icon lu-mdi mdi mdi-image-broken-variant" v-else></i>
+        </div>
+        <div class="lu-tile__title" v-if="title_">{{title_}}</div>
+    </a>
+</div>

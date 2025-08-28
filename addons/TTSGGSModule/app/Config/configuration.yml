@@ -1,0 +1,13 @@
+version: '1.0.0'
+systemName: 'The SSL Store & GoGetSSL Module'
+description: 'The module using TheSSLStore and GoGetSSL, allowing customers to purchase and manage SSL certificates, SiteLock, LEI codes and other products.'
+clientAreaName: 'TTSGGSModule'
+clientAreaController: Home
+adminAreaController: Home
+author: '<a href="https://www.modulesgarden.com" target="_blank">ModulesGarden</a>'
+moduleIcon: 'tts-ggs-logo'
+debug: false
+#fields: https://developers.whmcs.com/addon-modules/configuration/
+#  option1:
+#    FriendlyName: XXX
+#    Type: text

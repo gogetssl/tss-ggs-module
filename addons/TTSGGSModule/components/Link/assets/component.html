@@ -1,0 +1,4 @@
+<a :id="cid_" :href="url_">
+    <component v-if="typeof title_ === 'object'"  :key="title_.uniq" v-bind="title_.slots" v-bind:is="title_.name" ></component>
+    <template v-else>{{title_}}</template>
+</a>
