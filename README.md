@@ -15,14 +15,14 @@ The first module integrates TheSSLStore and GoGetSSL APIs, enabling customers to
 Please check the latest [Releases](https://github.com/gogetssl/tss-ggs-module/releases)) and Download files 
 
 ### WIKI
-Check [WIKI]((https://github.com/gogetssl/tss-ggs-module/wiki)) for manuals and descriptions of all features
+Check [WIKI]((https://github.com/gogetssl/tss-ggs-module/wiki) for manuals and descriptions of all features
 
 ### API Credentials
 - GoGetSSL resellers. Please generate API tokens at [Client area](https://my.gogetssl.com) -> Reseller Modules -> API settings
 - The SSL Store resellers. Please generate an API token at [Client area](https://www.thesslstore.com) -> Integration -> API Settings
 
 ### Suggestions, Bugs, Issues, New Features
-You are welcome to send us requests for new features, suggestions, issues, or any bugs you may find.
+You are welcome to send us requests for new features, suggestions, or report any issues or bugs you may find.
 [Submission form](https://github.com/gogetssl/tss-ggs-module/issues/new)
 
 ### List of addon features
@@ -44,8 +44,10 @@ You are welcome to send us requests for new features, suggestions, issues, or an
 At the end of September 2025, we will release the ["Products Reseller For WHMCS"](https://www.modulesgarden.com/products/whmcs/products-reseller#features) module from Modules Garden. It will allow you to have your own Sub-Resellers using WHMCS to expand your network. Please review [documentation](https://github.com/gogetssl/whmcs-addon/wiki/Sub-Resellers-module) for more details
 
 ### cPanel AutoSSL Installation 
-At the end of September 2025, we will release ["cPanel AutoSSL installation"](https://github.com/gogetssl/whmcs-addon/wiki/cPanel-AutoSSL), allowing users to validate and install SSL certificates automatically. 
-***
+At the end of September 2025, we will release ["AutoInstall SSL™](https://github.com/gogetssl/tss-ggs-module/wiki/AutoInstall-SSL%E2%84%A2) plugin, allowing users to validate and install SSL certificates automatically. 
+
+### Sectigo CaaS (ACME) subscription
+We are currently working on integrating the Sectigo ACME Certificate-as-a-Service product into our module, enabling us to manage ACME subscriptions. Check more about that product [here](https://www.gogetssl.com/sectigo/acme-caas/)
 
 ### License
 This project is licensed under the Apache-2.0 license
