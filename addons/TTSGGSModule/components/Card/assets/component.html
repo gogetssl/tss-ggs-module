@@ -1,0 +1,53 @@
+<div :id="cid_" class="lu-widget" :class="css_">
+    <div class="lu-widget__body">
+        <div class="lu-widget__content">
+            <span class="lu-heading" v-if="title_">{{title_}}</span>
+            <i v-if="description_" :data-title="description_" :aria-label="description_" :tooltip-id="tooltip_id_" class="lu-i-c-2x lu-form-tooltip-helper lu-tooltip lu-mdi mdi mdi-help-circle-outline"></i>
+            <div class="lu-rail lu-rail--space-between">
+                <div v-if="elements_.leftSidebar">
+                    <component
+                            :key="element.uniq"
+                            v-bind="element.slots"
+                            v-on="$listeners"
+                            v-bind:is="element.name"
+                            v-for="(element, key) in elements_.leftSidebar"
+                    >
+                    </component>
+                </div>
+                <div class="lu-type-3 lu-text-truncate">
+                    {{content_}}
+                    <div v-if="elements_.elements" :class="elements_.elements && elements_.elements.length == 1 ? 'lu-single-element' : ''">
+                        <component
+                                :key="element.uniq"
+                                v-bind="element.slots"
+                                v-on="$listeners"
+                                v-bind:is="element.name"
+                                v-for="(element, key) in elements_.elements"
+                        >
+                        </component>
+                    </div>
+                </div>
+                <div v-if="elements_.rightSidebar">
+                    <component
+                            :key="element.uniq"
+                            v-bind="element.slots"
+                            v-on="$listeners"
+                            v-bind:is="element.name"
+                            v-for="(element, key) in elements_.rightSidebar"
+                    >
+                    </component>
+                </div>
+            </div>
+        </div>
+        <div class="lu-widget__actions lu-widget__actions--raised" v-if="elements_.actions">
+            <component
+                    :key="element.uniq"
+                    v-bind="element.slots"
+                    v-on="$listeners"
+                    v-bind:is="element.name"
+                    v-for="(element, key) in elements_.actions"
+            >
+            </component>
+        </div>
+    </div>
+</div>

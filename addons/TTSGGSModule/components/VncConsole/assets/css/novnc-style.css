@@ -1,0 +1,23 @@
+.novnc-container {
+    display: flex;
+    flex-direction: column;
+    background-color: dimgrey;
+    min-height: 500px;
+    height: 100%;
+}
+
+.top-bar {
+    background-color: #6e84a3;
+    color: white;
+    font: bold 12px Helvetica;
+    padding: 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid white;
+}
+
+.screen {
+    flex: 1;
+    overflow: hidden;
+}

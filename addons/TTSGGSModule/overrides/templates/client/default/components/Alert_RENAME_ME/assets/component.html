@@ -1,0 +1,10 @@
+<div :class="[typeClass, outlineClass, sizeClass]" class="lu-alert" v-if="visible_">
+    <div class="lu-alert__body">XXXX
+        {{text_}}
+    </div>
+    <button @click="visible_ = false" class="lu-btn lu-btn--icon lu-btn--link lu-btn--close" data-dismiss="alert" type="button" v-if="dismiss_button_">
+        <i class="lu-btn__icon lu-mdi mdi mdi-close"></i>
+    </button>
+</div>
+
+

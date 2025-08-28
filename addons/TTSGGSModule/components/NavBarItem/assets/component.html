@@ -1,0 +1,17 @@
+<li :id="cid_" :class="[active ? 'is-active' : '', elements_.elements ? 'lu-has-dropdown': '']" class="lu-nav__item">
+    <a :href="url_" :target="getTarget" class="lu-nav__link">
+        <i :class="iconClass" class="lu-nav__link-icon lu-mdi mdi" v-if="iconClass"></i>
+        <span class="lu-nav__link-text" v-if="title_">{{title_}}</span>
+        <span class="lu-nav__link-drop-arrow"></span>
+        <span class="drop-arrow"></span>
+    </a>
+
+    <ul class="lu-nav lu-nav--sub" v-if="elements_.elements" :class="elements_.elements && elements_.elements.length == 1 ? 'lu-single-element' : ''">
+        <component v-bind="element.slots" v-bind:is="element.name" v-for="(element, key) in elements_.elements" v-bind:key="element.uniq"></component>
+    </ul>
+</li>
+
+
+
+
+

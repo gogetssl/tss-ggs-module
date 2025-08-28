@@ -1,0 +1,14 @@
+home:
+  icon: 'mdi mdi-view-dashboard'
+products:
+  icon: 'mdi mdi-layers'
+import:
+  icon: 'mdi mdi-import'
+statistics:
+  icon: 'mdi mdi-trending-up'
+reports:
+  icon: 'mdi mdi-file-chart'
+pricing:
+  icon: 'mdi mdi-cash'
+settings:
+  icon: 'mdi mdi-cog'

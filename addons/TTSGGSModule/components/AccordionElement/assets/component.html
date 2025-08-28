@@ -1,0 +1,13 @@
+<div class="lu-list-group__item" :id="cid_">
+    <div class="lu-list-group__top lu-top" :class="type_" data-toggle="lu-collapse" :data-parent="targetId" :data-target="targetId" aria-expanded="false" @click="change">
+        <span class="lu-collapse-icon" v-if="!removeIcon_"></span>
+        <div class="lu-top__title lu-type-6 lu-m-l-0x"><span :class="[textCenterClass]" class="lu-w-100">{{title_}}</span></div>
+    </div>
+    <div class="lu-collapse" :id="'element-' + cid_">
+        <div class="lu-list-group__content p-l-6x" v-if="isOpen_">
+            <div class="according-inner" :class="elements_.elements && elements_.elements.length == 1 ? 'lu-single-element' : ''">
+                <component :key="element.uniq" v-bind="element.slots" v-bind:is="element.name" v-for="element in elements_.elements" v-on="$listeners"></component>
+            </div>
+        </div>
+    </div>
+</div>

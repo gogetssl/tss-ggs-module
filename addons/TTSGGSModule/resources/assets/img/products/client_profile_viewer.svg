@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="72" height="72" viewBox="0 0 72 72">
+    <defs>
+        <style>
+            .cls-1 {
+            fill: #fff;
+            fill-rule: evenodd;
+            }
+        </style>
+    </defs>
+    <path id="Kształt_33_kopia" data-name="Kształt 33 kopia" class="cls-1" d="M796,1425h72v47H796v-47Zm4,4h64v39H800v-39Zm-2,47v-2h67v2H798Zm2,4v-2h63v2H800Zm2,4v-2h59v2H802Zm4-49h24v27H806v-27Zm20,22.99H810c0-3.95,1.829-6.83,4.48-8.16a6.01,6.01,0,1,1,7.074-.03C824.187,1451.08,826,1453.88,826,1457.99Zm-3.987-12.98a4.014,4.014,0,1,0-4.013,4A4.008,4.008,0,0,0,822.013,1445.01ZM818,1451c-3.307,0-5.987,2.62-5.987,6.99h11.974C823.987,1453.75,821.306,1451,818,1451Zm18-14v-2h15v2H836Zm0,10v-2h22v2H836Zm0,6v-2h22v2H836Zm0,6v-2h10v2H836Z" transform="translate(-796 -1418.5)"/>
+</svg>

@@ -1,0 +1,12 @@
+<span :id="cid_" class="copy-text-inline-component">
+    <span v-if="!hideIcon">{{text_}}</span>
+    <span @click="onClick" role="button">
+        <span v-if="hideIcon">{{text_}}</span>
+        <i class="lu-mdi mdi mdi-content-copy lu-i-c-2x lu-form-tooltip-helper-default"
+           :data-title="translate_('title')"
+           :aria-label="translate_('title')"
+           data-toggle="lu-tooltip"
+           data-lu-tooltip rel="tooltip"
+           v-if="!hideIcon"></i>
+    </span>
+</span>

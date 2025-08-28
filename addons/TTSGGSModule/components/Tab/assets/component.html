@@ -1,0 +1,20 @@
+<div :id="cid_" class="lu-p-2x" :class="[paddingClass, {'lu-single-element' : elements_.elements && elements_.elements.length == 1}]">
+    <!-- static content -->
+    <div class="" v-if="content_">
+        {{content_}}
+    </div>
+    <!-- end of static content -->
+
+    <!-- dynamic content -->
+    <component
+            :key="element.uniq"
+            v-bind="element.slots"
+            v-bind:is="element.name"
+            v-for="element in elements_.elements"
+            v-on:reload-parent="onReloadParent"
+            v-on:formErrorOccurred="onFormErrorOccurred"
+            v-if="elements_.elements"
+    >
+    </component>
+    <!-- end of dynamic content -->
+</div>

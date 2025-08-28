@@ -1,0 +1,5 @@
+<button :id="cid_" :class="[css_, isCopiedClass, typeClass]" :type="type_" @click="onClick" class="lu-btn">
+    <i class="lu-mdi mdi mdi-check" v-if="isCopied_"></i>
+    <i :class="icon_" v-else-if='icon'></i>
+    <!--    <span class="lu-btn__text" v-html="title_"></span>-->
+</button>

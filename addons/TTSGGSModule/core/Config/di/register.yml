@@ -1,0 +1,23 @@
+class:
+  - { namespace: 'ModulesGarden\\TTSGGSModule\\Core\\Configuration\\Addon\\Config\\After',            alias: "", singleton: true , auto: false }
+  - { namespace: 'ModulesGarden\\TTSGGSModule\\Core\\Configuration\\Addon\\Activate\\After',          alias: "", singleton: true , auto: false }
+  - { namespace: 'ModulesGarden\\TTSGGSModule\\Core\\Configuration\\Addon\\Deactivate\\After',        alias: "", singleton: true , auto: false }
+  - { namespace: 'ModulesGarden\\TTSGGSModule\\Core\\Configuration\\Addon\\Update\\After',            alias: "", singleton: true , auto: false }
+  - { namespace: 'ModulesGarden\\TTSGGSModule\\Core\\Configuration\\Addon\\Config\\Before',           alias: "", singleton: true , auto: false }
+  - { namespace: 'ModulesGarden\\TTSGGSModule\\Core\\Configuration\\Addon\\Activate\\Before',         alias: "", singleton: true , auto: false }
+  - { namespace: 'ModulesGarden\\TTSGGSModule\\Core\\Configuration\\Addon\\Deactivate\\Before',       alias: "", singleton: true , auto: false }
+  - { namespace: 'ModulesGarden\\TTSGGSModule\\Core\\Configuration\\Addon\\Update\\Before',           alias: "", singleton: true , auto: false }
+  - { namespace: 'ModulesGarden\\TTSGGSModule\\Core\\App\\Controllers\\Instances\\Addon\\Config', alias: "configurationAddon", singleton: true , auto: false }
+  - { namespace: 'ModulesGarden\\TTSGGSModule\\Core\\Configuration\\Data',           alias: "configurationData", singleton: true , auto: false }
+  - { namespace: 'ModulesGarden\\TTSGGSModule\\Core\\Lang\\Lang',                               alias: "lang", singleton: false ,auto: false }
+  - { namespace: 'ModulesGarden\\TTSGGSModule\\Core\\UI\\View',                                   alias: "view", singleton: true , auto: true }
+  - { namespace: 'ModulesGarden\\TTSGGSModule\\Core\\UI\\ViewAjax',                           alias: "viewAjax", singleton: true , auto: true }
+  - { namespace: 'ModulesGarden\\TTSGGSModule\\Core\\UI\\ViewIntegrationAddon',   alias: "viewIntegrationAddon", singleton: true , auto: true }
+  - { namespace: 'ModulesGarden\\TTSGGSModule\\Core\\Http\\AbstractController',             alias: "controller", singleton: true , auto: true }
+  - { namespace: 'ModulesGarden\\TTSGGSModule\\Core\\Http\\AbstractClientController', alias: "clientController", singleton: true , auto: true }
+  - { namespace: 'ModulesGarden\\TTSGGSModule\\Core\\Http\\AbstractHooksClient',alias: "clientHookController", singleton: true , auto: true }
+  - { namespace: 'ModulesGarden\\TTSGGSModule\\Core\\Configuration\\Addon\\Update\\PatchManager',alias: "patchManager",singleton: true ,auto: false }
+  - { namespace: 'ModulesGarden\\TTSGGSModule\\Core\\HandlerError\\WhmcsLogsHandler',      alias: "whmcsLogger", singleton: true , auto: false }
+  - { namespace: 'ModulesGarden\\TTSGGSModule\\Core\\Logger\\Entity',                     alias: "entityLogger", singleton: true , auto: true }
+  - { namespace: 'ModulesGarden\\TTSGGSModule\\Core\\CommandLine\\CronManager',            alias: "cronManager", singleton: true , auto: true }
+  - { namespace: 'ModulesGarden\\TTSGGSModule\\Core\\UI\\Widget\\Sidebar\\SidebarService',    alias: "sidebar", singleton: true ,auto: false }

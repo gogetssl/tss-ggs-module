@@ -1,0 +1,16 @@
+<table :id="cid_" :class="[css_, textCenterClass]" class="lu-table lu-table--mob-collapsible no-footer lu-table-simple" role="grid">
+    <thead v-if="columns_ && columns_.length">
+    <tr>
+        <th :class="[textCenterClass]" v-for="column in columns_">{{column}}</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr v-for="row in records_" v-if="records_">
+        <td v-for="cell in row">
+            <component :key="cell.uniq" v-bind="cell.slots" v-bind:is="cell.name" v-if="typeof cell == 'object'"></component>
+            <span v-else v-html="cell"></span>
+        </td>
+    </tr>
+    </tbody>
+</table>
+

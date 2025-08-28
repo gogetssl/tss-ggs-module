@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="72" height="72" viewBox="0 0 72 72">
+    <defs>
+        <style>
+            .cls-1 {
+            fill: #fff;
+            fill-rule: evenodd;
+            }
+        </style>
+    </defs>
+    <path id="Kształt_2146" data-name="Kształt 2146" class="cls-1" d="M1088,2927.3v-34.75l18.01-18.55v57.94A99.156,99.156,0,0,0,1088,2927.3Zm-6-.79c-3.29-.32-6.62-0.51-10-0.51s-6.71.19-10,.51v-26.88l9.39,10.02,10.61-10.93v27.79ZM1037.99,2874l18.01,19.22v34.08a99.156,99.156,0,0,0-18.01,4.64V2874Z" transform="translate(-1036 -2866.97)"/>
+</svg>

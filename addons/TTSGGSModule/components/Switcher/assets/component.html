@@ -1,0 +1,26 @@
+<label :id="cid_" :class="elements_.elements && elements_.elements.length == 1 ? 'lu-single-element' : ''">
+    <component @change="change"
+               v-bind="element.slots"
+               v-bind:is="element.name"
+               v-bind:key="element.uniq"
+               v-for="(element,key) in elements_.elements"
+               v-if="elements_.elements"
+               v-on="$listeners">
+    </component>
+    <div class="lu-switch" ref="switcher" :disabled="disabled_ == true || readonly_ == true">
+        <input :name="name_" type="hidden" :value="normaliseValue(false)" />
+        <input :name="name_" type="hidden" :value="normaliseValue(value_)" v-if="readonly_ == true"/>
+        <input :name="name_"
+               :value="normaliseValue(true)"
+               :disabled="disabled_ == true || readonly_ == true"
+               checked="value_"
+               class="lu-switch__checkbox no-icheck"
+               :class="css_"
+               type="checkbox"
+               v-model="value_"
+               v-on:change="change"
+               :readonly="readonly_ != '' ? true : false"
+        />
+        <span class="lu-switch__container"><span class="lu-switch__handle"></span></span>
+    </div>
+</label>

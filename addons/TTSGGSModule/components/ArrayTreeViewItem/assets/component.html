@@ -1,0 +1,61 @@
+<li :id="cid_" :class="css_" class="lu-d-table-row">
+
+    <!--PREFIX CELL-->
+    <span class="lu-d-table-cell lu-array-tree-view-item-cell lu-p-l-0x" v-if="elementsPrefix_ || expanderOnBeginning_">
+        <!--prefix on the beginning-->
+        <div v-if="elementsPrefix_ && !expanderOnBeginning_">
+            <component :key="elementsPrefix_.uniq" v-bind="elementsPrefix_.slots" v-bind:is="elementsPrefix_.name" v-on="$listeners" v-if="typeof elementsPrefix_ === 'object'"></component>
+            <div v-else>{{elementsPrefix_}}</div>
+        </div>
+
+        <!--expander on the beginning-->
+         <button class="lu-btn lu-btn--link lu-btn--sm lu-btn--icon lu-expander-on-beginning" @click="toggleElementsContainer" v-if="hasElements_ && expanderOnBeginning_">
+            <component :key="elementsExpander_.uniq" v-bind="elementsExpander_.slots" v-bind:is="elementsExpander_.name" v-on="$listeners" v-if="typeof elementsExpander_ === 'object'"></component>
+            <span v-else>{{elementsExpander_}}</span>
+        </button>
+    </span>
+
+    <!--KEY CELL-->
+    <span class="lu-d-table-cell lu-array-tree-view-item-cell">
+        {{name_}}
+    </span>
+
+    <!--SEPARATOR CELL-->
+    <span class="lu-d-table-cell lu-array-tree-view-item-cell" v-if="keyValueSeparator_">
+        <component :key="keyValueSeparator_.uniq" v-bind="keyValueSeparator_.slots" v-bind:is="keyValueSeparator_.name" v-on="$listeners" v-if="typeof keyValueSeparator_ === 'object'"></component>
+        <div v-else>{{keyValueSeparator_}}</div>
+    </span>
+
+    <!--VALUE CELL-->
+    <span class="lu-d-table-cell lu-array-tree-view-item-cell">
+
+        <div v-if="hasElements_">
+            <!--expander on the end-->
+            <div v-if="!expanderOnBeginning_">
+                <button class="lu-btn lu-btn--link lu-btn--sm lu-btn--icon" @click="toggleElementsContainer">
+                    <component :key="elementsExpander_.uniq" v-bind="elementsExpander_.slots" v-bind:is="elementsExpander_.name" v-on="$listeners" v-if="typeof elementsExpander_ === 'object'"></component>
+                    <span v-else>{{elementsExpander_}}</span>
+                </button>
+            </div>
+
+            <!--prefix on the end-->
+            <div v-if="expanderOnBeginning_">
+                <div v-if="elementsPrefix_" v-show="!showElements_">
+                    <component :key="elementsPrefix_.uniq" v-bind="elementsPrefix_.slots" v-bind:is="elementsPrefix_.name" v-on="$listeners" v-if="typeof elementsPrefix_ === 'object'"></component>
+                    <span v-if="typeof elementsPrefix_ !== 'object'">{{elementsPrefix_}}</span>
+                </div>
+                <div class="lu-d-table-row" v-show="showElements_"></div>
+            </div>
+
+            <div v-show="showElements_">
+                 <ul class="lu-d-table lu-array-tree-view">
+                    <component :key="element.uniq" v-bind="element.slots" v-bind:is="element.name" v-for="(element, key) in value_" v-on="$listeners"></component>
+                </ul>
+            </div>
+        </div>
+
+        <span v-else>
+            {{value_}}
+        </span>
+    </span>
+</li>

@@ -1,0 +1,18 @@
+<li :id="cid_" :class="readClass">
+    <div class="lu-row">
+        <div class="lu-col lu-col-md-10">
+            <div class="lu-dropdown__link" role="button" @click="onClick">
+                <div class="lu-w-100">
+                    <span class="lu-btn__text">{{date_}}</span>
+                    <span class="lu-btn__text lu-dropdown__title">{{title_}}</span>
+                    <span class="lu-btn__text">{{description_}}</span>
+                </div>
+            </div>
+        </div>
+        <div class="lu-col lu-col-md-1" @click="deleteItem">
+            <button aria-label="Close" data-dismiss="lu-modal" class="lu-btn lu-btn--xs lu-btn--default lu-btn--icon lu-btn--link lu-btn--plain">
+                <i class="lu-btn__icon lu-mdi mdi mdi-close"></i>
+            </button>
+        </div>
+    </div>
+</li>

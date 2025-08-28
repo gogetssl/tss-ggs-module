@@ -1,0 +1,77 @@
+---
+version: "2"
+plugins:
+  sonar-php:
+    enabled: true
+    config:
+      minimum_severity: major
+  phpcodesniffer:
+    enabled: false
+    config:
+      standard: ".phpcodesniffer.xml"
+  duplication:
+    enabled: true
+    exclude_patterns:
+      - "app/Config/*"
+      - "app/Configuration/*/base.php"
+    config:
+      languages:
+        - php
+#  phan:
+#    enabled: false
+#    config:
+#      file_extensions: "php"
+#      channel: "beta"
+#  sonar-php:
+#    enabled: false
+checks:
+  argument-count:
+    enabled: true
+    config:
+      threshold: 4
+  file-lines:
+    enabled: true
+    config:
+      threshold: 1000
+  complex-logic:
+    enabled: true
+    config:
+      threshold: 10
+  method-complexity:
+    enabled: true
+    config:
+      threshold: 5
+  method-count:
+    enabled: true
+    config:
+      threshold: 20
+  method-lines:
+    enabled: true
+    config:
+      threshold: 500
+  nested-control-flow:
+    enabled: true
+    config:
+      threshold: 4
+  return-statements:
+    enabled: true
+    config:
+      threshold: 5
+  similar-code:
+    enabled: true
+    config:
+      threshold: 70
+  identical-code:
+    enabled: true
+    config:
+      threshold: 3
+exclude_patterns:
+  - "**/vendor/"
+  - "**/core/"
+  - "**/*sdk*/*"
+  - "**/*.js"
+  - "**/*.css"
+  - "**/*.html"
+  - "**/langs/"
+  - "**/lang/"
+  - ".php-cs-fixer.php"

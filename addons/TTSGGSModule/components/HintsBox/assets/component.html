@@ -1,0 +1,27 @@
+<div :id="cid_" :class="[this.css_]" class="lu-row lu-row--eq-height hints-container">
+    <div class="lu-col-lg-12">
+        <div class="lu-widget">
+            <div class="lu-widget__header" v-if="title_">
+                <div class="lu-widget__top lu-top">
+                    <div class="lu-top__title">
+                        {{title_}}
+                    </div>
+                    <div class="lu-top__toolbar" v-if="elements_.toolbar">
+                        <component :key="elements_.toolbar.uniq" v-bind="elements_.toolbar.slots" v-bind:is="elements_.toolbar.name"></component>
+                    </div>
+                </div>
+            </div>
+            <div class="lu-widget__body" >
+                <div class="lu-widget__content" v-if="elements_.hints && elements_.hints.length > 0" :class="elements_.hints && elements_.hints.length == 1 ? 'lu-single-element' : ''">
+                    <component
+                            :key="element.uniq"
+                            v-bind="element.slots"
+                            v-bind:is="element.name"
+                            v-for="(element, key) in elements_.hints"
+                            v-on="$listeners">
+                    </component>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

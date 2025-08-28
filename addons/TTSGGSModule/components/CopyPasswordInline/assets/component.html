@@ -1,0 +1,7 @@
+<span :id="cid_" class="copy-text-inline-component">
+    <span v-if="is_visible_" @click="onTextClick" role="button">{{text_}}</span>
+    <span v-else @click="onTextClick" role="button">******</span>
+    <a v-if="!hideIcon_ && text_" href="#" @click="onIconClick">
+        <i class="lu-mdi mdi mdi-content-copy lu-i-c-2x lu-form-tooltip-helper-default" :data-title="translate_('title')" data-toggle="lu-tooltip" data-lu-tooltip rel="tooltip" :aria-label="translate_('title')"></i>
+    </a>
+</span>

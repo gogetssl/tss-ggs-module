@@ -1,0 +1,549 @@
+.lu-product-modulesgarden-widget-for-whmcs {
+    background: #5dd461;
+    background: linear-gradient(160deg, #5dd461 0%, #47b544 100%);
+}
+
+.lu-product-whmcs-analyzer {
+    background: #77b4f2;
+    background: linear-gradient(160deg, #77b4f2 0%, #3f91cc 100%);
+}
+
+.lu-product-agile-payment-gateway-for-whmcs {
+    background: #afd152;
+    background: linear-gradient(160deg, #afd152 0%, #81a83d 100%);
+}
+
+.lu-product-servertastic-ssl-for-whmcs {
+    background: #ff5454;
+    background: linear-gradient(160deg, #ff5454 0%, #d64545 100%);
+}
+
+.lu-product-support-tickets-filter-for-whmcs {
+    background: #98bad6;
+    background: linear-gradient(160deg, #98bad6 0%, #759dba 100%);
+}
+
+.lu-product-easydcim-dedicated-servers-for-whmcs {
+    background: #74a6eb;
+    background: linear-gradient(160deg, #74a6eb 0%, #3475d0 100%);
+}
+
+.lu-product-sapphire-admin-theme-for-magento {
+    background: #6d9cf1;
+    background: linear-gradient(160deg, #6d9cf1 0%, #6a77ed 100%);
+}
+
+.lu-product-crystal-theme-for-magento {
+    background: #a2d0e2;
+    background: linear-gradient(160deg, #a2d0e2 0%, #89b4c5 100%);
+}
+
+.lu-product-minimo-theme-for-magento {
+    background: #ccb6a3;
+    background: linear-gradient(160deg, #ccb6a3 0%, #ab9989 100%);
+}
+
+.lu-product-swifty-theme-for-magento {
+    background: #ebd335;
+    background: linear-gradient(160deg, #ebd335 0%, #e0bc0a 100%);
+}
+
+.lu-product-modulesgarden-base-for-magento {
+    background: #97a6db;
+    background: linear-gradient(160deg, #97a6db 0%, #6c83bd 100%);
+}
+
+.lu-product-modulesgarden-base-for-whmcs {
+    background: #97a6db;
+    background: linear-gradient(160deg, #97a6db 0%, #6c83bd 100%);
+}
+
+.lu-product-gpn-data-for-magento {
+    background: #a6bed2;
+    background: linear-gradient(160deg, #a6bed2 0%, #7e9cb1 100%);
+}
+
+.lu-product-geolocation-hook-for-whmcs {
+    background: #8bb2d9;
+    background: linear-gradient(160deg, #8bb2d9 0%, #5e90b1 100%);
+}
+
+.lu-product-servertastic-ssl-for-cpanel {
+    background: #ff695e;
+    background: linear-gradient(160deg, #ff695e 0%, #d64a40 100%);
+}
+
+.lu-product-jelastic-paas-for-whmcs {
+    background: #8d9cb2;
+    background: linear-gradient(160deg, #8d9cb2 0%, #6e819c 100%);
+}
+
+.lu-product-advanced-billing-for-whmcs {
+    background: #6eb6ff;
+    background: linear-gradient(160deg, #6eb6ff 0%, #2b98e0 100%);
+}
+
+.lu-product-cpanel-manage2-for-whmcs {
+    background: #ff8742;
+    background: linear-gradient(160deg, #ff8742 0%, #ff6e30 100%);
+}
+
+.lu-product-dns-manager-for-whmcs {
+    background: #2fd2e0;
+    background: linear-gradient(160deg, #2fd2e0 0%, #2cadd4 100%);
+}
+
+.lu-product-cpanel-extended-for-whmcs {
+    background: #ff8742;
+    background: linear-gradient(160deg, #ff8742 0%, #ff6e30 100%);
+}
+
+.lu-product-rackspace-public-cloud-for-whmcs {
+    background: #ff6060;
+    background: linear-gradient(160deg, #ff6060 0%, #cf4e4e 100%);
+}
+
+.lu-product-rackspace-email-extended-for-whmcs {
+    background: #ff6060;
+    background: linear-gradient(160deg, #ff6060 0%, #cf4e4e 100%);
+}
+
+.lu-product-crm-for-whmcs {
+    background: #65db69;
+    background: linear-gradient(160deg, #65db69 0%, #5bc758 100%);
+}
+
+.lu-product-product-linker-for-whmcs {
+    background: #e366ce;
+    background: linear-gradient(160deg, #e366ce 0%, #b8539e 100%);
+}
+
+.lu-product-sms-center-for-whmcs {
+    background: #82e581;
+    background: linear-gradient(160deg, #82e581 0%, #70c96f 100%);
+}
+
+.lu-product-multibrand-for-whmcs {
+    background: #a88ae3;
+    background: linear-gradient(160deg, #a88ae3 0%, #7c6bc9 100%);
+}
+
+.lu-product-zimbra-email-for-whmcs {
+    background: #ff7530;
+    background: linear-gradient(160deg, #ff7530 0%, #f0612e 100%);
+}
+
+.lu-product-nic-it-registrar-for-whmcs {
+    background: #cdb16d;
+    background: linear-gradient(160deg, #cdb16d 0%, #b09556 100%);
+}
+
+.lu-product-unban-center-for-whmcs {
+    background: #f86060;
+    background: linear-gradient(160deg, #f86060 0%, #e84a4a 100%);
+}
+
+.lu-product-godaddy-domain-registrar-for-whmcs {
+    background: #20c765;
+    background: linear-gradient(160deg, #20c765 0%, #00a841 100%);
+}
+
+.lu-product-directadmin-extended-for-whmcs {
+    background: #2db9e3;
+    background: linear-gradient(160deg, #2db9e3 0%, #138fbd 100%);
+}
+
+.lu-product-g-suite-for-whmcs {
+    background: #b3d943;
+    background: linear-gradient(160deg, #b3d943 0%, #97b82e 100%);
+}
+
+.lu-product-plesk-extended-for-whmcs {
+    background: #63a7ff;
+    background: linear-gradient(160deg, #63a7ff 0%, #428beb 100%);
+}
+
+.lu-product-zendesk-for-whmcs {
+    background: #3ecfc5;
+    background: linear-gradient(160deg, #3ecfc5 0%, #37b8af 100%);
+}
+
+.lu-product-resellers-center-for-whmcs {
+    background: #4ae0b8;
+    background: linear-gradient(160deg, #4ae0b8 0%, #28bd95 100%);
+}
+
+.lu-product-solusvm-extended-cloud-for-whmcs {
+    background: #33ccff;
+    background: linear-gradient(160deg, #33ccff 0%, #2b96e3 100%);
+}
+
+.lu-product-solusvm-extended-vps-for-whmcs {
+    background: #33ccff;
+    background: linear-gradient(160deg, #33ccff 0%, #2b96e3 100%);
+}
+
+.lu-product-solusvm-extended-reseller-for-whmcs {
+    background: #33ccff;
+    background: linear-gradient(160deg, #33ccff 0%, #2b96e3 100%);
+}
+
+.lu-product-enom-email-for-whmcs {
+    background: #f7c00a;
+    background: linear-gradient(160deg, #f7c00a 0%, #eba709 100%);
+}
+
+.lu-product-proxmox-cloud-for-whmcs {
+    background: #f28e30;
+    background: linear-gradient(160deg, #f28e30 0%, #f27500 100%);
+}
+
+.lu-product-proxmox-vps-for-whmcs {
+    background: #f28e30;
+    background: linear-gradient(160deg, #f28e30 0%, #f27500 100%);
+}
+
+.lu-product-proxmox-ve-vps-cloud-for-whmcs
+{
+    background: #f28e30;
+    background: linear-gradient(160deg, #f28e30 0%, #f27500 100%);
+}
+
+.lu-product-payment-gateway-charges-for-whmcs {
+    background: #a7de26;
+    background: linear-gradient(160deg, #a7de26 0%, #99cc23 100%);
+}
+
+.lu-product-mx-registrar-for-whmcs {
+    background: #d987e0;
+    background: linear-gradient(160deg, #d987e0 0%, #bf67c7 100%);
+}
+
+.lu-product-ip-manager-for-whmcs {
+    background: #ffcb2e;
+    background: linear-gradient(160deg, #ffcb2e 0%, #ecb40e 100%);
+}
+
+.lu-product-domains-reseller-for-whmcs {
+    background: #5ee5bd;
+    background: linear-gradient(160deg, #5ee5bd 0%, #48c2a9 100%);
+}
+
+.lu-product-virtuozzo-vps-for-whmcs {
+    background: #ed5374;
+    background: linear-gradient(160deg, #ed5374 0%, #bf4c5a 100%);
+}
+
+.lu-product-hosting-renewals-for-whmcs {
+    background: #66d9a3;
+    background: linear-gradient(160deg, #66d9a3 0%, #4cb584 100%);
+}
+
+.lu-product-report-generator-for-whmcs {
+    background: #33bbff;
+    background: linear-gradient(160deg, #33bbff 0%, #467ef0 100%);
+}
+
+.lu-product-plesk-key-administrator-for-whmcs {
+    background: #63a7ff;
+    background: linear-gradient(160deg, #63a7ff 0%, #428beb 100%);
+}
+
+.lu-product-password-manager-for-whmcs {
+    background: #64e39f;
+    background: linear-gradient(160deg, #64e39f 0%, #48c285 100%);
+}
+
+.lu-product-directadmin-licenses-for-whmcs {
+    background: #2db9e3;
+    background: linear-gradient(160deg, #2db9e3 0%, #138fbd 100%);
+}
+
+.lu-product-domain-orders-extended-for-whmcs {
+    background: #62deac;
+    background: linear-gradient(160deg, #62deac 0%, #48c295 100%);
+}
+
+.lu-product-namecom-registrar-for-whmcs {
+    background: #fc8042;
+    background: linear-gradient(160deg, #fc8042 0%, #e86a43 100%);
+}
+
+.lu-product-eurid-registrar-for-whmcs {
+    background: #ace55c;
+    background: linear-gradient(160deg, #ace55c 0%, #8bc23e 100%);
+}
+
+.lu-product-openstack-vps-for-whmcs {
+    background: #ff5d5d;
+    background: linear-gradient(160deg, #ff5d5d 0%, #cf4444 100%);
+}
+
+.lu-product-asterisk-voip-center-for-whmcs {
+    background: #f0882e;
+    background: linear-gradient(160deg, #f0882e 0%, #e57330 100%);
+}
+
+.lu-product-server-allocator-for-whmcs {
+    background: #a8afb6;
+    background: linear-gradient(160deg, #a8afb6 0%, #838a91 100%);
+}
+
+.lu-product-softlayer-servers-for-whmcs {
+    background: #e34f6f;
+    background: linear-gradient(160deg, #e34f6f 0%, #bd4654 100%);
+}
+
+.lu-product-time-task-manager-for-whmcs {
+    background: #958cfa;
+    background: linear-gradient(160deg, #958cfa 0%, #7878e3 100%);
+}
+
+.lu-product-premium-support-tickets-for-whmcs {
+    background: #6fe37d;
+    background: linear-gradient(160deg, #6fe37d 0%, #49c960 100%);
+}
+
+.lu-product-websitepanel-extended-for-whmcs {
+    background: #a1c3e5;
+    background: linear-gradient(160deg, #a1c3e5 0%, #749bc2 100%);
+}
+
+.lu-product-interspire-email-marketer-for-whmcs {
+    background: #fa6055;
+    background: linear-gradient(160deg, #fa6055 0%, #d9493f 100%);
+}
+
+.lu-product-account-synchronization-for-whmcs {
+    background: #69d6e0;
+    background: linear-gradient(160deg, #69d6e0 0%, #47a9c9 100%);
+}
+
+.lu-product-payment-gateway-allocator-for-whmcs {
+    background: #a7de26;
+    background: linear-gradient(160deg, #a7de26 0%, #99cc23 100%);
+}
+
+.lu-product-client-profile-viewer-for-whmcs {
+    background: #5bdeca;
+    background: linear-gradient(160deg, #5bdeca 0%, #47bfb7 100%);
+}
+
+.lu-product-product-auto-upgrade-for-whmcs {
+    background: #5bded9;
+    background: linear-gradient(160deg, #5bded9 0%, #49b8c4 100%);
+}
+
+.lu-product-quotes-automation-for-whmcs {
+    background: #ff73ad;
+    background: linear-gradient(160deg, #ff73ad 0%, #db4d88 100%);
+}
+
+.lu-product-hosting-quota-notifications-for-whmcs {
+    background: #b988eb;
+    background: linear-gradient(160deg, #b988eb 0%, #9071c9 100%);
+}
+
+.lu-product-quickbooks-online-for-whmcs {
+    background: #65cf57;
+    background: linear-gradient(160deg, #65cf57 0%, #3bad2c 100%);
+}
+
+.lu-product-support-tickets-allocator-for-whmcs {
+    background: #6fe37d;
+    background: linear-gradient(160deg, #6fe37d 0%, #49c960 100%);
+}
+
+.lu-product-r1soft-backups-for-whmcs {
+    background: #f5944e;
+    background: linear-gradient(160deg, #f5944e 0%, #e37949 100%);
+}
+
+.lu-product-team-task-organizer-for-magento {
+    background: #c5d0a1;
+    background: linear-gradient(160deg, #c5d0a1 0%, #aeba80 100%);
+}
+
+.lu-product-zendesk-extended-for-magento {
+    background: #3ecf95;
+    background: linear-gradient(160deg, #3ecf95 0%, #37b884 100%);
+}
+
+.lu-product-bulk-orders-center-for-magento {
+    background: #78c2ff;
+    background: linear-gradient(160deg, #78c2ff 0%, #27a5e8 100%);
+}
+
+.lu-product-rage4-for-cpanel {
+    background: #fa8058;
+    background: linear-gradient(160deg, #fa8058 0%, #f1683b 100%);
+}
+
+.lu-product-interworx-extended-for-whmcs {
+    background: #50c8d8;
+    background: linear-gradient(160deg, #50c8d8 0%, #2592c4 100%);
+}
+
+.lu-product-recurring-billing-extended-for-whmcs {
+    background: #d688fc;
+    background: linear-gradient(160deg, #d688fc 0%, #976bbf 100%);
+}
+
+.lu-product-discount-center-for-whmcs {
+    background: #6be86d;
+    background: linear-gradient(160deg, #6be86d 0%, #4ec74a 100%);
+}
+
+.lu-product-quickbooks-desktop-for-whmcs {
+    background: #65cf57;
+    background: linear-gradient(160deg, #65cf57 0%, #3bad2c 100%);
+}
+
+.lu-product-proxmox-cloud-autoscaling-for-whmcs {
+    background: #f28e30;
+    background: linear-gradient(160deg, #f28e30 0%, #f27500 100%);
+}
+
+.lu-product-crm-for-magento-2 {
+    background: #e0a88b;
+    background: linear-gradient(160deg, #e0a88b 0%, #d4947d 100%);
+}
+
+.lu-product-ovh-public-cloud-for-whmcs {
+    background: #7aa2d6;
+    background: linear-gradient(160deg, #7aa2d6 0%, #598ac9 100%);
+}
+
+.lu-product-rackspace-cloud-openstack-for-whmcs {
+    background: #ff6060;
+    background: linear-gradient(160deg, #ff6060 0%, #cf4e4e 100%);
+}
+
+.lu-product-crm-for-prestashop {
+    background: #bfd18a;
+    background: linear-gradient(160deg, #bfd18a 0%, #a8bd79 100%);
+}
+
+.lu-product-echecknet-payments-for-prestashop {
+    background: #54ccbc;
+    background: linear-gradient(160deg, #54ccbc 0%, #0fa6a1 100%);
+}
+
+.lu-product-client-area-popup-for-whmcs {
+    background: #50daf2;
+    background: linear-gradient(160deg, #50daf2 0%, #00b2c9 100%);
+}
+
+.lu-product-domain-email-forwarding-for-whmcs {
+    background: #968aeb;
+    background: linear-gradient(160deg, #968aeb 0%, #7376c9 100%);
+}
+
+.lu-product-social-media-login-for-whmcs {
+    background: #54ccbc;
+    background: linear-gradient(160deg, #54ccbc 0%, #0fa6a1 100%);
+}
+
+.lu-product-solidcp-extended-for-whmcs {
+    background: #ff6363;
+    background: linear-gradient(160deg, #ff6363 0%, #e84a4a 100%);
+}
+
+.lu-product-mspcontrol-extended-for-whmcs {
+    background: #b2c2d6;
+    background: linear-gradient(160deg, #b2c2d6 0%, #8494ac 100%);
+}
+
+.lu-product-zendesk-for-blesta {
+    background: #53b0bd;
+    background: linear-gradient(160deg, #53b0bd 0%, #499ba6 100%);
+}
+
+.lu-product-godaddy-domain-registrar-for-blesta {
+    background: #48d984;
+    background: linear-gradient(160deg, #48d984 0%, #2eb964 100%);
+}
+
+.lu-product-client-area-designer-for-whmcs {
+    background: #f7d305;
+    background: linear-gradient(160deg, #f7d305 0%, #ebc109 100%);
+}
+
+.lu-product-openstack-vps-for-blesta {
+    background: #ff7575;
+    background: linear-gradient(160deg, #ff7575 0%, #cf5959 100%);
+}
+
+.lu-product-crm-for-magento-1x {
+    background: #d6b2a1;
+    background: linear-gradient(160deg, #d6b2a1 0%, #c99a89 100%);
+}
+
+.lu-product-freshdesk-for-whmcs {
+    background: #82bc4f;
+    background: linear-gradient(160deg, #82bc4f 0%, #39b253 100%);
+}
+
+.lu-product-client-area-popup-for-blesta {
+    background: #90d6d1;
+    background: linear-gradient(160deg, #90d6d1 0%, #72b2ae 100%);
+}
+
+.lu-product-domain-allocator-for-whmcs {
+    background: #c5a9de;
+    background: linear-gradient(160deg, #c5a9de 0%, #af88d1 100%);
+}
+
+.lu-product-zendesk-extended-for-magento-2 {
+    background: #21c483;
+    background: linear-gradient(160deg, #21c483 0%, #1ea871 100%);
+}
+
+.lu-product-office-365-for-whmcs {
+    background: #ff6633;
+    background: linear-gradient(160deg, #ff6633 0%, #eb3c00 100%);
+}
+
+.lu-product-wordpress-manager-for-whmcs {
+    background: linear-gradient(160deg, #a5a5af 0%, #747380 100%);
+}
+
+.lu-product-ovh-vps-dedicated-for-whmcs {
+    background: #7aa2d6;
+    background: linear-gradient(160deg, #7aa2d6 0%, #598ac9 100%);
+}
+
+.lu-product-solusvm-2-vps-cloud-for-whmcs {
+    background: #06A2E0;
+    background: linear-gradient(160deg, #06A2E0 0%, #237AA9 100%);
+}
+
+.lu-product-google-analytics-for-whmcs {
+    background: #F8AB00;
+    background: linear-gradient(160deg, #F8AB00 0%, #E37300 100%);
+}
+
+.lu-product-vultr-vps-for-whmcs {
+    background: #51b0fe;
+    background: linear-gradient(160deg, #51b0fe 0%, #007bfc 100%)
+}
+
+.lu-product-marketing-triggers-automation-for-whmcs {
+    background: #F29199;
+    background: linear-gradient(160deg, #F29199 0%, #F25774 100%);
+}
+
+.lu-product-server-monitoring-for-whmcs {
+    background: #E4CA85;
+    background: linear-gradient(160deg, #E4CA85 0%, #BE9545 100%);
+}
+
+.lu-product-portainer-docker-containers-for-whmcs {
+    background: #0BA5EC;
+    background: linear-gradient(160deg, #0BA5EC 0%, #3A7DFF 100%);
+}
+
+.lu-product-withoutdns-for-whmcs {
+    background: #E87A2C;
+    background: linear-gradient(160deg, #E87A2C 0%, #D55533 100%);
+}
