@@ -110,11 +110,13 @@
             <td class="gold-bold"><i class="fa fa-cog" aria-hidden="true"></i> {$MGLANG->T('validation_page', 'Pending')}</td>
             <td>-</td>
         </tr>
-        <tr>
-            <td>{$MGLANG->T('validation_page', 'Organization Status')}</td>
-            <td class="gold-bold"><i class="fa fa-cog" aria-hidden="true"></i> {$MGLANG->T('validation_page', 'Pending')}</td>
-            <td>-</td>
-        </tr>
+        {if $validation_product == 'OV' || $validation_product == 'EV'}
+            <tr>
+                <td>{$MGLANG->T('validation_page', 'Organization Status')}</td>
+                <td class="gold-bold"><i class="fa fa-cog" aria-hidden="true"></i> {$MGLANG->T('validation_page', 'Pending')}</td>
+                <td>-</td>
+            </tr>
+        {/if}
         <tr>
             <td>{$MGLANG->T('validation_page', 'Vendor Status')}</td>
             <td>{$MGLANG->T('validation_page', 'awaiting validation (full)')}</td>

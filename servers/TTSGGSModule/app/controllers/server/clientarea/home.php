@@ -15,6 +15,7 @@ use ModulesGarden\Servers\TTSGGSModule\core\Lang;
 use ModulesGarden\Servers\TTSGGSModule\core\process\AbstractController;
 use ModulesGarden\TTSGGSModule\App\Helpers\EmailTemplates;
 use ModulesGarden\TTSGGSModule\App\Libs\SSLTrustCenterApi;
+use ModulesGarden\TTSGGSModule\App\Models\RemoteProduct;
 use ModulesGarden\TTSGGSModule\App\Models\Request;
 use ModulesGarden\TTSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
 use ModulesGarden\TTSGGSModule\App\Repositories\Whmcs\ProductRepository;
@@ -76,6 +77,8 @@ class home extends AbstractController {
         $orderDetails = Request::getOrder($input['id']);
         $order = $orderDetails['orderData'];
 
+        $productAPI = RemoteProduct::where('remoteId', $order['orderData']['product']['id'])->first()->toArray();
+
         if($order['order']['status'] == 'active')
         {
             $certificate = $orderDetails['orderFiles'];
@@ -102,12 +105,13 @@ class home extends AbstractController {
         $vars['subscribtion_ends'] = '';
         $vars['next_reissue'] = '';
         $vars['ssl_issuer'] = '';
+        $vars['validation_product'] = $productAPI['validation'];
         $vars['order_details']['registration_date'] = date('l F jS, Y',strtotime($service->regdate));
         $vars['order_details']['expiration_date'] = $service->nextduedate != '0000-00-00' ? date('l F jS, Y',strtotime($service->nextduedate)) : "";
         $vars['order_details']['reccuring_amount'] = formatCurrency($service->amount, $client->currency);
         $vars['order_details']['billing_cycle'] = ucfirst($service->billingcycle);
         $vars['order_details']['payment_method'] = ucfirst($service->paymentmethod);
-        $vars['order_details']['csr_status_updated'] = date('Y-m-d H:i');
+        $vars['order_details']['csr_status_updated'] = date('Y-m-d H:i', strtotime($order['order']['date']));
         $vars['order_details_api'] = $order;
         $vars['serviceid'] = $service->id;
         $vars['countSAN'] = 0;

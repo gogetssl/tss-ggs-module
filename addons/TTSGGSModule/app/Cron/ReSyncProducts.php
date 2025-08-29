@@ -4,18 +4,10 @@ namespace ModulesGarden\TTSGGSModule\App\Cron;
 
 use Exception;
 use ModulesGarden\TTSGGSModule\App\Libs\Helpers;
-use ModulesGarden\TTSGGSModule\App\Libs\SSLTrustCenterApi;
 use ModulesGarden\TTSGGSModule\App\Models\CronCheck;
-use ModulesGarden\TTSGGSModule\App\Models\RemoteProduct;
-use ModulesGarden\TTSGGSModule\App\Models\Request;
 use ModulesGarden\TTSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
-use ModulesGarden\TTSGGSModule\App\Repositories\Whmcs\ProductRepository;
 use ModulesGarden\TTSGGSModule\Core\CommandLine\AbstractCommand;
-use ModulesGarden\TTSGGSModule\Core\WHMCS\Models\Currency;
-use ModulesGarden\TTSGGSModule\Core\WHMCS\Models\Pricing;
-use ModulesGarden\TTSGGSModule\Core\WHMCS\Models\Service;
 use ModulesGarden\TTSGGSModule\Packages\Logs\Support\Facades\Logger;
-use ModulesGarden\TTSGGSModule\Packages\Product\Services\ConfigurableOptions;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -65,6 +57,16 @@ class ReSyncProducts extends AbstractCommand
             if($checkCron === false)
             {
                 return;
+            }
+
+            $countryCode     = \WHMCS\Config\Setting::getValue("DefaultCountry");
+
+            $configuredApis = Helpers::getConfiguredApis();
+            foreach($configuredApis as $api)
+            {
+                $api->getAnnouncements(true);
+                $api->getManager($countryCode, true);
+
             }
 
            Helpers::reSyncProducts();

@@ -337,5 +337,16 @@
         $("#inputCsr").parents(".card-body").find(".alert-info").text("{$MGLANG->T('csr_details', 'description')}");
         $("#inputServerType").parent(".form-group").hide();
         $("#inputServerType").val("1000");
+
+        {if $adminFormHidden}
+
+            $('#inputJobTitle').val('IT');
+            $('#inputFirstName').parents('fieldset').prev('div').prev('h2').hide();
+            $('#inputFirstName').parents('fieldset').prev('div').hide();
+            $('#inputFirstName').parents('fieldset').hide();
+
+        {/if}
+
+
     });
 </script>

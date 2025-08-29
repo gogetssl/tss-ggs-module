@@ -148,12 +148,130 @@ class SSLTrustCenterApi {
         return $this->call('/certificates/'.$this->category.'/'.$id.'/files');
     }
 
-    public function getManager($countryCode) {
-        return $this->call('/profile/manager/?country='.$countryCode);
+    public function getManager($countryCode, $forceAPI = false) {
+        if($forceAPI === false) {
+            $request = Request::where('serviceid', '0')->where('name', 'manager')->first();
+
+            if(isset($request->request) && !empty($request->request))
+            {
+                return json_decode(\decrypt($request->request),true);
+            }
+            else
+            {
+                $response = $this->call('/profile/manager/?country='.$countryCode);
+
+                $request = Request::where('serviceid', '0')->where('name', 'manager')->first();
+
+                if(!isset($request->id))
+                {
+                    Request::insert([
+                        'serviceid' => '0',
+                        'name' => 'manager',
+                        'request' => \encrypt(json_encode($response)),
+                        'created_at' => date('Y-m-d H:i:s'),
+                        'updated_at' => date('Y-m-d H:i:s')
+                    ]);
+                }
+                else
+                {
+                    Request::where('id', $request->id)->update([
+                        'request' => \encrypt(json_encode($response)),
+                        'updated_at' => date('Y-m-d H:i:s')
+                    ]);
+                }
+
+                return $response;
+            }
+
+        }
+        else {
+            $response = $this->call('/profile/manager/?country='.$countryCode);
+
+            $request = Request::where('serviceid', '0')->where('name', 'manager')->first();
+
+            if(!isset($request->id))
+            {
+                Request::insert([
+                    'serviceid' => '0',
+                    'name' => 'manager',
+                    'request' => \encrypt(json_encode($response)),
+                    'created_at' => date('Y-m-d H:i:s'),
+                    'updated_at' => date('Y-m-d H:i:s')
+                ]);
+            }
+            else
+            {
+                Request::where('id', $request->id)->update([
+                    'request' => \encrypt(json_encode($response)),
+                    'updated_at' => date('Y-m-d H:i:s')
+                ]);
+            }
+
+            return $response;
+        }
     }
 
-    public function getAnnouncements() {
-        return $this->call('/dashboard/announcements/');
+    public function getAnnouncements($forceAPI = false) {
+        if($forceAPI === false) {
+            $request = Request::where('serviceid', '0')->where('name', 'announcements')->first();
+
+            if(isset($request->request) && !empty($request->request))
+            {
+                return json_decode(\decrypt($request->request),true);
+            }
+            else
+            {
+                $response = $this->call('/dashboard/announcements/');
+
+                $request = Request::where('serviceid', '0')->where('name', 'announcements')->first();
+
+                if(!isset($request->id))
+                {
+                    Request::insert([
+                        'serviceid' => '0',
+                        'name' => 'announcements',
+                        'request' => \encrypt(json_encode($response)),
+                        'created_at' => date('Y-m-d H:i:s'),
+                        'updated_at' => date('Y-m-d H:i:s')
+                    ]);
+                }
+                else
+                {
+                    Request::where('id', $request->id)->update([
+                        'request' => \encrypt(json_encode($response)),
+                        'updated_at' => date('Y-m-d H:i:s')
+                    ]);
+                }
+
+                return $response;
+            }
+
+        }
+        else {
+            $response = $this->call('/dashboard/announcements/');
+
+            $request = Request::where('serviceid', '0')->where('name', 'announcements')->first();
+
+            if(!isset($request->id))
+            {
+                Request::insert([
+                    'serviceid' => '0',
+                    'name' => 'announcements',
+                    'request' => \encrypt(json_encode($response)),
+                    'created_at' => date('Y-m-d H:i:s'),
+                    'updated_at' => date('Y-m-d H:i:s')
+                ]);
+            }
+            else
+            {
+                Request::where('id', $request->id)->update([
+                    'request' => \encrypt(json_encode($response)),
+                    'updated_at' => date('Y-m-d H:i:s')
+                ]);
+            }
+
+            return $response;
+        }
     }
 
     protected function call($uri, $postData = [], $customMethod = false, $multilineResponse = false) {
