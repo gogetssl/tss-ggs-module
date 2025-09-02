@@ -11,7 +11,7 @@
                         <tbody>
                         <tr>
                             <td>{$MGLANG->T('awaiting_configuration', 'order_number')}</td>
-                            <td>{$order_number}</td>
+                            <td>{$MGLANG->T('awaiting_configuration', 'N/A')}</td>
                         </tr>
                         <tr>
                             <td>{$MGLANG->T('awaiting_configuration', 'Domain Name')}</td>

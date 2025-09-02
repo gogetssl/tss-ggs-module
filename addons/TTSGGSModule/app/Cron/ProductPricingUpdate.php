@@ -69,8 +69,9 @@ class ProductPricingUpdate extends AbstractCommand
 
             RemoteProduct::synchronize();
 
+            $defaultCurrency = Currency::where('default','1')->first();
             $addonConfig  = (new AddonModuleRepository())->getModuleConfiguration();
-            $currencyId   = (int)$addonConfig['financeSettings']['currency'];
+            $currencyId   = (int)$addonConfig['financeSettings']['currency'] ?: $defaultCurrency->id;
             $currency     = Currency::find($currencyId);
             $currencyRate = $addonConfig['financeSettings']['rate'] ?: 1;
             $profitMargin = floatval($addonConfig['financeSettings']['profitMargin']);
