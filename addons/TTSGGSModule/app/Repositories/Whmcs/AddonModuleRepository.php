@@ -2,6 +2,7 @@
 
 namespace ModulesGarden\TTSGGSModule\App\Repositories\Whmcs;
 
+use ModulesGarden\TTSGGSModule\App\Models\CronCheck;
 use ModulesGarden\TTSGGSModule\App\Models\Whmcs\AddonModule;
 
 class AddonModuleRepository
@@ -79,6 +80,20 @@ class AddonModuleRepository
 
     public function checkCron($name)
     {
+        $cronNames = [
+            'cron1' => 'ProductPricingUpdate',
+            'cron2' => 'SSLCertificates',
+            'cron3' => 'RenewalNotifyCertificate',
+            'cron4' => 'ReSyncProducts',
+            'cron5' => 'SSLCertificatesProcessing'
+        ];
+
+        $cronCheck = CronCheck::where('type', $cronNames[$name])->first();
+        if(!isset($cronCheck->last_error) || !empty($cronCheck->last_error))
+        {
+            return true;
+        }
+
         $day = date('d');
         $week = date('N');
         $hour = date('H');

@@ -168,6 +168,7 @@ $_LANG['admin.home.index.widgets.support_widget.featuresDisplay'] = 'Knowledge-b
 
 //systemcheck
 $_LANG['admin.home.index.widgets.system_check_widget.system_check_crons']   = 'Cron';
+$_LANG['admin.home.index.widgets.system_check_widget.system_check_alert'] = '<b>CronJobs not running.</b> Please enable all crons listed <a href="addonmodules.php?module=TTSGGSModule&mg-page=settings&settings-page=cronSettings" style="text-decoration: underline;">here</a>';
 $_LANG['admin.home.index.widgets.system_check_widget.system_check_updates'] = 'Updates';
 
 //===[Statistics]=======================================================================================================
