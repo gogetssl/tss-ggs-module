@@ -1,8 +1,0 @@
-<div :id="cid_" class="lu-app-main__top lu-top" v-if="items_.length">
-    <ul class="lu-breadcrumb lu-type-5" :class="items_ && items_.length == 1 ? 'lu-single-element' : ''">
-        <li :class="[index == items_.length-1  ? 'is-active' : '']" class="lu-breadcrumb__item is-active" v-for="(item, key, index) in items_">
-            <a :href="item.url" class="lu-breadcrumb__link">{{item.name}} {{index}}</a>
-        </li>
-    </ul>
-</div>
-

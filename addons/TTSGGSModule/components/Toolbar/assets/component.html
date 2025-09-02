@@ -1,8 +1,0 @@
-<div :id="cid_" class="lu-top__toolbar" :class="[css_, {'lu-single-element' : elements_.elements && elements_.elements.length == 1}]">
-    <component v-bind="button.slots"
-               v-bind:is="button.name"
-               v-bind:key="key"
-               v-for="(button,key) in elements_.elements"
-               v-on="$listeners">
-    </component>
-</div>

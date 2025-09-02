@@ -1,3 +1,0 @@
-<div class="lu-list-group lu-list-group--collapse" :id="cid_" :class="[css_, {'lu-single-element' : accordionElements_ && accordionElements_.length == 1, 'lu-list-group--simple' : !itemsBorder_}]">
-    <component :key="element.uniq" v-bind="element.slots" v-bind:is="element.name" v-for="element in accordionElements_" v-on="$listeners" @change="change"></component>
-</div>

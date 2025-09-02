@@ -1,5 +1,0 @@
-<button :id="cid_" :class="[css_]" :type="type_" @click="onClick" @click.middle="onClickMiddle" @mousedown.middle.prevent.stop>
-    <i class="lu-btn__icon lu-preloader lu-preloader--sm" v-if="isLoading_"></i>
-    <i :class="[icon_, 'lu-btn__icon']" v-else-if='icon'></i>
-    <span class="lu-btn__text" v-html="title_"></span>
-</button>

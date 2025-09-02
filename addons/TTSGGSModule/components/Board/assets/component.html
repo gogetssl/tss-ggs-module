@@ -1,5 +1,0 @@
-<div :id="cid_" class="lu-container-fluid" :class="css_">
-    <div class="lu-row" :class="elements_.columns && elements_.columns.length == 1 ? 'lu-single-element' : ''">
-        <component v-bind="element.slots" v-bind:is="element.name" v-bind:key="element.uniq"  v-for="(element, key) in elements_.columns" v-on="$listeners" @change="change"></component>
-    </div>
-</div>

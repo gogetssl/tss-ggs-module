@@ -1,8 +1,0 @@
-<li :id="cid_" class="lu-nav__item swiper-slide swiper-slide-active swiper-slide-visible" :class="active_ ? 'is-active' : ''">
-    <div v-if="elements_.elements" :class="elements_.elements && elements_.elements.length == 1 ? 'lu-single-element' : ''">
-        <component :key="element.uniq" v-bind="element.slots" v-bind:is="element.name" v-for="(element, key) in elements_.elements" v-on="$listeners"></component>
-    </div>
-    <a :href="url_" class="lu-nav__link" v-else>
-        <span class="lu-nav__link-text">{{title_}}</span>
-    </a>
-</li>
