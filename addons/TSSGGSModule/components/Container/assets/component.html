@@ -1,0 +1,12 @@
+<div :id="cid_" :class="[css_, {'lu-single-element' : elements_.elements && elements_.elements.length == 1}]">
+    <!-- preloader -->
+    <div class="lu-preloader-container lu-preloader-container--full-screen"
+         v-show="loading_ && showPreloader_">
+        <div class="lu-preloader lu-preloader--sm"></div>
+    </div>
+    <!-- end of preloader -->
+    <div v-if="content_">
+        {{content}}
+    </div>
+    <component :key="element.uniq" v-bind="element.slots" v-bind:is="element.name" v-for="(element, key) in elements_.elements" v-on="$listeners"></component>
+</div>

@@ -1,0 +1,7 @@
+<div :id="cid_" class="lu-image-text">
+    <div class="lu-m-r-1x">
+        <img :src="url_" v-if="url_">
+        <i class="lu-mdi mdi mdi-image-outline" :data-title="this.translate_('no_image')" :aria-label="this.translate_('no_image')" data-toggle="lu-tooltip" data-lu-tooltip rel="tooltip" v-else></i>
+    </div>
+    <span class="lu-text">{{text_}}</span>
+</div>

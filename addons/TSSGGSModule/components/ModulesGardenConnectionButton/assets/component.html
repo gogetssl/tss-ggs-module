@@ -1,0 +1,7 @@
+<button :id="cid_" :class="[css_]" @click="onClick" class="btn btn-primary modulesgarden-connection-button">
+    <i class="lu-btn__icon lu-preloader lu-preloader--sm" v-if="isLoading_"></i>
+    <div>
+    <div><span>{{ text }}</span></div>
+    <div><img :src="url" alt="logo"></div>
+    </div>
+</button>

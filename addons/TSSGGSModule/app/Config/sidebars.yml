@@ -1,0 +1,13 @@
+someTestSidebar:
+  tickets:
+    order: 1
+    uri: 'supporttickets.php'
+  domains:
+    order: 2
+    uri: 'clientarea.php?action=domains'
+  serverStatus:
+    order: 3
+    uri: 'serverstatus.php'
+  services:
+    order: 4
+    uri: 'clientarea.php?action=services'

@@ -1,0 +1,8 @@
+<ul :id="cid_" :class="[css_, elements_.elements && elements_.elements.length == 1 ? 'lu-single-element' : '']">
+    <template v-for="element in elements_.elements">
+        <li v-if="typeof element === 'object'">
+            <component :key="element.uniq" v-bind="element.slots" v-bind:is="element.name"></component>
+        </li>
+        <li v-else v-html="element"></li>
+    </template>
+</ul>

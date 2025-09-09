@@ -1,0 +1,7 @@
+<div :id="cid_" class="widgets" data-masonry='{ "itemSelector": ".widgets-item", "columnWidth": ".widgets-sizer", "percentPosition": "true" }' :class="[css_, {'lu-single-element' : elements_.elements && elements_.elements.length == 1}]">
+    <div class="widgets-sizer"></div>
+
+    <div class="widgets-item" v-for="(element, key) in elements_.elements" :key="element.uniq">
+        <component v-bind="element.slots" v-bind:is="element.name" v-on="$listeners" v-on:updated="updated"></component>
+    </div>
+</div>

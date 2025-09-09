@@ -1,0 +1,23 @@
+<div :id="cid_" class="lu-graph" ref="graph" :class="[{'lu-widget' : !isSparkline, 'lu-graph-sparkline' : isSparkline}]">
+    <div  v-if="showHeader" class="lu-widget__header">
+        <div class="lu-widget__top lu-top" :class="elements_.elements && elements_.elements.length == 1 ? 'lu-single-element' : ''">
+            <div class="lu-top__title">
+                <i :class="[iconClass]"></i>{{title_}}
+            </div>
+            <component
+                    :is="element.name"
+                    :key="element.uniq"
+                    v-bind="element.slots"
+                    v-for="(element, key) in elements_.elements"
+                    v-on:reload-parent="onReload"
+            >
+            </component>
+        </div>
+    </div>
+    <div :class="[{'lu-widget__body' : !isSparkline}]">
+        <div class="chartCanvas"></div>
+        <div class="lu-preloader-container lu-preloader-container--full-screen lu-preloader-container--overlay" v-show="loading_">
+            <div class="lu-preloader lu-preloader--sm"></div>
+        </div>
+    </div>
+</div>

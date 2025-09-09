@@ -1,0 +1,18 @@
+<div>
+
+    <ul class="vendor-selections" style="overflow: hidden;padding-bottom: 10px">
+        <li v-for="(option, index) in options_">
+            <input type="radio" :value="'cb'+index" name="vendor" ref="name_" :id="'cb'+index" />
+            <label :for="'cb'+index"><img :src="option.name" /></label>
+        </li>
+    </ul>
+
+    <div style="clear: both;margin-top: 10px;"></div>
+
+    <!---<label for="ggsssl_cert"><input id="ggsssl_cert" type="checkbox"> Do you want to add GoGetSSL certificates? You will need to create separate Reseller account using <a target="_blanks" href="#">them form</a></label>
+--->
+    <div style="clear: both;margin-top: 10px;"></div>
+</div>
+
+
+

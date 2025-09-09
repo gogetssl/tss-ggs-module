@@ -1,0 +1,213 @@
+<div :id="cid_" class="lu-widget">
+    <div class="lu-widget__body">
+        <div class="lu-widget__header" v-if="title_">
+            <div class="lu-widget__top lu-top">
+                <div class="lu-top__title">
+                    {{title_}}
+                </div>
+            </div>
+        </div>
+        <div :id="id" class="lu-t-c  datatableLoader" data-check-container data-table-container>
+            <!-- search and others -->
+            <div class="lu-t-c__top lu-top mob-top-search" v-if="search_ || elements_.toolbar">
+                <div class="lu-top__toolbar" v-if="search_">
+                    <div class="lu-top__search lu-input-group">
+                        <span class="lu-icon-sm lu-input-group__icon">
+                            <i class="lu-mdi mdi mdi-magnify"></i>
+                        </span>
+                        <input
+                                :placeholder="translate_('search_placeholder')"
+                                @keydown.enter="searchDataEnter"
+                                class="lu-form-control lu-input-group__form-control lu-table-search"
+                                v-on:keyup="checkClearMainSearchButton(event)"
+                                value=""
+                        >
+                        <button class="lu-btn lu-btn--link lu-p-r-0x lu-p-l-0x lu-m-r-1x lu-clear-main-search-button" disabled @click='clearMainSearch(event)'>
+                            <i class="lu-mdi lu-i-c-2x mdi mdi-close" ></i>
+                        </button>
+                    </div>
+                    <div v-if="filtersEnabled_">
+                            <span class="lu-table__text">
+                                <button class="lu-btn lu-btn--link lu-p-r-0x lu-p-l-0x" @click='toggleFilters'>
+                                    <i class="lu-mdi mdi mdi-filter"></i>
+                                    <i class="lu-mdi mdi lu-i-c-2x" :class="[filtersVisible_ ? 'mdi-chevron-up' : 'mdi-chevron-down']"></i>
+                                </button>
+                            </span>
+                    </div>
+                </div>
+                <div class="lu-top__toolbar" :class="elements_.toolbar && elements_.toolbar.length == 1 ? 'lu-single-element' : ''">
+                    <component :key="elements_.uniq" v-bind="button.slots" v-bind:is="button.name" v-for="(button, key) in elements_.toolbar" v-on="$listeners" v-on:reload-parent="reloadParent"></component>
+                </div>
+            </div>
+            <!-- end of search and others -->
+            <!-- mass actions buttons -->
+            <div class="lu-t-c__mass-actions lu-top is-open" v-if="elements_.mass && elements_.mass.length && massActionIds_.length">
+                <div class="lu-top__title">
+                    <span class="lu-badge lu-badge--primary lu-value">{{massActionIds_.length}}</span> {{translate_('items_selected')}}
+                </div>
+                <div class="lu-top__toolbar" :class="elements_.mass && elements_.mass.length && elements_.mass.length == 1 ? 'lu-single-element' : ''">
+                    <component :key="elements_.uniq" v-bind="button.slots" v-bind:data="{id:massActionIds_}" v-bind:is="button.name" v-for="(button, key) in elements_.mass" v-on="$listeners" v-on:reload-parent="reloadParent"></component>
+                </div>
+            </div>
+            <!-- end of mass actions -->
+            <div class="dataTables_wrapper no-footer">
+                <div class="lu-d-grid">
+                    <table class="lu-table lu-table--mob-collapsible dataTable no-footer dtr-column">
+                        <!-- table header -->
+                        <thead>
+                        <tr role='row'>
+                            <th :name="column.name" :class='[getSortedClass(column)]' v-for="(column, key, index) in columns_">
+
+                                <span class="drag-and-drop-icon lu-no-sort" v-if="index == 0 && draggable_"></span>
+                                <!-- mass actions first column -->
+                                <div class="lu-rail" v-if="index == 0 && elements_.mass && elements_.mass.length">
+                                    <div class="lu-form-check">
+                                        <label>
+                                            <input class="lu-form-checkbox" type="checkbox" @change="massActionCheckbox" v-model="massActionOpen_">
+                                            <span class="lu-form-indicator"></span>
+                                        </label>
+                                    </div>
+                                    <span @click="updateSorting($event, column)" class="lu-table__text" :class='[column.sortable ? "lu-is-sortable": ""]'>{{column.title}}</span>
+                                </div>
+                                <!-- end of mass actions first column -->
+                                <!-- normal column -->
+                                <span @click="updateSorting($event, column)" class="lu-table__text" :class='[column.sortable ? "lu-is-sortable": ""]' v-else>{{column.title}}</span>
+                                <!-- end of normal column -->
+
+                                <div v-if="filtersEnabled_" class="lu-filter-input-container" style="font-weight: normal;">
+                                    <button class="lu-btn lu-btn--link lu-p-r-0x lu-p-l-0x lu-filter-input-clear-button" disabled @click='clearFilterInput(event)'>
+                                        <i class="lu-mdi lu-i-c-2x mdi mdi-close" ></i>
+                                    </button>
+                                    <input
+                                            class="lu-form-control lu-form-control--xs lu-filter-input"
+                                            type="text"
+                                            :name="column.name"
+                                            v-on:keyup="checkClearFilterButton(event)"
+                                            v-on:keyup.enter="filterRecords"
+                                    />
+                                </div>
+                            </th>
+                            <!-- table actions -->
+                            <th class="mgTableActionsHeader" name="actionsCol" v-if="elements_.buttons"></th>
+                            <!-- end of table actions -->
+                        </tr>
+                        </thead>
+                        <!-- end of table header -->
+
+                        <!-- table body -->
+                        <tbody>
+                            <template v-for="(row, key, row_index) in records_">
+                                <tr class="lu-table-row" :data-order-id="row[uniqueColumnName_]">
+                                    <template v-for="(column, column_key, column_index) in columns_">
+                                        <!-- mass actions first column -->
+                                        <td v-if="elements_.mass && elements_.mass.length && column_index == 0">
+                                        <span class="drag-and-drop-icon" v-if="draggable_">
+                                            <i class="lu-mdi mdi mdi-unfold-more-horizontal"></i>
+                                        </span>
+                                            <div class="lu-rail">
+                                                <div class="lu-form-check">
+                                                    <label>
+                                                        <input class="lu-form-checkbox table-mass-action-check" type="checkbox" :value="row[uniqueColumnName_]" v-model="massActionIds_">
+                                                        <span class="lu-form-indicator"></span>
+                                                    </label>
+                                                </div>
+                                                <component v-if="typeof row[column.id] == 'object' && row[column.id] && row[column.id].name" :key="row[column.id].uniq" v-bind="row[column.id].slots" v-bind:data="row" v-bind:is="row[column.id].name" v-on:reload-parent="reloadParent"></component>
+                                                <span v-else v-html="row[column.id]"></span>
+                                            </div>
+                                        </td>
+                                        <!-- end of mass actions first column -->
+                                        <!-- component columns -->
+                                        <td v-else-if="typeof row[column.id] == 'object' && row[column.id] && row[column.id].name">
+                                        <span class="drag-and-drop-icon" v-if="draggable_ && column_index == 0">
+                                            <i class="lu-mdi mdi mdi-unfold-more-horizontal"></i>
+                                        </span>
+                                            <component :key="row[column.id].uniq" v-bind="row[column.id].slots" v-bind:data="row" v-bind:is="row[column.id].name" v-on:reload-parent="reloadParent"></component>
+                                        </td>
+
+                                        <!-- end of component column -->
+                                        <!-- normal column -->
+                                        <td v-else>
+                                        <span class="drag-and-drop-icon" v-if="draggable_ && column_index == 0">
+                                            <i class="lu-mdi mdi mdi-unfold-more-horizontal"></i>
+                                        </span>
+                                            <div v-html="row[column.id]"></div>
+                                        </td>
+                                        <!-- end of normal column -->
+                                    </template>
+                                    <td class="lu-cell-actions" v-if="elements_.buttons" :class="elements_.buttons && elements_.buttons.length == 1 ? 'lu-single-element' : ''">
+                                        <component :key="elements_.uniq" v-bind="button.slots" v-bind:data="row" v-bind:is="button.name" v-for="(button, key) in elements_.buttons" v-on="$listeners" v-on:reload-parent="reloadParent"></component>
+                                    </td>
+                                </tr>
+
+                                <tr v-if="row.subrow" :data-order-id="row[uniqueColumnName_]">
+                                    <td :colspan="Object.keys(columns_).length + (elements_.buttons ? 1 : 0)" class="lu-bg-grey">
+                                        <component :key="row.subrow.uniq" v-bind="row.subrow.slots" v-bind:data="row.subrow" v-bind:is="row.subrow.name" v-on:reload-parent="reloadParent"></component>
+                                    </td>
+                                </tr>
+                            </template>
+                        </tbody>
+                        <!-- end of table body -->
+                    </table>
+                    <!-- no data information -->
+                    <div style="padding: 15px; text-align: center; border-top: 1px solid #e9ebf0;" v-show="noData && records_.length == 0">
+                        {{translate_('nodata')}}
+                    </div>
+                    <!-- end of no data information -->
+
+                    <!-- preloader -->
+                    <div class="lu-preloader-container lu-preloader-container--full-screen lu-preloader-container--overlay"
+                         v-show="loading_">
+                        <div class="lu-preloader lu-preloader--sm"></div>
+                    </div>
+                    <!-- end of preloader -->
+
+                    <!-- table footer -->
+                    <div class="lu-t-c__footer table-footer" v-if="!hidePagination_">
+                        <!-- page select -->
+                        <div class="dataTables_paginate paging_simple_numbers">
+                            <a :class='"paginate_button previous" + ((curPage < 2) ? " disabled" : "")'
+                               :data-dt-idx='curPage -1'
+                               aria-controls="DataTables_Table_0" href="javascript:" id="{/literal}{$elementId}{literal}_previous" page="prev"
+                               tabindex="0"
+                               v-on:click="changePage"></a>
+                            <span v-for="pageNumber in pagesMap">
+                                    <a :class='"paginate_button" + (curPage === pageNumber ? " current" : "")'
+                                       :data-dt-idx="pageNumber"
+                                       aria-controls="DataTables_Table_0" tabindex="0"
+                                       v-if='pageNumber && pageNumber !== "..."' v-on:click="changePage"> {{ pageNumber}} </a>
+                                    <a class="paginate_button disabled" v-if='pageNumber && pageNumber === "..."'> {{ pageNumber}} </a>
+                                </span>
+                            <a :class='"paginate_button next" + ((curPage === allPages || allPages === 0) ? " disabled" : "")'
+                               :data-dt-idx='curPage +1' :id="id+'_next'" aria-controls="DataTables_Table_0"
+                               href="javascript:"
+                               page="next"
+                               tabindex="0" v-on:click="changePage"></a>
+                        </div>
+                        <!-- end of page select -->
+                        <!-- records per page -->
+                        <div class="lu-dt-buttons">
+                            <a
+                                    :class="[
+                                        len == recordsPerPage_ ? 'active' : ''
+                                    ]"
+                                    class="dt-button"
+                                    v-for="len in recordsPerPageOptions_"
+                                    v-on:click="updateLength(len)">
+                                <span>{{len}}</span>
+                            </a>
+                            <a
+                                    :class="[
+                                        99999999 == recordsPerPage_ ? 'active' : ''
+                                    ]"
+                                    class="dt-button"
+                                    v-on:click="updateLength(99999999)">
+                                <span>∞</span>
+                            </a>
+                        </div>
+                        <!-- end of records per page -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

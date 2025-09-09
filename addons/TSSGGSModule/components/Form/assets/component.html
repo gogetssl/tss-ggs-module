@@ -1,0 +1,32 @@
+<component :id="cid_" :is="container_" class="lu-w-100" ref="form" @submit="submit" :class="css_" :action="action_" :method="method_" :target="target_">
+    <div class="lu-preloader-container lu-preloader-container--full-screen lu-preloader-container--overlay" v-show="loading_">
+        <div class="lu-preloader lu-preloader--sm"></div>
+    </div>
+    <!-- static content -->
+    <div v-if="content">
+        {{content}}
+    </div>
+    <!-- end of static content -->
+
+    <!-- dynamic content -->
+    <div :class="elements_.elements && elements_.elements.length == 1 ? 'lu-single-element' : ''">
+        <component
+                @submit="submit"
+                v-bind="element.slots"
+                v-bind:is="element.name"
+                v-bind:key="element.uniq"
+                v-for="(element,key) in elements_.elements"
+                v-if="elements_.elements"
+                v-on="$listeners">
+        </component>
+    </div>
+
+    <component
+            v-bind="elements_.toolbar.slots"
+            v-bind:is="elements_.toolbar.name"
+            v-bind:key="elements_.toolbar.uniq"
+            v-if="elements_.toolbar"
+            v-on="$listeners">
+    </component>
+    <!-- end of dynamic content -->
+</component>

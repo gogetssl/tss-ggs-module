@@ -1,0 +1,9 @@
+<div :id="cid_" class="lu-progress lu-progress--h lu-progress__label" :class="sizeClass">
+    <div class="lu-progress__label" v-if="!disableLabel_">
+        {{text_}}
+        <component v-bind="descriptionTooltip_.slots" v-bind:is="descriptionTooltip_.name" v-bind:key="descriptionTooltip_.uniq" v-if="descriptionTooltip_"></component>
+    </div>
+    <div class="lu-progress__bar">
+        <div class="lu-progress__fill lu-text-center" :style="fillStyle" :class="backgroundClass_">{{fillMark}}</div>
+    </div>
+</div>

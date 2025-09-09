@@ -1,0 +1,8 @@
+<div :id="cid_">
+    <div class="lu-alert lu-alert--danger lu-alert--faded lu-d-block">
+        <div>{{error_}}</div>
+        <div v-if="file_">File: {{file_}}</div>
+        <div v-if="line_">Line: {{line_}}</div>
+    </div>
+    <pre v-if="trace_">{{trace_}}</pre>
+</div>

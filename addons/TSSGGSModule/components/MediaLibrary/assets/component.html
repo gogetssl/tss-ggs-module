@@ -1,0 +1,15 @@
+<div :id="cid_" class="lu-form-group lu-t-c lu-media-library-container">
+    <div v-if="mode_ == 'mode_manage'" class="lu-t-c__top lu-top mob-top-search">
+        <div class="lu-top__toolbar" :class="elements_.toolbar && elements_.toolbar.length == 1 ? 'lu-single-element' : ''">
+            <component :key="toolbarElement.uniq" v-bind="toolbarElement.slots" v-bind:is="toolbarElement.name" v-for="(toolbarElement, key) in elements_.toolbar" v-on="$listeners" v-on:reload-parent="reloadParent"></component>
+        </div>
+    </div>
+
+    <div v-if="!isEmptyLibrary()" :class="parsedElements_ && parsedElements_.length == 1 ? 'lu-single-element' : ''">
+        <component :key="element.uniq" v-bind="element.slots" v-bind:is="element.name" v-for="(element, key) in parsedElements_" v-on="$listeners" v-on:reload-parent="reloadParent" @change="change"></component>
+        </div>
+
+    <div style="padding: 15px; text-align: center; border-top: 1px solid #e9ebf0;" v-else>
+        <span>No image uploaded</span>
+    </div>
+</div>

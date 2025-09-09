@@ -1,0 +1,5 @@
+<span :id="cid_" class="lu-flex-items-sm-middle lu-d-flex" >
+    <span class="lu-m-r-1x" v-if="leftTextPosition_">{{text_}}</span>
+    <i :aria-label="title" :class="[css_, iconType]" :data-title="title_" :tooltip-id="tooltip_id_" class="lu-tooltip lu-mdi mdi"></i>
+    <span class="lu-m-l-1x" v-if="!leftTextPosition_">{{text_}}</span>
+</span>

@@ -1,0 +1,4 @@
+<div :class="css_" class="lu-form-input-file" v-on:click="triggerInput">
+    <span class="lu-form-control">{{placeholderContent}}</span>
+    <input :id="cid_" :multiple="multiple_" :accept="accept_" :name="name_" class="lu-form-control hidden" ref="name_" type="file" v-on:input="change"/>
+</div>
