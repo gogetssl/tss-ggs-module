@@ -133,11 +133,11 @@ class DataTable extends \ModulesGarden\TTSGGSModule\Components\DataTable\DataTab
         });
 
         $this->dataSet->setFieldModifier('salesAmount', function($fieldName, $row, $fieldValue) {
-            return Helpers::formatSelectedCurrency($fieldValue);
+            return Helpers::formatDefaultCurrency($fieldValue);
         });
 
         $this->dataSet->setFieldModifier('cost', function($fieldName, $row, $fieldValue) {
-            return ($fieldValue) ? Helpers::formatSelectedCurrency($fieldValue) : "-";
+            return ($fieldValue) ? Helpers::formatDefaultCurrency($fieldValue) : "-";
         });
 
         $this->dataSet->modifyRecords();

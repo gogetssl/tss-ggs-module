@@ -30,14 +30,23 @@ class GetCsvProvider extends CrudProvider
             'expirationDate',
         ];
 
-        $output = fopen('php://output', 'w');
+        $output    = fopen('php://output', 'w');
+        $csvHeader = [];
+
+        foreach($fields as $field)
+        {
+            $title       = preg_replace('/(?<!^)([A-Z])/', ' $1', $field);
+            $csvHeader[] = ucwords($title);
+        }
+
+        fputcsv($output, $csvHeader);
 
         foreach($records as $record)
         {
             $csvRow = [];
             foreach($fields as $field)
             {
-                $csvRow[] = strip_tags(str_replace('<br>',' ',$record[$field]));
+                $csvRow[] = strip_tags(str_replace('<br>', ' ', $record[$field]));
             }
 
             fputcsv($output, $csvRow);

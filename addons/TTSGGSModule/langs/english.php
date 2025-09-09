@@ -168,7 +168,7 @@ $_LANG['admin.home.index.widgets.support_widget.featuresDisplay'] = 'Knowledge-b
 
 //systemcheck
 $_LANG['admin.home.index.widgets.system_check_widget.system_check_crons']   = 'Cron';
-$_LANG['admin.home.index.widgets.system_check_widget.system_check_alert'] = '<b>CronJobs not running.</b> Please enable all crons listed <a href="addonmodules.php?module=TTSGGSModule&mg-page=settings&settings-page=cronSettings" style="text-decoration: underline;">here</a>';
+$_LANG['admin.home.index.widgets.system_check_widget.system_check_alert']   = '<b>CronJobs not running.</b> Please enable all crons listed <a href="addonmodules.php?module=TTSGGSModule&mg-page=settings&settings-page=cronSettings" style="text-decoration: underline;">here</a>';
 $_LANG['admin.home.index.widgets.system_check_widget.system_check_updates'] = 'Updates';
 
 //===[Statistics]=======================================================================================================
@@ -437,34 +437,41 @@ $_LANG['admin.settings.index.forms.finance_settings_form.exchangeRate']  = 'Exch
 $_LANG['admin.settings.index.forms.finance_settings_form.profitMargin'] = 'Desired Profit Margin';
 $_LANG['admin.settings.index.forms.finance_settings_form.currency']     = 'Default Currency';
 $_LANG['admin.settings.index.forms.finance_settings_form.rate']         = 'Set The Rate';
-$_LANG['admin.settings.index.forms.finance_settings_form.info']         = 'Please specify the exchange rate for setting product prices. For example, if you have EUR as the currency in WHMCS and USD in the module, and the exchange rate is 1.20, then a product priced at $1 USD will be set to 1.20 EUR in WHMCS.<br><br>If the currency in WHMCS and the module is the same, please leave this field blank.';
+$_LANG['admin.settings.index.forms.finance_settings_form.info']         = 'Your WHMCS doesn\'t have a USD currency defined. Your default currency is :defaultCurrency. Please provide a USD to :defaultCurrency conversion rate.<br><br>For example, if rate is  1.20 and the product price is 1.00 USD, then in WHMCS, the price will be set to 1.20 :defaultCurrency.';
 
 
 $_LANG['admin.settings.index.forms.finance_settings_form.save']           = 'Save';
 $_LANG['admin.settings.index.forms.finance_settings_form.update_success'] = 'Settings updated successfully';
 
 //cron settings
-$_LANG['admin.settings.index.widgets.cron_settings_widget.title']                                = 'CRON Settings';
-$_LANG['admin.settings.index.widgets.cron_settings_widget.cronCommand_ProductPricingUpdate']     = 'Please set up the following cron line to enable automatic daily product pricing updates.';
-$_LANG['admin.settings.index.widgets.cron_settings_widget.cronCommand_SSLCertificates']          = 'Please set up the following cron job to enable automatic daily synchronization of certificates.';
-$_LANG['admin.settings.index.widgets.cron_settings_widget.cronCommand_RenewalNotifyCertificate'] = 'Please set up the following cron line to enable automatic renewal notifications.';
+$_LANG['admin.settings.index.widgets.cron_settings_widget.title'] = 'CRON Settings';
+
+//cron settings titles
+$_LANG['admin.settings.index.widgets.cron_settings_widget.cronCommandTitle_processing'] = '<b>Main</b>';
+
+//cron settings descriptions
+$_LANG['admin.settings.index.widgets.cron_settings_widget.cronCommand_ProductPricingUpdate']      = 'Please set up the following cron line to enable automatic daily product pricing updates.';
+$_LANG['admin.settings.index.widgets.cron_settings_widget.cronCommand_SSLCertificates']           = 'Please set up the following cron job to enable automatic daily synchronization of certificates.';
+$_LANG['admin.settings.index.widgets.cron_settings_widget.cronCommand_RenewalNotifyCertificate']  = 'Please set up the following cron line to enable automatic renewal notifications.';
 $_LANG['admin.settings.index.widgets.cron_settings_widget.cronCommand_SSLCertificatesProcessing'] = 'Please set up the following cron line to enable updates for processing orders.';
-$_LANG['admin.settings.index.widgets.cron_settings_widget.cronCommand_ReSyncProducts'] = 'Please set up the following cron line to Re-Sync product configurations.';
-$_LANG['admin.settings.index.widgets.cron_settings_widget.cronCommand_processing'] = 'Please set up the following cron line to change initial status of orders. The cron job will run every 10 seconds. Last Cron Update: ';
-$_LANG['admin.settings.index.forms.cron_configuration_form.cron1'] = 'The cron job&nbsp;<b>ProductPricingUpdate</b>&nbsp;run frequency';
-$_LANG['admin.settings.index.forms.cron_configuration_form.cron2'] = 'The cron job&nbsp;<b>SSLCertificates</b>&nbsp;run frequency';
-$_LANG['admin.settings.index.forms.cron_configuration_form.cron3'] = 'The cron job&nbsp;<b>RenewalNotifyCertificate</b>&nbsp;run frequency';
-$_LANG['admin.settings.index.forms.cron_configuration_form.cron4'] = 'The cron job&nbsp;<b>ReSyncProducts</b>&nbsp;run frequency';
-$_LANG['admin.settings.index.forms.cron_configuration_form.cron5'] = 'The cron job&nbsp;<b>SSLCertificatesProcessing</b>&nbsp;run frequency';
-$_LANG['admin.settings.index.forms.cron_configuration_form.save'] = 'Save';
-$_LANG['admin.settings.index.forms.cron_configuration_form.update_success'] = 'The cron settings updated successfully';
-
-
+$_LANG['admin.settings.index.widgets.cron_settings_widget.cronCommand_ReSyncProducts']            = 'Please set up the following cron line to Re-Sync product configurations.';
+$_LANG['admin.settings.index.widgets.cron_settings_widget.cronCommand_processing']                = 'Please set up the following cron line to change initial status of orders. The cron job will run every 10 seconds. Last Cron Update: ';
+$_LANG['admin.settings.index.forms.cron_configuration_form.cron1']                                = 'The cron job&nbsp;<b>ProductPricingUpdate</b>&nbsp;run frequency';
+$_LANG['admin.settings.index.forms.cron_configuration_form.cron2']                                = 'The cron job&nbsp;<b>SSLCertificates</b>&nbsp;run frequency';
+$_LANG['admin.settings.index.forms.cron_configuration_form.cron3']                                = 'The cron job&nbsp;<b>RenewalNotifyCertificate</b>&nbsp;run frequency';
+$_LANG['admin.settings.index.forms.cron_configuration_form.cron4']                                = 'The cron job&nbsp;<b>ReSyncProducts</b>&nbsp;run frequency';
+$_LANG['admin.settings.index.forms.cron_configuration_form.cron5']                                = 'The cron job&nbsp;<b>SSLCertificatesProcessing</b>&nbsp;run frequency';
+$_LANG['admin.settings.index.forms.cron_configuration_form.save']                                 = 'Save';
+$_LANG['admin.settings.index.forms.cron_configuration_form.update_success']                       = 'The cron settings updated successfully';
 
 
 //===[Products]=========================================================================================================
 
 $_LANG['admin.breadcrumbs.Products'] = 'Products';
+
+//info
+$_LANG['admin.products.index.products_container.productsInfo'] = 'To import a product, please select it and click the Import button.';
+
 //Datatable
 $_LANG['admin.products.index.data_tables.products.array_data_provider.data_table.id']          = 'No';
 $_LANG['admin.products.index.data_tables.products.array_data_provider.data_table.productName'] = 'Product Name';
@@ -489,7 +496,7 @@ $_LANG['admin.products.index.data_tables.products.forms.import_form.pricingTypeP
 $_LANG['admin.products.index.data_tables.products.forms.import_form.productGroup']          = 'Product Group';
 $_LANG['admin.products.index.data_tables.products.forms.import_form.currency']              = 'Currency';
 $_LANG['admin.products.index.data_tables.products.forms.import_form.rate']                  = 'Set The Rate';
-$_LANG['admin.products.index.data_tables.products.forms.import_form.info']                  = 'Please set the rate through which the product prices will be set. For example, if in WHMCS you have EUR currency and in the module it is USD, then if rate is  1.20 and the product price is in USD is 1$, then in WHMCS, the price will be set to 1.20 EUR.<br><br>Leave this field blank if currency in WHMCS and our module are the same.';
+$_LANG['admin.products.index.data_tables.products.forms.import_form.info']                  = 'Your WHMCS doesn\'t have a USD currency defined. Your default currency is :defaultCurrency. Please provide a USD to :defaultCurrency conversion rate.<br><br>For example, if rate is  1.20 and the product price is 1.00 USD, then in WHMCS, the price will be set to 1.20 :defaultCurrency.';
 
 
 $_LANG['admin.products.index.data_tables.products.forms.import_form.profitMargin']             = 'Profit Margin';
@@ -544,3 +551,11 @@ $_LANG['admin.pricing.index.data_tables.pricing.forms.pricing_form.biennially'] 
 $_LANG['admin.pricing.index.data_tables.pricing.forms.pricing_form.triennially']    = 'Triennially';
 $_LANG['admin.pricing.index.data_tables.pricing.forms.pricing_form.update_success'] = 'Prices updated successfully';
 $_LANG['admin.pricing.index.data_tables.pricing.forms.pricing_form.autoUpdate']     = 'Auto Update';
+
+$_LANG['admin.pricing.index.data_tables.pricing.forms.pricing_form.info']     = 'Auto Update Information';
+
+
+
+
+//default option
+$_LANG['choseProductGroup'] = '--- Chose Product Group ---';

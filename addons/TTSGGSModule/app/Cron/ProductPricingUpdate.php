@@ -69,17 +69,23 @@ class ProductPricingUpdate extends AbstractCommand
 
             RemoteProduct::synchronize();
 
-            $defaultCurrency = Currency::where('default','1')->first();
-            $addonConfig  = (new AddonModuleRepository())->getModuleConfiguration();
-            $currencyId   = (int)$addonConfig['financeSettings']['currency'] ?: $defaultCurrency->id;
-            $currency     = Currency::find($currencyId);
-            $currencyRate = $addonConfig['financeSettings']['rate'] ?: 1;
-            $profitMargin = floatval($addonConfig['financeSettings']['profitMargin']);
+            //$baseCurrencyId - USD or default WHMCS currency
+            $baseCurrencyId = Helpers::getCurrencyIdByCode('USD');
 
-            if(!$currency)
+            if(!$baseCurrencyId)
             {
-                $io->write('Error: Invalid currency id.');
+                $baseCurrencyId = Helpers::getDefaultCurrencyId();
             }
+
+            if(!$baseCurrencyId)
+            {
+                $io->write('Error: Invalid base currency.');
+                return;
+            }
+
+            $addonConfig      = (new AddonModuleRepository())->getModuleConfiguration();
+            $baseCurrencyRate = $addonConfig['financeSettings']['rate'] ?: 1;
+            $profitMargin     = floatval($addonConfig['financeSettings']['profitMargin']);
 
             $remoteProducts = RemoteProduct::get();
 
@@ -106,37 +112,42 @@ class ProductPricingUpdate extends AbstractCommand
                     continue;
                 }
 
-                $pricing = Pricing::where('type', 'product')->where('currency', $currency->id)->where('relid', $whmcsProduct->id)->first();
-
                 foreach($remoteProductData['prices'] as $remotePriceData)
                 {
-                    $billingCycle = Helpers::monthsToBillingPeriod($remotePriceData['term']);
-
-                    if($billingCycle === false || $pricing->{$billingCycle} < 0)
-                    {
-                        continue;
-                    }
-
                     if(isset($remotePriceData['base']['single']['selling']))
                     {
-                        $price = floatval($remotePriceData['base']['single']['selling']);
+                        $apiPrice = floatval($remotePriceData['base']['single']['selling']);
                     }
                     elseif(isset($remotePriceData['base']['wildcard']['selling']))
                     {
-                        $price = floatval($remotePriceData['base']['wildcard']['selling']);
+                        $apiPrice = floatval($remotePriceData['base']['wildcard']['selling']);
                     }
                     else
                     {
                         continue;
                     }
 
-                    $price         = $price + ($price * $profitMargin / 100);
-                    $currencyPrice = $price * $currencyRate;
+                    $baseCurrencyPrice = $apiPrice * $baseCurrencyRate;
+                    $baseCurrencyPrice = $baseCurrencyPrice + ($baseCurrencyPrice * $profitMargin / 100);
+                    $currencies        = Currency::get();
 
-                    Pricing::updateOrInsert(
-                        ['type' => 'product', 'currency' => $currency->id, 'relid' => $whmcsProduct->id],
-                        [$billingCycle => $currencyPrice]
-                    );
+                    foreach($currencies as $currency)
+                    {
+                        $pricing      = Pricing::where('type', 'product')->where('currency', $currency->id)->where('relid', $whmcsProduct->id)->first();
+                        $billingCycle = Helpers::monthsToBillingPeriod($remotePriceData['term']);
+
+                        if($billingCycle === false || $pricing->{$billingCycle} < 0)
+                        {
+                            continue;
+                        }
+
+                        $currencyPrice = \convertCurrency($baseCurrencyPrice, $baseCurrencyId, $currency->id);
+
+                        Pricing::updateOrInsert(
+                            ['type' => 'product', 'currency' => $currency->id, 'relid' => $whmcsProduct->id],
+                            [$billingCycle => $currencyPrice]
+                        );
+                    }
 
                     Logger::info("Pricing for product #{$whmcsProduct->id} has been updated");
                 }
@@ -164,7 +175,7 @@ class ProductPricingUpdate extends AbstractCommand
                         continue;
                     }
 
-                    $insertData = [];
+                    $pricingArray = [];
 
                     foreach($remoteProductData['prices'] as $remotePriceData)
                     {
@@ -177,19 +188,27 @@ class ProductPricingUpdate extends AbstractCommand
 
                         if(isset($remotePriceData['san'][$remoteOptionName]['selling']))
                         {
-                            $price = floatval($remotePriceData['san'][$remoteOptionName]['selling']);
+                            $apiPrice = floatval($remotePriceData['san'][$remoteOptionName]['selling']);
                         }
                         else
                         {
                             continue;
                         }
 
-                        $price                      = $price + ($price * $profitMargin / 100);
-                        $currencyPrice              = $price * $currencyRate;
-                        $insertData[$billingPeriod] = $currencyPrice;
+                        $apiPrice          = $apiPrice + ($apiPrice * $profitMargin / 100);
+                        $baseCurrencyPrice = $apiPrice * $baseCurrencyRate;
+                        $currencies        = Currency::get();
+
+                        foreach($currencies as $currency)
+                        {
+                            $pricingArray[$currency->id][$billingPeriod] = \convertCurrency($baseCurrencyPrice, $baseCurrencyId, $currency->id);
+                        }
                     }
 
-                    Pricing::where('type', 'configoptions')->where('currency', $currencyId)->where('relid', $subOption->id)->update($insertData);
+                    foreach($pricingArray as $currencyId => $pricingData)
+                    {
+                        Pricing::where('type', 'configoptions')->where('currency', $currencyId)->where('relid', $subOption->id)->update($pricingData);
+                    }
 
                     Logger::info("Configurable Options Pricing for product #{$whmcsProduct->id} has been updated");
                 }
@@ -197,7 +216,7 @@ class ProductPricingUpdate extends AbstractCommand
         }
         catch(\Throwable $exception)
         {
-            Logger::error('ProductPricingUpdate Cron Error: '. $exception->getMessage());
+            Logger::error('ProductPricingUpdate Cron Error: ' . $exception->getMessage());
             $errorToDB = $exception->getMessage();
         }
 

@@ -40,7 +40,7 @@ class ResellersWidget extends Widget
         {
             $paid            = $row->paid;
             $clientId        = $row->clientId;
-            $data[$clientId] = Helpers::clientCurrencyToSelectedCurrency($paid, $clientId);
+            $data[$clientId] = Helpers::clientCurrencyToDefaultCurrency($paid, $clientId);
         }
 
         arsort($data);
@@ -50,7 +50,7 @@ class ResellersWidget extends Widget
         foreach($data as $clientId => $paid)
         {
             $link   = Helpers::getAdminAreaClientLink($clientId);
-            $record = new Record([$clientId, $link, Helpers::formatSelectedCurrency($paid)]);
+            $record = new Record([$clientId, $link, Helpers::formatDefaultCurrency($paid)]);
             $table->addRecord($record);
         }
 

@@ -3,6 +3,7 @@
 namespace ModulesGarden\TTSGGSModule\App\UI\Admin\Settings\Index\Forms;
 
 
+use ModulesGarden\TTSGGSModule\App\Libs\Helpers;
 use ModulesGarden\TTSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
 use ModulesGarden\TTSGGSModule\App\UI\Admin\Settings\Index\Components\RevertSwitcher;
 use ModulesGarden\TTSGGSModule\App\UI\Admin\Settings\Index\Providers\ApiSettingsProvider;
@@ -60,11 +61,6 @@ class FinanceSettingsForm extends Form implements AdminAreaInterface, AjaxCompon
         $majorSettingsWidget->setTitle($this->translate('majorSettings'));
         $leftContainer->addElement($majorSettingsWidget);
 
-        $exchangeRateWidget = new Widget();
-        $exchangeRateWidget->setTitle($this->translate('exchangeRate'));
-        $rightContainer->addElement($exchangeRateWidget);
-
-
         $this->builder->addFieldInContainer(
             $majorSettingsWidget,
             (new Number())
@@ -73,26 +69,33 @@ class FinanceSettingsForm extends Form implements AdminAreaInterface, AjaxCompon
                 ->numeric()
                 ->between(1, 1000)
         );
+        /*
+                $this->builder->addFieldInContainer(
+                    $majorSettingsWidget,
+                    (new Dropdown())
+                        ->setName('currency')
+                        ->required()
+                );
+        */
+        if(!Helpers::getCurrencyIdByCode('USD')) //If USD not defined
+        {
+            $exchangeRateWidget = new Widget();
+            $exchangeRateWidget->setTitle($this->translate('exchangeRate'));
+            $rightContainer->addElement($exchangeRateWidget);
 
-        $this->builder->addFieldInContainer(
-            $majorSettingsWidget,
-            (new Dropdown())
-                ->setName('currency')
-                ->required()
-        );
+            $this->builder->addFieldInContainer(
+                $exchangeRateWidget,
+                (new FormInputText())
+                    ->setName('rate')
+                    ->required()
+            );
 
-        $this->builder->addFieldInContainer(
-            $exchangeRateWidget,
-            (new FormInputText())
-                ->setName('rate')
-        );
-
-        $exchangeRateWidget->addElement(
-            (new AlertInfo())
-                ->setText($this->translate('info'))
-                ->setId('financial-settings-form-info')
-        );
-
+            $exchangeRateWidget->addElement(
+                (new AlertInfo())
+                    ->setText($this->translate('info', [':defaultCurrency' => Helpers::getDefaultCurrencyCode()]))
+                    ->setId('financial-settings-form-info')
+            );
+        }
 
         $toolbar = new Toolbar();
         $toolbar->addElement(

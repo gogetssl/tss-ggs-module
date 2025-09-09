@@ -23,15 +23,26 @@ class AnnouncementsWidget extends Widget
 
             foreach($announcements as $announcement)
             {
-                $this->addElement(new AnnouncementCard(
-                                      $announcement['title'],
-                                      Helpers::vendorToDisplay($vendor),
-                                      $announcement['body'],
-                                      $announcement['date'],
-                                      $announcement['category']
-                                  )
-                );
+                $owner = strtoupper($announcement['owner']);
+                if(array_key_exists($owner, $configuredApis))
+                {
+                    $vendorDisplay = '';
+                    if(count($configuredApis) > 1)
+                    {
+                        $vendorDisplay = Helpers::vendorToDisplay($vendor);
+                    }
+
+                    $this->addElement(new AnnouncementCard(
+                                          $announcement['title'],
+                                          $vendorDisplay,
+                                          $announcement['body'],
+                                          $announcement['date'],
+                                          $announcement['category']
+                                      )
+                    );
+                }
             }
+            break; //if all apis contain all announcements, brake after first api call
         }
     }
 }

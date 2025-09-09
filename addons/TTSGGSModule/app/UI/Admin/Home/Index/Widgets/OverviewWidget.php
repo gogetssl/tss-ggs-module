@@ -50,9 +50,9 @@ class OverviewWidget extends Widget
             $issuedLastMonth++;
         }
 
-        $paid    = Helpers::formatSelectedCurrency($paid);
-        $unpaid  = Helpers::formatSelectedCurrency($unpaid);
-        $overdue = Helpers::formatSelectedCurrency($overdue);
+        $paid    = Helpers::formatDefaultCurrency($paid);
+        $unpaid  = Helpers::formatDefaultCurrency($unpaid);
+        $overdue = Helpers::formatDefaultCurrency($overdue);
 
         $content = $this->translate('totalSales') . ' ';
         $content .= $this->translate('paid') . " <span class='green'>{$paid}</span> ";
@@ -64,7 +64,7 @@ class OverviewWidget extends Widget
         $this->addElement($item);
 
         $class       = ($grossProfit > 0) ? 'green' : 'red';
-        $grossProfit = Helpers::formatSelectedCurrency($grossProfit);
+        $grossProfit = Helpers::formatDefaultCurrency($grossProfit);
         $content     = $this->translate('grossProfit') . " <span class='{$class}'>{$grossProfit}</span>";
 
         $item = (new Alert())->setType(Color::SECONDARY);

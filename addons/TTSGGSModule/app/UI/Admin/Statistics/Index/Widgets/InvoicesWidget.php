@@ -46,8 +46,8 @@ class InvoicesWidget extends Widget
         {
             $invoiceId      = $row->id;
             $clientId       = $row->userid;
-            $amount         = Helpers::clientCurrencyToSelectedCurrency($row->total, $clientId);
-            $amountFormated = Helpers::formatSelectedCurrency($amount);
+            $amount         = Helpers::clientCurrencyToDefaultCurrency($row->total, $clientId);
+            $amountFormated = Helpers::formatDefaultCurrency($amount);
             $status         = $row->status;
             $date           = $row->date;
             $label          = (($status == 'Paid') ? (new LabelSuccess()) : (new LabelDanger()))->setText($status);

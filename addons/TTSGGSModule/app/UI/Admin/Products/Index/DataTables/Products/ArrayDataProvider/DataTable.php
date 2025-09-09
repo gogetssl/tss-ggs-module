@@ -11,6 +11,7 @@ use ModulesGarden\TTSGGSModule\App\UI\Admin\Products\Index\DataTables\Products\M
 use ModulesGarden\TTSGGSModule\App\UI\Admin\Products\Index\DataTables\Products\Modals\ReSyncModal;
 use ModulesGarden\TTSGGSModule\Components\Button\Button;
 use ModulesGarden\TTSGGSModule\Components\Button\ButtonPrimary;
+use ModulesGarden\TTSGGSModule\Components\Button\ButtonSuccess;
 use ModulesGarden\TTSGGSModule\Components\DataTable\Column;
 use ModulesGarden\TTSGGSModule\Components\IconButton\IconButton;
 use ModulesGarden\TTSGGSModule\Components\IconButton\IconButtonEdit;
@@ -60,15 +61,18 @@ class DataTable extends \ModulesGarden\TTSGGSModule\Components\DataTable\DataTab
         $visibilityWrapper->hideWhen('hidePricing', true);
         $this->addActionButton($visibilityWrapper);
 
-        $visibilityWrapper = new VisibilityWrapper((new IconButton())->setTitle($this->translate('import'))->setIcon('import')->onClick(new ModalLoad(new ImportModal())));
-        $visibilityWrapper->hideWhen('hideImport', true);
-        $this->addActionButton($visibilityWrapper);
+        /*
+                $visibilityWrapper = new VisibilityWrapper((new IconButton())->setTitle($this->translate('import'))->setIcon('import')->onClick(new ModalLoad(new ImportModal())));
+                $visibilityWrapper->hideWhen('hideImport', true);
+                $this->addActionButton($visibilityWrapper);
+        */
 
         $this->addMassActionButton(
-            (new IconButton())->setTitle($this->translate('import'))->setIcon('import')->onClick(new ModalLoad(new ImportModal()))
+            (new ButtonSuccess())->setTitle($this->translate('import'))->setIcon('import')->onClick(new ModalLoad(new ImportModal()))
         );
 
-        if($_REQUEST['mg-page'] != 'configuration') {
+        if($_REQUEST['mg-page'] != 'configuration')
+        {
             $reSyncButton = new ButtonPrimary();
             $reSyncButton->setTitle($this->translate('reSync'));
             $reSyncButton->onClick(new ModalLoad(new ReSyncModal()));
@@ -86,8 +90,16 @@ class DataTable extends \ModulesGarden\TTSGGSModule\Components\DataTable\DataTab
             RemoteProduct::synchronize();
         }
 
+        $brandWeights = [
+            'Digicert' => 1,
+            'RapidSSL' => 2,
+            'GeoTrust' => 3,
+            'Sectigo'  => 99,
+        ];
 
-        $remoteProducts = RemoteProduct::get();
+        $remoteProducts = RemoteProduct::get()->sortBy(function($product) use ($brandWeights) {
+            return ($brandWeights[$product->brand] ?? 50) . $product->name;
+        });
 
         foreach($remoteProducts as $remoteProduct)
         {
@@ -107,7 +119,7 @@ class DataTable extends \ModulesGarden\TTSGGSModule\Components\DataTable\DataTab
         }
 
         $dataProv = new ArrayDataProvider($rows);
-        $dataProv->setDefaultSorting('id', 'ASC');
+        //$dataProv->setDefaultSorting('id', 'ASC');
         $this->setDataProvider($dataProv);
     }
 

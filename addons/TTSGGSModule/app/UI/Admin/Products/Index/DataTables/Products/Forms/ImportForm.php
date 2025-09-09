@@ -32,8 +32,8 @@ class ImportForm extends Form implements AdminAreaInterface, AjaxComponentInterf
     {
         parent::__construct();
 
-        $this->provider       = ImportProvider::class;
-        $this->providerAction = ImportProvider::ACTION_CREATE;
+        $this->provider                  = ImportProvider::class;
+        $this->providerAction            = ImportProvider::ACTION_CREATE;
         $this->providerActionsToValidate = ['create', 'update', 'delete'];
     }
 
@@ -92,24 +92,30 @@ class ImportForm extends Form implements AdminAreaInterface, AjaxComponentInterf
         $productGroupField = new Dropdown();
         $productGroupField->setName('productGroup');
         $productGroupField->required();
+        $productGroupField->setDefaultValueAsFirstOption();
         $this->builder->addFieldInContainer($rightColumn, $productGroupField);
+        /*
+                $currencyField = new Dropdown();
+                $currencyField->setName('currency');
+                $currencyField->required();
+                $this->builder->addFieldInContainer($rightColumn, $currencyField);
+        */
 
-        $currencyField = new Dropdown();
-        $currencyField->setName('currency');
-        $currencyField->required();
-        $this->builder->addFieldInContainer($rightColumn, $currencyField);
+        if(!Helpers::getCurrencyIdByCode('USD')) //If USD not defined
+        {
+            $this->builder->addFieldInContainer(
+                $rightColumn,
+                (new FormInputText())
+                    ->setName('rate')
+                    ->required()
+            );
 
-        $this->builder->addFieldInContainer(
-            $rightColumn,
-            (new FormInputText())
-                ->setName('rate')
-        );
-
-        $rightColumn->addElement(
-            (new AlertInfo())
-                ->setText($this->translate('info'))
-                ->setId('financial-settings-form-info')
-        );
+            $rightColumn->addElement(
+                (new AlertInfo())
+                    ->setText($this->translate('info', [':defaultCurrency' => Helpers::getDefaultCurrencyCode()]))
+                    ->setId('financial-settings-form-info')
+            );
+        }
 
         if($mode == 'percent')
         {
@@ -119,7 +125,7 @@ class ImportForm extends Form implements AdminAreaInterface, AjaxComponentInterf
             $profitMarginField->setMax(1000);
             $profitMarginField->setName('profitMargin');
             $profitMarginField->required();
-            $profitMarginField->numeric()->between(1,1000);
+            $profitMarginField->numeric()->between(1, 1000);
             $this->builder->addFieldInContainer($rightColumn, $profitMarginField, true);
         }
 

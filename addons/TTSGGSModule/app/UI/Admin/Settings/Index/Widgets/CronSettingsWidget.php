@@ -20,6 +20,7 @@ class CronSettingsWidget extends Widget
 
         $timestamp = ModuleSettings::where('setting', 'cronLastUpdate')->first();
         $dateCron = isset($timestamp->value) ? date('Y-m-d H:i:s', $timestamp->value) : 'not activated';
+        $this->addElement((new Text())->setText($this->translate('cronCommandTitle_processing').'<br>')->setCss('cronCommandTitle'));
         $this->addElement((new Text())->setText($this->translate('cronCommand_processing').$dateCron));
         $this->addElement((new PreBlock())->setContent('*/5 * * * * php -q '.dirname(__DIR__, 6) . '/cron/cronScript.php'));
 
@@ -35,6 +36,7 @@ class CronSettingsWidget extends Widget
         {
             $cron    = '*/5 * * * *';
             $command = 'php -q ' . dirname(__DIR__, 6) . '/cron/cron.php ' . $cronCommand;
+            $this->addElement((new Text())->setText($this->translate('cronCommandTitle_' . $cronCommand).'<br>')->setCss('cronCommandTitle'));
             $this->addElement((new Text())->setText($this->translate('cronCommand_' . $cronCommand)));
             $this->addElement((new PreBlock())->setContent($cron . ' ' . $command));
         }

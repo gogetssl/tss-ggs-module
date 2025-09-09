@@ -89,6 +89,7 @@ class RecordsProvider
                                     'tblclients.lastname',
                                     'tblclients.companyname',
                                     'tblclients.country',
+                                    'tblhosting.id as serviceId',
                                     'tblhosting.regdate',
                                     'tblhosting.nextduedate',
                                     'tblhosting.domain',
@@ -102,7 +103,8 @@ class RecordsProvider
                                     'TTSGGSModule_Requests.rate',
                                     'TTSGGSModule_Requests.whmcs_price',
                                     'TTSGGSModule_Requests.diff_price',
-                                    'TTSGGSModule_Requests.status as orderStatus'
+                                    'TTSGGSModule_Requests.status as orderStatus',
+                                    'TTSGGSModule_Requests.request as requestEncoded'
                                 ])
                        ->get();
 
@@ -110,6 +112,24 @@ class RecordsProvider
 
         foreach($items as $item)
         {
+            $requestEncoded  = $item->requestEncoded;
+            $orderRequest    = decrypt($requestEncoded);
+            $serviceId       = $item->serviceId;
+            $orderStatus     = $item->orderStatus ? ucfirst($item->orderStatus) : 'Awaiting Configuration';
+            $certificateData = Capsule::table('TTSGGSModule_Requests')->where('serviceid', $serviceId)->where('name', 'certificate')->first();
+            $storeId         = '-';
+            $issueDate       = '-';
+            $expirationDate  = '-';
+
+            if($certificateData)
+            {
+                $certificateRequest = json_decode(decrypt($certificateData->request));
+                $orderStatus        = ucfirst($certificateRequest->orderData->order->status);
+                $storeId            = $certificateRequest->orderData->order->id ?: '-';
+                $issueDate          = $certificateRequest->orderFiles->validity->begin ? date('Y-m-d', strtotime($certificateRequest->orderFiles->validity->begin)) : '-';
+                $expirationDate     = $certificateRequest->orderFiles->validity->end ? date('Y-m-d', strtotime($certificateRequest->orderFiles->validity->end)) : '-';
+            }
+
             $clientName = $item->companyname ?: $item->firstname . ' ' . $item->lastname;
             $income     = $item->amount;
 
@@ -118,25 +138,25 @@ class RecordsProvider
                 $income = Helpers::getTaxedValue($income, $item->taxrate, $item->taxrate2);
             }
 
-            $income = Helpers::clientCurrencyToSelectedCurrency($income, $item->userid);
-            //$cost   = Helpers::apiCurrencyToSelectedCurrency($item->api_price);
-            $apiPrice = floatval($item->api_price);
-            $rate     = floatval($item->rate);
-            $cost     = floatval($apiPrice * $rate);
-            $profit   = ($cost > 0) ? $income - $cost : 0;
+            $income               = Helpers::clientCurrencyToDefaultCurrency($income, $item->userid);
+            $apiPrice             = floatval($item->api_price);
+            $rate                 = floatval($item->rate ?: 1);
+            $defaultCurrencyPrice = floatval($apiPrice * $rate);
+            $cost                 = $defaultCurrencyPrice;
+            $profit               = ($cost > 0) ? $income - $cost : 0;
 
             $rows[] = [
                 'date'           => $item->regdate,
-                'storeId'        => $item->configoption2,
+                'storeId'        => $storeId,
                 'clientDetails'  => "{$clientName}<br><strong>{$this->translate('country')}</strong> {$item->country}",
                 'productDetails' => "{$item->name}<br><strong>{$this->translate('domain')}</strong> {$item->domain}",
                 'productId'      => $item->productId,
                 'productName'    => $item->name,
                 'type'           => $item->configoption4,
                 'brand'          => $item->configoption3,
-                'status'         => $item->orderStatus ? ucfirst($item->orderStatus) : 'Awaiting Configuration',
-                'issueDate'      => $item->regdate,
-                'expirationDate' => $item->nextduedate,
+                'status'         => $orderStatus,
+                'issueDate'      => $issueDate,
+                'expirationDate' => $expirationDate,
                 'salesAmount'    => $income,
                 'cost'           => $cost,
                 'grossProfit'    => $profit,

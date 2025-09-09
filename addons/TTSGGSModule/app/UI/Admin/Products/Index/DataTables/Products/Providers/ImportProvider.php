@@ -7,6 +7,7 @@ use ModulesGarden\TTSGGSModule\App\Models\RemoteProduct;
 use ModulesGarden\TTSGGSModule\App\Repositories\Whmcs\ProductRepository;
 use ModulesGarden\TTSGGSModule\Core\DataProviders\CrudProvider;
 use ModulesGarden\TTSGGSModule\Core\Support\Facades\Request;
+use ModulesGarden\TTSGGSModule\Core\WHMCS\Models\Currency;
 use ModulesGarden\TTSGGSModule\Core\WHMCS\Models\Pricing;
 use ModulesGarden\TTSGGSModule\Core\WHMCS\Models\Product;
 use ModulesGarden\TTSGGSModule\Packages\Product\Libs\ConfigurableOptions\Quantity;
@@ -43,12 +44,18 @@ class ImportProvider extends CrudProvider
     {
         $productGroupId     = (int)$this->formData['productGroup'];
         $localIds           = explode(',', $this->formData['id']);
-        $currencyId         = (int)$this->formData['currency'];
-        $currencyRate       = $this->formData['rate'] ?: 1;
+        $baseCurrencyRate   = $this->formData['rate'] ?: 1;
         $pricingTypePercent = (bool)$this->formData['pricingTypePercent'];
 
+        //$baseCurrencyId - USD or default WHMCS currency
+        $baseCurrencyId = Helpers::getCurrencyIdByCode('USD');
 
-        if(!$currencyId)
+        if(!$baseCurrencyId)
+        {
+            $baseCurrencyId = Helpers::getDefaultCurrencyId();
+        }
+
+        if(!$baseCurrencyId)
         {
             throw new \Exception("invalidCurrency");
         }
@@ -78,11 +85,11 @@ class ImportProvider extends CrudProvider
 
                 if(isset($remotePriceData['base']['single']['selling']))
                 {
-                    $price = floatval($remotePriceData['base']['single']['selling']);
+                    $apiPrice = floatval($remotePriceData['base']['single']['selling']);
                 }
                 elseif(isset($remotePriceData['base']['wildcard']['selling']))
                 {
-                    $price = floatval($remotePriceData['base']['wildcard']['selling']);
+                    $apiPrice = floatval($remotePriceData['base']['wildcard']['selling']);
                 }
                 else
                 {
@@ -92,13 +99,17 @@ class ImportProvider extends CrudProvider
                 if(isset($this->formData['profitMargin']) && floatval($this->formData['profitMargin']) > 0)
                 {
                     $profitMargin = floatval($this->formData['profitMargin']);
-                    $price        = $price + ($price * $profitMargin / 100);
+                    $apiPrice     = $apiPrice + ($apiPrice * $profitMargin / 100);
                 }
 
-                $currencyPrice                        = $price * $currencyRate;
-                $pricing[$currencyId][$billingPeriod] = $currencyPrice;
-            }
+                $baseCurrencyPrice = $apiPrice * $baseCurrencyRate;
+                $currencies        = Currency::get();
 
+                foreach($currencies as $currency)
+                {
+                    $pricing[$currency->id][$billingPeriod] = \convertCurrency($baseCurrencyPrice, $baseCurrencyId, $currency->id);
+                }
+            }
 
             $productRepository = new ProductRepository();
             $productId         = $productRepository->createProduct($productName, $productDescription, $productGroupId, $pricing);
@@ -196,21 +207,7 @@ class ImportProvider extends CrudProvider
 
                 foreach($subOptions as $subOption)
                 {
-                    $pricing                = new Pricing();
-                    $insertData             = [];
-                    $insertData['type']     = 'configoptions';
-                    $insertData['currency'] = $currencyId;
-                    $insertData['relid']    = $subOption->id;
-
-                    foreach($pricing->priceFields() as $cycle)
-                    {
-                        $insertData[$cycle] = 0;
-                    }
-
-                    foreach($pricing->setupFields() as $setup)
-                    {
-                        $insertData[$setup] = 0;
-                    }
+                    $pricingArray = [];
 
                     foreach($remoteProductData['prices'] as $remotePriceData)
                     {
@@ -223,24 +220,27 @@ class ImportProvider extends CrudProvider
 
                         if(isset($remotePriceData['san'][$remoteOptionName]['selling']))
                         {
-                            $price = floatval($remotePriceData['san'][$remoteOptionName]['selling']);
+                            $apiPrice = floatval($remotePriceData['san'][$remoteOptionName]['selling']);
                         }
                         else
                         {
                             continue;
                         }
 
-                        if(isset($this->formData['profitMargin']) && floatval($this->formData['profitMargin']) > 0)
-                        {
-                            $profitMargin = floatval($this->formData['profitMargin']);
-                            $price        = $price + ($price * $profitMargin / 100);
-                        }
+                        $apiPrice          = $apiPrice + ($apiPrice * $profitMargin / 100);
+                        $baseCurrencyPrice = $apiPrice * $baseCurrencyRate;
+                        $currencies        = Currency::get();
 
-                        $currencyPrice              = $price * $currencyRate;
-                        $insertData[$billingPeriod] = $currencyPrice;
+                        foreach($currencies as $currency)
+                        {
+                            $pricingArray[$currency->id][$billingPeriod] = \convertCurrency($baseCurrencyPrice, $baseCurrencyId, $currency->id);
+                        }
                     }
 
-                    Pricing::where('type', 'configoptions')->where('currency', $currencyId)->where('relid', $subOption->id)->update($insertData);
+                    foreach($pricingArray as $currencyId => $pricingData)
+                    {
+                        Pricing::where('type', 'configoptions')->where('currency', $currencyId)->where('relid', $subOption->id)->update($pricingData);
+                    }
                 }
             }
         }

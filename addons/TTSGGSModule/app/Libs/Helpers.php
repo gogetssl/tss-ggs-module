@@ -6,6 +6,7 @@ use ModulesGarden\TTSGGSModule\App\Models\RemoteProduct;
 use ModulesGarden\TTSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
 use ModulesGarden\TTSGGSModule\App\Repositories\Whmcs\ProductRepository;
 use ModulesGarden\TTSGGSModule\Components\Link\Link;
+use ModulesGarden\TTSGGSModule\Core\Support\Facades\Translator;
 use ModulesGarden\TTSGGSModule\Core\WHMCS\Models\Client;
 use ModulesGarden\TTSGGSModule\Core\WHMCS\Models\Currency;
 use ModulesGarden\TTSGGSModule\Core\WHMCS\Models\PaymentGateway;
@@ -97,30 +98,19 @@ class Helpers
     }
 
 
-    public static function getSelectedCurrency()
+    public static function getDefaultCurrency()
     {
-        $moduleConfiguration = (new AddonModuleRepository())->getModuleConfiguration();
-        $selectedCurrencyId  = (int)$moduleConfiguration['financeSettings']['currency'];
-
-        if($selectedCurrencyId)
-        {
-            $selectedCurrency = Currency::findOrFail($selectedCurrencyId);
-        }
-        else
-        {
-            $selectedCurrency = Currency::where('default', "1")->first();
-        }
-
-        return $selectedCurrency;
+        return Currency::where('default', "1")->first();
     }
 
-    public static function clientCurrencyToSelectedCurrency($amount, $clientId)
+    public static function clientCurrencyToDefaultCurrency($amount, $clientId)
     {
-        $amount           = floatval($amount);
-        $selectedCurrency = Helpers::getSelectedCurrency();
-        $clientCurrency   = Client::findOrFail($clientId)->currency;
+        $amount          = floatval($amount);
+        $defaultCurrency = Helpers::getDefaultCurrency();
 
-        return \convertCurrency($amount, $clientCurrency->id, $selectedCurrency->id);
+        $clientCurrency = Client::findOrFail($clientId)->currency;
+
+        return \convertCurrency($amount, $clientCurrency->id, $defaultCurrency->id);
     }
 
     public static function apiCurrencyToSelectedCurrency($amount)
@@ -132,11 +122,11 @@ class Helpers
         return $amount * $currencyRate;
     }
 
-    public static function formatSelectedCurrency($amount)
+    public static function formatDefaultCurrency($amount)
     {
-        $selectedCurrency = Helpers::getSelectedCurrency();
+        $defaultCurrency = Helpers::getDefaultCurrency();
 
-        return (string)\formatCurrency($amount, $selectedCurrency->id);
+        return (string)\formatCurrency($amount, $defaultCurrency->id);
     }
 
     public static function getCurrencySymbol($currencyId = false)
@@ -147,11 +137,33 @@ class Helpers
         }
         else
         {
-            $currency = Helpers::getSelectedCurrency();
+            $currency = Helpers::getDefaultCurrency();
         }
 
         return $currency->prefix ?: $currency->code;
     }
+
+    public static function getCurrencyIdByCode($currencyCode)
+    {
+        $currency = Currency::where('code', $currencyCode)->first();
+
+        return (int)$currency->id;
+    }
+
+    public static function getDefaultCurrencyId()
+    {
+        $currency = Currency::where('default', 1)->first();
+
+        return (int)$currency->id;
+    }
+
+    public static function getDefaultCurrencyCode()
+    {
+        $currency = Currency::where('default', 1)->first();
+
+        return $currency->code;
+    }
+
 
     public static function getTaxedValue($value, $taxRate, $taxRate2)
     {
@@ -242,7 +254,9 @@ class Helpers
     public static function getProductGroupOptions()
     {
         $productGroups       = ProductGroup::get();
-        $productGroupOptions = [];
+        $productGroupOptions = [
+            '' => Translator::get('choseProductGroup'),
+        ];
 
         foreach($productGroups as $productGroup)
         {
@@ -493,11 +507,20 @@ class Helpers
                     }
                     else
                     {
-                        $addonConfig  = (new AddonModuleRepository())->getModuleConfiguration();
-                        $currencyId   = (int)$addonConfig['financeSettings']['currency'];
-                        $currencyRate = $addonConfig['financeSettings']['rate'] ?: 1;
-                        $profitMargin = floatval($addonConfig['financeSettings']['profitMargin']);
+                        $addonConfig      = (new AddonModuleRepository())->getModuleConfiguration();
+                        $baseCurrencyRate = $addonConfig['financeSettings']['rate'] ?: 1;
+                        $profitMargin     = floatval($addonConfig['financeSettings']['profitMargin']);
+                        $baseCurrencyId   = Helpers::getCurrencyIdByCode('USD');
 
+                        if(!$baseCurrencyId)
+                        {
+                            $baseCurrencyId = Helpers::getDefaultCurrencyId();
+                        }
+
+                        if(!$baseCurrencyId)
+                        {
+                            throw new \Exception("invalidCurrency");
+                        }
 
                         $configurableOptionsGroupService = new ConfigurableOptionsGroup();
                         $group                           = $configurableOptionsGroupService->getFirstOrCreateRelated($whmcsProduct);
@@ -518,7 +541,7 @@ class Helpers
                         }
 
                         $subOptionModel = $configurableOptionModel->suboptions()->first();
-                        $insertData     = [];
+                        $pricingArray   = [];
 
                         foreach($remoteProductData['prices'] as $remotePriceData)
                         {
@@ -538,12 +561,20 @@ class Helpers
                                 continue;
                             }
 
-                            $price                      = $price + ($price * $profitMargin / 100);
-                            $currencyPrice              = $price * $currencyRate;
-                            $insertData[$billingPeriod] = $currencyPrice;
+                            $price             = $price + ($price * $profitMargin / 100);
+                            $baseCurrencyPrice = $price * $baseCurrencyRate;
+                            $currencies        = Currency::get();
+
+                            foreach($currencies as $currency)
+                            {
+                                $pricingArray[$currency->id][$billingPeriod] = \convertCurrency($baseCurrencyPrice, $baseCurrencyId, $currency->id);
+                            }
                         }
 
-                        Pricing::where('type', 'configoptions')->where('currency', $currencyId)->where('relid', $subOptionModel->id)->update($insertData);
+                        foreach($pricingArray as $currencyId => $pricingData)
+                        {
+                            Pricing::where('type', 'configoptions')->where('currency', $currencyId)->where('relid', $subOptionModel->id)->update($pricingData);
+                        }
                     }
                 }
             }

@@ -38,7 +38,7 @@ class Header extends Alert implements AdminAreaInterface, AjaxComponentInterface
         }
 
         $class = ($profit > 0) ? 'green' : 'red';
-        $profit       = Helpers::formatSelectedCurrency($profit);
+        $profit       = Helpers::formatDefaultCurrency($profit);
 
         $content = <<<CONTENT
                     <p class="report-header">{$this->translate('totalGrossProfit')} <span class="{$class}">$profit </span></p>

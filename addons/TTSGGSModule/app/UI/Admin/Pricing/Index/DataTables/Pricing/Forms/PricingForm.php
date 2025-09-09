@@ -5,6 +5,7 @@ namespace ModulesGarden\TTSGGSModule\App\UI\Admin\Pricing\Index\DataTables\Prici
 
 use ModulesGarden\TTSGGSModule\App\Libs\Helpers;
 use ModulesGarden\TTSGGSModule\App\UI\Admin\Pricing\Index\DataTables\Pricing\Providers\PricingProvider;
+use ModulesGarden\TTSGGSModule\Components\Alert\AlertInfo;
 use ModulesGarden\TTSGGSModule\Components\Container\Container;
 use ModulesGarden\TTSGGSModule\Components\Form\Builder\BuilderCreator;
 use ModulesGarden\TTSGGSModule\Components\Form\Form;
@@ -108,6 +109,13 @@ class PricingForm extends Form implements AdminAreaInterface, AjaxComponentInter
         $this->builder = BuilderCreator::threeColumnsInContainer($this, $innerContainer);
         $this->builder->addField((new HiddenField)->setName('whmcsProductId'));
         $this->builder->addFieldInContainer($innerContainer, (new Switcher())->setName('auto_update_enable')->setTitle($this->translate('autoUpdate'))->addClass('switcher-revert'));
+
+
+        $innerContainer->addElement(
+            (new AlertInfo())
+                ->setText($this->translate('info', [':defaultCurrency' => Helpers::getDefaultCurrencyCode()]))
+                ->setId('financial-settings-form-info')
+        );
 
 
         $this->addElement($tabs);

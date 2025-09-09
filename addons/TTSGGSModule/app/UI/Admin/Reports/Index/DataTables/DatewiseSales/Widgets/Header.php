@@ -48,9 +48,9 @@ class Header extends Alert implements AjaxComponentInterface, AdminAreaInterface
             }
         }
 
-        $paid    = Helpers::formatSelectedCurrency($paid);
-        $unpaid  = Helpers::formatSelectedCurrency($unpaid);
-        $overdue = Helpers::formatSelectedCurrency($overdue);
+        $paid    = Helpers::formatDefaultCurrency($paid);
+        $unpaid  = Helpers::formatDefaultCurrency($unpaid);
+        $overdue = Helpers::formatDefaultCurrency($overdue);
 
         $content = <<<CONTENT
                     <p class="report-header">{$this->translate('paid')} <span class="green">$paid </span>{$this->translate('unpaid')} <span class="red">$unpaid </span>{$this->translate('overdue')} <span class="yellow">$overdue</span></p>
