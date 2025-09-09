@@ -1,9 +1,0 @@
-<webspace>
-    <get>
-        <filter/>
-        <dataset>
-            <hosting/>
-            <subscriptions/>
-        </dataset>
-    </get>
-</webspace>
