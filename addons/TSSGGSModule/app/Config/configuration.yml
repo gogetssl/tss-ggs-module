@@ -1,4 +1,4 @@
-version: '1.0.0'
+version: '1.0.1'
 systemName: 'The SSL Store & GoGetSSL Module'
 description: 'The module using TheSSLStore and GoGetSSL, allowing customers to purchase and manage SSL certificates, SiteLock, LEI codes and other products.'
 clientAreaName: 'TSSGGSModule'
