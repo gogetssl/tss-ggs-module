@@ -91,6 +91,10 @@ class ImportProvider extends CrudProvider
                 {
                     $apiPrice = floatval($remotePriceData['base']['wildcard']['selling']);
                 }
+                elseif(isset($remotePriceData['selling']))
+                {
+                    $apiPrice = floatval($remotePriceData['selling']);
+                }
                 else
                 {
                     continue;
