@@ -106,7 +106,7 @@ class SSLCertificates extends AbstractCommand
             (new AddonModuleRepository())->updateLastCertificatesSync($timestamp);
         }
 
-        $certificatesQuery = Service::select(['tblhosting.*','tblsslorders.remoteid','tblproducts.configoption1'])
+        $certificatesQuery = Service::select(['tblhosting.*','tblsslorders.remoteid','tblproducts.configoption1','tblproducts.configoption9'])
             ->join('tblsslorders', 'tblsslorders.serviceid', '=', 'tblhosting.id')
             ->join('tblproducts', 'tblhosting.packageid', '=', 'tblproducts.id')
             ->where('tblproducts.servertype', 'TSSGGSModule')
