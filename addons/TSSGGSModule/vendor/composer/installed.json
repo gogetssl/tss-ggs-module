@@ -1,0 +1,55 @@
+{
+    "packages": [
+        {
+            "name": "modulesgarden/whmcs-framework",
+            "version": "3.8.0",
+            "version_normalized": "3.8.0.0",
+            "source": {
+                "type": "git",
+                "url": "git@git.mglocal:whmcs-products/module-framework.git",
+                "reference": "9ddc552b0b766d50c8fdf88947723e40237d1416"
+            },
+            "time": "2025-06-12T08:37:32+00:00",
+            "type": "library",
+            "extra": {
+                "packages": [
+                    "ModuleSettings",
+                    "Notifier",
+                    "Logs",
+                    "Samples",
+                    "EasyTranslator",
+                    "MediaLibrary"
+                ],
+                "components": []
+            },
+            "installation-source": "source",
+            "autoload": {
+                "psr-4": {
+                    "ModulesGarden\\ModuleFramework\\Core\\": "./core",
+                    "ModulesGarden\\ModuleFramework\\App\\": "./app",
+                    "ModulesGarden\\ModuleFramework\\Packages\\": "./packages",
+                    "ModulesGarden\\ModuleFramework\\Components\\": "./components",
+                    "ModulesGarden\\ModuleFramework\\Fragments\\": "./fragments",
+                    "ModulesGarden\\ModuleFramework\\Install\\": "./install"
+                }
+            },
+            "scripts": {
+                "fw-install": [
+                    "\\ModulesGarden\\ModuleFramework\\Install\\Installer::run"
+                ]
+            },
+            "license": [
+                "EULA"
+            ],
+            "homepage": "https://www.modulesgarden.com",
+            "support": {
+                "email": "contact@modulesgarden.com",
+                "issues": "https://www.modulesgarden.com/customers/support",
+                "forum": "https://www.forum.modulesgarden.com/"
+            },
+            "install-path": "../modulesgarden/whmcs-framework"
+        }
+    ],
+    "dev": true,
+    "dev-package-names": []
+}

@@ -1,0 +1,13 @@
+<div :id="cid_" class="lu-form-group" :class="[formGroupClass, {'lu-single-element' : elements_.elements && elements_.elements.length == 1}]">
+    <!-- preloader -->
+    <div class="lu-preloader-container lu-preloader-container--full-screen"
+         v-show="loading_ && showPreloader_">
+        <div class="lu-preloader lu-preloader--sm"></div>
+    </div>
+    <!-- end of preloader -->
+    <div v-if="content_">
+        {{content}}
+    </div>
+    <component v-bind="element.slots" v-bind:is="element.name" v-bind:key="element.uniq" v-for="(element, key) in elements_.elements" v-on="$listeners"></component>
+    <div class="lu-form-feedback lu-form-feedback--icon" v-if="error_">{{error_}}</div>
+</div>

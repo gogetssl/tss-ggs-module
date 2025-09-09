@@ -1,0 +1,41 @@
+<div :id="cid_" :class="[modalClass, modalSize]" class="lu-modal show  modal--zoomIn changelogModal">
+    <div class="lu-modal__dialog">
+        <div class="lu-modal__content" style="overflow-y: auto;">
+            <div class="lu-modal__top lu-top">
+                <i :class="titleIconClass" class="lu-top__icon lu-mdi mdi" v-if="titleIconClass"></i>
+                <div :class='titleClass' class="lu-top__title lu-type-4">
+                    <span :class="inTitleClass">{{ title_ }}</span>
+                </div>
+                <div class="lu-top__toolbar">
+                    <button @click='closeModal($event)' aria-label="Close" class="lu-btn lu-btn--xs lu-btn--default lu-btn--icon lu-btn--link lu-btn--plain closeModal" data-dismiss="lu-modal">
+                        <i class="lu-btn__icon lu-mdi mdi mdi-close"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="lu-modal__body">
+                <div class="changelog-section" :class="versions_ && versions_.length == 1 ? 'lu-single-element' : ''">
+                    <template v-for="(element, key) in versions_">
+                        <div class="changelog-version">
+                            <span class="version">{{ element.version }}</span>
+                            <span class="released">{{ translate_('released') }}  {{ element.releaseDate }}</span>
+                        </div>
+
+                        <div v-html="element.changelog"></div>
+                    </template>
+                </div>
+
+                <a target="_blank" :href="changelogUrl">{{ translate_('seeChangelog') }}</a>
+            </div>
+            <div class="lu-modal__actions" :class="elements_.actionButtons && elements_.actionButtons.length == 1 ? 'lu-single-element' : ''">
+                <component
+                        v-bind="element.slots"
+                        v-bind:is="element.name"
+                        v-bind:key="element.uniq"
+                        v-for="(element, key) in elements_.actionButtons"
+                        v-if="elements_.actionButtons"
+                        v-on="$listeners">
+                </component>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,35 @@
+<div :id="cid_" class="lu-widget" :class="css_">
+    <div class="lu-widget__header" v-if="title_ || elements_.toolbar">
+        <div class="lu-widget__top lu-top">
+            <i :class="[icon_]" v-if='icon'></i>
+            <div class="lu-top__title">
+                {{title_}}
+            </div>
+            <div class="lu-top__toolbar" v-if="elements_.toolbar">
+                <component :key="elements_.toolbar.uniq" v-bind="elements_.toolbar.slots" v-bind:is="elements_.toolbar.name"></component>
+            </div>
+        </div>
+    </div>
+    <!-- dynamic components -->
+    <div class="lu-widget__body" v-if="elements_.elements">
+        <!-- preloader -->
+        <div class="lu-preloader-container lu-preloader-container--full-screen"
+             v-show="loading_ && showPreloader_">
+            <div class="lu-preloader lu-preloader--sm"></div>
+        </div>
+        <!-- end of preloader -->
+        <div class="lu-widget__content" :class="[elements_.elements && elements_.elements.length == 1 ? 'lu-single-element' : '', customcontentclass_]">
+            <component :key="element.uniq" v-bind="element.slots" v-on="$listeners"
+                       v-bind:is="element.name" v-for="(element, key) in elements_.elements">
+            </component>
+        </div>
+    </div>
+    <!-- end of dynamic components -->
+    <!-- static content -->
+    <div class="lu-widget__body" v-else>
+        <div class="lu-widget__content">
+            {{content_}}
+        </div>
+    </div>
+    <!-- end of static content -->
+</div>

@@ -1,0 +1,12 @@
+<ul :id="cid_" class="list-styled news" :class="elements_.elements && elements_.elements.length == 1 ? 'lu-single-element' : ''">
+    <template v-for="element in elements_.elements">
+        <li>
+            <a :href="element.link" target="_blank">
+                <div>{{element.text}}</div>
+                <div>
+                    <span class="date">{{element.date}}</span>
+                </div>
+            </a>
+        </li>
+    </template>
+</ul>

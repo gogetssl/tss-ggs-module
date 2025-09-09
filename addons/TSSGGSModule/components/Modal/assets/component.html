@@ -1,0 +1,46 @@
+<div :id="cid_" :class="[modalClass, modalSize]" class="lu-modal show  modal--zoomIn">
+    <div class="lu-modal__dialog">
+        <div class="lu-preloader-container lu-preloader-container--full-screen lu-preloader-container--overlay"
+             v-show="loading_">
+            <div class="lu-preloader lu-preloader--sm"></div>
+        </div>
+        <div class="lu-modal__content">
+            <div class="lu-modal__top lu-top">
+                <i :class="titleIconClass" class="lu-top__icon lu-mdi mdi" v-if="titleIconClass"></i>
+                <div :class='titleClass' class="lu-top__title">
+                    <span :class="inTitleClass">{{ title_ }}</span>
+                </div>
+                <div class="lu-top__toolbar">
+                    <button @click='closeModal($event)' aria-label="Close" class="lu-btn lu-btn--xs lu-btn--default lu-btn--icon lu-btn--link lu-btn--plain closeModal" data-dismiss="lu-modal">
+                        <i class="lu-btn__icon lu-mdi mdi mdi-close"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="lu-modal__body" :class="elements_.elements && elements_.elements.length == 1 ? 'lu-single-element' : ''">
+                <p v-if="content_">{{content_}}</p>
+
+                <component
+                        v-bind="element.slots"
+                        v-bind:is="element.name"
+                        v-bind:key="element.uniq"
+                        v-bind:data="data_"
+                        v-for="(element, key) in elements_.elements"
+                        v-if="elements_.elements"
+                        v-on="$listeners"
+                        v-on:reload-parent="closeModal">
+                </component>
+            </div>
+            <div class="lu-modal__actions" :class="elements_.actionButtons && elements_.actionButtons.length == 1 ? 'lu-single-element' : ''">
+                <component
+                        v-bind="element.slots"
+                        v-bind:is="element.name"
+                        v-bind:data="data_"
+                        v-bind:key="element.uniq"
+                        v-for="(element, key) in elements_.actionButtons"
+                        v-if="elements_.actionButtons"
+                        v-on="$listeners">
+                </component>
+            </div>
+        </div>
+    </div>
+</div>

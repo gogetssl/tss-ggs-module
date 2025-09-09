@@ -1,0 +1,60 @@
+<div :id="cid_">
+    <div class="lu-preloader-container lu-preloader-container--full-screen lu-preloader-container--overlay"
+         v-show="loading_">
+        <div class="lu-preloader lu-preloader--sm"></div>
+    </div>
+
+    <div class="lu-t-c__top lu-top lu-m-b-2x" v-if="search_ || elements_.toolbar">
+        <div class="lu-top__toolbar lu-w-100" v-if="search_">
+            <div class="lu-input-group lu-w-100">
+                <span class="lu-icon-sm lu-input-group__icon">
+                    <i class="lu-mdi mdi mdi-magnify "></i>
+                </span>
+                <input :placeholder="translate_('search_placeholder')" @keydown.enter="searchDataEnter" class="lu-form-control lu-input-group__form-control lu-table-search" value="">
+            </div>
+        </div>
+        <div class="lu-top__toolbar" :class="elements_.toolbar && elements_.toolbar.length == 1 ? 'lu-single-element' : ''">
+            <component :key="elements_.uniq" v-bind="button.slots" v-bind:is="button.name" v-for="(button, key) in elements_.toolbar" v-on="$listeners" v-on:reload-parent="reloadParent"></component>
+        </div>
+    </div>
+    <ul :id="cid_" :class="elements_.elements && elements_.elements.length == 1 ? 'lu-single-element' : ''">
+        <template v-for="element in elements_.elements">
+            <li v-if="typeof element === 'object'">
+                <component :key="element.uniq" v-bind="element.slots" v-bind:is="element.name"></component>
+            </li>
+        </template>
+    </ul>
+    <div class="lu-t-c__footer lu-t-c__body--boxed lu-m-b-3x" v-if="!hidePagination_">
+        <!-- page select -->
+        <div class="dataTables_paginate paging_simple_numbers">
+            <a :class='"paginate_button previous" + ((curPage < 2) ? " disabled" : "")'
+               :data-dt-idx='curPage -1'
+               aria-controls="DataTables_Table_0" href="javascript:" id="{/literal}{$elementId}{literal}_previous" page="prev"
+               tabindex="0"
+               v-on:click="changePage"></a>
+            <span v-for="pageNumber in pagesMap">
+                <a :class='"paginate_button" + (curPage === pageNumber ? " current" : "")'
+                   :data-dt-idx="pageNumber"
+                   aria-controls="DataTables_Table_0" tabindex="0"
+                   v-if='pageNumber && pageNumber !== "..."' v-on:click="changePage"> {{ pageNumber}} </a>
+                <a class="paginate_button disabled" v-if='pageNumber && pageNumber === "..."'> {{ pageNumber}} </a>
+            </span>
+            <a :class='"paginate_button next" + ((curPage === allPages || allPages === 0) ? " disabled" : "")'
+               :data-dt-idx='curPage +1' :id="id+'_next'" aria-controls="DataTables_Table_0"
+               href="javascript:"
+               page="next"
+               tabindex="0" v-on:click="changePage"></a>
+        </div>
+        <!-- end of page select -->
+        <!-- records per page -->
+        <div class="lu-dt-buttons">
+            <a :class="[len == recordsPerPage ? 'active' : '']" class="dt-button" href="#" v-for="len in recordsPerPageOptions_" v-on:click="updateLength(len)">
+                <span>{{len}}</span>
+            </a>
+            <a :class="[99999999 == recordsPerPage ? 'active' : '']" class="dt-button" href="#" v-on:click="updateLength(99999999)">
+                <span>∞</span>
+            </a>
+        </div>
+        <!-- end of records per page -->
+    </div>
+</div>

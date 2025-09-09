@@ -1,0 +1,24 @@
+<div :id="cid_" class="lu-block">
+    <div class="lu-block__body">
+        <div class="lu-widget">
+            <div class="lu-widget__body">
+                <div class="lu-zero-data">
+                    <div class="lu-msg">
+                        <div class="lu-msg">
+                            <div class="lu-msg__icon lu-i-c-1x" v-if="icon_">
+                                <i class="lu-mdi mdi" :class="['mdi-'+icon_]"></i>
+                            </div>
+                            <div class="lu-msg__body">
+                                <div class="lu-msg__title lu-type-4">{{title_}}</div>
+                                <p class="lu-msg__description">{{description_}}</p>
+                                <div class="lu-msg__actions" :class="elements_.elements && elements_.elements.length == 1 ? 'lu-single-element' : ''">
+                                    <component v-bind="element.slots" v-bind:is="element.name" v-bind:key="element.uniq" v-for="(element, key) in elements_.elements" v-on="$listeners"></component>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,17 @@
+<div :id="cid_">
+    <div v-if="valuePreviewEnabled_" class="lu-text-center">
+        <h6 :id="cid_" :class="css_" class="lu-slider-value-viewer">{{getValue}}</h6>
+    </div>
+    <input
+            :class="[css_, typeClass]"
+            :name="name_"
+            :value="value_"
+            ref="name_"
+            type="range"
+            :min="min_"
+            :max="max_"
+            :step="step_"
+            v-on:input="change"
+    />
+    <component v-if="elements_.marks" :key="elements_.marks.uniq" v-bind="elements_.marks.slots" v-bind:is="elements_.marks.name"></component>
+</div>

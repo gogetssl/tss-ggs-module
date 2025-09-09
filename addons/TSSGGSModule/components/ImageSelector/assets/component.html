@@ -1,0 +1,22 @@
+<div :id="cid_">
+    <div v-show="value_" class="lu-form-control">
+        <figure class="has-overlay" :name="value_" role="button" @click="removeSelectedImage()">
+            <div class="lu-widget__overlay">
+                <div class="lu-msg lu-msg--sm">
+                    <i class="lu-mdi mdi mdi-delete" ></i>
+                    <div v-html="this.translate_('remove_selected_image')"></div>
+                </div>
+            </div>
+            <div class="lu-widget__content">
+                <div class="lu-image-main-gallery-item-container">
+                    <img :src="imageUrl_" alt="Image Preview" loading="lazy">
+                </div>
+                <figcaption v-html="value_" class="lu-text-center lu-m-1x"></figcaption>
+            </div>
+        </figure>
+        <input :name="name_" :value="value_" type="hidden">
+    </div>
+    <div v-show="!value_" class="lu-form-control">
+        <component :key="mediaLibrary.uniq" v-bind="mediaLibrary.slots" v-bind:is="mediaLibrary.name" v-on="$listeners" @change="change" @componentLoaded="mediaLibraryLoaded"></component>
+    </div>
+</div>

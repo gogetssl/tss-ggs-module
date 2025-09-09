@@ -1,0 +1,25 @@
+<div :id="cid_" class="lu-selectize-control single lu-image-picker" :class="getCssClass()">
+    <div class="lu-selectize-input lu-form-control items has-options full has-items input-active">
+        <div class="lu-w-100" @click="onInputClick()">
+                <div class="lu-selectize-search-input-container" v-if="!disableSearching_ && isOpen_ && !value_">
+                    <i class="lu-mdi mdi mdi-magnify"></i>
+                    <input class="lu-selectize-search-input" type="text" style="height: 100%; border: none" autofocus @input="updateSearchedPhrase">
+                </div>
+                <div v-else>
+                    <span v-if="!value_" class="lu-text-faded" v-html="this.translate_('no_image_selected')"></span>
+                    <div v-else class="lu-image-container">
+                        <img :src="selectedImageUrl" class="lu-m-r-1x">
+                        <span v-html="value_" class="lu-m-r-1x"></span>
+                        <i class="lu-mdi lu-i-c-2x mdi mdi-close" @click="clearField($event)" role="button"></i>
+                    </div>
+                </div>
+                <input :name="name_" :value="value_" type="hidden">
+        </div>
+        <span class="lu-image-picker-dummy-dropdown-arrow" @click="toggleDropdown()"></span>
+    </div>
+    <div class="lu-selectize-dropdown single lu-form-control" hidden>
+        <div class="lu-selectize-dropdown-content" :class="dropdownHeightClass_">
+            <component :key="mediaLibrary.uniq" v-bind:searchedPhrase="searchedPhrase_" v-bind="mediaLibrary.slots" v-bind:is="mediaLibrary.name" v-on="$listeners" @change="change"></component>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,25 @@
+<div :id="cid_" class="lu-has-dropdown lu-notifications-dropdown">
+    <button :data-title="translate_('notifications')" :aria-label="translate_('notifications')" @click="toggleDropdown" class="lu-btn lu-btn--icon lu-btn--link lu-btn--default" data-lu-tooltip="">
+        <i class="lu-btn__icon lu-mdi mdi mdi-bell"></i>
+        <span class="lu-notifications-unread-pointer" v-if="unreadCount_ > 0"></span>
+    </button>
+    <div @click="toggleDropdown" class="mg-drop-bg-wrapper" v-show="is_drop_open_"></div>
+    <div v-if="elements_.items" class="drop lu-drop-element drop-enabled drop-element-attached-top drop-element-attached-left drop-target-attached-middle drop-target-attached-right drop-open drop-open-transitionend drop-after-open" v-show="is_drop_open_">
+        <div class="drop-content">
+            <div class="lu-dropdown" data-lu-dropdown-menu="">
+                <div class="lu-dropdown__arrow"></div>
+                <ul class="lu-dropdown__menu" :class="elements_.items && elements_.items.length == 1 ? 'lu-single-element' : ''">
+                    <component
+                            :key="element.uniq"
+                            v-bind="element.slots"
+                            v-bind:is="element.name"
+                            v-for="element in elements_.items"
+                            v-on="$listeners"
+                            v-on:reload-parent="reloadParent"
+                            @deleteItem="deleteItem">
+                    </component>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

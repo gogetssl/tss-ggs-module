@@ -1,0 +1,18 @@
+<div :id="cid_" @click="onClick" class="lu-image-main-gallery-item" :class="getItemClass()">
+    <figure class="lu-widget has-overlay" :name="imageName" :class="mode_">
+        <div vis="mode_ != 'mode-present'" class="lu-widget__overlay">
+            <div class="lu-text-center">
+                <span :class="getIconClass()"></span>
+                <div v-html="this.translate_(mode_)"></div>
+            </div>
+        </div>
+        <div class="lu-widget__content">
+            <div class="lu-image-main-gallery-item-container">
+                <div>
+                    <img :src="img_" alt="Image Preview" loading="lazy">
+                </div>
+            </div>
+            <figcaption v-html="imageName"></figcaption>
+        </div>
+    </figure>
+</div>

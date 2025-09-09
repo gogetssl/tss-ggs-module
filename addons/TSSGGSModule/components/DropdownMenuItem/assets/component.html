@@ -1,0 +1,7 @@
+<li :id="cid_" :class="linkClass" class="lu-dropdown__item">
+    <a :class="linkClass" @click="onClick" class="lu-dropdown__link" href="#">
+        <i :class="linkClass" class="lu-dropdown__link-icon lu-preloader lu-preloader--sm" v-if="isLoading_"></i>
+        <i :class="[icon, linkClass]" class="lu-dropdown__link-icon lu-mdi mdi" v-if='!isLoading_ && icon'></i>
+        <span class="lu-btn__text">{{title_}}</span>
+    </a>
+</li>

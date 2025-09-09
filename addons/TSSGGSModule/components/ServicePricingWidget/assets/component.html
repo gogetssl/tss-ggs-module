@@ -1,0 +1,85 @@
+<div :id="cid_" class="lu-service-pricing-widget" :class="css_">
+    <div class="lu-widget__header" v-if="title_ || elements_.toolbar">
+        <div class="lu-widget__top lu-top">
+            <div class="lu-top__title">
+                {{title_}}
+            </div>
+            <div class="lu-top__toolbar" v-if="elements_.toolbar">
+                <component :key="elements_.toolbar.uniq" v-bind="elements_.toolbar.slots" v-bind:is="elements_.toolbar.name"></component>
+            </div>
+        </div>
+    </div>
+    <div class="lu-widget__body">
+        <!-- preloader -->
+        <div class="lu-preloader-container lu-preloader-container--full-screen"
+             v-show="loading_ && showPreloader_">
+            <div class="lu-preloader lu-preloader--sm"></div>
+        </div>
+        <!-- end of preloader -->
+        <div class="lu-widget__content" v-if="dataSet_ || elements_.elements">
+            <div class="lu-row" v-for="(billingCycle, key) in dataSet_">
+                <div class="lu-col-md-6">
+                    <div :class="['lu-form-group', {'lu-is-error' : billingCycle.dropdownInput.validationMessage}]">
+                        <label class="lu-form-label">
+                            {{ billingCycle.dropdownInput.title}}
+                        </label>
+                        <select
+                                class = "lu-form-control"
+                                :name = "billingCycle.dropdownInput.name"
+                                :ref = "billingCycle.dropdownInput.name"
+                                :disabled = "billingCycle.dropdownInput.disabled"
+                                :data-dropdown-value = "billingCycle.dropdownInput.value"
+                                :data-dropdown-key = "key"
+                        ></select>
+                        <div class="lu-form-feedback lu-form-feedback--icon" v-if="billingCycle.dropdownInput.validationMessage">
+                            {{translate_(billingCycle.dropdownInput.validationMessage)}}
+                        </div>
+                    </div>
+                </div>
+                <div class="lu-col-md-6">
+                    <div :class="['lu-form-group', {'lu-is-error' : billingCycle.priceInput.validationMessage}]">
+                        <label class="lu-form-label">
+                            {{ billingCycle.priceInput.title}}
+                        </label>
+                        <div class="lu-input-group lu-form-control">
+                            <div v-if="billingCycle.primaryPriceLabel.text.length > 0"
+                                 :class="[billingCycle.primaryPriceLabel.css, 'lu-input-group__addon', 'white-space-no-wrap']">
+                                <span :data-title="billingCycle.primaryPriceLabel.description" :aria-label="billingCycle.primaryPriceLabel.description" class="lu-tooltip" data-lu-tooltip data-toggle="lu-tooltip">
+                                    {{billingCycle.primaryPriceLabel.text}}
+                                </span>
+                            </div>
+                            <input
+                                    class = "lu-form-control lu-tooltip"
+                                    type = "number"
+                                    min="0"
+                                    :name = "billingCycle.priceInput.name"
+                                    :ref = "billingCycle.priceInput.name"
+                                    :disabled = "billingCycle.priceInput.disabled"
+                                    :value = "billingCycle.priceInput.value"
+                                    @change="changeInputValue(event, key)"
+                                    :data-title="billingCycle.priceInput.description" :aria-label="billingCycle.priceInput.description"
+                                    data-lu-tooltip
+                                    data-toggle="lu-tooltip"
+                            />
+                            <div v-if="billingCycle.secondaryPriceLabel.text.length > 0"
+                                 :class="[billingCycle.secondaryPriceLabel.css, 'lu-input-group__addon', 'white-space-no-wrap']">
+                                <span :data-title="billingCycle.secondaryPriceLabel.description" :aria-label="billingCycle.secondaryPriceLabel.description" class="lu-tooltip" data-lu-tooltip data-toggle="lu-tooltip">
+                                    {{billingCycle.secondaryPriceLabel.text}}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="lu-form-feedback lu-form-feedback--icon" v-if="billingCycle.priceInput.validationMessage">
+                            {{translate_(billingCycle.priceInput.validationMessage)}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- dynamic components -->
+            <component :key="element.uniq" v-bind="element.slots" v-on="$listeners"
+                       v-bind:is="element.name" v-for="(element, key) in elements_.elements">
+            </component>
+            <!-- end of dynamic components -->
+        </div>
+    </div>
+</div>

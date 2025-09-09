@@ -1,0 +1,27 @@
+<date-picker
+        :id="cid_"
+        :name="name_"
+        v-model="value_"
+        value-type="format"
+        :disabled="disabled_ == true"
+        :ref="picker_"
+        :format="format_"
+        :type="type_"
+        :placeholder="placeholder_"
+        input-class="lu-form-control"
+        :input-attr="{name: name_}"
+        :range = "range_"
+        :editable = "editable_"
+        :clearable = "clearable_"
+        :disabled-date="disabledDate"
+        :disabled-time="disabledTime"
+        :confirm="confirmButtonEnabled"
+        @change="onChangeDate"
+>
+    <template #icon-calendar>
+        <i class="lu-mdi mdi mdi-calendar" :class="getIconClass()"></i>
+    </template>
+    <template #icon-clear>
+        <i class="lu-mdi lu-i-c-2x mdi mdi-close"></i>
+    </template>
+</date-picker>
