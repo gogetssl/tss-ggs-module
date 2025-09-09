@@ -17,7 +17,7 @@ class GetCsvProvider extends CrudProvider
         header('Content-Disposition: attachment; filename=' . $filename);
 
         $recordsProvider = new RecordsProvider();
-        $records         = $recordsProvider->getRecords($filters);
+        $records         = $recordsProvider->getRecords($filters, true);
         $fields          = [
             'date',
             'storeId',

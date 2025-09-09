@@ -76,7 +76,7 @@ class DataTable extends \ModulesGarden\TTSGGSModule\Components\DataTable\DataTab
     {
         $filters         = Request::get('ajaxData');//custom filter values
         $recordsProvider = new RecordsProvider();
-        $rows            = $recordsProvider->getRecords($filters);
+        $rows            = $recordsProvider->getRecords($filters, true);
 
         $dataProv = new ArrayDataProvider($rows);
         $dataProv->setDefaultSorting('date', 'DESC');

@@ -12,7 +12,7 @@ class RecordsProvider
 {
     use TranslatorTrait;
 
-    public function getRecords($filters = [])
+    public function getRecords($filters = [], $onlyPaid = false)
     {
         $query = Capsule::table('tblinvoiceitems')
                         ->join('tblhosting', 'tblinvoiceitems.relid', '=', 'tblhosting.id')
@@ -26,7 +26,11 @@ class RecordsProvider
                         ->where('tblinvoiceitems.type', 'Hosting')
                         ->where('tblproducts.servertype', 'TTSGGSModule');
 
-
+        if($onlyPaid)
+        {
+            $query->where('tblinvoices.status', 'Paid');
+        }
+/*
         if($filters['renewalPeriod'])
         {
             $explode = explode('_', $filters['renewalPeriod']);
@@ -49,7 +53,7 @@ class RecordsProvider
                 }
             }
         }
-
+*/
         if($filters['fromDate'])
         {
             $query->where('tblinvoices.date', '>=', $filters['fromDate']);
@@ -128,6 +132,37 @@ class RecordsProvider
                 $storeId            = $certificateRequest->orderData->order->id ?: '-';
                 $issueDate          = $certificateRequest->orderFiles->validity->begin ? date('Y-m-d', strtotime($certificateRequest->orderFiles->validity->begin)) : '-';
                 $expirationDate     = $certificateRequest->orderFiles->validity->end ? date('Y-m-d', strtotime($certificateRequest->orderFiles->validity->end)) : '-';
+            }
+
+            if($filters['renewalPeriod'])
+            {
+                $explode = explode('_', $filters['renewalPeriod']);
+                $days    = (int)$explode[1];
+
+                if($explode[0] == 'last')
+                {
+                    if($expirationDate == '-' || $expirationDate >= date('Y-m-d'))
+                    {
+                        continue;
+                    }
+
+                    if($days &&  $expirationDate <= date('Y-m-d', strtotime('-' . $days . ' day')))
+                    {
+                        continue;
+                    }
+                }
+                elseif($explode[0] == 'next')
+                {
+                    if($expirationDate == '-' || $expirationDate <= date('Y-m-d'))
+                    {
+                        continue;
+                    }
+
+                    if($days &&  $expirationDate >= date('Y-m-d', strtotime('+' . $days . ' day')))
+                    {
+                        continue;
+                    }
+                }
             }
 
             $clientName = $item->companyname ?: $item->firstname . ' ' . $item->lastname;
