@@ -122,6 +122,10 @@ class ProductPricingUpdate extends AbstractCommand
                     {
                         $apiPrice = floatval($remotePriceData['base']['wildcard']['selling']);
                     }
+                    elseif(isset($remotePriceData['selling']))
+                    {
+                        $apiPrice = floatval($remotePriceData['selling']);
+                    }
                     else
                     {
                         continue;
@@ -136,7 +140,7 @@ class ProductPricingUpdate extends AbstractCommand
                         $pricing      = Pricing::where('type', 'product')->where('currency', $currency->id)->where('relid', $whmcsProduct->id)->first();
                         $billingCycle = Helpers::monthsToBillingPeriod($remotePriceData['term']);
 
-                        if($billingCycle === false || $pricing->{$billingCycle} < 0)
+                        if($billingCycle === false)
                         {
                             continue;
                         }

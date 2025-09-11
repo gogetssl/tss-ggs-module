@@ -70,13 +70,6 @@ class FinanceSettingsForm extends Form implements AdminAreaInterface, AjaxCompon
                 ->between(1, 1000)
         );
 
-        $this->builder->addFieldInContainer(
-            $majorSettingsWidget,
-            (new Dropdown())
-                ->setName('currency')
-                ->required()
-        );
-
         if(!Helpers::getCurrencyIdByCode('USD')) //If USD not defined
         {
             $exchangeRateWidget = new Widget();

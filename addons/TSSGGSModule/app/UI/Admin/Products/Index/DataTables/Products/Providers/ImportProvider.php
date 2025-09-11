@@ -91,6 +91,10 @@ class ImportProvider extends CrudProvider
                 {
                     $apiPrice = floatval($remotePriceData['base']['wildcard']['selling']);
                 }
+                elseif(isset($remotePriceData['selling']))
+                {
+                    $apiPrice = floatval($remotePriceData['selling']);
+                }
                 else
                 {
                     continue;
@@ -127,7 +131,8 @@ class ImportProvider extends CrudProvider
                     'validation'            => $remoteProduct->validation,
                     'category'              => $remoteProduct->category,
                     'dcv'                   => implode(',', $dcvArray),
-                    'price_auto'            => $pricingTypePercent ? 'on' : 'off',
+                    //'price_auto'            => $pricingTypePercent ? 'on' : 'off',
+                    'price_auto'            => 'on', //always on
                     'included_san'          => $includedSan,
                     'included_san_wildcard' => $includedSanWildcard,
                 ]);

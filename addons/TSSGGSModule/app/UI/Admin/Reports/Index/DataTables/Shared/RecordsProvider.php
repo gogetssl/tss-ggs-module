@@ -31,29 +31,6 @@ class RecordsProvider
             $query->where('tblinvoices.status', 'Paid');
         }
 
-        if($filters['renewalPeriod'])
-        {
-            $explode = explode('_', $filters['renewalPeriod']);
-            $days    = (int)$explode[1];
-
-            if($explode[0] == 'last')
-            {
-                $query->where('tblhosting.nextduedate', '<', date('Y-m-d'));
-                if($days)
-                {
-                    $query->where('tblhosting.nextduedate', '>', date('Y-m-d', strtotime('-' . $days . ' day')));
-                }
-            }
-            elseif($explode[0] == 'next')
-            {
-                $query->where('tblhosting.nextduedate', '>', date('Y-m-d'));
-                if($days)
-                {
-                    $query->where('tblhosting.nextduedate', '<', date('Y-m-d', strtotime('+' . $days . ' day')));
-                }
-            }
-        }
-
         if($filters['fromDate'])
         {
             $query->where('tblinvoices.date', '>=', $filters['fromDate']);
