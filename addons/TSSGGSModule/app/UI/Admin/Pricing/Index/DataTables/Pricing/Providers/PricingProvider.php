@@ -20,8 +20,10 @@ class PricingProvider extends CrudProvider
         $currencies     = Currency::get();
 
         $productRepository                = new ProductRepository();
+        $product = Product::where('id', $whmcsProductId)->first()->toArray();
         $productConfiguration             = $productRepository->getProductConfiguration($whmcsProductId);
         $this->data['auto_update_enable'] = ($productConfiguration['price_auto'] == 'on');
+        $this->data['one_time_enable'] = ($product['paytype'] == 'onetime');
 
         foreach($currencies as $currency)
         {
@@ -45,6 +47,11 @@ class PricingProvider extends CrudProvider
                 if(!$pricing || $price < 0)
                 {
                     $price  = '0.00';
+                    $enable = 0;
+                }
+
+                if($this->data['one_time_enable'] && $billingCycle != 'annually')
+                {
                     $enable = 0;
                 }
 
@@ -75,6 +82,11 @@ class PricingProvider extends CrudProvider
             'price_auto' => ($this->formData['auto_update_enable'] ? 'on' : 'off'),
         ]);
 
+        $paytype = ($this->formData['one_time_enable'] ? 'onetime' : 'recurring');
+        Product::where('id', $whmcsProductId)->update([
+            'paytype' => $paytype,
+        ]);
+
         foreach($currencies as $currency)
         {
             $configurableOptionsData = Helpers::getConfigurableOptionsData($whmcsProductId, $currency->id);
@@ -88,34 +100,64 @@ class PricingProvider extends CrudProvider
                 'triennially'
             ];
 
-            foreach($expectedBillingCycles as $billingCycle)
-            {
-                $enable = (int)$this->formData[$currency->code . '_' . $billingCycle . '_enable'];
+            if($paytype == 'onetime') {
 
-                if(isset($this->formData[$currency->code . '_' . $billingCycle]) && $enable)
-                {
-                    $price = floatval($this->formData[$currency->code . '_' . $billingCycle]);
-                }
-                else
-                {
-                    $price = -1;
-                }
+                $price = floatval($this->formData[$currency->code . '_' . 'annually']);
 
                 Pricing::updateOrInsert(
                     ['type' => 'product', 'currency' => $currency->id, 'relid' => $whmcsProductId],
-                    [$billingCycle => $price]
+                    ['monthly' => $price]
                 );
 
-                foreach($configurableOptionsData as $configurableOptionData)
-                {
+                Pricing::updateOrInsert(
+                    ['type' => 'product', 'currency' => $currency->id, 'relid' => $whmcsProductId],
+                    ['annually' => $price]
+                );
+
+                foreach ($configurableOptionsData as $configurableOptionData) {
                     $subOptionId = $configurableOptionData->subId;
-                    $price       = floatval($this->formData[$currency->code . '_' . $billingCycle . '_option_' . $subOptionId]);
+                    $price = floatval($this->formData[$currency->code . '_' . 'annually' . '_option_' . $subOptionId]);
 
                     Pricing::updateOrInsert(
                         ['type' => 'configoptions', 'currency' => $currency->id, 'relid' => $subOptionId],
-                        [$billingCycle => $price]
+                        ['monthly' => $price]
+                    );
+
+                    Pricing::updateOrInsert(
+                        ['type' => 'configoptions', 'currency' => $currency->id, 'relid' => $subOptionId],
+                        ['annually' => $price]
                     );
                 }
+
+
+            }
+            else {
+
+                foreach ($expectedBillingCycles as $billingCycle) {
+                    $enable = (int)$this->formData[$currency->code . '_' . $billingCycle . '_enable'];
+
+                    if (isset($this->formData[$currency->code . '_' . $billingCycle]) && $enable) {
+                        $price = floatval($this->formData[$currency->code . '_' . $billingCycle]);
+                    } else {
+                        $price = -1;
+                    }
+
+                    Pricing::updateOrInsert(
+                        ['type' => 'product', 'currency' => $currency->id, 'relid' => $whmcsProductId],
+                        [$billingCycle => $price]
+                    );
+
+                    foreach ($configurableOptionsData as $configurableOptionData) {
+                        $subOptionId = $configurableOptionData->subId;
+                        $price = floatval($this->formData[$currency->code . '_' . $billingCycle . '_option_' . $subOptionId]);
+
+                        Pricing::updateOrInsert(
+                            ['type' => 'configoptions', 'currency' => $currency->id, 'relid' => $subOptionId],
+                            [$billingCycle => $price]
+                        );
+                    }
+                }
+
             }
         }
     }

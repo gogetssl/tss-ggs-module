@@ -91,6 +91,8 @@ class DataTable extends \ModulesGarden\TSSGGSModule\Components\DataTable\DataTab
             $productConfiguration             = $productRepository->getProductConfiguration($whmcsProduct->id);
             $this->data['auto_update_enable'] = ($productConfiguration['price_auto'] == 'on');
 
+            $product = Product::where('id', $whmcsProduct->id)->first()->toArray();
+
             $currencyCode = Request::get('ajaxData')['currency'];
 
             if($currencyCode)
@@ -144,6 +146,11 @@ class DataTable extends \ModulesGarden\TSSGGSModule\Components\DataTable\DataTab
                         $price .= '<br>' . $optionPrice;
 
                     }
+                }
+
+                if($product['paytype'] == 'onetime' && $billingCycle != 'annually')
+                {
+                    $price = '-';
                 }
 
                 $row[$billingCycle . 'Price'] = (string)$price;

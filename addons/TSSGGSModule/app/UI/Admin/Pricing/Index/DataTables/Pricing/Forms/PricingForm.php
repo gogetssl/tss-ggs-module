@@ -24,6 +24,7 @@ use ModulesGarden\TSSGGSModule\Core\Contracts\Components\AdminAreaInterface;
 use ModulesGarden\TSSGGSModule\Core\Contracts\Components\AjaxComponentInterface;
 use ModulesGarden\TSSGGSModule\Core\Support\Facades\Request;
 use ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Currency;
+use ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Product;
 
 
 class PricingForm extends Form implements AdminAreaInterface, AjaxComponentInterface
@@ -108,6 +109,8 @@ class PricingForm extends Form implements AdminAreaInterface, AjaxComponentInter
         $tab->addElement($innerContainer);
         $this->builder = BuilderCreator::threeColumnsInContainer($this, $innerContainer);
         $this->builder->addField((new HiddenField)->setName('whmcsProductId'));
+
+        $this->builder->addFieldInContainer($innerContainer, (new Switcher())->setName('one_time_enable')->setTitle($this->translate('oneTime'))->addClass('switcher-revert'));
         $this->builder->addFieldInContainer($innerContainer, (new Switcher())->setName('auto_update_enable')->setTitle($this->translate('autoUpdate'))->addClass('switcher-revert'));
 
 

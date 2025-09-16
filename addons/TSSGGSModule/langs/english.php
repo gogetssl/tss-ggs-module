@@ -545,18 +545,19 @@ $_LANG['admin.pricing.index.data_tables.pricing.array_data_provider.data_table.p
 $_LANG['admin.pricing.index.data_tables.pricing.array_data_provider.data_table.disabled']    = 'Disabled';
 
 
-$_LANG['admin.pricing.index.data_tables.pricing.array_data_provider.data_table.annuallyPrice']    = 'Annually';
+$_LANG['admin.pricing.index.data_tables.pricing.array_data_provider.data_table.annuallyPrice']    = 'Annually/One-Time';
 $_LANG['admin.pricing.index.data_tables.pricing.array_data_provider.data_table.bienniallyPrice']  = 'Biennially';
 $_LANG['admin.pricing.index.data_tables.pricing.array_data_provider.data_table.trienniallyPrice'] = 'Triennially';
 
 //pricing form
 $_LANG['admin.pricing.index.data_tables.pricing.modals.pricing_modal.title']        = 'Pricing';
 $_LANG['admin.pricing.index.data_tables.pricing.forms.pricing_form.options']        = 'Options';
-$_LANG['admin.pricing.index.data_tables.pricing.forms.pricing_form.annually']       = 'Annually';
+$_LANG['admin.pricing.index.data_tables.pricing.forms.pricing_form.annually']       = 'Annually/One-Time';
 $_LANG['admin.pricing.index.data_tables.pricing.forms.pricing_form.biennially']     = 'Biennially';
 $_LANG['admin.pricing.index.data_tables.pricing.forms.pricing_form.triennially']    = 'Triennially';
 $_LANG['admin.pricing.index.data_tables.pricing.forms.pricing_form.update_success'] = 'Prices updated successfully';
 $_LANG['admin.pricing.index.data_tables.pricing.forms.pricing_form.autoUpdate']     = 'Auto Update';
+$_LANG['admin.pricing.index.data_tables.pricing.forms.pricing_form.oneTime']        = 'One Time';
 
 $_LANG['admin.pricing.index.data_tables.pricing.forms.pricing_form.info']     = 'Auto Update Information';
 
