@@ -52,6 +52,11 @@ class ImportForm extends Form implements AdminAreaInterface, AjaxComponentInterf
             $mode = ((bool)$formData['pricingTypeIndividual']) ? "individual" : "percent";
         }
 
+        if(isset($ajaxData['reloadedBy']) && $ajaxData['reloadedBy'] == 'productGroup')
+        {
+            $productGroupMode = ($formData['productGroup'] == 'new') ? "new" : "existing";
+        }
+
         $this->builder = BuilderCreator::oneColumn($this);
 
         $this->setId('productImportForm');
@@ -93,7 +98,18 @@ class ImportForm extends Form implements AdminAreaInterface, AjaxComponentInterf
         $productGroupField->setName('productGroup');
         $productGroupField->required();
         $productGroupField->setDefaultValueAsFirstOption();
+        $productGroupField->onChange((new Reload($this)));
         $this->builder->addFieldInContainer($rightColumn, $productGroupField);
+
+        if($productGroupMode == 'new')
+        {
+            $productGroupNameField = new FormInputText();
+            $productGroupNameField->setName('productGroupName');
+            $productGroupNameField->required();
+            $this->builder->addFieldInContainer($rightColumn, $productGroupNameField);
+        }
+
+
         /*
                 $currencyField = new Dropdown();
                 $currencyField->setName('currency');

@@ -10,6 +10,7 @@ use ModulesGarden\TSSGGSModule\Core\Support\Facades\Request;
 use ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Currency;
 use ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Pricing;
 use ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Product;
+use ModulesGarden\TSSGGSModule\Core\WHMCS\Models\ProductGroup;
 use ModulesGarden\TSSGGSModule\Packages\Product\Libs\ConfigurableOptions\Quantity;
 use ModulesGarden\TSSGGSModule\Packages\Product\Libs\ConfigurableOptions\SubOption\SubOption;
 use ModulesGarden\TSSGGSModule\Packages\Product\Services\ConfigurableOptions;
@@ -42,7 +43,43 @@ class ImportProvider extends CrudProvider
 
     public function create()
     {
-        $productGroupId     = (int)$this->formData['productGroup'];
+        if($this->formData['productGroup'] == 'new')
+        {
+            $productGroupName = trim($this->formData['productGroupName']);
+            $slug             = strtolower($productGroupName);
+            $slug             = str_replace(' ', '-', $slug);
+            $slugIndex        = '';
+            $index            = 1;
+
+            while(true)
+            {
+                $existingGroup = ProductGroup::where('slug', $slug . $slugIndex)->first();
+
+                if($existingGroup)
+                {
+                    $slugIndex = $index;
+                    $index++;
+                }
+                else
+                {
+                    $slug = $slug . $slugIndex;
+                    break;
+                }
+            }
+
+            $productGroupModel         = new ProductGroup();
+            $productGroupModel->name   = $productGroupName;
+            $productGroupModel->slug   = $slug;
+            $productGroupModel->hidden = 0;
+            $productGroupModel->save();
+
+            $productGroupId = $productGroupModel->id;
+        }
+        else
+        {
+            $productGroupId = (int)$this->formData['productGroup'];
+        }
+
         $localIds           = explode(',', $this->formData['id']);
         $baseCurrencyRate   = $this->formData['rate'] ?: 1;
         $pricingTypePercent = (bool)$this->formData['pricingTypePercent'];

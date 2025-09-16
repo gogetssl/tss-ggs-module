@@ -255,7 +255,8 @@ class Helpers
     {
         $productGroups       = ProductGroup::get();
         $productGroupOptions = [
-            '' => Translator::get('choseProductGroup'),
+            ''    => Translator::get('choseProductGroup'),
+            'new' => Translator::get('createNewProductGroup'),
         ];
 
         foreach($productGroups as $productGroup)

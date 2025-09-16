@@ -447,12 +447,12 @@ $_LANG['admin.settings.index.forms.finance_settings_form.update_success'] = 'Set
 $_LANG['admin.settings.index.widgets.cron_settings_widget.title'] = 'CRON Settings';
 
 //cron settings titles
-$_LANG['admin.settings.index.widgets.cron_settings_widget.cronCommandTitle_processing'] = '<b>Order initialization</b>';
-$_LANG['admin.settings.index.widgets.cron_settings_widget.cronCommandTitle_ProductPricingUpdate'] = '<b>Product Pricing</b>';
+$_LANG['admin.settings.index.widgets.cron_settings_widget.cronCommandTitle_processing']                = '<b>Order initialization</b>';
+$_LANG['admin.settings.index.widgets.cron_settings_widget.cronCommandTitle_ProductPricingUpdate']      = '<b>Product Pricing</b>';
 $_LANG['admin.settings.index.widgets.cron_settings_widget.cronCommandTitle_SSLCertificatesProcessing'] = '<b>SSL Processing</b>';
-$_LANG['admin.settings.index.widgets.cron_settings_widget.cronCommandTitle_SSLCertificates'] = '<b>Order Daily sync</b>';
-$_LANG['admin.settings.index.widgets.cron_settings_widget.cronCommandTitle_RenewalNotifyCertificate'] = '<b>Automatic Renewal Notification</b>';
-$_LANG['admin.settings.index.widgets.cron_settings_widget.cronCommandTitle_ReSyncProducts'] = '<b>Product Re-sync</b>';
+$_LANG['admin.settings.index.widgets.cron_settings_widget.cronCommandTitle_SSLCertificates']           = '<b>Order Daily sync</b>';
+$_LANG['admin.settings.index.widgets.cron_settings_widget.cronCommandTitle_RenewalNotifyCertificate']  = '<b>Automatic Renewal Notification</b>';
+$_LANG['admin.settings.index.widgets.cron_settings_widget.cronCommandTitle_ReSyncProducts']            = '<b>Product Re-sync</b>';
 
 //cron settings descriptions
 $_LANG['admin.settings.index.widgets.cron_settings_widget.cronCommand_ProductPricingUpdate']      = 'Please set up the following cron line to enable automatic daily product pricing updates.';
@@ -476,7 +476,7 @@ $_LANG['admin.breadcrumbs.Products'] = 'Products';
 
 //info
 $_LANG['admin.products.index.products_container.productsInfo'] = 'To import a product, please select it and click the Import button.';
-$_LANG['admin.configuration.content.step5.productsInfo'] = 'To import a product, please select it and click the Import button.';
+$_LANG['admin.configuration.content.step5.productsInfo']       = 'To import a product, please select it and click the Import button.';
 
 //Datatable
 $_LANG['admin.products.index.data_tables.products.array_data_provider.data_table.id']          = 'No';
@@ -500,6 +500,7 @@ $_LANG['admin.products.index.data_tables.products.modals.import_modal.title']   
 $_LANG['admin.products.index.data_tables.products.forms.import_form.pricingTypeIndividual'] = 'Import Product With Individual Pricing';
 $_LANG['admin.products.index.data_tables.products.forms.import_form.pricingTypePercent']    = 'Import Product With % Margin';
 $_LANG['admin.products.index.data_tables.products.forms.import_form.productGroup']          = 'Product Group';
+$_LANG['admin.products.index.data_tables.products.forms.import_form.productGroupName']      = 'Product Group Name';
 $_LANG['admin.products.index.data_tables.products.forms.import_form.currency']              = 'Currency';
 $_LANG['admin.products.index.data_tables.products.forms.import_form.rate']                  = 'Set The Rate';
 $_LANG['admin.products.index.data_tables.products.forms.import_form.info']                  = 'Your WHMCS doesn\'t have a USD currency defined. Your default currency is :defaultCurrency. Please provide a USD to :defaultCurrency conversion rate.<br><br>For example, if rate is  1.20 and the product price is 1.00 USD, then in WHMCS, the price will be set to 1.20 :defaultCurrency.';
@@ -532,6 +533,10 @@ $_LANG['admin.products.index.data_tables.products.forms.configuration_form.inclu
 
 $_LANG['admin.products.index.data_tables.products.forms.configuration_form.update_success'] = 'Configuration updated successfully';
 
+//default option
+$_LANG['choseProductGroup']     = '--- Chose Product Group ---';
+$_LANG['createNewProductGroup'] = '--- New Product Group ---';
+
 
 //===[Pricing]==========================================================================================================
 
@@ -559,10 +564,7 @@ $_LANG['admin.pricing.index.data_tables.pricing.forms.pricing_form.update_succes
 $_LANG['admin.pricing.index.data_tables.pricing.forms.pricing_form.autoUpdate']     = 'Auto Update';
 $_LANG['admin.pricing.index.data_tables.pricing.forms.pricing_form.oneTime']        = 'One Time';
 
-$_LANG['admin.pricing.index.data_tables.pricing.forms.pricing_form.info']     = 'Auto Update Information';
+$_LANG['admin.pricing.index.data_tables.pricing.forms.pricing_form.info'] = 'Auto Update Information';
 
 
 
-
-//default option
-$_LANG['choseProductGroup'] = '--- Chose Product Group ---';
