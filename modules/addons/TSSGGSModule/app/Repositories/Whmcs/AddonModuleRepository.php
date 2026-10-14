@@ -80,6 +80,10 @@ class AddonModuleRepository
 
     public function checkCron($name)
     {
+        //debug
+        //return true;
+        //debug
+
         $cronNames = [
             'cron1' => 'ProductPricingUpdate',
             'cron2' => 'SSLCertificates',

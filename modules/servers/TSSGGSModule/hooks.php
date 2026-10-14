@@ -4,9 +4,9 @@ use WHMCS\Database\Capsule;
 use ModulesGarden\TSSGGSModule\App\Models\Request;
 use ModulesGarden\Servers\TSSGGSModule\core\Lang;
 
-if(!defined('DS'))define('DS',DIRECTORY_SEPARATOR);
+if(!defined('DS')) define('DS', DIRECTORY_SEPARATOR);
 
-require_once __DIR__.DS.'Loader.php';
+require_once __DIR__ . DS . 'Loader.php';
 new \ModulesGarden\Servers\TSSGGSModule\Loader();
 \ModulesGarden\Servers\TSSGGSModule\Server::I();
 
@@ -19,36 +19,38 @@ add_hook('ClientAreaPrimarySidebar', 1, function($primarySidebar) {
         $serviceId = $_REQUEST['id'];
         $orderData = Request::getOrder($serviceId);
 
-        if(isset($orderData['orderData']['order']['status']) && $orderData['orderData']['order']['status'] == 'active') {
+        if(isset($orderData['orderData']['order']['status']) && $orderData['orderData']['order']['status'] == 'active')
+        {
             $myAccount = $primarySidebar->getChild('Service Details Actions');
-            if ($myAccount) {
+            if($myAccount)
+            {
                 $myAccount->addChild('DownloadCRT', [
-                    'name' => 'DownloadCRT',
+                    'name'  => 'DownloadCRT',
                     'label' => Lang::absoluteT('Download CRT'),
-                    'uri' => 'clientarea.php?action=productdetails&id=67&mg-action=downloadCRT',
+                    'uri'   => 'clientarea.php?action=productdetails&id=67&mg-action=downloadCRT',
                     'order' => 10,
-                    'icon' => 'fas fa-cogs',
+                    'icon'  => 'fas fa-cogs',
                 ]);
                 $myAccount->addChild('DownloadICRT', [
-                    'name' => 'DownloadICRT',
+                    'name'  => 'DownloadICRT',
                     'label' => Lang::absoluteT('Download Intermediate CRT'),
-                    'uri' => 'clientarea.php?action=productdetails&id=67&mg-action=downloadICRT',
+                    'uri'   => 'clientarea.php?action=productdetails&id=67&mg-action=downloadICRT',
                     'order' => 20,
-                    'icon' => 'fas fa-cogs',
+                    'icon'  => 'fas fa-cogs',
                 ]);
                 $myAccount->addChild('DownloadSSL', [
-                    'name' => 'DownloadSSL',
+                    'name'  => 'DownloadSSL',
                     'label' => Lang::absoluteT('Download SSL'),
-                    'uri' => 'clientarea.php?action=productdetails&id=67&mg-action=downloadSSL',
+                    'uri'   => 'clientarea.php?action=productdetails&id=67&mg-action=downloadSSL',
                     'order' => 30,
-                    'icon' => 'fas fa-cogs',
+                    'icon'  => 'fas fa-cogs',
                 ]);
                 $myAccount->addChild('ReissueSSL', [
-                    'name' => 'ReissueSSL',
+                    'name'  => 'ReissueSSL',
                     'label' => Lang::absoluteT('Reissue SSL'),
-                    'uri' => 'clientarea.php?action=productdetails&id=67&mg-action=reissueSSL',
+                    'uri'   => 'clientarea.php?action=productdetails&id=67&mg-action=reissueSSL',
                     'order' => 40,
-                    'icon' => 'fas fa-cogs',
+                    'icon'  => 'fas fa-cogs',
                 ]);
 //                $myAccount->addChild('RenewSSL', [
 //                    'name' => 'RenewSSL',
@@ -58,11 +60,11 @@ add_hook('ClientAreaPrimarySidebar', 1, function($primarySidebar) {
 //                    'icon' => 'fas fa-cogs',
 //                ]);
                 $myAccount->addChild('SendCert', [
-                    'name' => 'SendCert',
+                    'name'  => 'SendCert',
                     'label' => Lang::absoluteT('Send Certificate'),
-                    'uri' => 'clientarea.php?action=productdetails&id=67&mg-action=sendCertificate',
+                    'uri'   => 'clientarea.php?action=productdetails&id=67&mg-action=sendCertificate',
                     'order' => 60,
-                    'icon' => 'fas fa-cogs',
+                    'icon'  => 'fas fa-cogs',
                 ]);
 
 //                $myAccount->addChild('ExtraSANs', [
@@ -75,31 +77,34 @@ add_hook('ClientAreaPrimarySidebar', 1, function($primarySidebar) {
             }
         }
 
-        if(isset($orderData['orderData']['order']['status']) && $orderData['orderData']['order']['status'] == 'pending') {
+        if(isset($orderData['orderData']['order']['status']) && $orderData['orderData']['order']['status'] == 'pending')
+        {
             $myAccount = $primarySidebar->getChild('Service Details Actions');
-            if ($myAccount) {
+            if($myAccount)
+            {
                 $myAccount->addChild('DownloadCSR', [
-                    'name' => 'DownloadCSR',
+                    'name'  => 'DownloadCSR',
                     'label' => Lang::absoluteT('Download CSR'),
-                    'uri' => 'clientarea.php?action=productdetails&id='.$serviceId.'&mg-action=downloadCSR',
+                    'uri'   => 'clientarea.php?action=productdetails&id=' . $serviceId . '&mg-action=downloadCSR',
                     'order' => 10,
-                    'icon' => 'fas fa-cogs'
+                    'icon'  => 'fas fa-cogs'
                 ]);
-                if(isset($orderData['orderData']['orderData']['common_name']['validation_method']) && ($orderData['orderData']['orderData']['common_name']['validation_method'] == 'http' || $orderData['orderData']['orderData']['common_name']['validation_method'] == 'https')) {
+                if(isset($orderData['orderData']['orderData']['common_name']['validation_method']) && ($orderData['orderData']['orderData']['common_name']['validation_method'] == 'http' || $orderData['orderData']['orderData']['common_name']['validation_method'] == 'https'))
+                {
                     $myAccount->addChild('DownloadAuthFile', [
-                        'name' => 'DownloadAuthFile',
+                        'name'  => 'DownloadAuthFile',
                         'label' => Lang::absoluteT('Download Auth File'),
-                        'uri' => 'clientarea.php?action=productdetails&id=' . $serviceId . '&mg-action=downloadAuthFile',
+                        'uri'   => 'clientarea.php?action=productdetails&id=' . $serviceId . '&mg-action=downloadAuthFile',
                         'order' => 20,
-                        'icon' => 'fas fa-cogs'
+                        'icon'  => 'fas fa-cogs'
                     ]);
                 }
                 $myAccount->addChild('ChangeApprovalMethod', [
-                    'name' => 'ChangeApprovalMethod',
+                    'name'  => 'ChangeApprovalMethod',
                     'label' => Lang::absoluteT('Change Approval Method'),
-                    'uri' => 'clientarea.php?action=productdetails&id='.$serviceId.'&mg-action=changeApprovalMethod',
+                    'uri'   => 'clientarea.php?action=productdetails&id=' . $serviceId . '&mg-action=changeApprovalMethod',
                     'order' => 30,
-                    'icon' => 'fas fa-cogs'
+                    'icon'  => 'fas fa-cogs'
                 ]);
             }
         }
@@ -108,23 +113,24 @@ add_hook('ClientAreaPrimarySidebar', 1, function($primarySidebar) {
 });
 
 
-
 add_hook('ClientAreaHeadOutput', 1, function($params) {
 
-    if ($params['clientareaaction'] == 'services' || $params['clientareaaction'] == 'products') {
+    if($params['clientareaaction'] == 'services' || $params['clientareaaction'] == 'products')
+    {
 
         $moduleName = (new \ModulesGarden\Servers\TSSGGSModule\Configuration())->systemName;
-        $services = Capsule::table('tblhosting')
-            ->select(['tblhosting.id'])
-            ->join('tblproducts', 'tblproducts.id', '=', 'tblhosting.packageid')
-            ->join('tblsslorders', 'tblsslorders.serviceid', '=', 'tblhosting.id')
-            ->where('tblhosting.userid', $_SESSION['uid'])
-            ->where('tblsslorders.status', 'Awaiting Configuration')
-            ->where('tblproducts.servertype', $moduleName)
-            ->get();
+        $services   = Capsule::table('tblhosting')
+                             ->select(['tblhosting.id'])
+                             ->join('tblproducts', 'tblproducts.id', '=', 'tblhosting.packageid')
+                             ->join('tblsslorders', 'tblsslorders.serviceid', '=', 'tblhosting.id')
+                             ->where('tblhosting.userid', $_SESSION['uid'])
+                             ->where('tblsslorders.status', 'Awaiting Configuration')
+                             ->where('tblproducts.servertype', $moduleName)
+                             ->get();
 
         $awaitingServicesSSLCENTER = [];
-        foreach ($services as $service) {
+        foreach($services as $service)
+        {
             $awaitingServicesSSLCENTER[$service->id] = $service->id;
         }
 
@@ -144,5 +150,21 @@ add_hook('ClientAreaHeadOutput', 1, function($params) {
             });
         });
     </script>';
+    }
+});
+
+add_hook('ClientAreaPage', 1, function($params) {
+    $page = basename($_SERVER['PHP_SELF']);
+
+    if($page == 'upgrade.php' && $_GET['type'] == 'configoptions')
+    {
+        $serviceId = $_GET['id'];
+        $service   = \ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Service::find($serviceId);
+
+        if($service->product->servertype == 'TSSGGSModule' && \ModulesGarden\TSSGGSModule\App\Libs\AcmeHelpers::isAcmeWhmcsProduct($service->product->id))
+        {
+            header('Location: clientarea.php?action=productdetails&id=' . $serviceId);
+            exit;
+        }
     }
 });

@@ -45,16 +45,18 @@ class ImportForm extends Form implements AdminAreaInterface, AjaxComponentInterf
 
         if(isset($ajaxData['reloadedBy']) && $ajaxData['reloadedBy'] == 'pricingTypePercent')
         {
-            $mode = ((bool)$formData['pricingTypePercent']) ? "percent" : "individual";
+            $productGroupMode = ($formData['productGroup'] == 'new') ? "new" : "existing";
+            $mode             = ((bool)$formData['pricingTypePercent']) ? "percent" : "individual";
         }
         elseif(isset($ajaxData['reloadedBy']) && $ajaxData['reloadedBy'] == 'pricingTypeIndividual')
         {
-            $mode = ((bool)$formData['pricingTypeIndividual']) ? "individual" : "percent";
+            $productGroupMode = ($formData['productGroup'] == 'new') ? "new" : "existing";
+            $mode             = ((bool)$formData['pricingTypeIndividual']) ? "individual" : "percent";
         }
-
-        if(isset($ajaxData['reloadedBy']) && $ajaxData['reloadedBy'] == 'productGroup')
+        elseif(isset($ajaxData['reloadedBy']) && $ajaxData['reloadedBy'] == 'productGroup')
         {
             $productGroupMode = ($formData['productGroup'] == 'new') ? "new" : "existing";
+            $mode             = ((bool)$formData['pricingTypeIndividual']) ? "individual" : "percent";
         }
 
         $this->builder = BuilderCreator::oneColumn($this);

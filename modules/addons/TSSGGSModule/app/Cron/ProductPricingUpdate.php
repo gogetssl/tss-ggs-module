@@ -151,6 +151,14 @@ class ProductPricingUpdate extends AbstractCommand
                             ['type' => 'product', 'currency' => $currency->id, 'relid' => $whmcsProduct->id],
                             [$billingCycle => $currencyPrice]
                         );
+
+                        if($whmcsProduct->paytype == 'onetime' && $billingCycle == 'annually')
+                        {
+                            Pricing::updateOrInsert(
+                                ['type' => 'product', 'currency' => $currency->id, 'relid' => $whmcsProduct->id],
+                                ['monthly' => $currencyPrice]
+                            );
+                        }
                     }
 
                     Logger::info("Pricing for product #{$whmcsProduct->id} has been updated");
@@ -206,6 +214,11 @@ class ProductPricingUpdate extends AbstractCommand
                         foreach($currencies as $currency)
                         {
                             $pricingArray[$currency->id][$billingPeriod] = \convertCurrency($baseCurrencyPrice, $baseCurrencyId, $currency->id);
+
+                            if($whmcsProduct->paytype == 'onetime' && $billingPeriod == 'annually')
+                            {
+                                $pricingArray[$currency->id]['monthly'] = \convertCurrency($baseCurrencyPrice, $baseCurrencyId, $currency->id);
+                            }
                         }
                     }
 

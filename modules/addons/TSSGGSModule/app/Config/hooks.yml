@@ -1,3 +1,5 @@
 name:
   AdminAreaFooterOutput: true
   ClientAreaFooterOutput: true
+  ShoppingCartValidateProductUpdate: true
+  ShoppingCartValidateCheckout: true

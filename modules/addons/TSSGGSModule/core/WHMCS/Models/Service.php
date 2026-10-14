@@ -19,7 +19,7 @@ class Service extends \WHMCS\Service\Service
         return $this->belongsTo("ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Client", 'userid');
     }
 
-    public function configOptions()
+    public function configOptions(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany("ModulesGarden\TSSGGSModule\Core\WHMCS\Models\ServiceConfigOption", 'relid');
     }

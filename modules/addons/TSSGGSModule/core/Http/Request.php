@@ -14,7 +14,7 @@ class Request extends \Symfony\Component\HttpFoundation\Request
         parent::__construct($_GET, $_POST, [], $_COOKIE, $_FILES, $_SERVER);
     }
 
-    public function getScheme()
+    public function getScheme(): string
     {
         return BuildUrl::getVisitorScheme() ?? parent::getScheme();
     }

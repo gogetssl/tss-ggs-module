@@ -24,4 +24,11 @@ class ProductConfigOptions {
         return $results;
     }
 
+    public static function getOptionIdBySystemName($productId, $systemName)
+    {
+        return  ProductConfigOption::join('tblproductconfiglinks', 'tblproductconfigoptions.gid', '=', 'tblproductconfiglinks.gid')
+            ->select('tblproductconfigoptions.id')
+            ->where('tblproductconfiglinks.pid', $productId)
+            ->where('tblproductconfigoptions.optionname', 'LIKE',  "$systemName|%")->first()->id;
+    }
 }

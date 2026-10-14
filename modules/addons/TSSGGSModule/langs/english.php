@@ -49,8 +49,8 @@ $_LANG['admin.configuration.content.step2.next_step_btn']               = 'Next 
 $_LANG['admin.configuration.content.step3.step3_title']   = 'STEP 3. Vendor Selection';
 $_LANG['admin.configuration.content.step3.next_step_btn'] = 'Next step';
 
-$_LANG['admin.configuration.content.step3.step3_title']   = 'STEP 4. Vendor selection';
-$_LANG['admin.configuration.content.step3.next_step_btn'] = 'Next step';
+//$_LANG['admin.configuration.content.step3.step3_title']   = 'STEP 4. Vendor selection';
+//$_LANG['admin.configuration.content.step3.next_step_btn'] = 'Next step';
 
 $_LANG['admin.configuration.content.step4.step4_title']   = 'STEP 4. Connected to API';
 $_LANG['admin.configuration.content.step4.next_step_btn'] = 'Next step';
@@ -404,7 +404,7 @@ $_LANG['admin.settings.index.forms.ssl_settings_form.useProfileDetailsForCsr'] =
 $_LANG['admin.settings.index.forms.ssl_settings_form.defaultCsrCountry']       = 'Default CSR Country';
 
 
-$_LANG['admin.settings.index.forms.ssl_settings_form.renewals']                                                 = 'Renewals';
+$_LANG['admin.settings.index.forms.ssl_settings_form.renewals']                                                 = 'Renewals (Standard Billing)';
 $_LANG['admin.settings.index.forms.ssl_settings_form.recurringOrders']                                          = 'Recurring Orders';
 $_LANG['admin.settings.index.forms.ssl_settings_form.oneTimeOrders']                                            = 'One-time Orders';
 $_LANG['admin.settings.index.forms.ssl_settings_form.visibleRenewButtonBeforeExpiration']                       = 'Visible "Renew" Button Before Expiration';
@@ -424,6 +424,11 @@ $_LANG['admin.settings.index.forms.ssl_settings_form.oneTimeSendExpirationNotifi
 $_LANG['admin.settings.index.forms.ssl_settings_form.oneTimeSendExpirationNotifications_description']           = 'Comma separated, from 0-30';
 $_LANG['admin.settings.index.providers.ssl_settings_provider.oneTimeSendExpirationNotificationsInvalidValue']   = 'Values should be in the range of 0-30';
 
+$_LANG['admin.settings.index.forms.ssl_settings_form.renewalsSubscription']                                     = 'Renewals (Subscription Billing)';
+$_LANG['admin.settings.index.forms.ssl_settings_form.recurringCreateAutomaticRenewalInvoiceSubscription']       = 'Create Automatic Renewal Invoice';
+$_LANG['admin.settings.index.forms.ssl_settings_form.recurringDaysBeforeExpirySubscription']                    = 'Days Before Expiry';
+$_LANG['admin.settings.index.forms.ssl_settings_form.recurringSendExpirationNotificationsSubscription']         = 'Send Expiration Notifications';
+$_LANG['admin.settings.index.providers.ssl_settings_provider.recurringSendExpirationNotificationsSubscription'] = 'Values should be in the range of 0-30';
 
 $_LANG['admin.settings.index.forms.ssl_settings_form.save']           = 'Save';
 $_LANG['admin.settings.index.forms.ssl_settings_form.update_success'] = 'Settings updated successfully';
@@ -549,14 +554,15 @@ $_LANG['admin.pricing.index.data_tables.pricing.array_data_provider.data_table.v
 $_LANG['admin.pricing.index.data_tables.pricing.array_data_provider.data_table.provider']    = 'Provider';
 $_LANG['admin.pricing.index.data_tables.pricing.array_data_provider.data_table.disabled']    = 'Disabled';
 
-
-$_LANG['admin.pricing.index.data_tables.pricing.array_data_provider.data_table.annuallyPrice']    = 'Annually/One-Time';
-$_LANG['admin.pricing.index.data_tables.pricing.array_data_provider.data_table.bienniallyPrice']  = 'Biennially';
-$_LANG['admin.pricing.index.data_tables.pricing.array_data_provider.data_table.trienniallyPrice'] = 'Triennially';
+$_LANG['admin.pricing.index.data_tables.pricing.array_data_provider.data_table.annuallyPriceStrict'] = 'Annually';
+$_LANG['admin.pricing.index.data_tables.pricing.array_data_provider.data_table.annuallyPrice']       = 'Annually/One-Time';
+$_LANG['admin.pricing.index.data_tables.pricing.array_data_provider.data_table.bienniallyPrice']     = 'Biennially';
+$_LANG['admin.pricing.index.data_tables.pricing.array_data_provider.data_table.trienniallyPrice']    = 'Triennially';
 
 //pricing form
 $_LANG['admin.pricing.index.data_tables.pricing.modals.pricing_modal.title']        = 'Pricing';
 $_LANG['admin.pricing.index.data_tables.pricing.forms.pricing_form.options']        = 'Options';
+$_LANG['admin.pricing.index.data_tables.pricing.forms.pricing_form.annuallyStrict'] = 'Annually';
 $_LANG['admin.pricing.index.data_tables.pricing.forms.pricing_form.annually']       = 'Annually/One-Time';
 $_LANG['admin.pricing.index.data_tables.pricing.forms.pricing_form.biennially']     = 'Biennially';
 $_LANG['admin.pricing.index.data_tables.pricing.forms.pricing_form.triennially']    = 'Triennially';
@@ -565,6 +571,8 @@ $_LANG['admin.pricing.index.data_tables.pricing.forms.pricing_form.autoUpdate'] 
 $_LANG['admin.pricing.index.data_tables.pricing.forms.pricing_form.oneTime']        = 'One Time';
 
 $_LANG['admin.pricing.index.data_tables.pricing.forms.pricing_form.info'] = 'Auto Update Information';
+
+$_LANG['acme_order_requires_at_least_one_san'] = 'To order this product you must select at least 1 Additional Single domain SAN or Additional Wildcard SAN.';
 
 
 

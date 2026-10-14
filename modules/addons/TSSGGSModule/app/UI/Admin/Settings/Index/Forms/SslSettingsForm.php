@@ -62,6 +62,10 @@ class SslSettingsForm extends Form implements AdminAreaInterface, AjaxComponentI
         $renewalsWidget->setTitle($this->translate('renewals'));
         $rightContainer->addElement($renewalsWidget);
 
+        $renewalsSubscriptionWidget = new Widget();
+        $renewalsSubscriptionWidget->setTitle($this->translate('renewalsSubscription'));
+        $rightContainer->addElement($renewalsSubscriptionWidget);
+
         //ssl validation------------------------------------------------------------------------------------------------
 
         $this->builder->addFieldInContainer(
@@ -337,6 +341,39 @@ class SslSettingsForm extends Form implements AdminAreaInterface, AjaxComponentI
             true
         );
 
+        //renewals subscription-----------------------------------------------------------------------------------------
+        $recurringOrdersWidget = new Widget();
+        $recurringOrdersWidget->setTitle($this->translate('recurringOrders'));
+        $renewalsSubscriptionWidget->addElement($recurringOrdersWidget);
+
+        $recurringSwitcher = $this->builder->addFieldInContainer(
+            $recurringOrdersWidget,
+            (new Switcher())
+                ->setName('recurringCreateAutomaticRenewalInvoiceSubscription')
+                ->addClass('switcher-revert')
+        );
+
+        $recurringContainer = new Container();
+        $recurringOrdersWidget->addElement($recurringContainer);
+        $recurringSwitcher->onChange(
+            (new Collapse($recurringContainer, !$this->provider()->getValueById('recurringCreateAutomaticRenewalInvoiceSubscription')))
+        );
+
+        $this->builder->addFieldInContainer(
+            $recurringContainer,
+            (new Dropdown())
+                ->setName('recurringDaysBeforeExpirySubscription')
+                ->setDefaultValueAsFirstOption()
+        );
+
+        $this->builder->addFieldInContainer(
+            $recurringContainer,
+            (new Switcher())
+                ->setName('recurringSendExpirationNotificationsSubscription')
+                ->addClass('switcher-revert')
+        );
+
+        //==============================================================================================================
 
         $toolbar = new Toolbar();
         $toolbar->addElement(

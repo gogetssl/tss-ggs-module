@@ -99,7 +99,6 @@ BODY;
         }
         catch(\Exception $e)
         {
-            //Helpers::debugLog("Error sending Email", $e->getMessage());
             throw $e;
         }
     }

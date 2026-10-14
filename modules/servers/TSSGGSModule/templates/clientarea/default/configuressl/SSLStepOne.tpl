@@ -116,6 +116,7 @@
 
             if(validate == true)
             {
+                $('#csrGeneration .modal-body .alert-danger').remove();
                 return true;
             }
             else
@@ -177,8 +178,8 @@
                         $('#csrGeneration .modal-body').prepend('<div class="alert alert-danger">'+res.data.json.message+'</div>');
                     }
 
-                    $('#generateCSRForm').html('{$MGLANG->T('stepone_modal', 'generate')}');
-                    $('#generateCSRForm').prop('disabled', false);
+                    $('#generateCSRFunc').html('{$MGLANG->T('stepone_modal', 'generate')}');
+                    $('#generateCSRFunc').prop('disabled', false);
 
                 });
 

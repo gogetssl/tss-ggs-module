@@ -111,12 +111,7 @@ class ConfigurationProvider extends CrudProvider
                 }
 
                 $max = $max - ($included - $min);
-                $min = $min - $included;
-
-                if($min < 0)
-                {
-                    $min = 0;
-                }
+                $min = 0;
 
                 if($max <= 0)
                 {

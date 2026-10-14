@@ -3,6 +3,7 @@
 namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Pricing\Index\DataTables\Pricing\Forms;
 
 
+use ModulesGarden\TSSGGSModule\App\Libs\AcmeHelpers;
 use ModulesGarden\TSSGGSModule\App\Libs\Helpers;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Pricing\Index\DataTables\Pricing\Providers\PricingProvider;
 use ModulesGarden\TSSGGSModule\Components\Alert\AlertInfo;
@@ -47,13 +48,13 @@ class PricingForm extends Form implements AdminAreaInterface, AjaxComponentInter
         $formData       = Request::get('formData');
         $whmcsProductId = $formData['whmcsProductId'];
         $currencyCode   = $formData['currencyCode'];
+        $isAcmeProduct  = AcmeHelpers::isAcmeWhmcsProduct($whmcsProductId);
 
         foreach($currencies as $currency)
         {
             $tab = (new Tab())->setTitle($currency->code);
-            $tab->setId($currency->code.'Tab');
+            $tab->setId($currency->code . 'Tab');
 
-            //Helpers::debugLog('form', $currencyCode, $currency->code);
 
             if($currency->code == $currencyCode)
             {
@@ -71,14 +72,36 @@ class PricingForm extends Form implements AdminAreaInterface, AjaxComponentInter
             $innerContainer->addClass('innerContainer');
             $tab->addElement($innerContainer);
 
+
             $this->builder = BuilderCreator::threeColumnsInContainer($this, $innerContainer);
-            $this->builder->addField((new FormInputText())->setName($currency->code . '_annually')->setTitle($this->translate('annually')));
-            $this->builder->addField((new FormInputText())->setName($currency->code . '_biennially')->setTitle($this->translate('biennially')));
-            $this->builder->addField((new FormInputText())->setName($currency->code . '_triennially')->setTitle($this->translate('triennially')));
+
+            $annuallyTitleKey = $isAcmeProduct ? 'annuallyStrict' : 'annually';
+
+            $this->builder->addField((new FormInputText())->setName($currency->code . '_annually')->setTitle($this->translate($annuallyTitleKey)));
+
+            if(!$isAcmeProduct)
+            {
+                $this->builder->addField((new FormInputText())->setName($currency->code . '_biennially')->setTitle($this->translate('biennially')));
+                $this->builder->addField((new FormInputText())->setName($currency->code . '_triennially')->setTitle($this->translate('triennially')));
+            }
+            else
+            {
+                $this->builder->addField(new HiddenField())->setName($currency->code . '_biennially')->setValue(0)->setCss('lu-form-group  lu-col-md-4');
+                $this->builder->addField(new HiddenField())->setName($currency->code . '_triennially')->setValue(0)->setCss('lu-form-group  lu-col-md-4');
+            }
 
             $this->builder->addField((new Switcher())->setName($currency->code . '_annually_enable')->setTitle(' ')->addClass('switcher-revert'));
-            $this->builder->addField((new Switcher())->setName($currency->code . '_biennially_enable')->setTitle(' ')->addClass('switcher-revert'));
-            $this->builder->addField((new Switcher())->setName($currency->code . '_triennially_enable')->setTitle(' ')->addClass('switcher-revert'));
+
+            if(!$isAcmeProduct)
+            {
+                $this->builder->addField((new Switcher())->setName($currency->code . '_biennially_enable')->setTitle(' ')->addClass('switcher-revert'));
+                $this->builder->addField((new Switcher())->setName($currency->code . '_triennially_enable')->setTitle(' ')->addClass('switcher-revert'));
+            }
+            else
+            {
+                $this->builder->addField(new HiddenField())->setName($currency->code . '_biennially_enable')->setValue(0)->setCss('lu-form-group  lu-col-md-4');
+                $this->builder->addField(new HiddenField())->setName($currency->code . '_triennially_enable')->setValue(0)->setCss('lu-form-group  lu-col-md-4');
+            }
 
             $configurableOptionsData = Helpers::getConfigurableOptionsData($whmcsProductId, $currency->id);
 
@@ -91,9 +114,18 @@ class PricingForm extends Form implements AdminAreaInterface, AjaxComponentInter
 
                 $widgetBuilder = BuilderCreator::threeColumnsInContainer($this, $widget);
 
-                $widgetBuilder->addField((new FormInputText())->setName($currency->code . '_annually_option_' . $configurableOptionData->subId)->setTitle($this->translate('annually')));
-                $widgetBuilder->addField((new FormInputText())->setName($currency->code . '_biennially_option_' . $configurableOptionData->subId)->setTitle($this->translate('biennially')));
-                $widgetBuilder->addField((new FormInputText())->setName($currency->code . '_triennially_option_' . $configurableOptionData->subId)->setTitle($this->translate('triennially')));
+                $widgetBuilder->addField((new FormInputText())->setName($currency->code . '_annually_option_' . $configurableOptionData->subId)->setTitle($this->translate($annuallyTitleKey)));
+
+                if(!$isAcmeProduct)
+                {
+                    $widgetBuilder->addField((new FormInputText())->setName($currency->code . '_biennially_option_' . $configurableOptionData->subId)->setTitle($this->translate('biennially')));
+                    $widgetBuilder->addField((new FormInputText())->setName($currency->code . '_triennially_option_' . $configurableOptionData->subId)->setTitle($this->translate('triennially')));
+                }
+                else
+                {
+                    $this->builder->addField(new HiddenField())->setName($currency->code . '_biennially_option_' . $configurableOptionData->subId)->setValue(0)->setCss('lu-form-group  lu-col-md-4');
+                    $this->builder->addField(new HiddenField())->setName($currency->code . '_triennially_option_' . $configurableOptionData->subId)->setValue(0)->setCss('lu-form-group  lu-col-md-4');
+                }
 
                 $this->builder->addElement($widget);
             }
@@ -110,7 +142,15 @@ class PricingForm extends Form implements AdminAreaInterface, AjaxComponentInter
         $this->builder = BuilderCreator::threeColumnsInContainer($this, $innerContainer);
         $this->builder->addField((new HiddenField)->setName('whmcsProductId'));
 
-        $this->builder->addFieldInContainer($innerContainer, (new Switcher())->setName('one_time_enable')->setTitle($this->translate('oneTime'))->addClass('switcher-revert'));
+        if($isAcmeProduct)
+        {
+            $this->builder->addFieldInContainer($innerContainer, (new HiddenField())->setName('one_time_enable')->setValue(1));
+        }
+        else
+        {
+            $this->builder->addFieldInContainer($innerContainer, (new Switcher())->setName('one_time_enable')->setTitle($this->translate('oneTime'))->addClass('switcher-revert'));
+        }
+
         $this->builder->addFieldInContainer($innerContainer, (new Switcher())->setName('auto_update_enable')->setTitle($this->translate('autoUpdate'))->addClass('switcher-revert'));
 
 

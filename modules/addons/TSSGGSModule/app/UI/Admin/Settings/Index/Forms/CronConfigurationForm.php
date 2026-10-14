@@ -95,16 +95,16 @@ class CronConfigurationForm extends Form implements AdminAreaInterface, AjaxComp
         $field->setDefaultValueAsFirstOption();
         $field->setName('cron3');
         $field->setOptions([
-            '5m' => 'every 5 minutes',
-            '10m' => 'every 10 minutes',
-            '30m' => 'every 30 minutes',
-            '1h' => 'every hour',
-            '3h' => 'every 3 hours',
-            '6h' => 'every 6 hours',
-            '12h' => 'every 12 hours',
+            //'5m' => 'every 5 minutes',
+            //'10m' => 'every 10 minutes',
+            //'30m' => 'every 30 minutes',
+            //'1h' => 'every hour',
+            //'3h' => 'every 3 hours',
+            //'6h' => 'every 6 hours',
+            //'12h' => 'every 12 hours',
             '1d' => 'every day',
-            '1w' => 'every week',
-            '1mo' => 'every month',
+            //'1w' => 'every week',
+            //'1mo' => 'every month',
             'never' => 'never'
         ]);
         $this->builder->addField($field);

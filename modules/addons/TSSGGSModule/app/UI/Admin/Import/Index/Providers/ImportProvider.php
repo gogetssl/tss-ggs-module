@@ -146,7 +146,6 @@ class ImportProvider extends CrudProvider
                 continue;
             }
 
-            //Helpers::debugLog('ImportProvider', '$remoteOrderData', $remoteOrderData);
 
             $remoteProductId = $remoteOrderData['items'][0]['product_id'];
             $domain          = trim($remoteOrderData['items'][0]['domains'][0]['name']);
@@ -246,7 +245,6 @@ class ImportProvider extends CrudProvider
                 ]
             ];
 
-            //Helpers::debugLog('ImportProvider', '$orderParams for addOrder', $orderParams);
 
             RequestModel::insert(
                 [
@@ -279,7 +277,6 @@ class ImportProvider extends CrudProvider
 
             $request = ['orderData' => $orderData, 'orderFiles' => $orderFiles];
 
-            //Helpers::debugLog('ImportProvider', '$request for certificate', $request);
 
             RequestModel::insert(
                 [

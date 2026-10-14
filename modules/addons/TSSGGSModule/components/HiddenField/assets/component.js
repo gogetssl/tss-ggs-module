@@ -7,6 +7,14 @@ var component =
         {
       
         },
+        props: [
+            'css',
+        ],
+        data: function () {
+            return {
+                css_: [],
+            };
+        },
         watch: {
             value_: function (newVal, oldVal) {
    

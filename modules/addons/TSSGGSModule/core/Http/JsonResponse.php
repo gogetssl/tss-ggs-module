@@ -74,7 +74,7 @@ class JsonResponse extends SymfonyJsonResponse
         return $data;
     }
 
-    public function setData($data = [])
+    public function setData($data = []): static
     {
         try
         {

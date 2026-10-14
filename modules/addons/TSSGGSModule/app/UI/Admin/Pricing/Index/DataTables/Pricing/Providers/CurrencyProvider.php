@@ -24,7 +24,6 @@ class CurrencyProvider extends CrudProvider
     {
         $currency = $this->formData['currency'];
 
-        //Helpers::debugLog('CurrencyProvider', 'update', $_REQUEST);
 
         return (new Response())
             ->setActions([

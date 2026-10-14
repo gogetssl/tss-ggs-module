@@ -2,11 +2,23 @@
 
 namespace ModulesGarden\Servers\TSSGGSModule\app\repository\whmcs;
 
+use ModulesGarden\Servers\TSSGGSModule\app\models\whmcs\Service;
+use ModulesGarden\TSSGGSModule\App\Libs\AcmeHelpers;
+use ModulesGarden\TSSGGSModule\App\Libs\Helpers;
 use WHMCS\Database\Capsule as DataBase;
 
-class Config {
+class Config
+{
+    public function getConfigureSSLUrl($id, $serviceID = null)
+    {
+        $service = Service::find($serviceID);
 
-    public function getConfigureSSLUrl($id, $serviceID = null) {
+        if($service && AcmeHelpers::isAcmeWhmcsProduct($service->packageid))
+        {
+            $WHMCSUrl = $this->getBrandURL($serviceID);
+            return $WHMCSUrl . '/clientarea.php?action=productdetails&id=' . $service->id . '&acmeconfig=1';
+        }
+
         $WHMCSUrl = $this->getBrandURL($serviceID);
         return $WHMCSUrl . '/configuressl.php?cert=' . md5($id);
     }
@@ -17,45 +29,50 @@ class Config {
         $mb2x = DataBase::table('tbladdonmodules')->where('module', 'Multibrand')->first();
 
         $configuration = DataBase::table('tblconfiguration')->where('setting', 'SystemURL')->first();
-        $systemURL = $configuration->value;
+        $systemURL     = $configuration->value;
 
-        if (function_exists('MultibrandFunctionalityAutoLoader') && !empty($mb1x)) {
-
+        if(function_exists('MultibrandFunctionalityAutoLoader') && !empty($mb1x))
+        {
             $brandData = [];
             MultibrandFunctionalityAutoLoader();
             $check = \MultibrandFunctionality\app\models\BrandRelations::factory()->searchFor('service', $id);
-            if (isset($check->brand_id)) {
+            if(isset($check->brand_id))
+            {
                 $currentBrand = \MultibrandFunctionality\app\models\Brand::factory($check->brand_id)->fetchOne();
             }
-            if (empty($currentBrand)) {
+            if(empty($currentBrand))
+            {
                 $currentBrand = \MultibrandFunctionality\app\models\Brand::factory()->getDefaultOne();
             }
             $brandData['systemURL'] = $currentBrand->systemURL;
             return $brandData['systemURL'];
-
-        } elseif (file_exists(dirname(dirname(dirname(__DIR__))) . DIRECTORY_SEPARATOR . 'addons' . DIRECTORY_SEPARATOR . 'Multibrand' . DIRECTORY_SEPARATOR . 'Loader.php') && !empty($mb2x)) {
+        }
+        elseif(file_exists(dirname(dirname(dirname(__DIR__))) . DIRECTORY_SEPARATOR . 'addons' . DIRECTORY_SEPARATOR . 'Multibrand' . DIRECTORY_SEPARATOR . 'Loader.php') && !empty($mb2x))
+        {
 
             require_once dirname(dirname(dirname(__DIR__))) . DIRECTORY_SEPARATOR . 'addons' . DIRECTORY_SEPARATOR . 'Multibrand' . DIRECTORY_SEPARATOR . 'Loader.php';
             new \MGModule\Multibrand\Loader();
 
             $hotingRel = DataBase::table('Multibrand_Relations')->where('type', 'hosting')->where('relid', $id)->first();
-            $brandID = false;
-            if (isset($hotingRel->brand_id) && !empty($hotingRel->brand_id)) {
+            $brandID   = false;
+            if(isset($hotingRel->brand_id) && !empty($hotingRel->brand_id))
+            {
                 $brandID = $hotingRel->brand_id;
             }
-            if ($brandID === false) {
-                $brand = DataBase::table('Multibrand_Brands')->first();
+            if($brandID === false)
+            {
+                $brand   = DataBase::table('Multibrand_Brands')->first();
                 $brandID = $brand->id;
             }
-            $settings = [];
-            $Brand = DataBase::table('Multibrand_Brands')->where('id', $brandID)->first();
-            $settings['domain'] = $Brand->domain;
-            $systemURL = \MGModule\Multibrand\Core\Server::getSystemURL($settings['domain']);
+            $settings               = [];
+            $Brand                  = DataBase::table('Multibrand_Brands')->where('id', $brandID)->first();
+            $settings['domain']     = $Brand->domain;
+            $systemURL              = \MGModule\Multibrand\Core\Server::getSystemURL($settings['domain']);
             $brandData['systemURL'] = $systemURL;
             return $brandData['systemURL'];
-
-        } else {
-
+        }
+        else
+        {
             $brandData['systemURL'] = $systemURL;
             return $brandData['systemURL'];
         }

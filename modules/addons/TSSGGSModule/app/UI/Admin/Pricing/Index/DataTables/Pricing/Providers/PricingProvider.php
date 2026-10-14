@@ -2,6 +2,7 @@
 
 namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Pricing\Index\DataTables\Pricing\Providers;
 
+use ModulesGarden\TSSGGSModule\App\Libs\AcmeHelpers;
 use ModulesGarden\TSSGGSModule\App\Libs\Helpers;
 use ModulesGarden\TSSGGSModule\App\Models\RemoteProduct;
 use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\ProductRepository;
@@ -20,10 +21,10 @@ class PricingProvider extends CrudProvider
         $currencies     = Currency::get();
 
         $productRepository                = new ProductRepository();
-        $product = Product::where('id', $whmcsProductId)->first()->toArray();
+        $product                          = Product::where('id', $whmcsProductId)->first()->toArray();
         $productConfiguration             = $productRepository->getProductConfiguration($whmcsProductId);
         $this->data['auto_update_enable'] = ($productConfiguration['price_auto'] == 'on');
-        $this->data['one_time_enable'] = ($product['paytype'] == 'onetime');
+        $this->data['one_time_enable']    = ($product['paytype'] == 'onetime');
 
         foreach($currencies as $currency)
         {
@@ -42,7 +43,13 @@ class PricingProvider extends CrudProvider
 
             foreach($expectedBillingCycles as $billingCycle)
             {
-                $price  = $pricing->{$billingCycle};
+                $price = $pricing->{$billingCycle};
+
+                if($this->data['one_time_enable'])
+                {
+                    $price = $pricing->monthly;
+                }
+
                 $enable = 1;
                 if(!$pricing || $price < 0)
                 {
@@ -61,6 +68,12 @@ class PricingProvider extends CrudProvider
                 foreach($configurableOptionsData as $configurableOptionData)
                 {
                     $price = $configurableOptionData->{$billingCycle};
+
+                    if($this->data['one_time_enable'])
+                    {
+                        $price = $configurableOptionData->monthly;
+                    }
+
                     if(!$price || $price < 0)
                     {
                         $price = '0.00';
@@ -84,8 +97,8 @@ class PricingProvider extends CrudProvider
 
         $paytype = ($this->formData['one_time_enable'] ? 'onetime' : 'recurring');
         Product::where('id', $whmcsProductId)->update([
-            'paytype' => $paytype,
-        ]);
+                                                          'paytype' => $paytype,
+                                                      ]);
 
         foreach($currencies as $currency)
         {
@@ -100,8 +113,8 @@ class PricingProvider extends CrudProvider
                 'triennially'
             ];
 
-            if($paytype == 'onetime') {
-
+            if($paytype == 'onetime')
+            {
                 $price = floatval($this->formData[$currency->code . '_' . 'annually']);
 
                 Pricing::updateOrInsert(
@@ -114,9 +127,10 @@ class PricingProvider extends CrudProvider
                     ['annually' => $price]
                 );
 
-                foreach ($configurableOptionsData as $configurableOptionData) {
+                foreach($configurableOptionsData as $configurableOptionData)
+                {
                     $subOptionId = $configurableOptionData->subId;
-                    $price = floatval($this->formData[$currency->code . '_' . 'annually' . '_option_' . $subOptionId]);
+                    $price       = floatval($this->formData[$currency->code . '_' . 'annually' . '_option_' . $subOptionId]);
 
                     Pricing::updateOrInsert(
                         ['type' => 'configoptions', 'currency' => $currency->id, 'relid' => $subOptionId],
@@ -128,17 +142,19 @@ class PricingProvider extends CrudProvider
                         ['annually' => $price]
                     );
                 }
-
-
             }
-            else {
-
-                foreach ($expectedBillingCycles as $billingCycle) {
+            else
+            {
+                foreach($expectedBillingCycles as $billingCycle)
+                {
                     $enable = (int)$this->formData[$currency->code . '_' . $billingCycle . '_enable'];
 
-                    if (isset($this->formData[$currency->code . '_' . $billingCycle]) && $enable) {
+                    if(isset($this->formData[$currency->code . '_' . $billingCycle]) && $enable)
+                    {
                         $price = floatval($this->formData[$currency->code . '_' . $billingCycle]);
-                    } else {
+                    }
+                    else
+                    {
                         $price = -1;
                     }
 
@@ -147,9 +163,10 @@ class PricingProvider extends CrudProvider
                         [$billingCycle => $price]
                     );
 
-                    foreach ($configurableOptionsData as $configurableOptionData) {
+                    foreach($configurableOptionsData as $configurableOptionData)
+                    {
                         $subOptionId = $configurableOptionData->subId;
-                        $price = floatval($this->formData[$currency->code . '_' . $billingCycle . '_option_' . $subOptionId]);
+                        $price       = floatval($this->formData[$currency->code . '_' . $billingCycle . '_option_' . $subOptionId]);
 
                         Pricing::updateOrInsert(
                             ['type' => 'configoptions', 'currency' => $currency->id, 'relid' => $subOptionId],

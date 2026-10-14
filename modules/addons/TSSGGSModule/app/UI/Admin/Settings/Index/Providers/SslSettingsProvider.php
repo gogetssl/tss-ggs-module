@@ -20,11 +20,17 @@ class SslSettingsProvider extends CrudProvider
             $this->data[$key] = $value;
         }
 
-        $this->availableValues['country']                       = Helpers::getCountryOptions();
-        $this->availableValues['defaultCsrCountry']             = Helpers::getCountryOptions();
-        $this->availableValues['additionalDaysForRenewalOrder'] = Helpers::get30DaysOptions();
-        $this->availableValues['recurringDaysBeforeExpiry']     = Helpers::getDaysOptions();
-        $this->availableValues['oneTimeDaysBeforeExpiry']       = Helpers::getDaysOptions();
+        if(!isset($this->data['recurringDaysBeforeExpirySubscription']))
+        {
+            $this->data['recurringDaysBeforeExpirySubscription'] = 30;
+        }
+
+        $this->availableValues['country']                               = Helpers::getCountryOptions();
+        $this->availableValues['defaultCsrCountry']                     = Helpers::getCountryOptions();
+        $this->availableValues['additionalDaysForRenewalOrder']         = Helpers::get30DaysOptions();
+        $this->availableValues['recurringDaysBeforeExpirySubscription'] = Helpers::getDaysOptions(true);
+        $this->availableValues['recurringDaysBeforeExpiry']             = Helpers::getDaysOptions();
+        $this->availableValues['oneTimeDaysBeforeExpiry']               = Helpers::getDaysOptions();
     }
 
     public function update()
@@ -59,7 +65,23 @@ class SslSettingsProvider extends CrudProvider
                                                                       }
                                                                   }
                                                               }
+                                                          ],
+                                                          'recurringSendExpirationNotificationsSubscription'   => [
+                                                              function(string $attribute, $value, \Closure $fail) {
+                                                                  $parts = explode(",", $value);
+                                                                  foreach($parts as $part)
+                                                                  {
+                                                                      $part = (int)trim($part);
+                                                                      if($part < 0 || $part > 30)
+                                                                      {
+                                                                          $fail($this->translate('recurringSendExpirationNotificationsSubscription', [
+                                                                              'field' => $attribute
+                                                                          ]));
+                                                                      }
+                                                                  }
+                                                              }
                                                           ]
+
                                                       ]
         );
 

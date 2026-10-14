@@ -16,7 +16,6 @@ class LogProvider
 
     public function getLog($data = [])
     {
-        //Helpers::debugLog('LogProvider - getLog', '$data', $data);
 
         $expectedFields = [
             'whmcsUrl'            => 'WHMCS URL:',
@@ -85,7 +84,6 @@ class LogProvider
                     ->select('id', 'type', 'date', 'data', 'message')
                     ->get();
 
-        //Helpers::debugLog('LogProvider - getLog', '$rows', $rows);
 
         foreach($rows as $row)
         {

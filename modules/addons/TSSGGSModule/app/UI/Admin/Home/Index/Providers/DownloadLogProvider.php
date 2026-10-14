@@ -13,7 +13,6 @@ class DownloadLogProvider extends CrudProvider
     {
         $data        = $this->formData->toArray();
 
-        //Helpers::debugLog('DownloadLogProvider', '$data', $data);
 
         $logProvider = new LogProvider();
         $log         = $logProvider->getLog($data);

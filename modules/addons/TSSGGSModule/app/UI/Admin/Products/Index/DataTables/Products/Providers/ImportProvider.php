@@ -2,6 +2,7 @@
 
 namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Products\Index\DataTables\Products\Providers;
 
+use ModulesGarden\TSSGGSModule\App\Libs\AcmeHelpers;
 use ModulesGarden\TSSGGSModule\App\Libs\Helpers;
 use ModulesGarden\TSSGGSModule\App\Models\RemoteProduct;
 use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\ProductRepository;
@@ -33,6 +34,10 @@ class ImportProvider extends CrudProvider
             $mode = ((bool)$formData['pricingTypePercent']) ? "percent" : "individual";
         }
         elseif(isset($ajaxData['reloadedBy']) && $ajaxData['reloadedBy'] == 'pricingTypeIndividual')
+        {
+            $mode = ((bool)$formData['pricingTypeIndividual']) ? "individual" : "percent";
+        }
+        elseif(isset($ajaxData['reloadedBy']) && $ajaxData['reloadedBy'] == 'productGroup')
         {
             $mode = ((bool)$formData['pricingTypeIndividual']) ? "individual" : "percent";
         }
@@ -149,6 +154,11 @@ class ImportProvider extends CrudProvider
                 foreach($currencies as $currency)
                 {
                     $pricing[$currency->id][$billingPeriod] = \convertCurrency($baseCurrencyPrice, $baseCurrencyId, $currency->id);
+
+                    if(AcmeHelpers::isAcmeRemoteProduct($remoteProduct->remoteId) && $billingPeriod == 'annually')
+                    {
+                        $pricing[$currency->id]['monthly'] = \convertCurrency($baseCurrencyPrice, $baseCurrencyId, $currency->id);
+                    }
                 }
             }
 
@@ -182,6 +192,13 @@ class ImportProvider extends CrudProvider
             //create configOptions
 
             $product = Product::find($productId);
+
+            if(AcmeHelpers::isAcmeWhmcsProduct($productId))
+            {
+                $product->paytype = 'onetime';
+                $product->configoptionsupgrade = 1;
+                $product->save();
+            }
 
             if(!$product)
             {
@@ -227,12 +244,7 @@ class ImportProvider extends CrudProvider
                 }
 
                 $max = $max - ($included - $min);
-                $min = $min - $included;
-
-                if($min < 0)
-                {
-                    $min = 0;
-                }
+                $min = 0;
 
                 if($max < 0)
                 {
@@ -276,6 +288,11 @@ class ImportProvider extends CrudProvider
                         foreach($currencies as $currency)
                         {
                             $pricingArray[$currency->id][$billingPeriod] = \convertCurrency($baseCurrencyPrice, $baseCurrencyId, $currency->id);
+
+                            if(AcmeHelpers::isAcmeRemoteProduct($remoteProduct->remoteId) && $billingPeriod == 'annually')
+                            {
+                                $pricingArray[$currency->id]['monthly'] = \convertCurrency($baseCurrencyPrice, $baseCurrencyId, $currency->id);
+                            }
                         }
                     }
 

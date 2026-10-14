@@ -3,6 +3,7 @@
 namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Pricing\Index\DataTables\Pricing\ArrayDataProvider;
 
 
+use ModulesGarden\TSSGGSModule\App\Libs\AcmeHelpers;
 use ModulesGarden\TSSGGSModule\App\Libs\Helpers;
 
 use ModulesGarden\TSSGGSModule\App\Models\RemoteProduct;
@@ -15,6 +16,7 @@ use ModulesGarden\TSSGGSModule\Core\Contracts\Components\AdminAreaInterface;
 use ModulesGarden\TSSGGSModule\Core\Contracts\Components\AjaxComponentInterface;
 use ModulesGarden\TSSGGSModule\Core\DataProviders\ArrayDataProvider;
 use ModulesGarden\TSSGGSModule\Core\Support\Facades\Request;
+use ModulesGarden\TSSGGSModule\Core\WHMCS\Helper;
 use ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Currency;
 use ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Pricing;
 use ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Product;
@@ -130,6 +132,10 @@ class DataTable extends \ModulesGarden\TSSGGSModule\Components\DataTable\DataTab
             foreach($expectedBillingCycles as $billingCycle)
             {
                 $price  = $pricing->{$billingCycle};
+                if($product['paytype'] == 'onetime')
+                {
+                    $price = $pricing->monthly;
+                }
 
                 if(!$pricing || $price < 0)
                 {
@@ -142,6 +148,12 @@ class DataTable extends \ModulesGarden\TSSGGSModule\Components\DataTable\DataTab
                     foreach($configurableOptionsData as $configurableOptionData)
                     {
                         $optionPrice = (float)$configurableOptionData->{$billingCycle};
+
+                        if($product['paytype'] == 'onetime')
+                        {
+                            $optionPrice = (float)$configurableOptionData->monthly;
+                        }
+
                         $optionPrice = formatCurrency($optionPrice, $currency->id);
                         $price .= '<br>' . $optionPrice;
 

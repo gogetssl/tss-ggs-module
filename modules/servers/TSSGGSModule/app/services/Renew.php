@@ -4,6 +4,7 @@ namespace ModulesGarden\Servers\TSSGGSModule\app\services;
 
 use ModulesGarden\Servers\TSSGGSModule\app\models\whmcs\Service;
 use ModulesGarden\Servers\TSSGGSModule\app\models\whmcs\SSL;
+use ModulesGarden\TSSGGSModule\App\Libs\AcmeHelpers;
 use ModulesGarden\TSSGGSModule\App\Libs\SSLTrustCenterApi;
 use ModulesGarden\TSSGGSModule\App\Models\Request;
 use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
@@ -15,6 +16,12 @@ class Renew
     public function run($params)
     {
         $serviceId = $params['serviceid'];
+
+        $service = Service::find($serviceId);
+        if($service && AcmeHelpers::isAcmeWhmcsProduct($service->packageid)) {
+            return 'success';
+        }
+
         $userId = $params['userid'];
         $pid = $params['pid'];
         $billingCycle = $params['model']->billingcycle;

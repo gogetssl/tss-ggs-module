@@ -16,7 +16,7 @@ class Application extends \Symfony\Component\Console\Application
     /**
      * @override
      */
-    public function run(?InputInterface $input = null, ?OutputInterface $output = null)
+    public function run(?InputInterface $input = null, ?OutputInterface $output = null): int
     {
         $this->addCommandsProvider(new LoadCommandsControllers);
         $this->addCommandsProvider(new LoadCoreCommandsController);

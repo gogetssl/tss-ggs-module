@@ -4,7 +4,9 @@ namespace ModulesGarden\TSSGGSModule\App\Cron;
 
 use Exception;
 use ModulesGarden\TSSGGSModule\App\Helpers\EmailTemplates;
+use ModulesGarden\TSSGGSModule\App\Libs\AcmeHelpers;
 use ModulesGarden\TSSGGSModule\App\Libs\SSLTrustCenterApi;
+use ModulesGarden\TSSGGSModule\App\Models\AcmeSubscription;
 use ModulesGarden\TSSGGSModule\App\Models\CronCheck;
 use ModulesGarden\TSSGGSModule\App\Models\Request;
 use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
@@ -256,8 +258,24 @@ class SSLCertificatesProcessing extends AbstractCommand
                 continue;
 
             }
+        }
 
+        $io->progressFinish();
+        $io->title('Subscriptions');
+        $pendingSubscriptions = AcmeSubscription::where('status', 'pending')->get();
+        $io->progressStart($pendingSubscriptions->count());
 
+        foreach($pendingSubscriptions as $subscription)
+        {
+            try
+            {
+                $io->progressAdvance(1);
+                AcmeHelpers::refreshAcmeCertificateDetails($subscription->service_id);
+            }
+            catch(\Throwable $e)
+            {
+                $errorToDB = $e->getMessage();
+            }
         }
 
         CronCheck::updateOrCreate(

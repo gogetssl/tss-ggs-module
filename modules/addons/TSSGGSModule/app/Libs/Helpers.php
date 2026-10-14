@@ -13,6 +13,7 @@ use ModulesGarden\TSSGGSModule\Core\WHMCS\Models\PaymentGateway;
 use ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Pricing;
 use ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Product;
 use ModulesGarden\TSSGGSModule\Core\WHMCS\Models\ProductGroup;
+use ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Service;
 use ModulesGarden\TSSGGSModule\Core\WHMCS\URL\Admin;
 use ModulesGarden\TSSGGSModule\Packages\Product\Libs\ConfigurableOptions\Quantity;
 use ModulesGarden\TSSGGSModule\Packages\Product\Libs\ConfigurableOptions\SubOption\SubOption;
@@ -25,6 +26,35 @@ class Helpers
     static public function debugLog($action, $request = [], $response = [])
     {
         logmodulecall("TSSGGSModule Debug Log", $action, $request, $response, $response);
+    }
+
+    public static function isWildcardEnabled($whmcsProductId)
+    {
+        $whmcsProduct = Product::find($whmcsProductId);
+
+        if(!$whmcsProduct)
+        {
+            return false;
+        }
+
+        $configurableOptionsService = new ConfigurableOptions($whmcsProduct);
+        $configurableOptionModel = $configurableOptionsService->getConfigurableOptionByName('sans_wildcard');
+
+        if($configurableOptionModel)
+        {
+            return !(bool)$configurableOptionModel->hidden;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    public static function validateDomain($domain) {
+        return (preg_match("/^([a-z\d](-*[a-z\d])*)(\.([a-z\d](-*[a-z\d])*))*$/i", $domain)
+            && preg_match("/^.{1,253}$/", $domain)
+            && preg_match("/^[^\.]{1,63}(\.[^\.]{1,63})*$/", $domain)
+            && preg_match('/[^.\d]/', $domain));
     }
 
     public static function getConfiguredApis()
@@ -53,6 +83,23 @@ class Helpers
         return $apis;
     }
 
+    public static function getApiByServiceId($whmcsServiceId)
+    {
+        $service = Service::find($whmcsServiceId);
+        if(!$service)
+        {
+            return false;
+        }
+        $vendor = $service->product->configoption1;
+        $apis    = Helpers::getConfiguredApis();
+
+        if(isset($apis[$vendor]))
+        {
+            return $apis[$vendor];
+        }
+        return false;
+    }
+
 
     public static function getConfigurableOptionsData($productId, $currencyId)
     {
@@ -64,7 +111,7 @@ class Helpers
                       ->where('tblpricing.type', 'configoptions')
                       ->where('tblpricing.currency', $currencyId)
                       ->where('tblproductconfigoptions.optiontype', '4')
-                      ->select(['tblproductconfigoptions.optionname', 'tblproductconfigoptionssub.id as subId', 'tblpricing.annually', 'tblpricing.biennially', 'tblpricing.triennially'])
+                      ->select(['tblproductconfigoptions.optionname', 'tblproductconfigoptionssub.id as subId', 'tblpricing.monthly', 'tblpricing.annually', 'tblpricing.biennially', 'tblpricing.triennially'])
                       ->get();
     }
 
@@ -267,9 +314,13 @@ class Helpers
         return $productGroupOptions;
     }
 
-    public static function getDaysOptions()
+    public static function getDaysOptions($forSubscription = false)
     {
-        return [3, 7, 14, 21, 30];
+        if($forSubscription)
+        {
+            return [0 => 0, 3 => 3, 7 => 7, 10 => 10, 14 => 14, 21 => 21, 30 => 30];
+        }
+        return [3 => 3, 7 => 7, 14 => 14, 21 => 21, 30 => 30];
     }
 
     public static function get30DaysOptions()
@@ -485,12 +536,7 @@ class Helpers
                     }
 
                     $max = $max - ($included - $min);
-                    $min = $min - $included;
-
-                    if($min <= 0)
-                    {
-                        $min = 0;
-                    }
+                    $min = 0;
 
                     if($max <= 0)
                     {
@@ -569,6 +615,11 @@ class Helpers
                             foreach($currencies as $currency)
                             {
                                 $pricingArray[$currency->id][$billingPeriod] = \convertCurrency($baseCurrencyPrice, $baseCurrencyId, $currency->id);
+
+                                if(AcmeHelpers::isAcmeWhmcsProduct($whmcsProduct->id) && $billingPeriod == 'annually')
+                                {
+                                    $pricingArray[$currency->id]['monthly'] = \convertCurrency($baseCurrencyPrice, $baseCurrencyId, $currency->id);
+                                }
                             }
                         }
 
