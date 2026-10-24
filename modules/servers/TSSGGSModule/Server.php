@@ -183,12 +183,15 @@ class Server extends AbstractMainDriver {
 
             }
 
-            return json_encode($content);
+            return json_encode($content, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
 
         } catch (\Exception $ex) {
 
             self::dump($ex);
-            return $ex->getMessage();
+            return json_encode([
+                'result' => 'error',
+                'error'  => $ex->getMessage(),
+            ], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
 
         }
     }

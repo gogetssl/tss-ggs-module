@@ -90,8 +90,11 @@ function TSSGGSModule_ClientArea(array $params) {
     
     if(!empty($_REQUEST['json']))
     {
-        header('Content-Type: text/plain');
-        echo Server::getJSONClientAreaPage($params, $_REQUEST);
+        // Response is always a json_encode()d string (see Server::getJSONClientAreaPage), never HTML
+        header('Content-Type: application/json; charset=utf-8');
+        header('X-Content-Type-Options: nosniff');
+        $jsonResponse = Server::getJSONClientAreaPage($params, $_REQUEST);
+        echo $jsonResponse;
         die();
     }
 
