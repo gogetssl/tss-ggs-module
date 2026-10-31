@@ -442,6 +442,24 @@ class Cpanel
         throw new \Exception(isset($response->errors[0]) ? $response->errors[0] : 'Unable to get document root for ' . $domain);
     }
 
+    /**
+     * Private key stored in the cPanel account (UAPI SSL::get_key), by key id or friendly name.
+     * Used by the legacy-module migration: the TheSSLStore module keeps AutoInstall keys in cPanel only.
+     */
+    public function getPrivateKey($username, $keyId)
+    {
+        $this->initiateConnection($username);
+        foreach(['id' => $keyId, 'friendly_name' => $keyId] as $param => $value)
+        {
+            $response = $this->exec('get_key', '/execute/SSL/', [$param => $value]);
+            if(isset($response->data->key) && strpos((string)$response->data->key, '-----BEGIN') === 0)
+            {
+                return (string)$response->data->key;
+            }
+        }
+        throw new \Exception(isset($response->errors[0]) ? $response->errors[0] : 'Private key ' . $keyId . ' not found in the cPanel account');
+    }
+
     public function installSSL($username, $domain, $cert, $key, $cabundle)
     {
         $this->initiateConnection($username);

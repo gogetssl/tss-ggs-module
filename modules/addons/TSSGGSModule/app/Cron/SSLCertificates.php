@@ -115,7 +115,7 @@ class SSLCertificates extends AbstractCommand
             ->whereNotIn('tblsslorders.remoteid', $certificatesWhere ?: [0])
             ->where('tblsslorders.updated_at', '<', date('Y-m-d H:i:s', strtotime('-1 day')))
             ->orderBy('tblsslorders.updated_at', 'asc')
-            ->limit(10)
+            ->limit(50)
             ->get()
             ->toArray();
 
