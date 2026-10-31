@@ -7,6 +7,13 @@ if(!defined('DS'))define('DS',DIRECTORY_SEPARATOR);
 
 require_once __DIR__.DS.'Loader.php';
 new \ModulesGarden\Servers\TSSGGSModule\Loader();
+
+// Edition name (GoGetSSL Module / TheSSLStore Plugin) - loaded directly, without booting the addon framework
+if(file_exists(dirname(__DIR__, 2).DS.'addons'.DS.'TSSGGSModule'.DS.'app'.DS.'Libs'.DS.'Edition.php'))
+{
+    require_once dirname(__DIR__, 2).DS.'addons'.DS.'TSSGGSModule'.DS.'app'.DS.'Libs'.DS.'Edition.php';
+}
+
 \ModulesGarden\Servers\TSSGGSModule\Server::I();
 
 
@@ -17,7 +24,7 @@ if (!defined("WHMCS")) {
 
 function TSSGGSModule_MetaData() {
     return array(
-        'DisplayName' => 'The SSL Store & GoGetSSL Module',
+        'DisplayName' => class_exists('\ModulesGarden\TSSGGSModule\App\Libs\Edition', false) ? \ModulesGarden\TSSGGSModule\App\Libs\Edition::name() : 'GoGetSSL Module',
         'APIVersion' => '1.0',
     );
 }

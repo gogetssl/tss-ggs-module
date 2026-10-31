@@ -29,7 +29,7 @@ $_LANG['instalation.menu.step5']              = 'STEP 5 - Choose Products';
 $_LANG['instalation.menu.step6']              = 'STEP 6 - Finalization';
 
 $_LANG['admin.configuration.content.step1.step1_title']   = 'STEP 1. Welcome';
-$_LANG['admin.configuration.content.step1.first_p']       = 'Thank you for installing the <b>The SSL Store & GoGetSSL Module</b> module!';
+$_LANG['admin.configuration.content.step1.first_p']       = 'Thank you for installing the <b>:moduleName</b>!';
 $_LANG['admin.configuration.content.step1.second_p']      = 'This add-on will assist you in importing products such as SSL certificates and other security offerings into your WHMCS. All you need is an account, and you can start selling these products.';
 $_LANG['admin.configuration.content.step1.third_p']       = 'Click the <b>"Next"</b> button so we can check whether your WHMCS installation is compatible.';
 $_LANG['admin.configuration.content.step1.next_step_btn'] = 'Next step';

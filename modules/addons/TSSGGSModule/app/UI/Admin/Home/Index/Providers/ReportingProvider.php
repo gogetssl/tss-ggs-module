@@ -86,7 +86,7 @@ class ReportingProvider extends CrudProvider
             $logProvider = new LogProvider();
             $to          = 'apisupport@thesslstore.com';
             $message     = new \WHMCS\Mail\Message();
-            $subject     = 'NEW WHMCS The SSL Store & GoGetSSL Module issue reported';
+            $subject     = 'NEW WHMCS ' . \ModulesGarden\TSSGGSModule\App\Libs\Edition::name() . ' issue reported';
             $body        = <<<BODY
                 Dear Support,<br><br>Here is a new issue reported from {$CONFIG['CompanyName']}.
 BODY;

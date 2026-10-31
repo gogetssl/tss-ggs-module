@@ -23,7 +23,7 @@ class Step1 extends Widget implements AjaxComponentInterface
         $this->setTitle($this->translate('step1_title'));
 
         $text = new Text();
-        $text->setText($this->translate('first_p').'<br><br>');
+        $text->setText($this->translate('first_p', ['moduleName' => \ModulesGarden\TSSGGSModule\App\Libs\Edition::name()]).'<br><br>');
         $this->addElement($text);
 
         $row = new Row();

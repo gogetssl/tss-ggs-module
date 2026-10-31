@@ -11,13 +11,13 @@ use WHMCS\Database\Capsule;
  */
 class AutoInstallEmailTemplates
 {
-    const CERT_INSTALLED_TEMPLATE     = 'The SSL Store & GoGetSSL Module - Certificate Installed';
-    const RENEWAL_COMPLETE_TEMPLATE   = 'The SSL Store & GoGetSSL Module - Renewal Complete';
-    const DNS_TO_EMAIL_TEMPLATE       = 'The SSL Store & GoGetSSL Module - DNS Validation Switched to Email';
-    const AUTO_REISSUE_FAILED_TEMPLATE = 'The SSL Store & GoGetSSL Module - Auto Reissue Failed';
-    const VALIDATION_WARNING_TEMPLATE = 'The SSL Store & GoGetSSL Module - Validation Warning';
-    const RENEWAL_STARTED_TEMPLATE    = 'The SSL Store & GoGetSSL Module - Renewal Started';
-    const RENEWAL_AUTORENEWED_TEMPLATE = 'The SSL Store & GoGetSSL Module - Certificate Autorenewed';
+    const CERT_INSTALLED_TEMPLATE     = 'Certificate Installed';
+    const RENEWAL_COMPLETE_TEMPLATE   = 'Renewal Complete';
+    const DNS_TO_EMAIL_TEMPLATE       = 'DNS Validation Switched to Email';
+    const AUTO_REISSUE_FAILED_TEMPLATE = 'Auto Reissue Failed';
+    const VALIDATION_WARNING_TEMPLATE = 'Validation Warning';
+    const RENEWAL_STARTED_TEMPLATE    = 'Renewal Started';
+    const RENEWAL_AUTORENEWED_TEMPLATE = 'Certificate Autorenewed';
 
     protected static function getDefinitions()
     {
@@ -106,33 +106,20 @@ class AutoInstallEmailTemplates
         }
     }
 
-    protected static function createTemplate($name, $subject, $message)
+    /**
+     * Returns the WHMCS template name for this edition, see EmailTemplates::resolveTemplate()
+     */
+    protected static function createTemplate($key, $subject, $message)
     {
-        if(EmailTemplate::where('name', $name)->first())
-        {
-            return;
-        }
-
-        EmailTemplate::insert([
-            'type'       => 'product',
-            'name'       => $name,
-            'subject'    => $subject,
-            'message'    => $message,
-            'disabled'   => '0',
-            'custom'     => '1',
-            'plaintext'  => '0',
-            'created_at' => date('Y-m-d H:i:s'),
-            'updated_at' => date('Y-m-d H:i:s')
-        ]);
+        return EmailTemplates::resolveTemplate($key, $subject, $message);
     }
 
     protected static function send($template, $serviceId, array $vars)
     {
         $definitions = self::getDefinitions();
-        if(isset($definitions[$template]))
-        {
-            self::createTemplate($template, $definitions[$template][0], $definitions[$template][1]);
-        }
+        $template    = isset($definitions[$template])
+            ? self::createTemplate($template, $definitions[$template][0], $definitions[$template][1])
+            : EmailTemplates::resolveTemplate($template);
 
         $systemUrl         = Capsule::table('tblconfiguration')->where('setting', 'SystemURL')->value('value');
         $vars['order_url'] = rtrim((string)$systemUrl, '/') . '/clientarea.php?action=productdetails&id=' . (int)$serviceId;

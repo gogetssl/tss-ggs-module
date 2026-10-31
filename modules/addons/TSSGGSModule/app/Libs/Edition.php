@@ -1,0 +1,75 @@
+<?php
+
+namespace ModulesGarden\TSSGGSModule\App\Libs;
+
+/**
+ * Distribution edition (GoGetSSL Module / TheSSLStore Plugin) - see app/Config/edition.php.
+ * Self-contained on purpose: it is also used by the server module before the addon framework is booted.
+ */
+class Edition
+{
+    const GGS = 'ggs';
+    const TSS = 'tss';
+
+    /**
+     * Name used by 1.2.x releases - email templates created under it are renamed to the edition name
+     */
+    const LEGACY_NAME = 'The SSL Store & GoGetSSL Module';
+
+    protected static $editions = [
+        self::GGS => [
+            'name'        => 'GoGetSSL Module',
+            'description' => 'GoGetSSL module for WHMCS: sell and manage SSL/TLS certificates, ACME and AutoInstall SSL subscriptions and other security products.',
+        ],
+        self::TSS => [
+            'name'        => 'TheSSLStore Plugin',
+            'description' => 'TheSSLStore plugin for WHMCS: sell and manage SSL/TLS certificates, ACME and AutoInstall SSL subscriptions and other security products.',
+        ],
+    ];
+
+    protected static $edition = null;
+
+    public static function get()
+    {
+        if(self::$edition === null)
+        {
+            $config        = @include __DIR__ . '/../Config/edition.php';
+            $edition       = is_array($config) && isset($config['edition']) ? strtolower(trim((string)$config['edition'])) : '';
+            self::$edition = isset(self::$editions[$edition]) ? $edition : self::GGS;
+        }
+
+        return self::$edition;
+    }
+
+    public static function name()
+    {
+        return self::$editions[self::get()]['name'];
+    }
+
+    public static function description()
+    {
+        return self::$editions[self::get()]['description'];
+    }
+
+    /**
+     * Names of all editions plus the legacy name - used to find email templates created by another edition or by 1.2.x
+     */
+    public static function knownNames()
+    {
+        $names = [self::LEGACY_NAME];
+        foreach(self::$editions as $edition)
+        {
+            $names[] = $edition['name'];
+        }
+
+        return array_values(array_unique($names));
+    }
+
+    /**
+     * Full WHMCS email template name for a template key, e.g. "GoGetSSL Module - Reissue"
+     */
+    public static function templateName($key)
+    {
+        return self::name() . ' - ' . $key;
+    }
+}
