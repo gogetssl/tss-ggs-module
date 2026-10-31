@@ -446,21 +446,67 @@ class Cpanel
      * Private key stored in the cPanel account (UAPI SSL::show_key, the call the legacy TheSSLStore module uses), by key id or friendly name.
      * Used by the legacy-module migration: the TheSSLStore module keeps AutoInstall keys in cPanel only.
      */
-    public function getPrivateKey($username, $keyId)
+    public function getPrivateKey($username, $keyId, $csrPem = '')
     {
         $this->initiateConnection($username);
-        foreach(['id' => $keyId, 'friendly_name' => $keyId] as $param => $value)
+        $response = null;
+        if((string)$keyId !== '')
         {
-            $response = $this->exec('show_key', '/execute/SSL/', [$param => $value]);
-            foreach(['key', 'text', 'pem'] as $field)
+            foreach(['id' => $keyId, 'friendly_name' => $keyId] as $param => $value)
             {
-                if(isset($response->data->$field) && strpos(trim((string)$response->data->$field), '-----BEGIN') === 0)
+                $response = $this->exec('show_key', '/execute/SSL/', [$param => $value]);
+                if(($pem = $this->keyPemFromResponse($response)) !== '')
                 {
-                    return trim((string)$response->data->$field);
+                    return $pem;
                 }
             }
         }
+
+        // the stored id may be stale (legacy module regenerated keys): find the key that matches the CSR's public key
+        $modulus = $csrPem !== '' ? self::csrModulus($csrPem) : '';
+        if($modulus !== '')
+        {
+            $list = $this->exec('list_keys', '/execute/SSL/', []);
+            foreach((array)($list->data ?? []) as $key)
+            {
+                if(isset($key->modulus) && strtolower((string)$key->modulus) === $modulus && !empty($key->id))
+                {
+                    $response = $this->exec('show_key', '/execute/SSL/', ['id' => (string)$key->id]);
+                    if(($pem = $this->keyPemFromResponse($response)) !== '')
+                    {
+                        return $pem;
+                    }
+                }
+            }
+            throw new \Exception('No private key in the cPanel account matches the CSR of this order' . ($keyId !== '' ? ' (key id ' . $keyId . ' not found either)' : ''));
+        }
         throw new \Exception(isset($response->errors[0]) ? $response->errors[0] : 'Private key ' . $keyId . ' not found in the cPanel account');
+    }
+
+    protected function keyPemFromResponse($response)
+    {
+        foreach(['key', 'text', 'pem'] as $field)
+        {
+            if(isset($response->data->$field) && strpos(trim((string)$response->data->$field), '-----BEGIN') === 0)
+            {
+                return trim((string)$response->data->$field);
+            }
+        }
+
+        return '';
+    }
+
+    /** Lowercase hex RSA modulus of a CSR's public key, '' when it cannot be read */
+    public static function csrModulus($csrPem)
+    {
+        $pub = @openssl_csr_get_public_key($csrPem);
+        if(!$pub)
+        {
+            return '';
+        }
+        $details = openssl_pkey_get_details($pub);
+
+        return isset($details['rsa']['n']) ? strtolower(bin2hex($details['rsa']['n'])) : '';
     }
 
     public function installSSL($username, $domain, $cert, $key, $cabundle)

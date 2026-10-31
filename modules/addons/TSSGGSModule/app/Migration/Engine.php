@@ -399,7 +399,7 @@ class Engine
             }
             $cpanel = new Cpanel();
             $cpanel->setService($service);
-            $pem = $cpanel->getPrivateKey($service->user, $state['legacy_pvtkey_id']);
+            $pem = $cpanel->getPrivateKey($service->user, $state['legacy_pvtkey_id'], (string)($rec['order_payload']['csr'] ?? ''));
 
             return [$pem, 'private key fetched from cPanel'];
         }
