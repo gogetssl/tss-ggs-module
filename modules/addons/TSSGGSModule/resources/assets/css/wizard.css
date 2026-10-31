@@ -29,7 +29,15 @@
     font-size: 14px;
 }
 
-/* The wizard has its own header: hide the module navbar and breadcrumb on the wizard pages only */
+/*
+ * The wizard has its own header. On the wizard pages only: hide the WHMCS page title (<h1> with the module
+ * name), the module navbar and the breadcrumb, and drop the WHMCS content padding.
+ */
+.contentarea:has(.tssggs-wizard) {
+    padding: 0;
+}
+
+.contentarea:has(.tssggs-wizard) h1,
 .lu-app:has(.tssggs-wizard) > :not(.lu-app-main),
 .lu-app-main__body:has(.tssggs-wizard) > .lu-app-main__top {
     display: none;
