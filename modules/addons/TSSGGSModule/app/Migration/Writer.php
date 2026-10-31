@@ -145,6 +145,9 @@ class Writer
      */
     public function writeService(array $rec, string $privateKeyPem = ''): array
     {
+        // table creation inside the transaction would commit it implicitly (MySQL DDL)
+        AutoInstallQueue::createTables();
+
         return Capsule::connection()->transaction(function() use ($rec, $privateKeyPem) {
             $now     = date('Y-m-d H:i:s');
             $written = ['ssl_order_id' => (int)$rec['ssl_order_id'], 'requests' => [], 'queue' => [], 'acme' => 0, 'acme_domains' => [], 'ais' => 0];

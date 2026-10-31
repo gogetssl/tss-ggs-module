@@ -101,6 +101,12 @@ class Engine
                 $services['skipped'][] = $row;
                 continue;
             }
+            if(empty($rec['skip_reason']) && !empty($rec['order_payload']) && (string)($rec['order_payload']['product']['id'] ?? '') === '')
+            {
+                $row['reason'] = 'Gateway product not resolved for this service (code "' . ($rec['product_code'] ?? '') . '")';
+                $services['skipped'][] = $row;
+                continue;
+            }
             if(($rec['kind'] ?? '') === 'unsupported')
             {
                 $services['unsupported'][] = $row;
@@ -220,10 +226,15 @@ class Engine
             // 2. settings
             $writer = new Writer($runId, $this->source);
             $filled = $writer->writeSettings($this->reader->readSettings());
-            if(Credentials::applyIfEmpty($this->source))
+            $copied = Credentials::applyIfEmpty($this->source);
+            if($copied === 'copied')
             {
                 $filled[] = 'credentials.' . $this->source;
                 $this->log($runId, 'info', self::PHASE_PREPARE, 'Gateway credentials copied from the legacy module');
+            }
+            elseif($copied !== '')
+            {
+                $this->log($runId, 'warning', self::PHASE_PREPARE, 'Legacy gateway credentials not reusable, enter them in Settings', ['error' => $copied]);
             }
             Store::addJob($runId, Store::KIND_SETTINGS, 0, 0, Store::JOB_DONE, null, ['filled' => $filled]);
             $this->log($runId, 'info', self::PHASE_PREPARE, 'Settings merged', ['filled' => $filled]);
@@ -338,7 +349,7 @@ class Engine
 
                 return;
             }
-            if(!empty($rec['order_payload']) && empty($rec['order_payload']['product']['id']))
+            if(!empty($rec['order_payload']) && (string)($rec['order_payload']['product']['id'] ?? '') === '')
             {
                 throw new \RuntimeException('Order payload has no gateway product id');
             }
@@ -460,7 +471,7 @@ class Engine
                 $writer->switchProducts($products);
                 $writer->switchOrders($doneOrderIds);
             });
-            Store::updateRun($runId, ['snapshot_max_order_id' => (int)Capsule::table('tblsslorders')->max('id')]);
+            Store::mergeSummary($runId, ['snapshot_max_order_id' => (int)Capsule::table('tblsslorders')->max('id')]);
             $this->log($runId, 'info', self::PHASE_SWITCH, 'Switched to the unified module', ['products' => count($products), 'orders' => count($doneOrderIds)]);
 
             // legacy addon off (its tables stay; rollback reactivates it)

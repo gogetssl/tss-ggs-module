@@ -2,6 +2,7 @@
 
 namespace ModulesGarden\TSSGGSModule\App\Migration;
 
+use ModulesGarden\TSSGGSModule\App\Libs\SSLTrustCenterApi;
 use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
 
 /**
@@ -84,18 +85,44 @@ class Credentials
         return [$all, $filled];
     }
 
-    /** Stores the legacy credentials of $source when the unified block is still empty. Returns true when stored. */
-    public static function applyIfEmpty(string $source): bool
+    /**
+     * Stores the legacy credentials of $source when the unified block is still empty and the gateway accepts them.
+     * Returns 'copied' | 'rejected: <reason>' | '' (nothing to do).
+     */
+    public static function applyIfEmpty(string $source): string
     {
         $all = self::current();
         if(self::isSet($all[$source]) || !($legacy = self::legacy($source)))
         {
-            return false;
+            return '';
+        }
+        $error = self::verify($source, $legacy);
+        if($error !== '')
+        {
+            return 'rejected: ' . $error;
         }
         $all[$source] = $legacy;
         self::save($all);
 
-        return true;
+        return 'copied';
+    }
+
+    /** One read-only gateway call with the block; '' when accepted, else the error */
+    public static function verify(string $source, array $block): string
+    {
+        $sandbox = ($block['OperationMode'] ?? '') === 'sandbox';
+        $code    = $sandbox ? $block['TestPartnerCode'] : $block['PartnerCode'];
+        $token   = $sandbox ? $block['TestAuthToken'] : $block['AuthToken'];
+        try
+        {
+            (new SSLTrustCenterApi(strtoupper($source), $code, $token))->getProducts();
+        }
+        catch(\Throwable $e)
+        {
+            return $e->getMessage();
+        }
+
+        return '';
     }
 
     public static function save(array $all): void

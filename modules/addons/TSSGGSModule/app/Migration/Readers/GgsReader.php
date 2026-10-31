@@ -101,10 +101,11 @@ class GgsReader extends AbstractReader
     public function readCredentials(): array
     {
         $s = $this->settings();
-        // GGS 3.x sends "GGS <partner code or login>:<API password>" to the same gateway
-        $code = trim((string)($s['api_partner_code'] ?? '')) ?: trim((string)($s['api_login'] ?? ''));
+        // GGS 3.x sends "GGS <partner code>:<API password>" to the same gateway. Without a partner code the legacy
+        // module only holds v1 API credentials (login + password), which the gateway does not accept.
+        $code = trim((string)($s['api_partner_code'] ?? ''));
 
-        return ['PartnerCode' => $code, 'AuthToken' => trim((string)($s['api_password'] ?? ''))];
+        return ['PartnerCode' => $code, 'AuthToken' => $code !== '' ? trim((string)($s['api_password'] ?? '')) : ''];
     }
 
     public function readSettings(): array
@@ -244,7 +245,7 @@ class GgsReader extends AbstractReader
         $itemId        = (int)Configdata::get($cd, 'tls_item_id', 0);
 
         $rec['remote_id']         = $itemId > 0 ? (string)$itemId : $remoteId;
-        $rec['remote_product_id'] = $remoteProduct ? (int)$remoteProduct->remoteId : (int)Configdata::get($cd, 'product_id', $svc['configoption1']);
+        $rec['remote_product_id'] = $remoteProduct ? (string)$remoteProduct->remoteId : (string)(int)Configdata::get($cd, 'product_id', $svc['configoption1']);
         if(!$remoteProduct)
         {
             $rec['warnings'][] = 'Gateway product not found for GoGetSSL product id ' . $rec['remote_product_id'] . ' (sync products in step 4)';

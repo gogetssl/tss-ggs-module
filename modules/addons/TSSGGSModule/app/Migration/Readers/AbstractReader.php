@@ -184,10 +184,18 @@ abstract class AbstractReader implements LegacyReaderInterface
     /**
      * Order payload in the shape of POST /certificates/{category}
      */
-    protected function buildOrderPayload(int $remoteProductId, int $termMonths, string $csr, string $commonName, string $cnMethod, array $sans, array $contacts): array
+    /** Gateway product id as the gateway sends it: int for numeric ids (GoGetSSL), string codes otherwise (TheSSLStore) */
+    public static function productIdValue($id)
+    {
+        $id = trim((string)$id);
+
+        return ctype_digit($id) ? (int)$id : $id;
+    }
+
+    protected function buildOrderPayload($remoteProductId, int $termMonths, string $csr, string $commonName, string $cnMethod, array $sans, array $contacts): array
     {
         $payload = [
-            'product'     => ['id' => $remoteProductId, 'term' => $termMonths > 0 ? $termMonths : 12],
+            'product'     => ['id' => self::productIdValue($remoteProductId), 'term' => $termMonths > 0 ? $termMonths : 12],
             'csr'         => $csr,
             'common_name' => ['name' => $commonName, 'validation_method' => $cnMethod],
             'contacts'    => $contacts,
@@ -284,7 +292,7 @@ abstract class AbstractReader implements LegacyReaderInterface
                 ],
                 'items'     => [[
                     'id'           => $itemId,
-                    'product_id'   => (int)$args['remote_product_id'],
+                    'product_id'   => self::productIdValue($args['remote_product_id']),
                     'status'       => $status,
                     'vendor'       => ['id' => (string)($args['vendor_order_id'] ?? '')],
                     'csr'          => (string)$args['csr'],

@@ -241,7 +241,12 @@ class Store
 
     public static function finishJob(int $jobId, string $status, ?string $reason = null, array $data = []): void
     {
-        Capsule::table(self::TABLE_JOBS)->where('id', $jobId)->update([
+        $update = [];
+        if(!empty($data['ssl_order_id']))
+        {
+            $update['ssl_order_id'] = (int)$data['ssl_order_id'];
+        }
+        Capsule::table(self::TABLE_JOBS)->where('id', $jobId)->update($update + [
             'status'     => $status,
             'reason'     => $reason !== null ? substr($reason, 0, 512) : null,
             'data'       => json_encode($data),

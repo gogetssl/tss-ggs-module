@@ -187,6 +187,30 @@ class TssReader extends AbstractReader
 
     // ---- Products ---- //
 
+    /**
+     * Product code of a service: tblhosting.configoption1 (often empty), else the TSS order data row,
+     * else the product's configoption1 unless the product was already rewritten to the unified layout ('TSS').
+     */
+    protected function serviceProductCode(array $svc): string
+    {
+        $code = $this->productCode((string)$svc['configoption1']);
+        if(in_array($code, ['tss', 'ggs'], true))
+        {
+            $code = ''; // product already rewritten to the unified layout during this run
+        }
+        if($code === '' && Schema::tableExists('mod_sslstore_orders_data'))
+        {
+            $code = strtolower(trim((string)Capsule::table('mod_sslstore_orders_data')->where('service_id', (int)$svc['id'])->orderBy('id', 'desc')->value('product_code')));
+        }
+        if($code === '')
+        {
+            $fromProduct = $this->productCode((string)Capsule::table('tblproducts')->where('id', (int)$svc['packageid'])->value('configoption1'));
+            $code = in_array($fromProduct, ['tss', 'ggs'], true) ? '' : $fromProduct;
+        }
+
+        return $code;
+    }
+
     protected function productCode(string $configoption1): string
     {
         $code = trim($configoption1);
@@ -272,7 +296,7 @@ class TssReader extends AbstractReader
         }
 
         $order = $this->sslOrder($serviceId);
-        $code  = $this->productCode((string)$svc['configoption1']);
+        $code  = $this->serviceProductCode($svc);
         $rec   = [
             'service_id'   => $serviceId,
             'client_id'    => (int)$svc['userid'],
@@ -320,7 +344,7 @@ class TssReader extends AbstractReader
     protected function readSsl(array $rec, array $svc, array $order, array $cd, string $code): array
     {
         $remoteProduct = $this->mapper ? $this->mapper->forTss($code) : null;
-        $rec['remote_product_id'] = $remoteProduct ? (int)$remoteProduct->remoteId : 0;
+        $rec['remote_product_id'] = $remoteProduct ? (string)$remoteProduct->remoteId : '';
         if(!$remoteProduct)
         {
             $rec['warnings'][] = 'Gateway product not found for TheSSLStore product code "' . $code . '"';
