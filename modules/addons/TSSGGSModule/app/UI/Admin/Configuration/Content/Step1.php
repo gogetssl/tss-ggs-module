@@ -3,7 +3,6 @@
 namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Configuration\Content;
 
 use ModulesGarden\TSSGGSModule\Components\Button\ButtonSuccess;
-use ModulesGarden\TSSGGSModule\Components\Image\Image;
 use ModulesGarden\TSSGGSModule\Components\Row\Row;
 use ModulesGarden\TSSGGSModule\Components\Text\Text;
 use ModulesGarden\TSSGGSModule\Components\Widget\Widget;
@@ -18,8 +17,6 @@ class Step1 extends Widget implements AjaxComponentInterface
 
     public function loadHtml(): void
     {
-        global $CONFIG;
-
         $this->setTitle($this->translate('step1_title'));
 
         \ModulesGarden\TSSGGSModule\App\UI\Admin\Configuration\Shared\WizardLayout::prepareStep($this, 1, $this->translate('step1_title'));
@@ -51,14 +48,6 @@ class Step1 extends Widget implements AjaxComponentInterface
         $text = new Text();
         $text->setText($this->translate('third_p'));
         $this->addElement($text);
-
-        $row = new Row();
-        $this->addElement($row);
-
-        $img = new Image();
-        $img->setCss('mt30_custom');
-        $img->setUrl($CONFIG['SystemURL'].'/modules/addons/TSSGGSModule/resources/assets/img/img_providers.png');
-        $this->addElement($img);
 
         $row = new Row();
         $this->addElement($row);
