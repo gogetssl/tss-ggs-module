@@ -270,11 +270,6 @@ a.tssggs-wizard__item:focus-visible {
     box-shadow: var(--tw-shadow);
 }
 
-/* the widget's own title is replaced by .tssggs-step__eyebrow / __title */
-.tssggs-wizard .tssggs-step > .lu-widget__header {
-    display: none;
-}
-
 .tssggs-wizard .tssggs-step > .lu-widget__body > .lu-widget__content {
     padding: 32px;
     font-size: 15px;

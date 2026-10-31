@@ -17,8 +17,6 @@ class Step1 extends Widget implements AjaxComponentInterface
 
     public function loadHtml(): void
     {
-        $this->setTitle($this->translate('step1_title'));
-
         \ModulesGarden\TSSGGSModule\App\UI\Admin\Configuration\Shared\WizardLayout::prepareStep($this, 1, $this->translate('step1_title'));
 
         $text = new Text();

@@ -20,7 +20,6 @@ class Step2 extends Widget implements AjaxComponentInterface
 
     public function loadHtml(): void
     {
-        $this->setTitle($this->translate('step2_title'));
         WizardLayout::prepareStep($this, 2, $this->translate('step2_title'));
 
         $checks  = (new SystemRequirements())->check();

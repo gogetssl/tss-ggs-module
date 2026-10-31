@@ -53,7 +53,7 @@ class WizardLayout
     }
 
     /**
-     * "Step N of 6" + title, shown at the top of the step card (the widget's own header is hidden by CSS)
+     * "Step N of 6" + title, shown at the top of the step card (step widgets have no widget title, so this is the only heading)
      */
     protected static function heading(int $step, string $title): Text
     {
