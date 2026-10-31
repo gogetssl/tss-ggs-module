@@ -13,7 +13,7 @@ use ModulesGarden\TSSGGSModule\Core\Http\JsonResponse;
 
 /**
  * Legacy module migration page and its actions.
- * Mutating actions are POST only and carry the WHMCS admin token (see token()).
+ * Mutating actions carry the WHMCS admin token (link token or POST field, see requireToken()).
  */
 class Migration extends AbstractController implements AdminAreaInterface
 {
@@ -31,11 +31,12 @@ class Migration extends AbstractController implements AdminAreaInterface
             $source = $this->source();
             Choice::set($source, Choice::MIGRATE);
             $engine = new Engine($source);
+            // options are 'on' unless the link switches them off (opt_keys=0, opt_logs=0, opt_deactivate=0)
             $runId  = $engine->start($this->admin(), [
-                'fetch_cpanel_keys' => !empty($_POST['fetch_cpanel_keys']),
-                'copy_templates'    => !empty($_POST['copy_templates']),
-                'backup_logs'       => !empty($_POST['backup_logs']),
-                'deactivate_legacy' => !empty($_POST['deactivate_legacy']),
+                'fetch_cpanel_keys' => ($_REQUEST['opt_keys'] ?? '1') !== '0',
+                'copy_templates'    => false,
+                'backup_logs'       => ($_REQUEST['opt_logs'] ?? '1') !== '0',
+                'deactivate_legacy' => ($_REQUEST['opt_deactivate'] ?? '1') !== '0',
             ]);
             $engine->runBatch($runId);
         }
@@ -82,21 +83,21 @@ class Migration extends AbstractController implements AdminAreaInterface
 
     public function rollback()
     {
-        $this->mutate(function() { Engine::rollback((int)$_POST['id'], $this->admin()); });
+        $this->mutate(function() { Engine::rollback((int)$_REQUEST['id'], $this->admin()); });
 
         return Helper\redirect('migration', 'index');
     }
 
     public function deleteBackups()
     {
-        $this->mutate(function() { Engine::deleteBackups((int)$_POST['id'], $this->admin()); });
+        $this->mutate(function() { Engine::deleteBackups((int)$_REQUEST['id'], $this->admin()); });
 
         return Helper\redirect('migration', 'index');
     }
 
     public function extendBackups()
     {
-        $this->mutate(function() { Engine::extendBackups((int)$_POST['id']); });
+        $this->mutate(function() { Engine::extendBackups((int)$_REQUEST['id']); });
 
         return Helper\redirect('migration', 'index');
     }
@@ -187,9 +188,10 @@ class Migration extends AbstractController implements AdminAreaInterface
 
     protected function requireToken(): void
     {
-        $token = (string)($_POST['token'] ?? '');
+        // WHMCS admin links carry the token in the query string (generate_token('link')); the runner posts it
+        $token = (string)($_REQUEST['token'] ?? '');
         $valid = (string)($_SESSION['tkval'] ?? '');
-        if($_SERVER['REQUEST_METHOD'] !== 'POST' || $token === '' || $valid === '' || !hash_equals($valid, $token))
+        if($token === '' || $valid === '' || !hash_equals($valid, $token))
         {
             throw new \RuntimeException('Invalid or expired security token. Reload the page and try again.');
         }

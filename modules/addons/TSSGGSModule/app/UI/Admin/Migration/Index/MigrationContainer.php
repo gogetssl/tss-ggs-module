@@ -109,19 +109,14 @@ class MigrationContainer extends Container implements AdminAreaInterface
         {
             $token  = MigrationController::token();
             $report = 'addonmodules.php?module=TSSGGSModule&mg-page=migration&mg-action=report&source=' . $source;
-            $html  .= '<div class="tssggs-actions">'
+            $base   = 'addonmodules.php?module=TSSGGSModule&mg-page=migration&source=' . $source . '&token=' . rawurlencode($token);
+            $html  .= '<p class="tssggs-muted">' . htmlspecialchars($this->t('start_defaults')) . '</p>'
+                . '<div class="tssggs-actions">'
                 . '<a class="lu-btn lu-btn--default" href="' . $report . '">' . htmlspecialchars($this->t('btn_report')) . '</a>'
-                . '<form method="post" action="addonmodules.php?module=TSSGGSModule&mg-page=migration&mg-action=start" class="tssggs-start" onsubmit="return confirm(' . htmlspecialchars(json_encode($this->t('confirm_start')), ENT_QUOTES) . ');">'
-                . '<input type="hidden" name="token" value="' . htmlspecialchars($token) . '"><input type="hidden" name="source" value="' . $source . '">'
-                . '<label><input type="checkbox" name="fetch_cpanel_keys" value="1" checked> ' . htmlspecialchars($this->t('opt_keys')) . '</label>'
-                . '<label><input type="checkbox" name="deactivate_legacy" value="1" checked> ' . htmlspecialchars($this->t('opt_deactivate')) . '</label>'
-                . '<label><input type="checkbox" name="backup_logs" value="1" checked> ' . htmlspecialchars($this->t('opt_backup_logs')) . '</label>'
-                . '<button type="submit" class="lu-btn lu-btn--success">' . htmlspecialchars($this->t('btn_start')) . '</button>'
-                . '</form>'
-                . '<form method="post" action="addonmodules.php?module=TSSGGSModule&mg-page=migration&mg-action=skip">'
-                . '<input type="hidden" name="token" value="' . htmlspecialchars($token) . '"><input type="hidden" name="source" value="' . $source . '">'
-                . '<button type="submit" class="lu-btn lu-btn--default">' . htmlspecialchars($this->t('btn_skip')) . '</button>'
-                . '</form>'
+                . $this->link($base . '&mg-action=start', $this->t('btn_start'), 'lu-btn lu-btn--success', $this->t('confirm_start'))
+                . $this->link($base . '&mg-action=start&opt_keys=0', $this->t('btn_start_nokeys'), 'lu-btn lu-btn--default', $this->t('confirm_start'))
+                . $this->link($base . '&mg-action=start&opt_deactivate=0', $this->t('btn_start_keeplegacy'), 'lu-btn lu-btn--default', $this->t('confirm_start'))
+                . $this->link($base . '&mg-action=skip', $this->t('btn_skip'), 'lu-btn lu-btn--default')
                 . '</div>';
         }
         else
@@ -194,17 +189,18 @@ class MigrationContainer extends Container implements AdminAreaInterface
             $html .= '<p class="tssggs-muted">' . htmlspecialchars($this->t('legacy_deactivated', ['result' => $d['ok'] ? $this->t('yes') : $this->t('no')])) . '</p>';
         }
 
-        $token = MigrationController::token();
+        $token   = MigrationController::token();
+        $runBase = 'addonmodules.php?module=TSSGGSModule&mg-page=migration&id=' . (int)$run['id'] . '&token=' . rawurlencode($token);
         $html .= '<div class="tssggs-actions">'
             . '<a class="lu-btn lu-btn--default" href="addonmodules.php?module=TSSGGSModule&mg-page=migration&mg-action=log&id=' . (int)$run['id'] . '">' . htmlspecialchars($this->t('btn_log')) . '</a>';
         if($run['backup_prefix'])
         {
             $html .= '<span class="tssggs-muted">' . htmlspecialchars($this->t('backups_until', ['date' => (string)$run['backup_expires_at']])) . '</span>'
-                . '<form method="post" action="addonmodules.php?module=TSSGGSModule&mg-page=migration&mg-action=extendBackups"><input type="hidden" name="token" value="' . htmlspecialchars($token) . '"><input type="hidden" name="id" value="' . (int)$run['id'] . '"><button type="submit" class="lu-btn lu-btn--default">' . htmlspecialchars($this->t('btn_extend')) . '</button></form>'
-                . '<form method="post" action="addonmodules.php?module=TSSGGSModule&mg-page=migration&mg-action=deleteBackups" onsubmit="return confirm(' . htmlspecialchars(json_encode($this->t('confirm_delete')), ENT_QUOTES) . ');"><input type="hidden" name="token" value="' . htmlspecialchars($token) . '"><input type="hidden" name="id" value="' . (int)$run['id'] . '"><button type="submit" class="lu-btn lu-btn--default">' . htmlspecialchars($this->t('btn_delete_backups')) . '</button></form>';
+                . $this->link($runBase . '&mg-action=extendBackups', $this->t('btn_extend'), 'lu-btn lu-btn--default')
+                . $this->link($runBase . '&mg-action=deleteBackups', $this->t('btn_delete_backups'), 'lu-btn lu-btn--default', $this->t('confirm_delete'));
             if(in_array($run['status'], [Store::RUN_COMPLETED, Store::RUN_FAILED], true) || $status['stale'])
             {
-                $html .= '<form method="post" action="addonmodules.php?module=TSSGGSModule&mg-page=migration&mg-action=rollback" onsubmit="return confirm(' . htmlspecialchars(json_encode($this->t('confirm_rollback')), ENT_QUOTES) . ');"><input type="hidden" name="token" value="' . htmlspecialchars($token) . '"><input type="hidden" name="id" value="' . (int)$run['id'] . '"><button type="submit" class="lu-btn lu-btn--danger">' . htmlspecialchars($this->t('btn_rollback')) . '</button></form>';
+                $html .= $this->link($runBase . '&mg-action=rollback', $this->t('btn_rollback'), 'lu-btn lu-btn--danger', $this->t('confirm_rollback'));
             }
         }
         else
@@ -247,6 +243,14 @@ class MigrationContainer extends Container implements AdminAreaInterface
         }
 
         return implode(' · ', $parts) ?: '—';
+    }
+
+    /** Action link; an inline confirm() works inside the Vue-rendered HTML (script tags would not) */
+    protected function link(string $href, string $label, string $class, string $confirm = ''): string
+    {
+        $onclick = $confirm !== '' ? ' onclick="return confirm(' . htmlspecialchars(json_encode($confirm), ENT_QUOTES) . ');"' : '';
+
+        return '<a class="' . $class . '" href="' . htmlspecialchars($href) . '"' . $onclick . '>' . htmlspecialchars($label) . '</a>';
     }
 
     protected function html(string $html): Text
