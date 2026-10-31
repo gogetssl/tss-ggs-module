@@ -12,6 +12,7 @@ $files = [
     'module_styles.css',
     'mg_styles.css',
     'vue2-datepicker.min.css',
+    'wizard.css',
 ];
 
 if (isset($_REQUEST['type']) && $_REQUEST['type'] == 'module')

@@ -22,6 +22,8 @@ class Step1 extends Widget implements AjaxComponentInterface
 
         $this->setTitle($this->translate('step1_title'));
 
+        $this->addElement(\ModulesGarden\TSSGGSModule\App\UI\Admin\Configuration\Shared\WizardLayout::heading(1, $this->translate('step1_title')));
+
         $text = new Text();
         $text->setText($this->translate('first_p', ['moduleName' => \ModulesGarden\TSSGGSModule\App\Libs\Edition::name()]).'<br><br>');
         $this->addElement($text);
@@ -31,6 +33,16 @@ class Step1 extends Widget implements AjaxComponentInterface
 
         $text = new Text();
         $text->setText($this->translate('second_p').'<br><br>');
+        $this->addElement($text);
+
+        $features = '';
+        foreach([1, 2, 3] as $i)
+        {
+            $features .= '<div class="tssggs-feature"><div class="tssggs-feature__title">' . htmlspecialchars($this->translate('feature' . $i . '_title')) . '</div>'
+                . '<div class="tssggs-feature__desc">' . htmlspecialchars($this->translate('feature' . $i . '_desc')) . '</div></div>';
+        }
+        $text = new Text();
+        $text->setText('<div class="tssggs-features">' . $features . '</div>');
         $this->addElement($text);
 
         $row = new Row();

@@ -16,6 +16,7 @@ class Step4 extends Widget implements AjaxComponentInterface
     public function loadHtml(): void
     {
         $this->setTitle($this->translate('step4_title'));
+        $this->addElement(\ModulesGarden\TSSGGSModule\App\UI\Admin\Configuration\Shared\WizardLayout::heading(4, $this->translate('step4_title')));
         $this->addElement(new ApiSettingsForm(true));
 
     }

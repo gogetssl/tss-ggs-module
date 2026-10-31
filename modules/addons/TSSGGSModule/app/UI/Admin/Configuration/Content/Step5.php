@@ -17,6 +17,7 @@ class Step5 extends Widget implements AjaxComponentInterface
     public function loadHtml(): void
     {
         $this->setTitle($this->translate('step5_title'));
+        $this->addElement(\ModulesGarden\TSSGGSModule\App\UI\Admin\Configuration\Shared\WizardLayout::heading(5, $this->translate('step5_title')));
 
         $alert = new AlertInfo();
         $alert->setText($this->translate("productsInfo"));

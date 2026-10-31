@@ -35,6 +35,9 @@ class Step2 extends Widget implements AjaxComponentInterface
 
         $this->setTitle($this->translate('step2_title'));
 
+
+        $this->addElement(\ModulesGarden\TSSGGSModule\App\UI\Admin\Configuration\Shared\WizardLayout::heading(2, $this->translate('step2_title')));
+
         if (version_compare($phpVersion, '8.1.0') >= 0)
         {
             $alert = new AlertSuccess();

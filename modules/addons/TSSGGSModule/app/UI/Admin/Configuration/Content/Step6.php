@@ -19,6 +19,8 @@ class Step6 extends Widget implements AjaxComponentInterface
 
         $this->setTitle($this->translate('step6_title'));
 
+        $this->addElement(\ModulesGarden\TSSGGSModule\App\UI\Admin\Configuration\Shared\WizardLayout::heading(6, $this->translate('step6_title')));
+
         $text = new Text();
         $text->setCss('title_alert');
         $text->setText($this->translate('title_alert'));

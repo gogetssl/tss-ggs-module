@@ -20,13 +20,28 @@ $_LANG['admin.breadcrumbs.Configuration_step5'] = 'Step 5';
 $_LANG['admin.breadcrumbs.Configuration_step6'] = 'Step 6';
 $_LANG['admin.breadcrumbs.Configuration_step7'] = 'Step 7';
 
-$_LANG['instalation.menu.installation_steps'] = 'Installation Steps';
-$_LANG['instalation.menu.step1']              = 'STEP 1 - Welcome';
-$_LANG['instalation.menu.step2']              = 'STEP 2 - Compatibility check';
-$_LANG['instalation.menu.step3']              = 'STEP 3 - Vendor selection';
-$_LANG['instalation.menu.step4']              = 'STEP 4 - API connection';
-$_LANG['instalation.menu.step5']              = 'STEP 5 - Choose Products';
-$_LANG['instalation.menu.step6']              = 'STEP 6 - Finalization';
+$_LANG['instalation.wizard.installation_steps']  = 'Installation steps';
+$_LANG['instalation.wizard.module_installation'] = 'Module Installation';
+$_LANG['instalation.wizard.step_of']             = 'Step %d of %d';
+$_LANG['instalation.wizard.step1_name']          = 'Welcome';
+$_LANG['instalation.wizard.step1_desc']          = 'Introduction';
+$_LANG['instalation.wizard.step2_name']          = 'Compatibility check';
+$_LANG['instalation.wizard.step2_desc']          = 'System requirements';
+$_LANG['instalation.wizard.step3_name']          = 'Vendor selection';
+$_LANG['instalation.wizard.step3_desc']          = 'Choose provider';
+$_LANG['instalation.wizard.step4_name']          = 'API connection';
+$_LANG['instalation.wizard.step4_desc']          = 'Credentials';
+$_LANG['instalation.wizard.step5_name']          = 'Choose products';
+$_LANG['instalation.wizard.step5_desc']          = 'Import catalog';
+$_LANG['instalation.wizard.step6_name']          = 'Finalization';
+$_LANG['instalation.wizard.step6_desc']          = 'Review & finish';
+
+$_LANG['admin.configuration.content.step1.feature1_title'] = 'Import products';
+$_LANG['admin.configuration.content.step1.feature1_desc']  = 'Bulk-create SSL products';
+$_LANG['admin.configuration.content.step1.feature2_title'] = 'Auto pricing';
+$_LANG['admin.configuration.content.step1.feature2_desc']  = 'Sync with vendor prices';
+$_LANG['admin.configuration.content.step1.feature3_title'] = 'Automated issuance';
+$_LANG['admin.configuration.content.step1.feature3_desc']  = 'Orders processed via API';
 
 $_LANG['admin.configuration.content.step1.step1_title']   = 'STEP 1. Welcome';
 $_LANG['admin.configuration.content.step1.first_p']       = 'Thank you for installing the <b>:moduleName</b>!';

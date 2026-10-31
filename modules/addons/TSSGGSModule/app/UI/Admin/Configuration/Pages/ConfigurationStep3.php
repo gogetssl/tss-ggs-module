@@ -3,8 +3,7 @@
 namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Configuration\Pages;
 
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Configuration\Content\Step3;
-use ModulesGarden\TSSGGSModule\App\UI\Admin\Configuration\Shared\Menu;
-use ModulesGarden\TSSGGSModule\Components\Grid\Grid;
+use ModulesGarden\TSSGGSModule\App\UI\Admin\Configuration\Shared\WizardLayout;
 use ModulesGarden\TSSGGSModule\Core\Contracts\Components\AdminAreaInterface;
 use ModulesGarden\TSSGGSModule\Core\Contracts\Components\ClientAreaInterface;
 use ModulesGarden\TSSGGSModule\Components\Container\Container;
@@ -14,13 +13,6 @@ class ConfigurationStep3 extends Container implements AdminAreaInterface, Client
 {
     public function loadHtml(): void
     {
-        $grid = new Grid();
-        $grid->setRows(
-            [
-                [[(new Menu())->getMenu(), 3], [new Step3(), 9]]
-            ]
-        );
-
-        $this->addElement($grid);
+        $this->addElement((new WizardLayout())->build(3, new Step3()));
     }
 }
