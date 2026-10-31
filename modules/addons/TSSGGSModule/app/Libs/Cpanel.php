@@ -443,7 +443,7 @@ class Cpanel
     }
 
     /**
-     * Private key stored in the cPanel account (UAPI SSL::get_key), by key id or friendly name.
+     * Private key stored in the cPanel account (UAPI SSL::show_key, the call the legacy TheSSLStore module uses), by key id or friendly name.
      * Used by the legacy-module migration: the TheSSLStore module keeps AutoInstall keys in cPanel only.
      */
     public function getPrivateKey($username, $keyId)
@@ -451,10 +451,13 @@ class Cpanel
         $this->initiateConnection($username);
         foreach(['id' => $keyId, 'friendly_name' => $keyId] as $param => $value)
         {
-            $response = $this->exec('get_key', '/execute/SSL/', [$param => $value]);
-            if(isset($response->data->key) && strpos((string)$response->data->key, '-----BEGIN') === 0)
+            $response = $this->exec('show_key', '/execute/SSL/', [$param => $value]);
+            foreach(['key', 'text', 'pem'] as $field)
             {
-                return (string)$response->data->key;
+                if(isset($response->data->$field) && strpos(trim((string)$response->data->$field), '-----BEGIN') === 0)
+                {
+                    return trim((string)$response->data->$field);
+                }
             }
         }
         throw new \Exception(isset($response->errors[0]) ? $response->errors[0] : 'Private key ' . $keyId . ' not found in the cPanel account');
