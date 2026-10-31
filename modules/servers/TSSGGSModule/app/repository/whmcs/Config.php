@@ -4,6 +4,7 @@ namespace ModulesGarden\Servers\TSSGGSModule\app\repository\whmcs;
 
 use ModulesGarden\Servers\TSSGGSModule\app\models\whmcs\Service;
 use ModulesGarden\TSSGGSModule\App\Libs\AcmeHelpers;
+use ModulesGarden\TSSGGSModule\App\Libs\AisHelpers;
 use ModulesGarden\TSSGGSModule\App\Libs\Helpers;
 use WHMCS\Database\Capsule as DataBase;
 
@@ -17,6 +18,19 @@ class Config
         {
             $WHMCSUrl = $this->getBrandURL($serviceID);
             return $WHMCSUrl . '/clientarea.php?action=productdetails&id=' . $service->id . '&acmeconfig=1';
+        }
+
+        if($service && AisHelpers::isAisWhmcsProduct($service->packageid))
+        {
+            $WHMCSUrl = $this->getBrandURL($serviceID);
+            return $WHMCSUrl . '/configuressl.php?cert=' . md5($id);
+        }
+
+        if($service)
+        {
+            // Module SSL configuration page (AutoInstall via cPanel / Manual)
+            $WHMCSUrl = $this->getBrandURL($serviceID);
+            return $WHMCSUrl . '/clientarea.php?action=productdetails&id=' . $service->id . '&configssl=1';
         }
 
         $WHMCSUrl = $this->getBrandURL($serviceID);

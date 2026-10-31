@@ -5,7 +5,9 @@ namespace ModulesGarden\TSSGGSModule\App\Cron;
 use Exception;
 use ModulesGarden\TSSGGSModule\App\Helpers\EmailTemplates;
 use ModulesGarden\TSSGGSModule\App\Libs\AcmeHelpers;
+use ModulesGarden\TSSGGSModule\App\Libs\AutoInstallHelpers;
 use ModulesGarden\TSSGGSModule\App\Libs\SSLTrustCenterApi;
+use ModulesGarden\TSSGGSModule\App\Libs\SslProductHelpers;
 use ModulesGarden\TSSGGSModule\App\Models\AcmeSubscription;
 use ModulesGarden\TSSGGSModule\App\Models\CronCheck;
 use ModulesGarden\TSSGGSModule\App\Models\Request;
@@ -128,12 +130,15 @@ class SSLCertificatesProcessing extends AbstractCommand
 
                 if($orderData['order']['status'] == 'active')
                 {
-                    $expireDate = date('Y-m-d', strtotime($orderFiles['validity']['end']));
-                    $nextDueDate = $expireDate;
-                    Service::where('id', $certificate['id'])->update([
-                        'nextinvoicedate' => $nextDueDate,
-                        'nextduedate' => $nextDueDate,
-                    ]);
+                    // Subscription end (falls back to the certificate end) - certificates within the subscription are reissued
+                    $nextDueDate = SslProductHelpers::getServiceDueDate($orderData, $orderFiles);
+                    if($nextDueDate)
+                    {
+                        Service::where('id', $certificate['id'])->update([
+                            'nextinvoicedate' => $nextDueDate,
+                            'nextduedate' => $nextDueDate,
+                        ]);
+                    }
 
                     $serviceId = $certificate['id'];
                     $userId = $certificate['userid'];
@@ -141,21 +146,10 @@ class SSLCertificatesProcessing extends AbstractCommand
                     $certificate = Request::getOrder($certificate['id']);
 
                     $filename = str_replace('.', '_', $certificate['orderData']['orderData']['common_name']['name']).'.crt';
-                    $files = $certificate['orderFiles']['files'];
+                    $cert     = AutoInstallHelpers::extractCertificate($certificate['orderFiles'], $certificate['orderData']['orderData']['common_name']['name']);
 
-                    $fileContentCrt = '';
-                    $fileContentCA = '';
-                    foreach ($files as $file)
-                    {
-                        if($file['name'] == $filename)
-                        {
-                            $fileContentCrt = $file['content'];
-                        }
-                        if (strpos($file['name'], 'CA.crt') !== false)
-                        {
-                            $fileContentCA = $file['content'];
-                        }
-                    }
+                    $fileContentCrt = $cert['crt'];
+                    $fileContentCA  = $cert['ca'];
 
                     $pathAttachemts = false;
                     $checkSettings = Capsule::schema()->hasTable('tblfileassetsettings');
@@ -278,12 +272,27 @@ class SSLCertificatesProcessing extends AbstractCommand
             }
         }
 
+        $io->progressFinish();
+        $io->title('SSL AutoInstall (cPanel)');
+
+        try
+        {
+            $autoInstallError = AutoInstallHelpers::processQueue();
+            if($autoInstallError)
+            {
+                $errorToDB = $autoInstallError;
+            }
+        }
+        catch(\Throwable $e)
+        {
+            $errorToDB = $e->getMessage();
+        }
+
         CronCheck::updateOrCreate(
             ['type' => 'SSLCertificatesProcessing'],
             ['last_run' => date('Y-m-d H:i:s'), 'last_error' => $errorToDB]
         );
 
-        $io->progressFinish();
         $io->success('Finished!');
     }
 }

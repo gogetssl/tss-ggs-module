@@ -9,6 +9,7 @@ use ModulesGarden\Servers\TSSGGSModule\app\services\Renew;
 use ModulesGarden\Servers\TSSGGSModule\app\services\SSLStepOne;
 use ModulesGarden\Servers\TSSGGSModule\app\services\SSLStepTwo;
 use ModulesGarden\Servers\TSSGGSModule\app\services\SSLStepThree;
+use ModulesGarden\Servers\TSSGGSModule\app\services\SyncCertificate;
 use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
 
 class Actions {
@@ -102,6 +103,24 @@ class Actions {
 
             $params = array_merge($_POST, $params);
             return (new SSLStepThree())->run($params);
+
+        } catch (\Exception $e) {
+
+            return $e->getMessage();
+
+        }
+    }
+
+    public function AdminCustomButtonArray()
+    {
+        return ['Sync Certificate' => 'SyncCertificate'];
+    }
+
+    public function SyncCertificate($params)
+    {
+        try {
+
+            return (new SyncCertificate())->run($params);
 
         } catch (\Exception $e) {
 

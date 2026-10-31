@@ -9,8 +9,7 @@ use stdClass;
 class SSLTrustCenterApi
 {
 
-    //protected $apiUrl = 'https://my.gogetssl.com/api/whmcs/v1';
-    protected $apiUrl = 'https://my.gogetssl.com/api/v2';
+    protected $apiUrl = 'https://my.gogetssl.com/whmcs/v2';
     protected $key;
     protected $code;
     protected $type;
@@ -26,7 +25,7 @@ class SSLTrustCenterApi
 
     public function getProducts()
     {
-        return $this->call('/products/');
+        return $this->call('/products');
     }
 
     public function getProduct($id)
@@ -38,30 +37,79 @@ class SSLTrustCenterApi
     public function getDomainEmails($domains)
     {
         $postData ['domains'] = $domains;
-        return $this->call('/certificates/' . $this->category . '/validation/emails/', $postData);
+        return $this->call('/certificates/' . $this->category . '/validation/emails', $postData);
     }
 
-    public function changeApprovers($order_id, $data)
+    /**
+     * Change DCV method of a single domain - $data: ['domain' => ['name' => .., 'validation_method' => ..]]
+     */
+    public function changeApprovers($itemId, $data)
     {
-        return $this->call('/certificates/' . $this->category . '/' . $order_id . '/validation/change/', $data, 'PATCH');
+        return $this->call('/certificates/' . $this->category . '/' . (int)$itemId . '/validation/change', $data, 'PATCH');
     }
 
-    public function reissueCertificate($order_id, $data)
+    /**
+     * Asks the CA to check the domain validation (DCV) again - $itemId is the certificate (item) ID.
+     * The API expects a JSON array of domain names; when $domains is empty all not yet approved domains are rechecked.
+     */
+    public function recheckValidation($itemId, array $domains = [])
     {
-        return $this->call('/certificates/' . $this->category . '/' . $order_id, $data);
+        if(empty($domains))
+        {
+            $details = $this->getCertificateDetails($this->category, $itemId);
+            foreach(isset($details['items'][0]['domains']) ? (array)$details['items'][0]['domains'] : [] as $domain)
+            {
+                if(!empty($domain['name']) && empty($domain['approved']))
+                {
+                    $domains[] = $domain['name'];
+                }
+            }
+        }
+
+        if(empty($domains))
+        {
+            return [];
+        }
+
+        return $this->call('/certificates/' . $this->category . '/' . (int)$itemId . '/validation/recheck', array_values($domains), 'POST');
     }
 
-    public function cancelOrder($order_id, $reason)
+    /**
+     * Resends DCV emails (only for the email validation method)
+     */
+    public function resendValidationEmail($itemId)
+    {
+        return $this->call('/certificates/' . $this->category . '/' . (int)$itemId . '/validation/resend', [], 'POST');
+    }
+
+    /**
+     * Buys additional SANs - $data: ['single_san' => int, 'wildcard_san' => int]
+     */
+    public function addSan($itemId, $data)
+    {
+        return $this->call('/certificates/' . $this->category . '/' . (int)$itemId . '/add-san', $data, 'POST');
+    }
+
+    public function reissueCertificate($itemId, $data)
+    {
+        return $this->call('/certificates/' . $this->category . '/' . (int)$itemId, $data);
+    }
+
+    /**
+     * Cancels the whole order (all items of the order are cancelled too) - $orderId is the order ID (order.id).
+     * To cancel a single certificate / service by its item ID use cancelItem().
+     */
+    public function cancelOrder($orderId, $reason)
     {
         $data = [
-            'reason' => $reason
+            'reason' => !empty($reason) ? $reason : 'Cancelled by API client'
         ];
-        return $this->call('/certificates/' . $order_id . '/cancel', $data);
+        return $this->call('/orders/' . (int)$orderId . '/cancel', $data, 'POST');
     }
 
     public function addOrder($data, $serviceId)
     {
-        $order = $this->call('/certificates/' . $this->category . '/', $data);
+        $order = $this->call('/certificates/' . $this->category, $data);
         Request::insert([
                             'serviceid'  => $serviceId,
                             'name'       => 'addOrder',
@@ -74,7 +122,7 @@ class SSLTrustCenterApi
 
     public function renewOrder($serviceId, $data)
     {
-        $order = $this->call('/certificates/' . $this->category . '/', $data);
+        $order = $this->call('/certificates/' . $this->category, $data);
         Request::insert([
                             'serviceid'  => $serviceId,
                             'name'       => 'renewOrder',
@@ -85,9 +133,29 @@ class SSLTrustCenterApi
         return $order;
     }
 
+    /**
+     * Certificate (item) ID from an order response: {"order":{"id":..},"items":[{"id":..}]}.
+     * tblsslorders.remoteid, /certificates/* endpoints and /services/updates use this ID, not order.id.
+     * $default is returned when the response has no items (e.g. reissue of the same certificate).
+     */
+    public static function getItemId($response, $default = null)
+    {
+        if(isset($response['items'][0]['id']) && (int)$response['items'][0]['id'] > 0)
+        {
+            return (int)$response['items'][0]['id'];
+        }
+
+        if($default !== null)
+        {
+            return (int)$default;
+        }
+
+        throw new \Exception('Invalid response from API: missing certificate item ID');
+    }
+
     public function ordersUpdate($timestamp = null)
     {
-        return $this->call('/orders/updates?since=' . $timestamp);
+        return $this->call('/services/updates?since=' . $timestamp);
     }
 
     public function getOrder($order_id, $serviceId = false)
@@ -114,39 +182,25 @@ class SSLTrustCenterApi
         return $response;
     }
 
+    /**
+     * The /orders/export endpoint is disabled in API v2 - the details are fetched one by one
+     * (Get certificate details). Returned array is keyed by the given ID.
+     */
     public function exportOrder($orderIds)
     {
-        $endpoint = '/orders/export';
+        $return = [];
 
-        foreach($orderIds as $index => $orderId)
+        foreach($orderIds as $orderId)
         {
-            if($index == 0)
-            {
-                $endpoint .= '?';
-            }
-            else
-            {
-                $endpoint .= '&';
-            }
+            $orderData = $this->call('/certificates/' . rawurlencode((string)$this->category) . '/' . (int)$orderId);
 
-            $endpoint .= 'order[]=' . $orderId;
-        }
-
-        $response = $this->call($endpoint, [], false, true);
-        $return   = [];
-
-        foreach($response as $orderData)
-        {
-            $orderId = $orderData['order']['id'];
-
-            if(!$orderId)
+            if(empty($orderData['order']['id']))
             {
                 throw new \Exception('Invalid response from API');
             }
 
             $return[$orderId] = $orderData;
         }
-
 
         return $return;
     }
@@ -168,7 +222,7 @@ class SSLTrustCenterApi
             }
             else
             {
-                $response = $this->call('/profile/manager/?country=' . $countryCode);
+                $response = $this->call('/profile/manager?country=' . $countryCode);
 
                 $request = Request::where('serviceid', '0')->where('name', 'manager')->first();
 
@@ -196,7 +250,7 @@ class SSLTrustCenterApi
         }
         else
         {
-            $response = $this->call('/profile/manager/?country=' . $countryCode);
+            $response = $this->call('/profile/manager?country=' . $countryCode);
 
             $request = Request::where('serviceid', '0')->where('name', 'manager')->first();
 
@@ -234,7 +288,7 @@ class SSLTrustCenterApi
             }
             else
             {
-                $response = $this->call('/dashboard/announcements/');
+                $response = $this->call('/dashboard/announcements');
 
                 $request = Request::where('serviceid', '0')->where('name', 'announcements')->first();
 
@@ -262,7 +316,7 @@ class SSLTrustCenterApi
         }
         else
         {
-            $response = $this->call('/dashboard/announcements/');
+            $response = $this->call('/dashboard/announcements');
 
             $request = Request::where('serviceid', '0')->where('name', 'announcements')->first();
 
@@ -464,11 +518,30 @@ class SSLTrustCenterApi
         return $this->call('/certificates/caas/' . (int)$itemId . '/domains/' . rawurlencode((string)$domainId), [], 'DELETE');
     }
 
-    public function cancelCertificate($orderId, $reason = '')
+    /**
+     * Cancels a certificate / service by its item ID and category (tls, cs, smime, ais).
+     * TSS has no item cancellation - the order ID equals the item ID there, so /orders/{id}/cancel is used.
+     */
+    public function cancelItem($itemId, $reason = '', $category = null)
     {
-        $payload = ['reason' => !empty($reason) ? $reason : 'Cancelled by API client'];
+        $reason = !empty($reason) ? $reason : 'Cancelled by API client';
 
-        return $this->call('/certificates/' . (int)$orderId . '/cancel', $payload, 'POST');
+        if(strtoupper($this->type) === 'TSS')
+        {
+            return $this->cancelOrder($itemId, $reason);
+        }
+
+        $category = $category ?: $this->category;
+
+        return $this->call('/certificates/' . rawurlencode((string)$category) . '/' . (int)$itemId . '/cancel', ['reason' => $reason], 'POST');
+    }
+
+    /**
+     * Turns subscription auto renewal on / off (AIS)
+     */
+    public function changeSubscriptionAutoRenewal($category, $itemId, $autoRenew)
+    {
+        return $this->call('/certificates/' . rawurlencode((string)$category) . '/' . (int)$itemId . '/subscription', ['auto_renew' => (bool)$autoRenew], 'PATCH');
     }
 
     public function disableSubscriptionAutoRenewal($itemId)
@@ -488,13 +561,12 @@ class SSLTrustCenterApi
 
     public function cancelAisSubscription($itemId, $reason = '')
     {
-        $payload = ['reason' => !empty($reason) ? $reason : 'Cancelled by client'];
-        return $this->call('/certificates/ais/' . (int)$itemId . '/cancel', $payload, 'POST');
+        return $this->cancelItem($itemId, !empty($reason) ? $reason : 'Cancelled by client', 'ais');
     }
 
     public function disableAisAutoRenewal($itemId)
     {
-        return $this->call('/certificates/ais/' . (int)$itemId . '/subscription', [], 'DELETE');
+        return $this->changeSubscriptionAutoRenewal('ais', $itemId, false);
     }
 
     protected function call($uri, $postData = [], $customMethod = false, $multilineResponse = false)
@@ -530,6 +602,17 @@ class SSLTrustCenterApi
         $headers[] = 'Authorization: ' . $this->type . ' ' . $this->code . ':' . $this->key;
         $headers[] = 'User-Agent: whmcs/' . $CONFIG['Version'] . '|' . $moduleName . '/' . $versionModule;
 
+        if($queryData !== '')
+        {
+            $headers[] = 'Content-Type: application/json';
+            $headers[] = 'Content-Length: ' . strlen($queryData);
+        }
+        elseif(in_array($customMethod, ['POST', 'PUT', 'PATCH'], true))
+        {
+            // Request without body (e.g. validation recheck) - some servers reject it without the length header
+            $headers[] = 'Content-Length: 0';
+        }
+
         curl_setopt($c, CURLOPT_HTTPHEADER, $headers);
         curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($c, CURLINFO_HEADER_OUT, true);
@@ -548,14 +631,26 @@ class SSLTrustCenterApi
 
         curl_close($c);
 
+        $httpCode  = (int)$info['http_code'];
+        $isSuccess = $httpCode >= 200 && $httpCode < 300;
+
+        if($httpCode === 204) // No Content
+        {
+            return [];
+        }
+
+        if(trim((string)$result) === '')
+        {
+            if($isSuccess)
+            {
+                return [];
+            }
+            throw new \Exception('Invalid response code: ' . $httpCode);
+        }
+
         if($multilineResponse)
         {
             $result = '[' . str_replace("\n", ',', trim($result)) . ']';
-        }
-
-        if($info['http_code'] == '204') // No Content
-        {
-            return [];
         }
 
         $response = json_decode($result, true);
@@ -564,18 +659,13 @@ class SSLTrustCenterApi
             throw new \Exception('Invalid response from API');
         }
 
-        if($info['http_code'] != '200' && $info['http_code'] != '201')
+        if(!$isSuccess)
         {
             if(isset($response['message']))
             {
-                throw new \Exception('Invalid response code: ' . $info['http_code'] . ' ' . $response['message']);
+                throw new \Exception('Invalid response code: ' . $httpCode . ' ' . $response['message']);
             }
-            throw new \Exception('Invalid response code: ' . $info['http_code']);
-        }
-
-        if(isset($response['message']) && !empty($response['message']))
-        {
-            throw new \Exception($response['message']);
+            throw new \Exception('Invalid response code: ' . $httpCode);
         }
 
         return $response;

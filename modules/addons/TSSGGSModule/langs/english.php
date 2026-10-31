@@ -8,6 +8,7 @@ $_LANG['admin.menu.statistics'] = 'Statistics';
 $_LANG['admin.menu.reports']    = 'Reports';
 $_LANG['admin.menu.pricing']    = 'Pricing';
 $_LANG['admin.menu.settings']   = 'Settings';
+$_LANG['admin.menu.automationQueue'] = 'Automation Queue';
 
 $_LANG['admin.breadcrumbs.Configuration']       = 'Module Installation';
 $_LANG['admin.menu.configuration']              = 'Module Installation';
@@ -360,6 +361,9 @@ $_LANG['admin.settings.index.forms.ssl_settings_form.disableEmailValidation']   
 $_LANG['admin.settings.index.forms.ssl_settings_form.disableEmailValidation_description']   = 'No Email validation will be available for all SSL certificates, only HTTP/DNS';
 $_LANG['admin.settings.index.forms.ssl_settings_form.autoDetailsForDvOrders']               = 'Auto Admin/Tech Details For DV Orders';
 $_LANG['admin.settings.index.forms.ssl_settings_form.autoDetailsForDvOrders_description']   = 'The module will use the Customer\'s Profile for Admin/Tech details';
+$_LANG['admin.settings.index.forms.ssl_settings_form.wildcardDnsTimeoutMinutes']            = 'Wildcard DNS Validation Timeout (minutes)';
+$_LANG['admin.settings.index.forms.ssl_settings_form.wildcardDnsTimeoutMinutes_description'] = 'AutoInstall (cPanel): if a wildcard certificate DNS validation is not completed within this many minutes, the system will automatically switch to Email validation and notify the client. Default: 65';
+$_LANG['admin.settings.index.providers.ssl_settings_provider.wildcardDnsTimeoutMinutesInvalidValue'] = 'The value should be a whole number of minutes greater than 0';
 $_LANG['admin.settings.index.forms.ssl_settings_form.useFixedTechnicalDetails']             = 'Use Fixed Technical Details';
 $_LANG['admin.settings.index.forms.ssl_settings_form.useFixedTechnicalDetails_description'] = '';
 $_LANG['admin.settings.index.forms.ssl_settings_form.firstName']                            = 'First Name';
@@ -413,6 +417,8 @@ $_LANG['admin.settings.index.forms.ssl_settings_form.renewOrderViaExistingOrder'
 $_LANG['admin.settings.index.forms.ssl_settings_form.automaticProcessingOfRenewalOrders']                       = 'Automatic Process of Renewal Orders';
 $_LANG['admin.settings.index.forms.ssl_settings_form.setTheUnpaidStatusForRenewalInvoices']                     = 'Set The Unpaid Status For Renewal Invoices';
 $_LANG['admin.settings.index.forms.ssl_settings_form.additionalDaysForRenewalOrder']                            = 'Additional Days For Renewal Order';
+$_LANG['admin.settings.index.forms.ssl_settings_form.autoReissueDaysBeforeExpire']                              = 'Auto Reissue Days Before Expiration';
+$_LANG['admin.settings.index.forms.ssl_settings_form.autoReissueDaysBeforeExpire_description']                  = 'AutoInstall (cPanel) certificates are reissued automatically this many days before the certificate expires, as long as the subscription continues. 0 disables automatic reissue. Default: 7';
 $_LANG['admin.settings.index.forms.ssl_settings_form.recurringCreateAutomaticRenewalInvoice']                   = 'Create Automatic Renewal Invoice';
 $_LANG['admin.settings.index.forms.ssl_settings_form.recurringDaysBeforeExpiry']                                = 'Days Before Expiry';
 $_LANG['admin.settings.index.forms.ssl_settings_form.recurringSendExpirationNotifications']                     = 'Send Expiration Notifications';
@@ -458,6 +464,7 @@ $_LANG['admin.settings.index.widgets.cron_settings_widget.cronCommandTitle_SSLCe
 $_LANG['admin.settings.index.widgets.cron_settings_widget.cronCommandTitle_SSLCertificates']           = '<b>Order Daily sync</b>';
 $_LANG['admin.settings.index.widgets.cron_settings_widget.cronCommandTitle_RenewalNotifyCertificate']  = '<b>Automatic Renewal Notification</b>';
 $_LANG['admin.settings.index.widgets.cron_settings_widget.cronCommandTitle_ReSyncProducts']            = '<b>Product Re-sync</b>';
+$_LANG['admin.settings.index.widgets.cron_settings_widget.cronCommandTitle_SSLAutoInstall']            = '<b>SSL AutoInstall (cPanel)</b>';
 
 //cron settings descriptions
 $_LANG['admin.settings.index.widgets.cron_settings_widget.cronCommand_ProductPricingUpdate']      = 'Please set up the following cron line to enable automatic daily product pricing updates.';
@@ -465,6 +472,7 @@ $_LANG['admin.settings.index.widgets.cron_settings_widget.cronCommand_SSLCertifi
 $_LANG['admin.settings.index.widgets.cron_settings_widget.cronCommand_RenewalNotifyCertificate']  = 'Please set up the following cron line to enable automatic renewal notifications.';
 $_LANG['admin.settings.index.widgets.cron_settings_widget.cronCommand_SSLCertificatesProcessing'] = 'Please set up the following cron line to enable updates for processing orders.';
 $_LANG['admin.settings.index.widgets.cron_settings_widget.cronCommand_ReSyncProducts']            = 'Please set up the following cron line to Re-Sync product configurations.';
+$_LANG['admin.settings.index.widgets.cron_settings_widget.cronCommand_SSLAutoInstall']            = 'Please set up the following cron line to process the SSL AutoInstall (cPanel) queue: validation, installation and automatic reissue. Recommended: every 5 minutes.';
 $_LANG['admin.settings.index.widgets.cron_settings_widget.cronCommand_processing']                = 'Please set up the following cron line to change initial status of orders. The cron job will run every 10 seconds. Last Cron Update: ';
 $_LANG['admin.settings.index.forms.cron_configuration_form.cron1']                                = 'The cron job&nbsp;<b>ProductPricingUpdate</b>&nbsp;run frequency';
 $_LANG['admin.settings.index.forms.cron_configuration_form.cron2']                                = 'The cron job&nbsp;<b>SSLCertificates</b>&nbsp;run frequency';
@@ -478,6 +486,26 @@ $_LANG['admin.settings.index.forms.cron_configuration_form.update_success']     
 //===[Products]=========================================================================================================
 
 $_LANG['admin.breadcrumbs.Products'] = 'Products';
+
+// Automation Queue (AutoInstall cron tasks)
+$_LANG['admin.breadcrumbs.AutomationQueue'] = 'Automation Queue';
+$_LANG['admin.automation_queue.index.automation_queue_container.queueInfo'] = 'AutoInstall tasks (validation, installation, reissue) processed by the cron. A task in the Error status will not be processed again until it is reset.';
+
+$_LANG['admin.automation_queue.index.data_tables.queue.data_table.id']       = 'ID';
+$_LANG['admin.automation_queue.index.data_tables.queue.data_table.service']  = 'Service';
+$_LANG['admin.automation_queue.index.data_tables.queue.data_table.domain']   = 'Domain';
+$_LANG['admin.automation_queue.index.data_tables.queue.data_table.type']     = 'Type';
+$_LANG['admin.automation_queue.index.data_tables.queue.data_table.status']   = 'Status';
+$_LANG['admin.automation_queue.index.data_tables.queue.data_table.attempts'] = 'Attempts';
+$_LANG['admin.automation_queue.index.data_tables.queue.data_table.message']  = 'Message';
+$_LANG['admin.automation_queue.index.data_tables.queue.data_table.updated']  = 'Last Update';
+
+$_LANG['admin.automation_queue.index.data_tables.queue.buttons.reset_task_button.resetTask'] = 'Reset Task';
+$_LANG['admin.automation_queue.index.data_tables.queue.modals.reset_task_modal.title']       = 'Reset Task';
+$_LANG['admin.automation_queue.index.data_tables.queue.modals.reset_task_modal.submit']      = 'Submit';
+$_LANG['admin.automation_queue.index.data_tables.queue.modals.reset_task_modal.cancel']      = 'Cancel';
+$_LANG['admin.automation_queue.index.data_tables.queue.modals.reset_task_modal.description'] ='Are you sure you want to reset this task? Its status will be changed to Pending and the attempts counter will be cleared, so the cron will process it again during the next run.';
+$_LANG['admin.automation_queue.index.data_tables.queue.forms.reset_task_form.update_success'] = 'The task has been reset and will be processed by the next cron run';
 
 //info
 $_LANG['admin.products.index.products_container.productsInfo'] = 'To import a product, please select it and click the Import button.';

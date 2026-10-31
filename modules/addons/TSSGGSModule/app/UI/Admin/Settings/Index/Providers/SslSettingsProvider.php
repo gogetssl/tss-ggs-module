@@ -2,6 +2,7 @@
 
 namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Providers;
 
+use ModulesGarden\TSSGGSModule\App\Libs\AutoInstallHelpers;
 use ModulesGarden\TSSGGSModule\App\Libs\Helpers;
 use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
 use ModulesGarden\TSSGGSModule\Core\DataProviders\CrudProvider;
@@ -25,9 +26,20 @@ class SslSettingsProvider extends CrudProvider
             $this->data['recurringDaysBeforeExpirySubscription'] = 30;
         }
 
+        if(!isset($this->data['wildcardDnsTimeoutMinutes']) || $this->data['wildcardDnsTimeoutMinutes'] === '')
+        {
+            $this->data['wildcardDnsTimeoutMinutes'] = AutoInstallHelpers::DEFAULT_WILDCARD_DNS_TIMEOUT_MINUTES;
+        }
+
+        if(!isset($this->data['autoReissueDaysBeforeExpire']))
+        {
+            $this->data['autoReissueDaysBeforeExpire'] = AutoInstallHelpers::DEFAULT_AUTO_REISSUE_DAYS_BEFORE_EXPIRE;
+        }
+
         $this->availableValues['country']                               = Helpers::getCountryOptions();
         $this->availableValues['defaultCsrCountry']                     = Helpers::getCountryOptions();
         $this->availableValues['additionalDaysForRenewalOrder']         = Helpers::get30DaysOptions();
+        $this->availableValues['autoReissueDaysBeforeExpire']           = Helpers::get30DaysOptions();
         $this->availableValues['recurringDaysBeforeExpirySubscription'] = Helpers::getDaysOptions(true);
         $this->availableValues['recurringDaysBeforeExpiry']             = Helpers::getDaysOptions();
         $this->availableValues['oneTimeDaysBeforeExpiry']               = Helpers::getDaysOptions();
@@ -36,6 +48,16 @@ class SslSettingsProvider extends CrudProvider
     public function update()
     {
         Validator::validate($this->formData->toArray(), [
+                                                          'wildcardDnsTimeoutMinutes' => [
+                                                              function(string $attribute, $value, \Closure $fail) {
+                                                                  if(!preg_match('/^\d+$/', trim((string)$value)) || (int)$value < 1)
+                                                                  {
+                                                                      $fail($this->translate('wildcardDnsTimeoutMinutesInvalidValue', [
+                                                                          'field' => $attribute
+                                                                      ]));
+                                                                  }
+                                                              }
+                                                          ],
                                                           'recurringSendExpirationNotifications' => [
                                                               function(string $attribute, $value, \Closure $fail) {
                                                                   $parts = explode(",", $value);

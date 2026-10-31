@@ -102,7 +102,8 @@ class SSLStepThree
             }
 
             $newOrder = $api->addOrder($orderParams, $params['serviceid']);
-            SSL::where('serviceid', $params['serviceid'])->update(['remoteid' => $newOrder['order']['id']]);
+            $itemId   = SSLTrustCenterApi::getItemId($newOrder);
+            SSL::where('serviceid', $params['serviceid'])->update(['remoteid' => $itemId]);
             Service::where('id', $params['serviceid'])->update(['domain' => $decode['CN']]);
 
             $apiPrice = $newOrder['order']['total_amount'];
@@ -123,7 +124,7 @@ class SSLStepThree
                 'status' => $newOrder['order']['status']
             ]);
 
-            $orderData = $api->getOrder($newOrder['order']['id'], $params['serviceid']);
+            $orderData = $api->getOrder($itemId, $params['serviceid']);
 
             $orderFiles = [];
             $request = ['orderData' => $orderData, 'orderFiles' => $orderFiles];

@@ -10,5 +10,7 @@ reports:
   icon: 'mdi mdi-file-chart'
 pricing:
   icon: 'mdi mdi-cash'
+automationQueue:
+  icon: 'mdi mdi-format-list-checks'
 settings:
   icon: 'mdi mdi-cog'

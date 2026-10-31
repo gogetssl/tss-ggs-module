@@ -3,7 +3,11 @@
 namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Reports\Index\DataTables\Shared;
 
 
+use ModulesGarden\TSSGGSModule\App\Libs\AcmeHelpers;
+use ModulesGarden\TSSGGSModule\App\Libs\AisHelpers;
 use ModulesGarden\TSSGGSModule\App\Libs\Helpers;
+use ModulesGarden\TSSGGSModule\App\Models\AcmeSubscription;
+use ModulesGarden\TSSGGSModule\App\Models\AisSubscription;
 use ModulesGarden\TSSGGSModule\Core\Translation\TranslatorTrait;
 use ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Service;
 use Illuminate\Database\Capsule\Manager as Capsule;
@@ -89,7 +93,8 @@ class RecordsProvider
                                 ])
                        ->get();
 
-        $rows = [];
+        $rows         = [];
+        $productTypes = [];
 
         foreach($items as $item)
         {
@@ -102,7 +107,30 @@ class RecordsProvider
             $issueDate       = '-';
             $expirationDate  = '-';
 
-            if($certificateData)
+            // ACME / AIS keep their state in the subscription tables, not in TSSGGSModule_Requests
+            if(!isset($productTypes[$item->productId]))
+            {
+                $productTypes[$item->productId] = AcmeHelpers::isAcmeWhmcsProduct($item->productId) ? 'acme' : (AisHelpers::isAisWhmcsProduct($item->productId) ? 'ais' : 'ssl');
+            }
+
+            $subscription = null;
+            if($productTypes[$item->productId] === 'acme')
+            {
+                $subscription = AcmeSubscription::getByServiceId($serviceId);
+            }
+            elseif($productTypes[$item->productId] === 'ais')
+            {
+                $subscription = AisSubscription::getByServiceId($serviceId);
+            }
+
+            if($subscription)
+            {
+                $orderStatus    = $subscription->status ? ucfirst($subscription->status) : $orderStatus;
+                $storeId        = $subscription->api_order_id ?: '-';
+                $issueDate      = $subscription->period_start ? $subscription->period_start->format('Y-m-d') : '-';
+                $expirationDate = $subscription->period_end ? $subscription->period_end->format('Y-m-d') : '-';
+            }
+            elseif($certificateData)
             {
                 $certificateRequest = json_decode(decrypt($certificateData->request));
                 $orderStatus        = ucfirst($certificateRequest->orderData->order->status);

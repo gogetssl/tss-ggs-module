@@ -3,6 +3,7 @@
 namespace ModulesGarden\Servers\TSSGGSModule\app\services;
 
 use ModulesGarden\Servers\TSSGGSModule\app\models\whmcs\SSL;
+use ModulesGarden\TSSGGSModule\App\Libs\AutoInstallHelpers;
 
 class AdminServicesTabFields
 {
@@ -30,7 +31,7 @@ class AdminServicesTabFields
                 throw new Exception('The id not exist in this SSL order');
             }
 
-            return [];
+            return $this->getAutoInstallDetails($params['serviceid']);
 
 //            $return = [];
 //            $return['SSLCenter API Order ID'] = $sslService->remoteid;
@@ -71,5 +72,52 @@ class AdminServicesTabFields
         } catch (\Exception $ex) {
             return ['Error' => $ex->getMessage()];
         }
+    }
+
+    private function getAutoInstallDetails($serviceId)
+    {
+        try {
+            $autoInstall = AutoInstallHelpers::getStatusForView($serviceId, 20);
+        } catch (\Exception $ex) {
+            return [];
+        }
+
+        if (!$autoInstall) {
+            return ['SSL Install Type' => 'Manual'];
+        }
+
+        $labels = [
+            AutoInstallHelpers::STATUS_AWAITING  => 'label-info',
+            AutoInstallHelpers::STATUS_INSTALLED => 'label-success',
+            AutoInstallHelpers::STATUS_FAILED    => 'label-danger',
+            AutoInstallHelpers::STATUS_DISABLED  => 'label-warning',
+        ];
+        $label = isset($labels[$autoInstall['status']]) ? $labels[$autoInstall['status']] : 'label-default';
+
+        $status = '<span class="label ' . $label . '">' . htmlspecialchars(ucwords(str_replace('_', ' ', $autoInstall['status']))) . '</span>'
+            . ' on <strong>' . htmlspecialchars($autoInstall['domain']) . '</strong>';
+        if ($autoInstall['installed_at']) {
+            $status .= ' | installed: ' . htmlspecialchars($autoInstall['installed_at']);
+        }
+        if ($autoInstall['valid_till']) {
+            $status .= ' | valid till: ' . htmlspecialchars($autoInstall['valid_till']);
+        }
+        if ($autoInstall['last_error']) {
+            $status .= '<br><span style="color:#c0392b;">Last error: ' . htmlspecialchars($autoInstall['last_error']) . '</span>';
+        }
+
+        $return = ['SSL Install Type' => 'AutoInstall (cPanel)', 'AutoInstall Status' => $status];
+
+        if (!empty($autoInstall['logs'])) {
+            $logs = '<div style="max-height:220px;overflow:auto;font-size:11px;">';
+            foreach ($autoInstall['logs'] as $log) {
+                $color = $log['type'] === 'error' ? '#c0392b' : ($log['type'] === 'success' ? '#27ae60' : '#333');
+                $logs .= '<div style="color:' . $color . ';">' . htmlspecialchars($log['date']) . ' - ' . htmlspecialchars($log['message']) . '</div>';
+            }
+            $logs .= '</div>';
+            $return['AutoInstall Log'] = $logs;
+        }
+
+        return $return;
     }
 }
