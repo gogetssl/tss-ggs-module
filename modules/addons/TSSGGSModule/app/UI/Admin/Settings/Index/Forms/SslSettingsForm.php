@@ -84,6 +84,13 @@ class SslSettingsForm extends Form implements AdminAreaInterface, AjaxComponentI
             true
         );
 
+        $this->builder->addFieldInContainer(
+            $sslValidationWidget,
+            (new FormInputText())
+                ->setName('wildcardDnsTimeoutMinutes'),
+            true
+        );
+
         $useFixedTechnicalDetails = $this->builder->addFieldInContainer(
             $sslValidationWidget,
             (new Switcher())
@@ -277,6 +284,12 @@ class SslSettingsForm extends Form implements AdminAreaInterface, AjaxComponentI
             (new Dropdown())
                 ->setName('additionalDaysForRenewalOrder')
                 ->setDefaultValueAsFirstOption()
+        );
+
+        $this->builder->addFieldInContainer(
+            $renewalsWidget,
+            (new Dropdown())
+                ->setName('autoReissueDaysBeforeExpire')
         );
 
         $recurringOrdersWidget = new Widget();

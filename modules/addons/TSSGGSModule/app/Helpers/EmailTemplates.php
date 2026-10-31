@@ -111,6 +111,8 @@ class EmailTemplates
                                   ]);
 
         }
+
+        AutoInstallEmailTemplates::createTemplates();
     }
 
     public static function sendEmail($template, $id, $fields = [], $attachments = [])

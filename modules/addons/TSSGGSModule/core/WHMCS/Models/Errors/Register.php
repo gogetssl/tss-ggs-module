@@ -32,7 +32,7 @@ class Register extends Exception
             'code'    => $exc->getCode(),
             'token'   => self::getToken($exc),
         ],
-            $debug, 0, 0);
+            $debug);
     }
 
     /**

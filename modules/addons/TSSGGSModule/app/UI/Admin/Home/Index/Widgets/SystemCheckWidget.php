@@ -30,6 +30,7 @@ class SystemCheckWidget extends Widget
             'RenewalNotifyCertificate',
             'ReSyncProducts',
             'SSLCertificatesProcessing',
+            'SSLAutoInstall',
         ];
 
         $list = new ListSimple();

@@ -1,4 +1,22 @@
 <div class="validate-ssl-unified">
+    {if $autoinstall}
+        {assign var=aiDomain value=$autoinstall.domain|escape}
+        <div class="alert {if $autoinstall.status == 'installed'}alert-success{elseif $autoinstall.status == 'failed'}alert-danger{elseif $autoinstall.status == 'disabled'}alert-warning{else}alert-info{/if}" role="alert">
+            <strong>{$MGLANG->T('autoinstallBoxTitle')}:</strong>
+            {if $autoinstall.status == 'installed'}{$MGLANG->T('autoinstallBoxInstalled')|sprintf:$aiDomain}{elseif $autoinstall.status == 'failed'}{$MGLANG->T('autoinstallBoxFailed')|sprintf:$aiDomain}{elseif $autoinstall.status == 'disabled'}{$MGLANG->T('autoinstallBoxDisabled')}{else}{$MGLANG->T('autoinstallBoxAwaiting')|sprintf:$aiDomain}{/if}
+            {if $autoinstall.status != 'installed' && $autoinstall.status != 'disabled' && $autoinstall.last_error}<br><small>{$MGLANG->T('autoinstallBoxLastError')} {$autoinstall.last_error|escape}</small>{/if}
+            {if $autoinstall.logs}
+                <details style="margin-top:8px;">
+                    <summary style="cursor:pointer;">{$MGLANG->T('autoinstallBoxLogs')}</summary>
+                    <ul style="margin:6px 0 0;padding-left:18px;font-size:12px;">
+                        {foreach $autoinstall.logs as $aiLog}
+                            <li{if $aiLog.type == 'error'} style="color:#c0392b;"{/if}>{$aiLog.date|escape} - {$aiLog.message|escape}</li>
+                        {/foreach}
+                    </ul>
+                </details>
+            {/if}
+        </div>
+    {/if}
     <div class="table-unified-information">
         <p class="desc">{$product_title}</p>
         <div class="row">
@@ -137,7 +155,7 @@
         {if $order_details_api.orderData.common_name.validation_method == 'http' || $order_details_api.orderData.common_name.validation_method == 'https'}
             <tr>
                 <td>{$MGLANG->T('validation_page', 'File Url')}</td>
-                <td colspan="2">https://{$domain}/.well-known/pki-validation/{$mainDomainValidation.file_name}</td>
+                <td colspan="2">{$order_details_api.orderData.common_name.validation_method}://{$domain}/.well-known/pki-validation/{$mainDomainValidation.file_name}</td>
             </tr>
             <tr>
                 <td>{$MGLANG->T('validation_page', 'File Content')}</td>
@@ -192,6 +210,18 @@
         <a href="clientarea.php?action=productdetails&id={$serviceid}&mg-action=downloadAuthFile" class="btn btn-default">{$MGLANG->T('validation_page', 'Download Auth File')}</a>
     {/if}
     <a href="clientarea.php?action=productdetails&id={$serviceid}&mg-action=changeApprovalMethod" class="btn btn-default">{$MGLANG->T('validation_page', 'Change Approval Method')}</a>
+    {if $status == 'pending' || $status == 'processing'}
+        <form method="POST" style="display:inline;">
+            <input type="hidden" name="mg-action" value="revalidate">
+            <button type="submit" class="btn btn-primary" title="{$MGLANG->T('validation_page', 'RevalidateDesc')}">{$MGLANG->T('validation_page', 'Revalidate')}</button>
+        </form>
+    {/if}
+    {if $hasEmailValidation && ($status == 'pending' || $status == 'processing')}
+        <form method="POST" style="display:inline;">
+            <input type="hidden" name="mg-action" value="resendValidationEmail">
+            <button type="submit" class="btn btn-default" title="{$MGLANG->T('validation_page', 'ResendDcvEmailDesc')}">{$MGLANG->T('validation_page', 'Resend DCV email')}</button>
+        </form>
+    {/if}
 
     {if $configurableOptions.sans || $configurableOptions.sans_wildcard}
 

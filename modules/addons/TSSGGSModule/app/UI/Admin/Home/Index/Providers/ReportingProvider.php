@@ -38,6 +38,7 @@ class ReportingProvider extends CrudProvider
             'RenewalNotifyCertificate',
             'ReSyncProducts',
             'SSLCertificatesProcessing',
+            'SSLAutoInstall',
         ];
 
         $issues = 0;

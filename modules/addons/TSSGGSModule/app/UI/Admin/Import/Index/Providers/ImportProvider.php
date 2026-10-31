@@ -5,6 +5,7 @@ namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Import\Index\Providers;
 use ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Service;
 use WHMCS\Database\Capsule;
 use ModulesGarden\TSSGGSModule\App\Libs\Helpers;
+use ModulesGarden\TSSGGSModule\App\Libs\SSLTrustCenterApi;
 use ModulesGarden\TSSGGSModule\App\Models\RemoteProduct;
 use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
 use ModulesGarden\TSSGGSModule\Core\DataProviders\CrudProvider;
@@ -110,15 +111,6 @@ class ImportProvider extends CrudProvider
             $clientId  = (int)$localOrderData['clientId'];
             $payMethod = trim($localOrderData['payMethod']);
 
-            $existingOrder = Capsule::table('tblsslorders')->where('remoteid', $remoteOrderId)->first();
-
-            if($existingOrder)
-            {
-                Logger::error('orderExists', $localOrderData);
-                $errorsCount++;
-                continue;
-            }
-
             $client = Client::find($clientId);
 
             if(!$client)
@@ -139,9 +131,20 @@ class ImportProvider extends CrudProvider
 
             $remoteOrderData = $remoteOrdersData[$remoteOrderId];
 
-            if(empty($remoteOrderData))
+            if(empty($remoteOrderData) || empty($remoteOrderData['items'][0]['id']))
             {
                 Logger::error('invalidOrderId', $localOrderData);
+                $errorsCount++;
+                continue;
+            }
+
+            // tblsslorders.remoteid holds the certificate (item) ID, older services may still have the order ID
+            $remoteItemId  = SSLTrustCenterApi::getItemId($remoteOrderData);
+            $existingOrder = Capsule::table('tblsslorders')->whereIn('remoteid', [$remoteItemId, $remoteOrderId])->first();
+
+            if($existingOrder)
+            {
+                Logger::error('orderExists', $localOrderData);
                 $errorsCount++;
                 continue;
             }
@@ -223,7 +226,7 @@ class ImportProvider extends CrudProvider
 
             Capsule::table('tblsslorders')->where('serviceid', $serviceId)->update(
                 [
-                    'remoteid'   => $remoteOrderId,
+                    'remoteid'   => $remoteItemId,
                     'status'     => 'Configuration Submitted',
                     'updated_at' => date('Y-m-d H:i:s'),
                 ]
@@ -262,14 +265,14 @@ class ImportProvider extends CrudProvider
                 ]
             );
 
-            $orderData = $configuredApi->getOrder($remoteOrderId);
+            $orderData = $configuredApi->getOrder($remoteItemId);
 
             $orderData['orderData'] = $orderParams;
             $orderFiles             = [];
 
             try
             {
-                $orderFiles = $configuredApi->getCertificateFiles($remoteOrderId);
+                $orderFiles = $configuredApi->getCertificateFiles($remoteItemId);
             }
             catch(\Exception $exception)
             {

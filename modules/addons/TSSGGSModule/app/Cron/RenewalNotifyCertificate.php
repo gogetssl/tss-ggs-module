@@ -6,6 +6,7 @@ use Exception;
 use ModulesGarden\Servers\TSSGGSModule\app\services\InvoiceRenew;
 use ModulesGarden\TSSGGSModule\App\Helpers\EmailTemplates;
 use ModulesGarden\TSSGGSModule\App\Libs\AcmeHelpers;
+use ModulesGarden\TSSGGSModule\App\Libs\AutoInstallHelpers;
 use ModulesGarden\TSSGGSModule\App\Libs\Helpers;
 use ModulesGarden\TSSGGSModule\App\Models\AcmeSubscription;
 use ModulesGarden\TSSGGSModule\App\Models\CronCheck;
@@ -109,7 +110,7 @@ class RenewalNotifyCertificate extends AbstractCommand
                 $daysLeft    = $this->checkOrderExpireDate($srv->nextduedate);
                 $daysReissue = $this->checkReissueDate($srv->id, $certificate);
 
-                if($srv->domainstatus == 'Active' && $daysReissue == '30')
+                if($srv->domainstatus == 'Active' && $daysReissue == '30' && !AutoInstallHelpers::isAutoReissueActive($srv->id))
                 {
                     $output->write('Send Email Reissue: ' . $srv->id . ' - ' . $srv->domain);
                     EmailTemplates::sendEmail(EmailTemplates::REISSUE_TEMPLATE, $srv->id);
@@ -283,7 +284,7 @@ class RenewalNotifyCertificate extends AbstractCommand
         {
             $subscription = AcmeSubscription::getByServiceId($row->service_id);
 
-            if (!$subscription || (int)$subscription->api_order_id <= 0)
+            if (!$subscription || (int)$subscription->acme_id <= 0)
             {
                 continue;
             }
@@ -296,7 +297,7 @@ class RenewalNotifyCertificate extends AbstractCommand
             try
             {
                 $api = Helpers::getApiByServiceId($row->service_id);
-                $api->cancelCertificate((int) $subscription->api_order_id, 'Overdue renewal invoice');
+                $api->cancelItem((int) $subscription->acme_id, 'Overdue renewal invoice', 'caas');
             }
             catch (\Exception $e)
             {
@@ -336,12 +337,12 @@ class RenewalNotifyCertificate extends AbstractCommand
 
         foreach ($subscriptions as $subscriptionData)
         {
-            if ((int) $subscriptionData->api_order_id > 0)
+            if ((int) $subscriptionData->acme_id > 0)
             {
                 try
                 {
                     $api = Helpers::getApiByServiceId($subscriptionData->service_id);
-                    $api->cancelCertificate((int) $subscriptionData->api_order_id, 'Auto-renew disabled and subscription expired');
+                    $api->cancelItem((int) $subscriptionData->acme_id, 'Auto-renew disabled and subscription expired', 'caas');
                 }
                 catch (\Exception $e)
                 {

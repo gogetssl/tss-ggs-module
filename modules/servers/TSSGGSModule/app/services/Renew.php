@@ -5,6 +5,7 @@ namespace ModulesGarden\Servers\TSSGGSModule\app\services;
 use ModulesGarden\Servers\TSSGGSModule\app\models\whmcs\Service;
 use ModulesGarden\Servers\TSSGGSModule\app\models\whmcs\SSL;
 use ModulesGarden\TSSGGSModule\App\Libs\AcmeHelpers;
+use ModulesGarden\TSSGGSModule\App\Libs\AutoInstallHelpers;
 use ModulesGarden\TSSGGSModule\App\Libs\SSLTrustCenterApi;
 use ModulesGarden\TSSGGSModule\App\Models\Request;
 use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
@@ -63,9 +64,10 @@ class Renew
             $requestRenew['renewal']['prior_order_id'] = $sslOrder->remoteid;
             $requestRenew['renewal']['remaining_days'] = $days > 0 ? $days+1 : 0;
 
-            $newOrder = $api->renewOrder($serviceId, $requestRenew);
+            $newOrder  = $api->renewOrder($serviceId, $requestRenew);
+            $newItemId = SSLTrustCenterApi::getItemId($newOrder);
 
-            SSL::where('serviceid', $serviceId)->update(['remoteid' => $newOrder['order']['id']]);
+            SSL::where('serviceid', $serviceId)->update(['remoteid' => $newItemId]);
 
             $invoiceId = 0;
             $item = InvoiceItem::where('relid', $serviceId)->where('type', 'Hosting')->orderBy('id','desc')->first();
@@ -85,11 +87,11 @@ class Renew
                 'status' => 'pending'
             ]);
 
-            $orderData = $api->getOrder($newOrder['order']['id'], $serviceId);
+            $orderData = $api->getOrder($newItemId, $serviceId);
 
             $orderFiles = [];
             try {
-                $orderFiles = $api->getCertificateFiles($newOrder['order']['id']);
+                $orderFiles = $api->getCertificateFiles($newItemId);
             } catch (\Exception $exception) {}
 
             $request = ['orderData' => $orderData, 'orderFiles' => $orderFiles];
@@ -99,6 +101,11 @@ class Renew
                 'status' => 'pending',
                 'updated_at' => date('Y-m-d H:i:s')
             ]);
+
+            // AutoInstall: install the renewed certificate (same CSR / private key) + "Renewal Started"; otherwise "Autorenewed" email
+            try {
+                AutoInstallHelpers::afterRenewal($serviceId, $serviceId, $newItemId);
+            } catch (\Exception $exception) {}
         }
 
         if(!$renewOrderViaExistingOrder)
@@ -145,6 +152,7 @@ class Renew
                 $requestRenew['renewal']['remaining_days'] = $days > 0 ? $days+1 : 0;
 
                 $newOrder = $api->renewOrder($newServiceId, $requestRenew);
+                $newItemId = SSLTrustCenterApi::getItemId($newOrder);
                 $newService = Service::where('id', $newServiceId)->first();
 
                 $invoiceId = 0;
@@ -165,11 +173,11 @@ class Renew
                     'status' => 'pending'
                 ]);
 
-                $orderData = $api->getOrder($newOrder['order']['id'], $newServiceId);
+                $orderData = $api->getOrder($newItemId, $newServiceId);
 
                 $orderFiles = [];
                 try {
-                    $orderFiles = $api->getCertificateFiles($newOrder['order']['id']);
+                    $orderFiles = $api->getCertificateFiles($newItemId);
                 } catch (\Exception $exception) {}
 
                 $request = ['orderData' => $orderData, 'orderFiles' => $orderFiles];
@@ -182,10 +190,15 @@ class Renew
                     'updated_at' => date('Y-m-d H:i:s')
                 ]);
                 SSL::where('serviceid', $newServiceId)->update([
-                    'remoteid' => $newOrder['order']['id'],
+                    'remoteid' => $newItemId,
                     'completiondate' => date('Y-m-d H:i:s'),
                     'status' => 'Configuration Submitted'
                 ]);
+
+                // AutoInstall: install the renewed certificate (same CSR / private key) + "Renewal Started"; otherwise "Autorenewed" email
+                try {
+                    AutoInstallHelpers::afterRenewal($serviceId, $newServiceId, $newItemId);
+                } catch (\Exception $exception) {}
             }
         }
 

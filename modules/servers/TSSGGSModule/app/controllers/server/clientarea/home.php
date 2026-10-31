@@ -11,12 +11,17 @@ use ModulesGarden\Servers\TSSGGSModule\app\repository\whmcs\Config;
 use ModulesGarden\Servers\TSSGGSModule\app\repository\whmcs\Domain;
 use ModulesGarden\Servers\TSSGGSModule\app\repository\whmcs\ProductConfigOptions;
 use ModulesGarden\Servers\TSSGGSModule\app\services\InvoiceRenew;
+use ModulesGarden\Servers\TSSGGSModule\app\services\SSLStepThree;
 use ModulesGarden\Servers\TSSGGSModule\core\Lang;
 use ModulesGarden\Servers\TSSGGSModule\core\process\AbstractController;
 use ModulesGarden\Servers\TSSGGSModule\Server;
 use ModulesGarden\TSSGGSModule\App\Helpers\EmailTemplates;
 use ModulesGarden\TSSGGSModule\App\Libs\AcmeHelpers;
 use ModulesGarden\TSSGGSModule\App\Libs\AisHelpers;
+use ModulesGarden\TSSGGSModule\App\Libs\AutoInstallHelpers;
+use ModulesGarden\TSSGGSModule\App\Libs\CertificateSyncHelpers;
+use ModulesGarden\TSSGGSModule\App\Libs\Cpanel;
+use ModulesGarden\TSSGGSModule\App\Libs\SslProductHelpers;
 use ModulesGarden\TSSGGSModule\App\Libs\Helpers;
 use ModulesGarden\TSSGGSModule\App\Libs\SSLTrustCenterApi;
 use ModulesGarden\TSSGGSModule\App\Models\AcmeSubscription;
@@ -64,6 +69,10 @@ class home extends AbstractController
 
             if(isset($ssl->status) && $ssl->status == 'Awaiting Configuration')
             {
+                if(isset($_GET['configssl']) && (string)$_GET['configssl'] === '1')
+                {
+                    return $this->sslConfigurationHTML($input, $vars);
+                }
                 return $this->awaitingConfiguration($serviceId, $ssl);
             }
 
@@ -113,7 +122,9 @@ class home extends AbstractController
         $orderDetails = Request::getOrder($input['id']);
         $order        = $orderDetails['orderData'];
 
-        $productAPI = RemoteProduct::where('remoteId', $order['orderData']['product']['id'])->first()->toArray();
+        $remoteProductId = isset($order['orderData']['product']['id']) ? $order['orderData']['product']['id'] : $product->configoption2;
+        $remoteProduct   = RemoteProduct::where('remoteId', $remoteProductId)->where('vendor', $product->configoption1)->first();
+        $productAPI      = $remoteProduct ? $remoteProduct->toArray() : [];
 
         if($order['order']['status'] == 'active')
         {
@@ -141,7 +152,7 @@ class home extends AbstractController
         $vars['subscribtion_ends']                   = '';
         $vars['next_reissue']                        = '';
         $vars['ssl_issuer']                          = '';
-        $vars['validation_product']                  = $productAPI['validation'];
+        $vars['validation_product']                  = isset($productAPI['validation']) ? $productAPI['validation'] : '';
         $vars['order_details']['registration_date']  = date('l F jS, Y', strtotime($service->regdate));
         $vars['order_details']['expiration_date']    = $service->nextduedate != '0000-00-00' ? date('l F jS, Y', strtotime($service->nextduedate)) : "";
         $vars['order_details']['reccuring_amount']   = formatCurrency($service->amount, $client->currency);
@@ -158,8 +169,15 @@ class home extends AbstractController
 
         $vars['additional_names'] = [];
 
+        $vars['hasEmailValidation'] = false;
+
         foreach($domains as $domain)
         {
+            if(strtolower($domain['method']) === 'email' || strpos((string)$domain['method'], '@') !== false)
+            {
+                $vars['hasEmailValidation'] = true;
+            }
+
             if($domain['name'] == $mainDomain)
             {
                 $vars['mainDomainMethod']     = $domain['method'];
@@ -190,6 +208,13 @@ class home extends AbstractController
             $vars['success'] = $_SESSION['mg-success'];
             unset($_SESSION['mg-success']);
         }
+        if(isset($_SESSION['mg-error']))
+        {
+            $vars['error'] = htmlspecialchars($_SESSION['mg-error']);
+            unset($_SESSION['mg-error']);
+        }
+
+        $vars['autoinstall'] = AutoInstallHelpers::getStatusForView($service->id);
 
         return ['tpl' => 'configuration_submitted', 'vars' => $vars];
     }
@@ -201,21 +226,10 @@ class home extends AbstractController
 
 
         $filename = str_replace('.', '_', $certificate['orderData']['orderData']['common_name']['name']) . '.crt';
-        $files    = $certificate['orderFiles']['files'];
+        $cert     = AutoInstallHelpers::extractCertificate($certificate['orderFiles'], $certificate['orderData']['orderData']['common_name']['name']);
 
-        $fileContentCrt = '';
-        $fileContentCA  = '';
-        foreach($files as $file)
-        {
-            if($file['name'] == $filename)
-            {
-                $fileContentCrt = $file['content'];
-            }
-            if(strpos($file['name'], 'CA.crt') !== false)
-            {
-                $fileContentCA = $file['content'];
-            }
-        }
+        $fileContentCrt = $cert['crt'];
+        $fileContentCA  = $cert['ca'];
 
 
         $pathAttachemts = false;
@@ -328,18 +342,8 @@ class home extends AbstractController
         $serviceId   = $input['id'];
         $certificate = Request::getOrder($serviceId);
 
-        $filename = str_replace('.', '_', $certificate['orderData']['orderData']['common_name']['name']) . '.crt';
-        $files    = $certificate['orderFiles']['files'];
-
-        $fileContent = '';
-
-        foreach($files as $file)
-        {
-            if($file['name'] == $filename)
-            {
-                $fileContent = $file['content'];
-            }
-        }
+        $filename    = str_replace('.', '_', $certificate['orderData']['orderData']['common_name']['name']) . '.crt';
+        $fileContent = AutoInstallHelpers::extractCertificate($certificate['orderFiles'], $certificate['orderData']['orderData']['common_name']['name'])['crt'];
 
         header('Content-Type: application/octet-stream');
         header('Content-Disposition: attachment; filename=' . $filename);
@@ -356,20 +360,8 @@ class home extends AbstractController
         $serviceId   = $input['id'];
         $certificate = Request::getOrder($serviceId);
 
-        $files = $certificate['orderFiles']['files'];
-
         $filename    = 'CA.crt';
-        $fileContent = '';
-
-        foreach($files as $file)
-        {
-
-            if(strpos($file['name'], 'CA.crt') !== false)
-            {
-                $fileContent = $file['content'];
-                $filename    = $file['name'];
-            }
-        }
+        $fileContent = AutoInstallHelpers::extractCertificate($certificate['orderFiles'], $certificate['orderData']['orderData']['common_name']['name'])['ca'];
 
         header('Content-Type: application/octet-stream');
         header('Content-Disposition: attachment; filename=' . $filename);
@@ -386,24 +378,11 @@ class home extends AbstractController
         $serviceId   = $input['id'];
         $certificate = Request::getOrder($serviceId);
 
-        $mainCrt = str_replace('.', '_', $certificate['orderData']['orderData']['common_name']['name']) . '.crt';
-        $files   = $certificate['orderFiles']['files'];
+        $cert = AutoInstallHelpers::extractCertificate($certificate['orderFiles'], $certificate['orderData']['orderData']['common_name']['name']);
 
+        // Full chain: certificate first, then the intermediates
         $filename    = 'certificates.crt';
-        $fileContent = '';
-
-        foreach($files as $file)
-        {
-
-            if(strpos($file['name'], 'CA.crt') !== false)
-            {
-                $fileContent .= $file['content'];
-            }
-            if($file['name'] == $mainCrt)
-            {
-                $fileContent .= $file['content'];
-            }
-        }
+        $fileContent = $cert['crt'] . $cert['ca'];
 
         header('Content-Type: application/octet-stream');
         header('Content-Disposition: attachment; filename=' . $filename);
@@ -626,7 +605,9 @@ class home extends AbstractController
                 'existing_alternative_names'  => isset($requestOrder['alternative_names']) ? $requestOrder['alternative_names'] : [],
                 'submitted_alternative_names' => $san
             ];
-            $reissue     = $api->reissueCertificate($certificate['orderData']['order']['id'], $reissueData);
+            $itemId      = (int)SSL::getByServiceId($serviceId)->remoteid;
+            $reissue     = $api->reissueCertificate($itemId, $reissueData);
+            $itemId      = SSLTrustCenterApi::getItemId($reissue, $itemId);
 
             $requestOrder['csr']               = $reissueData['csr'];
             $requestOrder['common_name']       = $reissueData['common_name'];
@@ -638,11 +619,11 @@ class home extends AbstractController
                                                                                            'updated_at' => date('Y-m-d H:i:s')
                                                                                        ]);
 
-            $orderData  = $api->getOrder($reissue['order']['id'], $serviceId);
+            $orderData  = $api->getOrder($itemId, $serviceId);
             $orderFiles = [];
             try
             {
-                $orderFiles = $api->getCertificateFiles($reissue['order']['id']);
+                $orderFiles = $api->getCertificateFiles($itemId);
             }
             catch(\Exception $exception)
             {
@@ -655,6 +636,15 @@ class home extends AbstractController
                                                                                           ]);
 
             Service::where('id', $serviceId)->update(['domain' => $decode['CN']]);
+
+            // New CSR = new private key unknown to the module - stop the cPanel AutoInstall for this service
+            try
+            {
+                AutoInstallHelpers::onManualReissue($serviceId);
+            }
+            catch(\Exception $autoInstallException)
+            {
+            }
 
             $_SESSION['mg-success'] = Lang::absoluteT('reissue_success');
             redir('action=productdetails&id=' . $serviceId, 'clientarea.php');
@@ -827,6 +817,14 @@ class home extends AbstractController
             unset($_SESSION['mg-success']);
         }
 
+        $vars['autoinstall'] = AutoInstallHelpers::getStatusForView($params['service']->id);
+
+        // Certificate already installed via cPanel AutoInstall - do not tell the client it is still waiting for installation
+        if(!empty($vars['autoinstall']) && $vars['autoinstall']['status'] === 'installed')
+        {
+            $vars['product_title'] = sprintf(Lang::absoluteT('product_title_installed'), $params['product']->name);
+        }
+
         return ['tpl' => 'certificate_active', 'vars' => $vars];
     }
 
@@ -937,7 +935,8 @@ class home extends AbstractController
         }
 
         $api = new SSLTrustCenterApi($configProduct['provider'], $credentials['PartnerCode'], $credentials['AuthToken'], $configProduct['category']);
-        $api->cancelOrder($input['remoteid'], 'Cancelled by customer');
+        // remoteid is the certificate (item) ID
+        $api->cancelItem((int)SSL::getByServiceId($input['id'])->remoteid, 'Cancelled by customer');
 
         Service::where('id', $input['id'])->update([
                                                        'domainstatus' => 'Cancelled'
@@ -948,6 +947,64 @@ class home extends AbstractController
                                                                                      ]);
 
         redir('action=productdetails&id=' . $input['id'], 'clientarea.php');
+    }
+
+    public function revalidateHTML($input, $vars = [])
+    {
+        $serviceId = (int)$input['id'];
+
+        try
+        {
+            $ssl     = SSL::getByServiceId($serviceId);
+            $service = Service::where('id', $serviceId)->first();
+            if(!$ssl || !$service || $ssl->status !== 'Configuration Submitted' || empty($ssl->remoteid))
+            {
+                throw new \Exception(Lang::absoluteT('revalidate_not_available'));
+            }
+
+            $this->getSslApiForProduct($service->packageid)->recheckValidation($ssl->remoteid);
+
+            // Same flow as the SSLCertificates cron - fetch the order details right away
+            $status      = '';
+            $certificate = CertificateSyncHelpers::getCertificatesQuery()->where('tblhosting.id', $serviceId)->first();
+            if($certificate)
+            {
+                $status = CertificateSyncHelpers::syncCertificate($certificate->toArray(), (new AddonModuleRepository())->getModuleConfiguration());
+            }
+
+            $_SESSION['mg-success'] = Lang::absoluteT($status === 'active' ? 'revalidate_success_active' : 'revalidate_success_pending');
+        }
+        catch(\Exception $e)
+        {
+            $_SESSION['mg-error'] = Lang::absoluteT('revalidate_error') . ' ' . $e->getMessage();
+        }
+
+        redir('action=productdetails&id=' . $serviceId, 'clientarea.php');
+    }
+
+    public function resendValidationEmailHTML($input, $vars = [])
+    {
+        $serviceId = (int)$input['id'];
+
+        try
+        {
+            $ssl     = SSL::getByServiceId($serviceId);
+            $service = Service::where('id', $serviceId)->first();
+            if(!$ssl || !$service || $ssl->status !== 'Configuration Submitted' || empty($ssl->remoteid))
+            {
+                throw new \Exception(Lang::absoluteT('resend_dcv_not_available'));
+            }
+
+            $this->getSslApiForProduct($service->packageid)->resendValidationEmail($ssl->remoteid);
+
+            $_SESSION['mg-success'] = Lang::absoluteT('resend_dcv_success');
+        }
+        catch(\Exception $e)
+        {
+            $_SESSION['mg-error'] = Lang::absoluteT('resend_dcv_error') . ' ' . $e->getMessage();
+        }
+
+        redir('action=productdetails&id=' . $serviceId, 'clientarea.php');
     }
 
     public function downloadCSRHTML($input, $vars = [])
@@ -1053,11 +1110,12 @@ class home extends AbstractController
             try
             {
 
+                $itemId = (int)SSL::getByServiceId($serviceId)->remoteid;
                 foreach($domainChanges as $domainChange)
                 {
-                    $api->changeApprovers($certificate['orderData']['order']['id'], $domainChange);
+                    $api->changeApprovers($itemId, $domainChange);
                 }
-                $newData                               = $api->getOrder($certificate['orderData']['order']['id'], $serviceId);
+                $newData                               = $api->getOrder($itemId, $serviceId);
                 $certificate['orderData']['orderData'] = $newOrderData;
                 $certificate['orderData']['order']     = $newData['order'];
                 $certificate['orderData']['items']     = $newData['items'];
@@ -1721,14 +1779,15 @@ class home extends AbstractController
         $serviceId    = (int)$input['id'];
         $subscription = AcmeSubscription::getByServiceId($serviceId);
 
-        if(!$subscription || (int)$subscription->api_order_id <= 0)
+        if(!$subscription || (int)$subscription->acme_id <= 0)
         {
             throw new \Exception(Lang::absoluteT('subscription_was_not_created_yet'));
         }
 
 
+        // acme_id is the CaaS item ID (items[0].id), not the order ID
         $api = Helpers::getApiByServiceId($serviceId);
-        $api->cancelCertificate((int)$subscription->api_order_id, 'Cancelled by client');
+        $api->cancelItem((int)$subscription->acme_id, 'Cancelled by client', 'caas');
 
         $subscription->status       = 'cancelled';
         $subscription->cancelled_at = date('Y-m-d H:i:s');
@@ -2149,6 +2208,522 @@ class home extends AbstractController
         Capsule::table('tblhosting')->where('id', $serviceId)->update(['domainstatus' => 'Cancelled']);
 
         return ['success' => true, 'message' => Lang::absoluteT('aisSubscriptionCancelled')];
+    }
+
+    private function getSslApiForProduct($packageId)
+    {
+        $configProduct = (new ProductRepository())->getProductConfiguration($packageId);
+        $addonConfig   = (new AddonModuleRepository())->getModuleConfiguration();
+
+        $provider    = strtolower($configProduct['provider']);
+        $credentials = $addonConfig['credentials'][$provider];
+
+        if($provider == 'tss' && $credentials['OperationMode'] == 'sandbox')
+        {
+            $credentials['PartnerCode'] = $credentials['TestPartnerCode'];
+            $credentials['AuthToken']   = $credentials['TestAuthToken'];
+        }
+
+        return new SSLTrustCenterApi($configProduct['provider'], $credentials['PartnerCode'], $credentials['AuthToken'], $configProduct['category']);
+    }
+
+    private function getSslConfigurationSettings($params)
+    {
+        $configProduct = (new ProductRepository())->getProductConfiguration($params['packageid']);
+        $addonConfig   = (new AddonModuleRepository())->getModuleConfiguration();
+        $sslSettings   = isset($addonConfig['sslSettings']) && is_array($addonConfig['sslSettings']) ? $addonConfig['sslSettings'] : [];
+
+        $product    = Product::where('id', $params['packageid'])->first();
+        $isWildcard = SslProductHelpers::isWildcardProduct($configProduct['product_id'], $product ? $product->name : '');
+
+        $validation = strtoupper(trim((string)$configProduct['validation']));
+        if(!in_array($validation, ['DV', 'OV', 'EV']))
+        {
+            $validation = 'DV';
+        }
+
+        $dcvMethods = array_values(array_filter(array_map('trim', explode(',', strtolower((string)$configProduct['dcv'])))));
+        // Same methods as in SSLCENTERWHMCS: dns-cname / dns-txt from the API product are shown as one DNS method
+        $dcvMethods = array_map(function($method) {
+            return in_array($method, ['dns-cname', 'dns-txt']) ? 'dns' : $method;
+        }, $dcvMethods);
+        $dcvMethods = array_values(array_intersect(['email', 'http', 'https', 'dns'], $dcvMethods));
+        if(empty($dcvMethods))
+        {
+            $dcvMethods = ['email', 'http', 'https', 'dns'];
+        }
+        if(!empty($sslSettings['disableEmailValidation']))
+        {
+            $dcvMethods = array_values(array_diff($dcvMethods, ['email']));
+        }
+        if($isWildcard)
+        {
+            $dcvMethods = array_values(array_diff($dcvMethods, ['http', 'https']));
+        }
+
+        $sansLimit         = (int)$params['configoption7'] + (isset($params['configoptions']['sans']) ? (int)$params['configoptions']['sans'] : 0);
+        $wildcardSansLimit = (int)$params['configoption8'] + (isset($params['configoptions']['sans_wildcard']) ? (int)$params['configoptions']['sans_wildcard'] : 0);
+
+        return [
+            'productName'        => $product ? $product->name : 'SSL Certificate',
+            'isWildcard'         => $isWildcard,
+            'validation'         => $validation,
+            'dcvMethods'         => $dcvMethods,
+            'sansLimit'          => $sansLimit,
+            'wildcardSansLimit'  => $wildcardSansLimit,
+            'enableCsrGenerator' => !empty($sslSettings['enableCsrGenerator']),
+            'useProfileForCsr'   => !empty($sslSettings['useProfileDetailsForCsr']),
+            'defaultCsrCountry'  => isset($sslSettings['defaultCsrCountry']) ? (string)$sslSettings['defaultCsrCountry'] : '',
+            'adminFormHidden'    => !empty($sslSettings['autoDetailsForDvOrders']) && $validation === 'DV',
+        ];
+    }
+
+    private function getCountriesList()
+    {
+        $file      = dirname(dirname(dirname(dirname(dirname(dirname(dirname(__DIR__))))))) . DS . 'resources' . DS . 'country' . DS . 'dist.countries.json';
+        $countries = [];
+        if(file_exists($file))
+        {
+            $decoded = json_decode(file_get_contents($file), true);
+            if(is_array($decoded))
+            {
+                foreach($decoded as $code => $country)
+                {
+                    $countries[$code] = isset($country['name']) ? $country['name'] : $code;
+                }
+            }
+        }
+        asort($countries);
+
+        return $countries;
+    }
+
+    private function sslConfigurationHTML($input, $vars = array())
+    {
+        $params    = $input['params'];
+        $serviceId = (int)$params['serviceid'];
+        $userId    = (int)$params['userid'];
+        $settings  = $this->getSslConfigurationSettings($params);
+
+        // All client's cPanel accounts - null means manual enrollment only
+        $cpanelDomains = null;
+        try
+        {
+            $cpanelDomains = Cpanel::getMergedDomainsGrouped($userId);
+        }
+        catch(\Exception $e)
+        {
+        }
+
+        // Each parent domain is an optgroup with itself + its subdomains
+        $domainGroups = [];
+        if($cpanelDomains !== null)
+        {
+            $parents = [];
+            if(!empty($cpanelDomains['main']))
+            {
+                $parents[] = $cpanelDomains['main'];
+            }
+            foreach(array_merge($cpanelDomains['addon'], $cpanelDomains['parked']) as $d)
+            {
+                $parents[] = $d;
+            }
+            foreach($parents as $parent)
+            {
+                $group = ['label' => $parent, 'domains' => [$parent]];
+                foreach($cpanelDomains['subdomain'] as $sub)
+                {
+                    if($sub['parent'] === $parent)
+                    {
+                        $group['domains'][] = $sub['domain'];
+                    }
+                }
+                $domainGroups[] = $group;
+            }
+        }
+
+        $countries      = $this->getCountriesList();
+        $defaultCountry = $settings['defaultCsrCountry'];
+        $client         = Client::where('id', $userId)->first();
+
+        $csrDefaults = ['country' => $defaultCountry, 'state' => '', 'city' => '', 'org' => '', 'email' => ''];
+        if($settings['useProfileForCsr'] && $client)
+        {
+            $clientCountry = strtoupper(trim((string)$client->country));
+            if($clientCountry && isset($countries[$clientCountry]))
+            {
+                $csrDefaults['country'] = $clientCountry;
+            }
+            $csrDefaults['state'] = (string)$client->state;
+            $csrDefaults['city']  = (string)$client->city;
+            $csrDefaults['org']   = (string)$client->companyname;
+            $csrDefaults['email'] = (string)$client->email;
+        }
+
+        $vars['allOk']              = true;
+        $vars['serviceid']          = $serviceId;
+        $vars['assetsURL']          = Server::I()->getAssetsURL();
+        $vars['productName']        = $settings['productName'];
+        $vars['domainGroups']       = $domainGroups;
+        $vars['hasCpanel']          = !empty($domainGroups);
+        $vars['dcvMethods']         = $settings['dcvMethods'];
+        $vars['countries']          = $countries;
+        $vars['csrDefaults']        = $csrDefaults;
+        $vars['client']             = $client;
+        $vars['clientCountry']      = $client ? strtoupper((string)$client->country) : $defaultCountry;
+        $vars['sansLimit']          = $settings['sansLimit'];
+        $vars['wildcardSansLimit']  = $settings['wildcardSansLimit'];
+        $vars['isMultiDomain']      = $settings['sansLimit'] > 0 || $settings['wildcardSansLimit'] > 0;
+        $vars['isWildcard']         = $settings['isWildcard'];
+        $vars['certTypeConfig']     = $settings['validation'] === 'DV' ? 'DV' : 'OV';
+        $vars['enableCsrGenerator'] = $settings['enableCsrGenerator'];
+        $vars['adminFormHidden']    = $settings['adminFormHidden'];
+        $vars['productDomain']      = isset($params['domain']) ? $params['domain'] : '';
+
+        return [
+            'tpl'  => 'home_ssl_configuration',
+            'vars' => $vars,
+        ];
+    }
+
+    public function getApproverEmailsJSON($input, $vars = array())
+    {
+        $domain = isset($input['domain']) ? strtolower(trim($input['domain'])) : '';
+        if(strpos($domain, '*.') === 0)
+        {
+            $domain = substr($domain, 2);
+        }
+        if(empty($domain))
+        {
+            return ['emails' => []];
+        }
+
+        try
+        {
+            $api    = $this->getSslApiForProduct($input['params']['packageid']);
+            $result = $api->getDomainEmails([$domain]);
+            $emails = [];
+            foreach((array)$result as $row)
+            {
+                if(isset($row['emails']) && is_array($row['emails']))
+                {
+                    foreach($row['emails'] as $email)
+                    {
+                        if(is_string($email) && !empty($email))
+                        {
+                            $emails[] = $email;
+                        }
+                    }
+                }
+            }
+            return ['emails' => array_values(array_unique($emails))];
+        }
+        catch(\Exception $e)
+        {
+            return ['emails' => []];
+        }
+    }
+
+    private function parseSslDomainList($raw)
+    {
+        if(is_array($raw))
+        {
+            $raw = implode("\n", $raw);
+        }
+        $items = preg_split('/[\s,;]+/', strtolower(trim((string)$raw)));
+
+        return array_values(array_unique(array_filter(array_map('trim', $items))));
+    }
+
+    public function submitSslConfigurationJSON($input, $vars = array())
+    {
+        $params    = $input['params'];
+        $serviceId = (int)$params['serviceid'];
+        $userId    = (int)$params['userid'];
+
+        $ssl = SSL::getByServiceId($serviceId);
+        if(!$ssl || $ssl->status !== 'Awaiting Configuration' || !empty($ssl->remoteid))
+        {
+            throw new \Exception(Lang::absoluteT('sslConfigAlreadySubmitted'));
+        }
+
+        $settings    = $this->getSslConfigurationSettings($params);
+        $installType = (isset($input['install_type']) && $input['install_type'] === 'autoinstall') ? 'autoinstall' : 'manual';
+        $dcvMethod   = isset($input['dcv_method']) ? strtolower(trim($input['dcv_method'])) : '';
+        $includeWww  = !empty($input['include_www']);
+        $ownCsr      = ($installType === 'manual') ? trim(isset($input['own_csr']) ? $input['own_csr'] : '') : '';
+
+        if(!in_array($dcvMethod, $settings['dcvMethods'], true))
+        {
+            throw new \Exception(Lang::absoluteT('sslConfigInvalidDcvMethod'));
+        }
+        if($installType === 'manual' && empty($ownCsr) && !$settings['enableCsrGenerator'])
+        {
+            throw new \Exception(Lang::absoluteT('sslConfigOwnCsrRequired'));
+        }
+
+        // ---- Main domain ----
+        $autoinstallDomain = '';
+        if($installType === 'autoinstall')
+        {
+            $mainDomain = isset($input['main_domain']) ? strtolower(trim($input['main_domain'])) : '';
+            if(empty($mainDomain) || $mainDomain === '__manual__')
+            {
+                throw new \Exception(Lang::absoluteT('sslConfigDomainRequired'));
+            }
+            $autoinstallDomain = strpos($mainDomain, '*.') === 0 ? substr($mainDomain, 2) : $mainDomain;
+            if(Cpanel::getServiceByDomain($userId, $autoinstallDomain) === false)
+            {
+                throw new \Exception(sprintf(Lang::absoluteT('sslConfigDomainNotInCpanel'), $autoinstallDomain));
+            }
+        }
+        elseif(!empty($ownCsr))
+        {
+            $csrSubject = @openssl_csr_get_subject($ownCsr);
+            if(!$csrSubject || empty($csrSubject['CN']))
+            {
+                throw new \Exception(Lang::absoluteT('csr_error'));
+            }
+            $mainDomain = strtolower(trim($csrSubject['CN']));
+        }
+        else
+        {
+            $mainDomain = isset($input['manual_domain']) ? strtolower(trim($input['manual_domain'])) : '';
+        }
+        if(empty($mainDomain))
+        {
+            $mainDomain = strtolower(trim((string)$params['domain']));
+        }
+        if(empty($mainDomain))
+        {
+            throw new \Exception(Lang::absoluteT('sslConfigDomainRequired'));
+        }
+
+        $domainValidation = new Domain();
+        $isWildcardCn     = strpos($mainDomain, '*.') === 0;
+        $domainValidation->validateDomain($mainDomain, $isWildcardCn);
+
+        // ---- SANs ----
+        $sanDomains   = $this->parseSslDomainList(isset($input['san_domains']) ? $input['san_domains'] : '');
+        $wildcardSans = [];
+        foreach($this->parseSslDomainList(isset($input['wildcard_san']) ? $input['wildcard_san'] : '') as $wildcardSan)
+        {
+            $wildcardSans[] = strpos($wildcardSan, '*.') === 0 ? $wildcardSan : '*.' . $wildcardSan;
+        }
+
+        if(count($sanDomains) > $settings['sansLimit'])
+        {
+            throw new \Exception(sprintf(Lang::absoluteT('using_max_san'), $settings['sansLimit']));
+        }
+        if(count($wildcardSans) > $settings['wildcardSansLimit'])
+        {
+            throw new \Exception(sprintf(Lang::absoluteT('using_max_san_wildcard'), $settings['wildcardSansLimit']));
+        }
+        foreach($sanDomains as $sanDomain)
+        {
+            $domainValidation->validateDomain($sanDomain);
+        }
+        foreach($wildcardSans as $wildcardSan)
+        {
+            $domainValidation->validateDomain($wildcardSan, true);
+        }
+
+        // ---- CSR ----
+        $privateKey = '';
+        if(!empty($ownCsr))
+        {
+            $csrCode = $ownCsr;
+        }
+        else
+        {
+            $commonName = $mainDomain;
+            if(!$isWildcardCn && $installType === 'autoinstall' && $includeWww && strpos($commonName, 'www.') !== 0)
+            {
+                $commonName = 'www.' . $commonName;
+            }
+
+            $privKey = openssl_pkey_new([
+                'private_key_bits' => 2048,
+                'private_key_type' => OPENSSL_KEYTYPE_RSA,
+            ]);
+            if(!$privKey || !openssl_pkey_export($privKey, $privateKey))
+            {
+                throw new \Exception(Lang::absoluteT('error_csr_generate'));
+            }
+
+            $dn  = array_filter([
+                'countryName'            => strtoupper(!empty($input['csr_country']) ? $input['csr_country'] : 'US'),
+                'stateOrProvinceName'    => isset($input['csr_state']) ? trim($input['csr_state']) : '',
+                'localityName'           => isset($input['csr_city']) ? trim($input['csr_city']) : '',
+                'organizationName'       => !empty($input['csr_org']) ? trim($input['csr_org']) : $commonName,
+                'organizationalUnitName' => isset($input['csr_org_unit']) ? trim($input['csr_org_unit']) : '',
+                'commonName'             => $commonName,
+                'emailAddress'           => isset($input['csr_email']) ? trim($input['csr_email']) : '',
+            ], function($v) { return $v !== ''; });
+            $csr = openssl_csr_new($dn, $privKey, ['digest_alg' => 'sha256']);
+            if(!$csr || !openssl_csr_export($csr, $csrCode))
+            {
+                throw new \Exception(Lang::absoluteT('error_csr_generate'));
+            }
+        }
+
+        $csrSubject = openssl_csr_get_subject($csrCode);
+        if(!$csrSubject || empty($csrSubject['CN']))
+        {
+            throw new \Exception(Lang::absoluteT('csr_error'));
+        }
+        $commonName = $csrSubject['CN'];
+
+        // ---- Validation methods (format expected by SSLStepThree) ----
+        $allDomains = array_values(array_unique(array_merge([$commonName], array_diff(array_merge($sanDomains, $wildcardSans), [$commonName]))));
+        $method     = [];
+        $approver   = [];
+
+        if($dcvMethod === 'email')
+        {
+            $approverEmail = isset($input['approver_email']) ? trim($input['approver_email']) : '';
+            if(empty($approverEmail))
+            {
+                throw new \Exception(Lang::absoluteT('sslConfigApproverEmailRequired'));
+            }
+
+            $otherDomains = array_values(array_diff($allDomains, [$commonName]));
+            $sanApprovers = !empty($otherDomains)
+                ? AutoInstallHelpers::pickApproverEmails($this->getSslApiForProduct($params['packageid']), $otherDomains)
+                : [];
+        }
+
+        foreach($allDomains as $domain)
+        {
+            $domainMethod = $dcvMethod;
+            // File based validation is not possible for wildcard names
+            if(strpos($domain, '*.') === 0 && in_array($domainMethod, ['http', 'https']))
+            {
+                $domainMethod = 'dns';
+            }
+            $method[$domain] = $domainMethod;
+
+            if($domainMethod !== 'email')
+            {
+                continue;
+            }
+            if($domain === $commonName)
+            {
+                $approver[$domain] = $approverEmail;
+                continue;
+            }
+
+            if(empty($sanApprovers[$domain]))
+            {
+                throw new \Exception(sprintf(Lang::absoluteT('sslConfigNoApproverForDomain'), $domain));
+            }
+            $approver[$domain] = $sanApprovers[$domain];
+        }
+
+        // ---- Contacts ----
+        $client = Client::where('id', $userId)->first();
+        if($settings['adminFormHidden'] && $client)
+        {
+            $contact = [
+                'firstname'   => $client->firstname,
+                'lastname'    => $client->lastname,
+                'jobtitle'    => 'IT',
+                'email'       => $client->email,
+                'phonenumber' => $client->phonenumber,
+                'address1'    => $client->address1,
+                'city'        => $client->city,
+                'state'       => $client->state,
+                'postcode'    => $client->postcode,
+                'country'     => $client->country,
+            ];
+        }
+        else
+        {
+            $contact = [
+                'firstname'   => isset($input['admin_firstname']) ? trim($input['admin_firstname']) : '',
+                'lastname'    => isset($input['admin_lastname']) ? trim($input['admin_lastname']) : '',
+                'jobtitle'    => isset($input['admin_title']) ? trim($input['admin_title']) : '',
+                'email'       => isset($input['admin_email']) ? trim($input['admin_email']) : '',
+                'phonenumber' => isset($input['admin_phone']) ? trim($input['admin_phone']) : '',
+                'address1'    => isset($input['admin_addressline1']) ? trim($input['admin_addressline1']) : '',
+                'city'        => isset($input['admin_city']) ? trim($input['admin_city']) : '',
+                'state'       => isset($input['admin_region']) ? trim($input['admin_region']) : '',
+                'postcode'    => isset($input['admin_postalcode']) ? trim($input['admin_postalcode']) : '',
+                'country'     => isset($input['admin_country']) ? strtoupper(trim($input['admin_country'])) : '',
+            ];
+            foreach(['firstname', 'lastname', 'email', 'phonenumber'] as $requiredField)
+            {
+                if(empty($contact[$requiredField]))
+                {
+                    throw new \Exception(Lang::absoluteT('sslConfigContactRequired'));
+                }
+            }
+        }
+
+        // ---- Place the order (same path as WHMCS configuressl.php step three) ----
+        $stepParams = array_merge($params, $contact, [
+            'csr'      => $csrCode,
+            'method'   => $method,
+            'approver' => $approver,
+        ]);
+        $result = (new SSLStepThree())->run($stepParams);
+
+        $ssl = SSL::getByServiceId($serviceId);
+        if(empty($ssl->remoteid))
+        {
+            throw new \Exception(is_array($result) && !empty($result['error']) ? $result['error'] : Lang::absoluteT('sslConfigOrderFailed'));
+        }
+
+        Capsule::table('tblsslorders')->where('serviceid', $serviceId)->update([
+            'status'         => 'Configuration Submitted',
+            'completiondate' => date('Y-m-d H:i:s'),
+        ]);
+
+        if($installType === 'autoinstall')
+        {
+            $isWildcardOrder  = $isWildcardCn || !empty($wildcardSans);
+            $dnsFallbackEmail = ($dcvMethod === 'dns' && !empty($input['dns_fallback_email'])) ? trim($input['dns_fallback_email']) : '';
+
+            $validateTaskData = [
+                'domain'       => $autoinstallDomain,
+                'api_order_id' => (int)$ssl->remoteid,
+                'is_wildcard'  => $isWildcardOrder,
+            ];
+            if($dcvMethod === 'dns')
+            {
+                $validateTaskData['dns_check_start'] = time();
+            }
+            if($dnsFallbackEmail)
+            {
+                $validateTaskData['dns_fallback_email'] = $dnsFallbackEmail;
+            }
+
+            AutoInstallHelpers::onConfigured($serviceId, $userId, [
+                'install_type'       => 'autoinstall',
+                'domain'             => $autoinstallDomain,
+                'common_name'        => $commonName,
+                'dcv_method'         => $dcvMethod,
+                'dns_fallback_email' => $dnsFallbackEmail,
+                'is_wildcard'        => $isWildcardOrder,
+                'private_key'        => \encrypt($privateKey),
+                'created_at'         => date('Y-m-d H:i:s'),
+            ], $validateTaskData);
+        }
+
+        $response = [
+            'success'        => true,
+            'install_type'   => $installType,
+            'approver_email' => isset($approver[$commonName]) ? $approver[$commonName] : '',
+        ];
+
+        // Manual enrollment with a generated CSR - the client has to take the private key now
+        if($installType === 'manual' && !empty($privateKey))
+        {
+            $response['private_key']     = $privateKey;
+            $response['private_key_url'] = 'clientarea.php?action=productdetails&id=' . $serviceId . '&mg-action=downloadKey&pkey=' . rawurlencode(\encrypt($privateKey));
+        }
+
+        return $response;
     }
 
     private function extractDomainsFromInput($domains)

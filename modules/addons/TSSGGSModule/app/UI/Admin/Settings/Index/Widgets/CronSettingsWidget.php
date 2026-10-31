@@ -28,6 +28,7 @@ class CronSettingsWidget extends Widget
             'ProductPricingUpdate',
             'SSLCertificatesProcessing',
             'SSLCertificates',
+            'SSLAutoInstall',
             'RenewalNotifyCertificate',
             'ReSyncProducts'
         ];

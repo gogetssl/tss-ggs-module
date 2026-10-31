@@ -55,7 +55,11 @@ function TSSGGSModule_TerminateAccount($params) {
 }
 
 function TSSGGSModule_AdminCustomButtonArray() {
-    //return (new Actions())->AdminCustomButtonArray();
+    return (new Actions())->AdminCustomButtonArray();
+}
+
+function TSSGGSModule_SyncCertificate($params) {
+    return (new Actions())->SyncCertificate($params);
 }
 
 function TSSGGSModule_SSLAdminResendApproverEmail($params) {

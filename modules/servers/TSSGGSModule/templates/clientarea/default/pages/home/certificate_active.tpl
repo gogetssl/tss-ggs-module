@@ -6,6 +6,25 @@
         </div>
     {/if}
 
+    {if $autoinstall}
+        {assign var=aiDomain value=$autoinstall.domain|escape}
+        <div class="alert {if $autoinstall.status == 'installed'}alert-success{elseif $autoinstall.status == 'failed'}alert-danger{elseif $autoinstall.status == 'disabled'}alert-warning{else}alert-info{/if}" role="alert">
+            <strong>{$MGLANG->T('autoinstallBoxTitle')}:</strong>
+            {if $autoinstall.status == 'installed'}{$MGLANG->T('autoinstallBoxInstalled')|sprintf:$aiDomain}{elseif $autoinstall.status == 'failed'}{$MGLANG->T('autoinstallBoxFailed')|sprintf:$aiDomain}{elseif $autoinstall.status == 'disabled'}{$MGLANG->T('autoinstallBoxDisabled')}{else}{$MGLANG->T('autoinstallBoxAwaiting')|sprintf:$aiDomain}{/if}
+            {if $autoinstall.status != 'installed' && $autoinstall.status != 'disabled' && $autoinstall.last_error}<br><small>{$MGLANG->T('autoinstallBoxLastError')} {$autoinstall.last_error|escape}</small>{/if}
+            {if $autoinstall.logs}
+                <details style="margin-top:8px;">
+                    <summary style="cursor:pointer;">{$MGLANG->T('autoinstallBoxLogs')}</summary>
+                    <ul style="margin:6px 0 0;padding-left:18px;font-size:12px;">
+                        {foreach $autoinstall.logs as $aiLog}
+                            <li{if $aiLog.type == 'error'} style="color:#c0392b;"{/if}>{$aiLog.date|escape} - {$aiLog.message|escape}</li>
+                        {/foreach}
+                    </ul>
+                </details>
+            {/if}
+        </div>
+    {/if}
+
     <div class="table-unified-information" style="border-color: #32a353;">
         <p class="desc" style="background: #beecdc;color: #32a353;font-weight: 600;">{$product_title}</p>
         <div class="row">
