@@ -9,7 +9,9 @@ use stdClass;
 class SSLTrustCenterApi
 {
 
-    protected $apiUrl = 'https://my.gogetssl.com/whmcs/v2';
+    const API_URL = 'https://my.gogetssl.com/whmcs/v2';
+
+    protected $apiUrl = self::API_URL;
     protected $key;
     protected $code;
     protected $type;

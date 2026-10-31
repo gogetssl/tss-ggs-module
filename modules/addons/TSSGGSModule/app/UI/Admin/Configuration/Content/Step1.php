@@ -39,6 +39,7 @@ class Step1 extends Widget implements AjaxComponentInterface
                 . '<div class="tssggs-feature__desc">' . htmlspecialchars($this->translate('feature' . $i . '_desc')) . '</div></div>';
         }
         $text = new Text();
+        $text->setCss('tssggs-html');
         $text->setText('<div class="tssggs-features">' . $features . '</div>');
         $this->addElement($text);
 
