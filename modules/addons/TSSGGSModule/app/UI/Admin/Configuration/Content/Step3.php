@@ -14,7 +14,7 @@ class Step3 extends Widget implements AjaxComponentInterface
     public function loadHtml(): void
     {
         $this->setTitle($this->translate('step3_title'));
-        $this->addElement(\ModulesGarden\TSSGGSModule\App\UI\Admin\Configuration\Shared\WizardLayout::heading(3, $this->translate('step3_title')));
+        \ModulesGarden\TSSGGSModule\App\UI\Admin\Configuration\Shared\WizardLayout::prepareStep($this, 3, $this->translate('step3_title'));
         $this->addElement(new VendorSelectionForm());
 
     }

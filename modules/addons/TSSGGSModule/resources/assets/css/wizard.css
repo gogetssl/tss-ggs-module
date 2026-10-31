@@ -29,6 +29,12 @@
     font-size: 14px;
 }
 
+/* The wizard has its own header: hide the module navbar and breadcrumb on the wizard pages only */
+.lu-app:has(.tssggs-wizard) > :not(.lu-app-main),
+.lu-app-main__body:has(.tssggs-wizard) > .lu-app-main__top {
+    display: none;
+}
+
 /* ---- Header ---- */
 
 .tssggs-wizard__header {
@@ -266,7 +272,8 @@ a.tssggs-wizard__item:focus-visible {
     color: var(--tw-fg-soft);
 }
 
-.tssggs-step__eyebrow {
+/* #layers2 (the module root) outranks the WHMCS admin theme's heading styles */
+#layers2 .tssggs-step__eyebrow {
     font-size: 12px;
     font-weight: 600;
     letter-spacing: .06em;
@@ -274,8 +281,11 @@ a.tssggs-wizard__item:focus-visible {
     color: var(--tw-primary);
 }
 
-.tssggs-step__title {
+#layers2 .tssggs-step__title {
     margin: 4px 0 20px;
+    padding: 0;
+    font-family: inherit;
+    letter-spacing: normal;
     font-size: 24px;
     font-weight: 600;
     line-height: 1.25;
@@ -408,4 +418,10 @@ a.tssggs-wizard__item:focus-visible {
     .tssggs-features {
         grid-template-columns: minmax(0, 1fr);
     }
+}
+
+/* Text components render a <span>; the wizard puts block markup inside */
+.tssggs-wizard .tssggs-html {
+    display: block;
+    min-width: 0;
 }

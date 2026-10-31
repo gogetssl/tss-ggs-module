@@ -22,7 +22,7 @@ class Step1 extends Widget implements AjaxComponentInterface
 
         $this->setTitle($this->translate('step1_title'));
 
-        $this->addElement(\ModulesGarden\TSSGGSModule\App\UI\Admin\Configuration\Shared\WizardLayout::heading(1, $this->translate('step1_title')));
+        \ModulesGarden\TSSGGSModule\App\UI\Admin\Configuration\Shared\WizardLayout::prepareStep($this, 1, $this->translate('step1_title'));
 
         $text = new Text();
         $text->setText($this->translate('first_p', ['moduleName' => \ModulesGarden\TSSGGSModule\App\Libs\Edition::name()]).'<br><br>');

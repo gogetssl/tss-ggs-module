@@ -5,6 +5,7 @@ namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Configuration\Shared;
 use ModulesGarden\TSSGGSModule\App\Libs\Edition;
 use ModulesGarden\TSSGGSModule\Components\Container\Container;
 use ModulesGarden\TSSGGSModule\Components\Text\Text;
+use ModulesGarden\TSSGGSModule\Components\Widget\Widget;
 use ModulesGarden\TSSGGSModule\Core\Support\Facades\Config;
 use ModulesGarden\TSSGGSModule\Core\Translation\TranslatorTrait;
 
@@ -33,7 +34,6 @@ class WizardLayout
 
         $section = new Container();
         $section->setCss('tssggs-wizard__section');
-        $content->appendCss('tssggs-step');
         $section->addElement($content);
         $body->addElement($section);
 
@@ -43,9 +43,19 @@ class WizardLayout
     }
 
     /**
+     * Marks a step widget for the wizard styles and adds its heading. Called from the step's own loadHtml():
+     * AJAX-loaded widgets are re-created on the server, so CSS classes set from outside would be lost.
+     */
+    public static function prepareStep(Widget $widget, int $step, string $title): void
+    {
+        $widget->appendCss('tssggs-step');
+        $widget->addElement(self::heading($step, $title));
+    }
+
+    /**
      * "Step N of 6" + title, shown at the top of the step card (the widget's own header is hidden by CSS)
      */
-    public static function heading(int $step, string $title): Text
+    protected static function heading(int $step, string $title): Text
     {
         $layout = new self();
         $title  = preg_replace('/^\s*STEP\s+\d+\s*[.\-:]\s*/i', '', $title);
@@ -61,7 +71,7 @@ class WizardLayout
         $pct     = (int)round(($step - 1) / (self::STEPS - 1) * 100);
         $version = (string)Config::get('configuration.version', '');
 
-        return '<header class="tssggs-wizard__header">'
+        return '<div class="tssggs-wizard__header">'
             . '<div class="tssggs-wizard__brand">'
             . '<span class="tssggs-wizard__logo">' . $this->icon('shield') . '</span>'
             . '<span><span class="tssggs-wizard__name">' . htmlspecialchars(Edition::name()) . '</span>'
@@ -71,7 +81,7 @@ class WizardLayout
             . '<span class="tssggs-wizard__bar"><span style="width:' . $pct . '%"></span></span>'
             . '<span class="tssggs-wizard__pct">' . $pct . '%</span>'
             . '</div>'
-            . '</header>';
+            . '</div>';
     }
 
     protected function stepsHtml(int $current): string
@@ -101,6 +111,7 @@ class WizardLayout
     protected function html(string $html): Text
     {
         $text = new Text();
+        $text->setCss('tssggs-html');
         $text->setText($html);
 
         return $text;
