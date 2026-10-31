@@ -435,6 +435,12 @@ class Engine
                 $this->log($runId, 'info', self::PHASE_SWITCH, 'Rescan done', ['reconfigured' => $changed, 'new_orders' => $rescan]);
             }
 
+            $frozen = $this->reader->freeze();
+            if($frozen)
+            {
+                $this->log($runId, 'info', self::PHASE_SWITCH, 'Legacy automation frozen', ['changes' => $frozen]);
+            }
+
             // the switch itself: one transaction
             $doneOrderIds = [];
             foreach(Store::jobsByStatus($runId, Store::KIND_SERVICE, Store::JOB_DONE) as $job)

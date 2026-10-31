@@ -5,6 +5,7 @@ namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Configuration\Content\Step1;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Configuration\Shared\Menu;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Widgets\AnnouncementsWidget;
+use ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Widgets\MigrationWidget;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Widgets\OverviewWidget;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Widgets\PartnerWidget;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Widgets\ReportingWidget;
@@ -36,6 +37,7 @@ class HomeContainer extends Container implements AdminAreaInterface
                     ],
                     [
                         (new Container())
+                            ->addElement(new MigrationWidget())
                             ->addElement(new ReportingWidget())
                             ->addElement(new SystemCheckWidget())
                             ->addElement(new PartnerWidget())

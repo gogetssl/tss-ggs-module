@@ -77,6 +77,24 @@ class TssReader extends AbstractReader
         return ['php -q {WHMCS}/modules/addons/thesslstorefullv2_admin/tss_cron.php'];
     }
 
+    public function freeze(): array
+    {
+        $done = [];
+        if(Schema::tableExists('mod_sslstore_settings_v2') && Schema::columnExists('mod_sslstore_settings_v2', 'product_sync_setting'))
+        {
+            Capsule::table('mod_sslstore_settings_v2')->update(['product_sync_setting' => 'manually']);
+            $done[] = 'product_sync_setting=manually';
+        }
+        if(Schema::tableExists('mod_sslstore_crons'))
+        {
+            // a very long interval keeps the rows (for rollback) but stops the legacy scheduler from acting
+            Capsule::table('mod_sslstore_crons')->update(['interval' => 525600]);
+            $done[] = 'cron intervals set to 1 year';
+        }
+
+        return $done;
+    }
+
     // ---- Settings ---- //
 
     protected function config(): array

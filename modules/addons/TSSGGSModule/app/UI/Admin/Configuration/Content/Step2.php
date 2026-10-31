@@ -56,7 +56,7 @@ class Step2 extends Widget implements AjaxComponentInterface
 
         $nextStep = new ButtonSuccess();
         $nextStep->setCss('lu-btn lu-btn--success mt30_custom');
-        $nextStep->onClick(Action::redirect('addonmodules.php?module=TSSGGSModule&mg-page=configuration&mg-action=step3'));
+        $nextStep->onClick(Action::redirect('addonmodules.php?module=TSSGGSModule&mg-page=configuration&mg-action=step' . WizardLayout::nextPage(2)));
         $nextStep->setTitle($this->translate('next_step_btn'));
         if($blocked)
         {

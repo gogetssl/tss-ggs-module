@@ -3,6 +3,7 @@
 namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Configuration\Shared;
 
 use ModulesGarden\TSSGGSModule\App\Libs\Edition;
+use ModulesGarden\TSSGGSModule\App\Migration\Detector;
 use ModulesGarden\TSSGGSModule\Components\Container\Container;
 use ModulesGarden\TSSGGSModule\Components\Text\Text;
 use ModulesGarden\TSSGGSModule\Components\Widget\Widget;
@@ -12,25 +13,71 @@ use ModulesGarden\TSSGGSModule\Core\Translation\TranslatorTrait;
 /**
  * Installation wizard layout (design: github.com/gogetssl/ssl-plugin-refresh): module header with progress,
  * vertical step list and the step card. Styles in resources/assets/css/wizard.css, scoped to .tssggs-wizard.
+ *
+ * Page step3 (legacy modules) is only part of the wizard when a legacy module is installed; without one the
+ * wizard has five steps and the numbering adjusts.
  */
 class WizardLayout
 {
     use TranslatorTrait;
 
-    const STEPS = 6;
+    /** page => [name key, description key] */
+    const ALL_STEPS = [
+        1 => ['step1_name', 'step1_desc'],
+        2 => ['step2_name', 'step2_desc'],
+        3 => ['step3_name', 'step3_desc'], // legacy modules found
+        4 => ['step4_name', 'step4_desc'],
+        5 => ['step5_name', 'step5_desc'],
+        6 => ['step6_name', 'step6_desc'],
+    ];
+
+    protected static $hasLegacy = null;
+
+    public static function hasLegacy(): bool
+    {
+        if(self::$hasLegacy === null)
+        {
+            try
+            {
+                self::$hasLegacy = Detector::anyFound();
+            }
+            catch(\Throwable $e)
+            {
+                self::$hasLegacy = false;
+            }
+        }
+
+        return self::$hasLegacy;
+    }
 
     /**
-     * Full wizard page for step $step (1..6) with the step content widget
+     * Ordered list of the wizard's pages: [1, 2, (3,) 4, 5, 6]
      */
-    public function build(int $step, $content): Container
+    public static function pages(): array
+    {
+        return self::hasLegacy() ? [1, 2, 3, 4, 5, 6] : [1, 2, 4, 5, 6];
+    }
+
+    public static function nextPage(int $page): int
+    {
+        $pages = self::pages();
+        $i     = array_search($page, $pages, true);
+
+        return $i !== false && isset($pages[$i + 1]) ? $pages[$i + 1] : $page;
+    }
+
+    /**
+     * Full wizard page for page $page (1..6) with the step content widget
+     */
+    public function build(int $page, $content): Container
     {
         $wizard = new Container();
         $wizard->setCss('tssggs-wizard');
-        $wizard->addElement($this->html($this->headerHtml($step)));
+        $wizard->addElement($this->html($this->headerHtml($page)));
 
         $body = new Container();
         $body->setCss('tssggs-wizard__body');
-        $body->addElement($this->html($this->stepsHtml($step)));
+        $body->addElement($this->html($this->stepsHtml($page)));
 
         $section = new Container();
         $section->setCss('tssggs-wizard__section');
@@ -46,29 +93,33 @@ class WizardLayout
      * Marks a step widget for the wizard styles and adds its heading. Called from the step's own loadHtml():
      * AJAX-loaded widgets are re-created on the server, so CSS classes set from outside would be lost.
      */
-    public static function prepareStep(Widget $widget, int $step, string $title): void
+    public static function prepareStep(Widget $widget, int $page, string $title): void
     {
         $widget->appendCss('tssggs-step');
-        $widget->addElement(self::heading($step, $title));
+        $widget->addElement(self::heading($page, $title));
     }
 
     /**
-     * "Step N of 6" + title, shown at the top of the step card (step widgets have no widget title, so this is the only heading)
+     * "Step N of M" + title, shown at the top of the step card (step widgets have no widget title, so this is the only heading)
      */
-    protected static function heading(int $step, string $title): Text
+    protected static function heading(int $page, string $title): Text
     {
         $layout = new self();
         $title  = preg_replace('/^\s*STEP\s+\d+\s*[.\-:]\s*/i', '', $title);
+        $pages  = self::pages();
+        $index  = (int)array_search($page, $pages, true) + 1;
 
         return $layout->html(
-            '<div class="tssggs-step__eyebrow">' . htmlspecialchars(sprintf($layout->tr('step_of'), $step, self::STEPS)) . '</div>'
+            '<div class="tssggs-step__eyebrow">' . htmlspecialchars(sprintf($layout->tr('step_of'), $index, count($pages))) . '</div>'
             . '<h2 class="tssggs-step__title">' . htmlspecialchars($title) . '</h2>'
         );
     }
 
-    protected function headerHtml(int $step): string
+    protected function headerHtml(int $page): string
     {
-        $pct     = (int)round(($step - 1) / (self::STEPS - 1) * 100);
+        $pages   = self::pages();
+        $index   = (int)array_search($page, $pages, true);
+        $pct     = count($pages) > 1 ? (int)round($index / (count($pages) - 1) * 100) : 100;
         $version = (string)Config::get('configuration.version', '');
 
         return '<div class="tssggs-wizard__header">'
@@ -86,21 +137,23 @@ class WizardLayout
 
     protected function stepsHtml(int $current): string
     {
-        $html = '<nav class="tssggs-wizard__nav" aria-label="' . htmlspecialchars($this->tr('installation_steps')) . '">'
+        $pages = self::pages();
+        $pos   = (int)array_search($current, $pages, true);
+        $html  = '<nav class="tssggs-wizard__nav" aria-label="' . htmlspecialchars($this->tr('installation_steps')) . '">'
             . '<div class="tssggs-wizard__nav-title">' . htmlspecialchars($this->tr('installation_steps')) . '</div><ol>';
 
-        for($i = 1; $i <= self::STEPS; $i++)
+        foreach($pages as $i => $page)
         {
-            $state = $i < $current ? 'is-done' : ($i === $current ? 'is-active' : 'is-todo');
-            $mark  = $i < $current ? $this->icon('check') : (string)$i;
-            $inner = '<span class="tssggs-wizard__dot">' . ($i === $current ? '<span class="tssggs-wizard__ring"></span>' : '') . $mark . '</span>'
-                . '<span class="tssggs-wizard__label"><span class="tssggs-wizard__step-title">' . htmlspecialchars($this->tr('step' . $i . '_name')) . '</span>'
-                . '<span class="tssggs-wizard__step-desc">' . htmlspecialchars($this->tr('step' . $i . '_desc')) . '</span></span>';
+            $state = $i < $pos ? 'is-done' : ($i === $pos ? 'is-active' : 'is-todo');
+            $mark  = $i < $pos ? $this->icon('check') : (string)($i + 1);
+            $inner = '<span class="tssggs-wizard__dot">' . ($i === $pos ? '<span class="tssggs-wizard__ring"></span>' : '') . $mark . '</span>'
+                . '<span class="tssggs-wizard__label"><span class="tssggs-wizard__step-title">' . htmlspecialchars($this->tr(self::ALL_STEPS[$page][0])) . '</span>'
+                . '<span class="tssggs-wizard__step-desc">' . htmlspecialchars($this->tr(self::ALL_STEPS[$page][1])) . '</span></span>';
 
-            // Finished steps link back to their page
-            $item = $i < $current
-                ? '<a class="tssggs-wizard__item" href="addonmodules.php?module=TSSGGSModule&amp;mg-page=configuration&amp;mg-action=step' . $i . '">' . $inner . '</a>'
-                : '<span class="tssggs-wizard__item"' . ($i === $current ? ' aria-current="step"' : '') . '>' . $inner . '</span>';
+            // finished steps link back to their page
+            $item = $i < $pos
+                ? '<a class="tssggs-wizard__item" href="addonmodules.php?module=TSSGGSModule&amp;mg-page=configuration&amp;mg-action=step' . $page . '">' . $inner . '</a>'
+                : '<span class="tssggs-wizard__item"' . ($i === $pos ? ' aria-current="step"' : '') . '>' . $inner . '</span>';
 
             $html .= '<li class="' . $state . '">' . $item . '</li>';
         }

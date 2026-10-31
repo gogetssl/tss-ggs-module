@@ -80,6 +80,11 @@ class GgsReader extends AbstractReader
         ]);
     }
 
+    public function freeze(): array
+    {
+        return [];
+    }
+
     // ---- Settings ---- //
 
     protected function settings(): array

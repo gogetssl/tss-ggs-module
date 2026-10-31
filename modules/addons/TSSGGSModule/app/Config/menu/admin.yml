@@ -14,3 +14,5 @@ automationQueue:
   icon: 'mdi mdi-format-list-checks'
 settings:
   icon: 'mdi mdi-cog'
+migration:
+  icon: 'mdi mdi-database-arrow-right'

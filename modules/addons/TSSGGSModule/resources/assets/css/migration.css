@@ -1,0 +1,121 @@
+/*
+ * Legacy migration: wizard step 3 (inside .tssggs-wizard) and the Migration page (.tssggs-migration).
+ * Same tokens as wizard.css; everything is scoped to the two roots.
+ */
+
+.tssggs-migration,
+.tssggs-wizard .tssggs-legacy {
+    --tw-primary: #007136;
+    --tw-primary-soft: #e4f8e8;
+    --tw-fg: #020618;
+    --tw-muted: #62748e;
+    --tw-surface: #ffffff;
+    --tw-surface-alt: #f8fafc;
+    --tw-border: #e2e8f0;
+    --tw-danger: #e7000b;
+    --tw-danger-soft: #fef2f2;
+    --tw-warning: #a65f00;
+    --tw-warning-soft: #fef6e7;
+}
+
+/* ---- shared bits ---- */
+
+.tssggs-muted { color: var(--tw-muted); font-size: 13px; margin: 8px 0; }
+
+.tssggs-note {
+    margin: 12px 0;
+    padding: 10px 14px;
+    border: 1px solid var(--tw-border);
+    border-radius: 8px;
+    background: var(--tw-surface-alt);
+    font-size: 14px;
+}
+.tssggs-note.is-ok   { border-color: rgba(0,113,54,.3);  background: var(--tw-primary-soft); }
+.tssggs-note.is-warn { border-color: rgba(166,95,0,.3);  background: var(--tw-warning-soft); }
+.tssggs-note.is-bad  { border-color: rgba(231,0,11,.3);  background: var(--tw-danger-soft); }
+
+.tssggs-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 14px;
+    margin-top: 16px;
+}
+.tssggs-actions form { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; margin: 0; }
+.tssggs-actions label { font-size: 13px; color: var(--tw-fg); }
+.tssggs-actions .lu-btn--success { background: var(--tw-primary); border-color: var(--tw-primary); color: #fff; }
+
+.tssggs-details { margin-top: 12px; }
+.tssggs-details summary { cursor: pointer; font-weight: 500; }
+.tssggs-details pre { margin: 8px 0; padding: 10px 12px; background: var(--tw-surface-alt); border: 1px solid var(--tw-border); border-radius: 6px; font-size: 12px; overflow-x: auto; }
+
+.tssggs-table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 13px; }
+.tssggs-table th, .tssggs-table td { padding: 6px 10px; border-bottom: 1px solid var(--tw-border); text-align: left; vertical-align: top; }
+.tssggs-table th { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--tw-muted); }
+
+/* ---- wizard step 3: legacy modules ---- */
+
+.tssggs-legacy {
+    margin: 12px 0 18px;
+    padding: 16px;
+    border: 1px solid var(--tw-border);
+    border-radius: 8px;
+    background: var(--tw-surface-alt);
+}
+.tssggs-legacy__head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 15px; }
+.tssggs-legacy__facts { margin: 10px 0 0; padding-left: 18px; font-size: 14px; }
+.tssggs-legacy__facts li { margin: 2px 0; }
+
+.tssggs-legacy__choice { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 14px; }
+.tssggs-legacy__choice label {
+    display: block;
+    padding: 12px 14px;
+    border: 1px solid var(--tw-border);
+    border-radius: 8px;
+    background: var(--tw-surface);
+    cursor: pointer;
+    font-weight: 400;
+}
+.tssggs-legacy__choice label:has(input:checked) { border-color: var(--tw-primary); background: var(--tw-primary-soft); }
+.tssggs-legacy__choice label b { display: inline-block; margin-left: 4px; }
+.tssggs-legacy__choice label span { display: block; margin-top: 4px; font-size: 12px; color: var(--tw-muted); }
+.tssggs-legacy__choice input { accent-color: var(--tw-primary); }
+
+/* ---- migration page: count cards ---- */
+
+.tssggs-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 10px;
+    margin: 4px 0 12px;
+}
+.tssggs-card {
+    padding: 12px 14px;
+    border: 1px solid var(--tw-border);
+    border-radius: 8px;
+    background: var(--tw-surface-alt);
+    min-width: 0;
+}
+.tssggs-card__label { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--tw-muted); }
+.tssggs-card__value { font-size: 24px; font-weight: 600; color: var(--tw-fg); font-variant-numeric: tabular-nums; }
+.tssggs-card__sub   { font-size: 12px; color: var(--tw-muted); overflow-wrap: anywhere; }
+
+/* ---- runner ---- */
+
+.tssggs-runner { padding: 4px 0 8px; }
+.tssggs-runner__head { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 6px; }
+.tssggs-runner__state { font-weight: 600; }
+.tssggs-runner__pct { color: var(--tw-muted); font-variant-numeric: tabular-nums; }
+.tssggs-runner__bar { height: 10px; border-radius: 999px; background: var(--tw-border); overflow: hidden; }
+.tssggs-runner__bar span { display: block; height: 100%; background: var(--tw-primary); transition: width .4s ease; }
+.tssggs-runner.is-failed .tssggs-runner__bar span,
+.tssggs-runner.is-rolled_back .tssggs-runner__bar span { background: var(--tw-danger); }
+.tssggs-runner__counts { display: flex; flex-wrap: wrap; gap: 6px 18px; list-style: none; margin: 10px 0 0; padding: 0; font-size: 13px; color: var(--tw-muted); }
+.tssggs-runner__counts b { color: var(--tw-fg); font-variant-numeric: tabular-nums; }
+.tssggs-runner__counts li.is-bad b { color: var(--tw-danger); }
+.tssggs-runner__note { margin: 10px 0 0; font-size: 13px; color: var(--tw-muted); }
+.tssggs-runner__error { margin: 10px 0 0; font-size: 13px; color: var(--tw-danger); }
+
+@media (max-width: 767px) {
+    .tssggs-legacy__choice { grid-template-columns: minmax(0, 1fr); }
+}

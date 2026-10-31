@@ -71,4 +71,10 @@ interface LegacyReaderInterface
 
     /** Legacy cron command lines (for the "remove these" list), as far as the module documents them */
     public function cronLines(): array;
+
+    /**
+     * Stops legacy automation that would interfere after the switch (e.g. a product sync that re-creates
+     * products). Called once in the switch phase; must be undone by the rollback through the table backups.
+     */
+    public function freeze(): array;
 }
