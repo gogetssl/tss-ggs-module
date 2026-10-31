@@ -10,7 +10,6 @@ use ModulesGarden\TSSGGSModule\App\UI\Admin\Configuration\Pages\ConfigurationSte
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Configuration\Pages\ConfigurationStep6;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Configuration\Pages\ConfigurationStep7;
 use ModulesGarden\TSSGGSModule\App\Libs\Edition;
-use ModulesGarden\TSSGGSModule\App\Migration\Choice;
 use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Configuration\Shared\WizardLayout;
 use ModulesGarden\TSSGGSModule\Core\Contracts\Controllers\AdminAreaInterface;
@@ -51,37 +50,6 @@ class Configuration extends AbstractController implements AdminAreaInterface
             ->addElement(ConfigurationStep3::class);
     }
 
-    /**
-     * POST from step 3: Migrate / Install standalone per legacy module. Vendors to configure in step 4 are the
-     * edition's own plus every legacy module chosen for migration.
-     */
-    public function saveLegacyChoice()
-    {
-        $token = (string)($_POST['token'] ?? '');
-        $valid = (string)($_SESSION['tkval'] ?? '');
-        if($_SERVER['REQUEST_METHOD'] !== 'POST' || $token === '' || $valid === '' || !hash_equals($valid, $token))
-        {
-            return Helper\redirect('configuration', 'step3');
-        }
-
-        $vendors = [Edition::get()];
-        foreach((array)($_POST['choice'] ?? []) as $source => $choice)
-        {
-            if(!in_array($source, ['ggs', 'tss'], true))
-            {
-                continue;
-            }
-            $choice = $choice === Choice::MIGRATE ? Choice::MIGRATE : Choice::SKIP;
-            Choice::set($source, $choice);
-            if($choice === Choice::MIGRATE)
-            {
-                $vendors[] = $source;
-            }
-        }
-        (new AddonModuleRepository())->saveVendor(array_values(array_unique($vendors)));
-
-        return Helper\redirect('configuration', 'step4');
-    }
 
     public function step4()
     {

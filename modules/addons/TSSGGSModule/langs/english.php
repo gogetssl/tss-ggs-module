@@ -166,10 +166,6 @@ $_LANG['admin.configuration.content.step3.fact_products']   = ':n products';
 $_LANG['admin.configuration.content.step3.fact_services']   = ':active active services (:total in total)';
 $_LANG['admin.configuration.content.step3.fact_orders']     = ':n SSL orders, :unconfigured not configured yet, :unpaid unpaid';
 $_LANG['admin.configuration.content.step3.fact_subscriptions'] = ':acme ACME and :ais AutoInstall SSL subscriptions, :autoinstall certificates installed via cPanel';
-$_LANG['admin.configuration.content.step3.choice_migrate']  = 'Migrate to this module';
-$_LANG['admin.configuration.content.step3.choice_migrate_desc'] = 'Backups are created first; the migration runs after the API connection and product steps and can be rolled back for 14 days.';
-$_LANG['admin.configuration.content.step3.choice_skip']     = 'Install as a new standalone module';
-$_LANG['admin.configuration.content.step3.choice_skip_desc'] = 'The legacy module keeps running untouched; this module starts empty. You can migrate later from the Migration page.';
 $_LANG['admin.configuration.content.step3.unsupported_hint'] = 'Update the legacy module to its latest version first, then run the migration from the Migration page, or install this module as a new standalone module.';
 $_LANG['admin.configuration.content.step3.runs_later']      = 'Nothing is changed yet. The migration starts from the Finalization step, after your API credentials are in place.';
 $_LANG['admin.configuration.content.step3.next_step_btn'] = 'Next step';
@@ -730,3 +726,12 @@ $_LANG['acme_order_requires_at_least_one_san'] = 'To order this product you must
 
 
 
+
+$_LANG['admin.configuration.shared.forms.legacy_choice_form.choice_ggs']   = 'GoGetSSL module (SSLCENTERWHMCS)';
+$_LANG['admin.configuration.shared.forms.legacy_choice_form.choice_ggs_description'] = 'Migrate: products, orders, subscriptions and AutoInstall certificates move to this module after the next steps (backups first, rollback for 14 days). Standalone: the legacy module keeps running untouched.';
+$_LANG['admin.configuration.shared.forms.legacy_choice_form.choice_tss']   = 'TheSSLStore module (thesslstorefullv2)';
+$_LANG['admin.configuration.shared.forms.legacy_choice_form.choice_tss_description'] = 'Migrate: products, orders, subscriptions and AutoInstall certificates move to this module after the next steps (backups first, rollback for 14 days). Standalone: the legacy module keeps running untouched.';
+$_LANG['admin.configuration.shared.forms.legacy_choice_form.next_step_btn'] = 'Next step';
+$_LANG['admin.configuration.shared.providers.legacy_choice_provider.option_migrate'] = 'Migrate to this module';
+$_LANG['admin.configuration.shared.providers.legacy_choice_provider.option_skip']    = 'Install as a new standalone module';
+$_LANG['admin.configuration.shared.providers.legacy_choice_provider.saved']          = 'Saved';

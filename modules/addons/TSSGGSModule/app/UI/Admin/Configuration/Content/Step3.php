@@ -2,9 +2,8 @@
 
 namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Configuration\Content;
 
-use ModulesGarden\TSSGGSModule\App\Http\Admin\Migration as MigrationController;
-use ModulesGarden\TSSGGSModule\App\Migration\Choice;
 use ModulesGarden\TSSGGSModule\App\Migration\Detector;
+use ModulesGarden\TSSGGSModule\App\UI\Admin\Configuration\Shared\Forms\LegacyChoiceForm;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Configuration\Shared\WizardLayout;
 use ModulesGarden\TSSGGSModule\Components\Text\Text;
 use ModulesGarden\TSSGGSModule\Components\Widget\Widget;
@@ -31,9 +30,8 @@ class Step3 extends Widget implements AjaxComponentInterface
 
         foreach($found as $source => $info)
         {
-            $c      = $info['counts'];
-            $choice = Choice::get($source) ?: ($info['support']['supported'] ? Choice::MIGRATE : Choice::SKIP);
-            $band   = $info['support']['band'];
+            $c    = $info['counts'];
+            $band = $info['support']['band'];
 
             $html .= '<div class="tssggs-legacy">'
                 . '<div class="tssggs-legacy__head"><b>' . htmlspecialchars($info['label']) . '</b> <span class="tssggs-muted">' . htmlspecialchars($info['version'] ?: $this->translate('version_unknown')) . '</span>'
@@ -44,34 +42,23 @@ class Step3 extends Widget implements AjaxComponentInterface
                 . '<li>' . htmlspecialchars($this->translate('fact_orders', ['n' => array_sum($c['orders']), 'unconfigured' => (int)$c['unconfigured'], 'unpaid' => (int)$c['unpaid']])) . '</li>'
                 . '<li>' . htmlspecialchars($this->translate('fact_subscriptions', ['acme' => (int)$c['acme'], 'ais' => (int)$c['ais'], 'autoinstall' => (int)$c['autoinstall']])) . '</li>'
                 . '</ul>';
-
             if($info['support']['reason'])
             {
                 $html .= '<p class="tssggs-muted">' . htmlspecialchars($info['support']['reason']) . '</p>';
             }
-
-            if($info['support']['supported'])
+            if(!$info['support']['supported'])
             {
-                $html .= '<div class="tssggs-legacy__choice">'
-                    . '<label><input type="radio" name="choice[' . $source . ']" value="migrate"' . ($choice === Choice::MIGRATE ? ' checked' : '') . '> <b>' . htmlspecialchars($this->translate('choice_migrate')) . '</b><span>' . htmlspecialchars($this->translate('choice_migrate_desc')) . '</span></label>'
-                    . '<label><input type="radio" name="choice[' . $source . ']" value="skip"' . ($choice === Choice::SKIP ? ' checked' : '') . '> <b>' . htmlspecialchars($this->translate('choice_skip')) . '</b><span>' . htmlspecialchars($this->translate('choice_skip_desc')) . '</span></label>'
-                    . '</div>';
-            }
-            else
-            {
-                $html .= '<div class="tssggs-note is-bad">' . htmlspecialchars($this->translate('unsupported_hint')) . '</div>'
-                    . '<input type="hidden" name="choice[' . $source . ']" value="skip">';
+                $html .= '<div class="tssggs-note is-bad">' . htmlspecialchars($this->translate('unsupported_hint')) . '</div>';
             }
             $html .= '</div>';
         }
+        $html .= '<p class="tssggs-muted">' . htmlspecialchars($this->translate('runs_later')) . '</p>';
 
-        $html .= '<p class="tssggs-muted">' . htmlspecialchars($this->translate('runs_later')) . '</p>'
-            . '<button type="submit" class="lu-btn lu-btn--success mt30_custom">' . htmlspecialchars($this->translate('next_step_btn')) . '</button>';
+        $text = new Text();
+        $text->setCss('tssggs-html');
+        $text->setText($html);
+        $this->addElement($text);
 
-        $form = new Text();
-        $form->setCss('tssggs-html');
-        $form->setText('<form method="post" action="addonmodules.php?module=TSSGGSModule&mg-page=configuration&mg-action=saveLegacyChoice" class="tssggs-legacy-form">'
-            . '<input type="hidden" name="token" value="' . htmlspecialchars(MigrationController::token()) . '">' . $html . '</form>');
-        $this->addElement($form);
+        $this->addElement(new LegacyChoiceForm());
     }
 }
