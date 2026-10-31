@@ -32,8 +32,7 @@ class SystemRequirements
         return array_merge(
             [$this->checkPhp(), $this->checkWhmcs()],
             $this->checkExtensions(),
-            $this->checkStorage(),
-            [$this->checkGateway()]
+            [$this->checkStorage(), $this->checkGateway()]
         );
     }
 
@@ -78,16 +77,23 @@ class SystemRequirements
 
     protected function checkStorage(): array
     {
-        $root   = dirname(__DIR__, 2);
-        $checks = [];
+        $root     = dirname(__DIR__, 2);
+        $problems = [];
         foreach(self::STORAGE_DIRS as $dir)
         {
-            $path     = $root . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $dir);
-            $writable = is_dir($path) && is_writable($path);
-            $checks[] = $this->result('storage', 'writable', $writable ? 'writable' : (is_dir($path) ? 'not writable' : 'missing'), $writable, true, $dir);
+            $path = $root . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $dir);
+            if(!is_dir($path))
+            {
+                $problems[] = $dir . ' missing';
+            }
+            elseif(!is_writable($path))
+            {
+                $problems[] = $dir . ' not writable';
+            }
         }
 
-        return $checks;
+        // One row for all storage folders; the failed ones are named in "found"
+        return $this->result('storage', 'writable', $problems ? implode(', ', $problems) : 'writable', !$problems);
     }
 
     /**
