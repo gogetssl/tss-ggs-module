@@ -449,3 +449,5 @@ $_LANG['sslConfigApproverEmailRequired'] = 'Please select the approver email.';
 $_LANG['sslConfigNoApproverForDomain']   = 'No approver email is available for domain %s. Please choose another validation method.';
 $_LANG['sslConfigContactRequired']       = 'Please fill in the administrative contact (first name, last name, email and phone).';
 $_LANG['sslConfigOrderFailed']           = 'Unable to place the certificate order. Please try again or contact support.';
+$_LANG['sslConfigInProgress']            = 'The configuration is already being submitted. Please wait a moment and refresh the page.';
+$_LANG['invalidCsrfToken']               = 'Invalid or expired security token. Please refresh the page and try again.';

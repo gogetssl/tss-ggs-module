@@ -364,6 +364,8 @@ $_LANG['admin.settings.index.forms.ssl_settings_form.autoDetailsForDvOrders_desc
 $_LANG['admin.settings.index.forms.ssl_settings_form.wildcardDnsTimeoutMinutes']            = 'Wildcard DNS Validation Timeout (minutes)';
 $_LANG['admin.settings.index.forms.ssl_settings_form.wildcardDnsTimeoutMinutes_description'] = 'AutoInstall (cPanel): if a wildcard certificate DNS validation is not completed within this many minutes, the system will automatically switch to Email validation and notify the client. Default: 65';
 $_LANG['admin.settings.index.providers.ssl_settings_provider.wildcardDnsTimeoutMinutesInvalidValue'] = 'The value should be a whole number of minutes greater than 0';
+$_LANG['admin.settings.index.forms.ssl_settings_form.cpanelTlsVerifyDisabled']             = 'Skip cPanel TLS Certificate Verification';
+$_LANG['admin.settings.index.forms.ssl_settings_form.cpanelTlsVerifyDisabled_description'] = 'AutoInstall (cPanel): do not verify the WHM/cPanel server TLS certificate. Only enable this for servers with a self-signed certificate - the WHM credentials are sent with every request. Default: off';
 $_LANG['admin.settings.index.forms.ssl_settings_form.useFixedTechnicalDetails']             = 'Use Fixed Technical Details';
 $_LANG['admin.settings.index.forms.ssl_settings_form.useFixedTechnicalDetails_description'] = '';
 $_LANG['admin.settings.index.forms.ssl_settings_form.firstName']                            = 'First Name';

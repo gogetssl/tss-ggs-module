@@ -2,6 +2,7 @@
 
 namespace ModulesGarden\TSSGGSModule\App\Libs;
 
+use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
 use WHMCS\Database\Capsule;
 
 /**
@@ -39,6 +40,8 @@ class Cpanel
             ->join('tblservers', 'tblhosting.server', '=', 'tblservers.id')
             ->where('tblproducts.servertype', 'cpanel')
             ->where('tblhosting.userid', (int)$userId)
+            // terminated/cancelled accounts may be gone or reused by another customer on the server
+            ->where('tblhosting.domainstatus', 'Active')
             ->get();
     }
 
@@ -63,7 +66,7 @@ class Cpanel
                     }
                 }
             }
-            catch(\Exception $e)
+            catch(\Throwable $e)
             {
                 \logActivity('TSSGGSModule cPanel: ' . $e->getMessage(), 0);
             }
@@ -95,7 +98,7 @@ class Cpanel
                 $cpanel->setService($svcInfo);
                 $grouped = $cpanel->listDomainsGrouped($svcInfo->user);
             }
-            catch(\Exception $e)
+            catch(\Throwable $e)
             {
                 // Server unreachable or misconfigured - skip it, keep collecting from the rest
                 continue;
@@ -162,10 +165,11 @@ class Cpanel
     {
         $sessionDetails  = $this->getSessionDetails($username);
         $decodedResponse = json_decode($sessionDetails, true);
-        if(!$decodedResponse)
+        if(!$decodedResponse || empty($decodedResponse['data']['url']))
         {
-            $this->ch = false;
-            return false;
+            $this->closeConnection();
+            $message = isset($decodedResponse['metadata']['reason']) ? $decodedResponse['metadata']['reason'] : 'invalid response from WHM (check the server credentials)';
+            throw new \Exception('cPanel session could not be created for ' . $this->service['hostname'] . ': ' . $message);
         }
 
         $this->setSessionDetails($decodedResponse);
@@ -214,9 +218,10 @@ class Cpanel
     {
         $query    = ($this->service['ssl'] ? 'https://' . $this->service['hostname'] . ':2087' : 'http://' . $this->service['hostname'] . ':2086') .
             "/json-api/create_user_session?api.version=1&user=" . $username . "&service=cpaneld";
+        $this->closeConnection();
         $this->ch = curl_init();
-        curl_setopt($this->ch, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($this->ch, CURLOPT_SSL_VERIFYHOST, false);
+        curl_setopt($this->ch, CURLOPT_SSL_VERIFYPEER, $this->verifyTls());
+        curl_setopt($this->ch, CURLOPT_SSL_VERIFYHOST, $this->verifyTls() ? 2 : 0);
         curl_setopt($this->ch, CURLOPT_HEADER, true);
         curl_setopt($this->ch, CURLINFO_HEADER_OUT, true);
         curl_setopt($this->ch, CURLOPT_RETURNTRANSFER, true);
@@ -244,8 +249,39 @@ class Cpanel
         return $result;
     }
 
+    protected function closeConnection()
+    {
+        if($this->ch)
+        {
+            curl_close($this->ch);
+        }
+        $this->ch = null;
+    }
+
+    /**
+     * cPanel/WHM TLS certificate verification - on unless the admin disabled it in the SSL settings
+     * (self-signed WHM certificates). The requests carry the WHM credentials, so verification is the default.
+     */
+    protected function verifyTls()
+    {
+        static $verify = null;
+
+        if($verify === null)
+        {
+            $config = (new AddonModuleRepository())->getModuleConfiguration();
+            $verify = empty($config['sslSettings']['cpanelTlsVerifyDisabled']);
+        }
+
+        return $verify;
+    }
+
     protected function exec($name, $api, $params = array())
     {
+        if(!$this->ch || !$this->sessionUrl)
+        {
+            throw new \Exception('cPanel session is not initialised');
+        }
+
         $query = $this->sessionUrl . $api . $name;
         curl_setopt($this->ch, CURLOPT_TIMEOUT, 30);
         curl_setopt($this->ch, CURLOPT_CONNECTTIMEOUT, 30);
@@ -620,8 +656,8 @@ class Cpanel
         $chOptions = array(
             CURLOPT_URL            => $url,
             CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_SSL_VERIFYPEER => false,
-            CURLOPT_SSL_VERIFYHOST => false,
+            CURLOPT_SSL_VERIFYPEER => $this->verifyTls(),
+            CURLOPT_SSL_VERIFYHOST => $this->verifyTls() ? 2 : 0,
             CURLOPT_TIMEOUT        => 30
         );
 

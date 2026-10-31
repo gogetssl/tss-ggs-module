@@ -666,6 +666,7 @@
 
         var postData = {
             'mg-action':          'submitSslConfiguration',
+            'token':              '{$csrfToken}',
             'install_type':       installType,
             'dcv_method':         dcvMethod,
             'approver_email':     approverEmail,

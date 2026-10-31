@@ -91,6 +91,14 @@ class SslSettingsForm extends Form implements AdminAreaInterface, AjaxComponentI
             true
         );
 
+        $this->builder->addFieldInContainer(
+            $sslValidationWidget,
+            (new Switcher())
+                ->setName('cpanelTlsVerifyDisabled')
+                ->setDefaultValue(false),
+            true
+        );
+
         $useFixedTechnicalDetails = $this->builder->addFieldInContainer(
             $sslValidationWidget,
             (new Switcher())

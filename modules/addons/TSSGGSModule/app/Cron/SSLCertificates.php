@@ -108,13 +108,24 @@ class SSLCertificates extends AbstractCommand
         $certificatesQuery = CertificateSyncHelpers::getCertificatesQuery()
             ->whereIn('tblsslorders.remoteid', $certificatesWhere);
 
+        // /services/updates reports certificate (item) IDs. Services configured before 1.2.4 still hold the API
+        // order ID in remoteid and would never match - sync a few of the longest unsynced ones per run; the sync
+        // itself migrates remoteid to the item ID (CertificateSyncHelpers::syncCertificate).
+        $legacyCertificates = CertificateSyncHelpers::getCertificatesQuery()
+            ->whereNotIn('tblsslorders.remoteid', $certificatesWhere ?: [0])
+            ->where('tblsslorders.updated_at', '<', date('Y-m-d H:i:s', strtotime('-1 day')))
+            ->orderBy('tblsslorders.updated_at', 'asc')
+            ->limit(10)
+            ->get()
+            ->toArray();
+
 
         $output->write('Start checking certificates...') .
 
         $io->title('Progress Bar!');
         $io->progressStart($certificatesQuery->count());
 
-        foreach ($certificatesQuery->get()->toArray() as $certificate) {
+        foreach (array_merge($certificatesQuery->get()->toArray(), $legacyCertificates) as $certificate) {
 
             $io->progressAdvance(1);
 

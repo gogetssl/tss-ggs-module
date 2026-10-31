@@ -213,12 +213,14 @@
     {if $status == 'pending' || $status == 'processing'}
         <form method="POST" style="display:inline;">
             <input type="hidden" name="mg-action" value="revalidate">
+            <input type="hidden" name="token" value="{$csrfToken}">
             <button type="submit" class="btn btn-primary" title="{$MGLANG->T('validation_page', 'RevalidateDesc')}">{$MGLANG->T('validation_page', 'Revalidate')}</button>
         </form>
     {/if}
     {if $hasEmailValidation && ($status == 'pending' || $status == 'processing')}
         <form method="POST" style="display:inline;">
             <input type="hidden" name="mg-action" value="resendValidationEmail">
+            <input type="hidden" name="token" value="{$csrfToken}">
             <button type="submit" class="btn btn-default" title="{$MGLANG->T('validation_page', 'ResendDcvEmailDesc')}">{$MGLANG->T('validation_page', 'Resend DCV email')}</button>
         </form>
     {/if}

@@ -29,7 +29,9 @@
             </div>
         </div>
         <div id="mg-container">
-            {$content|html_entity_decode}
+            {* WHMCS escapes template variables (escape_html); the module output is already HTML, so skip the
+               escaping instead of decoding it back - decoding would also undo the |escape used in page templates *}
+            {$content nofilter}
         </div>
         {literal}
             <script type="text/javascript">

@@ -215,6 +215,7 @@ class home extends AbstractController
         }
 
         $vars['autoinstall'] = AutoInstallHelpers::getStatusForView($service->id);
+        $vars['csrfToken']   = \generate_token('plain');
 
         return ['tpl' => 'configuration_submitted', 'vars' => $vars];
     }
@@ -955,6 +956,8 @@ class home extends AbstractController
 
         try
         {
+            $this->requireCsrfToken();
+
             $ssl     = SSL::getByServiceId($serviceId);
             $service = Service::where('id', $serviceId)->first();
             if(!$ssl || !$service || $ssl->status !== 'Configuration Submitted' || empty($ssl->remoteid))
@@ -988,6 +991,8 @@ class home extends AbstractController
 
         try
         {
+            $this->requireCsrfToken();
+
             $ssl     = SSL::getByServiceId($serviceId);
             $service = Service::where('id', $serviceId)->first();
             if(!$ssl || !$service || $ssl->status !== 'Configuration Submitted' || empty($ssl->remoteid))
@@ -2311,7 +2316,7 @@ class home extends AbstractController
         {
             $cpanelDomains = Cpanel::getMergedDomainsGrouped($userId);
         }
-        catch(\Exception $e)
+        catch(\Throwable $e)
         {
         }
 
@@ -2379,6 +2384,7 @@ class home extends AbstractController
         $vars['enableCsrGenerator'] = $settings['enableCsrGenerator'];
         $vars['adminFormHidden']    = $settings['adminFormHidden'];
         $vars['productDomain']      = isset($params['domain']) ? $params['domain'] : '';
+        $vars['csrfToken']          = \generate_token('plain');
 
         return [
             'tpl'  => 'home_ssl_configuration',
@@ -2436,6 +2442,26 @@ class home extends AbstractController
     }
 
     public function submitSslConfigurationJSON($input, $vars = array())
+    {
+        $this->requireCsrfToken();
+
+        $serviceId = (int)$input['params']['serviceid'];
+        if(!$this->acquireServiceLock($serviceId))
+        {
+            throw new \Exception(Lang::absoluteT('sslConfigInProgress'));
+        }
+
+        try
+        {
+            return $this->doSubmitSslConfiguration($input);
+        }
+        finally
+        {
+            $this->releaseServiceLock($serviceId);
+        }
+    }
+
+    private function doSubmitSslConfiguration($input)
     {
         $params    = $input['params'];
         $serviceId = (int)$params['serviceid'];
@@ -2724,6 +2750,37 @@ class home extends AbstractController
         }
 
         return $response;
+    }
+
+    /**
+     * State-changing client actions must be POSTed with the WHMCS CSRF token - WHMCS itself verifies the token
+     * only on its own forms, so module actions reachable via GET would otherwise be open to CSRF.
+     */
+    private function requireCsrfToken()
+    {
+        $token = isset($_POST['token']) ? (string)$_POST['token'] : '';
+        $valid = isset($_SESSION['tkval']) ? (string)$_SESSION['tkval'] : '';
+
+        if($_SERVER['REQUEST_METHOD'] !== 'POST' || $token === '' || $valid === '' || !hash_equals($valid, $token))
+        {
+            throw new \Exception(Lang::absoluteT('invalidCsrfToken'));
+        }
+    }
+
+    /**
+     * Per-service MySQL lock so a double submit cannot place two orders / create two subscriptions.
+     * Returns false when another request holds the lock.
+     */
+    private function acquireServiceLock($serviceId)
+    {
+        $row = Capsule::select('SELECT GET_LOCK(?, 0) AS l', ['tssggs_service_' . (int)$serviceId]);
+
+        return !empty($row) && (int)$row[0]->l === 1;
+    }
+
+    private function releaseServiceLock($serviceId)
+    {
+        Capsule::select('SELECT RELEASE_LOCK(?)', ['tssggs_service_' . (int)$serviceId]);
     }
 
     private function extractDomainsFromInput($domains)

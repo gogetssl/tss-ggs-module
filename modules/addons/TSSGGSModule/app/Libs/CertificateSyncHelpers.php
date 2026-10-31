@@ -6,6 +6,7 @@ use Exception;
 use ModulesGarden\TSSGGSModule\App\Models\Request;
 use ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Service;
 use ModulesGarden\TSSGGSModule\Packages\Logs\Support\Facades\Logger;
+use WHMCS\Database\Capsule;
 
 /**
  * Certificate details sync shared by the SSLCertificates cron (services reported by /services/updates)
@@ -45,6 +46,15 @@ class CertificateSyncHelpers
 
         $api       = new SSLTrustCenterApi($certificate['configoption1'], $credentials['PartnerCode'], $credentials['AuthToken'], $certificate['configoption9']);
         $orderData = $api->getOrder($certificate['remoteid'], $certificate['id']);
+
+        // Services configured before 1.2.4 store the API order ID in tblsslorders.remoteid; since 1.2.4 it is the
+        // certificate (item) ID. The API accepts both, so migrate the stored value whenever the order is fetched.
+        $itemId = SSLTrustCenterApi::getItemId($orderData, $certificate['remoteid']);
+        Capsule::table('tblsslorders')->where('serviceid', $certificate['id'])->update([
+            'remoteid'   => $itemId,
+            'updated_at' => date('Y-m-d H:i:s'),
+        ]);
+        $certificate['remoteid'] = $itemId;
 
         $orderFiles = [];
         if($orderData['order']['status'] == 'active') {
