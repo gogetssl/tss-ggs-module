@@ -4,6 +4,7 @@ namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Migration\Index;
 
 use ModulesGarden\TSSGGSModule\App\Http\Admin\Migration as MigrationController;
 use ModulesGarden\TSSGGSModule\App\Migration\Choice;
+use ModulesGarden\TSSGGSModule\App\Migration\Credentials;
 use ModulesGarden\TSSGGSModule\App\Migration\Detector;
 use ModulesGarden\TSSGGSModule\App\Migration\Engine;
 use ModulesGarden\TSSGGSModule\App\Migration\Store;
@@ -103,6 +104,7 @@ class MigrationContainer extends Container implements AdminAreaInterface
             $html .= '<p class="tssggs-muted">' . htmlspecialchars($this->t('other_modules')) . ' ' . htmlspecialchars(implode(', ', array_map(function($k, $v) { return $k . ' (' . $v . ')'; }, array_keys($c['other_ssl_modules']), $c['other_ssl_modules']))) . '</p>';
         }
 
+        $html .= '<p class="tssggs-muted">' . htmlspecialchars($this->t('credentials_' . Credentials::state($source))) . '</p>';
         $html .= '<p class="tssggs-muted">' . htmlspecialchars($this->t('choice_current')) . ' <b>' . htmlspecialchars($choice ? $this->t('choice_' . $choice) : $this->t('choice_none')) . '</b></p>';
 
         if($info['support']['supported'])

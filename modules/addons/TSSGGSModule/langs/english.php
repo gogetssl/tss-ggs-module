@@ -45,6 +45,9 @@ $_LANG['admin.migration.choice_none']           = 'none yet';
 $_LANG['admin.migration.btn_report']            = 'Download dry-run report (CSV)';
 $_LANG['admin.migration.btn_start']             = 'Start migration';
 $_LANG['admin.migration.btn_skip']              = 'Skip (keep standalone)';
+$_LANG['admin.migration.credentials_already_set'] = 'API credentials: this module has its own.';
+$_LANG['admin.migration.credentials_available']   = 'API credentials: will be copied from the legacy module if still empty when the migration starts.';
+$_LANG['admin.migration.credentials_missing']     = 'API credentials: none in this module nor in the legacy module; enter them in Settings before migrating.';
 $_LANG['admin.migration.start_defaults']        = 'Start migration: backup tables first; AutoInstall private keys are fetched from cPanel (TheSSLStore); the legacy addon is deactivated after the switch; legacy log tables are included in the backup.';
 $_LANG['admin.migration.btn_start_nokeys']      = 'Start without fetching cPanel keys';
 $_LANG['admin.migration.btn_start_keeplegacy']  = 'Start and keep the legacy addon active';
@@ -175,6 +178,7 @@ $_LANG['admin.configuration.content.step3.next_step_btn'] = 'Next step';
 
 $_LANG['admin.configuration.content.step4.step4_title']   = 'STEP 4. Connected to API';
 $_LANG['admin.configuration.content.step4.next_step_btn'] = 'Next step';
+$_LANG['admin.configuration.content.step4.credentials_prefilled'] = 'API credentials were copied from the :modules module. Test the connection and save, or replace them.';
 
 $_LANG['admin.configuration.content.step5.step5_title']   = 'STEP 5. Choose Products';
 $_LANG['admin.configuration.content.step5.next_step_btn'] = 'Next step';

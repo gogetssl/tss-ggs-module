@@ -139,6 +139,7 @@ class Migration extends AbstractController implements AdminAreaInterface
         {
             fputcsv($out, ['product', '', $p['pid'], $p['mapped'] ? 'mapped' : 'not mapped', '', '', $p['remote_product']['id'] ?? '', '', $p['legacy_product_ref'], implode(' | ', $p['warnings'])]);
         }
+        fputcsv($out, ['credentials', '', '', $report['summary']['credentials'], '', '', '', '', '', '']);
         rewind($out);
         header('Content-Type: text/csv; charset=utf-8');
         header('Content-Disposition: attachment; filename="tssggs-migration-' . $source . '-dry-run.csv"');

@@ -98,6 +98,15 @@ class GgsReader extends AbstractReader
         return $this->settingsRow;
     }
 
+    public function readCredentials(): array
+    {
+        $s = $this->settings();
+        // GGS 3.x sends "GGS <partner code or login>:<API password>" to the same gateway
+        $code = trim((string)($s['api_partner_code'] ?? '')) ?: trim((string)($s['api_login'] ?? ''));
+
+        return ['PartnerCode' => $code, 'AuthToken' => trim((string)($s['api_password'] ?? ''))];
+    }
+
     public function readSettings(): array
     {
         $s = $this->settings();

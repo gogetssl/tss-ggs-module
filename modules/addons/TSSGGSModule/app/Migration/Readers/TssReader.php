@@ -114,6 +114,20 @@ class TssReader extends AbstractReader
         return $this->config;
     }
 
+    public function readCredentials(): array
+    {
+        $c      = $this->config();
+        $secret = function($key) use ($c) { $v = trim((string)($c[$key] ?? '')); return $v !== '' && function_exists('decrypt') ? trim((string)decrypt($v)) : $v; };
+
+        return [
+            'PartnerCode'     => trim((string)($c['live_partner_code'] ?? '')),
+            'AuthToken'       => $secret('live_auth_token'),
+            'TestPartnerCode' => trim((string)($c['test_partner_code'] ?? '')),
+            'TestAuthToken'   => $secret('test_auth_token'),
+            'OperationMode'   => strtoupper((string)($c['api_mode'] ?? '')) === 'LIVE' ? 'live' : 'sandbox',
+        ];
+    }
+
     public function readSettings(): array
     {
         $c = $this->config();

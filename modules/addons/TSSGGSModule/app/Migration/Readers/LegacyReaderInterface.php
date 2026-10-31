@@ -57,6 +57,12 @@ interface LegacyReaderInterface
     /** Legacy settings as unified sslSettings / financeSettings (only keys that have a legacy value) */
     public function readSettings(): array;
 
+    /**
+     * Gateway credentials of the legacy module as a unified block: PartnerCode, AuthToken and, for TheSSLStore,
+     * TestPartnerCode, TestAuthToken, OperationMode (live|sandbox). Empty strings when not configured.
+     */
+    public function readCredentials(): array;
+
     /** Product record for one legacy product */
     public function readProduct(int $pid): array;
 

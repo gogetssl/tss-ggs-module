@@ -144,6 +144,7 @@ class Engine
             'backup_tables'   => $legacyTables,
             'backup_bytes'    => Backup::estimateBytes($legacyTables),
             'settings_filled' => array_keys(array_filter($this->reader->readSettings()['sslSettings'] ?? [], function($v) { return $v !== ''; })),
+            'credentials'     => Credentials::state($this->source),
             'cron_lines'      => $this->reader->cronLines(),
             'addon_active'    => LegacyModuleControl::isActive($this->reader->addonName()),
             'mapper_has_vendor' => $this->mapper->hasVendor(strtoupper($this->source)),
@@ -219,6 +220,11 @@ class Engine
             // 2. settings
             $writer = new Writer($runId, $this->source);
             $filled = $writer->writeSettings($this->reader->readSettings());
+            if(Credentials::applyIfEmpty($this->source))
+            {
+                $filled[] = 'credentials.' . $this->source;
+                $this->log($runId, 'info', self::PHASE_PREPARE, 'Gateway credentials copied from the legacy module');
+            }
             Store::addJob($runId, Store::KIND_SETTINGS, 0, 0, Store::JOB_DONE, null, ['filled' => $filled]);
             $this->log($runId, 'info', self::PHASE_PREPARE, 'Settings merged', ['filled' => $filled]);
 
