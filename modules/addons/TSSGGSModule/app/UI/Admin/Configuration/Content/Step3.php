@@ -24,7 +24,10 @@ class Step3 extends Widget implements AjaxComponentInterface
         WizardLayout::prepareStep($this, 3, $this->translate('step3_title'));
 
         $found = Detector::detect();
-        $html  = '<p class="tssggs-checks__intro">' . htmlspecialchars($this->translate('intro')) . '</p>';
+        // name only what was actually found: "GoGetSSL", "TheSSLStore" or both
+        $names = array_map(function($info) { return $info['source'] === 'ggs' ? 'GoGetSSL' : 'TheSSLStore'; }, $found);
+        $intro = $this->translate(count($names) > 1 ? 'intro_many' : 'intro_one', ['modules' => implode(' ' . $this->translate('and') . ' ', $names)]);
+        $html  = '<p class="tssggs-checks__intro">' . htmlspecialchars($intro) . '</p>';
 
         foreach($found as $source => $info)
         {

@@ -155,7 +155,9 @@ $_LANG['admin.configuration.content.step2.hint_gateway']    = 'The server could 
 $_LANG['admin.configuration.content.step2.next_step_btn']               = 'Next step';
 
 $_LANG['admin.configuration.content.step3.step3_title']   = 'STEP 3. Legacy modules found';
-$_LANG['admin.configuration.content.step3.intro']         = 'An earlier GoGetSSL or TheSSLStore module is installed on this WHMCS. Its products, orders, subscriptions and AutoInstall certificates can be moved to this module so that renewals, reissues and e-mails continue to work here. Choose per module:';
+$_LANG['admin.configuration.content.step3.intro_one']     = 'An earlier :modules module is installed on this WHMCS. Its products, orders, subscriptions and AutoInstall certificates can be moved to this module so that renewals, reissues and e-mails continue to work here.';
+$_LANG['admin.configuration.content.step3.intro_many']    = 'Earlier :modules modules are installed on this WHMCS. Their products, orders, subscriptions and AutoInstall certificates can be moved to this module so that renewals, reissues and e-mails continue to work here. Choose per module:';
+$_LANG['admin.configuration.content.step3.and']           = 'and';
 $_LANG['admin.configuration.content.step3.version_unknown'] = 'version unknown';
 $_LANG['admin.configuration.content.step3.support_full']    = 'Migration supported';
 $_LANG['admin.configuration.content.step3.support_partial'] = 'Migration supported (partially)';
