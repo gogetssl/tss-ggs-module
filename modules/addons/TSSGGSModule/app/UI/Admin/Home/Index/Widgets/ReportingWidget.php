@@ -3,29 +3,28 @@
 namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Widgets;
 
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Modals\ReportingModal;
-use ModulesGarden\TSSGGSModule\Components\Button\ButtonPrimary;
-use ModulesGarden\TSSGGSModule\Components\Text\Text;
-use ModulesGarden\TSSGGSModule\Components\Widget\Widget;
+use ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Shared\Card;
+use ModulesGarden\TSSGGSModule\Components\Button\Button;
+use ModulesGarden\TSSGGSModule\Components\Container\Container;
 use ModulesGarden\TSSGGSModule\Core\Components\Actions\ModalLoad;
 
-class ReportingWidget extends Widget
+/**
+ * Module issue reporting: opens the report modal (activity log, environment details)
+ */
+class ReportingWidget extends Card
 {
     public function loadHtml(): void
     {
-        $this->setTitle($this->translate('title'));
-        $this->setIcon('alert-outline');
-        $this->setSlot('customcontentclass', 'report-issue');
+        $this->start('file-document-outline', $this->translate('title'));
 
-        $text = new Text();
-        $text->setText($this->translate('info'));
-        $this->addElement($text);
-
-        $this->addElement((new Text())->setText('<br><br>'));
-
-
-        $button = new ButtonPrimary();
+        $button = new Button();
         $button->setTitle($this->translate('sendReport'));
         $button->onClick(new ModalLoad(new ReportingModal()));
-        $this->addElement($button);
+
+        $body = new Container();
+        $body->setCss('tssggs-dcard__body');
+        $body->addElement(Card::html('<p class="tssggs-muted">' . Card::e($this->translate('info')) . '</p>'));
+        $body->addElement($button);
+        $this->addElement($body);
     }
 }

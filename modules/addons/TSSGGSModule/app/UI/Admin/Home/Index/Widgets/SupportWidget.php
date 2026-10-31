@@ -3,92 +3,39 @@
 namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Widgets;
 
 use ModulesGarden\TSSGGSModule\App\Libs\Helpers;
-use ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Components\AssistantCard;
-use ModulesGarden\TSSGGSModule\Components\Widget\Widget;
+use ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Shared\Card;
 
-class SupportWidget extends Widget
+/**
+ * Support contacts of the configured vendors
+ */
+class SupportWidget extends Card
 {
+    const CONTACTS = [
+        'TSS' => ['email' => 'support@thesslstore.com', 'phone' => '727-388-4240'],
+        'GGS' => ['email' => 'support@gogetssl.com', 'phone' => ''],
+    ];
+
     public function loadHtml(): void
     {
-        $this->setTitle($this->translate('title'));
-        $this->setIcon('headset');
-        $this->setSlot('customcontentclass', 'support-assistance');
-        $configuredApis = Helpers::getConfiguredApis();
+        $this->setCss('tssggs-dcard tssggs-support');
 
-        if(isset($configuredApis["TSS"]) && isset($configuredApis["GGS"]))
+        $vendors = array_values(array_intersect(array_keys(self::CONTACTS), array_keys(Helpers::getConfiguredApis())));
+        $phones  = [];
+        $buttons = '';
+        foreach($vendors as $vendor)
         {
-            $details = [
-                [
-                    'title'   => $this->translate('phone'),
-                    'display' => '727-388-4240',
-                ],
-                [
-                    'title'   => $this->translate('ttsEmail'),
-                    'display' => 'support@thesslstore.com',
-                    'url'     => 'mailto:support@thesslstore.com'
-                ],
-                [
-                    'title'   => $this->translate('ggsEmail'),
-                    'display' => 'support@gogetssl.com',
-                    'url'     => 'mailto:support@gogetssl.com'
-                ],
-                [
-                    'title'   => $this->translate('helpdesk'),
-                    'display' => $this->translate('helpdeskDisplay'),
-                    'url'     => 'testUrl3',
-                ],
-                [
-                    'title'   => $this->translate('features'),
-                    'display' => $this->translate('featuresDisplay'),
-                    'url'     => 'testUrl3',
-                ],
-            ];
-        }
-        elseif(isset($configuredApis["TSS"]))
-        {
-            $details = [
-                [
-                    'title'   => $this->translate('phone'),
-                    'display' => '727-388-4240',
-                ],
-                [
-                    'title'   => $this->translate('email'),
-                    'display' => 'support@thesslstore.com',
-                    'url'     => 'mailto:support@thesslstore.com'
-                ],
-                [
-                    'title'   => 'SSLHelpdesk.com:',
-                    'display' => 'White Label Support Articles',
-                    'url'     => 'testUrl3',
-                ],
-                [
-                    'title'   => 'SSLFeatures.com:',
-                    'display' => 'Informative White-Label Product Pages',
-                    'url'     => 'testUrl3',
-                ],
-            ];
-        }
-        elseif(isset($configuredApis["GGS"]))
-        {
-            $details = [
-                [
-                    'title'   => $this->translate('email'),
-                    'display' => 'support@gogetssl.com',
-                    'url'     => 'mailto:support@gogetssl.com'
-                ],
-                [
-                    'title'   => 'SSLFeatures.com:',
-                    'display' => 'Informative White-Label Product Pages',
-                    'url'     => 'testUrl3',
-                ],
-                [
-                    'title'   => '',
-                    'display' => 'www.gogetssl.com',
-                    'url'     => 'www.gogetssl.com',
-                ],
-            ];
+            $contact = self::CONTACTS[$vendor];
+            if($contact['phone'] !== '')
+            {
+                $phones[] = $this->translate('phone', ['phone' => $contact['phone']]);
+            }
+            $label    = count($vendors) > 1 ? $this->translate('contact_vendor', ['vendor' => Helpers::vendorToDisplay($vendor)]) : $this->translate('contact');
+            $buttons .= '<a class="tssggs-dbtn" href="mailto:' . Card::e($contact['email']) . '">' . Card::icon('email-outline') . Card::e($label) . '</a>';
         }
 
-        $this->addElement(new AssistantCard($details));
+        $this->addElement(Card::html('<div class="tssggs-support__row"><span class="tssggs-support__icon">' . Card::icon('headset') . '</span>'
+            . '<div class="tssggs-support__text"><h3>' . Card::e($this->translate('title')) . '</h3>'
+            . ($phones ? '<p>' . Card::e(implode(' · ', $phones)) . '</p>' : '') . '</div>'
+            . '<div class="tssggs-support__actions">' . $buttons . '</div></div>'));
     }
 }

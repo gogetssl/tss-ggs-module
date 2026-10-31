@@ -2,93 +2,42 @@
 
 namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Widgets;
 
-use Dom\Text;
-use ModulesGarden\TSSGGSModule\App\Models\CronCheck;
-use ModulesGarden\TSSGGSModule\Components\Alert\Alert;
-use ModulesGarden\TSSGGSModule\Components\Alert\AlertDanger;
-use ModulesGarden\TSSGGSModule\Components\Hint\Hint;
-use ModulesGarden\TSSGGSModule\Components\HintsBox\HintsBox;
-use ModulesGarden\TSSGGSModule\Components\ListInfo\ListInfo;
-use ModulesGarden\TSSGGSModule\Components\ListInfo\ListInfoItem;
-use ModulesGarden\TSSGGSModule\Components\ListSimple\ListSimple;
-use ModulesGarden\TSSGGSModule\Components\Text\TextBold;
-use ModulesGarden\TSSGGSModule\Components\Widget\Widget;
-use ModulesGarden\TSSGGSModule\Packages\ModuleSettings\Models\ModuleSettings;
+use ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Shared\Card;
+use ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Shared\CronStatus;
 
-class SystemCheckWidget extends Widget
+/**
+ * System health: last run of the module cron and each scheduled task
+ */
+class SystemCheckWidget extends Card
 {
     public function loadHtml(): void
     {
-        $this->setTitle($this->translate('title'));
-        $this->setIcon('hospital-box-outline');
+        $ok = CronStatus::ok();
+        $this->start('pulse', $this->translate('title'), $ok ? Card::status('ok', $this->translate('ok')) : Card::status('bad', $this->translate('attention')));
 
-        $date = date('Y-m-d H:i:s');
-
-        $expectedCrons = [
-            'ProductPricingUpdate',
-            'SSLCertificates',
-            'RenewalNotifyCertificate',
-            'ReSyncProducts',
-            'SSLCertificatesProcessing',
-            'SSLAutoInstall',
-        ];
-
-        $list = new ListSimple();
-        $list->addClass('system-check-list');
-
-        $cronStatus = 'success';
-
-        $timestamp = ModuleSettings::where('setting', 'cronLastUpdate')->first();
-        if(isset($timestamp->value))
+        $html = '<p class="tssggs-label" id="tssggs-health">' . Card::e($this->translate('tasks')) . '</p><ul class="tssggs-tasks">';
+        foreach(CronStatus::rows() as $task => $row)
         {
-            $list->addItem('cronScript'.' - <span class="green">' . date('Y-m-d H:i:s', $timestamp->value) . '</span>');
-        }
-        else
-        {
-            $list->addItem('cronScript'.' - <span class="red">' . $this->translate('never') . '</span>');
-            $cronStatus = 'error';
-        }
-
-        foreach($expectedCrons as $expectedCron)
-        {
-            $cronCheck = CronCheck::where('type', $expectedCron)->first();
-
-            if($cronCheck)
+            if($row['last'] === null)
             {
-                $date  = $cronCheck->last_run;
-                $error = trim($cronCheck->last_error);
-                $item  = $expectedCron . ' - <span class="green">' . $date . '</span>';
-
-                if($error)
-                {
-                    $item .= ' - <span class="red">' . $this->translate('error') . ': ' . $error . '</span>';
-                }
-
-                $list->addItem($item);
+                $state = '<span class="is-bad">' . Card::icon('close') . Card::e($this->translate('never')) . '</span>';
+            }
+            elseif($row['error'] !== '')
+            {
+                $state = '<span class="is-warn" title="' . Card::e($row['error']) . '">' . Card::icon('alert-outline') . Card::e($row['last']) . '</span>';
             }
             else
             {
-                $list->addItem($expectedCron . ' - <span class="red">' . $this->translate('never') . '</span>');
-                $cronStatus = 'error';
+                $state = '<span class="is-ok">' . Card::icon('check') . Card::e($row['last']) . '</span>';
+            }
+            $html .= '<li><span class="tssggs-tasks__name">' . Card::e($task) . '</span>' . $state . '</li>';
+            if($row['error'] !== '')
+            {
+                $html .= '<li class="tssggs-tasks__error">' . Card::e($this->translate('error') . ': ' . $row['error']) . '</li>';
             }
         }
+        $html .= '</ul>' . Card::link('addonmodules.php?module=TSSGGSModule&mg-page=settings&settings-page=cronSettings', $this->translate('review'), 'is-block');
 
-        if($cronStatus == 'error')
-        {
-            $alert = new AlertDanger();
-            $alert->setText($this->translate('system_check_alert'));
-            $this->addElement($alert);
-        }
-
-        $this->addElement((new TextBold())->setText($this->translate('system_check_crons')));
-        $this->addElement($list);
-/*
-        $this->addElement((new TextBold())->setText($this->translate('system_check_updates')));
-        $list = new ListSimple();
-        $list->addClass('system-check-list');
-        $list->addItem('placeholder');
-        $this->addElement($list);
-*/
-
+        $this->body($html);
     }
 }

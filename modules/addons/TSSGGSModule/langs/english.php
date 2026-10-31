@@ -12,14 +12,63 @@ $_LANG['admin.menu.automationQueue'] = 'Automation Queue';
 $_LANG['admin.menu.migration']       = 'Migration';
 $_LANG['admin.breadcrumbs.Migration_index'] = 'Migration';
 
-$_LANG['admin.home.index.widgets.migration_widget.title']         = 'Legacy module migration';
-$_LANG['admin.home.index.widgets.migration_widget.services']      = ':n active services';
-$_LANG['admin.home.index.widgets.migration_widget.choice_migrate'] = 'to be migrated';
-$_LANG['admin.home.index.widgets.migration_widget.choice_skip']   = 'kept standalone';
-$_LANG['admin.home.index.widgets.migration_widget.last_run']      = 'Last migration #:id: :status (:done migrated, :failed failed, :skipped skipped)';
-$_LANG['admin.home.index.widgets.migration_widget.backups_until'] = 'Backups kept until :date';
-$_LANG['admin.home.index.widgets.migration_widget.nothing']       = 'No legacy module found on this installation.';
-$_LANG['admin.home.index.widgets.migration_widget.open']          = 'Open Migration';
+$_LANG['admin.home.index.home_container.title']                 = 'Dashboard';
+$_LANG['admin.home.index.home_container.period']                = 'Last month';
+$_LANG['admin.home.index.home_container.attention_title']       = 'Automation needs attention';
+$_LANG['admin.home.index.home_container.attention_body']        = 'Cron jobs are not running. Certificate processing and price updates may be affected.';
+$_LANG['admin.home.index.home_container.attention_button']      = 'Review system';
+$_LANG['admin.home.index.home_container.kpi_sales']             = 'Total sales';
+$_LANG['admin.home.index.home_container.kpi_sales_detail']      = 'Paid sales · :currency';
+$_LANG['admin.home.index.home_container.kpi_profit']            = 'Gross profit';
+$_LANG['admin.home.index.home_container.kpi_profit_detail']     = 'Last month · :currency';
+$_LANG['admin.home.index.home_container.kpi_issued']            = 'Certificates issued';
+$_LANG['admin.home.index.home_container.kpi_issued_detail']     = 'Last month';
+$_LANG['admin.home.index.home_container.kpi_expiring']          = 'Expiring certificates';
+$_LANG['admin.home.index.home_container.kpi_expiring_detail']   = 'Within the next 90 days';
+$_LANG['admin.home.index.home_container.version']               = 'Module version :version';
+
+$_LANG['admin.home.index.widgets.overview_widget.title']        = 'Sales overview';
+$_LANG['admin.home.index.widgets.overview_widget.statistics']   = 'All statistics';
+$_LANG['admin.home.index.widgets.overview_widget.paid']         = 'Paid';
+$_LANG['admin.home.index.widgets.overview_widget.unpaid']       = 'Unpaid';
+$_LANG['admin.home.index.widgets.overview_widget.overdue']      = 'Overdue';
+$_LANG['admin.home.index.widgets.overview_widget.period']       = 'Last month';
+
+$_LANG['admin.home.index.widgets.announcements_widget.title']       = 'Announcements';
+$_LANG['admin.home.index.widgets.announcements_widget.latest']      = 'Latest updates';
+$_LANG['admin.home.index.widgets.announcements_widget.none']        = 'No announcements.';
+$_LANG['admin.home.index.widgets.announcements_widget.unavailable'] = 'Announcements could not be loaded: :error';
+
+$_LANG['admin.home.index.widgets.support_widget.title']          = 'Support assistance';
+$_LANG['admin.home.index.widgets.support_widget.phone']          = 'Telephone: :phone';
+$_LANG['admin.home.index.widgets.support_widget.contact']        = 'Contact support';
+$_LANG['admin.home.index.widgets.support_widget.contact_vendor'] = 'Contact :vendor support';
+
+$_LANG['admin.home.index.widgets.system_check_widget.title']     = 'System health';
+$_LANG['admin.home.index.widgets.system_check_widget.ok']        = 'All running';
+$_LANG['admin.home.index.widgets.system_check_widget.attention'] = 'Action required';
+$_LANG['admin.home.index.widgets.system_check_widget.tasks']     = 'Scheduled tasks';
+$_LANG['admin.home.index.widgets.system_check_widget.never']     = 'Never';
+$_LANG['admin.home.index.widgets.system_check_widget.error']     = 'Error';
+$_LANG['admin.home.index.widgets.system_check_widget.review']    = 'Review cron configuration';
+
+$_LANG['admin.home.index.widgets.migration_widget.title']           = 'Legacy module migration';
+$_LANG['admin.home.index.widgets.migration_widget.intro']           = 'Move your existing SSL services to this module.';
+$_LANG['admin.home.index.widgets.migration_widget.services']        = ':n active services';
+$_LANG['admin.home.index.widgets.migration_widget.choice_migrate']  = 'to be migrated';
+$_LANG['admin.home.index.widgets.migration_widget.choice_skip']     = 'kept standalone';
+$_LANG['admin.home.index.widgets.migration_widget.last_run']        = 'Migration #:id · :status';
+$_LANG['admin.home.index.widgets.migration_widget.last_run_counts'] = ':done migrated, :failed failed, :skipped skipped';
+$_LANG['admin.home.index.widgets.migration_widget.backups_until']   = 'Backups kept until :date';
+$_LANG['admin.home.index.widgets.migration_widget.open']            = 'Open migration';
+
+$_LANG['admin.home.index.widgets.partner_widget.title'] = 'Your partner growth manager';
+$_LANG['admin.home.index.widgets.partner_widget.none']  = 'No partner growth manager assigned yet.';
+
+$_LANG['admin.home.index.widgets.reporting_widget.title']      = 'Module issue reporting';
+$_LANG['admin.home.index.widgets.reporting_widget.info']       = 'Share the module activity log with our support team: it lists errors and helps troubleshoot issues you or your clients run into.';
+$_LANG['admin.home.index.widgets.reporting_widget.sendReport'] = 'Send report';
+
 
 $_LANG['admin.migration.title']                 = 'Legacy module migration';
 $_LANG['admin.migration.none_found']            = 'No legacy GoGetSSL or TheSSLStore module was found on this installation.';
@@ -210,23 +259,10 @@ $_LANG['admin.configuration.content.step6.step6_products'] = '<b>%s Products imp
 
 $_LANG['admin.breadcrumbs.Home'] = 'Dashboard';
 //update
-$_LANG['admin.home.index.widgets.upgrade_widget.title'] = 'Update';
 //overview
-$_LANG['admin.home.index.widgets.overview_widget.title']           = 'Overview';
-$_LANG['admin.home.index.widgets.overview_widget.statistics']      = 'All Statistics';
-$_LANG['admin.home.index.widgets.overview_widget.totalSales']      = 'Total Sales of last month:';
-$_LANG['admin.home.index.widgets.overview_widget.grossProfit']     = 'Total Gross Profit of last month:';
-$_LANG['admin.home.index.widgets.overview_widget.issuedLastMonth'] = 'Number of certificates issued in last month:';
-$_LANG['admin.home.index.widgets.overview_widget.expireIn90Days']  = 'Number of certificates that will expire in 90 days:';
-$_LANG['admin.home.index.widgets.overview_widget.paid']            = 'Paid:';
-$_LANG['admin.home.index.widgets.overview_widget.unpaid']          = 'Unpaid:';
-$_LANG['admin.home.index.widgets.overview_widget.overdue']         = 'Overdue:';
 
 
 //reporting
-$_LANG['admin.home.index.widgets.reporting_widget.title']       = 'Module Issue Reporting';
-$_LANG['admin.home.index.widgets.reporting_widget.info']        = 'Sending/Downloading the activity log module provides useful information, such as errors, which helps troubleshoot any issues you or your clients may encounter while using our module.';
-$_LANG['admin.home.index.widgets.reporting_widget.sendReport']  = 'Send Report';
 $_LANG['admin.home.index.modals.reporting_modal.sendReport']    = 'Send Report';
 $_LANG['admin.home.index.forms.reporting_form.whmcsUrl']        = 'WHMCS URL';
 $_LANG['admin.home.index.forms.reporting_form.moduleVersion']   = 'Module Version';
@@ -256,45 +292,19 @@ $_LANG['admin.home.index.forms.reporting_form.send_success'] = 'Your activity lo
 
 
 //system check
-$_LANG['admin.home.index.widgets.system_check_widget.title'] = 'System Check';
-$_LANG['admin.home.index.widgets.system_check_widget.never'] = 'Never';
-$_LANG['admin.home.index.widgets.system_check_widget.error'] = 'Error';
 
 
 //Announcements
-$_LANG['admin.home.index.widgets.announcements_widget.title'] = 'Announcements';
 
 //manager
-$_LANG['admin.home.index.widgets.partner_widget.title'] = 'Your Partner Growth Manager';
 
 //support
-$_LANG['admin.home.index.widgets.support_widget.title'] = 'Support Assistance';
 
-$_LANG['admin.home.index.components.assistant_card.phone']        = 'Telephone';
-$_LANG['admin.home.index.components.assistant_card.emailTss']     = 'TheSSLSTORE Email';
-$_LANG['admin.home.index.components.assistant_card.emailGgs']     = 'GoGetSSL Email';
-$_LANG['admin.home.index.components.assistant_card.helpdesk']     = 'SSLHelpDesk.com';
-$_LANG['admin.home.index.components.assistant_card.helpdeskLink'] = 'White Label Support Articles';
-$_LANG['admin.home.index.components.assistant_card.helpdesk']     = 'SSLHelpDesk.com';
-$_LANG['admin.home.index.components.assistant_card.helpdeskLink'] = 'White Label Support Articles';
-$_LANG['admin.home.index.components.assistant_card.features']     = 'White Label Support Articles';
-$_LANG['admin.home.index.components.assistant_card.featuresLink'] = 'Informative White-Label Product Pages';
 
 //assistance
 
-$_LANG['admin.home.index.widgets.support_widget.email']           = 'Email:';
-$_LANG['admin.home.index.widgets.support_widget.phone']           = 'Telephone:';
-$_LANG['admin.home.index.widgets.support_widget.ttsEmail']        = 'TheSSLStore Email:';
-$_LANG['admin.home.index.widgets.support_widget.ggsEmail']        = 'GoGetSSL Email:';
-$_LANG['admin.home.index.widgets.support_widget.helpdesk']        = 'SSLHelpdesk.com:';
-$_LANG['admin.home.index.widgets.support_widget.helpdeskDisplay'] = 'White Label Support Articles';
-$_LANG['admin.home.index.widgets.support_widget.features']        = 'SSLFeatures.com:';
-$_LANG['admin.home.index.widgets.support_widget.featuresDisplay'] = 'Knowledge-base';
 
 //systemcheck
-$_LANG['admin.home.index.widgets.system_check_widget.system_check_crons']   = 'Cron';
-$_LANG['admin.home.index.widgets.system_check_widget.system_check_alert']   = '<b>CronJobs not running.</b> Please enable all crons listed <a href="addonmodules.php?module=TSSGGSModule&mg-page=settings&settings-page=cronSettings" style="text-decoration: underline;">here</a>';
-$_LANG['admin.home.index.widgets.system_check_widget.system_check_updates'] = 'Updates';
 
 //===[Statistics]=======================================================================================================
 
