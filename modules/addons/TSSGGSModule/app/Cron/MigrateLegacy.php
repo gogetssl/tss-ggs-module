@@ -16,7 +16,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  * Legacy module migration from the command line (large installs, unattended runs, support).
  *
  *   php -q cron.php MigrateLegacy detect
- *   php -q cron.php MigrateLegacy dry-run  --source=ggs|tss
+ *   php -q cron.php MigrateLegacy dry-run  --source=ggs|tss [--no-store]
  *   php -q cron.php MigrateLegacy start    --source=ggs|tss [--no-keys] [--keep-legacy-active]
  *   php -q cron.php MigrateLegacy run      [--id=N]      (runs batches until finished)
  *   php -q cron.php MigrateLegacy status   [--id=N]
@@ -36,6 +36,7 @@ class MigrateLegacy extends AbstractCommand
         $this->addOption('id', null, InputOption::VALUE_REQUIRED, 'migration run id');
         $this->addOption('no-keys', null, InputOption::VALUE_NONE, 'do not fetch AutoInstall private keys from cPanel');
         $this->addOption('keep-legacy-active', null, InputOption::VALUE_NONE, 'do not deactivate the legacy addon after the switch');
+        $this->addOption('no-store', null, InputOption::VALUE_NONE, 'dry-run: print the report without storing it (pure read)');
     }
 
     protected function process(InputInterface $input, OutputInterface $output, SymfonyStyle $io)
@@ -55,7 +56,7 @@ class MigrateLegacy extends AbstractCommand
 
             case 'dry-run':
                 $engine = new Engine($this->source($input));
-                $report = $engine->dryRun('cli');
+                $report = $input->getOption('no-store') ? $engine->analyse() : $engine->dryRun('cli');
                 $io->writeln(json_encode($report['summary'], JSON_PRETTY_PRINT));
                 foreach($report['services'] as $group => $rows)
                 {

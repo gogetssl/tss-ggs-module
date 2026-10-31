@@ -288,6 +288,16 @@ class SSLCertificatesProcessing extends AbstractCommand
             $errorToDB = $e->getMessage();
         }
 
+        // legacy migration housekeeping: expired backup tables, log rows older than 30 days
+        try
+        {
+            \ModulesGarden\TSSGGSModule\App\Migration\Engine::housekeeping();
+        }
+        catch(\Throwable $e)
+        {
+            $errorToDB = $errorToDB ?: $e->getMessage();
+        }
+
         CronCheck::updateOrCreate(
             ['type' => 'SSLCertificatesProcessing'],
             ['last_run' => date('Y-m-d H:i:s'), 'last_error' => $errorToDB]

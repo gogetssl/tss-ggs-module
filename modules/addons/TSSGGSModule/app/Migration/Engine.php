@@ -65,7 +65,10 @@ class Engine
         return $report;
     }
 
-    protected function analyse(): array
+    /**
+     * Read-only analysis (nothing is stored). dryRun() stores it as a run for later download.
+     */
+    public function analyse(): array
     {
         $support  = $this->reader->versionSupport();
         $products = [];
