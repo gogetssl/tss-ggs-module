@@ -38,7 +38,7 @@ class Cpanel
             ])
             ->join('tblproducts', 'tblhosting.packageid', '=', 'tblproducts.id')
             ->join('tblservers', 'tblhosting.server', '=', 'tblservers.id')
-            ->where('tblproducts.servertype', 'cpanel')
+            ->whereIn('tblproducts.servertype', ['cpanel', 'cpanelExtended', 'cpanelextended', 'cpanel_extended'])
             ->where('tblhosting.userid', (int)$userId)
             // terminated/cancelled accounts may be gone or reused by another customer on the server
             ->where('tblhosting.domainstatus', 'Active')
