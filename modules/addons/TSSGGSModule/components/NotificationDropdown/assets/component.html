@@ -1,6 +1,6 @@
 <div :id="cid_" class="lu-has-dropdown lu-notifications-dropdown">
     <button :data-title="translate_('notifications')" :aria-label="translate_('notifications')" @click="toggleDropdown" class="lu-btn lu-btn--icon lu-btn--link lu-btn--default" data-lu-tooltip="">
-        <i class="lu-btn__icon lu-mdi mdi mdi-bell"></i>
+        <span class="lu-btn__icon tssggs-icobox"><svg class="tssggs-ico" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false"><path fill="currentColor" d="M21,19V20H3V19L5,17V11C5,7.9 7.03,5.17 10,4.29C10,4.19 10,4.1 10,4A2,2 0 0,1 12,2A2,2 0 0,1 14,4C14,4.1 14,4.19 14,4.29C16.97,5.17 19,7.9 19,11V17L21,19M14,21A2,2 0 0,1 12,23A2,2 0 0,1 10,21"/></svg></span>
         <span class="lu-notifications-unread-pointer" v-if="unreadCount_ > 0"></span>
     </button>
     <div @click="toggleDropdown" class="mg-drop-bg-wrapper" v-show="is_drop_open_"></div>

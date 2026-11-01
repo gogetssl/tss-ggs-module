@@ -3,6 +3,7 @@
 namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Forms;
 
 
+use ModulesGarden\TSSGGSModule\App\Libs\Icons;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Shared\CronStatus;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Providers\CronSettingsProvider;
 use ModulesGarden\TSSGGSModule\Components\Button\ButtonSuccess;
@@ -64,10 +65,10 @@ class CronConfigurationForm extends Form implements AdminAreaInterface, AjaxComp
             $row     = isset($status[$job]) ? $status[$job] : ['last' => null, 'error' => ''];
             $failing = $row['error'] !== '';
             $badge   = $row['last'] === null
-                ? '<span class="tssggs-badge tssggs-badge--idle"><i class="mdi mdi-clock-outline"></i>' . $this->translate('neverRunBadge') . '</span>'
+                ? '<span class="tssggs-badge tssggs-badge--idle">' . Icons::svg('clock-outline') . '' . $this->translate('neverRunBadge') . '</span>'
                 : ($failing
-                    ? '<span class="tssggs-badge tssggs-badge--bad"><i class="mdi mdi-alert-outline"></i>' . $this->translate('failing') . '</span>'
-                    : '<span class="tssggs-badge tssggs-badge--ok"><i class="mdi mdi-check-circle-outline"></i>' . $this->translate('healthy') . '</span>');
+                    ? '<span class="tssggs-badge tssggs-badge--bad">' . Icons::svg('alert-outline') . '' . $this->translate('failing') . '</span>'
+                    : '<span class="tssggs-badge tssggs-badge--ok">' . Icons::svg('check-circle-outline') . '' . $this->translate('healthy') . '</span>');
             $last    = $row['last'] === null ? $this->translate('neverRun') : htmlspecialchars($row['last']);
 
             $block->addElement((new Text())->setText(
@@ -78,7 +79,7 @@ class CronConfigurationForm extends Form implements AdminAreaInterface, AjaxComp
             ));
 
             $block->addElement((new Text())->setText(
-                '<div class="tssggs-cronjob__freq"><i class="mdi mdi-clock-outline"></i><span>' . $this->translate('howOften') . '</span>'
+                '<div class="tssggs-cronjob__freq">' . Icons::svg('clock-outline') . '<span>' . $this->translate('howOften') . '</span>'
                 . ($key === null ? '<span class="tssggs-cronjob__fixed">' . $this->translate('everyStart') . '</span>' : '') . '</div>'
             ));
 
@@ -98,8 +99,8 @@ class CronConfigurationForm extends Form implements AdminAreaInterface, AjaxComp
             }
 
             $block->addElement((new Text())->setText(
-                '<p class="tssggs-cronjob__meta"><span><i class="mdi mdi-clock-outline"></i>' . $this->translate('lastRun') . ' ' . $last . '</span>'
-                . '<span><i class="mdi mdi-console"></i>' . $this->translate('runNow') . ' <code>php -q &hellip;/cron/cron.php ' . $job . ' --force</code></span></p>'
+                '<p class="tssggs-cronjob__meta"><span>' . Icons::svg('clock-outline') . '' . $this->translate('lastRun') . ' ' . $last . '</span>'
+                . '<span>' . Icons::svg('console') . '' . $this->translate('runNow') . ' <code>php -q &hellip;/cron/cron.php ' . $job . ' --force</code></span></p>'
             ));
         }
 

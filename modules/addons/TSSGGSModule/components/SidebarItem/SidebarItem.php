@@ -2,6 +2,7 @@
 
 namespace ModulesGarden\TSSGGSModule\Components\SidebarItem;
 
+use ModulesGarden\TSSGGSModule\App\Libs\Icons;
 use ModulesGarden\TSSGGSModule\Core\Components\AbstractComponent;
 use ModulesGarden\TSSGGSModule\Core\Components\Traits\ComponentsContainerTrait;
 use ModulesGarden\TSSGGSModule\Core\Components\Traits\CssContainerTrait;
@@ -30,7 +31,9 @@ class SidebarItem extends AbstractComponent implements ComponentContainerInterfa
      */
     public function setIcon(string $icon): self
     {
-        $this->setSlot('icon', 'mdi mdi-' . $icon);
+        // inline SVG; the class only for a name that has no SVG yet
+        $svg = Icons::svg($icon);
+        $this->setSlot('icon', $svg !== '' ? $svg : 'mdi mdi-' . $icon);
 
         return $this;
     }

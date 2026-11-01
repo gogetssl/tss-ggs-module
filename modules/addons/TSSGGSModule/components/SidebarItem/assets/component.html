@@ -3,6 +3,6 @@
         <component :key="element.uniq" v-bind="element.slots" v-bind:is="element.name" v-for="(element, key) in elements_.elements" v-on="$listeners"></component>
     </div>
     <a :href="url_" class="lu-nav__link" v-else>
-        <i :class="icon" v-if="icon" aria-hidden="true"></i><span class="lu-nav__link-text">{{title_}}</span>
+        <span class="lu-nav__icon" v-if="icon && icon.indexOf('<svg') === 0" v-html="icon"></span><i :class="icon" v-else-if="icon" aria-hidden="true"></i><span class="lu-nav__link-text">{{title_}}</span>
     </a>
 </li>

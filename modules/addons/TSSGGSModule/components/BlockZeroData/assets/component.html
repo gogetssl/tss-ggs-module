@@ -6,7 +6,8 @@
                     <div class="lu-msg">
                         <div class="lu-msg">
                             <div class="lu-msg__icon lu-i-c-1x" v-if="icon_">
-                                <i class="lu-mdi mdi" :class="['mdi-'+icon_]"></i>
+                                <span class="tssggs-icobox" v-if="iconSvg_" v-html="iconSvg_"></span>
+                                <i class="lu-mdi mdi" :class="['mdi-'+icon_]" v-else></i>
                             </div>
                             <div class="lu-msg__body">
                                 <div class="lu-msg__title lu-type-4">{{title_}}</div>

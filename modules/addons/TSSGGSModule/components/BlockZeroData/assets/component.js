@@ -3,6 +3,7 @@ var component =
         extends: BaseDataComponent,
         template: '#template-name#',
         props: [
+            'iconSvg',
             'css',
             'description',
             'additionalDescription',
@@ -12,6 +13,7 @@ var component =
         ],
         data: function () {
             return {
+                iconSvg_: '',
                 elements_: [],
                 description_: '',
                 additionalDescription_: '',

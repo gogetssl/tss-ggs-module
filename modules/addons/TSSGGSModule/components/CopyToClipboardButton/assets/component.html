@@ -1,5 +1,5 @@
 <button :id="cid_" :class="[css_, isCopiedClass, typeClass]" :type="type_" @click="onClick" class="lu-btn">
-    <i class="lu-mdi mdi mdi-check" v-if="isCopied_"></i>
+    <span class="tssggs-icobox" v-if="isCopied_"><svg class="tssggs-ico" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false"><path fill="currentColor" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"/></svg></span>
     <i :class="icon_" v-else-if='icon'></i>
     <!--    <span class="lu-btn__text" v-html="title_"></span>-->
 </button>

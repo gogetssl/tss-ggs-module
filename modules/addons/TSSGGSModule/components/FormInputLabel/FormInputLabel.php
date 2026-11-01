@@ -2,6 +2,7 @@
 
 namespace ModulesGarden\TSSGGSModule\Components\FormInputLabel;
 
+use ModulesGarden\TSSGGSModule\App\Libs\Icons;
 use ModulesGarden\TSSGGSModule\Core\Components\AbstractComponent;
 use ModulesGarden\TSSGGSModule\Core\Components\Traits\CssContainerTrait;
 use ModulesGarden\TSSGGSModule\Core\Components\Traits\TextTrait;
@@ -22,6 +23,8 @@ class FormInputLabel extends AbstractComponent implements FormFieldInterface
     public function setIcon(string $icon): self
     {
         $this->setSlot('icon', $icon);
+        // inline SVG, rendered instead of the icon class when there is one
+        $this->setSlot('iconSvg', Icons::svg($icon));
 
         return $this;
     }

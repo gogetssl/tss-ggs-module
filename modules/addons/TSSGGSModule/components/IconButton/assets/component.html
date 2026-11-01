@@ -12,6 +12,7 @@
         type="button">
     <span class="lu-btn__text" v-if="label_ && checkLabelPosition('left')">{{label_}}</span>
     <i class="lu-btn__icon lu-preloader lu-preloader--sm" v-if="isLoading_"></i>
+    <span class="lu-btn__icon tssggs-icobox" v-else-if="iconSvg_" v-html="iconSvg_"></span>
     <i class="lu-btn__icon" :class="icon_" v-else-if='icon'></i>
     <span class="lu-btn__text" v-if="label_ && checkLabelPosition('right')">{{label_}}</span>
 </button>

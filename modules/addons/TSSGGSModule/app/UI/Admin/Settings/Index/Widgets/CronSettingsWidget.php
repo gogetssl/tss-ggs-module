@@ -2,6 +2,7 @@
 
 namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Widgets;
 
+use ModulesGarden\TSSGGSModule\App\Libs\Icons;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Forms\CronConfigurationForm;
 use ModulesGarden\TSSGGSModule\Components\Text\Text;
 use ModulesGarden\TSSGGSModule\Components\Widget\Widget;
@@ -25,11 +26,11 @@ class CronSettingsWidget extends Widget
 
         $this->addElement((new Text())->setText(
             '<p class="tssggs-cronpanel__sub">' . $this->translate('subtitle') . '</p>'
-            . '<div class="tssggs-cronone"><div class="tssggs-cronone__title"><i class="mdi mdi-console"></i>' . $this->translate('oneLineTitle') . '</div>'
+            . '<div class="tssggs-cronone"><div class="tssggs-cronone__title">' . Icons::svg('console') . '' . $this->translate('oneLineTitle') . '</div>'
             . '<p>' . $this->translate('oneLineInfo') . '</p>'
             . '<div class="tssggs-cronone__code"><code>' . htmlspecialchars($line) . '</code>'
             . '<button type="button" class="tssggs-copy" onclick="var b=this,o=b.innerHTML;navigator.clipboard.writeText(b.previousElementSibling.textContent);b.textContent=\'' . $copied
-            . '\';setTimeout(function(){b.innerHTML=o},1500)"><i class="mdi mdi-content-copy"></i>' . $this->translate('copy') . '</button></div></div>'
+            . '\';setTimeout(function(){b.innerHTML=o},1500)">' . Icons::svg('content-copy') . '' . $this->translate('copy') . '</button></div></div>'
         ));
 
         $this->addElement(new CronConfigurationForm());

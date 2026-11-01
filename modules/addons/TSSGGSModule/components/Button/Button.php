@@ -2,6 +2,7 @@
 
 namespace ModulesGarden\TSSGGSModule\Components\Button;
 
+use ModulesGarden\TSSGGSModule\App\Libs\Icons;
 use ModulesGarden\TSSGGSModule\Core\Components\FallbackTraits\ButtonFallbackTrait;
 use ModulesGarden\TSSGGSModule\Core\Components\FormFields\FormField;
 use ModulesGarden\TSSGGSModule\Core\Components\Traits\ActionOnClickTrait;
@@ -37,6 +38,8 @@ class Button extends FormField
     public function setIcon(string $icon): self
     {
         $this->setSlot('icon', 'lu-mdi mdi mdi-' . $icon);
+        // inline SVG, rendered instead of the icon class when there is one
+        $this->setSlot('iconSvg', Icons::svg($icon));
 
         return $this;
     }

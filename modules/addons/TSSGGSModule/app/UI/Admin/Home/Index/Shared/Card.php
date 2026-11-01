@@ -2,6 +2,7 @@
 
 namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Shared;
 
+use ModulesGarden\TSSGGSModule\App\Libs\Icons;
 use ModulesGarden\TSSGGSModule\Components\Container\Container;
 use ModulesGarden\TSSGGSModule\Components\Text\Text;
 
@@ -45,9 +46,10 @@ abstract class Card extends Container
         return $text;
     }
 
+    /** Inline SVG icon (fixed size set by the CSS of the place it is in) */
     public static function icon(string $name): string
     {
-        return '<i class="mdi mdi-' . $name . '" aria-hidden="true"></i>';
+        return Icons::svg($name);
     }
 
     /** Square icon tile (panel headers, list items) */

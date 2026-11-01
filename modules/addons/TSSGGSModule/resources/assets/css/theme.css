@@ -312,3 +312,93 @@
     #layers2 .tssggs-pipe__stages, #layers2 .tssggs-money { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     #layers2 .tssggs-pipe__more { grid-template-columns: minmax(0, 1fr); }
 }
+
+/*
+ * ======== icons: inline SVG with a fixed box per place, centred by its container (never sized by font-size) ========
+ * 22px header logo | 18px list rows, sidebar | 16px tiles, menu, footers, stages | 14px pills, small buttons, meta text
+ */
+#layers2 svg.tssggs-ico { display: block; flex: none; width: 16px; height: 16px; }
+
+/* containers that centre their icon */
+#layers2 .tssggs-tile,
+#layers2 .lu-widget__icon,
+#layers2 .tssggs-head__logo { display: inline-flex; align-items: center; justify-content: center; flex: none; }
+#layers2 .tssggs-tile { width: 28px; height: 28px; }
+#layers2 .lu-app-main .lu-widget > .lu-widget__header > .lu-widget__top > .lu-widget__icon {
+    width: 28px; height: 28px; border-radius: 6px; background: var(--th-canvas); color: var(--tw-fg);
+}
+
+/* 22px */
+#layers2 .tssggs-head__logo svg.tssggs-ico { width: 22px; height: 22px; }
+
+/* 18px */
+#layers2 .tssggs-row > svg.tssggs-ico,
+#layers2 .tssggs-row--component > .tssggs-html > svg.tssggs-ico,
+#layers2 .tssggs-settings .lu-nav__icon svg.tssggs-ico { width: 18px; height: 18px; color: var(--th-quiet); }
+#layers2 .tssggs-settings .lu-nav__icon { display: inline-flex; align-items: center; justify-content: center; flex: none; width: 18px; height: 18px; }
+#layers2 .tssggs-settings .lu-navbar__nav li.lu-nav__item.is-active .lu-nav__icon svg.tssggs-ico { color: var(--tw-primary); }
+#layers2 .tssggs-settings .lu-navbar__nav li.lu-nav__item:not(.is-active) .lu-nav__icon svg.tssggs-ico { color: var(--tw-fg); }
+
+/* 16px */
+#layers2 .lu-app-navbar .lu-nav__link-icon { display: inline-flex; align-items: center; justify-content: center; flex: none; width: 16px; height: 16px; }
+#layers2 .tssggs-tile svg.tssggs-ico,
+#layers2 .lu-widget__icon svg.tssggs-ico,
+#layers2 .lu-app-navbar .lu-nav__link-icon svg.tssggs-ico,
+#layers2 .tssggs-dcard__foot svg.tssggs-ico,
+#layers2 .tssggs-stage__top svg.tssggs-ico,
+#layers2 .tssggs-pipe__more svg.tssggs-ico,
+#layers2 .tssggs-setup__step > svg.tssggs-ico,
+#layers2 .tssggs-dash__period svg.tssggs-ico,
+#layers2 .tssggs-dcard__sub svg.tssggs-ico,
+#layers2 .tssggs-cronjob__freq svg.tssggs-ico,
+#layers2 .tssggs-cronone__title svg.tssggs-ico { width: 16px; height: 16px; }
+#layers2 .tssggs-stage__top > span { display: inline-flex; }
+#layers2 .tssggs-pipe__more svg.tssggs-ico { color: #6ee7a1; }
+#layers2 .tssggs-cronjob__freq svg.tssggs-ico,
+#layers2 .tssggs-cronone__title svg.tssggs-ico { color: var(--tw-primary); }
+
+/* 14px */
+#layers2 .tssggs-pill svg.tssggs-ico,
+#layers2 .tssggs-sbtn svg.tssggs-ico,
+#layers2 .tssggs-dbtn svg.tssggs-ico,
+#layers2 .tssggs-dcard__aside svg.tssggs-ico,
+#layers2 .tssggs-kpi__detail svg.tssggs-ico,
+#layers2 .tssggs-money span svg.tssggs-ico,
+#layers2 .tssggs-setup__note svg.tssggs-ico,
+#layers2 .tssggs-dash__crumb svg.tssggs-ico,
+#layers2 .tssggs-pagehead__crumb svg.tssggs-ico,
+#layers2 .tssggs-dash__foot svg.tssggs-ico,
+#layers2 .tssggs-nav-chevron,
+#layers2 .tssggs-badge svg.tssggs-ico,
+#layers2 .tssggs-cronjob__meta svg.tssggs-ico,
+#layers2 .tssggs-copy svg.tssggs-ico { width: 14px; height: 14px; }
+#layers2 .tssggs-kpi__detail svg.tssggs-ico,
+#layers2 .tssggs-setup__note svg.tssggs-ico { color: var(--th-quiet); }
+
+/* the text containers of those icons line the icon up with the text */
+#layers2 .tssggs-pill,
+#layers2 .tssggs-sbtn,
+#layers2 .tssggs-dbtn,
+#layers2 .tssggs-badge,
+#layers2 .tssggs-copy,
+#layers2 .tssggs-dash__crumb,
+#layers2 .tssggs-dash__period,
+#layers2 .tssggs-dash__foot span,
+#layers2 .tssggs-cronjob__freq,
+#layers2 .tssggs-cronone__title,
+#layers2 .tssggs-cronjob__meta span { display: inline-flex; align-items: center; gap: 6px; }
+#layers2 .tssggs-pill { gap: 5px; }
+#layers2 .tssggs-cronjob__meta span { display: flex; }
+
+/* icons inside the framework's components (buttons, table search, modals, hints ...): a 16px box, centred */
+#layers2 .tssggs-icobox { display: inline-flex !important; align-items: center; justify-content: center; flex: none; width: 16px !important; height: 16px !important; padding: 0 !important; font-size: 0; line-height: 0; vertical-align: middle; }
+#layers2 .tssggs-icobox > svg.tssggs-ico { width: 16px; height: 16px; }
+/* table search: the magnifier gets its own 32px slot in front of the input */
+#layers2 .lu-input-group > .lu-input-group__icon { display: inline-flex; align-items: center; justify-content: center; flex: 0 0 32px; width: 32px; color: var(--th-quiet); }
+#layers2 .lu-input-group > .lu-input-group__icon + .lu-input-group__form-control { margin-left: 0 !important; padding-left: 0 !important; }
+#layers2 .lu-app-main .lu-input-group > input.lu-input-group__form-control { min-height: 0; border: 0 !important; background: transparent; box-shadow: none !important; }
+#layers2 .lu-app-main .lu-top__search.lu-input-group { height: 36px; border: 1px solid var(--tw-border); border-radius: 6px; background: var(--tw-surface); }
+#layers2 .lu-app-main .lu-top__search.lu-input-group:focus-within { border-color: var(--tw-primary); box-shadow: 0 0 0 3px var(--tw-ring); }
+#layers2 .lu-clear-main-search-button { display: inline-flex; align-items: center; justify-content: center; width: 28px; color: var(--th-quiet); }
+/* the few icons still drawn by a mask (hint icons chosen in the browser): no padding may widen the box */
+.mdi, [class^="mdi-"], [class*=" mdi-"] { padding: 0 !important; box-sizing: content-box !important; }

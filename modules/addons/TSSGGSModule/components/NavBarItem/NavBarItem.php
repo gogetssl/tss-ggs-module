@@ -2,6 +2,7 @@
 
 namespace ModulesGarden\TSSGGSModule\Components\NavBarItem;
 
+use ModulesGarden\TSSGGSModule\App\Libs\Icons;
 use ModulesGarden\TSSGGSModule\Core\Components\AbstractComponent;
 use ModulesGarden\TSSGGSModule\Core\Components\Traits\ComponentsContainerTrait;
 use ModulesGarden\TSSGGSModule\Core\Components\Traits\TitleTrait;
@@ -29,7 +30,9 @@ class NavBarItem extends AbstractComponent
 
     public function setIcon(string $icon): self
     {
-        $this->setSlot('icon', $icon);
+        // inline SVG (the menu config gives "mdi mdi-NAME"); the name only when it has no SVG yet
+        $svg = Icons::svg($icon);
+        $this->setSlot('icon', $svg !== '' ? $svg : $icon);
 
         return $this;
     }

@@ -74,16 +74,16 @@ class HomeContainer extends Container implements AdminAreaInterface
         $sales    = SalesSummary::get();
         $currency = (string)Helpers::getDefaultCurrencyCode();
         $tiles    = [
-            ['kpi_sales', Helpers::formatDefaultCurrency($sales['paid']), 'currency-usd', 'credit-card-outline'],
-            ['kpi_profit', Helpers::formatDefaultCurrency($sales['profit']), 'trending-up', 'chart-line'],
-            ['kpi_issued', (string)$sales['issued'], 'certificate-outline', 'calendar-month-outline'],
-            ['kpi_expiring', (string)$sales['expiring'], 'timer-sand', 'check-circle-outline'],
+            ['kpi_sales', Helpers::formatDefaultCurrency($sales['paid']), 'currency-usd', 'ok', 'credit-card-outline'],
+            ['kpi_profit', Helpers::formatDefaultCurrency($sales['profit']), 'trending-up', 'info', 'chart-line'],
+            ['kpi_issued', (string)$sales['issued'], 'certificate-outline', 'ok', 'calendar-month-outline'],
+            ['kpi_expiring', (string)$sales['expiring'], 'timer-sand', 'warn', 'check-circle-outline'],
         ];
 
         $html = '<section class="tssggs-dash__kpis" aria-label="' . Card::e($this->translate('period')) . '">';
-        foreach($tiles as [$key, $value, $icon, $detailIcon])
+        foreach($tiles as [$key, $value, $icon, $tone, $detailIcon])
         {
-            $html .= '<article class="tssggs-kpi"><div class="tssggs-kpi__top"><h3>' . Card::e($this->translate($key)) . '</h3>' . Card::icon($icon) . '</div>'
+            $html .= '<article class="tssggs-kpi"><div class="tssggs-kpi__top"><h3>' . Card::e($this->translate($key)) . '</h3>' . Card::tile($icon, $tone) . '</div>'
                 . '<p class="tssggs-kpi__value">' . Card::e($value) . '</p>'
                 . '<p class="tssggs-kpi__detail">' . Card::icon($detailIcon) . Card::e($this->translate($key . '_detail', ['currency' => $currency])) . '</p></article>';
         }

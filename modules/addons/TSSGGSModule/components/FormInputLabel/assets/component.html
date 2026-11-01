@@ -1,4 +1,5 @@
 <label :for="for_" class="lu-btn lu-btn--default lu-form-label" :class="css_">
-        <i :class="'lu-mdi mdi mdi-' + icon_" v-if='icon_'></i>
+        <span class="tssggs-icobox" v-if="iconSvg_" v-html="iconSvg_"></span>
+        <i :class="'lu-mdi mdi mdi-' + icon_" v-else-if='icon_'></i>
         {{text_}}
 </label>
