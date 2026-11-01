@@ -67,6 +67,7 @@
                 {/foreach}
                 <option value="__manual__">{$MGLANG->T('sslConfigDomainNotListed')}</option>
             </select>
+            <small><a href="clientarea.php?action=productdetails&id={$serviceid}&configssl=1&refreshdomains=1">{$MGLANG->T('sslConfigRefreshDomains')}</a></small>
         </div>
 
         {if $isWildcard}

@@ -525,3 +525,4 @@ $_LANG['serverCA']['home']['sslConfigAgreementRequired'] = 'Accepter certifikatu
 $_LANG['serverCA']['home']['sslConfigValidationDnsCname'] = 'DNS - CNAME-record';
 $_LANG['serverCA']['home']['sslConfigValidationDnsTxt']   = 'DNS - TXT-record';
 $_LANG['private_key_expired'] = 'Den private nøgle er ikke længere tilgængelig (den gemmes i en time i din session). Generér nøglen igen.';
+$_LANG['serverCA']['home']['sslConfigRefreshDomains'] = 'Domænelisten er ikke opdateret? Opdater listen';

@@ -2267,7 +2267,8 @@ class home extends AbstractController
         $cpanelDomains = null;
         try
         {
-            $cpanelDomains = Cpanel::getMergedDomainsGrouped($userId);
+            // the lists come from a short-lived cache; "refresh the list" (refreshdomains=1) asks the servers live
+            $cpanelDomains = Cpanel::getMergedDomainsGrouped($userId, !empty($_GET['refreshdomains']));
         }
         catch(\Throwable $e)
         {

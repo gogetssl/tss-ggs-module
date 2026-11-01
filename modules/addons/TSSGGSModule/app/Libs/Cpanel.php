@@ -3,6 +3,7 @@
 namespace ModulesGarden\TSSGGSModule\App\Libs;
 
 use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
+use ModulesGarden\TSSGGSModule\Core\ModuleConstants;
 use WHMCS\Database\Capsule;
 
 /**
@@ -52,23 +53,28 @@ class Cpanel
     {
         $domain = strtolower(trim((string)$domain));
 
-        foreach(self::getServices($userId) as $service)
+        // The first pass may use cached domain lists; a domain that is missing there could have been added to cPanel
+        // since, so before giving up every account is asked live once.
+        foreach([false, true] as $live)
         {
-            try
+            foreach(self::getServices($userId) as $service)
             {
-                $cpanel = new self();
-                $cpanel->setService($service);
-                foreach($cpanel->listDomains($service->user) as $cpanelDomain)
+                try
                 {
-                    if(strtolower($cpanelDomain) === $domain)
+                    $cpanel = new self();
+                    $cpanel->setService($service);
+                    foreach($cpanel->listDomains($service->user, $live) as $cpanelDomain)
                     {
-                        return $service;
+                        if(strtolower($cpanelDomain) === $domain)
+                        {
+                            return $service;
+                        }
                     }
                 }
-            }
-            catch(\Throwable $e)
-            {
-                \logActivity('TSSGGSModule cPanel: ' . $e->getMessage(), 0);
+                catch(\Throwable $e)
+                {
+                    \logActivity('TSSGGSModule cPanel: ' . $e->getMessage(), 0);
+                }
             }
         }
 
@@ -79,7 +85,7 @@ class Cpanel
      * Domains from all client's cPanel accounts merged into one grouped list.
      * Returns null when the client has no reachable cPanel account with domains.
      */
-    public static function getMergedDomainsGrouped($userId)
+    public static function getMergedDomainsGrouped($userId, $live = false)
     {
         $services = self::getServices($userId);
         if($services->isEmpty())
@@ -96,7 +102,7 @@ class Cpanel
             {
                 $cpanel = new self();
                 $cpanel->setService($svcInfo);
-                $grouped = $cpanel->listDomainsGrouped($svcInfo->user);
+                $grouped = $cpanel->listDomainsGrouped($svcInfo->user, $live);
             }
             catch(\Throwable $e)
             {
@@ -335,9 +341,9 @@ class Cpanel
         return $safe;
     }
 
-    public function listDomains($username)
+    public function listDomains($username, $live = false)
     {
-        $grouped = $this->listDomainsGrouped($username);
+        $grouped = $this->listDomainsGrouped($username, $live);
 
         $domains = [];
         if(!empty($grouped['main']))
@@ -356,7 +362,76 @@ class Cpanel
         return $domains;
     }
 
-    public function listDomainsGrouped($username)
+    /**
+     * Domains of the cPanel account. The server is slow (15-30 s), so the answer is cached for CACHE_TTL seconds; when
+     * the server can not be reached the last answer (up to CACHE_KEEP seconds old) is used instead of nothing.
+     * $live = true skips the cache (and refreshes it).
+     */
+    public function listDomainsGrouped($username, $live = false)
+    {
+        $file   = self::cacheFile($this->service, $username);
+        $cached = self::readCache($file);
+        if(!$live && $cached && $cached['time'] > time() - self::CACHE_TTL)
+        {
+            return $cached['data'];
+        }
+
+        try
+        {
+            $grouped = $this->fetchDomainsGrouped($username);
+        }
+        catch(\Throwable $e)
+        {
+            if($cached && $cached['time'] > time() - self::CACHE_KEEP)
+            {
+                return $cached['data'];
+            }
+            throw $e;
+        }
+        self::writeCache($file, $grouped);
+
+        return $grouped;
+    }
+
+    const CACHE_TTL  = 600;
+    const CACHE_KEEP = 86400;
+
+    protected static function cacheFile($service, $username)
+    {
+        $host = is_object($service) ? (isset($service->hostname) ? $service->hostname : '') . (isset($service->port) ? $service->port : '') : '';
+
+        return ModuleConstants::getFullPath('storage', 'cpanel_domains', md5(strtolower($host . '|' . $username)) . '.json');
+    }
+
+    protected static function readCache($file)
+    {
+        $data = is_file($file) ? json_decode((string)@file_get_contents($file), true) : null;
+
+        return is_array($data) && isset($data['time'], $data['data']) ? $data : null;
+    }
+
+    /**
+     * Writes the list and removes lists nobody asked for within CACHE_KEEP seconds (that is the clean-up)
+     */
+    protected static function writeCache($file, array $grouped)
+    {
+        $dir = dirname($file);
+        if(!is_dir($dir))
+        {
+            @mkdir($dir, 0775, true);
+        }
+        @file_put_contents($file, json_encode(['time' => time(), 'data' => $grouped]), LOCK_EX);
+
+        foreach((array)glob($dir . DIRECTORY_SEPARATOR . '*.json') as $old)
+        {
+            if(filemtime($old) < time() - self::CACHE_KEEP)
+            {
+                @unlink($old);
+            }
+        }
+    }
+
+    protected function fetchDomainsGrouped($username)
     {
         $this->initiateConnection($username);
         $response = $this->exec("list_domains", "/execute/DomainInfo/");

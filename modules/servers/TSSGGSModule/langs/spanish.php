@@ -525,3 +525,4 @@ $_LANG['serverCA']['home']['sslConfigAgreementRequired'] = 'Acepte el acuerdo de
 $_LANG['serverCA']['home']['sslConfigValidationDnsCname'] = 'DNS - registro CNAME';
 $_LANG['serverCA']['home']['sslConfigValidationDnsTxt'] = 'DNS - registro TXT';
 $_LANG['private_key_expired'] = 'La clave privada ya no está disponible (se conserva una hora en su sesión). Genere la clave de nuevo.';
+$_LANG['serverCA']['home']['sslConfigRefreshDomains'] = '¿La lista de dominios no está actualizada? Actualizar la lista';
