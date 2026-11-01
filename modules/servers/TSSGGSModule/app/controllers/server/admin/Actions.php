@@ -162,7 +162,9 @@ class Actions {
         $contacts = [];
         foreach(CertificateService::contacts($params['serviceid']) as $type => $contact)
         {
-            $contacts[] = ['title' => isset($labels[$type]) ? $labels[$type] : ucfirst($type), 'fields' => array_filter((array)$contact, 'is_scalar')];
+            $contacts[] = ['title' => isset($labels[$type]) ? $labels[$type] : ucfirst($type), 'fields' => array_filter((array)$contact, function($value) {
+                return is_scalar($value) && trim((string)$value) !== '';
+            })];
         }
 
         return [

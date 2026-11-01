@@ -4,6 +4,14 @@ use WHMCS\Database\Capsule;
 use ModulesGarden\TSSGGSModule\App\Models\Request;
 use ModulesGarden\Servers\TSSGGSModule\core\Lang;
 
+// Loaded by WHMCS (ModuleHooks) and by the addon's hooks.php - WHMCS lists the server module in ModuleHooks only
+// after a product using it was saved in the admin area, so the addon makes sure the client hooks always run
+if(defined('TSSGGSMODULE_SERVER_HOOKS'))
+{
+    return;
+}
+define('TSSGGSMODULE_SERVER_HOOKS', true);
+
 if(!defined('DS')) define('DS', DIRECTORY_SEPARATOR);
 
 require_once __DIR__ . DS . 'Loader.php';
@@ -249,6 +257,7 @@ add_hook('ClientAreaHomepagePanels', 1, function($homePagePanels) {
     }
     catch(\Throwable $e)
     {
+        logActivity('TSSGGSModule SSL summary panel: ' . $e->getMessage());
     }
 });
 

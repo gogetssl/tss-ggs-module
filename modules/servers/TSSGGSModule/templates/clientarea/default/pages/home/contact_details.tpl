@@ -12,5 +12,5 @@
     {foreachelse}
         <p>-</p>
     {/foreach}
-    <a class="btn btn-default" href="clientarea.php?action=productdetails&amp;id={$serviceid}">&laquo; {$LANG.clientareabacklink|default:'Back'}</a>
+    <a class="btn btn-default" href="clientarea.php?action=productdetails&amp;id={$serviceid}">{$LANG.clientareabacklink|default:'Back'}</a>
 </div>
