@@ -25,6 +25,16 @@ class SidebarItem extends AbstractComponent implements ComponentContainerInterfa
         $this->setUrl($url);
     }
 
+    /**
+     * Material Design Icons name without the prefix (e.g. "key-variant")
+     */
+    public function setIcon(string $icon): self
+    {
+        $this->setSlot('icon', 'mdi mdi-' . $icon);
+
+        return $this;
+    }
+
     public function setActive(bool $active): self
     {
         $this->setSlot('active', $active);

@@ -1111,6 +1111,13 @@ $_LANG['admin.settings.index.forms.cron_configuration_form.name_SSLAutoInstall']
 $_LANG['admin.settings.index.forms.cron_configuration_form.about_SSLAutoInstall'] = 'Works through the AutoInstall queue: domain validation, installation on cPanel, renewals and automatic reissue. It runs whenever the module cron runs (every 5 minutes).';
 $_LANG['admin.settings.index.forms.cron_configuration_form.lastRun'] = 'Last run:';
 $_LANG['admin.settings.index.forms.cron_configuration_form.neverRun'] = 'never';
-$_LANG['admin.settings.index.forms.cron_configuration_form.command'] = 'Run it now (for a test):';
+$_LANG['admin.settings.index.forms.cron_configuration_form.runNow'] = 'Run it now (for a test):';
 $_LANG['admin.settings.index.forms.cron_configuration_form.frequency'] = 'How often it runs:';
-$_LANG['admin.settings.index.forms.cron_configuration_form.everyStart'] = 'every time the module cron line above starts (every 5 minutes).';
+$_LANG['admin.settings.index.forms.cron_configuration_form.everyStart'] = 'every time the module cron line above starts (every 5 minutes).';$_LANG['admin.settings.index.forms.cron_configuration_form.healthy'] = 'Healthy';
+$_LANG['admin.settings.index.forms.cron_configuration_form.failing'] = 'Failing';
+$_LANG['admin.settings.index.forms.cron_configuration_form.neverRunBadge'] = 'Not run yet';
+$_LANG['admin.settings.index.forms.cron_configuration_form.seeLog'] = 'details in the module log';
+$_LANG['admin.settings.index.forms.cron_configuration_form.howOften'] = 'How often it runs';
+$_LANG['admin.settings.index.widgets.cron_settings_widget.subtitle'] = 'Scheduled tasks that keep prices, orders and certificates up to date';
+$_LANG['admin.settings.index.widgets.cron_settings_widget.copy'] = 'Copy';
+$_LANG['admin.settings.index.widgets.cron_settings_widget.copied'] = 'Copied';

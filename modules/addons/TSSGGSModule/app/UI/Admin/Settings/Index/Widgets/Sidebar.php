@@ -7,6 +7,16 @@ use ModulesGarden\TSSGGSModule\Core\Support\Facades\Request;
 
 class Sidebar extends \ModulesGarden\TSSGGSModule\Components\Sidebar\Sidebar
 {
+    /** page => Material Design icon */
+    const ICONS = [
+        'apiSettings'       => 'key-variant',
+        'generalSettings'   => 'earth',
+        'sslSettings'       => 'shield-check-outline',
+        'automatedSettings' => 'autorenew',
+        'financeSettings'   => 'cash-multiple',
+        'cronSettings'      => 'clock-outline',
+    ];
+
     function loadHtml(): void
     {
         $this->setTitle($this->translate('title'));
@@ -23,7 +33,7 @@ class Sidebar extends \ModulesGarden\TSSGGSModule\Components\Sidebar\Sidebar
 
         foreach($pages as $page)
         {
-            $item = (new SidebarItem($this->translate($page)))->setUrl('addonmodules.php?module=TSSGGSModule&mg-page=settings&settings-page=' . $page);
+            $item = (new SidebarItem($this->translate($page)))->setIcon(self::ICONS[$page])->setUrl('addonmodules.php?module=TSSGGSModule&mg-page=settings&settings-page=' . $page);
 
             if($page == $currentPage)
             {

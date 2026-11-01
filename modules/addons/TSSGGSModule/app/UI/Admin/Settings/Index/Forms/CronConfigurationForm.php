@@ -58,37 +58,45 @@ class CronConfigurationForm extends Form implements AdminAreaInterface, AjaxComp
         foreach(self::JOBS as $job => [$key, $choices])
         {
             $block = new Widget();
-            $block->setTitle($this->translate('name_' . $job));
+            $block->setCss('tssggs-cronjob');
             $this->addElement($block);
 
-            $row  = isset($status[$job]) ? $status[$job] : ['last' => null, 'error' => ''];
-            $last = $row['last'] === null
-                ? '<span style="color:#e7000b">' . $this->translate('neverRun') . '</span>'
-                : htmlspecialchars($row['last']) . ($row['error'] !== '' ? ' <span style="color:#a65f00">- ' . htmlspecialchars($row['error']) . '</span>' : '');
+            $row     = isset($status[$job]) ? $status[$job] : ['last' => null, 'error' => ''];
+            $failing = $row['error'] !== '';
+            $badge   = $row['last'] === null
+                ? '<span class="tssggs-badge tssggs-badge--idle">' . $this->translate('neverRunBadge') . '</span>'
+                : ($failing
+                    ? '<span class="tssggs-badge tssggs-badge--bad">' . $this->translate('failing') . '</span>'
+                    : '<span class="tssggs-badge tssggs-badge--ok">' . $this->translate('healthy') . '</span>');
+            $last    = $row['last'] === null ? $this->translate('neverRun') : htmlspecialchars($row['last']);
+
+            $html = '<div class="tssggs-cronjob__head"><h3>' . $this->translate('name_' . $job) . '</h3>' . $badge . '</div>'
+                . '<p class="tssggs-cronjob__about">' . $this->translate('about_' . $job) . '</p>'
+                . ($failing ? '<div class="tssggs-cronjob__fail">' . $this->translate('lastRun') . ' ' . $last . ' &mdash; ' . htmlspecialchars($row['error']) . ' (' . $this->translate('seeLog') . ')</div>' : '')
+                . '<hr class="tssggs-cronjob__sep">'
+                . '<div class="tssggs-cronjob__freq"><i class="mdi mdi-clock-outline"></i><span>' . $this->translate('howOften') . '</span>'
+                . ($key === null ? ' <b>' . $this->translate('everyStart') . '</b>' : '') . '</div>';
+            $block->addElement((new Text())->setText($html));
+
+            if($key !== null)
+            {
+                $options = [];
+                foreach($choices as $choice)
+                {
+                    $options[$choice] = self::LABELS[$choice];
+                }
+                $field = new Dropdown();
+                $field->required();
+                $field->setDefaultValueAsFirstOption();
+                $field->setName($key);
+                $field->setOptions($options);
+                $this->builder->addFieldInContainer($block, $field);
+            }
 
             $block->addElement((new Text())->setText(
-                '<p>' . $this->translate('about_' . $job) . '</p>'
-                . '<p class="text-muted"><b>' . $this->translate('lastRun') . '</b> ' . $last . '<br>'
-                . '<b>' . $this->translate('command') . '</b> <code>php -q ' . $script . ' ' . $job . ' --force</code></p>'
-                . ($key === null ? '<p><b>' . $this->translate('frequency') . '</b> ' . $this->translate('everyStart') . '</p>' : '')
+                '<p class="tssggs-cronjob__meta">' . $this->translate('lastRun') . ' ' . $last . '<br>'
+                . $this->translate('runNow') . ' <code>php -q ' . $script . ' ' . $job . ' --force</code></p>'
             ));
-
-            if($key === null)
-            {
-                continue;
-            }
-
-            $options = [];
-            foreach($choices as $choice)
-            {
-                $options[$choice] = self::LABELS[$choice];
-            }
-            $field = new Dropdown();
-            $field->required();
-            $field->setDefaultValueAsFirstOption();
-            $field->setName($key);
-            $field->setOptions($options);
-            $this->builder->addFieldInContainer($block, $field);
         }
 
         $toolbar = new Toolbar();
