@@ -512,3 +512,9 @@ $_LANG['clientPages']['status_expired']     = 'Expired';
 $_LANG['clientPages']['status_rejected']    = 'Rejected';
 $_LANG['clientPages']['status_revoked']     = 'Revoked';
 $_LANG['clientPages']['status_awaiting']    = 'Awaiting Configuration';
+
+// Reissue: keep AutoInstall, buy more SANs (1.3.0)
+$_LANG['serverCA']['home']['reissue_page']['reissue_autoinstall_key']      = 'Keep the automatic installation (generate the CSR from the key of the installed certificate)';
+$_LANG['serverCA']['home']['reissue_page']['reissue_autoinstall_key_desc'] = 'The reissued certificate is installed on your server automatically once it is issued. Untick to paste your own CSR - the automatic installation is then turned off.';
+$_LANG['serverCA']['home']['reissue_page']['reissue_buy_sans_desc']        = 'Need more domains on this certificate?';
+$_LANG['serverCA']['home']['reissue_page']['reissue_buy_sans']             = 'Buy additional SANs';

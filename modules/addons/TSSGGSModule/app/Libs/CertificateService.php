@@ -308,6 +308,193 @@ class CertificateService
     }
 
     /**
+     * Reissues the certificate with a new CSR. $methods: [domain => 'http'|'https'|'dns'|approver email], the common
+     * name first. When the CSR uses the private key stored for AutoInstall, the reissued certificate is installed
+     * automatically again; any other key turns AutoInstall off for the service.
+     */
+    public static function reissue($serviceId, $csr, array $methods)
+    {
+        $ssl     = self::requireOrder($serviceId);
+        $subject = @openssl_csr_get_subject($csr);
+        if(!$subject || empty($subject['CN']))
+        {
+            throw new \Exception('The CSR is not valid');
+        }
+        $commonName = $subject['CN'];
+        if(empty($methods[$commonName]))
+        {
+            throw new \Exception('No validation method for ' . $commonName);
+        }
+
+        $request      = Request::where('serviceid', (int)$serviceId)->where('name', 'addOrder')->first();
+        $requestOrder = $request && $request->request ? (json_decode(\decrypt($request->request), true) ?: []) : [];
+
+        $sans = [];
+        foreach($methods as $domain => $method)
+        {
+            if($domain !== $commonName)
+            {
+                $sans[] = ['name' => $domain, 'validation_method' => $method];
+            }
+        }
+
+        $api     = self::api($serviceId);
+        $reissue = $api->reissueCertificate((int)$ssl->remoteid, [
+            'csr'                         => trim($csr),
+            'common_name'                 => ['name' => $commonName, 'validation_method' => $methods[$commonName]],
+            'existing_alternative_names'  => isset($requestOrder['alternative_names']) ? $requestOrder['alternative_names'] : [],
+            'submitted_alternative_names' => $sans,
+        ]);
+        $itemId = SSLTrustCenterApi::getItemId($reissue, (int)$ssl->remoteid);
+
+        $requestOrder['csr']               = trim($csr);
+        $requestOrder['common_name']       = ['name' => $commonName, 'validation_method' => $methods[$commonName]];
+        $requestOrder['alternative_names'] = $sans;
+        Request::where('serviceid', (int)$serviceId)->where('name', 'addOrder')->update([
+            'request'    => \encrypt(json_encode($requestOrder)),
+            'status'     => 'pending',
+            'updated_at' => date('Y-m-d H:i:s'),
+        ]);
+
+        $orderData  = $api->getOrder($itemId, $serviceId);
+        $orderFiles = [];
+        try
+        {
+            $orderFiles = $api->getCertificateFiles($itemId);
+        }
+        catch(\Exception $e)
+        {
+        }
+        Request::where('serviceid', (int)$serviceId)->where('name', 'certificate')->update([
+            'request'    => \encrypt(json_encode(['orderData' => $orderData, 'orderFiles' => $orderFiles])),
+            'status'     => 'pending',
+            'updated_at' => date('Y-m-d H:i:s'),
+        ]);
+        Capsule::table('tblsslorders')->where('serviceid', (int)$serviceId)->update(['remoteid' => $itemId]);
+        Capsule::table('tblhosting')->where('id', (int)$serviceId)->update(['domain' => $commonName]);
+
+        $keepAutoInstall = self::csrUsesAutoInstallKey($serviceId, $csr);
+        try
+        {
+            if($keepAutoInstall)
+            {
+                self::queueAutoInstallAfterReissue($serviceId, $itemId, $methods[$commonName], count(array_filter(array_keys($methods), function($d) { return strpos($d, '*.') === 0; })) > 0);
+            }
+            else
+            {
+                AutoInstallHelpers::onManualReissue($serviceId);
+            }
+        }
+        catch(\Throwable $e)
+        {
+        }
+
+        self::event($serviceId, 'success', '[Reissue] Certificate reissue submitted for ' . $commonName . ' (' . count($methods) . ' domain(s))'
+            . ($keepAutoInstall ? ' - it will be installed automatically once issued' : ''));
+
+        return $itemId;
+    }
+
+    /**
+     * CSR made from the AutoInstall private key (same public key)
+     */
+    public static function csrUsesAutoInstallKey($serviceId, $csr)
+    {
+        $state = AutoInstallHelpers::get($serviceId);
+        if(empty($state['private_key']) || $state['status'] === AutoInstallHelpers::STATUS_DISABLED)
+        {
+            return false;
+        }
+
+        $key       = @openssl_pkey_get_private(\decrypt($state['private_key']));
+        $csrPublic = @openssl_csr_get_public_key($csr);
+        if(!$key || !$csrPublic)
+        {
+            return false;
+        }
+
+        return openssl_pkey_get_details($key)['key'] === openssl_pkey_get_details($csrPublic)['key'];
+    }
+
+    /**
+     * New CSR for a reissue, signed with the private key stored for AutoInstall
+     */
+    public static function csrFromAutoInstallKey($serviceId, $commonName)
+    {
+        $state = AutoInstallHelpers::get($serviceId);
+        $key   = !empty($state['private_key']) ? @openssl_pkey_get_private(\decrypt($state['private_key'])) : false;
+        if(!$key)
+        {
+            throw new \Exception('No private key is stored for the automatic installation of this certificate');
+        }
+
+        $csr = openssl_csr_new(['commonName' => $commonName], $key, ['digest_alg' => 'sha256']);
+        if(!$csr || !openssl_csr_export($csr, $pem))
+        {
+            throw new \Exception('The CSR could not be generated');
+        }
+
+        return $pem;
+    }
+
+    protected static function queueAutoInstallAfterReissue($serviceId, $itemId, $method, $isWildcard)
+    {
+        $state  = AutoInstallHelpers::get($serviceId);
+        $userId = (int)Capsule::table('tblhosting')->where('id', (int)$serviceId)->value('userid');
+        $task   = [
+            'domain'       => $state['domain'],
+            'api_order_id' => (int)$itemId,
+            'is_reissue'   => true,
+            'is_wildcard'  => $isWildcard || !empty($state['is_wildcard']),
+        ];
+        if($method === 'dns')
+        {
+            $task['dns_check_start'] = time();
+        }
+
+        AutoInstallQueue::cancelOpenTasks($serviceId, 'Certificate reissued');
+        AutoInstallQueue::addTask($userId, $serviceId, 'validate', $task);
+        $state['dcv_method'] = strpos($method, '@') !== false ? 'email' : $method;
+        $state['last_error'] = '';
+        AutoInstallHelpers::save($serviceId, $state, AutoInstallHelpers::STATUS_AWAITING);
+    }
+
+    /**
+     * Changes the validation method / approver email of pending domains: [domain => 'http'|'https'|'dns'|email]
+     */
+    public static function changeValidation($serviceId, array $methods)
+    {
+        $ssl    = self::requireOrder($serviceId);
+        $api    = self::api($serviceId);
+        $stored = self::stored($serviceId);
+
+        foreach($methods as $domain => $method)
+        {
+            $api->changeApprovers((int)$ssl->remoteid, ['domain' => ['name' => $domain, 'validation_method' => $method]]);
+            if(isset($stored['orderData']['orderData']['common_name']['name']) && $stored['orderData']['orderData']['common_name']['name'] === $domain)
+            {
+                $stored['orderData']['orderData']['common_name']['validation_method'] = $method;
+            }
+            foreach(isset($stored['orderData']['orderData']['alternative_names']) ? $stored['orderData']['orderData']['alternative_names'] : [] as $i => $san)
+            {
+                if(($san['name'] ?? '') === $domain)
+                {
+                    $stored['orderData']['orderData']['alternative_names'][$i]['validation_method'] = $method;
+                }
+            }
+        }
+
+        $fresh = $api->getOrder((int)$ssl->remoteid, $serviceId);
+        $stored['orderData']['order'] = $fresh['order'];
+        $stored['orderData']['items'] = $fresh['items'];
+        Request::updateOrderData($serviceId, $stored);
+
+        self::event($serviceId, 'info', '[Validation] Validation method changed: ' . implode(', ', array_map(function($d, $m) {
+            return $d . ' => ' . $m;
+        }, array_keys($methods), $methods)));
+    }
+
+    /**
      * Installs the issued certificate on the client's cPanel account hosting $domain. The private key is the one
      * stored for AutoInstall or the one the client pastes. The service is enrolled in AutoInstall afterwards,
      * so reissues and renewals are installed automatically.

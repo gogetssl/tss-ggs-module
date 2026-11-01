@@ -336,12 +336,19 @@ class home extends AbstractController
         $vars['domain']              = $input['params']['domain'];
         $vars['client']              = $clientData;
 
+        $params                = $input['params'];
         $vars['sans']          = isset($params['configoptions']['sans']) ? $params['configoptions']['sans'] : 0;
         $vars['sans_wildcard'] = isset($params['configoptions']['sans_wildcard']) ? $params['configoptions']['sans_wildcard'] : 0;
 
-        $vars['sans']              += $params['configoption7'];
-        $vars['sans_wildcard']     += $params['configoption8'];
+        $vars['sans']              += (int)$params['configoption7'];
+        $vars['sans_wildcard']     += (int)$params['configoption8'];
         $vars['serviceid']         = $input['id'];
+
+        // Reissue with the AutoInstall key keeps the automatic installation; more SANs can be bought before the reissue
+        $autoInstall             = AutoInstallHelpers::get($serviceId);
+        $vars['autoinstall_key'] = !empty($autoInstall['private_key']) && $autoInstall['status'] !== AutoInstallHelpers::STATUS_DISABLED;
+        $sanOptions              = ProductConfigOptions::get($params['packageid'], $serviceId, $params['model']->billingcycle);
+        $vars['buy_sans_url']    = $sanOptions ? 'upgrade.php?type=configoptions&id=' . (int)$serviceId : '';
         $vars['lang_san']          = sprintf(Lang::absoluteT('sans_additional'), $vars['sans']);
         $vars['lang_san_wildcard'] = sprintf(Lang::absoluteT('sans_additional_wildcard'), $vars['sans_wildcard']);
 
@@ -377,10 +384,25 @@ class home extends AbstractController
         try
         {
 
+            // The step 1 form posts fields[sans_domains] / fields[sans_domains_wildcard]; step 2 re-posts them flat
             $fields = [
-                'sans_domains' => isset($input['sans_domains']) ? $input['sans_domains'] : '',
-                'wildcard_san' => isset($input['sans_domains_wildcard']) ? $input['sans_domains_wildcard'] : '',
+                'sans_domains' => isset($input['fields']['sans_domains']) ? $input['fields']['sans_domains'] : (isset($input['sans_domains']) ? $input['sans_domains'] : ''),
+                'wildcard_san' => isset($input['fields']['sans_domains_wildcard']) ? $input['fields']['sans_domains_wildcard'] : (isset($input['sans_domains_wildcard']) ? $input['sans_domains_wildcard'] : ''),
             ];
+            $fields = array_map(function($list) {
+                return implode(',', array_filter(array_map('trim', preg_split('/[\s,;]+/', (string)$list))));
+            }, $fields);
+
+            if(!empty($input['use_autoinstall_key']))
+            {
+                $currentCn     = isset($certificate['orderData']['orderData']['common_name']['name']) ? $certificate['orderData']['orderData']['common_name']['name'] : $input['params']['domain'];
+                $input['csr']  = CertificateService::csrFromAutoInstallKey($serviceId, $currentCn);
+                $_POST['csr']  = $input['csr'];
+                unset($_POST['use_autoinstall_key']);
+            }
+            $_POST['sans_domains']          = $fields['sans_domains'];
+            $_POST['sans_domains_wildcard'] = $fields['wildcard_san'];
+            unset($_POST['fields']);
 
             $decode  = $this->decodeCSR($input['csr']);
             $domains = $this->validateDomains($decode['CN'], $fields, $input['params']);
@@ -441,102 +463,31 @@ class home extends AbstractController
 
     public function reissueStep3($input)
     {
-
         try
         {
-
-            $serviceId   = $input['id'];
-            $certificate = Request::getOrder($serviceId);
-
-            $configProduct = (new ProductRepository())->getProductConfiguration($input['params']['packageid']);
-            $addonConfig   = (new AddonModuleRepository())->getModuleConfiguration();
-
-            $provider    = strtolower($configProduct['provider']);
-            $credentials = $addonConfig['credentials'][$provider];
-
-            if($provider == 'tss' && $credentials['OperationMode'] == 'sandbox')
+            $serviceId = (int)$input['id'];
+            $methods   = [];
+            foreach((array)$input['method'] as $domain => $method)
             {
-                $credentials['PartnerCode'] = $credentials['TestPartnerCode'];
-                $credentials['AuthToken']   = $credentials['TestAuthToken'];
+                $methods[$domain] = $method == 'email' ? $input['approver'][$domain] : $method;
             }
 
-            $api = new SSLTrustCenterApi($configProduct['provider'], $credentials['PartnerCode'], $credentials['AuthToken'], $configProduct['category']);
-
-            $decode     = openssl_csr_get_subject($input['csr']);
-            $mainMethod = $input['method'][$decode['CN']] == 'email' ? $input['approver'][$decode['CN']] : $input['method'][$decode['CN']];
-
-            $request      = Request::where('serviceid', $serviceId)->where('name', 'addOrder')->first();
-            $requestOrder = json_decode(\decrypt($request->request), true);
-
-            $san = [];
-            foreach($input['method'] as $domain_san => $method_san)
+            // CN first
+            $commonName = openssl_csr_get_subject($input['csr'])['CN'];
+            if(isset($methods[$commonName]))
             {
-                if($domain_san == $decode['CN']) continue;
-                $methodSan = $method_san == 'email' ? $input['approver'][$domain_san] : $method_san;
-                $san[]     = ['name' => $domain_san, 'validation_method' => $methodSan];
+                $methods = [$commonName => $methods[$commonName]] + $methods;
             }
 
-            $reissueData = [
-                'csr'                         => trim($input['csr']),
-                'common_name'                 => [
-                    'name'              => $decode['CN'],
-                    'validation_method' => $mainMethod
-                ],
-                'existing_alternative_names'  => isset($requestOrder['alternative_names']) ? $requestOrder['alternative_names'] : [],
-                'submitted_alternative_names' => $san
-            ];
-            $itemId      = (int)SSL::getByServiceId($serviceId)->remoteid;
-            $reissue     = $api->reissueCertificate($itemId, $reissueData);
-            $itemId      = SSLTrustCenterApi::getItemId($reissue, $itemId);
-
-            $requestOrder['csr']               = $reissueData['csr'];
-            $requestOrder['common_name']       = $reissueData['common_name'];
-            $requestOrder['alternative_names'] = $reissueData['submitted_alternative_names'];
-
-            Request::where('serviceid', $serviceId)->where('name', 'addOrder')->update([
-                                                                                           'request'    => \encrypt(json_encode($requestOrder)),
-                                                                                           'status'     => 'pending',
-                                                                                           'updated_at' => date('Y-m-d H:i:s')
-                                                                                       ]);
-
-            $orderData  = $api->getOrder($itemId, $serviceId);
-            $orderFiles = [];
-            try
-            {
-                $orderFiles = $api->getCertificateFiles($itemId);
-            }
-            catch(\Exception $exception)
-            {
-            }
-            $request = ['orderData' => $orderData, 'orderFiles' => $orderFiles];
-            Request::where('serviceid', $serviceId)->where('name', 'certificate')->update([
-                                                                                              'request'    => \encrypt(json_encode($request)),
-                                                                                              'status'     => 'pending',
-                                                                                              'updated_at' => date('Y-m-d H:i:s')
-                                                                                          ]);
-
-            Service::where('id', $serviceId)->update(['domain' => $decode['CN']]);
-
-            // New CSR = new private key unknown to the module - stop the cPanel AutoInstall for this service
-            try
-            {
-                AutoInstallHelpers::onManualReissue($serviceId);
-            }
-            catch(\Exception $autoInstallException)
-            {
-            }
+            CertificateService::reissue($serviceId, $input['csr'], $methods);
 
             $_SESSION['mg-success'] = Lang::absoluteT('reissue_success');
             redir('action=productdetails&id=' . $serviceId, 'clientarea.php');
-
         }
         catch(\Exception $e)
         {
-
             return $e->getMessage();
-
         }
-
     }
 
 
@@ -784,19 +735,9 @@ class home extends AbstractController
         try
         {
 
-            $invoice   = new InvoiceRenew();
-            $invoiceId = $invoice->checkInvoiceAlreadyCreated($input['id']);
+            list($invoiceId, $created) = (new InvoiceRenew())->getOrCreateInvoice((int)$input['id']);
 
-            if($invoiceId)
-            {
-                $existInvoiceID         = $invoiceId;
-                $_SESSION['mg-success'] = Lang::absoluteT('renew_exists') . ' <a target="_blank" href="' . $CONFIG['SystemURL'] . '/viewinvoice.php?id=' . $existInvoiceID . '">' . Lang::absoluteT('Click here to view the invoice') . '</a>';
-                redir('action=productdetails&id=' . $input['id'], 'clientarea.php');
-
-            }
-
-            $invoiceId              = $invoice->createInvoice($input['id']);
-            $_SESSION['mg-success'] = Lang::absoluteT('renew_invoice_generated') . ' <a target="_blank" href="' . $CONFIG['SystemURL'] . '/viewinvoice.php?id=' . $invoiceId . '">' . Lang::absoluteT('Click here to view the invoice') . '</a>';
+            $_SESSION['mg-success'] = Lang::absoluteT($created ? 'renew_invoice_generated' : 'renew_exists') . ' <a target="_blank" href="' . $CONFIG['SystemURL'] . '/viewinvoice.php?id=' . (int)$invoiceId . '">' . Lang::absoluteT('Click here to view the invoice') . '</a>';
             redir('action=productdetails&id=' . $input['id'], 'clientarea.php');
 
         }

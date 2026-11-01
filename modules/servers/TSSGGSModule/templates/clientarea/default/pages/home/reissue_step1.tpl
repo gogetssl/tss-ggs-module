@@ -103,6 +103,21 @@
             </div>
 
 
+            {if $autoinstall_key}
+                <div class="checkbox tssggs-reissue-autoinstall" style="margin:10px 0 20px;">
+                    <label>
+                        <input type="checkbox" name="use_autoinstall_key" value="1" checked onchange="document.getElementById('inputCsr').closest('.form-group').style.display = this.checked ? 'none' : '';">
+                        {$MGLANG->T('reissue_page', 'reissue_autoinstall_key')}
+                    </label>
+                    <small class="text-muted" style="display:block;">{$MGLANG->T('reissue_page', 'reissue_autoinstall_key_desc')}</small>
+                </div>
+                <script>document.addEventListener('DOMContentLoaded', function () { var f = document.getElementById('inputCsr'); if (f) { f.closest('.form-group').style.display = 'none'; } });</script>
+            {/if}
+
+            {if $buy_sans_url}
+                <p style="margin:10px 0 20px;">{$MGLANG->T('reissue_page', 'reissue_buy_sans_desc')} <a href="{$buy_sans_url}" class="btn btn-default btn-sm">{$MGLANG->T('reissue_page', 'reissue_buy_sans')}</a></p>
+            {/if}
+
             {if $sans || $sans_wildcard}
                 <div><strong>{$MGLANG->T('reissue_page', 'Subject Alternative Names (SANs)')}</strong></div>
             {/if}

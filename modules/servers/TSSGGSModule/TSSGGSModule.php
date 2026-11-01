@@ -109,6 +109,10 @@ function TSSGGSModule_AdminServicesTabFields(array $params) {
     return (new Actions())->AdminServicesTabFields($params);
 }
 
+function TSSGGSModule_AdminServicesTabFieldsSave(array $params) {
+    (new \ModulesGarden\Servers\TSSGGSModule\app\services\AdminServicesTabFields())->save($params);
+}
+
 function TSSGGSModule_SSLAdminGetCertificate($params) {
     return (new Actions())->GetCertificate($params);
 }

@@ -53,7 +53,11 @@ class AcmeHelpers
     }
 
 
-    public static function hasAcmeSubscriptionRenewalInvoice($serviceId)
+    /**
+     * Renewal invoice of the subscription period already exists: an unpaid one, or any not cancelled one
+     * due on the period's renewal date (not only one created today - a cron run on another day must not add one)
+     */
+    public static function hasAcmeSubscriptionRenewalInvoice($serviceId, $renewalDate = null)
     {
         return Capsule::table('tblinvoiceitems')
                       ->join('tblinvoices', 'tblinvoices.id', '=', 'tblinvoiceitems.invoiceid')
@@ -61,13 +65,39 @@ class AcmeHelpers
                       ->where('tblinvoiceitems.relid', (int)$serviceId)
                       ->where('tblinvoiceitems.description', 'LIKE', '%ACME Subscription Renewal')
                       ->whereNotIn('tblinvoices.status', ['Cancelled', 'Refunded'])
-                      ->where('date', date('Y-m-d'))
+                      ->where(function($query) use ($renewalDate) {
+                          $query->whereIn('tblinvoices.status', ['Unpaid', 'Payment Pending', 'Draft'])
+                                ->orWhere('tblinvoices.date', date('Y-m-d'));
+                          if($renewalDate)
+                          {
+                              $query->orWhere('tblinvoices.duedate', date('Y-m-d', strtotime((string)$renewalDate)));
+                          }
+                      })
                       ->exists();
     }
 
     public static function createAcmeSubscriptionRenewalInvoice($service, $product, $subscriptionData)
     {
-        if(self::hasAcmeSubscriptionRenewalInvoice((int)$service->id))
+        $lock = 'tssggs_renewal_invoice_' . (int)$service->id;
+        $row  = Capsule::select('SELECT GET_LOCK(?, 10) AS l', [$lock]);
+        if(empty($row) || (int)$row[0]->l !== 1)
+        {
+            return 0;
+        }
+
+        try
+        {
+            return self::createAcmeSubscriptionRenewalInvoiceLocked($service, $product, $subscriptionData);
+        }
+        finally
+        {
+            Capsule::select('SELECT RELEASE_LOCK(?)', [$lock]);
+        }
+    }
+
+    protected static function createAcmeSubscriptionRenewalInvoiceLocked($service, $product, $subscriptionData)
+    {
+        if(self::hasAcmeSubscriptionRenewalInvoice((int)$service->id, $subscriptionData->renewal_date ?? null))
         {
             return 0;
         }
