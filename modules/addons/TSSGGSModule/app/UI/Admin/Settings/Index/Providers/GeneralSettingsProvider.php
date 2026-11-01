@@ -8,7 +8,7 @@ use WHMCS\Database\Capsule;
 
 class GeneralSettingsProvider extends CrudProvider
 {
-    const SWITCHES = ['clientSummary', 'certificatesByDomain', 'whmcsActivityLog', 'moduleLog', 'terminateCancelsOrder', 'requireAgreement', 'keepMarginOnSync', 'belowCostEmail'];
+    const SWITCHES = ['clientSummary', 'certificatesByDomain', 'whmcsActivityLog', 'moduleLog', 'terminateCancelsOrder', 'terminateUnpaidOnExpiry', 'requireAgreement', 'keepMarginOnSync', 'belowCostEmail'];
 
     public function read()
     {
@@ -18,6 +18,9 @@ class GeneralSettingsProvider extends CrudProvider
         }
 
         $this->availableValues['expiresSoonDays'] = ['10' => '10', '15' => '15', '30' => '30', '60' => '60', '90' => '90'];
+        $offsets = ['0' => '0', '3' => '3', '7' => '7', '15' => '15', '30' => '30'];
+        $this->availableValues['dueDateOffsetRegular']      = $offsets;
+        $this->availableValues['dueDateOffsetSubscription'] = $offsets;
 
         // General e-mail templates; empty = the module's own "Send Certificate" template
         $templates = ['' => $this->translate('moduleTemplate')];

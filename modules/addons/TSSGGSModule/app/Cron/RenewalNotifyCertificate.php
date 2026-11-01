@@ -223,6 +223,7 @@ class RenewalNotifyCertificate extends AbstractCommand
 
         $this->cancelOverdueAcmeSubscriptions();
         $this->cancelExpiredStoppedAutoRenewAcmeSubscriptions();
+        \ModulesGarden\TSSGGSModule\App\Libs\UnpaidTermination::run();
 
         CronCheck::updateOrCreate(
             ['type' => 'RenewalNotifyCertificate'],
@@ -301,6 +302,14 @@ class RenewalNotifyCertificate extends AbstractCommand
             }
             catch (\Exception $e)
             {
+                // the vendor still bills the subscription: keep the service open and retry on the next run, give up
+                // (and tell the admin) after 14 days
+                Logger::error('The overdue ACME subscription could not be cancelled: ' . $e->getMessage(), ['service' => $row->service_id]);
+                if($row->duedate >= date('Y-m-d', strtotime('-14 days')))
+                {
+                    continue;
+                }
+                \ModulesGarden\TSSGGSModule\App\Libs\GeneralSettings::activity('ACME subscription of service #' . (int)$row->service_id . ' could not be cancelled at the vendor for 14 days - cancel it manually: ' . $e->getMessage());
             }
 
             $subscription->status = 'cancelled';
@@ -346,6 +355,14 @@ class RenewalNotifyCertificate extends AbstractCommand
                 }
                 catch (\Exception $e)
                 {
+                    // keep the subscription open and retry on the next run; give up (and tell the admin) after 14 days
+                    Logger::error('The expired ACME subscription could not be cancelled: ' . $e->getMessage(), ['service' => $subscriptionData->service_id]);
+                    $ended = $subscriptionData->renewal_date ?: $subscriptionData->period_end;
+                    if(!$ended || date('Y-m-d', strtotime((string)$ended)) >= date('Y-m-d', strtotime('-14 days')))
+                    {
+                        continue;
+                    }
+                    \ModulesGarden\TSSGGSModule\App\Libs\GeneralSettings::activity('ACME subscription of service #' . (int)$subscriptionData->service_id . ' could not be cancelled at the vendor for 14 days - cancel it manually: ' . $e->getMessage());
                 }
             }
 
