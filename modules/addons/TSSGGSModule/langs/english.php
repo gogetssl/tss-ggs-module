@@ -827,3 +827,4 @@ $_LANG['admin.certificate_log.page']                   = 'Page :page of :pages (
 
 //import: map to an existing service
 $_LANG['admin.import.index.forms.import_form.serviceId'] = 'Attach To Existing Service ID (optional)';
+$_LANG['admin.settings.index.forms.general_settings_form.update_success']                    = 'Settings updated successfully';
