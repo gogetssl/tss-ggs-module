@@ -1058,3 +1058,16 @@ $_LANG['admin.settings.index.forms.ssl_settings_form.downloadFormat_fullchain'] 
 $_LANG['admin.settings.index.forms.ssl_settings_form.downloadFormat_nginx']                = 'Nginx (chained .crt)';
 $_LANG['admin.settings.index.forms.ssl_settings_form.downloadFormat_apache']               = 'Apache (.crt + .ca-bundle, ZIP)';
 $_LANG['admin.settings.index.forms.ssl_settings_form.downloadFormat_pkcs7']                = 'IIS / Tomcat (PKCS#7 .p7b)';
+$_LANG['admin.home.index.widgets.documentation_widget.title']        = 'Module documentation';
+$_LANG['admin.home.index.widgets.documentation_widget.info']         = 'Installation guides, configuration reference and troubleshooting in one place.';
+$_LANG['admin.home.index.widgets.documentation_widget.open_thesslstore'] = 'TheSSLStore documentation';
+$_LANG['admin.home.index.widgets.documentation_widget.open_gogetssl']    = 'GoGetSSL documentation';
+$_LANG['admin.home.index.widgets.next_steps_widget.title']           = 'Next steps after module installation';
+$_LANG['admin.home.index.widgets.next_steps_widget.chip']            = 'Finish setup';
+$_LANG['admin.home.index.widgets.next_steps_widget.step_products']        = 'Setup products';
+$_LANG['admin.home.index.widgets.next_steps_widget.step_products_detail'] = 'Create products and add a short description';
+$_LANG['admin.home.index.widgets.next_steps_widget.step_pricing']         = 'Set pricing';
+$_LANG['admin.home.index.widgets.next_steps_widget.step_pricing_detail']  = 'Choose your selling prices for certificates';
+$_LANG['admin.home.index.widgets.next_steps_widget.step_renewals']        = 'Check renewal settings';
+$_LANG['admin.home.index.widgets.next_steps_widget.step_renewals_detail'] = 'Review how certificate renewals are handled';
+$_LANG['admin.home.index.widgets.next_steps_widget.note']            = 'This message is removed automatically :hours hours after the dashboard was first opened.';

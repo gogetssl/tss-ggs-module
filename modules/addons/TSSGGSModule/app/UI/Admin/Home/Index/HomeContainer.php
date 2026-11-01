@@ -8,7 +8,9 @@ use ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Shared\Card;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Shared\CronStatus;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Shared\SalesSummary;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Widgets\AnnouncementsWidget;
+use ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Widgets\DocumentationWidget;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Widgets\MigrationWidget;
+use ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Widgets\NextStepsWidget;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Widgets\OverviewWidget;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Widgets\PartnerWidget;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Widgets\ReportingWidget;
@@ -34,6 +36,11 @@ class HomeContainer extends Container implements AdminAreaInterface
         {
             $this->addElement(Card::html($this->attentionHtml()));
         }
+        // guide for the first 72 hours
+        if(NextStepsWidget::visible())
+        {
+            $this->addElement(new NextStepsWidget());
+        }
         $this->addElement(Card::html($this->kpisHtml()));
 
         $main = new Container();
@@ -50,7 +57,8 @@ class HomeContainer extends Container implements AdminAreaInterface
             $side->addElement(new MigrationWidget());
         }
         $side->addElement(new PartnerWidget())
-             ->addElement(new ReportingWidget());
+             ->addElement(new ReportingWidget())
+             ->addElement(new DocumentationWidget());
 
         $grid = new Container();
         $grid->setCss('tssggs-dash__grid');

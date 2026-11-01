@@ -611,3 +611,144 @@
     align-items: center;
     gap: 6px;
 }
+
+/* ---- next steps guide + documentation links ---- */
+#layers2 .tssggs-steps {
+    margin-bottom: 20px;
+    padding: 20px;
+    border: 1px solid rgba(0, 113, 54, .25);
+    border-radius: var(--tw-radius);
+    background: linear-gradient(135deg, rgba(0, 113, 54, .09), rgba(0, 113, 54, .03) 60%, transparent);
+}
+
+#layers2 .tssggs-steps__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+#layers2 .tssggs-steps__head h3 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+#layers2 .tssggs-steps__badge {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: var(--tw-primary);
+    color: #fff;
+    font-size: 18px;
+}
+
+#layers2 .tssggs-steps__chip {
+    padding: 3px 12px;
+    border: 1px solid rgba(0, 113, 54, .3);
+    border-radius: 999px;
+    background: rgba(0, 113, 54, .1);
+    color: var(--tw-primary);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+}
+
+#layers2 .tssggs-steps__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 12px;
+}
+
+#layers2 .tssggs-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 16px;
+    border: 1px solid var(--tw-border);
+    border-radius: 8px;
+    background: var(--tw-surface);
+    color: var(--tw-fg);
+    text-decoration: none;
+}
+
+#layers2 .tssggs-step:hover {
+    border-color: var(--tw-primary);
+}
+
+#layers2 .tssggs-step__num {
+    display: grid;
+    flex: 0 0 auto;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--tw-primary);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+#layers2 .tssggs-step.is-done .tssggs-step__num {
+    background: var(--tw-primary-soft);
+    color: var(--tw-primary);
+}
+
+#layers2 .tssggs-step__text {
+    flex: 1;
+    min-width: 0;
+}
+
+#layers2 .tssggs-step__text strong {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+}
+
+#layers2 .tssggs-step__text strong .mdi {
+    color: var(--tw-primary);
+}
+
+#layers2 .tssggs-step__text small {
+    display: block;
+    margin-top: 4px;
+    color: var(--tw-muted);
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+#layers2 .tssggs-step > .mdi {
+    color: var(--tw-muted);
+}
+
+#layers2 .tssggs-steps__note {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 16px 0 0;
+    padding: 10px 14px;
+    border: 1px solid rgba(0, 113, 54, .2);
+    border-radius: 6px;
+    background: rgba(0, 113, 54, .05);
+    font-size: 12px;
+}
+
+#layers2 .tssggs-steps__note .mdi {
+    color: var(--tw-primary);
+}
+
+#layers2 .tssggs-dcard__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 14px;
+}
