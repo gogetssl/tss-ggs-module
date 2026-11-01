@@ -5,7 +5,6 @@ require_once dirname(__FILE__, 3) . '/vendor/autoload.php';
 \ModulesGarden\TSSGGSModule\Core\ModuleConstants::initialize();
 
 $files = [
-    'materialdesignicons.min.css',
     'products-icons.css',
     'simplemde.min.css',
     'layers2-ui.css',
@@ -16,6 +15,7 @@ $files = [
     'migration.css',
     'dashboard.css',
     'shell.css',
+    'icons.css',
     'theme.css',
 ];
 

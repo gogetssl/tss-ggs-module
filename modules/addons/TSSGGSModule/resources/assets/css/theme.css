@@ -44,16 +44,16 @@
 }
 #layers2 .lu-app { color: var(--tw-fg-soft); font-variant-numeric: tabular-nums; -webkit-font-smoothing: antialiased; }
 
-/* canvas */
+/* canvas: the module area and the WHMCS content area around it (outside #layers2, so the token is set here too) */
 #layers2 .lu-app,
 #layers2 .lu-app-main { background: var(--th-canvas); }
+.contentarea { --th-canvas: #f3f5f8; background: var(--th-canvas); }
+#layers2 .lu-app-main__body:not(.lu-app-clientarea) { padding: 25px 10px; }
 
 /* module header + nav: one bordered block */
 #layers2 .tssggs-head { border-color: var(--tw-border); }
 #layers2 .tssggs-head__logo { background: var(--tw-primary); }
-#layers2 .tssggs-head__text strong { font-size: 17px; color: var(--tw-fg); }
-#layers2 .tssggs-head__btn { height: 34px; padding: 0 14px; font-size: 13px; border-color: var(--tw-border); transition: border-color .2s, background .2s; }
-#layers2 .tssggs-head__btn:hover { border-color: #b8c2cf; background: var(--tw-surface-alt); }
+#layers2 .tssggs-head__text strong { display: block; color: var(--tw-fg); font-size: 20px; font-weight: 600; line-height: 1; }
 #layers2 .lu-app-navbar { border-color: var(--tw-border); }
 #layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav { padding: 0 12px !important; gap: 4px; }
 #layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav > li.lu-nav__item > a.lu-nav__link { height: 46px; min-height: 46px; gap: 7px; color: var(--tw-fg-soft); font-size: 13.5px; transition: color .2s, border-color .2s; }
@@ -138,6 +138,13 @@
 #layers2 .lu-app-main table.lu-table > tbody > tr > td,
 #layers2 .lu-app-main table.table > tbody > tr > td,
 #layers2 .lu-app-main table.tssggs-table td { border-color: var(--th-line-soft); }
+
+/* active settings row: an SVG chevron (no text glyph) */
+#layers2 .tssggs-settings .lu-navbar__nav li.lu-nav__item.is-active > a.lu-nav__link::after {
+    content: ""; width: 18px; height: 18px; margin-left: auto; background-color: currentColor;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z' /%3E%3C/svg%3E") center / contain no-repeat;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z' /%3E%3C/svg%3E") center / contain no-repeat;
+}
 
 /* settings sidebar and cron cards follow the same panel look */
 #layers2 .tssggs-settings .lu-widget:has(.lu-navbar__nav) { border-radius: 8px !important; border-color: var(--tw-border) !important; }
