@@ -92,10 +92,19 @@ class CertificateSyncHelpers
             }
         }
 
-        if($orderData['order']['status'] == 'cancelled' || $orderData['order']['status'] == 'expired' || $orderData['order']['status'] == 'filed' || $orderData['order']['status'] == 'rejected')
+        if($orderData['order']['status'] == 'cancelled' || $orderData['order']['status'] == 'rejected')
         {
             Service::where('id', $certificate['id'])->update([
                 'domainstatus' => 'Cancelled'
+            ]);
+        }
+        elseif($orderData['order']['status'] == 'expired' || $orderData['order']['status'] == 'filed')
+        {
+            // an expired (or one-time, filed) certificate is terminated with a termination date, not cancelled; services
+            // that already ended (Terminated / Cancelled / Fraud) are left as they are
+            Service::where('id', $certificate['id'])->whereIn('domainstatus', ['Pending', 'Active', 'Suspended'])->update([
+                'domainstatus'     => 'Terminated',
+                'termination_date' => date('Y-m-d'),
             ]);
         }
 
