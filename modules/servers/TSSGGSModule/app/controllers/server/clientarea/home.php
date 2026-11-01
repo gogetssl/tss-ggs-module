@@ -1016,10 +1016,12 @@ class home extends AbstractController
                 $certificate['orderData']['order']     = $newData['order'];
                 $certificate['orderData']['items']     = $newData['items'];
                 Request::updateOrderData($serviceId, $certificate);
+                CertificateService::event($serviceId, 'info', '[Validation] Validation method changed by the client');
 
             }
             catch(\Exception $exception)
             {
+                $_SESSION['mg-error'] = $exception->getMessage();
             }
 
             redir('action=productdetails&id=' . $serviceId, 'clientarea.php');

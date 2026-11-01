@@ -240,17 +240,21 @@ class ImportProvider extends CrudProvider
 
             $_SESSION['TSSGGSModule']['importedServices'][] = $serviceId;
 
-            try
+            // A mapped service usually has its SSL order row already - ModuleCreate refuses to run twice
+            if(!Capsule::table('tblsslorders')->where('serviceid', $serviceId)->exists())
             {
-                $result = WhmcsApi::run('ModuleCreate', [
-                    'serviceid' => $serviceId,
-                ]);
-            }
-            catch(\Throwable $e)
-            {
-                Logger::error($e->getMessage(), $localOrderData);
-                $errorsCount++;
-                continue;
+                try
+                {
+                    $result = WhmcsApi::run('ModuleCreate', [
+                        'serviceid' => $serviceId,
+                    ]);
+                }
+                catch(\Throwable $e)
+                {
+                    Logger::error($e->getMessage(), $localOrderData);
+                    $errorsCount++;
+                    continue;
+                }
             }
 
             Capsule::table('tblsslorders')->where('serviceid', $serviceId)->update(
