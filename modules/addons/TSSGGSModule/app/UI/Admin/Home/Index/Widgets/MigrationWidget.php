@@ -16,16 +16,36 @@ class MigrationWidget extends Card
     const RUN_TONES = ['completed' => 'ok', 'failed' => 'bad', 'rolled_back' => 'muted'];
     const RUN_ICONS = ['completed' => 'check', 'failed' => 'close', 'rolled_back' => 'undo'];
 
+    /** the panel is removed this many days after a completed migration */
+    const DAYS = 14;
+
     public static function relevant(): bool
     {
         try
         {
-            return Detector::anyFound() || Store::latestRun();
+            $run = Store::latestRun();
+            if($run && self::removedAt($run) !== null && time() >= self::removedAt($run))
+            {
+                return false;
+            }
+
+            return Detector::anyFound() || $run;
         }
         catch(\Throwable $e)
         {
             return false;
         }
+    }
+
+    /** Timestamp the panel disappears: 14 days after the run finished; null while it is not completed */
+    protected static function removedAt(array $run)
+    {
+        if($run['status'] !== 'completed' || empty($run['finished_at']))
+        {
+            return null;
+        }
+
+        return strtotime((string)$run['finished_at']) + self::DAYS * 86400;
     }
 
     public function loadHtml(): void
@@ -50,6 +70,11 @@ class MigrationWidget extends Card
                 . Card::e($this->translate('last_run_counts', ['done' => $counts['done'], 'failed' => $counts['failed'], 'skipped' => $counts['skipped']])
                     . ($run['backup_prefix'] && $run['backup_expires_at'] ? '. ' . $this->translate('backups_until', ['date' => substr($run['backup_expires_at'], 0, 10)]) : ''))
                 . '</p>';
+            if(self::removedAt($run) !== null)
+            {
+                $html .= '<p class="tssggs-dcard__sub">' . Card::icon('clock-outline')
+                    . Card::e($this->translate('removed_on', ['date' => date('Y-m-d', self::removedAt($run)), 'days' => self::DAYS])) . '</p>';
+            }
         }
         $this->addElement(Card::html('<div class="tssggs-dcard__rows">' . $html . '</div>'));
 

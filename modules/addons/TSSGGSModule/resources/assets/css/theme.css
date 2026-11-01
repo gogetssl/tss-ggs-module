@@ -220,7 +220,8 @@
 #layers2 .tssggs-row__name small { display: block; color: var(--th-quiet); font-size: 12px; overflow-wrap: anywhere; }
 #layers2 .tssggs-row__val { flex: none; margin-left: auto; text-align: right; white-space: nowrap; color: var(--tw-fg); }
 #layers2 .tssggs-row__val b { font-weight: 500; }
-#layers2 .tssggs-row--component { margin: 0 18px; border-top: 1px solid var(--th-line-soft); border-bottom: 0; }
+#layers2 .tssggs-row--component { margin: 0; border-top: 1px solid var(--th-line-soft); border-bottom: 0; }
+#layers2 .tssggs-dcard__rows > .lu-preloader-container { display: none; }
 #layers2 .tssggs-row--component > .tssggs-html { display: flex; flex: 1 1 auto; align-items: center; gap: 12px; min-width: 0; }
 #layers2 .tssggs-row--component > .tssggs-html > .mdi { flex: none; width: 18px; color: var(--th-quiet); font-size: 17px; text-align: center; }
 #layers2 .tssggs-row--component .lu-btn { min-height: 28px !important; height: 28px; padding: 0 12px !important; border: 1px solid var(--tw-border) !important; background: var(--tw-surface) !important; color: var(--tw-fg) !important; font-size: 12.5px !important; }
