@@ -9,12 +9,12 @@ class Sidebar extends \ModulesGarden\TSSGGSModule\Components\Sidebar\Sidebar
 {
     /** page => Material Design icon */
     const ICONS = [
-        'apiSettings'       => 'key-variant',
-        'generalSettings'   => 'earth',
+        'apiSettings'       => 'key-outline',
+        'generalSettings'   => 'web',
         'sslSettings'       => 'shield-check-outline',
-        'automatedSettings' => 'autorenew',
-        'financeSettings'   => 'cash-multiple',
-        'cronSettings'      => 'clock-outline',
+        'automatedSettings' => 'sync',
+        'financeSettings'   => 'email-outline',
+        'cronSettings'      => 'file-clock-outline',
     ];
 
     function loadHtml(): void

@@ -683,3 +683,27 @@
 #layers2 .tssggs-settings form .lu-widget.tssggs-cronjob { margin: 0 0 16px !important; padding: 20px 20px 16px !important; border: 1px solid #e5e7eb !important; border-radius: 8px !important; background: #fff !important; box-shadow: none !important; }
 #layers2 .tssggs-badge i { display: inline-block; margin-right: 4px; line-height: 1; }
 #layers2 .tssggs-badge { padding: 2px 8px; font-size: 12px; line-height: 18px; }
+
+/* settings sidebar: 1:1 with the Lovable aside */
+#layers2 .tssggs-settings .lu-widget:has(.lu-navbar__nav) { padding: 8px !important; border: 1px solid #e5e7eb !important; border-radius: 12px !important; box-shadow: none !important; }
+#layers2 .tssggs-settings .lu-widget:has(.lu-navbar__nav) > .lu-widget__header { height: auto !important; min-height: 0 !important; padding: 8px 12px !important; margin: 0 !important; }
+#layers2 .tssggs-settings .lu-widget:has(.lu-navbar__nav) > .lu-widget__header .lu-top { min-height: 0 !important; margin: 0 !important; padding: 0 !important; }
+#layers2 .tssggs-settings .lu-widget:has(.lu-navbar__nav) > .lu-widget__header .lu-top__title { margin: 0 !important; padding: 0 !important; font-size: 12px !important; font-weight: 500 !important; line-height: 16px !important; letter-spacing: .05em; color: var(--tw-muted); }
+#layers2 .tssggs-settings .lu-widget:has(.lu-navbar__nav) > .lu-widget__body { padding: 0 !important; }
+#layers2 .tssggs-settings .lu-navbar__nav ul { padding: 0 !important; display: flex; flex-direction: column; gap: 2px; }
+#layers2 .tssggs-settings .lu-navbar__nav li.lu-nav__item,
+#layers2 .tssggs-settings .lu-navbar__nav li.lu-nav__item.is-active { margin: 0 !important; border: 0 !important; box-shadow: none !important; width: auto !important; }
+#layers2 .tssggs-settings .lu-navbar__nav li.lu-nav__item > a.lu-nav__link { min-height: 40px; padding: 8px 12px !important; gap: 12px; border: 0 !important; border-radius: 8px; font-size: 14px; font-weight: 500; line-height: 20px; color: var(--tw-fg); }
+#layers2 .tssggs-settings .lu-navbar__nav li.lu-nav__item > a.lu-nav__link > i { display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; font-size: 18px; line-height: 18px; }
+#layers2 .tssggs-settings .lu-navbar__nav li.lu-nav__item > a.lu-nav__link > i::before { line-height: 18px; }
+#layers2 .tssggs-settings .lu-navbar__nav li.lu-nav__item.is-active > a.lu-nav__link { background: var(--tw-primary-soft); color: var(--tw-primary); font-weight: 500; }
+#layers2 .tssggs-settings .lu-navbar__nav li.lu-nav__item.is-active > a.lu-nav__link::after { content: "\203A"; margin-left: auto; font-size: 20px; font-weight: 400; line-height: 1; }
+#layers2 .tssggs-settings .lu-widget:has(.lu-navbar__nav) > .lu-widget__header .lu-top__title { height: auto !important; min-height: 0 !important; }
+#layers2 .tssggs-settings .lu-widget:has(.lu-navbar__nav) .lu-nav__link-text { white-space: nowrap; }
+@media (min-width: 768px) {
+    #layers2 .tssggs-settings > .lu-container > .lu-row { flex-wrap: nowrap; }
+    #layers2 .tssggs-settings > .lu-container > .lu-row > .lu-col-md-2 { flex: 0 0 256px; max-width: 256px; }
+    #layers2 .tssggs-settings > .lu-container > .lu-row > .lu-col-md-10 { flex: 1 1 auto; max-width: none; min-width: 0; }
+}
+#layers2 .tssggs-settings .lu-widget:has(.lu-navbar__nav) > .lu-widget__header .lu-top { height: auto !important; }
+#layers2 .tssggs-settings .lu-widget:has(.lu-navbar__nav) .lu-navbar__nav ul { flex: 1 1 auto; width: 100% !important; margin: 0 !important; }
