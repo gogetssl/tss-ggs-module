@@ -1071,7 +1071,6 @@ $_LANG['admin.home.index.widgets.next_steps_widget.step_pricing']         = 'Set
 $_LANG['admin.home.index.widgets.next_steps_widget.step_pricing_detail']  = 'Choose your selling prices for certificates';
 $_LANG['admin.home.index.widgets.next_steps_widget.step_renewals']        = 'Check renewal settings';
 $_LANG['admin.home.index.widgets.next_steps_widget.step_renewals_detail'] = 'Review how certificate renewals are handled';
-$_LANG['admin.home.index.widgets.next_steps_widget.note']            = 'This message is removed automatically :hours hours after the dashboard was first opened.';
 
 $_LANG['admin.home.index.widgets.system_check_widget.name_ProductPricingUpdate'] = 'Prices and catalogue update';
 $_LANG['admin.home.index.widgets.system_check_widget.name_ReSyncProducts'] = 'Catalogue refresh';
@@ -1199,7 +1198,6 @@ $_LANG['admin.home.index.widgets.support_widget.report'] = 'Module logs for supp
 $_LANG['admin.home.index.widgets.support_widget.report_detail'] = 'Send the activity report to support';
 $_LANG['admin.home.index.widgets.support_widget.report_button'] = 'Send report';
 $_LANG['admin.home.index.widgets.next_steps_widget.lead'] = 'Finish setting up';
-$_LANG['admin.home.index.widgets.next_steps_widget.note_short'] = 'Hides :hours h after the first view';
 $_LANG['admin.home.index.widgets.system_check_widget.yesterday'] = 'Yesterday :time';
 $_LANG['admin.home.index.widgets.migration_widget.removed_on'] = 'This panel is removed on :date, :days days after the migration.';
 $_LANG['admin.home.index.widgets.support_widget.phone_detail'] = 'Telephone support';

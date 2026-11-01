@@ -7,37 +7,31 @@ use ModulesGarden\TSSGGSModule\Components\Container\Container;
 use WHMCS\Database\Capsule;
 
 /**
- * "Finish setting up": three guided steps on the dashboard, removed automatically 72 hours after the dashboard was
- * first opened (the time of the first view is stored once).
+ * "Finish setting up": three guided steps on the dashboard, shown until all three are done.
  *
  * A step is done when its data exists (products created, a product priced) or when its page was saved (the Pricing
  * page, the SSL settings): those pages call markDone().
  */
 class NextStepsWidget extends Container
 {
-    const HOURS   = 72;
-    const SETTING = 'nextStepsStart';
-    const DONE    = 'nextStepsDone';
+    const DONE = 'nextStepsDone';
 
     const STEP_PRICING  = 'pricing';
     const STEP_RENEWALS = 'renewals';
 
     protected static $done = null;
 
-    /**
-     * Whether the guide is still shown; the first call starts the 72 hours
-     */
+    /** Whether the guide is still shown: until all three steps are done */
     public static function visible(): bool
     {
-        $where = ['module' => 'configuration_TSSGGSModule', 'setting' => self::SETTING];
-        $start = (int)Capsule::table('tbladdonmodules')->where($where)->value('value');
-        if($start <= 0)
+        try
         {
-            $start = time();
-            Capsule::table('tbladdonmodules')->updateOrInsert($where, ['value' => (string)$start]);
+            return in_array(false, array_column(self::steps(), 4), true);
         }
-
-        return time() < $start + self::HOURS * 3600;
+        catch(\Throwable $e)
+        {
+            return false;
+        }
     }
 
     /** Records that the admin completed a step (saved its page) */
@@ -90,27 +84,31 @@ class NextStepsWidget extends Container
             ->exists();
     }
 
-    public function loadHtml(): void
+    /** [number, icon, text key, url, done] */
+    protected static function steps(): array
     {
-        $this->setCss('tssggs-setup');
+        $base = 'addonmodules.php?module=TSSGGSModule&mg-page=';
+        $done = self::done();
 
-        $base  = 'addonmodules.php?module=TSSGGSModule&mg-page=';
-        $done  = self::done();
-        $steps = [
+        return [
             [1, 'package-variant-closed', 'step_products', $base . 'products', (int)Capsule::table('tblproducts')->where('servertype', 'TSSGGSModule')->count() > 0],
             [2, 'tag-outline', 'step_pricing', $base . 'pricing', in_array(self::STEP_PRICING, $done, true) || self::priced()],
             [3, 'sync', 'step_renewals', $base . 'settings&settings-page=sslSettings', in_array(self::STEP_RENEWALS, $done, true)],
         ];
+    }
 
-        // one strip: the lead, the three steps, when the guide disappears
+    public function loadHtml(): void
+    {
+        $this->setCss('tssggs-setup');
+
+        // one strip: the lead and the three steps
         $html = '<span class="tssggs-setup__lead">' . Card::tile('format-list-checks', 'ok') . Card::e($this->translate('lead')) . '</span>';
-        foreach($steps as [$number, $icon, $key, $url, $isDone])
+        foreach(self::steps() as [$number, $icon, $key, $url, $isDone])
         {
             $html .= '<a class="tssggs-setup__step' . ($isDone ? ' is-done' : '') . '" href="' . Card::e($url) . '">' . Card::tile($isDone ? 'check' : $icon, $isDone ? 'ok' : '')
                 . '<span><b>' . Card::e($this->translate($key)) . '</b><small>' . Card::e($this->translate($key . '_detail')) . '</small></span>'
                 . ($isDone ? '' : Card::icon('arrow-right')) . '</a>';
         }
-        $html .= '<span class="tssggs-setup__note">' . Card::icon('clock-outline') . Card::e($this->translate('note_short', ['hours' => self::HOURS])) . '</span>';
 
         $this->addElement(Card::html($html));
     }
