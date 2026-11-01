@@ -1201,3 +1201,7 @@ $_LANG['admin.home.index.widgets.next_steps_widget.lead'] = 'Finish setting up';
 $_LANG['admin.home.index.widgets.system_check_widget.yesterday'] = 'Yesterday :time';
 $_LANG['admin.home.index.widgets.migration_widget.removed_on'] = 'This panel is removed on :date, :days days after the migration.';
 $_LANG['admin.home.index.widgets.support_widget.phone_detail'] = 'Telephone support';
+$_LANG['admin.home.index.widgets.gateway_widget.not_configured'] = 'Not configured';
+$_LANG['admin.home.index.widgets.gateway_widget.not_configured_detail'] = 'Enter the API credentials';
+$_LANG['admin.home.index.widgets.attention_widget.gateway_missing_title'] = ':gateway API credentials are missing';
+$_LANG['admin.home.index.widgets.attention_widget.gateway_missing_text'] = 'Without them the module cannot order or check certificates. Enter them in API Settings.';

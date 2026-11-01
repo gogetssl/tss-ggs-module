@@ -59,13 +59,18 @@ class AttentionWidget extends Card
             }
         }
 
-        foreach(GatewayHealth::check() as $vendor => $row)
+        // the gateway of this edition: unreachable, or its credentials are not entered
+        $vendor  = GatewayWidget::vendor();
+        $gateway = GatewayHealth::check()[$vendor] ?? null;
+        if($gateway === null)
         {
-            if(!$row['ok'])
-            {
-                $items[] = ['bad', 'power-plug-off-outline', $this->translate('gateway_title', ['gateway' => Helpers::vendorToDisplay($vendor)]), $row['error'],
-                    Card::button(self::BASE . 'settings&settings-page=apiSettings', $this->translate('api'), 'key-outline')];
-            }
+            $items[] = ['bad', 'power-plug-off-outline', $this->translate('gateway_missing_title', ['gateway' => Helpers::vendorToDisplay($vendor)]), $this->translate('gateway_missing_text'),
+                Card::button(self::BASE . 'settings&settings-page=apiSettings', $this->translate('api'), 'key-outline')];
+        }
+        elseif(!$gateway['ok'])
+        {
+            $items[] = ['bad', 'power-plug-off-outline', $this->translate('gateway_title', ['gateway' => Helpers::vendorToDisplay($vendor)]), $gateway['error'],
+                Card::button(self::BASE . 'settings&settings-page=apiSettings', $this->translate('api'), 'key-outline')];
         }
 
         $pipeline = Pipeline::get();
