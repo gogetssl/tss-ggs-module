@@ -242,7 +242,10 @@ class AddonModuleRepository
 
     public function saveSslSettings($data)
     {
-        $data = json_encode($data);
+        // merged into the stored settings: the SSL and the automated SSL page each save their own part
+        $configuration = $this->getModuleConfiguration();
+        $stored        = isset($configuration['sslSettings']) && is_array($configuration['sslSettings']) ? $configuration['sslSettings'] : [];
+        $data          = json_encode(array_merge($stored, (array)$data));
 
         AddonModule::updateOrInsert(
             ['module' => 'configuration_TSSGGSModule', 'setting' => 'sslSettings'],

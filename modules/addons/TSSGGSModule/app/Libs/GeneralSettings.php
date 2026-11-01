@@ -76,7 +76,10 @@ class GeneralSettings
 
     public static function save(array $data)
     {
-        (new AddonModuleRepository())->saveGeneralSettings(array_intersect_key($data, self::DEFAULTS));
+        // merged into the stored settings: the settings are spread over several pages, each saves its own part
+        $configuration = (new AddonModuleRepository())->getModuleConfiguration();
+        $stored        = isset($configuration['generalSettings']) && is_array($configuration['generalSettings']) ? $configuration['generalSettings'] : [];
+        (new AddonModuleRepository())->saveGeneralSettings(array_merge($stored, array_intersect_key($data, self::DEFAULTS)));
         self::$settings = null;
     }
 

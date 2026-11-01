@@ -11,6 +11,6 @@ class SslSettingsWidget extends Widget
     public function loadHtml(): void
     {
         $this->setTitle($this->translate('title'));
-        $this->addElement(new SslSettingsForm());
+        $this->addElement(new SslSettingsForm(false, SslSettingsForm::SCOPE_SSL));
     }
 }

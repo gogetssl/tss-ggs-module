@@ -54,32 +54,12 @@ class GeneralSettingsForm extends Form implements AdminAreaInterface, AjaxCompon
         $this->builder->addFieldInContainer($logging, (new Switcher())->setName('whmcsActivityLog')->addClass('switcher-revert'), true);
         $this->builder->addFieldInContainer($logging, (new Switcher())->setName('moduleLog')->addClass('switcher-revert'), true);
 
-        $lifecycle = $this->widget($left, 'lifecycle');
+        $lifecycle = $this->widget($right, 'lifecycle');
         $this->builder->addFieldInContainer($lifecycle, (new Switcher())->setName('terminateCancelsOrder')->addClass('switcher-revert'), true);
         $this->builder->addFieldInContainer($lifecycle, (new Switcher())->setName('terminateUnpaidOnExpiry')->addClass('switcher-revert'), true);
-        $this->builder->addFieldInContainer($lifecycle, (new FormInputText())->setName('defaultWebServer'), true);
-        $this->builder->addFieldInContainer($lifecycle, (new Dropdown())->setName('dueDateOffsetRegular'), true);
-        $this->builder->addFieldInContainer($lifecycle, (new Dropdown())->setName('dueDateOffsetSubscription'), true);
-
-        // formats the client can download (a checkbox each)
-        $downloads = $this->widget($right, 'downloads');
-        foreach(['zip', 'crt', 'ca', 'fullchain', 'nginx', 'apache', 'pkcs7'] as $format)
-        {
-            $this->builder->addFieldInContainer($downloads, (new Switcher())->setName('downloadFormat_' . $format)->addClass('switcher-revert'), true);
-        }
-
-        $pricing = $this->widget($left, 'pricing');
+        $pricing = $this->widget($right, 'pricing');
         $this->builder->addFieldInContainer($pricing, (new Switcher())->setName('keepMarginOnSync')->addClass('switcher-revert'), true);
         $this->builder->addFieldInContainer($pricing, (new Switcher())->setName('belowCostEmail')->addClass('switcher-revert'), true);
-
-        $messages = $this->widget($right, 'messages');
-        $this->builder->addFieldInContainer($messages, (new TextArea())->setName('processingGuide'), true);
-        $this->builder->addFieldInContainer($messages, (new TextArea())->setName('issuedMessage'), true);
-        $this->builder->addFieldInContainer($messages, (new Dropdown())->setName('certificateEmailTemplate'), true);
-
-        $agreement = $this->widget($right, 'agreement');
-        $this->builder->addFieldInContainer($agreement, (new Switcher())->setName('requireAgreement')->addClass('switcher-revert'), true);
-        $this->builder->addFieldInContainer($agreement, (new TextArea())->setName('agreementText'), true);
 
         $toolbar = new Toolbar();
         $toolbar->addElement(

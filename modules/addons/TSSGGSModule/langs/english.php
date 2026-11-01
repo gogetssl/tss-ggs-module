@@ -465,7 +465,7 @@ $_LANG['admin.breadcrumbs.Settings'] = 'Settings';
 
 $_LANG['admin.settings.index.widgets.sidebar.title']           = 'Settings';
 $_LANG['admin.settings.index.widgets.sidebar.apiSettings']     = 'API Settings';
-$_LANG['admin.settings.index.widgets.sidebar.sslSettings']     = 'SSL Settings';
+$_LANG['admin.settings.index.widgets.sidebar.sslSettings']     = 'SSL Certificates';
 $_LANG['admin.settings.index.widgets.sidebar.financeSettings'] = 'Finance Settings';
 $_LANG['admin.settings.index.widgets.sidebar.cronSettings']    = 'CRON Settings';
 
@@ -493,7 +493,7 @@ $_LANG['admin.settings.index.providers.api_settings_provider.successAPI']      =
 
 //ssl settings
 //validation
-$_LANG['admin.settings.index.widgets.ssl_settings_widget.title']                            = 'SSL Settings';
+$_LANG['admin.settings.index.widgets.ssl_settings_widget.title']                            = 'SSL Certificates';
 $_LANG['admin.settings.index.forms.ssl_settings_form.sslValidation']                        = 'SSL Validation';
 $_LANG['admin.settings.index.forms.ssl_settings_form.disableEmailValidation']               = 'Disable Email Validation';
 $_LANG['admin.settings.index.forms.ssl_settings_form.disableEmailValidation_description']   = 'No Email validation will be available for all SSL certificates, only HTTP/DNS';
@@ -755,7 +755,7 @@ $_LANG['admin.configuration.shared.providers.legacy_choice_provider.option_skip'
 $_LANG['admin.configuration.shared.providers.legacy_choice_provider.saved']          = 'Saved';
 
 //general settings
-$_LANG['admin.settings.index.widgets.sidebar.generalSettings']                               = 'General Settings';
+$_LANG['admin.settings.index.widgets.sidebar.generalSettings']                               = 'General (all products)';
 $_LANG['admin.settings.index.widgets.general_settings_widget.title']                         = 'General Settings';
 $_LANG['admin.settings.index.forms.general_settings_form.clientArea']                        = 'Client Area';
 $_LANG['admin.settings.index.forms.general_settings_form.clientSummary']                     = 'SSL Summary';
@@ -1028,3 +1028,33 @@ $_LANG['admin.settings.index.forms.general_settings_form.downloadFormat_fullchai
 $_LANG['admin.settings.index.forms.general_settings_form.downloadFormat_nginx']                = 'Nginx (chained .crt)';
 $_LANG['admin.settings.index.forms.general_settings_form.downloadFormat_apache']               = 'Apache (.crt + .ca-bundle, ZIP)';
 $_LANG['admin.settings.index.forms.general_settings_form.downloadFormat_pkcs7']                = 'IIS / Tomcat (PKCS#7 .p7b)';
+$_LANG['admin.settings.index.forms.ssl_settings_form.ordering']                = 'Ordering And Agreement';
+$_LANG['admin.settings.index.forms.ssl_settings_form.delivery']                = 'Delivery And Messages';
+$_LANG['admin.settings.index.forms.ssl_settings_form.dueDates']                = 'Due Dates';
+$_LANG['admin.settings.index.forms.ssl_settings_form.autoInstall']             = 'AutoInstall (cPanel)';
+$_LANG['admin.settings.index.providers.ssl_settings_provider.moduleTemplate']  = 'Module template (Send Certificate)';
+$_LANG['admin.settings.index.widgets.automated_settings_widget.title']         = 'Automated SSL (AutoInstall, ACME and plan subscriptions)';
+$_LANG['admin.settings.index.widgets.sidebar.automatedSettings']               = 'Automated SSL';
+$_LANG['admin.settings.index.forms.ssl_settings_form.processingGuide']                   = 'Processing Guide';
+$_LANG['admin.settings.index.forms.ssl_settings_form.processingGuide_description']       = 'Shown to the client while the certificate is being validated (HTML allowed). Can be overridden per product';
+$_LANG['admin.settings.index.forms.ssl_settings_form.issuedMessage']                     = 'Issued SSL Message';
+$_LANG['admin.settings.index.forms.ssl_settings_form.issuedMessage_description']         = 'Shown to the client once the certificate is issued, e.g. installation instructions (HTML allowed). Can be overridden per product';
+$_LANG['admin.settings.index.forms.ssl_settings_form.certificateEmailTemplate']          = 'Certificate Email Template';
+$_LANG['admin.settings.index.forms.ssl_settings_form.certificateEmailTemplate_description'] = 'Template used when the certificate is sent to the client';
+$_LANG['admin.settings.index.forms.ssl_settings_form.requireAgreement']                  = 'Require Agreement';
+$_LANG['admin.settings.index.forms.ssl_settings_form.requireAgreement_description']      = 'The client has to accept the certificate authority\'s subscriber agreement before the order is placed';
+$_LANG['admin.settings.index.forms.ssl_settings_form.agreementText']                     = 'Agreement Text';
+$_LANG['admin.settings.index.forms.ssl_settings_form.agreementText_description']         = 'Optional text shown above the checkbox (HTML allowed). The link to the agreement of the product\'s certificate authority is added automatically';
+$_LANG['admin.settings.index.forms.ssl_settings_form.dueDateOffsetRegular']                  = 'Regular Certificates: Due Date Days Before Expiry';
+$_LANG['admin.settings.index.forms.ssl_settings_form.dueDateOffsetRegular_description']      = 'A single (non-subscription) certificate falls due this many days before its expiry (0 = on the expiry date). Applied the next time the order is synchronised.';
+$_LANG['admin.settings.index.forms.ssl_settings_form.dueDateOffsetSubscription']             = 'Subscriptions: Due Date Days Before End';
+$_LANG['admin.settings.index.forms.ssl_settings_form.dueDateOffsetSubscription_description'] = 'A multi-year subscription falls due this many days before the subscription ends (0 = on the end date). Applied the next time the order is synchronised.';
+$_LANG['admin.settings.index.forms.ssl_settings_form.defaultWebServer']             = 'Default Web Server Type';
+$_LANG['admin.settings.index.forms.ssl_settings_form.defaultWebServer_description'] = 'Sent with every order as webserver_type so clients are never asked. Leave empty when your gateway does not need it.';
+$_LANG['admin.settings.index.forms.ssl_settings_form.downloadFormat_zip']                  = 'All formats (ZIP)';
+$_LANG['admin.settings.index.forms.ssl_settings_form.downloadFormat_crt']                  = 'Certificate (.crt)';
+$_LANG['admin.settings.index.forms.ssl_settings_form.downloadFormat_ca']                   = 'CA bundle (.ca-bundle)';
+$_LANG['admin.settings.index.forms.ssl_settings_form.downloadFormat_fullchain']            = 'Full chain (.crt)';
+$_LANG['admin.settings.index.forms.ssl_settings_form.downloadFormat_nginx']                = 'Nginx (chained .crt)';
+$_LANG['admin.settings.index.forms.ssl_settings_form.downloadFormat_apache']               = 'Apache (.crt + .ca-bundle, ZIP)';
+$_LANG['admin.settings.index.forms.ssl_settings_form.downloadFormat_pkcs7']                = 'IIS / Tomcat (PKCS#7 .p7b)';

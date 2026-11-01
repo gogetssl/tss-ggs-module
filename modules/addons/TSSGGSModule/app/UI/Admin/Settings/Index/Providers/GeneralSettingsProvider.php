@@ -33,13 +33,29 @@ class GeneralSettingsProvider extends CrudProvider
 
     public function update()
     {
-        $data = $this->formData->toArray();
+        self::saveGeneral($this->formData->toArray());
+    }
+
+    /**
+     * Saves the posted general settings (any subset: the settings are spread over several pages) into the stored ones
+     */
+    public static function saveGeneral(array $data)
+    {
         foreach(self::SWITCHES as $key)
         {
-            $data[$key] = !empty($data[$key]) && !in_array($data[$key], ['off', 'false', '0'], true);
+            if(array_key_exists($key, $data))
+            {
+                $data[$key] = !empty($data[$key]) && !in_array($data[$key], ['off', 'false', '0'], true);
+            }
         }
-        $data['expiresSoonDays']  = max(1, (int)($data['expiresSoonDays'] ?? 30));
-        $data['sidebarTemplates'] = preg_replace('/[^a-z0-9_,-]/i', '', (string)($data['sidebarTemplates'] ?? ''));
+        if(array_key_exists('expiresSoonDays', $data))
+        {
+            $data['expiresSoonDays'] = max(1, (int)$data['expiresSoonDays']);
+        }
+        if(array_key_exists('sidebarTemplates', $data))
+        {
+            $data['sidebarTemplates'] = preg_replace('/[^a-z0-9_,-]/i', '', (string)$data['sidebarTemplates']);
+        }
 
         GeneralSettings::save($data);
     }

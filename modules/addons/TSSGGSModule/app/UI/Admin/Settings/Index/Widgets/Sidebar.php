@@ -14,10 +14,11 @@ class Sidebar extends \ModulesGarden\TSSGGSModule\Components\Sidebar\Sidebar
         $currentPage = Request::get('settings-page')?:'apiSettings';
         $pages       = [
             'apiSettings',
+            'generalSettings',
             'sslSettings',
+            'automatedSettings',
             'financeSettings',
             'cronSettings',
-            'generalSettings',
         ];
 
         foreach($pages as $page)
