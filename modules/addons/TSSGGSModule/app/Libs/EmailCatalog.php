@@ -35,7 +35,7 @@ class EmailCatalog
     /**
      * Merge fields WHMCS fills for every service e-mail (shown in the editor next to the template's own fields)
      */
-    const STANDARD_FIELDS = ['client_name', 'client_first_name', 'client_last_name', 'client_email', 'service_product_name', 'service_domain', 'service_id', 'domain', 'order_url', 'signature', 'company_name', 'whmcs_url'];
+    const STANDARD_FIELDS = ['client_name', 'client_first_name', 'client_last_name', 'client_email', 'service_product_name', 'service_domain', 'service_id', 'domain', 'order_url', 'storeorder_id', 'product_name', 'cert_expiry_date', 'subscription_end_date', 'expireDaysLeft', 'signature', 'company_name', 'whmcs_url'];
 
     protected static $all;
 
@@ -111,6 +111,10 @@ class EmailCatalog
             'cert_expiry'            => date('Y-m-d', strtotime('+20 days')),
             'days_left'              => 20,
             'expireDaysLeft'         => 15,
+            'storeorder_id'          => '123456',
+            'product_name'           => 'Example SSL certificate',
+            'cert_expiry_date'       => date('Y-m-d', strtotime('+20 days')),
+            'subscription_end_date'  => date('Y-m-d', strtotime('+20 days')),
             'error_message'          => 'The CA rejected the request (sample error)',
             'dcv_email'              => 'admin@example.com',
             'dcv_method'             => 'HTTP',

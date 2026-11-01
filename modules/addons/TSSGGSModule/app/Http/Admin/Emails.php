@@ -5,7 +5,6 @@ namespace ModulesGarden\TSSGGSModule\App\Http\Admin;
 use ModulesGarden\TSSGGSModule\App\Libs\CsrfToken;
 use ModulesGarden\TSSGGSModule\App\Libs\EmailCatalog;
 use ModulesGarden\TSSGGSModule\App\Libs\EmailManager;
-use ModulesGarden\TSSGGSModule\App\Libs\LegacyEmailImport;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Emails\Index\EmailsContainer;
 use ModulesGarden\TSSGGSModule\Core\Contracts\Controllers\AdminAreaInterface;
 use ModulesGarden\TSSGGSModule\Core\Helper;
@@ -13,7 +12,7 @@ use ModulesGarden\TSSGGSModule\Core\Http\AbstractController;
 use WHMCS\User\Admin\Permission;
 
 /**
- * Emails page: edit the module's e-mails per language, preview, test, reset, enable / disable, import legacy texts.
+ * Emails page: edit the module's e-mails per language, preview, test, reset, enable / disable.
  * Every action is POSTed with the admin token and needs the same WHMCS permission as the WHMCS e-mail template editor.
  */
 class Emails extends AbstractController implements AdminAreaInterface
@@ -64,7 +63,8 @@ class Emails extends AbstractController implements AdminAreaInterface
         return $this->run(function($key, $language) {
             $this->require(self::EDIT);
             $this->keepDraft($key, $language);
-            EmailManager::sendTest($key, $language, (string)($_POST['subject'] ?? ''), (string)($_POST['message'] ?? ''));
+            $saved = EmailManager::load($key, '');
+            EmailManager::sendTest($key, '', (string)($_POST['subject'] ?? $saved['subject']), (string)($_POST['message'] ?? $saved['message']));
 
             return 'test_sent';
         });
@@ -99,17 +99,6 @@ class Emails extends AbstractController implements AdminAreaInterface
             EmailManager::setDisabled($key, !empty($_POST['disable']));
 
             return !empty($_POST['disable']) ? 'disabled' : 'enabled';
-        });
-    }
-
-    public function import()
-    {
-        return $this->run(function($key, $language) {
-            $this->require(self::EDIT);
-            $result = LegacyEmailImport::import(array_map('strval', (array)($_POST['legacy'] ?? [])));
-            $_SESSION[self::SESSION]['count'] = $result['copied'];
-
-            return 'imported';
         });
     }
 

@@ -54,6 +54,7 @@ class LegacyEmailImport
         'reissue_link'  => 'order_url',
         'reminder_days' => 'expireDaysLeft',
         'common_name'   => 'service_domain',
+        'sso_link'      => 'order_url',
     ];
 
     /** Variables WHMCS fills for every e-mail of a service (prefixes) and a few global ones */

@@ -121,15 +121,24 @@ class EmailTemplates
     }
 
     /**
-     * Merge fields every module e-mail can use (the ones a template gets explicitly win): the service domain and the
-     * client area page of the service
+     * Merge fields every module e-mail can use (the ones a template gets explicitly win): the service domain, its client
+     * area page, the order id, the product, and the expiry / next due date with the days left
      */
     public static function commonFields($serviceId)
     {
-        $domain    = (string)\WHMCS\Database\Capsule::table('tblhosting')->where('id', (int)$serviceId)->value('domain');
+        $service   = \WHMCS\Database\Capsule::table('tblhosting')->where('id', (int)$serviceId)->first(['domain', 'nextduedate', 'packageid']);
         $systemUrl = rtrim((string)\WHMCS\Database\Capsule::table('tblconfiguration')->where('setting', 'SystemURL')->value('value'), '/');
+        $due       = $service && $service->nextduedate && $service->nextduedate !== '0000-00-00' ? (string)$service->nextduedate : '';
 
-        return ['domain' => $domain, 'order_url' => $systemUrl . '/clientarea.php?action=productdetails&id=' . (int)$serviceId];
+        return [
+            'domain'                => $service ? (string)$service->domain : '',
+            'order_url'             => $systemUrl . '/clientarea.php?action=productdetails&id=' . (int)$serviceId,
+            'storeorder_id'         => (string)\WHMCS\Database\Capsule::table('tblsslorders')->where('serviceid', (int)$serviceId)->value('remoteid'),
+            'product_name'          => $service ? (string)\WHMCS\Database\Capsule::table('tblproducts')->where('id', $service->packageid)->value('name') : '',
+            'cert_expiry_date'      => $due,
+            'subscription_end_date' => $due,
+            'expireDaysLeft'        => $due !== '' ? (int)floor((strtotime($due) - strtotime(date('Y-m-d'))) / 86400) : '',
+        ];
     }
 
     /**
