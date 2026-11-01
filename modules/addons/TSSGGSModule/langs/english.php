@@ -51,6 +51,10 @@ $_LANG['admin.home.index.widgets.system_check_widget.tasks']     = 'Scheduled ta
 $_LANG['admin.home.index.widgets.system_check_widget.never']     = 'Never';
 $_LANG['admin.home.index.widgets.system_check_widget.error']     = 'Error';
 $_LANG['admin.home.index.widgets.system_check_widget.review']    = 'Review cron configuration';
+$_LANG['admin.home.index.widgets.system_check_widget.gateway']         = 'Gateway connection';
+$_LANG['admin.home.index.widgets.system_check_widget.gateway_ok']      = 'Connected (:ms ms)';
+$_LANG['admin.home.index.widgets.system_check_widget.gateway_error']   = 'Unreachable';
+$_LANG['admin.home.index.widgets.system_check_widget.gateway_recheck'] = 'Check the connection again';
 
 $_LANG['admin.home.index.widgets.migration_widget.title']           = 'Legacy module migration';
 $_LANG['admin.home.index.widgets.migration_widget.intro']           = 'Move your existing SSL services to this module.';
