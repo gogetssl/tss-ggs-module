@@ -8,7 +8,7 @@ use WHMCS\Database\Capsule;
 
 class GeneralSettingsProvider extends CrudProvider
 {
-    const SWITCHES = ['clientSummary', 'certificatesByDomain', 'whmcsActivityLog', 'moduleLog', 'terminateCancelsOrder', 'requireAgreement'];
+    const SWITCHES = ['clientSummary', 'certificatesByDomain', 'whmcsActivityLog', 'moduleLog', 'terminateCancelsOrder', 'requireAgreement', 'keepMarginOnSync', 'belowCostEmail'];
 
     public function read()
     {

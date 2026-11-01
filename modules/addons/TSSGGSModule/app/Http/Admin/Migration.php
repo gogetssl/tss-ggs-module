@@ -190,9 +190,7 @@ class Migration extends AbstractController implements AdminAreaInterface
     protected function requireToken(): void
     {
         // WHMCS admin links carry the token in the query string (generate_token('link')); the runner posts it
-        $token = (string)($_REQUEST['token'] ?? '');
-        $valid = (string)($_SESSION['tkval'] ?? '');
-        if($token === '' || $valid === '' || !hash_equals($valid, $token))
+        if(!\ModulesGarden\TSSGGSModule\App\Libs\CsrfToken::valid($_REQUEST['token'] ?? ''))
         {
             throw new \RuntimeException('Invalid or expired security token. Reload the page and try again.');
         }

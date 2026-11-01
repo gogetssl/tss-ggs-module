@@ -22,9 +22,7 @@ class CertificateLog extends AbstractController implements AdminAreaInterface
     /** GET older=<days>|all with the admin link token */
     public function clear()
     {
-        $token = (string)($_REQUEST['token'] ?? '');
-        $valid = (string)($_SESSION['tkval'] ?? '');
-        if($token !== '' && $valid !== '' && hash_equals($valid, $token))
+        if(\ModulesGarden\TSSGGSModule\App\Libs\CsrfToken::valid($_REQUEST['token'] ?? ''))
         {
             AutoInstallQueue::createTables();
             $query = Capsule::table(AutoInstallQueue::LOGS_TABLE);

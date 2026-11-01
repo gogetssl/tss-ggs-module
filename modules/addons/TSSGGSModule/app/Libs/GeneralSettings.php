@@ -26,6 +26,9 @@ class GeneralSettings
         'moduleLog'                => true,
         // Lifecycle
         'terminateCancelsOrder'    => true,
+        // Pricing
+        'keepMarginOnSync'         => false,
+        'belowCostEmail'           => true,
     ];
 
     protected static $settings;

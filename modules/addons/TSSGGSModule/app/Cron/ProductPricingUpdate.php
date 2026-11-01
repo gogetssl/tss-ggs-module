@@ -4,6 +4,8 @@ namespace ModulesGarden\TSSGGSModule\App\Cron;
 
 use Exception;
 use ModulesGarden\TSSGGSModule\App\Libs\Helpers;
+use ModulesGarden\TSSGGSModule\App\Libs\GeneralSettings;
+use ModulesGarden\TSSGGSModule\App\Libs\PricingService;
 use ModulesGarden\TSSGGSModule\App\Libs\ProductSettings;
 use ModulesGarden\TSSGGSModule\App\Libs\SSLTrustCenterApi;
 use ModulesGarden\TSSGGSModule\App\Models\CronCheck;
@@ -232,6 +234,18 @@ class ProductPricingUpdate extends AbstractCommand
 
                     Logger::info("Configurable Options Pricing for product #{$whmcsProduct->id} has been updated");
                 }
+            }
+
+            // Manual prices follow cost changes (same margin); admins hear about prices below cost
+            $pricing = new PricingService();
+            $kept    = $pricing->keepMargins(GeneralSettings::enabled('keepMarginOnSync'));
+            if($kept)
+            {
+                Logger::info("Manual prices adjusted to keep the margin: {$kept}");
+            }
+            if(GeneralSettings::enabled('belowCostEmail'))
+            {
+                $pricing->notifyBelowCost();
             }
         }
         catch(\Throwable $exception)

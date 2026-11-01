@@ -2676,10 +2676,7 @@ class home extends AbstractController
      */
     private function requireCsrfToken()
     {
-        $token = isset($_POST['token']) ? (string)$_POST['token'] : '';
-        $valid = isset($_SESSION['tkval']) ? (string)$_SESSION['tkval'] : '';
-
-        if($_SERVER['REQUEST_METHOD'] !== 'POST' || $token === '' || $valid === '' || !hash_equals($valid, $token))
+        if($_SERVER['REQUEST_METHOD'] !== 'POST' || !\ModulesGarden\TSSGGSModule\App\Libs\CsrfToken::valid($_POST['token'] ?? ''))
         {
             throw new \Exception(Lang::absoluteT('invalidCsrfToken'));
         }

@@ -55,6 +55,10 @@ class GeneralSettingsForm extends Form implements AdminAreaInterface, AjaxCompon
         $lifecycle = $this->widget($left, 'lifecycle');
         $this->builder->addFieldInContainer($lifecycle, (new Switcher())->setName('terminateCancelsOrder')->addClass('switcher-revert'), true);
 
+        $pricing = $this->widget($left, 'pricing');
+        $this->builder->addFieldInContainer($pricing, (new Switcher())->setName('keepMarginOnSync')->addClass('switcher-revert'), true);
+        $this->builder->addFieldInContainer($pricing, (new Switcher())->setName('belowCostEmail')->addClass('switcher-revert'), true);
+
         $messages = $this->widget($right, 'messages');
         $this->builder->addFieldInContainer($messages, (new TextArea())->setName('processingGuide'), true);
         $this->builder->addFieldInContainer($messages, (new TextArea())->setName('issuedMessage'), true);
