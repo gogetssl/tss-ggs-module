@@ -692,7 +692,7 @@ class home extends AbstractController
         }
         $aiState                     = AutoInstallHelpers::get($params['service']->id);
         $vars['install_key_stored']  = !empty($aiState['private_key']);
-        $vars['install_domain']      = !empty($aiState['domain']) ? $aiState['domain'] : ltrim((string)$params['service']->domain, '*.');
+        $vars['install_domain']      = !empty($aiState['domain']) ? $aiState['domain'] : (CertificateService::installTarget($params['service']->id) ?: ltrim((string)$params['service']->domain, '*.'));
         $vars['install_available']   = !empty($vars['cpanel_services']) && (empty($vars['autoinstall']) || $vars['autoinstall']['status'] !== 'installed');
 
         return ['tpl' => 'certificate_active', 'vars' => $vars];

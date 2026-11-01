@@ -6,6 +6,7 @@ use ModulesGarden\Servers\TSSGGSModule\app\models\whmcs\Service;
 use ModulesGarden\Servers\TSSGGSModule\app\models\whmcs\SSL;
 use ModulesGarden\TSSGGSModule\App\Libs\AcmeHelpers;
 use ModulesGarden\TSSGGSModule\App\Libs\AutoInstallHelpers;
+use ModulesGarden\TSSGGSModule\App\Libs\CertificateService;
 use ModulesGarden\TSSGGSModule\App\Libs\SSLTrustCenterApi;
 use ModulesGarden\TSSGGSModule\App\Models\Request;
 use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
@@ -62,7 +63,7 @@ class Renew
             $days = round($datediff / (60 * 60 * 24));
 
             $requestRenew['renewal']['prior_order_id'] = $sslOrder->remoteid;
-            $requestRenew['renewal']['remaining_days'] = $days > 0 ? $days+1 : 0;
+            $requestRenew['renewal']['remaining_days'] = CertificateService::renewalDays($serviceId, $days > 0 ? $days + 1 : 0);
 
             $newOrder  = $api->renewOrder($serviceId, $requestRenew);
             $newItemId = SSLTrustCenterApi::getItemId($newOrder);
@@ -149,7 +150,7 @@ class Renew
                 $datediff = $nextduedate - $now;
                 $days = round($datediff / (60 * 60 * 24));
                 $requestRenew['renewal']['prior_order_id'] = $sslOrder->remoteid;
-                $requestRenew['renewal']['remaining_days'] = $days > 0 ? $days+1 : 0;
+                $requestRenew['renewal']['remaining_days'] = CertificateService::renewalDays($serviceId, $days > 0 ? $days + 1 : 0);
 
                 $newOrder = $api->renewOrder($newServiceId, $requestRenew);
                 $newItemId = SSLTrustCenterApi::getItemId($newOrder);

@@ -551,6 +551,96 @@ class CertificateService
         self::event($serviceId, 'success', '[Install] Certificate installed on cPanel - domain: ' . $domain . ' | server: ' . $cpanelService->hostname, $userId);
     }
 
+    // ---- Install target chosen by the administrator for services without AutoInstall ---- //
+
+    public static function installTarget($serviceId)
+    {
+        $value = Request::where('serviceid', (int)$serviceId)->where('name', 'installTarget')->value('request');
+
+        return $value === null || $value === '' ? null : (string)$value;
+    }
+
+    public static function setInstallTarget($serviceId, $domain)
+    {
+        $domain = strtolower(trim((string)$domain));
+        if($domain === '')
+        {
+            Request::where('serviceid', (int)$serviceId)->where('name', 'installTarget')->delete();
+
+            return;
+        }
+        if(!preg_match('/^[a-z0-9.-]+\.[a-z0-9-]+$/', $domain))
+        {
+            throw new \InvalidArgumentException('Install target "' . $domain . '" is not a valid domain');
+        }
+        Request::updateOrInsert(['serviceid' => (int)$serviceId, 'name' => 'installTarget'],
+            ['request' => $domain, 'status' => 'set', 'created_at' => date('Y-m-d H:i:s'), 'updated_at' => date('Y-m-d H:i:s')]);
+        self::event($serviceId, 'info', 'Install target set to ' . $domain . ' by the administrator');
+    }
+
+    // ---- Renewal "additional days" (days of the current certificate carried over to the renewal) ---- //
+
+    const RENEWAL_DAYS_MAX = 30;
+
+    /**
+     * Per-service override, null = not set
+     */
+    public static function renewalDaysOverride($serviceId)
+    {
+        $value = Request::where('serviceid', (int)$serviceId)->where('name', 'renewalDays')->value('request');
+
+        return $value === null || $value === '' ? null : (int)$value;
+    }
+
+    public static function setRenewalDaysOverride($serviceId, $days)
+    {
+        if($days === null || trim((string)$days) === '')
+        {
+            Request::where('serviceid', (int)$serviceId)->where('name', 'renewalDays')->delete();
+
+            return;
+        }
+        if(!ctype_digit(trim((string)$days)) || (int)$days > self::RENEWAL_DAYS_MAX)
+        {
+            throw new \InvalidArgumentException('Additional days must be between 0 and ' . self::RENEWAL_DAYS_MAX);
+        }
+        Request::updateOrInsert(['serviceid' => (int)$serviceId, 'name' => 'renewalDays'],
+            ['request' => (string)(int)$days, 'status' => 'set', 'created_at' => date('Y-m-d H:i:s'), 'updated_at' => date('Y-m-d H:i:s')]);
+    }
+
+    /**
+     * Days sent with a Sectigo renewal order: the service override, then the "Additional Days For Renewal Order" setting,
+     * otherwise (and for every other CA) the days left on the current certificate
+     */
+    public static function renewalDays($serviceId, $remainingDays)
+    {
+        $packageId = (int)Capsule::table('tblhosting')->where('id', (int)$serviceId)->value('packageid');
+        if(!$packageId || !self::isSectigo($packageId))
+        {
+            return max(0, (int)$remainingDays);
+        }
+
+        $override = self::renewalDaysOverride($serviceId);
+        if($override !== null)
+        {
+            return $override;
+        }
+        $global = (int)((new AddonModuleRepository())->getModuleConfiguration()['sslSettings']['additionalDaysForRenewalOrder'] ?? 0);
+
+        return $global > 0 ? $global : max(0, (int)$remainingDays);
+    }
+
+    /**
+     * Sectigo (Comodo) brands - the CA that honours the additional renewal days
+     */
+    public static function isSectigo($packageId)
+    {
+        $product = (new ProductRepository())->getProductConfiguration($packageId);
+        $brand   = strtolower((string)$product['brand'] . ' ' . (string)RemoteProduct::where('remoteId', $product['product_id'])->where('vendor', $product['provider'])->value('brand'));
+
+        return (bool)preg_match('/sectigo|comodo|positivessl|instantssl|essentialssl|enterprisessl/', $brand);
+    }
+
     /**
      * Subscriber agreement the client accepts before the order is placed, null when not required.
      * The link points to the legal repository of the product's certificate authority.

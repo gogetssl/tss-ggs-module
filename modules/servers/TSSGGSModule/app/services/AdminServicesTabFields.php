@@ -6,6 +6,7 @@ use ModulesGarden\Servers\TSSGGSModule\app\models\whmcs\SSL;
 use ModulesGarden\TSSGGSModule\App\Libs\AutoInstallHelpers;
 use ModulesGarden\TSSGGSModule\App\Libs\AutoInstallQueue;
 use ModulesGarden\TSSGGSModule\App\Libs\CertificateService;
+use ModulesGarden\TSSGGSModule\App\Libs\Cpanel;
 use ModulesGarden\TSSGGSModule\App\Libs\Helpers;
 use ModulesGarden\TSSGGSModule\App\Models\Request;
 
@@ -42,7 +43,15 @@ class AdminServicesTabFields
                 return ['Gateway Item ID' => (int)$sslService->remoteid];
             }
 
-            return array_merge($this->getCertificateDetails($params, $sslService), $this->getAutoInstallDetails($params['serviceid']));
+            $fields = array_merge($this->getCertificateDetails($params, $sslService), $this->getAutoInstallDetails($params['serviceid'], (int)$params['userid']));
+            if(CertificateService::isSectigo($params['packageid']))
+            {
+                $override = CertificateService::renewalDaysOverride($params['serviceid']);
+                $fields['Renewal Additional Days'] = '<input name="tssggs_renewal_days" class="form-control input-sm" style="display:inline-block;width:80px;" value="' . ($override === null ? '' : (int)$override) . '" placeholder="auto">'
+                    . ' <small class="text-muted">0-' . CertificateService::RENEWAL_DAYS_MAX . ' days carried over to the renewal order (Sectigo). Empty = the global setting, or the days left on the certificate.</small>';
+            }
+
+            return $fields;
         }
         catch(\Exception $ex)
         {
@@ -142,7 +151,7 @@ class AdminServicesTabFields
         return $html . '</table>';
     }
 
-    private function getAutoInstallDetails($serviceId)
+    private function getAutoInstallDetails($serviceId, $userId)
     {
         try
         {
@@ -153,10 +162,25 @@ class AdminServicesTabFields
             return [];
         }
 
-        $target = '<input name="tssggs_install_domain" class="form-control input-sm" style="display:inline-block;width:260px;" value="' . htmlspecialchars($autoInstall ? $autoInstall['domain'] : '') . '" placeholder="domain on the client\'s cPanel account"' . ($autoInstall ? '' : ' disabled') . '>'
+        // Suggestions: main domains of the client's cPanel accounts (no cPanel call on page load)
+        $options = '';
+        try
+        {
+            foreach(Cpanel::getServices($userId) as $cpanelService)
+            {
+                $options .= '<option value="' . htmlspecialchars($cpanelService->domain) . '">' . htmlspecialchars($cpanelService->name . ' - ' . $cpanelService->hostname) . '</option>';
+            }
+        }
+        catch(\Throwable $e)
+        {
+        }
+
+        $current = $autoInstall ? $autoInstall['domain'] : (string)CertificateService::installTarget($serviceId);
+        $target  = '<input name="tssggs_install_domain" list="tssggs-install-targets" class="form-control input-sm" style="display:inline-block;width:260px;" value="' . htmlspecialchars($current) . '" placeholder="domain on the client\'s cPanel account">'
+            . '<datalist id="tssggs-install-targets">' . $options . '</datalist>'
             . ' <small class="text-muted">' . ($autoInstall
                 ? 'Domain the certificate is installed on (AutoInstall). Changing it re-queues the installation.'
-                : 'The client can install the issued certificate with "Install on server" in the client area.') . '</small>';
+                : 'Default domain for "Install on server" in the client area' . ($options === '' ? ' - the client has no active cPanel account' : '') . '.') . '</small>';
 
         if(!$autoInstall)
         {
@@ -235,8 +259,17 @@ class AdminServicesTabFields
                 CertificateService::changeValidation($serviceId, $methods);
             }
 
+            if(isset($_POST['tssggs_renewal_days']))
+            {
+                CertificateService::setRenewalDaysOverride($serviceId, $_POST['tssggs_renewal_days']);
+            }
+
             $installDomain = strtolower(trim((string)($_POST['tssggs_install_domain'] ?? '')));
             $state         = AutoInstallHelpers::get($serviceId);
+            if(!$state && isset($_POST['tssggs_install_domain']) && $installDomain !== (string)CertificateService::installTarget($serviceId))
+            {
+                CertificateService::setInstallTarget($serviceId, $installDomain);
+            }
             if($installDomain !== '' && $state && $installDomain !== $state['domain'])
             {
                 $state['domain'] = $installDomain;

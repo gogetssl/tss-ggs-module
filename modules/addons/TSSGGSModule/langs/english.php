@@ -556,7 +556,7 @@ $_LANG['admin.settings.index.forms.ssl_settings_form.visibleRenewButtonAfterExpi
 $_LANG['admin.settings.index.forms.ssl_settings_form.renewOrderViaExistingOrder']                               = 'Renew Order Via Existing Order';
 $_LANG['admin.settings.index.forms.ssl_settings_form.automaticProcessingOfRenewalOrders']                       = 'Automatic Process of Renewal Orders';
 $_LANG['admin.settings.index.forms.ssl_settings_form.setTheUnpaidStatusForRenewalInvoices']                     = 'Set The Unpaid Status For Renewal Invoices';
-$_LANG['admin.settings.index.forms.ssl_settings_form.additionalDaysForRenewalOrder']                            = 'Additional Days For Renewal Order';
+$_LANG['admin.settings.index.forms.ssl_settings_form.additionalDaysForRenewalOrder']                            = 'Additional Days For Renewal Order (Sectigo)';
 $_LANG['admin.settings.index.forms.ssl_settings_form.autoReissueDaysBeforeExpire']                              = 'Auto Reissue Days Before Expiration';
 $_LANG['admin.settings.index.forms.ssl_settings_form.autoReissueDaysBeforeExpire_description']                  = 'AutoInstall (cPanel) certificates are reissued automatically this many days before the certificate expires, as long as the subscription continues. 0 disables automatic reissue. Default: 7';
 $_LANG['admin.settings.index.forms.ssl_settings_form.recurringCreateAutomaticRenewalInvoice']                   = 'Create Automatic Renewal Invoice';
