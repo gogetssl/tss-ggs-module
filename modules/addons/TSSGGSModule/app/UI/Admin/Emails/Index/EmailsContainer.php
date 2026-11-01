@@ -12,6 +12,7 @@ use ModulesGarden\TSSGGSModule\Core\Translation\TranslatorTrait;
 
 /**
  * Admin page "Emails": the module's client e-mails by event, edited per language where WHMCS keeps them.
+ * The text is edited with the TinyMCE that ships with WHMCS (assets/js/tinymce), like on WHMCS's own template page.
  * (Texts of the legacy modules are copied by the migration itself.)
  */
 class EmailsContainer extends Container implements AdminAreaInterface
@@ -19,9 +20,12 @@ class EmailsContainer extends Container implements AdminAreaInterface
     use TranslatorTrait;
 
     const BASE = 'addonmodules.php?module=TSSGGSModule&mg-page=emails';
-    /** Runs when the WHMCS template page has loaded in the frame: hides its admin chrome and fits the frame to the content */
-    const FRAME_JS = "var d=this.contentDocument,s=d.createElement('style');s.textContent='.global-admin-warning,.navigation,#sidebar,#sidebarOpener,.footerbar,#intelligentSearchResults{display:none!important}.contentarea{margin:0!important;padding:0!important;min-height:0!important}body{background:#fff!important;padding:0!important}';d.head.appendChild(s);this.style.height=Math.max(600,d.documentElement.scrollHeight+20)+'px';";
 
+    /**
+     * Page script, run by the onerror of an image (scripts in the rendered text are not executed): loads WHMCS's TinyMCE
+     * and defines tssggsRich(on) and tssggsInsert(text) for the toggle and the merge-field chips
+     */
+    const EDITOR_JS = "var id='tssggs-email-message';window.tssggsRich=function(on){if(on){if(window.tinymce&&!tinymce.get(id)){tinymce.init({selector:'#'+id,height:420,menubar:false,branding:false,plugins:'link lists code table autolink',toolbar:'undo redo | styleselect bold italic underline | alignleft aligncenter alignright | bullist numlist | link table | code',relative_urls:false,convert_urls:false,remove_script_host:false,verify_html:false,entity_encoding:'raw'})}}else if(window.tinymce&&tinymce.get(id)){tinymce.get(id).remove()}};window.tssggsInsert=function(t){var e=window.tinymce&&tinymce.get(id);if(e){e.insertContent(t)}else{var a=document.getElementById(id),s=a.selectionStart;a.value=a.value.slice(0,s)+t+a.value.slice(a.selectionEnd);a.focus()}};var s=document.createElement('script');s.src='../assets/js/tinymce/tinymce.min.js';s.onload=function(){tssggsRich(document.getElementById('tssggs-rich').checked)};document.head.appendChild(s);";
 
     public function loadHtml(): void
     {
@@ -46,7 +50,7 @@ class EmailsContainer extends Container implements AdminAreaInterface
         $overview  = EmailManager::overview();
         $key       = isset($_GET['key']) && isset($overview[$_GET['key']]) ? $_GET['key'] : (isset($session['draft']['key']) && isset($overview[$session['draft']['key']]) ? $session['draft']['key'] : array_key_first($overview));
         $languages = EmailManager::languages();
-        $language  = strtolower((string)($_GET['lang'] ?? ''));
+        $language  = strtolower((string)($_GET['lang'] ?? ($session['draft']['lang'] ?? '')));
         $language  = in_array($language, $languages, true) ? $language : '';
 
         $html = '';
@@ -60,11 +64,11 @@ class EmailsContainer extends Container implements AdminAreaInterface
         }
 
         return $html . '<p class="tssggs-muted">' . $this->e($this->t('intro')) . '</p>'
-            . '<div class="em-layout"><div class="em-card em-nav">' . $this->nav($overview, $key, $language) . '</div>'
-            . '<div class="em-card">' . $this->editor($overview[$key], $session) . '</div></div>';
+            . '<div class="em-layout"><div class="em-card em-nav">' . $this->nav($overview, $key) . '</div>'
+            . '<div class="em-card">' . $this->editor($overview[$key], $language, $languages, $session) . '</div></div>';
     }
 
-    protected function nav(array $overview, $current, $language)
+    protected function nav(array $overview, $current)
     {
         $groups = [];
         foreach($overview as $row)
@@ -85,7 +89,7 @@ class EmailsContainer extends Container implements AdminAreaInterface
                 $tags = ($row['disabled'] ? $this->tag($this->t('badge_disabled'), 'is-off') : '')
                     . (!$row['sent'] ? $this->tag($this->t('badge_unused'), '') : '')
                     . ($row['customised'] && !$row['disabled'] ? $this->tag($this->t('badge_customised'), 'is-edited') : '');
-                $html .= '<a class="' . ($row['key'] === $current ? 'is-current' : '') . '" href="' . self::BASE . '&key=' . rawurlencode($row['key']) . ($language !== '' ? '&lang=' . rawurlencode($language) : '') . '"><span>'
+                $html .= '<a class="' . ($row['key'] === $current ? 'is-current' : '') . '" href="' . self::BASE . '&key=' . rawurlencode($row['key']) . '"><span>'
                     . $this->e($this->t('name_' . $row['slug'])) . '</span><span>' . $tags . '</span></a>';
             }
         }
@@ -93,53 +97,134 @@ class EmailsContainer extends Container implements AdminAreaInterface
         return $html;
     }
 
-    /**
-     * The editor is WHMCS's own template page (visual editor, From / Copy to / Blind copy, attachments, plain text,
-     * languages) in a frame with its admin chrome hidden; this page adds the module's extras below it
-     */
-    protected function editor(array $row, array $session)
+    protected function editor(array $row, $language, array $languages, array $session)
     {
         $key   = $row['key'];
+        $draft = isset($session['draft']) && $session['draft']['key'] === $key && $session['draft']['lang'] === $language ? $session['draft'] : null;
+        $data  = EmailManager::load($key, $language);
+        $text  = $draft ? $draft + $data : $data;
         $token = function_exists('generate_token') ? \generate_token('plain') : '';
         $can   = EmailsController::can(EmailsController::EDIT);
-        $id    = (int)\WHMCS\Database\Capsule::table(EmailManager::TABLE)->where('name', $row['name'])->where('language', '')->value('id');
+        $ro    = $can ? '' : ' readonly';
 
         $html = '<div class="em-head"><h3>' . $this->e($this->t('name_' . $row['slug'])) . '</h3><p>' . $this->e($this->t('when_' . $row['slug'])) . '</p>'
-            . '<p class="tssggs-muted">' . $this->e($this->t('whmcs_name')) . ' <code>' . $this->e($row['name']) . '</code></p></div>';
+            . '<p class="tssggs-muted">' . $this->e($this->t('whmcs_name')) . ' <code>' . $this->e($row['name']) . '</code></p></div>'
+            . $this->tabs($row, $language, $languages);
 
-        if($row['disabled'])
+        if($language !== '' && !$data['own'])
         {
-            $html .= '<div class="tssggs-note is-warn">' . $this->e($this->t('notice_disabled')) . '</div>';
+            $html .= '<div class="tssggs-note is-warn">' . $this->e($this->t('language_new', ['language' => ucfirst($language)])) . '</div>';
         }
-        if(!$row['sent'])
+        elseif($language === '')
         {
-            $html .= '<div class="tssggs-note">' . $this->e($this->t('badge_unused')) . '</div>';
+            $html .= '<p class="tssggs-muted" style="margin-top:0">' . $this->e($this->t('language_default_hint')) . '</p>';
         }
 
-        $html .= '<iframe class="em-frame" id="tssggs-email-frame" src="configemailtemplates.php?action=edit&amp;id=' . $id . '" onload="' . $this->e(self::FRAME_JS) . '"></iframe>'
-            . '<div class="em-fields"><small>' . $this->e($this->t('fields_own')) . '</small>';
+        $html .= '<form method="post" action="' . self::BASE . '&mg-action=save" onsubmit="if(window.tinymce){tinymce.triggerSave()}">'
+            . '<input type="hidden" name="token" value="' . $this->e($token) . '"><input type="hidden" name="key" value="' . $this->e($key) . '"><input type="hidden" name="lang" value="' . $this->e($language) . '">';
+
+        // sender, copies, plain text and disabled belong to the default text only (as in WHMCS)
+        if($language === '')
+        {
+            $html .= '<div class="em-opts">'
+                . '<label>' . $this->e($this->t('opt_from')) . '</label><span class="em-inline"><input class="form-control" name="fromname" placeholder="' . $this->e($this->t('opt_from_name')) . '" value="' . $this->e($text['fromname']) . '"' . $ro . '>'
+                . '<input class="form-control" name="fromemail" placeholder="' . $this->e($this->t('opt_from_email')) . '" value="' . $this->e($text['fromemail']) . '"' . $ro . '></span>'
+                . '<label>' . $this->e($this->t('opt_copy')) . '</label><input class="form-control" name="copyto" placeholder="' . $this->e($this->t('opt_list_hint')) . '" value="' . $this->e($text['copyto']) . '"' . $ro . '>'
+                . '<label>' . $this->e($this->t('opt_blind')) . '</label><input class="form-control" name="blind_copy_to" placeholder="' . $this->e($this->t('opt_list_hint')) . '" value="' . $this->e($text['blind_copy_to']) . '"' . $ro . '>'
+                . '<label>' . $this->e($this->t('opt_plain')) . '</label><span><input type="checkbox" name="plaintext" value="1"' . (!empty($text['plaintext']) ? ' checked' : '') . ($can ? '' : ' disabled') . ' onchange="document.getElementById(\'tssggs-rich\').checked=!this.checked;tssggsRich(!this.checked)"> ' . $this->e($this->t('opt_plain_hint')) . '</span>'
+                . '<label>' . $this->e($this->t('opt_disable')) . '</label><span><input type="checkbox" name="disabled" value="1"' . ($row['disabled'] ? ' checked' : '') . ($can ? '' : ' disabled') . '> ' . $this->e($this->t('opt_disable_hint')) . '</span>'
+                . '</div>';
+        }
+
+        $html .= '<label class="em-label">' . $this->e($this->t('subject')) . '</label>'
+            . '<input class="form-control" name="subject" value="' . $this->e($text['subject']) . '"' . $ro . '>'
+            . '<div class="em-labelrow"><label class="em-label">' . $this->e($this->t('message')) . '</label>'
+            . '<label class="em-rich"><input type="checkbox" id="tssggs-rich" onchange="tssggsRich(this.checked)"' . (empty($text['plaintext']) ? ' checked' : '') . '> ' . $this->e($this->t('rich_editor')) . '</label></div>'
+            . '<textarea class="form-control em-message" id="tssggs-email-message" name="message"' . $ro . '>' . $this->e($text['message']) . '</textarea>'
+            . $this->fields($row)
+            . '<img src="x:x" alt="" style="display:none" onerror="' . $this->e(self::EDITOR_JS) . '">';
+
+        if($can)
+        {
+            $html .= '<div class="em-bar">'
+                . $this->button($this->t('save'), 'lu-btn lu-btn--success', 'save')
+                . $this->button($this->t('preview'), 'lu-btn lu-btn--default', 'preview')
+                . $this->button($this->t('test'), 'lu-btn lu-btn--default', 'test', $this->t('confirm_test'))
+                . '<span class="em-spacer"></span>';
+            if($language === '')
+            {
+                $html .= $this->button($this->t('reset'), 'lu-btn lu-btn--default is-danger', 'reset', $this->t('confirm_reset'));
+            }
+            elseif($data['own'])
+            {
+                $html .= $this->button($this->t('remove_language', ['language' => ucfirst($language)]), 'lu-btn lu-btn--default is-danger', 'removeLanguage', $this->t('confirm_remove_language'));
+            }
+            $html .= '</div>';
+        }
+        $html .= '</form>';
+
+        if(!empty($session['preview']))
+        {
+            $html .= '<div class="em-preview"><label class="em-label">' . $this->e($this->t('preview_title')) . '</label><p><strong>' . $this->e($this->t('subject')) . ':</strong> ' . $this->e($session['preview']['subject']) . '</p>'
+                . '<iframe sandbox="" srcdoc="' . $this->e($session['preview']['body']) . '"></iframe>'
+                . '<p class="tssggs-muted">' . $this->e($this->t('preview_hint')) . '</p></div>';
+        }
+
+        return $html;
+    }
+
+    /**
+     * Default + the languages that have a text of their own as tabs; the rest in one "add language" list
+     */
+    protected function tabs(array $row, $language, array $languages)
+    {
+        $link = function($lang) use ($row) {
+            return self::BASE . '&key=' . rawurlencode($row['key']) . ($lang !== '' ? '&lang=' . rawurlencode($lang) : '');
+        };
+        $html = '<div class="em-tabs"><a class="' . ($language === '' ? 'is-current' : '') . '" href="' . $link('') . '">' . $this->e($this->t('language_tab_default')) . '</a>';
+        $free = [];
+        foreach($languages as $name)
+        {
+            if(in_array($name, $row['languages'], true) || $name === $language)
+            {
+                $html .= '<a class="' . ($name === $language ? 'is-current' : '') . '" href="' . $link($name) . '">' . $this->e(ucfirst($name)) . '</a>';
+            }
+            else
+            {
+                $free[] = $name;
+            }
+        }
+        if($free && EmailsController::can(EmailsController::EDIT))
+        {
+            $html .= '<select class="form-control" onchange="if(this.value){location.href=this.value}"><option value="">+ ' . $this->e($this->t('add_language')) . '</option>';
+            foreach($free as $name)
+            {
+                $html .= '<option value="' . $this->e($link($name)) . '">' . $this->e(ucfirst($name)) . '</option>';
+            }
+            $html .= '</select>';
+        }
+
+        return $html . '</div>';
+    }
+
+    protected function fields(array $row)
+    {
+        $chip = function($name, $own) {
+            return '<a href="#" class="em-chip' . ($own ? ' is-own' : '') . '" onclick="tssggsInsert(' . $this->e(json_encode('{$' . $name . '}')) . ');return false;">' . $this->e('{$' . $name . '}') . '</a>';
+        };
+
+        $html = '<div class="em-fields"><small>' . $this->e($this->t('fields_own')) . '</small>';
         foreach($row['fields'] as $name)
         {
-            $html .= '<code class="em-chip is-own">{$' . $this->e($name) . '}</code>';
+            $html .= $chip($name, true);
         }
         $html .= '<small>' . $this->e($this->t('fields_standard')) . '</small>';
         foreach(array_diff(EmailCatalog::STANDARD_FIELDS, $row['fields']) as $name)
         {
-            $html .= '<code class="em-chip">{$' . $this->e($name) . '}</code>';
-        }
-        $html .= '</div>';
-
-        if($can)
-        {
-            $html .= '<form method="post" class="em-bar" action="' . self::BASE . '"><input type="hidden" name="token" value="' . $this->e($token) . '"><input type="hidden" name="key" value="' . $this->e($key) . '"><input type="hidden" name="lang" value="">'
-                . $this->button($this->t('test'), 'lu-btn lu-btn--default', 'test', $this->t('confirm_test'))
-                . '<span class="em-spacer"></span>'
-                . '<button class="lu-btn lu-btn--default" type="submit" formaction="' . self::BASE . '&mg-action=toggle" name="disable" value="' . ($row['disabled'] ? '0' : '1') . '">' . $this->e($row['disabled'] ? $this->t('enable') : $this->t('disable')) . '</button>'
-                . $this->button($this->t('reset'), 'lu-btn lu-btn--default is-danger', 'reset', $this->t('confirm_reset'))
-                . '</form>';
+            $html .= $chip($name, false);
         }
 
-        return $html;
+        return $html . '</div>';
     }
 
     protected function button($label, $class, $action, $confirm = '')

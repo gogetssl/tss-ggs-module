@@ -39,7 +39,7 @@ class Emails extends AbstractController implements AdminAreaInterface
             $this->require(self::EDIT);
             $this->requireLanguagePermission($language);
             $this->keepDraft($key, $language);
-            EmailManager::save($key, $language, $_POST['subject'] ?? '', $_POST['message'] ?? '');
+            EmailManager::save($key, $language, $_POST['subject'] ?? '', $_POST['message'] ?? '', $language === '' ? EmailManager::options($_POST) : []);
             $this->forgetDraft();
 
             return 'saved';
@@ -63,8 +63,8 @@ class Emails extends AbstractController implements AdminAreaInterface
         return $this->run(function($key, $language) {
             $this->require(self::EDIT);
             $this->keepDraft($key, $language);
-            $saved = EmailManager::load($key, '');
-            EmailManager::sendTest($key, '', (string)($_POST['subject'] ?? $saved['subject']), (string)($_POST['message'] ?? $saved['message']));
+            $saved = EmailManager::load($key, $language);
+            EmailManager::sendTest($key, $language, (string)($_POST['subject'] ?? $saved['subject']), (string)($_POST['message'] ?? $saved['message']));
 
             return 'test_sent';
         });
@@ -160,7 +160,8 @@ class Emails extends AbstractController implements AdminAreaInterface
      */
     protected function keepDraft($key, $language)
     {
-        $_SESSION[self::SESSION]['draft'] = ['key' => $key, 'lang' => $language, 'subject' => (string)($_POST['subject'] ?? ''), 'message' => (string)($_POST['message'] ?? '')];
+        $_SESSION[self::SESSION]['draft'] = ['key' => $key, 'lang' => $language, 'subject' => (string)($_POST['subject'] ?? ''), 'message' => (string)($_POST['message'] ?? '')]
+            + array_map('strval', array_intersect_key($_POST, array_flip(['fromname', 'fromemail', 'copyto', 'blind_copy_to', 'plaintext', 'disabled'])));
     }
 
     protected function forgetDraft()

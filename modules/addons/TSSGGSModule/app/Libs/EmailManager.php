@@ -105,13 +105,54 @@ class EmailManager
             $row = Capsule::table(self::TABLE)->where('name', $name)->where('language', '')->first();
         }
 
-        return ['subject' => $row ? (string)$row->subject : '', 'message' => $row ? (string)$row->message : '', 'own' => $own, 'disabled' => $row && (int)$row->disabled === 1];
+        // sender, copies and plain-text belong to the default text (WHMCS ignores them on language versions)
+        $default = Capsule::table(self::TABLE)->where('name', $name)->where('language', '')->first();
+
+        return [
+            'subject'       => $row ? (string)$row->subject : '',
+            'message'       => $row ? (string)$row->message : '',
+            'own'           => $own,
+            'disabled'      => $row && (int)$row->disabled === 1,
+            'fromname'      => $default ? (string)$default->fromname : '',
+            'fromemail'     => $default ? (string)$default->fromemail : '',
+            'copyto'        => $default ? (string)$default->copyto : '',
+            'blind_copy_to' => $default ? (string)$default->blind_copy_to : '',
+            'plaintext'     => $default && (int)$default->plaintext === 1,
+        ];
+    }
+
+    /**
+     * Sender / copy / plain-text / disabled options from a form: addresses are checked, lists are comma separated
+     */
+    public static function options(array $input)
+    {
+        $emails = function($value) {
+            $list = array_filter(array_map('trim', explode(',', (string)$value)), 'strlen');
+            foreach($list as $address)
+            {
+                if(!filter_var($address, FILTER_VALIDATE_EMAIL))
+                {
+                    throw new \InvalidArgumentException('Invalid e-mail address: ' . $address);
+                }
+            }
+
+            return implode(',', $list);
+        };
+
+        return [
+            'fromname'      => trim((string)($input['fromname'] ?? '')),
+            'fromemail'     => $emails($input['fromemail'] ?? ''),
+            'copyto'        => $emails($input['copyto'] ?? ''),
+            'blind_copy_to' => $emails($input['blind_copy_to'] ?? ''),
+            'plaintext'     => !empty($input['plaintext']) ? 1 : 0,
+            'disabled'      => !empty($input['disabled']) ? 1 : 0,
+        ];
     }
 
     /**
      * Saves after a test render (a Smarty error is refused, so no broken e-mail ever reaches a client)
      */
-    public static function save($key, $language, $subject, $message)
+    public static function save($key, $language, $subject, $message, array $options = [])
     {
         $subject = trim((string)$subject);
         $message = (string)$message;
@@ -125,7 +166,7 @@ class EmailManager
         $now  = date('Y-m-d H:i:s');
         if((string)$language === '')
         {
-            Capsule::table(self::TABLE)->where('name', $name)->where('language', '')->update(['subject' => $subject, 'message' => $message, 'updated_at' => $now]);
+            Capsule::table(self::TABLE)->where('name', $name)->where('language', '')->update(['subject' => $subject, 'message' => $message, 'updated_at' => $now] + $options);
 
             return;
         }
