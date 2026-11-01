@@ -65,7 +65,7 @@ class GeneralSettingsForm extends Form implements AdminAreaInterface, AjaxCompon
         $downloads = $this->widget($right, 'downloads');
         foreach(['zip', 'crt', 'ca', 'fullchain', 'nginx', 'apache', 'pkcs7'] as $format)
         {
-            $this->builder->addFieldInContainer($downloads, (new Checkbox())->setName('downloadFormat_' . $format), true);
+            $this->builder->addFieldInContainer($downloads, (new Switcher())->setName('downloadFormat_' . $format)->addClass('switcher-revert'), true);
         }
 
         $pricing = $this->widget($left, 'pricing');
