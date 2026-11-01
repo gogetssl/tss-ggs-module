@@ -78,13 +78,8 @@ add_hook('ClientAreaPrimarySidebar', 1, function($primarySidebar) {
 //                    'order' => 50,
 //                    'icon' => 'fas fa-cogs',
 //                ]);
-                $myAccount->addChild('SendCert', [
-                    'name'  => 'SendCert',
-                    'label' => Lang::absoluteT('Send Certificate'),
-                    'uri'   => 'clientarea.php?action=productdetails&id=' . $serviceId . '&mg-action=sendCertificate',
-                    'order' => 60,
-                    'icon'  => 'fas fa-cogs',
-                ]);
+                // "Send Certificate" is a button in the main block of the service page (it needs a POST with a token, a
+                // sidebar link can not carry one)
 
 //                $myAccount->addChild('ExtraSANs', [
 //                    'name' => 'ExtraSANs',
