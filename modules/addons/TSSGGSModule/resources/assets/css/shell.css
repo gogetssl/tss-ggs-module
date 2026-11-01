@@ -50,7 +50,7 @@
 
 #layers2 .tssggs-head__text strong {
     display: block;
-    font-size: 16px;
+    font-size: 20px;
     font-weight: 600;
     line-height: 1.3;
 }
@@ -105,10 +105,10 @@
     max-width: none !important;
     display: grid !important;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 1px;
+    gap: 0;
     margin: 0;
     padding: 0;
-    background: var(--tw-border);
+    background: var(--tw-surface);
 }
 
 @media (min-width: 900px) {
@@ -129,12 +129,14 @@
     min-width: 0;
     margin: 0;
     background: var(--tw-surface);
+    border-right: 1px solid var(--tw-border);
+    border-bottom: 1px solid var(--tw-border);
 }
 
 #layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav > li.lu-nav__item > a.lu-nav__link {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 10px;
     height: 48px;
     padding: 4px 10px;
     border-bottom: 2px solid transparent;
@@ -159,12 +161,18 @@
 }
 
 #layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav > li.lu-nav__item > a.lu-nav__link > i {
+    display: inline-flex;
     flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
     margin: 0;
-    font-size: 15px;
+    font-size: 20px;
     line-height: 1;
     position: static;
     float: none;
+    vertical-align: middle;
 }
 
 #layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav > li.lu-nav__item > a.lu-nav__link .drop-arrow,
@@ -373,4 +381,234 @@
 #layers2 .tssggs-settings > .lu-row,
 #layers2 .tssggs-settings > div {
     margin-top: 4px;
+}
+
+/* ---- the navigation never hides: no off-canvas, no burger ---- */
+
+#layers2 .lu-app-navbar.lu-off-canvas-responsive {
+    position: static !important;
+    top: auto !important;
+    right: auto !important;
+    transform: none !important;
+    display: block !important;
+    visibility: visible !important;
+    width: auto !important;
+    max-width: none !important;
+    height: auto !important;
+    max-height: none !important;
+    overflow: hidden !important;
+    opacity: 1 !important;
+    margin: 0 !important;
+}
+
+#layers2 .lu-app-header .lu-navbar__burger {
+    display: none !important;
+}
+
+#layers2 .lu-app-navbar > div,
+#layers2 .lu-app-navbar .lu-navbar__nav {
+    display: block !important;
+    float: none !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    flex: none !important;
+}
+
+/*
+ * ---- spacing system ----
+ * 4px baseline, 8px grid (steps 4 / 8 / 12 / 16 / 24 / 32); cards pad 24px (16px between their header and body parts),
+ * stacked blocks are 24px apart, form rows 16px, table cells 12px x 16px, running text has a 1.5 line height and
+ * headings 1.3 (guidance: Material 3 density and 4dp grid, Refactoring UI, public design-system spacing tokens).
+ */
+
+#layers2 {
+    --sp-1: 4px;
+    --sp-2: 8px;
+    --sp-3: 12px;
+    --sp-4: 16px;
+    --sp-6: 24px;
+    --sp-8: 32px;
+}
+
+#layers2 .lu-app-main {
+    line-height: 1.5;
+}
+
+#layers2 .lu-app-main h1,
+#layers2 .lu-app-main h2,
+#layers2 .lu-app-main h3,
+#layers2 .lu-app-main h4,
+#layers2 .lu-app-main .lu-top__title {
+    line-height: 1.3;
+}
+
+#layers2 .lu-app-main p {
+    line-height: 1.5;
+}
+
+/* page: a header block, then 24px between the page blocks */
+#layers2 .lu-app-main__body {
+    padding-top: var(--sp-6);
+}
+
+#layers2 .lu-app-main__top {
+    margin-bottom: var(--sp-4);
+}
+
+/* dashboard */
+#layers2 .tssggs-dash__head {
+    gap: var(--sp-4);
+    padding: var(--sp-2) 0 var(--sp-6);
+}
+
+#layers2 .tssggs-dash__alert {
+    gap: var(--sp-4);
+    margin-bottom: var(--sp-6);
+    padding: var(--sp-4) var(--sp-6);
+}
+
+#layers2 .tssggs-dash__kpis {
+    gap: var(--sp-4);
+}
+
+#layers2 .tssggs-kpi {
+    padding: var(--sp-6);
+}
+
+#layers2 .tssggs-dash__grid {
+    gap: var(--sp-6);
+    margin-top: var(--sp-6);
+}
+
+#layers2 .tssggs-dash__col {
+    gap: var(--sp-6);
+}
+
+#layers2 .tssggs-dcard__head {
+    padding: var(--sp-4) var(--sp-6);
+}
+
+#layers2 .tssggs-dcard__body {
+    padding: var(--sp-6);
+}
+
+#layers2 .tssggs-dcard__note {
+    padding: var(--sp-3) var(--sp-6);
+}
+
+#layers2 .tssggs-dash .tssggs-muted,
+#layers2 .tssggs-news__body,
+#layers2 .tssggs-support__text p {
+    line-height: 1.5;
+}
+
+#layers2 .tssggs-tasks li {
+    padding: var(--sp-2) 0;
+    line-height: 1.5;
+}
+
+#layers2 .tssggs-news {
+    padding: var(--sp-4) var(--sp-6);
+}
+
+#layers2 .tssggs-steps {
+    padding: var(--sp-6);
+    margin-bottom: var(--sp-6);
+}
+
+#layers2 .tssggs-step {
+    padding: var(--sp-4);
+}
+
+/* cards of the other pages (framework widgets) */
+#layers2 .lu-app-main .lu-widget {
+    margin-bottom: var(--sp-6);
+}
+
+#layers2 .lu-app-main .lu-widget__header {
+    padding: var(--sp-4) var(--sp-6);
+}
+
+#layers2 .lu-app-main .lu-widget__content {
+    padding: var(--sp-6);
+}
+
+/* tables: generous rows, quiet headers */
+#layers2 .lu-table td,
+#layers2 .lu-table th {
+    padding: var(--sp-3) var(--sp-4);
+    line-height: 1.5;
+    vertical-align: middle;
+}
+
+#layers2 .lu-table thead th {
+    padding-top: var(--sp-3);
+    padding-bottom: var(--sp-3);
+    color: var(--tw-muted);
+    font-size: 11px;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+}
+
+/* forms: 16px between rows, 8px between a label and its field */
+#layers2 .lu-form-group {
+    margin-bottom: var(--sp-4);
+}
+
+#layers2 .lu-form-group > label,
+#layers2 .lu-form-group .lu-form-group__label {
+    margin-bottom: var(--sp-2);
+    line-height: 1.5;
+}
+
+/* settings pages */
+#layers2 .tssggs-settings .lu-widget__header {
+    padding: var(--sp-4) var(--sp-6);
+}
+
+#layers2 .tssggs-settings .lu-widget > .lu-widget__body > .lu-widget__content {
+    padding: var(--sp-6);
+}
+
+#layers2 .tssggs-settings form .lu-widget {
+    margin-bottom: var(--sp-8);
+}
+
+#layers2 .tssggs-settings form .lu-widget__header {
+    margin-bottom: var(--sp-2);
+}
+
+#layers2 .tssggs-settings .lu-form-group.lu-form-check > label {
+    padding: var(--sp-3) 0;
+    line-height: 1.5;
+}
+
+#layers2 .tssggs-settings form .lu-top__toolbar {
+    margin: var(--sp-4) calc(-1 * var(--sp-6)) calc(-1 * var(--sp-6));
+    padding: var(--sp-4) var(--sp-6);
+}
+
+/* header block and navigation */
+#layers2 .tssggs-head {
+    padding: var(--sp-6);
+}
+
+/* labels that start a new group (e.g. "Gateway connection" under the task list) */
+#layers2 .tssggs-dash .tssggs-label {
+    margin: var(--sp-6) 0 var(--sp-2);
+}
+
+#layers2 .tssggs-dash .tssggs-label:first-child {
+    margin-top: 0;
+}
+
+/* the sections inside a settings form are not cards: no extra padding, rows start right under the heading */
+#layers2 .tssggs-settings form .lu-widget .lu-widget__content,
+#layers2 .tssggs-settings form .lu-widget .lu-widget__body {
+    padding: 0 !important;
+}
+
+#layers2 .tssggs-settings form .lu-widget .lu-widget__header {
+    padding: 0 !important;
 }
