@@ -1,19 +1,16 @@
-# UI/UX Manifesto & Design System
+# UI/UX Manifesto (PHP + Smarty Edition)
 
-## Aesthetic Direction
-- Style: Strict Swiss Editorial / Minimalist High-End SaaS (Do NOT use generic AI cards or multi-colored gradients).
-- Layout Philosophy: Asymmetric balance, editorial whitespace, and high contrast.
+## Technical Constraints (CRITICAL)
+- Templates use `{ }` for Smarty tags.
+- If you write Tailwind or inline CSS that uses brackets, ALWAYS wrap them in `{literal}...{/literal}` or use spaces after brackets so Smarty doesn't crash.
+- Do NOT mix PHP logic with presentation. Keep templates clean.
 
-## Typography
-- Headings: Playfair Display (Serif), tracking-tight, font-light.
-- Body: Inter (Sans-serif), leading-relaxed, text-slate-600.
+## Visual & Aesthetic Direction
+- Style: Premium Minimalist Editorial (Inspired by Stripe & Vercel documentation).
+- Grid & Layout: Strict Bento-grid or Asymmetric layout using CSS Grid/Flexbox.
+- Whitespace: Double the padding you think you need (`p-8` instead of `p-4`). Give elements room to breathe.
 
-## Color Palette (Strictly enforce these Tailwind classes)
-- Background: `bg-[#f8f9fa]` (Off-white, never pure white or default slate).
-- Text Primary: `text-[#1a1a1a]` (Deep charcoal, never pure black).
-- Accent: `bg-[#0f172a]` (Slate-900) for high-impact single moments.
-
-## Rules of Execution
-1. "Spend your boldness in one place": Only one component per viewport can have an eye-catching element (e.g., a large type or a subtle interaction). The rest must remain ultra-quiet.
-2. No placeholders: Never draw generic "Feature 1, Feature 2" layout cards. Use realistic data layout.
-3. Shadows & Borders: No heavy blurs or ambient colored shadows. Use crisp, 1px borders (`border-slate-200`) or zero borders with clean negative space.
+## UI/UX Rules of Polish
+1. "Typography First": Use stark contrast between huge, crisp headers (font-light, tracking-tight) and small, quiet metadata (text-slate-400).
+2. Clean Containers: No heavy shadows or complex rounded corners. Use subtle 1px borders (`border-slate-100`) or alternating soft backgrounds (`bg-slate-50`) to separate sections.
+3. Interactive States: Every button and interactive row must have a premium transition (`transition-all duration-200`) and explicit hover/focus states.
