@@ -562,7 +562,7 @@ $_LANG['admin.settings.index.forms.ssl_settings_form.autoReissueDaysBeforeExpire
 $_LANG['admin.settings.index.forms.ssl_settings_form.recurringCreateAutomaticRenewalInvoice']                   = 'Create Automatic Renewal Invoice';
 $_LANG['admin.settings.index.forms.ssl_settings_form.recurringDaysBeforeExpiry']                                = 'Days Before Expiry';
 $_LANG['admin.settings.index.forms.ssl_settings_form.recurringSendExpirationNotifications']                     = 'Send Expiration Notifications';
-$_LANG['admin.settings.index.forms.ssl_settings_form.recurringSendExpirationNotifications_description']         = 'Comma separated, from 0-30';
+$_LANG['admin.settings.index.forms.ssl_settings_form.recurringSendExpirationNotifications_description']         = 'Days before the expiry on which the client gets a reminder e-mail, comma separated, 0-30. Works with or without automatic renewal invoices: with the invoice switch off this is reminder-only mode.';
 $_LANG['admin.settings.index.providers.ssl_settings_provider.recurringSendExpirationNotificationsInvalidValue'] = 'Values should be in the range of 0-30';
 $_LANG['admin.settings.index.forms.ssl_settings_form.oneTimeCreateAutomaticRenewalInvoice']                     = 'Create Automatic Renewal Invoice';
 $_LANG['admin.settings.index.forms.ssl_settings_form.oneTimeDaysBeforeExpiry']                                  = 'Days Before Expiry';

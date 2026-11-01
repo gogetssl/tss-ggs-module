@@ -311,6 +311,14 @@ class SslSettingsForm extends Form implements AdminAreaInterface, AjaxComponentI
                 ->addClass('switcher-revert')
         );
 
+        // reminders do not depend on the invoice switch: switch off + days = "reminder only", switch on = full automatic renewal
+        $this->builder->addFieldInContainer(
+            $recurringOrdersWidget,
+            (new FormInputText())
+                ->setName('recurringSendExpirationNotifications'),
+            true
+        );
+
         $recurringContainer = new Container();
         $recurringOrdersWidget->addElement($recurringContainer);
         $recurringSwitcher->onChange(
@@ -322,13 +330,6 @@ class SslSettingsForm extends Form implements AdminAreaInterface, AjaxComponentI
             (new Dropdown())
                 ->setName('recurringDaysBeforeExpiry')
                 ->setDefaultValueAsFirstOption()
-        );
-
-        $this->builder->addFieldInContainer(
-            $recurringContainer,
-            (new FormInputText())
-                ->setName('recurringSendExpirationNotifications'),
-            true
         );
 
         $oneTimeOrdersWidget = new Widget();

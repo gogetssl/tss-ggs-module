@@ -15,7 +15,25 @@ use ModulesGarden\TSSGGSModule\Core\WHMCS\Models\InvoiceItem;
 
 class Renew
 {
+    /**
+     * WHMCS shows what is returned here: anything but "success" is a failed module action, so a vendor error is
+     * returned (and logged) instead of leaving the service looking renewed
+     */
     public function run($params)
+    {
+        try
+        {
+            return $this->renew($params);
+        }
+        catch(\Exception $e)
+        {
+            \logActivity('TSSGGS: Renewal of service #' . (int)$params['serviceid'] . ' failed: ' . $e->getMessage());
+
+            return 'Renewal failed: ' . $e->getMessage();
+        }
+    }
+
+    protected function renew($params)
     {
         $serviceId = $params['serviceid'];
 
@@ -62,7 +80,7 @@ class Renew
             $datediff = $nextduedate - $now;
             $days = round($datediff / (60 * 60 * 24));
 
-            $requestRenew['renewal']['prior_order_id'] = $sslOrder->remoteid;
+            $requestRenew['renewal']['prior_order_id'] = $requestRenew['renewal']['prior_certificate_id'] = $sslOrder->remoteid;
             $requestRenew['renewal']['remaining_days'] = CertificateService::renewalDays($serviceId, $days > 0 ? $days + 1 : 0);
 
             $newOrder  = $api->renewOrder($serviceId, $requestRenew);
@@ -137,6 +155,10 @@ class Renew
                 }
                 Service::where('id', $newServiceId)->update(['domain' => $domain]);
             }
+            else
+            {
+                return 'The renewal order could not be created: ' . ($resultsOrder['message'] ?? 'unknown error');
+            }
 
             if($automaticProcessingOfRenewalOrders)
             {
@@ -149,7 +171,7 @@ class Renew
                 $nextduedate = strtotime($request['orderFiles']['validity']['end']);
                 $datediff = $nextduedate - $now;
                 $days = round($datediff / (60 * 60 * 24));
-                $requestRenew['renewal']['prior_order_id'] = $sslOrder->remoteid;
+                $requestRenew['renewal']['prior_order_id'] = $requestRenew['renewal']['prior_certificate_id'] = $sslOrder->remoteid;
                 $requestRenew['renewal']['remaining_days'] = CertificateService::renewalDays($serviceId, $days > 0 ? $days + 1 : 0);
 
                 $newOrder = $api->renewOrder($newServiceId, $requestRenew);
