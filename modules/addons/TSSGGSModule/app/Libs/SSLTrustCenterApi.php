@@ -11,6 +11,10 @@ class SSLTrustCenterApi
 
     const API_URL = 'https://my.gogetssl.com/whmcs/v2';
 
+    // A hung gateway must not stall the crons or the client area pages (seconds)
+    const CONNECT_TIMEOUT = 10;
+    const TIMEOUT         = 60;
+
     protected $apiUrl = self::API_URL;
     protected $key;
     protected $code;
@@ -571,6 +575,14 @@ class SSLTrustCenterApi
         return $this->changeSubscriptionAutoRenewal('ais', $itemId, false);
     }
 
+    protected static function log($action, $request, $response)
+    {
+        if(GeneralSettings::enabled('moduleLog'))
+        {
+            logModuleCall('tss_gss_module', $action, $request, $response);
+        }
+    }
+
     protected function call($uri, $postData = [], $customMethod = false, $multilineResponse = false)
     {
 
@@ -619,17 +631,23 @@ class SSLTrustCenterApi
         curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($c, CURLINFO_HEADER_OUT, true);
         curl_setopt($c, CURLOPT_HEADER, true);
+        curl_setopt($c, CURLOPT_CONNECTTIMEOUT, self::CONNECT_TIMEOUT);
+        curl_setopt($c, CURLOPT_TIMEOUT, self::TIMEOUT);
 
-        $data   = curl_exec($c);
-        $info   = curl_getinfo($c);
+        $data = curl_exec($c);
+        $info = curl_getinfo($c);
+
+        if($data === false)
+        {
+            $error = curl_error($c);
+            curl_close($c);
+            self::log('Time: ' . $info['total_time'] . ' ' . $uri, $queryData, $error);
+            throw new \Exception('Gateway request failed: ' . $error);
+        }
+
         $result = substr($data, $info['header_size']);
 
-        logModuleCall('tss_gss_module', 'Time: ' . $info['total_time'] . ' ' . $uri, $info['request_header'] . $queryData, $data);
-
-        if($result === false)
-        {
-            throw new \Exception(curl_error($c));
-        }
+        self::log('Time: ' . $info['total_time'] . ' ' . $uri, $info['request_header'] . $queryData, $data);
 
         curl_close($c);
 

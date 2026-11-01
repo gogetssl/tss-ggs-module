@@ -52,6 +52,9 @@ if (defined('CLIENTAREA'))
     {
         #MGLICENSE_CHECK_ECHO_AND_RETURN_MESSAGE#
 
-        return (new AppContext())->runAddonModule(__FUNCTION__, []);
+        // Client's SSL certificates (summary filters) and "SSL Certificates by Domain" - plain Smarty pages
+        require_once dirname(__DIR__, 3) . DIRECTORY_SEPARATOR . 'core' . DIRECTORY_SEPARATOR . 'Bootstrap.php';
+
+        return \ModulesGarden\TSSGGSModule\App\ClientArea\SslPages::render($_GET);
     }
 }

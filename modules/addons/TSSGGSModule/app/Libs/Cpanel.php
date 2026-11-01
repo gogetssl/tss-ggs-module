@@ -153,7 +153,10 @@ class Cpanel
 
     private function logCall($action, $request, $response, $processed = '', $replacements = [])
     {
-        logModuleCall('TSSGGSModule_cpanel', $action, $request, $response, $processed, $replacements);
+        if(GeneralSettings::enabled('moduleLog'))
+        {
+            logModuleCall('TSSGGSModule_cpanel', $action, $request, $response, $processed, $replacements);
+        }
     }
 
     private function getReplacements()

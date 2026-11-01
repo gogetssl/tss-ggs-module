@@ -4,7 +4,9 @@ namespace ModulesGarden\Servers\TSSGGSModule\app\services;
 
 use ModulesGarden\Servers\TSSGGSModule\app\models\whmcs\Service;
 use ModulesGarden\Servers\TSSGGSModule\app\models\whmcs\SSL;
+use ModulesGarden\TSSGGSModule\App\Libs\CertificateService;
 use ModulesGarden\TSSGGSModule\App\Libs\Helpers;
+use ModulesGarden\TSSGGSModule\App\Libs\SanUpgrade;
 use ModulesGarden\TSSGGSModule\App\Libs\SSLTrustCenterApi;
 use ModulesGarden\TSSGGSModule\App\Models\DemonTask;
 use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
@@ -149,6 +151,22 @@ class SSLStepThree
                     'updated_at' => date('Y-m-d H:i:s')
                 ]);
             }
+
+            // SANs paid with this order - an upgrade of the SAN options orders only the difference (see SanUpgrade)
+            SanUpgrade::rememberPurchased($params['serviceid'], SanUpgrade::paidQuantities($params));
+
+            CertificateService::event($params['serviceid'], 'success', '[Order] SSL order placed for domain: ' . $decode['CN']
+                . ' (order #' . $newOrder['order']['id'] . ', ' . (count($san) + 1) . ' domain(s))', $params['userid']);
+
+            // Integrator hook; SSLCenter_StepThree keeps hooks written for the GoGetSSL module working after the migration
+            $hookParams = [
+                'serviceid'     => $params['serviceid'],
+                'userid'        => $params['userid'],
+                'api_ssl_order' => $newOrder,
+                'order_details' => $orderParams,
+            ];
+            run_hook('TSSGGSModule_OrderPlaced', $hookParams);
+            run_hook('SSLCenter_StepThree', $hookParams);
 
         } catch (\Exception $e) {
 

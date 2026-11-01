@@ -10,7 +10,7 @@ class AddonModuleRepository
     public function getModuleConfiguration()
     {
         $settings = AddonModule::where('module', 'configuration_TSSGGSModule')
-                               ->whereIn('setting', ['vendors', 'credentials', 'test_connection', 'sslSettings', 'financeSettings', 'cronSettings', 'certificates_sync_last'])
+                               ->whereIn('setting', ['vendors', 'credentials', 'test_connection', 'sslSettings', 'financeSettings', 'cronSettings', 'generalSettings', 'certificates_sync_last'])
                                ->get()->toArray();
 
         $result = [];
@@ -37,6 +37,10 @@ class AddonModuleRepository
                 $result[$setting['setting']] = json_decode($setting['value'], true);
             }
             if($setting['setting'] == 'cronSettings')
+            {
+                $result[$setting['setting']] = json_decode($setting['value'], true);
+            }
+            if($setting['setting'] == 'generalSettings')
             {
                 $result[$setting['setting']] = json_decode($setting['value'], true);
             }
@@ -253,6 +257,14 @@ class AddonModuleRepository
         AddonModule::updateOrInsert(
             ['module' => 'configuration_TSSGGSModule', 'setting' => 'cronSettings'],
             ['value' => $data]
+        );
+    }
+
+    public function saveGeneralSettings($data)
+    {
+        AddonModule::updateOrInsert(
+            ['module' => 'configuration_TSSGGSModule', 'setting' => 'generalSettings'],
+            ['value' => json_encode($data)]
         );
     }
 

@@ -1,5 +1,15 @@
 <div class="validate-ssl-unified">
 
+    {if $success}
+        <div class="alert alert-success" role="alert">{$success}</div>
+    {/if}
+    {if $errors}
+        <div class="alert alert-danger" role="alert">{$errors|escape}</div>
+    {/if}
+    {if $issued_message}
+        <div class="alert alert-info tssggs-issued-message" role="alert">{$issued_message}</div>
+    {/if}
+
     {if $sendEmail}
         <div class="alert alert-success" role="alert">
             {$MGLANG->T('validation_page', 'send_email')}
@@ -108,11 +118,23 @@
 
 
                     <a href="{$whmcs_url}/clientarea.php?action=productdetails&id={$serviceid}&mg-action=sendCertificate" style="margin-bottom: 5px;" class="btn btn-default">{$MGLANG->T('validation_page', 'Send Certificate')}</a>
-                    <a href="{$whmcs_url}/clientarea.php?action=productdetails&id={$serviceid}&mg-action=downloadCRT" style="margin-bottom: 5px;" class="btn btn-default">{$MGLANG->T('validation_page', 'Download CRT')}</a>
-                    <a href="{$whmcs_url}/clientarea.php?action=productdetails&id={$serviceid}&mg-action=downloadICRT" style="margin-bottom: 5px;" class="btn btn-default">{$MGLANG->T('validation_page', 'Download Intermediate CRT')}</a>
-                    <a href="{$whmcs_url}/clientarea.php?action=productdetails&id={$serviceid}&mg-action=downloadSSL" style="margin-bottom: 5px;" class="btn btn-default">{$MGLANG->T('validation_page', 'Download SSL')}</a>
+                    <button style="margin-bottom: 5px;" data-toggle="modal" data-target="#tssggsViewCertificate" type="button" class="btn btn-default">{$MGLANG->T('validation_page', 'View Certificate')}</button>
+                    <div class="btn-group" style="margin-bottom: 5px;">
+                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{$MGLANG->T('validation_page', 'Download')} <span class="caret"></span></button>
+                        <ul class="dropdown-menu">
+                            {foreach $download_formats as $format}
+                                <li><a class="dropdown-item" href="{$whmcs_url}/clientarea.php?action=productdetails&id={$serviceid}&mg-action=download&format={$format}">{$MGLANG->T('download_formats', $format)}</a></li>
+                            {/foreach}
+                        </ul>
+                    </div>
                     {if $visibleRenewButton}<button data-toggle="modal" data-target="#myModalRenew" type="button" style="margin-bottom: 5px;" class="btn btn-success">{$MGLANG->T('validation_page', 'Renew SSL')}</button>{/if}
                     <a href="{$whmcs_url}/clientarea.php?action=productdetails&id={$serviceid}&mg-action=reissueSSL" style="margin-bottom: 5px;" class="btn btn-default">{$MGLANG->T('validation_page', 'Reissue SSL')}</a>
+                    {if $install_available}
+                        <button style="margin-bottom: 5px;" data-toggle="modal" data-target="#tssggsInstallCertificate" type="button" class="btn btn-primary">{$MGLANG->T('validation_page', 'Install on server')}</button>
+                    {/if}
+                    {foreach $cpanel_services as $cpanelService}
+                        <a href="{$whmcs_url}/clientarea.php?action=productdetails&id={$cpanelService.id}&dosinglesignon=1" target="_blank" rel="noopener" style="margin-bottom: 5px;" class="btn btn-default">{$MGLANG->T('validation_page', 'Login to cPanel')}{if $cpanel_services|@count > 1} ({$cpanelService.domain|escape}){/if}</a>
+                    {/foreach}
                 </div>
             </div>
         </div>
@@ -147,41 +169,20 @@
 {/if}
 
 
-{if $order_details_api.orderData.contacts.organization}
+{if $organization}
 
     <table style="margin-top: 30px;" class="table-validation-details active-table">
         <tbody>
         <tr class="title-table">
             <td colspan="2">{$MGLANG->T('validation_page', 'Organization Details')}</td>
         </tr>
-        <tr>
-            <td>{$MGLANG->T('validation_page', 'Name')}</td>
-            <td>Test</td>
-        </tr>
-        <tr>
-            <td>{$MGLANG->T('validation_page', 'DUNS Number')}</td>
-            <td>Name</td>
-        </tr>
-        <tr>
-            <td>{$MGLANG->T('validation_page', 'Division')}</td>
-            <td>test@domain.com</td>
-        </tr>
-        <tr>
-            <td>{$MGLANG->T('validation_page', 'Country')}</td>
-            <td>Poland</td>
-        </tr>
-        <tr>
-            <td>{$MGLANG->T('validation_page', 'City')}</td>
-            <td>Rzeszów</td>
-        </tr>
-        <tr>
-            <td>{$MGLANG->T('validation_page', 'Street Address')}</td>
-            <td>Rejtana 36</td>
-        </tr>
-        <tr>
-            <td>{$MGLANG->T('validation_page', 'Postal Code')}</td>
-            <td>35352</td>
-        </tr>
+        <tr><td>{$MGLANG->T('validation_page', 'Name')}</td><td>{$organization.name|escape}</td></tr>
+        {if $organization.duns}<tr><td>{$MGLANG->T('validation_page', 'DUNS Number')}</td><td>{$organization.duns|escape}</td></tr>{/if}
+        {if $organization.division}<tr><td>{$MGLANG->T('validation_page', 'Division')}</td><td>{$organization.division|escape}</td></tr>{/if}
+        <tr><td>{$MGLANG->T('validation_page', 'Country')}</td><td>{$organization.country|escape}</td></tr>
+        <tr><td>{$MGLANG->T('validation_page', 'City')}</td><td>{$organization.city|escape}</td></tr>
+        <tr><td>{$MGLANG->T('validation_page', 'Street Address')}</td><td>{$organization.address_line_1|escape}{if $organization.address_line_2}, {$organization.address_line_2|escape}{/if}</td></tr>
+        <tr><td>{$MGLANG->T('validation_page', 'Postal Code')}</td><td>{$organization.postal_code|escape}</td></tr>
         </tbody>
     </table>
 
@@ -247,6 +248,63 @@
         </table>
     </div>
 </div>
+
+<div class="modal fade" id="tssggsViewCertificate" tabindex="-1" role="dialog" aria-labelledby="tssggsViewCertificateLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="display: block;">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" style="text-align: left;" id="tssggsViewCertificateLabel">{$MGLANG->T('validation_page', 'View Certificate')}</h4>
+            </div>
+            <div class="modal-body" style="text-align: left;">
+                <label for="tssggsCrtCode">{$MGLANG->T('validation_page', 'Certificate (CRT)')}</label>
+                <textarea id="tssggsCrtCode" class="form-control" rows="10" readonly style="font-family:monospace;font-size:12px;">{$crt_code|escape}</textarea>
+                {if $ca_code}
+                    <label for="tssggsCaCode" style="margin-top:12px;">{$MGLANG->T('validation_page', 'Intermediate certificates (CA bundle)')}</label>
+                    <textarea id="tssggsCaCode" class="form-control" rows="10" readonly style="font-family:monospace;font-size:12px;">{$ca_code|escape}</textarea>
+                {/if}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">{$MGLANG->T('validation_page', 'Close')}</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{if $install_available}
+<div class="modal fade" id="tssggsInstallCertificate" tabindex="-1" role="dialog" aria-labelledby="tssggsInstallCertificateLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form method="POST" action="{$whmcs_url}/clientarea.php?action=productdetails&id={$serviceid}">
+                <input type="hidden" name="mg-action" value="installCertificate">
+                <input type="hidden" name="token" value="{$csrfToken}">
+                <div class="modal-header" style="display: block;">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" style="text-align: left;" id="tssggsInstallCertificateLabel">{$MGLANG->T('validation_page', 'Install on server')}</h4>
+                </div>
+                <div class="modal-body" style="text-align: left;">
+                    <p>{$MGLANG->T('validation_page', 'install_desc')}</p>
+                    <div class="form-group">
+                        <label for="tssggsInstallDomain">{$MGLANG->T('validation_page', 'Domain')}</label>
+                        <input id="tssggsInstallDomain" class="form-control" name="install_domain" value="{$install_domain|escape}" required>
+                    </div>
+                    {if !$install_key_stored}
+                        <div class="form-group">
+                            <label for="tssggsInstallKey">{$MGLANG->T('validation_page', 'Private key')}</label>
+                            <textarea id="tssggsInstallKey" class="form-control" name="private_key" rows="8" required style="font-family:monospace;font-size:12px;" placeholder="-----BEGIN PRIVATE KEY-----"></textarea>
+                            <small class="text-muted">{$MGLANG->T('validation_page', 'install_key_hint')}</small>
+                        </div>
+                    {/if}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">{$MGLANG->T('validation_page', 'Close')}</button>
+                    <button type="submit" class="btn btn-primary">{$MGLANG->T('validation_page', 'Install')}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{/if}
 
 <div class="modal fade" id="myModalCancel" tabindex="-1" role="dialog" aria-labelledby="myModalCancelLabel">
     <div class="modal-dialog" role="document">

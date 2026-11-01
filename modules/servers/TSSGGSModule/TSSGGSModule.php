@@ -61,8 +61,32 @@ function TSSGGSModule_TerminateAccount($params) {
     return (new Actions())->TerminateAccount($params);
 }
 
-function TSSGGSModule_AdminCustomButtonArray() {
-    return (new Actions())->AdminCustomButtonArray();
+function TSSGGSModule_AdminCustomButtonArray($params = []) {
+    return (new Actions())->AdminCustomButtonArray($params);
+}
+
+function TSSGGSModule_RecheckValidation($params) {
+    return (new Actions())->RecheckValidation($params);
+}
+
+function TSSGGSModule_CancelOrder($params) {
+    return (new Actions())->CancelOrder($params);
+}
+
+function TSSGGSModule_DownloadAuthFile($params) {
+    return (new Actions())->DownloadAuthFile($params);
+}
+
+function TSSGGSModule_ClientAreaCustomButtonArray($params = []) {
+    return (new Actions())->ClientAreaCustomButtonArray($params);
+}
+
+function TSSGGSModule_ClientAreaAllowedFunctions() {
+    return (new Actions())->ClientAreaAllowedFunctions();
+}
+
+function TSSGGSModule_ClientAreaCustomDownloadCertificate($params) {
+    return (new Actions())->DownloadCertificate($params);
 }
 
 function TSSGGSModule_SyncCertificate($params) {

@@ -19,8 +19,11 @@ use ModulesGarden\TSSGGSModule\App\Helpers\EmailTemplates;
 use ModulesGarden\TSSGGSModule\App\Libs\AcmeHelpers;
 use ModulesGarden\TSSGGSModule\App\Libs\AisHelpers;
 use ModulesGarden\TSSGGSModule\App\Libs\AutoInstallHelpers;
+use ModulesGarden\TSSGGSModule\App\Libs\CertificateBundle;
+use ModulesGarden\TSSGGSModule\App\Libs\CertificateService;
 use ModulesGarden\TSSGGSModule\App\Libs\CertificateSyncHelpers;
 use ModulesGarden\TSSGGSModule\App\Libs\Cpanel;
+use ModulesGarden\TSSGGSModule\App\Libs\GeneralSettings;
 use ModulesGarden\TSSGGSModule\App\Libs\SslProductHelpers;
 use ModulesGarden\TSSGGSModule\App\Libs\Helpers;
 use ModulesGarden\TSSGGSModule\App\Libs\SSLTrustCenterApi;
@@ -222,177 +225,53 @@ class home extends AbstractController
 
     public function sendCertificateHTML($input, $vars = [])
     {
-        $serviceId   = $input['id'];
-        $certificate = Request::getOrder($serviceId);
-
-
-        $filename = str_replace('.', '_', $certificate['orderData']['orderData']['common_name']['name']) . '.crt';
-        $cert     = AutoInstallHelpers::extractCertificate($certificate['orderFiles'], $certificate['orderData']['orderData']['common_name']['name']);
-
-        $fileContentCrt = $cert['crt'];
-        $fileContentCA  = $cert['ca'];
-
-
-        $pathAttachemts = false;
-        $checkSettings  = Capsule::schema()->hasTable('tblfileassetsettings');
-        if($checkSettings !== false)
+        try
         {
-            $filesetting = Capsule::table('tblfileassetsettings')->where('asset_type', 'email_attachments')->first();
-            if(isset($filesetting->storageconfiguration_id) && !empty($filesetting->storageconfiguration_id))
-            {
-                $checkStorage = Capsule::schema()->hasTable('tblstorageconfigurations');
-                if($checkStorage !== false)
-                {
-
-                    $storage = Capsule::table('tblstorageconfigurations')->where('id', $filesetting->storageconfiguration_id)->first();
-                    if(isset($storage->settings) && !empty($storage->settings))
-                    {
-                        $storageData = json_decode($storage->settings, true);
-                        if(isset($storageData['local_path']) && !empty($storageData['local_path']))
-                        {
-                            $pathAttachemts = $storageData['local_path'];
-                        }
-                    }
-                }
-            }
+            CertificateService::sendCertificate((int)$input['id']);
+            redir('action=productdetails&id=' . (int)$input['id'] . '&sendEmail=true', 'clientarea.php');
         }
-
-
-        $attachments = [];
-        if(!empty($fileContentCrt))
+        catch(\Exception $e)
         {
-            if($pathAttachemts === false)
-            {
-                $tmp_ca_code = tempnam("/tmp", "FOO");
-                $handle      = fopen($tmp_ca_code, "w");
-                fwrite($handle, $fileContentCrt);
-                fclose($handle);
-
-                $attachments[] = array(
-                    'displayname' => 'crt_certificate.crt',
-                    'path'        => $tmp_ca_code
-                );
-            }
-            else
-            {
-                $filetemp = $pathAttachemts . DIRECTORY_SEPARATOR . $serviceId . $input['params']['accountid'] . '_crt_certificate.crt';
-                file_exists($filetemp) or touch($filetemp);
-                file_put_contents($filetemp, $fileContentCrt);
-
-                $attachments[] = array(
-                    'displayname' => $serviceId . $input['params']['accountid'] . '_crt_certificate.crt',
-                    'filename'    => $serviceId . $input['params']['accountid'] . '_crt_certificate.crt'
-                );
-            }
+            $_SESSION['mg-error'] = $e->getMessage();
+            redir('action=productdetails&id=' . (int)$input['id'], 'clientarea.php');
         }
+    }
 
-        if(!empty($fileContentCA))
+    /**
+     * Certificate download in any format of CertificateBundle::FORMATS (crt, ca, fullchain, nginx, apache, pkcs7, zip)
+     */
+    public function downloadHTML($input, $vars = [])
+    {
+        $format = isset($input['format']) ? (string)$input['format'] : 'zip';
+
+        try
         {
-            if($pathAttachemts === false)
+            if(!in_array($format, CertificateBundle::FORMATS, true))
             {
-                $tmp_crt_code = tempnam("/tmp", "FOO");
-                $handle       = fopen($tmp_crt_code, "w");
-                fwrite($handle, $fileContentCA);
-                fclose($handle);
-
-                $attachments[] = array(
-                    'displayname' => 'ca_certificate.crt',
-                    'path'        => $tmp_crt_code
-                );
+                throw new \Exception(Lang::absoluteT('download_unknown_format'));
             }
-            else
-            {
-                $filetemp = $pathAttachemts . DIRECTORY_SEPARATOR . $serviceId . $input['params']['accountid'] . '_ca_certificate.crt';
-                file_exists($filetemp) or touch($filetemp);
-                file_put_contents($filetemp, $fileContentCA);
-
-                $attachments[] = array(
-                    'displayname' => $serviceId . $input['params']['accountid'] . '_ca_certificate.crt',
-                    'filename'    => $serviceId . $input['params']['accountid'] . '_ca_certificate.crt'
-                );
-            }
+            CertificateBundle::output(CertificateService::bundle((int)$input['id'])->get($format));
         }
-
-
-        EmailTemplates::sendEmail(EmailTemplates::SEND_CERTIFICATE_TEMPLATE, $serviceId, [
-            'domain'          => $filename,
-            'ssl_certyficate' => nl2br($fileContentCA),
-            'crt_code'        => nl2br($fileContentCrt),
-        ],                        $attachments);
-
-
-        if(!empty($fileContentCA))
+        catch(\Exception $e)
         {
-
-            unlink($tmp_ca_code);
-
+            $_SESSION['mg-error'] = $e->getMessage();
+            redir('action=productdetails&id=' . (int)$input['id'], 'clientarea.php');
         }
-
-        if(!empty($orderStatus['crt_code']))
-        {
-
-            unlink($tmp_crt_code);
-
-        }
-
-        redir('action=productdetails&id=' . $input['id'] . '&sendEmail=true', 'clientarea.php');
     }
 
     public function downloadCRTHTML($input, $vars = [])
     {
-        $serviceId   = $input['id'];
-        $certificate = Request::getOrder($serviceId);
-
-        $filename    = str_replace('.', '_', $certificate['orderData']['orderData']['common_name']['name']) . '.crt';
-        $fileContent = AutoInstallHelpers::extractCertificate($certificate['orderFiles'], $certificate['orderData']['orderData']['common_name']['name'])['crt'];
-
-        header('Content-Type: application/octet-stream');
-        header('Content-Disposition: attachment; filename=' . $filename);
-        header('Expires: 0');
-        header('Cache-Control: must-revalidate');
-        header('Pragma: public');
-        print $fileContent;
-        exit;
-
+        return $this->downloadHTML(array_merge($input, ['format' => 'crt']), $vars);
     }
 
     public function downloadICRTHTML($input, $vars = [])
     {
-        $serviceId   = $input['id'];
-        $certificate = Request::getOrder($serviceId);
-
-        $filename    = 'CA.crt';
-        $fileContent = AutoInstallHelpers::extractCertificate($certificate['orderFiles'], $certificate['orderData']['orderData']['common_name']['name'])['ca'];
-
-        header('Content-Type: application/octet-stream');
-        header('Content-Disposition: attachment; filename=' . $filename);
-        header('Expires: 0');
-        header('Cache-Control: must-revalidate');
-        header('Pragma: public');
-        print $fileContent;
-        exit;
-
+        return $this->downloadHTML(array_merge($input, ['format' => 'ca']), $vars);
     }
 
     public function downloadSSLHTML($input, $vars = [])
     {
-        $serviceId   = $input['id'];
-        $certificate = Request::getOrder($serviceId);
-
-        $cert = AutoInstallHelpers::extractCertificate($certificate['orderFiles'], $certificate['orderData']['orderData']['common_name']['name']);
-
-        // Full chain: certificate first, then the intermediates
-        $filename    = 'certificates.crt';
-        $fileContent = $cert['crt'] . $cert['ca'];
-
-        header('Content-Type: application/octet-stream');
-        header('Content-Disposition: attachment; filename=' . $filename);
-        header('Expires: 0');
-        header('Cache-Control: must-revalidate');
-        header('Pragma: public');
-        print $fileContent;
-        exit;
-
+        return $this->downloadHTML(array_merge($input, ['format' => 'fullchain']), $vars);
     }
 
     public function reissueSSLHTML($input, $vars = [])
@@ -826,7 +705,76 @@ class home extends AbstractController
             $vars['product_title'] = sprintf(Lang::absoluteT('product_title_installed'), $params['product']->name);
         }
 
+        // View certificate dialog
+        $cert             = AutoInstallHelpers::extractCertificate($params['certificate'], isset($params['order']['orderData']['common_name']['name']) ? $params['order']['orderData']['common_name']['name'] : '');
+        $vars['crt_code'] = $cert['crt'];
+        $vars['ca_code']  = $cert['ca'];
+
+        // Purchased vs used SANs ("Purchase additional SANs")
+        $vars['configurableOptions'] = ProductConfigOptions::get($params['product']->id, $params['service']->id, $params['service']->billingcycle);
+        $vars['countSAN']            = 0;
+        $vars['countSANWildcard']    = 0;
+        foreach(isset($params['order']['orderData']['alternative_names']) ? (array)$params['order']['orderData']['alternative_names'] : [] as $alternativeName)
+        {
+            $name = isset($alternativeName['name']) ? $alternativeName['name'] : (isset($alternativeName['domain']) ? $alternativeName['domain'] : '');
+            strpos((string)$name, '*.') === 0 ? $vars['countSANWildcard']++ : $vars['countSAN']++;
+        }
+
+        $vars['issued_message']   = trim((string)GeneralSettings::get('issuedMessage'));
+        $vars['organization']     = isset($params['order']['orderData']['contacts']['organization']) ? array_filter((array)$params['order']['orderData']['contacts']['organization'], 'is_scalar') : [];
+        $vars['download_formats'] = ['zip', 'crt', 'ca', 'fullchain', 'nginx', 'apache', 'pkcs7'];
+        $vars['csrfToken']        = \generate_token('plain');
+
+        // Install on server / Login to cPanel - only for clients with an active cPanel account
+        $vars['cpanel_services'] = [];
+        try
+        {
+            foreach(Cpanel::getServices($params['service']->userid) as $cpanelService)
+            {
+                $vars['cpanel_services'][] = ['id' => (int)$cpanelService->id, 'domain' => (string)$cpanelService->domain];
+            }
+        }
+        catch(\Throwable $e)
+        {
+        }
+        $aiState                     = AutoInstallHelpers::get($params['service']->id);
+        $vars['install_key_stored']  = !empty($aiState['private_key']);
+        $vars['install_domain']      = !empty($aiState['domain']) ? $aiState['domain'] : ltrim((string)$params['service']->domain, '*.');
+        $vars['install_available']   = !empty($vars['cpanel_services']) && (empty($vars['autoinstall']) || $vars['autoinstall']['status'] !== 'installed');
+
         return ['tpl' => 'certificate_active', 'vars' => $vars];
+    }
+
+    /**
+     * "Install on server" - installs the issued certificate on the client's cPanel account
+     */
+    public function installCertificateHTML($input, $vars = [])
+    {
+        $serviceId = (int)$input['id'];
+
+        try
+        {
+            $this->requireCsrfToken();
+            if(!$this->acquireServiceLock($serviceId))
+            {
+                throw new \Exception(Lang::absoluteT('sslConfigInProgress'));
+            }
+            try
+            {
+                CertificateService::installOnCpanel($serviceId, isset($input['install_domain']) ? $input['install_domain'] : '', isset($input['private_key']) ? $input['private_key'] : '');
+            }
+            finally
+            {
+                $this->releaseServiceLock($serviceId);
+            }
+            $_SESSION['mg-success'] = Lang::absoluteT('install_success');
+        }
+        catch(\Exception $e)
+        {
+            $_SESSION['mg-error'] = Lang::absoluteT('install_error') . ' ' . $e->getMessage();
+        }
+
+        redir('action=productdetails&id=' . $serviceId, 'clientarea.php');
     }
 
     public function renewHTML($input, $vars = [])
