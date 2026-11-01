@@ -2,6 +2,7 @@
 
 namespace ModulesGarden\TSSGGSModule\App\Migration;
 
+use ModulesGarden\TSSGGSModule\App\Libs\Commissions;
 use ModulesGarden\TSSGGSModule\App\Libs\Cpanel;
 use ModulesGarden\TSSGGSModule\App\Migration\Readers\LegacyReaderInterface;
 use ModulesGarden\TSSGGSModule\App\Migration\Support\Schema;
@@ -261,6 +262,17 @@ class Engine
                 $this->log($runId, 'info', self::PHASE_PREPARE, 'Product prepared', ['pid' => $pid, 'name' => $p['name'], 'remote' => $p['remote_product']->remoteId, 'renamed_options' => count($data['renamed_options'])]);
             }
             Store::mergeSummary($runId, ['products' => $migratedPids, 'settings_filled' => $filled]);
+
+            // per-client commissions of the migrated products (GGS)
+            if(method_exists($this->reader, 'readCommissions'))
+            {
+                $rules = array_values(array_filter($this->reader->readCommissions(), function($rule) use ($migratedPids) {
+                    return in_array((int)$rule['product_id'], $migratedPids, true);
+                }));
+                $ids = $writer->writeCommissions($rules);
+                Store::addJob($runId, Store::KIND_SETTINGS, 0, 0, Store::JOB_DONE, null, ['commission_ids' => $ids]);
+                $this->log($runId, 'info', self::PHASE_PREPARE, 'Client commissions copied', ['rules' => count($ids), 'legacy_rules' => count($rules)]);
+            }
 
             // 4. service job list
             $n = 0;
@@ -596,6 +608,16 @@ class Engine
             foreach(Store::jobsByStatus($runId, Store::KIND_SERVICE, Store::JOB_DONE) as $job)
             {
                 $writer->undoService($job['data']);
+            }
+            // commission rules created by the run (settings and product jobs)
+            $commissionIds = [];
+            foreach(array_merge(Store::jobsByStatus($runId, Store::KIND_SETTINGS, Store::JOB_DONE), Store::jobsByStatus($runId, Store::KIND_PRODUCT, Store::JOB_DONE)) as $job)
+            {
+                $commissionIds = array_merge($commissionIds, (array)($job['data']['commission_ids'] ?? []));
+            }
+            if($commissionIds)
+            {
+                Capsule::table(Commissions::TABLE)->whereIn('id', $commissionIds)->delete();
             }
             // unified rows written for products are reverted through the row backups below
             $backup->restoreRows('tblsslorders');

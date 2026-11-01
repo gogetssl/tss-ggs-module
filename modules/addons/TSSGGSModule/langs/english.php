@@ -899,3 +899,20 @@ $_LANG['admin.products.index.products_container.notice_retired']            = ':
 $_LANG['admin.products.index.products_container.notice_unretired']          = ':product is active again (still hidden - use Show to offer it).';
 $_LANG['admin.products.index.products_container.notice_options_fixed']      = 'Configurable options of :product checked. Changes: :detail';
 $_LANG['admin.products.index.products_container.notice_renewals_cancelled'] = 'Cancellation requests created for :detail services of :product.';
+
+//commissions
+$_LANG['admin.menu.commissions']                = 'Commissions';
+$_LANG['admin.breadcrumbs.Commissions_index']   = 'Commissions';
+$_LANG['admin.commissions.intro']               = 'Raise or lower the price of SSL products for a client: +10 adds 10 % to the product price, -5 is a 5 % discount. The most specific rule wins: client + product, then client + all products, then all clients + product. Applies to new orders in the cart, on the standard and the Lagom order form.';
+$_LANG['admin.commissions.client']              = 'Client';
+$_LANG['admin.commissions.product']             = 'Product';
+$_LANG['admin.commissions.commission']          = 'Commission %';
+$_LANG['admin.commissions.all_clients']         = 'All clients';
+$_LANG['admin.commissions.all_products']        = 'All SSL products';
+$_LANG['admin.commissions.save']                = 'Add / change';
+$_LANG['admin.commissions.updated']             = 'Updated';
+$_LANG['admin.commissions.delete']              = 'Delete';
+$_LANG['admin.commissions.confirm_delete']      = 'Delete this commission rule?';
+$_LANG['admin.commissions.empty']               = 'No commission rules.';
+$_LANG['admin.commissions.notice_saved']        = 'Commission rule saved.';
+$_LANG['admin.commissions.notice_deleted']      = 'Commission rule deleted.';

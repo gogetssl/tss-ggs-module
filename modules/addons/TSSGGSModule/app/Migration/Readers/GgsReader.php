@@ -154,9 +154,20 @@ class GgsReader extends AbstractReader
         }
         $ssl['useFixedTechnicalDetails'] = $hasTech ? 'on' : '';
 
+        $template = (int)$val('send_certificate_template') ? (string)Capsule::table('tblemailtemplates')->where('id', (int)$val('send_certificate_template'))->value('name') : '';
+
         return [
             'sslSettings'     => $ssl,
             'financeSettings' => ['rate' => (float)$val('rate', '1') ?: 1],
+            // General settings page (client area, messages, logging)
+            'generalSettings' => array_filter([
+                'clientSummary'            => !empty($s['display_ca_summary']),
+                'sidebarTemplates'         => $val('sidebar_templates'),
+                'expiresSoonDays'          => (int)$val('summary_expires_soon_days', '30'),
+                'processingGuide'          => $val('custom_guide'),
+                'certificateEmailTemplate' => $template,
+                'whmcsActivityLog'         => !empty($s['save_activity_logs']),
+            ], function($value) { return $value !== '' && $value !== null; }),
             // informational: things the unified module has no setting for
             'legacy'          => [
                 'api_partner_code'     => $val('api_partner_code'),
@@ -185,12 +196,36 @@ class GgsReader extends AbstractReader
             'price_auto'            => (string)$p['configoption5'] === '1',
             'san_options'           => $this->sanOptions($pid, ['sans' => '/^sans_count(\||$)/', 'sans_wildcard' => '/^sans_wildcard_count(\||$)/']),
             'other_options'         => [],
-            'warnings'              => array_values(array_filter([
-                (float)$p['configoption6'] > 0 ? 'Per-product commission (configoption6) has no unified equivalent; margin is global.' : '',
-                trim((string)$p['configoption23']) !== '' ? 'Issued-SSL message (configoption23) is not supported by the unified module.' : '',
-                trim((string)$p['configoption24']) !== '' ? 'Per-product guide (configoption24) is not supported by the unified module.' : '',
-            ])),
+            // per-product messages and the product commission (a fraction, 0.1 = +10 % for every client)
+            'product_settings'      => array_filter([
+                'issuedMessage'   => trim((string)$p['configoption23']),
+                'processingGuide' => trim((string)$p['configoption24']),
+            ], 'strlen'),
+            'commission_percent'    => (float)$p['configoption6'] > 0 ? round((float)$p['configoption6'] * 100, 2) : null,
+            'warnings'              => [],
         ];
+    }
+
+    /**
+     * Per-client commissions: [['client_id', 'product_id', 'percent']] (stored by the GGS module as a fraction)
+     */
+    public function readCommissions(): array
+    {
+        if(!Schema::tableExists('mgfw_SSLCENTER_user_commission'))
+        {
+            return [];
+        }
+
+        $rules = [];
+        foreach(Capsule::table('mgfw_SSLCENTER_user_commission')->get() as $row)
+        {
+            if(is_numeric($row->commission))
+            {
+                $rules[] = ['client_id' => (int)$row->client_id, 'product_id' => (int)$row->product_id, 'percent' => round((float)$row->commission * 100, 2)];
+            }
+        }
+
+        return $rules;
     }
 
     // ---- Services ---- //
@@ -534,7 +569,8 @@ class GgsReader extends AbstractReader
             'unconfigured'            => Schema::count('tblsslorders', ['module' => $this->orderModules(), 'status' => self::STATUS_AWAITING]),
             'unconfigured_preordered' => 0,
             'unpaid'                  => (int)Capsule::table('tblhosting')->join('tblproducts', 'tblproducts.id', '=', 'tblhosting.packageid')->where('tblproducts.servertype', $serverType)->where('tblhosting.domainstatus', 'Pending')->count(),
-            'unsupported'             => ['commissions' => Schema::count('mgfw_SSLCENTER_user_commission')],
+            'commissions'             => Schema::count('mgfw_SSLCENTER_user_commission'),
+            'unsupported'             => [],
             'other_ssl_modules'       => $this->otherSslModules(),
         ];
     }

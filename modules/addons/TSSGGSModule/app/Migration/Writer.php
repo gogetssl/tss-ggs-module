@@ -3,6 +3,7 @@
 namespace ModulesGarden\TSSGGSModule\App\Migration;
 
 use ModulesGarden\TSSGGSModule\App\Libs\AutoInstallQueue;
+use ModulesGarden\TSSGGSModule\App\Libs\Commissions;
 use ModulesGarden\TSSGGSModule\App\Libs\Edition;
 use ModulesGarden\TSSGGSModule\App\Models\RemoteProduct;
 use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
@@ -71,6 +72,16 @@ class Writer
         }
         $this->saveSetting('financeSettings', $finance);
 
+        // General settings: only while the unified module has none saved yet
+        if(!empty($legacy['generalSettings']) && empty($current['generalSettings']))
+        {
+            $this->saveSetting('generalSettings', $legacy['generalSettings']);
+            foreach(array_keys($legacy['generalSettings']) as $key)
+            {
+                $filled[] = 'generalSettings.' . $key;
+            }
+        }
+
         return $filled;
     }
 
@@ -130,7 +141,42 @@ class Writer
             Capsule::table('tblproductconfigoptions')->where('id', $option['id'])->update(['hidden' => 1]);
         }
 
-        return ['pid' => (int)$product['pid'], 'old_configoptions' => $old, 'renamed_options' => $renamed, 'hidden_options' => array_column((array)($product['other_options'] ?? []), 'id')];
+        // Products page settings (messages); the legacy product commission becomes an "all clients" commission rule
+        if(!empty($product['product_settings']))
+        {
+            $this->saveSetting('product_' . (int)$product['pid'], array_merge(['months' => 0, 'commission' => '', 'processingGuide' => '', 'issuedMessage' => ''], $product['product_settings']));
+        }
+        $commissionIds = [];
+        if(!empty($product['commission_percent']))
+        {
+            $commissionIds = $this->writeCommissions([['client_id' => 0, 'product_id' => (int)$product['pid'], 'percent' => $product['commission_percent']]]);
+        }
+
+        return ['pid' => (int)$product['pid'], 'old_configoptions' => $old, 'renamed_options' => $renamed, 'hidden_options' => array_column((array)($product['other_options'] ?? []), 'id'),
+                'commission_ids' => $commissionIds];
+    }
+
+    /**
+     * Commission rules ([client_id, product_id, percent]); an existing rule of the unified module is kept.
+     * Returns the ids it created (undone by Engine::rollback()).
+     */
+    public function writeCommissions(array $rules): array
+    {
+        Commissions::createTable();
+        $ids = [];
+        foreach($rules as $rule)
+        {
+            $exists = Capsule::table(Commissions::TABLE)->where('client_id', (int)$rule['client_id'])->where('product_id', (int)$rule['product_id'])->exists();
+            if($exists || ((int)$rule['client_id'] === 0 && (int)$rule['product_id'] === 0))
+            {
+                continue;
+            }
+            $ids[] = Capsule::table(Commissions::TABLE)->insertGetId([
+                'client_id' => (int)$rule['client_id'], 'product_id' => (int)$rule['product_id'], 'commission' => (float)$rule['percent'], 'created_at' => date('Y-m-d H:i:s'),
+            ]);
+        }
+
+        return $ids;
     }
 
     public function switchProducts(array $pids): int

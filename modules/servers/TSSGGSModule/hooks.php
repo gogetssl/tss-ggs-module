@@ -313,3 +313,163 @@ add_hook('ClientAreaSecondarySidebar', 1, function($secondarySidebar) {
     {
     }
 });
+
+// ---- Per-client commissions (Commissions page) ---- //
+
+function tssggs_commission_client_currency()
+{
+    $clientId = !empty($_SESSION['uid']) ? (int)$_SESSION['uid'] : 0;
+    if($clientId && function_exists('getCurrency'))
+    {
+        $currency = getCurrency($clientId);
+
+        return [$clientId, (int)$currency['id']];
+    }
+    $currencyId = !empty($_SESSION['currency']) ? (int)$_SESSION['currency'] : (int)Capsule::table('tblcurrencies')->where('default', 1)->value('id');
+
+    return [0, $currencyId];
+}
+
+// Price used in the cart and on the invoice
+add_hook('OrderProductPricingOverride', 1, function($vars) {
+    try
+    {
+        list($clientId, $currencyId) = tssggs_commission_client_currency();
+        $price = \ModulesGarden\TSSGGSModule\App\Libs\Commissions::price($clientId, (int)$vars['pid'], $vars['proddata']['billingcycle'] ?? 'annually', $currencyId);
+
+        return $price === null ? [] : ['recurring' => $price];
+    }
+    catch(\Throwable $e)
+    {
+        return [];
+    }
+});
+
+// Prices shown on the standard order form (product list and configure product)
+add_hook('ClientAreaPageCart', 1, function($vars) {
+    try
+    {
+        list($clientId, $currencyId) = tssggs_commission_client_currency();
+        $scale = function($pricing, $pid) use ($clientId, $currencyId) {
+            $commission = \ModulesGarden\TSSGGSModule\App\Libs\Commissions::forProduct($clientId, $pid);
+            if($commission === null || !is_array($pricing) || !Capsule::table('tblproducts')->where('id', (int)$pid)->where('servertype', 'TSSGGSModule')->exists())
+            {
+                return $pricing;
+            }
+            foreach((array)($pricing['rawpricing'] ?? []) as $cycle => $amount)
+            {
+                if(!is_numeric($amount) || (float)$amount <= 0)
+                {
+                    continue;
+                }
+                $new = \ModulesGarden\TSSGGSModule\App\Libs\Commissions::apply($amount, $commission);
+                $pricing['rawpricing'][$cycle] = number_format($new, 2, '.', '');
+                if(isset($pricing['cycles'][$cycle]))
+                {
+                    $pricing['cycles'][$cycle] = str_replace((string)formatCurrency($amount, $currencyId), (string)formatCurrency($new, $currencyId), (string)$pricing['cycles'][$cycle]);
+                }
+            }
+            if(isset($pricing['minprice']['price']) && !empty($pricing['minprice']['cycle']) && isset($pricing['rawpricing'][$pricing['minprice']['cycle']]))
+            {
+                $pricing['minprice']['price'] = formatCurrency($pricing['rawpricing'][$pricing['minprice']['cycle']], $currencyId);
+            }
+
+            return $pricing;
+        };
+
+        $return = [];
+        if(!empty($vars['products']) && is_array($vars['products']))
+        {
+            $products = $vars['products'];
+            foreach($products as $key => $product)
+            {
+                if(isset($product['pid'], $product['pricing']))
+                {
+                    $products[$key]['pricing'] = $scale($product['pricing'], (int)$product['pid']);
+                }
+            }
+            $return['products'] = $products;
+        }
+        if(!empty($vars['pricing']) && !empty($vars['productinfo']['pid']))
+        {
+            $return['pricing'] = $scale($vars['pricing'], (int)$vars['productinfo']['pid']);
+        }
+
+        return $return;
+    }
+    catch(\Throwable $e)
+    {
+        return [];
+    }
+});
+
+// Lagom order form loads prices over AJAX - adjust them in the browser (the cart total comes from the override hook)
+add_hook('ClientAreaHeadOutput', 1, function($vars) {
+    if(strpos((string)($vars['template'] ?? ''), 'lagom') === false)
+    {
+        return '';
+    }
+    try
+    {
+        list($clientId) = tssggs_commission_client_currency();
+        $commissions = [];
+        foreach(Capsule::table('tblproducts')->where('servertype', 'TSSGGSModule')->pluck('id') as $pid)
+        {
+            $commission = \ModulesGarden\TSSGGSModule\App\Libs\Commissions::forProduct($clientId, $pid);
+            if($commission !== null)
+            {
+                $commissions[(int)$pid] = 1 + $commission / 100;
+            }
+        }
+        if(!$commissions)
+        {
+            return '';
+        }
+    }
+    catch(\Throwable $e)
+    {
+        return '';
+    }
+
+    return '<script>(function () {
+    var factors = ' . json_encode($commissions) . ', months = {monthly: 1, quarterly: 3, semiannually: 6, annually: 12, biennially: 24, triennially: 36};
+    function scale(pricing, factor, prefix) {
+        Object.keys(pricing || {}).forEach(function (cycle) {
+            var p = pricing[cycle], raw = parseFloat(p && p.rawPrice);
+            if (isNaN(raw) || raw <= 0) { return; }
+            var value = (raw * factor).toFixed(2);
+            p.rawPrice = value;
+            p.price = p.finalPrice = p.startingPrice = prefix + value;
+            p.monthlyPrice = prefix + (value / (months[cycle] || 1)).toFixed(2);
+        });
+    }
+    var open = XMLHttpRequest.prototype.open;
+    XMLHttpRequest.prototype.open = function (method, url) {
+        if (url && String(url).indexOf("LagomOrderForm") !== -1) {
+            var xhr = this;
+            xhr.addEventListener("readystatechange", function () {
+                if (xhr.readyState !== 4) { return; }
+                try {
+                    var data = JSON.parse(xhr.responseText), changed = false;
+                    var prefix = data.settings && data.settings.currency ? data.settings.currency.prefix : "";
+                    ((data.appState && data.appState.groups) || []).forEach(function (group) {
+                        (group.products || []).forEach(function (product) {
+                            var factor = factors[product.id];
+                            if (!factor) { return; }
+                            changed = true;
+                            scale(product.pricing, factor, prefix);
+                            Object.keys(product.pricings || {}).forEach(function (id) { scale(product.pricings[id], factor, prefix); });
+                        });
+                    });
+                    if (changed) {
+                        var text = JSON.stringify(data);
+                        Object.defineProperty(xhr, "responseText", {get: function () { return text; }});
+                        Object.defineProperty(xhr, "response", {get: function () { return text; }});
+                    }
+                } catch (e) {}
+            });
+        }
+        return open.apply(this, arguments);
+    };
+})();</script>';
+});
