@@ -11,6 +11,7 @@ class ProductIncomeWidget extends Widget
     public function loadHtml(): void
     {
         $this->setTitle($this->translate('title'));
+        $this->setIcon('chart-bar');
         $graph = new ProductIncomeGraph();
         $this->addElement($graph);
     }

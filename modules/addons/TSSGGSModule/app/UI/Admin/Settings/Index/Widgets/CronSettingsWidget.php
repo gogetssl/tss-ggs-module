@@ -15,6 +15,7 @@ class CronSettingsWidget extends Widget
     public function loadHtml(): void
     {
         $this->setTitle($this->translate('title'));
+        $this->setIcon('file-clock-outline');
         $this->setCss('tssggs-cronpanel');
 
         $script = dirname(__DIR__, 6) . '/cron/cron.php';

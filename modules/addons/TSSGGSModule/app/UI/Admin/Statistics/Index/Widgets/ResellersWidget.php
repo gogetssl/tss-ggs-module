@@ -14,6 +14,7 @@ class ResellersWidget extends Widget
     public function loadHtml(): void
     {
         $this->setTitle($this->translate('title'));
+        $this->setIcon('account-group-outline');
 
         $table = new TableSimple;
 

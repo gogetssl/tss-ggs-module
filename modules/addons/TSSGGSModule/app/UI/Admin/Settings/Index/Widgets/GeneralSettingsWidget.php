@@ -10,6 +10,7 @@ class GeneralSettingsWidget extends Widget
     public function loadHtml(): void
     {
         $this->setTitle($this->translate('title'));
+        $this->setIcon('web');
         $this->addElement(new GeneralSettingsForm());
     }
 }

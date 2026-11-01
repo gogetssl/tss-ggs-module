@@ -44,6 +44,7 @@ class MigrationContainer extends Container implements AdminAreaInterface
         {
             $widget = new Widget();
             $widget->setTitle($this->t('title'));
+            $widget->setIcon('database-outline');
             $widget->addElement($this->html('<p class="tssggs-muted">' . htmlspecialchars($this->t('none_found')) . '</p>'));
             $this->addElement($widget);
         }
@@ -73,6 +74,7 @@ class MigrationContainer extends Container implements AdminAreaInterface
     {
         $widget = new Widget();
         $widget->setTitle($info['label'] . ($info['version'] ? ' ' . $info['version'] : ''));
+        $widget->setIcon('package-variant-closed');
         $widget->appendCss('tssggs-migration__source');
 
         $c      = $info['counts'];
@@ -139,6 +141,7 @@ class MigrationContainer extends Container implements AdminAreaInterface
         $status = $engine->status((int)$run['id']);
         $widget = new Widget();
         $widget->setTitle($this->t('run_title', ['id' => (int)$run['id'], 'source' => strtoupper($run['source'])]) . ' · ' . ($run['started_at'] ?: $run['created_at']));
+        $widget->setIcon('sync');
         $widget->appendCss('tssggs-migration__run is-' . $run['status']);
 
         $labels = [
