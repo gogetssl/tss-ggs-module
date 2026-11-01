@@ -876,3 +876,26 @@ $_LANG['admin.settings.index.forms.general_settings_form.keepMarginOnSync']     
 $_LANG['admin.settings.index.forms.general_settings_form.keepMarginOnSync_description']  = 'Products with manual prices ("Auto" off on the Pricing page) follow reseller cost changes, so their margin stays the same';
 $_LANG['admin.settings.index.forms.general_settings_form.belowCostEmail']                = 'Below-Cost Email';
 $_LANG['admin.settings.index.forms.general_settings_form.belowCostEmail_description']    = 'E-mail the administrators when prices are below the reseller cost (checked by the price update cron, sent once per change)';
+
+//products: lifecycle
+$_LANG['admin.products.index.data_tables.products.array_data_provider.data_table.manage']                  = 'Manage';
+$_LANG['admin.products.index.data_tables.products.array_data_provider.data_table.badge_imported']          = 'Imported';
+$_LANG['admin.products.index.data_tables.products.array_data_provider.data_table.badge_not_imported']      = 'Not imported';
+$_LANG['admin.products.index.data_tables.products.array_data_provider.data_table.badge_hidden']            = 'Hidden';
+$_LANG['admin.products.index.data_tables.products.array_data_provider.data_table.badge_retired']           = 'Retired';
+$_LANG['admin.products.index.data_tables.products.array_data_provider.data_table.badge_removed']           = 'Removed by the gateway';
+$_LANG['admin.products.index.data_tables.products.array_data_provider.data_table.badge_options']           = 'Check options';
+$_LANG['admin.products.index.data_tables.products.array_data_provider.data_table.action_hide']             = 'Hide';
+$_LANG['admin.products.index.data_tables.products.array_data_provider.data_table.action_show']             = 'Show';
+$_LANG['admin.products.index.data_tables.products.array_data_provider.data_table.action_retire']           = 'Retire';
+$_LANG['admin.products.index.data_tables.products.array_data_provider.data_table.action_unretire']         = 'Un-retire';
+$_LANG['admin.products.index.data_tables.products.array_data_provider.data_table.action_fixOptions']       = 'Fix options';
+$_LANG['admin.products.index.data_tables.products.array_data_provider.data_table.action_cancelRenewals']   = 'Cancel all renewals';
+$_LANG['admin.products.index.data_tables.products.array_data_provider.data_table.confirm_retire']          = 'Retire this product? It can no longer be ordered; existing services keep working.';
+$_LANG['admin.products.index.data_tables.products.array_data_provider.data_table.confirm_cancel_renewals'] = 'Create a cancellation request (end of billing period) for every active service of this product?';
+$_LANG['admin.products.index.products_container.notice_hidden']             = ':product is hidden from the order form.';
+$_LANG['admin.products.index.products_container.notice_shown']              = ':product is visible on the order form.';
+$_LANG['admin.products.index.products_container.notice_retired']            = ':product is retired.';
+$_LANG['admin.products.index.products_container.notice_unretired']          = ':product is active again (still hidden - use Show to offer it).';
+$_LANG['admin.products.index.products_container.notice_options_fixed']      = 'Configurable options of :product checked. Changes: :detail';
+$_LANG['admin.products.index.products_container.notice_renewals_cancelled'] = 'Cancellation requests created for :detail services of :product.';

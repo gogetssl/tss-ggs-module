@@ -4,6 +4,7 @@ namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Products\Index\DataTables\Prod
 
 
 use ModulesGarden\TSSGGSModule\App\Libs\Helpers;
+use ModulesGarden\TSSGGSModule\App\Libs\ProductCatalog;
 
 use ModulesGarden\TSSGGSModule\App\Models\RemoteProduct;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Products\Index\DataTables\Products\Modals\ImportModal;
@@ -54,6 +55,11 @@ class DataTable extends \ModulesGarden\TSSGGSModule\Components\DataTable\DataTab
                              ->setTitle($this->translate('status'))
                              ->setSortable(true)
                              ->setSearchable(true));
+
+        if(($_REQUEST['mg-page'] ?? '') != 'configuration')
+        {
+            $this->addColumn((new Column('manage'))->setTitle($this->translate('manage')));
+        }
 
         $this->setRecordsPerPageOptions([10, 25]);
 
@@ -112,7 +118,8 @@ class DataTable extends \ModulesGarden\TSSGGSModule\Components\DataTable\DataTab
                 'brand'          => $remoteProduct->brand,
                 'validation'     => $remoteProduct->validation,
                 'provider'       => Helpers::vendorToDisplay($remoteProduct->vendor),
-                'status'         => $whmcsProduct ? $this->translate('imported') : '',
+                'status'         => $this->badges(ProductCatalog::badges((array)$remoteProduct->rawData, $whmcsProduct)),
+                'manage'         => $whmcsProduct ? $this->manageLinks($whmcsProduct) : '',
                 'hidePricing'    => !$whmcsProduct,
                 'hideImport'     => (bool)$whmcsProduct,
             ];
@@ -126,15 +133,48 @@ class DataTable extends \ModulesGarden\TSSGGSModule\Components\DataTable\DataTab
 
     protected function parseDataSetRecords(): void
     {
-        $this->dataSet->setFieldModifier('status', function($fieldName, $row, $fieldValue) {
-            if($fieldValue)
-            {
-                $label = new LabelSuccess();
-                $label->setText($fieldValue);
-            }
-            return $label;
-        });
-
         $this->dataSet->modifyRecords();
+    }
+
+    const BADGE_CLASSES = [
+        'imported' => 'lu-label--success', 'not_imported' => 'lu-label--default', 'hidden' => 'lu-label--warning',
+        'retired'  => 'lu-label--danger', 'removed' => 'lu-label--danger', 'options' => 'lu-label--warning',
+    ];
+
+    protected function badges(array $badges)
+    {
+        $html = '';
+        foreach($badges as $badge)
+        {
+            $html .= '<span class="lu-label lu-label--sm ' . (self::BADGE_CLASSES[$badge] ?? 'lu-label--default') . '" style="margin:0 3px 3px 0">'
+                . htmlspecialchars($this->translate('badge_' . $badge)) . '</span>';
+        }
+
+        return $html;
+    }
+
+    /**
+     * Hide / show, retire / un-retire, fix configurable options, cancel all renewals (App\Http\Admin\Products)
+     */
+    protected function manageLinks($whmcsProduct)
+    {
+        $base    = 'addonmodules.php?module=TSSGGSModule&mg-page=products&pid=' . (int)$whmcsProduct->id . '&token=' . urlencode(function_exists('generate_token') ? \generate_token('plain') : '') . '&mg-action=';
+        $actions = [];
+        if(!$whmcsProduct->retired)
+        {
+            $actions[$whmcsProduct->hidden ? 'show' : 'hide'] = '';
+        }
+        $actions[$whmcsProduct->retired ? 'unretire' : 'retire'] = $whmcsProduct->retired ? '' : 'confirm_retire';
+        $actions['fixOptions']     = '';
+        $actions['cancelRenewals'] = 'confirm_cancel_renewals';
+
+        $links = [];
+        foreach($actions as $action => $confirm)
+        {
+            $links[] = '<a href="' . htmlspecialchars($base . $action) . '"' . ($confirm ? ' onclick="return confirm(' . htmlspecialchars(json_encode($this->translate($confirm))) . ')"' : '') . '>'
+                . htmlspecialchars($this->translate('action_' . $action)) . '</a>';
+        }
+
+        return '<span style="white-space:nowrap;font-size:12px">' . implode(' · ', $links) . '</span>';
     }
 }

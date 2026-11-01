@@ -3,6 +3,7 @@
 namespace ModulesGarden\TSSGGSModule\App\Models;
 
 use ModulesGarden\TSSGGSModule\App\Libs\Helpers;
+use ModulesGarden\TSSGGSModule\App\Libs\ProductCatalog;
 use ModulesGarden\TSSGGSModule\Core\Models\ExtendedEloquentModel;
 use ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Product;
 
@@ -25,10 +26,12 @@ class RemoteProduct extends ExtendedEloquentModel
         foreach($configuredApis as $vendor => $api)
         {
             $remoteProducts = $api->getProducts();
+            $returnedIds    = [];
 
             foreach($remoteProducts as $remoteProductData)
             {
-                $remoteId = $remoteProductData['id'];
+                $remoteId      = $remoteProductData['id'];
+                $returnedIds[] = (string)$remoteId;
                 $model    = self::where('remoteId', $remoteId)->where('vendor', $vendor)->first();
 
                 if(!$model)
@@ -45,6 +48,12 @@ class RemoteProduct extends ExtendedEloquentModel
                 $model->category    = $remoteProductData['category'] ?: '';
                 $model->rawData     = $remoteProductData;
                 $model->save();
+            }
+
+            // Products the gateway no longer offers get a "Removed by the gateway" badge on the Products page
+            if($returnedIds)
+            {
+                ProductCatalog::markMissing($vendor, $returnedIds);
             }
         }
     }
