@@ -1014,3 +1014,7 @@ $_LANG['admin.settings.index.forms.general_settings_form.dueDateOffsetRegular'] 
 $_LANG['admin.settings.index.forms.general_settings_form.dueDateOffsetRegular_description']      = 'A single (non-subscription) certificate falls due this many days before its expiry (0 = on the expiry date). Applied the next time the order is synchronised.';
 $_LANG['admin.settings.index.forms.general_settings_form.dueDateOffsetSubscription']             = 'Subscriptions: Due Date Days Before End';
 $_LANG['admin.settings.index.forms.general_settings_form.dueDateOffsetSubscription_description'] = 'A multi-year subscription falls due this many days before the subscription ends (0 = on the end date). Applied the next time the order is synchronised.';
+$_LANG['admin.settings.index.forms.general_settings_form.defaultWebServer']             = 'Default Web Server Type';
+$_LANG['admin.settings.index.forms.general_settings_form.defaultWebServer_description'] = 'Sent with every order as webserver_type so clients are never asked. Leave empty when your gateway does not need it.';
+$_LANG['admin.emails.name_product_discontinued']     = 'Product discontinued';
+$_LANG['admin.emails.when_product_discontinued']     = 'Sent to the client with the renewal invoice when the gateway no longer sells the service\'s product (retired or removed), so renewal under the same product may be refused.';

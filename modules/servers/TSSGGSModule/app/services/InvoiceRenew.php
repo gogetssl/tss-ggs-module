@@ -127,6 +127,7 @@ class InvoiceRenew {
 
         $invoiceId = $results['invoiceid'];
         EmailTemplates::sendRenewalInvoiceEmail($serviceId, $invoiceId);
+        \ModulesGarden\TSSGGSModule\App\Libs\ProductCatalog::noticeIfDiscontinued($serviceId);
         InvoiceItem::where('invoiceid', $invoiceId)->update(['type' => 'Hosting', 'relid' => $serviceId]);
         $invoiceData = Invoice::where('id', $invoiceId)->first()->toArray();
 

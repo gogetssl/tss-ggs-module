@@ -45,6 +45,52 @@ class ProductCatalog
         return $badges;
     }
 
+    /**
+     * The gateway no longer sells the product: the WHMCS product is retired, or the gateway product is gone from the list
+     */
+    public static function isDiscontinued($packageId)
+    {
+        $product = Capsule::table('tblproducts')->where('id', (int)$packageId)->first(['retired', 'configoption2']);
+        if(!$product)
+        {
+            return false;
+        }
+        if(!empty($product->retired))
+        {
+            return true;
+        }
+        $remote = \ModulesGarden\TSSGGSModule\App\Models\RemoteProduct::where('remoteId', $product->configoption2)->first();
+
+        return $remote && is_array($remote->rawData) && !empty($remote->rawData['missing_since']);
+    }
+
+    /**
+     * With a renewal invoice for a discontinued product: the admin gets a warning (activity log, certificate log) and
+     * the client the "Product discontinued" e-mail (it can be disabled on the Emails page)
+     * @return bool whether the product is discontinued
+     */
+    public static function noticeIfDiscontinued($serviceId)
+    {
+        $service = Capsule::table('tblhosting')->where('id', (int)$serviceId)->first(['packageid']);
+        if(!$service || !self::isDiscontinued($service->packageid))
+        {
+            return false;
+        }
+
+        $text = 'The product of this service is discontinued at the gateway: renewal under the same product may be refused - arrange a replacement certificate';
+        GeneralSettings::activity('Service #' . (int)$serviceId . ': ' . $text);
+        CertificateService::event((int)$serviceId, 'warning', $text);
+        try
+        {
+            \ModulesGarden\TSSGGSModule\App\Helpers\EmailTemplates::sendEmail(\ModulesGarden\TSSGGSModule\App\Helpers\EmailTemplates::DISCONTINUED_TEMPLATE, (int)$serviceId);
+        }
+        catch(\Throwable $e)
+        {
+        }
+
+        return true;
+    }
+
     public static function setHidden($productId, $hidden)
     {
         return Capsule::table('tblproducts')->where('id', (int)$productId)->where('servertype', 'TSSGGSModule')->update(['hidden' => $hidden ? 1 : 0]);

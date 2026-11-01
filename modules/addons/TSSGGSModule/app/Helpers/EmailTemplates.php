@@ -99,7 +99,20 @@ class EmailTemplates
                              <p><a href="{$invoice_url}">View and pay the invoice</a></p>
                              <p>{$signature}</p>';
 
-    const TEMPLATE_NAMES = ['CONFIGURATION', 'EXPIRATION', 'SEND_CERTIFICATE', 'RENEWAL', 'REISSUE', 'SUBSCRIPTION', 'SUBSCRIPTION_EXPIRATION', 'SUBSCRIPTION_RENEWAL', 'RENEWAL_INVOICE'];
+    /**
+     * Sent with the renewal invoice of a service whose product the gateway no longer sells (retired / removed)
+     */
+    const DISCONTINUED_TEMPLATE = 'Product Discontinued';
+    const DISCONTINUED_SUBJECT  = 'Your certificate product {$service_product_name} is discontinued';
+    const DISCONTINUED_MESSAGE  = '<p>Dear {$client_name},</p>
+                             <p>
+                                The product of your SSL certificate {$service_domain} (service #{$service_id}) is no longer offered.
+                                Renewal may not be possible under the same product - please open a ticket and we will arrange a
+                                replacement certificate before your current one expires.
+                             </p>
+                             <p>{$signature}</p>';
+
+    const TEMPLATE_NAMES = ['CONFIGURATION', 'EXPIRATION', 'SEND_CERTIFICATE', 'RENEWAL', 'REISSUE', 'SUBSCRIPTION', 'SUBSCRIPTION_EXPIRATION', 'SUBSCRIPTION_RENEWAL', 'RENEWAL_INVOICE', 'DISCONTINUED'];
 
     /** keys of the templates that are created disabled */
     const OPT_IN = [self::RENEWAL_INVOICE_TEMPLATE];

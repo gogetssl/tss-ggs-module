@@ -108,6 +108,13 @@ class SSLStepThree
                 $orderParams['alternative_names'] = $san;
             }
 
+            // chosen by the admin (settings), the client is not asked
+            $webServer = trim((string)\ModulesGarden\TSSGGSModule\App\Libs\GeneralSettings::get('defaultWebServer'));
+            if($webServer !== '')
+            {
+                $orderParams['webserver_type'] = $webServer;
+            }
+
             if(in_array($configProduct['validation'], ['OV','EV']))
             {
                 $orderParams['contacts']['organization'] = $this->prepareContactOrganization($params);

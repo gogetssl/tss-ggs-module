@@ -27,6 +27,8 @@ class GeneralSettings
         // Lifecycle
         'terminateCancelsOrder'    => true,
         'terminateUnpaidOnExpiry'  => true,
+        // Orders
+        'defaultWebServer'         => '',
         // Renewal rules: days before the end of the certificate / subscription on which the service falls due
         'dueDateOffsetRegular'      => 0,
         'dueDateOffsetSubscription' => 0,

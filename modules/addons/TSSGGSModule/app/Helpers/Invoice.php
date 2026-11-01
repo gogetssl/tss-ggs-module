@@ -257,6 +257,7 @@ class Invoice
 
         $invoiceId = $results['invoiceid'];
         EmailTemplates::sendRenewalInvoiceEmail($service->id, $invoiceId);
+        \ModulesGarden\TSSGGSModule\App\Libs\ProductCatalog::noticeIfDiscontinued($service->id);
 
         $this->saveInvoiceInfo($service->userid, $invoiceId, $service->id, $product->id);
 

@@ -55,6 +55,7 @@ class GeneralSettingsForm extends Form implements AdminAreaInterface, AjaxCompon
         $lifecycle = $this->widget($left, 'lifecycle');
         $this->builder->addFieldInContainer($lifecycle, (new Switcher())->setName('terminateCancelsOrder')->addClass('switcher-revert'), true);
         $this->builder->addFieldInContainer($lifecycle, (new Switcher())->setName('terminateUnpaidOnExpiry')->addClass('switcher-revert'), true);
+        $this->builder->addFieldInContainer($lifecycle, (new FormInputText())->setName('defaultWebServer'), true);
         $this->builder->addFieldInContainer($lifecycle, (new Dropdown())->setName('dueDateOffsetRegular'), true);
         $this->builder->addFieldInContainer($lifecycle, (new Dropdown())->setName('dueDateOffsetSubscription'), true);
 

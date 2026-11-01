@@ -25,6 +25,7 @@ class EmailCatalog
         'Reissue'                           => ['renewals', [], true],
         'Renewal Started'                   => ['renewals', ['domain', 'cert_expiry', 'days_left', 'order_url'], true],
         'Renewal Invoice Created'           => ['renewals', ['invoice_id', 'invoice_total', 'invoice_due_date', 'invoice_url'], true],
+        'Product Discontinued'              => ['renewals', [], true],
         'Renewal Complete'                  => ['renewals', ['domain', 'order_url'], true],
         'Certificate Autorenewed'           => ['renewals', ['domain', 'order_number', 'common_name', 'order_url'], true],
         'ACME Subscription Expiration'      => ['renewals', [], true],

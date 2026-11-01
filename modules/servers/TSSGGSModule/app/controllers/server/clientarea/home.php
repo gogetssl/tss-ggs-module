@@ -1343,7 +1343,9 @@ class home extends AbstractController
         $vendor = $input['params']['configoption1'];
         $api    = $apis[$vendor];
 
-        $acmeProductId = isset($input['params']['configoption2']) ? (int)$input['params']['configoption2'] : (int)AcmeHelpers::getProductIds()[0];
+        // remote product ids can be codes (TSS: sectigo_caas_dv), not only numbers
+        $acmeProductId = !empty($input['params']['configoption2']) ? $input['params']['configoption2'] : AcmeHelpers::getProductIds()[0];
+        $acmeProductId = is_numeric($acmeProductId) ? (int)$acmeProductId : $acmeProductId;
         $response      = $api->createAcmeSubscription([
                                                           'product_id' => $acmeProductId,
                                                           'domains'    => implode(',', $domains),
