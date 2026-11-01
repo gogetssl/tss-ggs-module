@@ -759,3 +759,113 @@
 #layers2 .lu-app-navbar ul.lu-nav--sub > li.lu-nav__item > a.lu-nav__link > i { width: 16px; height: 16px; margin: 0; font-size: 16px; line-height: 16px; }
 #layers2 .lu-app-navbar a.lu-nav__link:focus { outline: none; box-shadow: none; }
 #layers2 .lu-app-navbar a.lu-nav__link:focus-visible { outline: 2px solid var(--tw-primary); outline-offset: -2px; border-radius: 6px; }
+
+/*
+ * ---- admin pages: one system for every page (Lovable design) ----
+ * heading: breadcrumb 12px + title 24px | content sits on 8px-radius cards | tables: 40px header, 12px cells,
+ * plain-case muted header, hover instead of stripes | badges: soft tint + border | controls: 36px high, brand green
+ */
+
+/* page heading */
+#layers2 .lu-app-main__top.tssggs-pagehead { display: block; margin: 0 0 var(--sp-6) !important; padding: 0; }
+#layers2 .tssggs-pagehead__crumb { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; margin-bottom: 4px; color: var(--tw-muted); font-size: 12px; line-height: 16px; }
+#layers2 .tssggs-pagehead__crumb a { color: inherit; text-decoration: none; }
+#layers2 .tssggs-pagehead__crumb a:hover { color: var(--tw-fg); }
+#layers2 .tssggs-pagehead__crumb i { font-size: 14px; line-height: 1; }
+#layers2 .tssggs-pagehead__title { margin: 0; color: var(--tw-fg); font-size: 24px; font-weight: 600; line-height: 32px; }
+
+/* pages built from one HTML block get the same card as the widget pages */
+#layers2 .tssggs-pricing .tssggs-html,
+#layers2 .tssggs-log .tssggs-html,
+#layers2 .tssggs-commissions .tssggs-html {
+    display: block; padding: var(--sp-6); border: 1px solid var(--tw-border); border-radius: var(--tw-radius); background: var(--tw-surface);
+}
+#layers2 .lu-app-main .lu-widget { border: 1px solid var(--tw-border); border-radius: var(--tw-radius); box-shadow: none; }
+
+/* tables */
+#layers2 .lu-app-main table.lu-table,
+#layers2 .lu-app-main table.table,
+#layers2 .lu-app-main table.tssggs-table { border-collapse: collapse; background: transparent; }
+#layers2 .lu-app-main table.lu-table > thead > tr > th,
+#layers2 .lu-app-main table.table > thead > tr > th,
+#layers2 .lu-app-main table.tssggs-table th {
+    height: 40px; padding: 8px 12px; border: 0; border-bottom: 1px solid var(--tw-border); background: transparent;
+    color: var(--tw-muted); font-size: 12px; font-weight: 500; letter-spacing: 0; line-height: 16px; text-transform: none; vertical-align: middle; white-space: nowrap;
+}
+#layers2 .lu-app-main table.lu-table > tbody > tr > td,
+#layers2 .lu-app-main table.table > tbody > tr > td,
+#layers2 .lu-app-main table.tssggs-table td {
+    padding: 12px; border: 0; border-bottom: 1px solid var(--tw-border); background: transparent;
+    color: var(--tw-fg); font-size: 13px; line-height: 20px; vertical-align: middle; word-break: normal; overflow-wrap: break-word;
+}
+#layers2 .lu-app-main table.lu-table > tbody > tr:last-child > td,
+#layers2 .lu-app-main table.table > tbody > tr:last-child > td { border-bottom: 0; }
+#layers2 .lu-app-main table.table-striped > tbody > tr:nth-of-type(odd) { background: transparent; }
+#layers2 .lu-app-main table.lu-table > tbody > tr:hover > td,
+#layers2 .lu-app-main table.table > tbody > tr:hover > td { background: var(--tw-surface-alt); }
+#layers2 .lu-app-main table small,
+#layers2 .lu-app-main table .tssggs-muted { color: var(--tw-muted); font-size: 12px; }
+
+/* badges */
+#layers2 .lu-app-main .lu-label {
+    display: inline-flex; align-items: center; height: auto; padding: 2px 8px; border: 1px solid #e2e8f0; border-radius: 999px;
+    background: #f1f5f9; color: #475569; font-size: 12px; font-weight: 500; line-height: 16px; text-transform: none; white-space: nowrap;
+}
+#layers2 .lu-app-main .lu-label--success { border-color: #bbf7d0; background: var(--tw-primary-soft); color: var(--tw-primary); }
+#layers2 .lu-app-main .lu-label--warning { border-color: #fde68a; background: #fffbeb; color: #b45309; }
+#layers2 .lu-app-main .lu-label--danger { border-color: #fecaca; background: #fef2f2; color: #b91c1c; }
+#layers2 .lu-app-main .lu-label--info,
+#layers2 .lu-app-main .lu-label--primary { border-color: #bfdbfe; background: #eff6ff; color: #1d4ed8; }
+
+/* buttons (not the icon / link ones) */
+#layers2 .lu-app-main .lu-btn:not(.lu-btn--link):not(.lu-btn--plain):not(.lu-btn--icon) {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 36px; padding: 0 16px;
+    border-radius: 6px; font-size: 14px; font-weight: 500; line-height: 20px; box-shadow: none; text-transform: none;
+}
+#layers2 .lu-app-main .lu-btn--primary:not(.lu-btn--link):not(.lu-btn--plain),
+#layers2 .lu-app-main .lu-btn--success:not(.lu-btn--link):not(.lu-btn--plain) { border: 1px solid var(--tw-primary); background: var(--tw-primary); color: #fff; }
+#layers2 .lu-app-main .lu-btn--primary:not(.lu-btn--link):not(.lu-btn--plain):hover,
+#layers2 .lu-app-main .lu-btn--success:not(.lu-btn--link):not(.lu-btn--plain):hover { border-color: #005a2b; background: #005a2b; color: #fff; }
+#layers2 .lu-app-main .lu-btn--default:not(.lu-btn--link):not(.lu-btn--plain) { border: 1px solid var(--tw-border); background: var(--tw-surface); color: var(--tw-fg); }
+#layers2 .lu-app-main .lu-btn--default:not(.lu-btn--link):not(.lu-btn--plain):hover { background: var(--tw-surface-alt); }
+#layers2 .lu-app-main .lu-btn--danger:not(.lu-btn--link):not(.lu-btn--plain) { border: 1px solid #dc2626; background: #dc2626; color: #fff; }
+#layers2 .lu-app-main .lu-btn:focus-visible { outline: 2px solid var(--tw-primary); outline-offset: 2px; }
+
+/* inputs and selects */
+#layers2 .lu-app-main input.lu-form-control,
+#layers2 .lu-app-main select.lu-form-control,
+#layers2 .lu-app-main .lu-selectize-input.lu-form-control,
+#layers2 .lu-app-main .tssggs-html input[type=text],
+#layers2 .lu-app-main .tssggs-html input[type=number],
+#layers2 .lu-app-main .tssggs-html select {
+    min-height: 36px; border: 1px solid var(--tw-border); border-radius: 6px; background-color: var(--tw-surface); color: var(--tw-fg); font-size: 13px; box-shadow: none;
+}
+#layers2 .lu-app-main .lu-form-control:focus,
+#layers2 .lu-app-main .tssggs-html input:focus,
+#layers2 .lu-app-main .tssggs-html select:focus { border-color: var(--tw-primary); outline: none; box-shadow: 0 0 0 3px color-mix(in srgb, var(--tw-primary) 15%, transparent); }
+
+/* info banners */
+#layers2 .lu-app-main .lu-alert { border-radius: var(--tw-radius); font-size: 13px; line-height: 20px; }
+
+/* footer line */
+#layers2 .lu-app-main__footer { margin-top: var(--sp-6); }
+#layers2 .lu-footer-module-version-info { color: var(--tw-muted); font-size: 11px; }
+
+/* filter / toolbar forms inside the HTML pages: labels on one baseline, controls on one line */
+#layers2 .lu-app-main .tssggs-html form label:not(.tssggs-legacy__choice label) {
+    display: block; margin: 0 0 6px; color: var(--tw-fg); font-size: 12px; font-weight: 500 !important; line-height: 16px;
+}
+#layers2 .lu-app-main .tssggs-html .form-control { min-height: 36px; height: 36px; padding: 0 10px; border: 1px solid var(--tw-border); border-radius: 6px; font-size: 13px; box-shadow: none; }
+#layers2 .lu-app-main .tssggs-html table .form-control { height: 32px; min-height: 32px; }
+#layers2 .lu-app-main .tssggs-html input[type=file] { font-size: 13px; color: var(--tw-muted); }
+#layers2 .lu-app-main .tssggs-html input[type=file]::file-selector-button {
+    height: 36px; margin-right: 8px; padding: 0 14px; border: 1px solid var(--tw-border); border-radius: 6px;
+    background: var(--tw-surface); color: var(--tw-fg); font-size: 14px; font-weight: 500; cursor: pointer;
+}
+#layers2 .lu-app-main .tssggs-html input[type=file]::file-selector-button:hover { background: var(--tw-surface-alt); }
+#layers2 .lu-app-main .tssggs-html > p.tssggs-muted,
+#layers2 .lu-app-main .tssggs-html .tssggs-muted { color: var(--tw-muted); font-size: 13px; line-height: 20px; }
+
+/* breadcrumb chevron on the text's centre line */
+#layers2 .tssggs-pagehead__crumb i { display: inline-flex; align-items: center; height: 16px; }
+#layers2 .tssggs-pagehead__crumb i::before { line-height: 16px; }

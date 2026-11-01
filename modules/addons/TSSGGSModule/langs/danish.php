@@ -1010,3 +1010,6 @@ $_LANG['admin.emails.rich_editor']              = 'Rich text-editor';
 $_LANG['admin.emails.rich_failed']              = 'Den visuelle editor kunne ikke indlæses (assets/js/tinymce i WHMCS); teksten redigeres som HTML-kildekode.';
 $_LANG['admin.emails.name_renewal_invoice_created']  = 'Fornyelsesfaktura oprettet';
 $_LANG['admin.emails.when_renewal_invoice_created']  = 'Sendes, når dette modul opretter en fornyelsesfaktura. Deaktiveret som standard: mens den er deaktiveret, sender WHMCS sin egen faktura-e-mail; aktiver den for at sende denne tekst i stedet.';
+$_LANG['admin.breadcrumbs.CertificateLog'] = 'Certifikatlog';
+$_LANG['admin.breadcrumbs.Commissions'] = 'Provisioner';
+$_LANG['admin.breadcrumbs.Migration'] = 'Migrering';

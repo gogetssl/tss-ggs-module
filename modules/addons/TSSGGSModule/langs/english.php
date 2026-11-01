@@ -1125,3 +1125,6 @@ $_LANG['admin.settings.index.widgets.cron_settings_widget.copied'] = 'Copied';
 $_LANG['admin.settings.index.forms.cron_configuration_form.saveChanges'] = 'Save changes';
 $_LANG['admin.settings.index.forms.cron_configuration_form.noUnsaved'] = 'No unsaved changes';
 $_LANG['admin.settings.index.forms.cron_configuration_form.unsaved'] = 'Unsaved changes';
+$_LANG['admin.breadcrumbs.CertificateLog'] = 'Certificate Log';
+$_LANG['admin.breadcrumbs.Commissions'] = 'Commissions';
+$_LANG['admin.breadcrumbs.Migration'] = 'Migration';

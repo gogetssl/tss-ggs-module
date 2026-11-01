@@ -1008,3 +1008,6 @@ $_LANG['admin.emails.rich_editor'] = 'Rich-Text-Editor';
 $_LANG['admin.emails.rich_failed'] = 'Der visuelle Editor konnte nicht geladen werden (assets/js/tinymce von WHMCS); der Text wird als HTML-Quelltext bearbeitet.';
 $_LANG['admin.emails.name_renewal_invoice_created'] = 'Verlängerungsrechnung erstellt';
 $_LANG['admin.emails.when_renewal_invoice_created'] = 'Wird gesendet, wenn dieses Modul eine Verlängerungsrechnung erstellt. Standardmäßig deaktiviert: Solange sie deaktiviert ist, sendet WHMCS seine eigene Rechnungs-E-Mail; aktivieren Sie sie, um stattdessen diesen Text zu senden.';
+$_LANG['admin.breadcrumbs.CertificateLog'] = 'Zertifikatsprotokoll';
+$_LANG['admin.breadcrumbs.Commissions'] = 'Provisionen';
+$_LANG['admin.breadcrumbs.Migration'] = 'Migration';

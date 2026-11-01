@@ -4,18 +4,18 @@ var component =
         template: '#template-name#',
         data: function () {
             return {
-                items_: []
+                items_: [],
+                module_: ''
             }
         },
         props: [
-            'items'
+            'items',
+            'module'
         ],
-        created: function () {
-        },
         computed: {
-            moduleUrlClassLogo: function () {
-                return 'lu-product-{$tagImageModule}-for-whmcs'
+            // the items come as an array or as an object keyed by position
+            list: function () {
+                return this.items_ ? Object.values(this.items_) : [];
             }
-            
         }
     }
