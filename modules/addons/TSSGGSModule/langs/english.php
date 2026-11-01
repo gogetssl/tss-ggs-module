@@ -1005,3 +1005,4 @@ $_LANG['admin.emails.opt_plain_hint']           = 'Send this e-mail in plain tex
 $_LANG['admin.emails.opt_disable']              = 'Disable';
 $_LANG['admin.emails.opt_disable_hint']         = 'Do not send this e-mail';
 $_LANG['admin.emails.rich_editor']              = 'Rich-text editor';
+$_LANG['admin.emails.rich_failed']              = 'The visual editor could not be loaded (assets/js/tinymce of WHMCS); the text is edited as HTML source.';

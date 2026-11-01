@@ -25,7 +25,7 @@ class EmailsContainer extends Container implements AdminAreaInterface
      * Page script, run by the onerror of an image (scripts in the rendered text are not executed): loads WHMCS's TinyMCE
      * and defines tssggsRich(on) and tssggsInsert(text) for the toggle and the merge-field chips
      */
-    const EDITOR_JS = "var id='tssggs-email-message';window.tssggsRich=function(on){if(on){if(window.tinymce&&!tinymce.get(id)){tinymce.init({selector:'#'+id,height:420,menubar:false,branding:false,plugins:'link lists code table autolink',toolbar:'undo redo | styleselect bold italic underline | alignleft aligncenter alignright | bullist numlist | link table | code',relative_urls:false,convert_urls:false,remove_script_host:false,verify_html:false,entity_encoding:'raw'})}}else if(window.tinymce&&tinymce.get(id)){tinymce.get(id).remove()}};window.tssggsInsert=function(t){var e=window.tinymce&&tinymce.get(id);if(e){e.insertContent(t)}else{var a=document.getElementById(id),s=a.selectionStart;a.value=a.value.slice(0,s)+t+a.value.slice(a.selectionEnd);a.focus()}};var s=document.createElement('script');s.src='../assets/js/tinymce/tinymce.min.js';s.onload=function(){tssggsRich(document.getElementById('tssggs-rich').checked)};document.head.appendChild(s);";
+    const EDITOR_JS = "var id='tssggs-email-message';window.tssggsRich=function(on){if(on){if(window.tinymce&&!tinymce.get(id)){tinymce.init({selector:'#'+id,height:420,menubar:false,branding:false,plugins:'link lists code table autolink',toolbar:'undo redo | styleselect bold italic underline | alignleft aligncenter alignright | bullist numlist | link table | code',relative_urls:false,convert_urls:false,remove_script_host:false,verify_html:false,entity_encoding:'raw'})}}else if(window.tinymce&&tinymce.get(id)){tinymce.get(id).remove()}};window.tssggsInsert=function(t){var e=window.tinymce&&tinymce.get(id);if(e){e.insertContent(t)}else{var a=document.getElementById(id),s=a.selectionStart;a.value=a.value.slice(0,s)+t+a.value.slice(a.selectionEnd);a.focus()}};var s=document.createElement('script');s.src='../assets/js/tinymce/tinymce.min.js';s.onload=function(){tssggsRich(document.getElementById('tssggs-rich').checked)};s.onerror=function(){document.getElementById('tssggs-rich').checked=false;document.getElementById('tssggs-rich-note').style.display='block'};document.head.appendChild(s);";
 
     public function loadHtml(): void
     {
@@ -141,6 +141,7 @@ class EmailsContainer extends Container implements AdminAreaInterface
             . '<div class="em-labelrow"><label class="em-label">' . $this->e($this->t('message')) . '</label>'
             . '<label class="em-rich"><input type="checkbox" id="tssggs-rich" onchange="tssggsRich(this.checked)"' . (empty($text['plaintext']) ? ' checked' : '') . '> ' . $this->e($this->t('rich_editor')) . '</label></div>'
             . '<textarea class="form-control em-message" id="tssggs-email-message" name="message"' . $ro . '>' . $this->e($text['message']) . '</textarea>'
+            . '<p class="tssggs-note is-warn" id="tssggs-rich-note" style="display:none">' . $this->e($this->t('rich_failed')) . '</p>'
             . $this->fields($row)
             . '<img src="x:x" alt="" style="display:none" onerror="' . $this->e(self::EDITOR_JS) . '">';
 
