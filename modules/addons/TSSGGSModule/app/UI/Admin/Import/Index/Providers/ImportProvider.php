@@ -64,6 +64,7 @@ class ImportProvider extends CrudProvider
                 'remoteOrderId' => $remoteOrderId,
                 'clientId'      => $clientId,
                 'payMethod'     => $payMethod,
+                'serviceId'     => (int)$this->formData['serviceId'],
             ];
         }
         else
@@ -75,6 +76,7 @@ class ImportProvider extends CrudProvider
                 'API order ID'   => 'remoteOrderId',
                 'Customer ID'    => 'clientId',
                 'Payment method' => 'payMethod',
+                'Service ID'     => 'serviceId',
             ];
 
             foreach($header as $index => $name)
@@ -170,34 +172,61 @@ class ImportProvider extends CrudProvider
                 continue;
             }
 
-            try
+            $mapToService = (int)($localOrderData['serviceId'] ?? 0);
+            if($mapToService)
             {
-                $result = WhmcsApi::run('AddOrder', [
-                    'clientid'       => $clientId,
-                    'paymentmethod'  => $payMethod,
-                    'pid'            => [$whmcsProduct->id],
-                    'domain'         => [$domain],
-                    'noinvoice'      => !$generateInvoice,
-                    'noemail'        => true,
-                    'noinvoiceemail' => true,
-                ]);
-            }
-            catch(\Throwable $e)
-            {
-                Logger::error($e->getMessage(), $localOrderData);
-                $errorsCount++;
-                continue;
-            }
+                // Attach the order to an existing service of the client (e.g. created by hand or by another module)
+                $service = Service::find($mapToService);
+                if(!$service || (int)$service->userid !== $clientId || $service->product->servertype !== 'TSSGGSModule')
+                {
+                    Logger::error('invalidServiceToMap', $localOrderData);
+                    $errorsCount++;
+                    continue;
+                }
+                $sslOrder = Capsule::table('tblsslorders')->where('serviceid', $mapToService)->first();
+                if($sslOrder && !empty($sslOrder->remoteid) && $sslOrder->status !== 'Awaiting Configuration')
+                {
+                    Logger::error('serviceHasOrder', $localOrderData);
+                    $errorsCount++;
+                    continue;
+                }
 
-            $serviceId = (int)$result['serviceids'];
-            $service   = Service::find($serviceId);
-            $invoiceId = (int)$result['invoiceid'];
-
-            if(!$serviceId || !$service)
+                $serviceId       = $mapToService;
+                $invoiceId       = 0;
+                $service->domain = $domain;
+                $service->save();
+            }
+            else
             {
-                Logger::error('invalidServiceId', $localOrderData);
-                $errorsCount++;
-                continue;
+                try
+                {
+                    $result = WhmcsApi::run('AddOrder', [
+                        'clientid'       => $clientId,
+                        'paymentmethod'  => $payMethod,
+                        'pid'            => [$whmcsProduct->id],
+                        'domain'         => [$domain],
+                        'noinvoice'      => !$generateInvoice,
+                        'noemail'        => true,
+                        'noinvoiceemail' => true,
+                    ]);
+                }
+                catch(\Throwable $e)
+                {
+                    Logger::error($e->getMessage(), $localOrderData);
+                    $errorsCount++;
+                    continue;
+                }
+
+                $serviceId = (int)$result['serviceids'];
+                $service   = Service::find($serviceId);
+                $invoiceId = (int)$result['invoiceid'];
+
+                if(!$serviceId || !$service)
+                {
+                    Logger::error('invalidServiceId', $localOrderData);
+                    $errorsCount++;
+                    continue;
+                }
             }
 
             if(isset($remoteOrderData['items'][0]['subscription']['end']))
@@ -248,6 +277,8 @@ class ImportProvider extends CrudProvider
                 ]
             ];
 
+            // A mapped service may carry the data of an earlier order
+            RequestModel::where('serviceid', $serviceId)->whereIn('name', ['addOrder', 'certificate'])->delete();
 
             RequestModel::insert(
                 [
@@ -287,8 +318,8 @@ class ImportProvider extends CrudProvider
                     'serviceid'  => $serviceId,
                     'request'    => \encrypt(json_encode($request)),
                     'status'     => 'pending',
-                    'created_at' => date('Y - m - d H:i:s'),
-                    'updated_at' => date('Y - m - d H:i:s')
+                    'created_at' => date('Y-m-d H:i:s'),
+                    'updated_at' => date('Y-m-d H:i:s')
                 ]
             );
         }

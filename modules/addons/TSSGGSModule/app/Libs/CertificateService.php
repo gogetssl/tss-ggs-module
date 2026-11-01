@@ -5,6 +5,7 @@ namespace ModulesGarden\TSSGGSModule\App\Libs;
 use ModulesGarden\TSSGGSModule\App\Helpers\EmailTemplates;
 use ModulesGarden\TSSGGSModule\App\Models\AcmeSubscription;
 use ModulesGarden\TSSGGSModule\App\Models\AisSubscription;
+use ModulesGarden\TSSGGSModule\App\Models\RemoteProduct;
 use ModulesGarden\TSSGGSModule\App\Models\Request;
 use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
 use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\ProductRepository;
@@ -548,6 +549,51 @@ class CertificateService
         AutoInstallHelpers::save($serviceId, $state, AutoInstallHelpers::STATUS_INSTALLED);
 
         self::event($serviceId, 'success', '[Install] Certificate installed on cPanel - domain: ' . $domain . ' | server: ' . $cpanelService->hostname, $userId);
+    }
+
+    /**
+     * Subscriber agreement the client accepts before the order is placed, null when not required.
+     * The link points to the legal repository of the product's certificate authority.
+     */
+    public static function agreement($packageId)
+    {
+        if(!GeneralSettings::enabled('requireAgreement'))
+        {
+            return null;
+        }
+
+        $product = (new ProductRepository())->getProductConfiguration($packageId);
+        $brand   = strtolower((string)$product['brand'] . ' ' . (string)RemoteProduct::where('remoteId', $product['product_id'])->where('vendor', $product['provider'])->value('brand'));
+
+        $authorities = [
+            'Sectigo'  => ['sectigo', 'comodo', 'positivessl', 'instantssl', 'essentialssl', 'enterprisessl', 'trustedsite'],
+            'DigiCert' => ['digicert', 'geotrust', 'rapidssl', 'thawte', 'symantec', 'encryption everywhere'],
+            'GoGetSSL' => ['gogetssl'],
+        ];
+        $urls = [
+            'Sectigo'  => 'https://www.sectigo.com/legal',
+            'DigiCert' => 'https://www.digicert.com/legal-repository',
+            'GoGetSSL' => 'https://www.gogetssl.com/legal/',
+        ];
+
+        $name = '';
+        foreach($authorities as $authority => $needles)
+        {
+            foreach($needles as $needle)
+            {
+                if(strpos($brand, $needle) !== false)
+                {
+                    $name = $authority;
+                    break 2;
+                }
+            }
+        }
+
+        return [
+            'name' => $name !== '' ? $name . ' Subscriber Agreement' : 'Subscriber Agreement of the certificate authority',
+            'url'  => $name !== '' ? $urls[$name] : '',
+            'text' => trim((string)GeneralSettings::get('agreementText')),
+        ];
     }
 
     /**

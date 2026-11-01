@@ -820,3 +820,6 @@ $_LANG['admin.certificate_log.type']                   = 'Event';
 $_LANG['admin.certificate_log.message']                = 'Message';
 $_LANG['admin.certificate_log.empty']                  = 'No events found.';
 $_LANG['admin.certificate_log.page']                   = 'Page :page of :pages (:total events)';
+
+//import: map to an existing service
+$_LANG['admin.import.index.forms.import_form.serviceId'] = 'Attach To Existing Service ID (optional)';

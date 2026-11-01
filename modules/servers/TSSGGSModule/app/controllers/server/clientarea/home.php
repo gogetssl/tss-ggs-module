@@ -2139,6 +2139,23 @@ class home extends AbstractController
         }
 
         $dcvMethods = array_values(array_filter(array_map('trim', explode(',', strtolower((string)$configProduct['dcv'])))));
+
+        // Manual orders can pick the DNS record type (CNAME / TXT) when the CA offers both; AutoInstall creates
+        // the record the CA asks for, so it keeps the single DNS method
+        $manualMethods = array_values(array_intersect(['email', 'http', 'https', 'dns-cname', 'dns-txt'], $dcvMethods));
+        if(!array_intersect(['dns-cname', 'dns-txt'], $manualMethods) && in_array('dns', $dcvMethods, true))
+        {
+            $manualMethods[] = 'dns';
+        }
+        if(!empty($sslSettings['disableEmailValidation']))
+        {
+            $manualMethods = array_values(array_diff($manualMethods, ['email']));
+        }
+        if($isWildcard)
+        {
+            $manualMethods = array_values(array_diff($manualMethods, ['http', 'https']));
+        }
+
         // Same methods as in SSLCENTERWHMCS: dns-cname / dns-txt from the API product are shown as one DNS method
         $dcvMethods = array_map(function($method) {
             return in_array($method, ['dns-cname', 'dns-txt']) ? 'dns' : $method;
@@ -2161,6 +2178,7 @@ class home extends AbstractController
         $wildcardSansLimit = (int)$params['configoption8'] + (isset($params['configoptions']['sans_wildcard']) ? (int)$params['configoptions']['sans_wildcard'] : 0);
 
         return [
+            'dcvMethodsManual'   => $manualMethods ?: $dcvMethods,
             'productName'        => $product ? $product->name : 'SSL Certificate',
             'isWildcard'         => $isWildcard,
             'validation'         => $validation,
@@ -2263,6 +2281,7 @@ class home extends AbstractController
         $vars['domainGroups']       = $domainGroups;
         $vars['hasCpanel']          = !empty($domainGroups);
         $vars['dcvMethods']         = $settings['dcvMethods'];
+        $vars['dcvMethodsManual']   = $settings['dcvMethodsManual'];
         $vars['countries']          = $countries;
         $vars['csrDefaults']        = $csrDefaults;
         $vars['client']             = $client;
@@ -2276,6 +2295,7 @@ class home extends AbstractController
         $vars['adminFormHidden']    = $settings['adminFormHidden'];
         $vars['productDomain']      = isset($params['domain']) ? $params['domain'] : '';
         $vars['csrfToken']          = \generate_token('plain');
+        $vars['agreement']          = CertificateService::agreement($params['packageid']);
 
         return [
             'tpl'  => 'home_ssl_configuration',
@@ -2364,13 +2384,18 @@ class home extends AbstractController
             throw new \Exception(Lang::absoluteT('sslConfigAlreadySubmitted'));
         }
 
+        if(CertificateService::agreement($params['packageid']) && empty($input['agreement']))
+        {
+            throw new \Exception(Lang::absoluteT('serverCA', 'home', 'sslConfigAgreementRequired'));
+        }
+
         $settings    = $this->getSslConfigurationSettings($params);
         $installType = (isset($input['install_type']) && $input['install_type'] === 'autoinstall') ? 'autoinstall' : 'manual';
         $dcvMethod   = isset($input['dcv_method']) ? strtolower(trim($input['dcv_method'])) : '';
         $includeWww  = !empty($input['include_www']);
         $ownCsr      = ($installType === 'manual') ? trim(isset($input['own_csr']) ? $input['own_csr'] : '') : '';
 
-        if(!in_array($dcvMethod, $settings['dcvMethods'], true))
+        if(!in_array($dcvMethod, $installType === 'manual' ? $settings['dcvMethodsManual'] : $settings['dcvMethods'], true))
         {
             throw new \Exception(Lang::absoluteT('sslConfigInvalidDcvMethod'));
         }

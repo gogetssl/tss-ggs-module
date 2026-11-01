@@ -518,3 +518,9 @@ $_LANG['serverCA']['home']['reissue_page']['reissue_autoinstall_key']      = 'Ke
 $_LANG['serverCA']['home']['reissue_page']['reissue_autoinstall_key_desc'] = 'The reissued certificate is installed on your server automatically once it is issued. Untick to paste your own CSR - the automatic installation is then turned off.';
 $_LANG['serverCA']['home']['reissue_page']['reissue_buy_sans_desc']        = 'Need more domains on this certificate?';
 $_LANG['serverCA']['home']['reissue_page']['reissue_buy_sans']             = 'Buy additional SANs';
+
+// Subscriber agreement (1.3.0)
+$_LANG['serverCA']['home']['sslConfigAgreement']         = 'I have read and accept the';
+$_LANG['serverCA']['home']['sslConfigAgreementRequired'] = 'Please accept the subscriber agreement of the certificate authority.';
+$_LANG['serverCA']['home']['sslConfigValidationDnsCname'] = 'DNS - CNAME record';
+$_LANG['serverCA']['home']['sslConfigValidationDnsTxt']   = 'DNS - TXT record';

@@ -196,12 +196,14 @@
         <div class="form-group">
             <label>{$MGLANG->T('sslConfigValidationMethod')} <span class="text-danger">*</span></label>
             <select class="form-control dcv-select" id="dcv_method_manual">
-                {foreach $dcvMethods as $method}
+                {foreach $dcvMethodsManual as $method}
                     <option value="{$method|escape}" {if $method == 'http'}selected{/if}>
                         {if $method == 'email'}{$MGLANG->T('sslConfigValidationEmail')}
                         {elseif $method == 'http'}{$MGLANG->T('sslConfigValidationHttp')}
                         {elseif $method == 'https'}{$MGLANG->T('sslConfigValidationHttps')}
                         {elseif $method == 'dns'}{$MGLANG->T('sslConfigValidationDns')}
+                        {elseif $method == 'dns-cname'}{$MGLANG->T('sslConfigValidationDnsCname')}
+                        {elseif $method == 'dns-txt'}{$MGLANG->T('sslConfigValidationDnsTxt')}
                         {else}{$method|escape}{/if}
                     </option>
                 {/foreach}
@@ -309,6 +311,16 @@
                 </div>
             </div>
         </div>
+    </div>
+    {/if}
+
+    {if $agreement}
+    <div class="tssggs-agreement" style="margin-top:25px;">
+        {if $agreement.text}<div style="margin-bottom:8px;">{$agreement.text}</div>{/if}
+        <label style="font-weight:normal;">
+            <input type="checkbox" id="tssggs_agreement" value="1">
+            {$MGLANG->T('sslConfigAgreement')} {if $agreement.url}<a href="{$agreement.url|escape}" target="_blank" rel="noopener">{$agreement.name|escape}</a>{else}{$agreement.name|escape}{/if}
+        </label>
     </div>
     {/if}
 
@@ -664,6 +676,11 @@
             return;
         }
 
+        if ($('#tssggs_agreement').length && !$('#tssggs_agreement').is(':checked')) {
+            showError('{$MGLANG->T('sslConfigAgreementRequired')|escape:'javascript'}');
+            return;
+        }
+
         var postData = {
             'mg-action':          'submitSslConfiguration',
             'token':              '{$csrfToken}',
@@ -686,7 +703,8 @@
             'admin_city':         $('#admin_city').val(),
             'admin_region':       $('#admin_region').val(),
             'admin_postalcode':   $('#admin_postalcode').val(),
-            'admin_country':      $('#admin_country').val()
+            'admin_country':      $('#admin_country').val(),
+            'agreement':          $('#tssggs_agreement').is(':checked') ? 1 : 0
         };
 
         if (installType === 'autoinstall') {

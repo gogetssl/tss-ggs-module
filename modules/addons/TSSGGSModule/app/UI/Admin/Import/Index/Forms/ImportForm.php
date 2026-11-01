@@ -66,6 +66,12 @@ class ImportForm extends Form implements AdminAreaInterface, AjaxComponentInterf
         );
 
         $this->builder->addField(
+            (new FormInputText())
+                ->setTitle($this->translate('serviceId'))
+                ->setName('serviceId')
+        );
+
+        $this->builder->addField(
             (new Dropdown())
                 ->setTitle($this->translate('payMethod'))
                 ->setName('payMethod')
