@@ -3,6 +3,7 @@
 namespace ModulesGarden\Servers\TSSGGSModule\app\services;
 
 
+use ModulesGarden\TSSGGSModule\App\Helpers\EmailTemplates;
 use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
 use ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Invoice;
 use ModulesGarden\TSSGGSModule\Core\WHMCS\Models\InvoiceItem;
@@ -116,7 +117,7 @@ class InvoiceRenew {
 
         $results = localAPI('CreateInvoice', [
             'userid' => $service['userid'],
-            'sendinvoice' => true,
+            'sendinvoice' => !EmailTemplates::renewalInvoiceEmailActive(),
             'date' => date('Y-m-d'),
             'duedate' => $invoiceDueDate,
             'itemdescription1' => $invoiceItemDescription,
@@ -125,6 +126,7 @@ class InvoiceRenew {
         ]);
 
         $invoiceId = $results['invoiceid'];
+        EmailTemplates::sendRenewalInvoiceEmail($serviceId, $invoiceId);
         InvoiceItem::where('invoiceid', $invoiceId)->update(['type' => 'Hosting', 'relid' => $serviceId]);
         $invoiceData = Invoice::where('id', $invoiceId)->first()->toArray();
 

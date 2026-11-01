@@ -1006,3 +1006,5 @@ $_LANG['admin.emails.opt_disable']              = 'Disable';
 $_LANG['admin.emails.opt_disable_hint']         = 'Do not send this e-mail';
 $_LANG['admin.emails.rich_editor']              = 'Rich-text editor';
 $_LANG['admin.emails.rich_failed']              = 'The visual editor could not be loaded (assets/js/tinymce of WHMCS); the text is edited as HTML source.';
+$_LANG['admin.emails.name_renewal_invoice_created']  = 'Renewal invoice created';
+$_LANG['admin.emails.when_renewal_invoice_created']  = 'Sent when this module creates a renewal invoice. Disabled by default: while it is disabled WHMCS sends its own invoice e-mail; enable it to send this text instead.';

@@ -223,7 +223,7 @@ class Invoice
         //modify item amount based on product commission / client commission
         $postData = array(
             'userid' => $service->userid,
-            'sendinvoice' => true,
+            'sendinvoice' => !EmailTemplates::renewalInvoiceEmailActive(),
             'date' => $dateInvoice,
             'duedate' => $dateInvoice,
             'itemdescription1' => $invoiceItemDescription,
@@ -256,6 +256,7 @@ class Invoice
         $results = localAPI('CreateInvoice', $postData, $adminUserName);
 
         $invoiceId = $results['invoiceid'];
+        EmailTemplates::sendRenewalInvoiceEmail($service->id, $invoiceId);
 
         $this->saveInvoiceInfo($service->userid, $invoiceId, $service->id, $product->id);
 

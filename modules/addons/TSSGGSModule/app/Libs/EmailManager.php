@@ -23,7 +23,7 @@ class EmailManager
     {
         foreach(EmailCatalog::all() as $key => $definition)
         {
-            EmailTemplates::resolveTemplate($key, $definition['subject'], $definition['message']);
+            EmailTemplates::resolveTemplate($key, $definition['subject'], $definition['message'], in_array($key, EmailTemplates::OPT_IN, true));
         }
     }
 

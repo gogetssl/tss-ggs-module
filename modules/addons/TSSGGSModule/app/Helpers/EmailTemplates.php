@@ -85,17 +85,31 @@ class EmailTemplates
     const SUBSCRIPTION_RENEWAL_MESSAGE  = '<p>Dear {$client_name},</p><p>We have received your payment for the renewal invoice of your ACME subscription service #{$service_id}. Your subscription has been successfully renewed and remains active.</p><p>{$signature}</p>';
 
 
-    const TEMPLATE_NAMES = ['CONFIGURATION', 'EXPIRATION', 'SEND_CERTIFICATE', 'RENEWAL', 'REISSUE', 'SUBSCRIPTION', 'SUBSCRIPTION_EXPIRATION', 'SUBSCRIPTION_RENEWAL'];
+    /**
+     * Replaces WHMCS's own "Invoice Created" e-mail for the renewal invoices this module creates - only when the admin
+     * enables it (it is created disabled, so nothing changes for existing installs)
+     */
+    const RENEWAL_INVOICE_TEMPLATE = 'Renewal Invoice Created';
+    const RENEWAL_INVOICE_SUBJECT  = 'Renewal invoice #{$invoice_id} - {$service_domain}';
+    const RENEWAL_INVOICE_MESSAGE  = '<p>Dear {$client_name},</p>
+                             <p>
+                                A renewal invoice was created for your SSL certificate {$service_domain} (service #{$service_id}).
+                                Amount: <strong>{$invoice_total}</strong>, due {$invoice_due_date}.
+                             </p>
+                             <p><a href="{$invoice_url}">View and pay the invoice</a></p>
+                             <p>{$signature}</p>';
+
+    const TEMPLATE_NAMES = ['CONFIGURATION', 'EXPIRATION', 'SEND_CERTIFICATE', 'RENEWAL', 'REISSUE', 'SUBSCRIPTION', 'SUBSCRIPTION_EXPIRATION', 'SUBSCRIPTION_RENEWAL', 'RENEWAL_INVOICE'];
+
+    /** keys of the templates that are created disabled */
+    const OPT_IN = [self::RENEWAL_INVOICE_TEMPLATE];
 
     public static function createTemplates()
     {
         foreach(self::TEMPLATE_NAMES as $name)
         {
-            self::resolveTemplate(
-                constant('self::' . $name . '_TEMPLATE'),
-                constant('self::' . $name . '_SUBJECT'),
-                constant('self::' . $name . '_MESSAGE')
-            );
+            $key = constant('self::' . $name . '_TEMPLATE');
+            self::resolveTemplate($key, constant('self::' . $name . '_SUBJECT'), constant('self::' . $name . '_MESSAGE'), in_array($key, self::OPT_IN, true));
         }
 
         AutoInstallEmailTemplates::createTemplates();
@@ -141,12 +155,42 @@ class EmailTemplates
         ];
     }
 
+    public static function renewalInvoiceEmailActive()
+    {
+        $row = EmailTemplate::where('name', Edition::templateName(self::RENEWAL_INVOICE_TEMPLATE))->where('language', '')->first();
+
+        return $row && (int)$row->disabled === 0;
+    }
+
+    /**
+     * The module's renewal invoice e-mail; false when it is disabled (the caller then lets WHMCS send its own invoice e-mail)
+     */
+    public static function sendRenewalInvoiceEmail($serviceId, $invoiceId)
+    {
+        $invoice = \WHMCS\Database\Capsule::table('tblinvoices')->where('id', (int)$invoiceId)->first(['id', 'userid', 'total', 'duedate']);
+        if(!$invoice || !self::renewalInvoiceEmailActive())
+        {
+            return false;
+        }
+
+        \getCurrency($invoice->userid);
+        $systemUrl = rtrim((string)\WHMCS\Database\Capsule::table('tblconfiguration')->where('setting', 'SystemURL')->value('value'), '/');
+        self::sendEmail(self::RENEWAL_INVOICE_TEMPLATE, (int)$serviceId, [
+            'invoice_id'       => (int)$invoice->id,
+            'invoice_total'    => (string)\formatCurrency($invoice->total),
+            'invoice_due_date' => (string)$invoice->duedate,
+            'invoice_url'      => $systemUrl . '/viewinvoice.php?id=' . (int)$invoice->id,
+        ]);
+
+        return true;
+    }
+
     /**
      * Returns the WHMCS name of the template for this edition ("<edition name> - <key>"). A template created under
      * another edition's name or the 1.2.x name is renamed (keeps the admin's edits); a missing one is created when
      * $subject/$message are given.
      */
-    public static function resolveTemplate($key, $subject = null, $message = null)
+    public static function resolveTemplate($key, $subject = null, $message = null, $disabled = false)
     {
         $name = Edition::templateName($key);
 
@@ -176,7 +220,7 @@ class EmailTemplates
                                       'name'       => $name,
                                       'subject'    => $subject,
                                       'message'    => $message,
-                                      'disabled'   => '0',
+                                      'disabled'   => $disabled ? '1' : '0',
                                       'custom'     => '1',
                                       'plaintext'  => '0',
                                       'created_at' => date('Y-m-d H:i:s'),
