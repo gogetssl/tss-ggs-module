@@ -10,6 +10,9 @@ use ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Shared\CronStatus;
  */
 class SystemCheckWidget extends Card
 {
+    /** tasks not listed in this panel */
+    const HIDDEN = ['SSLCertificatesProcessing'];
+
     const ICONS = [
         'ProductPricingUpdate'      => 'tag-outline',
         'SSLCertificatesProcessing' => 'timer-sand',
@@ -20,12 +23,21 @@ class SystemCheckWidget extends Card
 
     public function loadHtml(): void
     {
-        $latest = CronStatus::latest();
-        $aside  = $latest !== null ? '<span class="tssggs-dcard__aside">' . Card::icon('clock-outline') . Card::e($this->when($latest)) . '</span>' : '';
-        $this->start('pulse', $this->translate('title'), $aside, CronStatus::healthy() ? 'ok' : 'bad');
+        // the pending orders check runs every 5 minutes and is not listed here (its failures show under "Needs your attention")
+        $rows = array_diff_key(CronStatus::rows(), array_flip(self::HIDDEN));
+
+        $latest = null;
+        $ok     = true;
+        foreach($rows as $row)
+        {
+            $ok     = $ok && $row['last'] !== null && $row['error'] === '';
+            $latest = $row['last'] !== null && ($latest === null || strcmp($row['last'], $latest) > 0) ? $row['last'] : $latest;
+        }
+        $aside = $latest !== null ? '<span class="tssggs-dcard__aside">' . Card::icon('clock-outline') . Card::e($this->when($latest)) . '</span>' : '';
+        $this->start('pulse', $this->translate('title'), $aside, $ok ? 'ok' : 'bad');
 
         $html = '';
-        foreach(CronStatus::rows() as $task => $row)
+        foreach($rows as $task => $row)
         {
             if($row['last'] === null)
             {
