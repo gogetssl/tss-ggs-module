@@ -102,7 +102,8 @@ class AcmeHelpers
             return 0;
         }
 
-        $amount      = isset($service->firstpaymentamount) ? (float)$service->firstpaymentamount : 0.00;
+        // the recurring amount: the first payment can include a setup fee or a promotion that must not be renewed
+        $amount      = isset($service->amount) ? (float)$service->amount : (isset($service->firstpaymentamount) ? (float)$service->firstpaymentamount : 0.00);
         $dateInvoice = date('Y-m-d');
         $periodStart = !empty($subscriptionData->renewal_date)
             ? date('Y-m-d', strtotime((string)$subscriptionData->renewal_date))
