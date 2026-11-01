@@ -10,6 +10,24 @@ class CertificateBundle
 {
     const FORMATS = ['crt', 'ca', 'fullchain', 'nginx', 'apache', 'pkcs7', 'zip'];
 
+    /**
+     * Formats the admin offers to clients (Settings > General > Certificate Downloads), in display order; the ZIP is the
+     * fallback when none is ticked
+     */
+    public static function enabledFormats()
+    {
+        $enabled = [];
+        foreach(['zip', 'crt', 'ca', 'fullchain', 'nginx', 'apache', 'pkcs7'] as $format)
+        {
+            if(GeneralSettings::enabled('downloadFormat_' . $format))
+            {
+                $enabled[] = $format;
+            }
+        }
+
+        return $enabled ?: ['zip'];
+    }
+
     protected $crt;
     protected $ca;
     protected $name;

@@ -32,27 +32,38 @@ add_hook('ClientAreaPrimarySidebar', 1, function($primarySidebar) {
             $myAccount = $primarySidebar->getChild('Service Details Actions');
             if($myAccount)
             {
-                $myAccount->addChild('DownloadCRT', [
-                    'name'  => 'DownloadCRT',
-                    'label' => Lang::absoluteT('Download CRT'),
-                    'uri'   => 'clientarea.php?action=productdetails&id=' . $serviceId . '&mg-action=download&format=crt',
-                    'order' => 10,
-                    'icon'  => 'fas fa-cogs',
-                ]);
-                $myAccount->addChild('DownloadICRT', [
-                    'name'  => 'DownloadICRT',
-                    'label' => Lang::absoluteT('Download Intermediate CRT'),
-                    'uri'   => 'clientarea.php?action=productdetails&id=' . $serviceId . '&mg-action=download&format=ca',
-                    'order' => 20,
-                    'icon'  => 'fas fa-cogs',
-                ]);
-                $myAccount->addChild('DownloadSSL', [
-                    'name'  => 'DownloadSSL',
-                    'label' => Lang::absoluteT('Download SSL'),
-                    'uri'   => 'clientarea.php?action=productdetails&id=' . $serviceId . '&mg-action=download&format=zip',
-                    'order' => 30,
-                    'icon'  => 'fas fa-cogs',
-                ]);
+                // only the formats the admin offers (Settings > General > Certificate Downloads)
+                $formats = \ModulesGarden\TSSGGSModule\App\Libs\CertificateBundle::enabledFormats();
+                if(in_array('crt', $formats, true))
+                {
+                    $myAccount->addChild('DownloadCRT', [
+                        'name'  => 'DownloadCRT',
+                        'label' => Lang::absoluteT('Download CRT'),
+                        'uri'   => 'clientarea.php?action=productdetails&id=' . $serviceId . '&mg-action=download&format=crt',
+                        'order' => 10,
+                        'icon'  => 'fas fa-cogs',
+                    ]);
+                }
+                if(in_array('ca', $formats, true))
+                {
+                    $myAccount->addChild('DownloadICRT', [
+                        'name'  => 'DownloadICRT',
+                        'label' => Lang::absoluteT('Download Intermediate CRT'),
+                        'uri'   => 'clientarea.php?action=productdetails&id=' . $serviceId . '&mg-action=download&format=ca',
+                        'order' => 20,
+                        'icon'  => 'fas fa-cogs',
+                    ]);
+                }
+                if(in_array('zip', $formats, true))
+                {
+                    $myAccount->addChild('DownloadSSL', [
+                        'name'  => 'DownloadSSL',
+                        'label' => Lang::absoluteT('Download SSL'),
+                        'uri'   => 'clientarea.php?action=productdetails&id=' . $serviceId . '&mg-action=download&format=zip',
+                        'order' => 30,
+                        'icon'  => 'fas fa-cogs',
+                    ]);
+                }
                 $myAccount->addChild('ReissueSSL', [
                     'name'  => 'ReissueSSL',
                     'label' => Lang::absoluteT('Reissue SSL'),

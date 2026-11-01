@@ -250,7 +250,7 @@ class home extends AbstractController
 
         try
         {
-            if(!in_array($format, CertificateBundle::FORMATS, true))
+            if(!in_array($format, CertificateBundle::enabledFormats(), true))
             {
                 throw new \Exception(Lang::absoluteT('download_unknown_format'));
             }
@@ -679,7 +679,7 @@ class home extends AbstractController
 
         $vars['issued_message']   = ProductSettings::message($params['product']->id, 'issuedMessage');
         $vars['organization']     = isset($params['order']['orderData']['contacts']['organization']) ? array_filter((array)$params['order']['orderData']['contacts']['organization'], 'is_scalar') : [];
-        $vars['download_formats'] = ['zip', 'crt', 'ca', 'fullchain', 'nginx', 'apache', 'pkcs7'];
+        $vars['download_formats'] = CertificateBundle::enabledFormats();
         $vars['csrfToken']        = \generate_token('plain');
 
         // Install on server / Login to cPanel - only for clients with an active cPanel account

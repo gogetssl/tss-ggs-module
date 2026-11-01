@@ -16,6 +16,14 @@ class GeneralSettings
         'expiresSoonDays'          => 30,
         'certificatesByDomain'     => true,
         'sslTools'                 => true,
+        // Downloads: the formats offered to clients
+        'downloadFormat_zip'       => true,
+        'downloadFormat_crt'       => true,
+        'downloadFormat_ca'        => true,
+        'downloadFormat_fullchain' => true,
+        'downloadFormat_nginx'     => true,
+        'downloadFormat_apache'    => true,
+        'downloadFormat_pkcs7'     => true,
         // Messages
         'processingGuide'          => '',
         'issuedMessage'            => '',

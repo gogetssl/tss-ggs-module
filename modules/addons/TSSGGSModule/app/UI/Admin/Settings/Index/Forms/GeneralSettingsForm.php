@@ -4,6 +4,7 @@ namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Forms;
 
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Providers\GeneralSettingsProvider;
 use ModulesGarden\TSSGGSModule\Components\Button\ButtonSuccess;
+use ModulesGarden\TSSGGSModule\Components\Checkbox\Checkbox;
 use ModulesGarden\TSSGGSModule\Components\Container\Container;
 use ModulesGarden\TSSGGSModule\Components\Dropdown\Dropdown;
 use ModulesGarden\TSSGGSModule\Components\Form\Builder\BuilderCreator;
@@ -59,6 +60,13 @@ class GeneralSettingsForm extends Form implements AdminAreaInterface, AjaxCompon
         $this->builder->addFieldInContainer($lifecycle, (new FormInputText())->setName('defaultWebServer'), true);
         $this->builder->addFieldInContainer($lifecycle, (new Dropdown())->setName('dueDateOffsetRegular'), true);
         $this->builder->addFieldInContainer($lifecycle, (new Dropdown())->setName('dueDateOffsetSubscription'), true);
+
+        // formats the client can download (a checkbox each)
+        $downloads = $this->widget($right, 'downloads');
+        foreach(['zip', 'crt', 'ca', 'fullchain', 'nginx', 'apache', 'pkcs7'] as $format)
+        {
+            $this->builder->addFieldInContainer($downloads, (new Checkbox())->setName('downloadFormat_' . $format), true);
+        }
 
         $pricing = $this->widget($left, 'pricing');
         $this->builder->addFieldInContainer($pricing, (new Switcher())->setName('keepMarginOnSync')->addClass('switcher-revert'), true);
