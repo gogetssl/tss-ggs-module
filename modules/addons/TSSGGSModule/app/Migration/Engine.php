@@ -4,6 +4,9 @@ namespace ModulesGarden\TSSGGSModule\App\Migration;
 
 use ModulesGarden\TSSGGSModule\App\Libs\Commissions;
 use ModulesGarden\TSSGGSModule\App\Libs\Cpanel;
+use ModulesGarden\TSSGGSModule\App\Libs\EmailCatalog;
+use ModulesGarden\TSSGGSModule\App\Libs\EmailManager;
+use ModulesGarden\TSSGGSModule\App\Libs\LegacyEmailImport;
 use ModulesGarden\TSSGGSModule\App\Migration\Readers\LegacyReaderInterface;
 use ModulesGarden\TSSGGSModule\App\Migration\Support\Schema;
 use WHMCS\Database\Capsule;
@@ -213,6 +216,13 @@ class Engine
             $tables[]   = $backup->copyRows('tblproductconfigoptionssub', function($q) use ($optionIds) { $q->whereIn('configid', $optionIds ?: [0]); });
             $tables[]   = $backup->copyRows('tbladdonmodules', function($q) { $q->whereIn('module', ['configuration_' . Writer::MODULE, $this->reader->addonName()]); });
             $tables[]   = $backup->copyRows('tblconfiguration', function($q) { $q->where('setting', 'ActiveAddonModules'); });
+            if(!empty($options['copy_templates']))
+            {
+                // the unified e-mail templates the copy may overwrite
+                EmailManager::ensureAll();
+                $templateNames = array_map([EmailManager::class, 'name'], array_keys(EmailCatalog::all()));
+                $tables[]      = $backup->copyRows('tblemailtemplates', function($q) use ($templateNames) { $q->whereIn('name', $templateNames); });
+            }
             $tables     = array_values(array_filter($tables));
 
             $maxOrderId = (int)Capsule::table('tblsslorders')->max('id');
@@ -239,6 +249,22 @@ class Engine
             }
             Store::addJob($runId, Store::KIND_SETTINGS, 0, 0, Store::JOB_DONE, null, ['filled' => $filled]);
             $this->log($runId, 'info', self::PHASE_PREPARE, 'Settings merged', ['filled' => $filled]);
+
+            // 2b. opt-in (D5): the e-mail texts the reseller customised in the legacy module
+            if(!empty($options['copy_templates']))
+            {
+                $ids = [];
+                foreach(LegacyEmailImport::candidates() as $candidate)
+                {
+                    if($candidate['source'] === $this->source && !$candidate['same'])
+                    {
+                        $ids[] = $candidate['id'];
+                    }
+                }
+                $copy = LegacyEmailImport::import($ids);
+                Store::addJob($runId, Store::KIND_SETTINGS, 0, 0, Store::JOB_DONE, null, ['template_ids' => $copy['created_ids']]);
+                $this->log($runId, 'info', self::PHASE_PREPARE, 'E-mail templates copied from the legacy module', ['templates' => $copy['copied'], 'new_rows' => count($copy['created_ids'])]);
+            }
 
             // 3. products (configoptions + SAN option rename; servertype flips in the switch phase)
             $migratedPids = [];
@@ -619,6 +645,16 @@ class Engine
             {
                 Capsule::table(Commissions::TABLE)->whereIn('id', $commissionIds)->delete();
             }
+            // e-mail template rows created by the copy; the ones it overwrote come back from the row backup
+            $templateIds = [];
+            foreach(Store::jobsByStatus($runId, Store::KIND_SETTINGS, Store::JOB_DONE) as $job)
+            {
+                $templateIds = array_merge($templateIds, (array)($job['data']['template_ids'] ?? []));
+            }
+            if($templateIds)
+            {
+                Capsule::table('tblemailtemplates')->whereIn('id', $templateIds)->delete();
+            }
             // unified rows written for products are reverted through the row backups below
             $backup->restoreRows('tblsslorders');
             $backup->restoreRows('tblproducts');
@@ -627,6 +663,7 @@ class Engine
             $backup->restoreRows('tblproductconfigoptionssub');
             $backup->restoreRows('tbladdonmodules');
             $backup->restoreRows('tblconfiguration');
+            $backup->restoreRows('tblemailtemplates');
             foreach($reader->tables() as $table)
             {
                 $backup->restoreTable($table);

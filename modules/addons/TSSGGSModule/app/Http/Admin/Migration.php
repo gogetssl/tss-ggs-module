@@ -31,10 +31,10 @@ class Migration extends AbstractController implements AdminAreaInterface
             $source = $this->source();
             Choice::set($source, Choice::MIGRATE);
             $engine = new Engine($source);
-            // options are 'on' unless the link switches them off (opt_keys=0, opt_logs=0, opt_deactivate=0)
+            // options are 'on' unless the link switches them off (opt_keys=0, opt_logs=0, opt_deactivate=0); opt_templates=1 switches the e-mail copy on
             $runId  = $engine->start($this->admin(), [
                 'fetch_cpanel_keys' => ($_REQUEST['opt_keys'] ?? '1') !== '0',
-                'copy_templates'    => false,
+                'copy_templates'    => ($_REQUEST['opt_templates'] ?? '0') === '1',
                 'backup_logs'       => ($_REQUEST['opt_logs'] ?? '1') !== '0',
                 'deactivate_legacy' => ($_REQUEST['opt_deactivate'] ?? '1') !== '0',
             ]);

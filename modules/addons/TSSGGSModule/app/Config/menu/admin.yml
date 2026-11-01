@@ -16,6 +16,8 @@ automationQueue:
   icon: 'mdi mdi-format-list-checks'
 certificateLog:
   icon: 'mdi mdi-text-box-search-outline'
+emails:
+  icon: 'mdi mdi-email-edit-outline'
 settings:
   icon: 'mdi mdi-cog'
 migration:

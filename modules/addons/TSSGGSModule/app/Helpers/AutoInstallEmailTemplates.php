@@ -19,6 +19,14 @@ class AutoInstallEmailTemplates
     const RENEWAL_STARTED_TEMPLATE    = 'Renewal Started';
     const RENEWAL_AUTORENEWED_TEMPLATE = 'Certificate Autorenewed';
 
+    /**
+     * key => [subject, message] of the AutoInstall e-mails (the Emails page resets a template to these)
+     */
+    public static function definitions()
+    {
+        return self::getDefinitions();
+    }
+
     protected static function getDefinitions()
     {
         return [
