@@ -2,6 +2,7 @@
 
 namespace ModulesGarden\TSSGGSModule\App\Libs;
 
+use ModulesGarden\TSSGGSModule\App\Models\CronCheck;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Shared\CronStatus;
 use ModulesGarden\TSSGGSModule\Core\ModuleConstants;
 use ModulesGarden\TSSGGSModule\Packages\ModuleSettings\Models\ModuleSettings;
@@ -43,13 +44,24 @@ class CronLauncher
     }
 
     /**
-     * Whether the module's own cron entry ran recently
+     * Whether the reseller's own cron lines started a job recently: a job ran in the last OWN_CRON_MINUTES and not
+     * within a minute after this launcher's own last start (jobs started here run right after the marker is touched)
      */
     protected static function ownCronWorks()
     {
-        $timestamp = (int)ModuleSettings::where('setting', 'cronLastUpdate')->value('value');
+        $lastRun = 0;
+        foreach(CronStatus::TASKS as $task)
+        {
+            $row = CronCheck::where('type', $task)->first();
+            if($row && $row->last_run)
+            {
+                $lastRun = max($lastRun, (int)strtotime((string)$row->last_run));
+            }
+        }
+        $marker = ModuleConstants::getFullPath('storage', 'cron_hook_last_start');
+        $ours   = is_file($marker) ? filemtime($marker) : 0;
 
-        return $timestamp > time() - self::OWN_CRON_MINUTES * 60;
+        return $lastRun > time() - self::OWN_CRON_MINUTES * 60 && $lastRun > $ours + 600;
     }
 
     protected static function canExec()

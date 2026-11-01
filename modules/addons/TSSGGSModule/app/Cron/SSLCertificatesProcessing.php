@@ -84,6 +84,8 @@ class SSLCertificatesProcessing extends AbstractCommand
         $io->title('Progress Bar!');
         $io->progressStart($certificatesQuery->count());
 
+        $failed = [];
+        $totalChecked = $certificatesQuery->get()->count();
         foreach ($certificatesQuery->get()->toArray() as $certificate) {
 
             $io->progressAdvance(1);
@@ -233,10 +235,18 @@ class SSLCertificatesProcessing extends AbstractCommand
                     ], $attachments);
                 }
 
-                if($orderData['order']['status'] == 'cancelled' || $orderData['order']['status'] == 'expired' || $orderData['order']['status'] == 'filed' || $orderData['order']['status'] == 'rejected')
+                // same rule as the order status sync (CertificateSyncHelpers): expired / filed = Terminated with a date
+                if($orderData['order']['status'] == 'cancelled' || $orderData['order']['status'] == 'rejected')
                 {
                     Service::where('id', $certificate['id'])->update([
                         'domainstatus' => 'Cancelled'
+                    ]);
+                }
+                elseif($orderData['order']['status'] == 'expired' || $orderData['order']['status'] == 'filed')
+                {
+                    Service::where('id', $certificate['id'])->whereIn('domainstatus', ['Pending', 'Active', 'Suspended'])->update([
+                        'domainstatus'     => 'Terminated',
+                        'termination_date' => date('Y-m-d'),
                     ]);
                 }
 
@@ -244,7 +254,7 @@ class SSLCertificatesProcessing extends AbstractCommand
 
             } catch (Exception $e) {
 
-                $errorToDB = $e->getMessage();
+                $failed[$certificate['id']] = $e->getMessage();
                 $io->write('Error: ' . $e->getMessage());
 
                 Logger::error($e->getMessage(), ['service' => $certificate['id']]);
@@ -255,6 +265,11 @@ class SSLCertificatesProcessing extends AbstractCommand
         }
 
         $io->progressFinish();
+        // one line with the number of failed orders and which, not the message of the last one
+        if($failed)
+        {
+            $errorToDB = \ModulesGarden\TSSGGSModule\App\Libs\CronErrors::summary($failed, $totalChecked);
+        }
         $io->title('Subscriptions');
         $pendingSubscriptions = AcmeSubscription::where('status', 'pending')->get();
         $io->progressStart($pendingSubscriptions->count());

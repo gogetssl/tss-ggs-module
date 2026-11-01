@@ -26,8 +26,9 @@ class CronStatus
     {
         if(self::$rows === null)
         {
-            $timestamp  = ModuleSettings::where('setting', 'cronLastUpdate')->value('value');
-            self::$rows = ['cronScript' => ['last' => $timestamp ? date('Y-m-d H:i:s', (int)$timestamp) : null, 'error' => '']];
+            // (the framework's task runner cronScript.php is not listed: nothing is queued for it in this module, so its
+            // "never" said nothing about the jobs)
+            self::$rows = [];
 
             foreach(self::TASKS as $task)
             {

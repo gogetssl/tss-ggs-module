@@ -598,27 +598,27 @@ $_LANG['admin.settings.index.forms.finance_settings_form.update_success'] = 'Set
 $_LANG['admin.settings.index.widgets.cron_settings_widget.title'] = 'CRON Settings';
 
 //cron settings titles
-$_LANG['admin.settings.index.widgets.cron_settings_widget.cronCommandTitle_processing']                = '<b>Order initialization</b>';
-$_LANG['admin.settings.index.widgets.cron_settings_widget.cronCommandTitle_ProductPricingUpdate']      = '<b>Product Pricing</b>';
-$_LANG['admin.settings.index.widgets.cron_settings_widget.cronCommandTitle_SSLCertificatesProcessing'] = '<b>SSL Processing</b>';
-$_LANG['admin.settings.index.widgets.cron_settings_widget.cronCommandTitle_SSLCertificates']           = '<b>Order Daily sync</b>';
-$_LANG['admin.settings.index.widgets.cron_settings_widget.cronCommandTitle_RenewalNotifyCertificate']  = '<b>Automatic Renewal Notification</b>';
-$_LANG['admin.settings.index.widgets.cron_settings_widget.cronCommandTitle_ReSyncProducts']            = '<b>Product Re-sync</b>';
-$_LANG['admin.settings.index.widgets.cron_settings_widget.cronCommandTitle_SSLAutoInstall']            = '<b>SSL AutoInstall (cPanel)</b>';
+$_LANG['admin.settings.index.widgets.cron_settings_widget.cronCommandTitle_processing'] = '<b>Task runner (optional)</b>';
+$_LANG['admin.settings.index.widgets.cron_settings_widget.cronCommandTitle_ProductPricingUpdate'] = '<b>Prices and catalogue update</b>';
+$_LANG['admin.settings.index.widgets.cron_settings_widget.cronCommandTitle_SSLCertificatesProcessing'] = '<b>New order processing</b>';
+$_LANG['admin.settings.index.widgets.cron_settings_widget.cronCommandTitle_SSLCertificates'] = '<b>Order status sync</b>';
+$_LANG['admin.settings.index.widgets.cron_settings_widget.cronCommandTitle_RenewalNotifyCertificate'] = '<b>Renewals, reminders and expiry</b>';
+$_LANG['admin.settings.index.widgets.cron_settings_widget.cronCommandTitle_ReSyncProducts'] = '<b>Catalogue refresh</b>';
+$_LANG['admin.settings.index.widgets.cron_settings_widget.cronCommandTitle_SSLAutoInstall'] = '<b>AutoInstall queue (cPanel)</b>';
 
 //cron settings descriptions
-$_LANG['admin.settings.index.widgets.cron_settings_widget.cronCommand_ProductPricingUpdate']      = 'Please set up the following cron line to enable automatic daily product pricing updates.';
-$_LANG['admin.settings.index.widgets.cron_settings_widget.cronCommand_SSLCertificates']           = 'Please set up the following cron job to enable automatic daily synchronization of certificates.';
-$_LANG['admin.settings.index.widgets.cron_settings_widget.cronCommand_RenewalNotifyCertificate']  = 'Please set up the following cron line to enable automatic renewal notifications.';
-$_LANG['admin.settings.index.widgets.cron_settings_widget.cronCommand_SSLCertificatesProcessing'] = 'Please set up the following cron line to enable updates for processing orders.';
-$_LANG['admin.settings.index.widgets.cron_settings_widget.cronCommand_ReSyncProducts']            = 'Please set up the following cron line to Re-Sync product configurations.';
-$_LANG['admin.settings.index.widgets.cron_settings_widget.cronCommand_SSLAutoInstall']            = 'Please set up the following cron line to process the SSL AutoInstall (cPanel) queue: validation, installation and automatic reissue. Recommended: every 5 minutes.';
-$_LANG['admin.settings.index.widgets.cron_settings_widget.cronCommand_processing']                = 'Please set up the following cron line to change initial status of orders. The cron job will run every 10 seconds. Last Cron Update: ';
-$_LANG['admin.settings.index.forms.cron_configuration_form.cron1']                                = 'The cron job&nbsp;<b>ProductPricingUpdate</b>&nbsp;run frequency';
-$_LANG['admin.settings.index.forms.cron_configuration_form.cron2']                                = 'The cron job&nbsp;<b>SSLCertificates</b>&nbsp;run frequency';
-$_LANG['admin.settings.index.forms.cron_configuration_form.cron3']                                = 'The cron job&nbsp;<b>RenewalNotifyCertificate</b>&nbsp;run frequency';
-$_LANG['admin.settings.index.forms.cron_configuration_form.cron4']                                = 'The cron job&nbsp;<b>ReSyncProducts</b>&nbsp;run frequency';
-$_LANG['admin.settings.index.forms.cron_configuration_form.cron5']                                = 'The cron job&nbsp;<b>SSLCertificatesProcessing</b>&nbsp;run frequency';
+$_LANG['admin.settings.index.widgets.cron_settings_widget.cronCommand_ProductPricingUpdate'] = 'Reads the reseller catalogue and prices from the gateway and updates the selling price of every product that has automatic pricing on (cost + your margin). New products and price changes of the CA reach your price list through this job. Recommended: once a day. Command to schedule:';
+$_LANG['admin.settings.index.widgets.cron_settings_widget.cronCommand_SSLCertificates'] = 'Asks the gateway which orders changed (issued, renewed, expired, cancelled, revalidated) and updates those services; it also re-checks up to 50 orders that were not updated for a day. Recommended: every 12 hours or daily. Command to schedule:';
+$_LANG['admin.settings.index.widgets.cron_settings_widget.cronCommand_RenewalNotifyCertificate'] = 'Once a day: expiry and reissue reminder e-mails, automatic renewal invoices, ACME / AutoInstall subscription invoices, and the termination (with vendor cancellation) of services that were not paid by their expiry date. Do not disable it if you bill renewals automatically. Command to schedule:';
+$_LANG['admin.settings.index.widgets.cron_settings_widget.cronCommand_SSLCertificatesProcessing'] = 'Follows the orders that were submitted and are waiting for the certificate authority. When a certificate is issued it is stored, the due date is set and the certificate e-mail is sent. Run it often (every 5-10 minutes) so clients get their certificates quickly. Command to schedule:';
+$_LANG['admin.settings.index.widgets.cron_settings_widget.cronCommand_ReSyncProducts'] = 'Refreshes the product configuration (configurable options, SAN limits), the announcements shown on the dashboard and the details of your account manager. Recommended: once a day. Command to schedule:';
+$_LANG['admin.settings.index.widgets.cron_settings_widget.cronCommand_SSLAutoInstall'] = 'Works through the AutoInstall queue: domain validation, installation on cPanel, renewals and automatic reissue. Recommended: every 5 minutes. Command to schedule:';
+$_LANG['admin.settings.index.widgets.cron_settings_widget.cronCommand_processing'] = 'Task runner of the module framework. This version queues nothing for it, so this line is optional. Last run: ';
+$_LANG['admin.settings.index.forms.cron_configuration_form.cron1'] = 'Prices and catalogue update - how often it runs';
+$_LANG['admin.settings.index.forms.cron_configuration_form.cron2'] = 'Order status sync - how often it runs';
+$_LANG['admin.settings.index.forms.cron_configuration_form.cron3'] = 'Renewals, reminders and expiry - how often it runs';
+$_LANG['admin.settings.index.forms.cron_configuration_form.cron4'] = 'Catalogue refresh - how often it runs';
+$_LANG['admin.settings.index.forms.cron_configuration_form.cron5'] = 'New order processing - how often it runs';
 $_LANG['admin.settings.index.forms.cron_configuration_form.save']                                 = 'Save';
 $_LANG['admin.settings.index.forms.cron_configuration_form.update_success']                       = 'The cron settings updated successfully';
 
@@ -1071,3 +1071,16 @@ $_LANG['admin.home.index.widgets.next_steps_widget.step_pricing_detail']  = 'Cho
 $_LANG['admin.home.index.widgets.next_steps_widget.step_renewals']        = 'Check renewal settings';
 $_LANG['admin.home.index.widgets.next_steps_widget.step_renewals_detail'] = 'Review how certificate renewals are handled';
 $_LANG['admin.home.index.widgets.next_steps_widget.note']            = 'This message is removed automatically :hours hours after the dashboard was first opened.';
+
+$_LANG['admin.home.index.widgets.system_check_widget.name_ProductPricingUpdate'] = 'Prices and catalogue update';
+$_LANG['admin.home.index.widgets.system_check_widget.name_ReSyncProducts'] = 'Catalogue refresh';
+$_LANG['admin.home.index.widgets.system_check_widget.name_SSLCertificates'] = 'Order status sync';
+$_LANG['admin.home.index.widgets.system_check_widget.name_SSLCertificatesProcessing'] = 'New order processing';
+$_LANG['admin.home.index.widgets.system_check_widget.name_RenewalNotifyCertificate'] = 'Renewals, reminders and expiry';
+$_LANG['admin.home.index.widgets.system_check_widget.name_SSLAutoInstall'] = 'AutoInstall queue (cPanel)';
+$_LANG['admin.home.index.widgets.system_check_widget.name_cronScript'] = 'Module scheduler';
+$_LANG['admin.settings.index.forms.cron_configuration_form.cron1_description'] = 'Reads the reseller catalogue and prices from the gateway and updates the selling price of every product that has automatic pricing on (cost + your margin). New products and price changes of the CA reach your price list through this job. Recommended: once a day.';
+$_LANG['admin.settings.index.forms.cron_configuration_form.cron2_description'] = 'Asks the gateway which orders changed (issued, renewed, expired, cancelled, revalidated) and updates those services; it also re-checks up to 50 orders that were not updated for a day. Recommended: every 12 hours or daily.';
+$_LANG['admin.settings.index.forms.cron_configuration_form.cron3_description'] = 'Once a day: expiry and reissue reminder e-mails, automatic renewal invoices, ACME / AutoInstall subscription invoices, and the termination (with vendor cancellation) of services that were not paid by their expiry date. Do not disable it if you bill renewals automatically.';
+$_LANG['admin.settings.index.forms.cron_configuration_form.cron4_description'] = 'Refreshes the product configuration (configurable options, SAN limits), the announcements shown on the dashboard and the details of your account manager. Recommended: once a day.';
+$_LANG['admin.settings.index.forms.cron_configuration_form.cron5_description'] = 'Follows the orders that were submitted and are waiting for the certificate authority. When a certificate is issued it is stored, the due date is set and the certificate e-mail is sent. Run it often (every 5-10 minutes) so clients get their certificates quickly.';

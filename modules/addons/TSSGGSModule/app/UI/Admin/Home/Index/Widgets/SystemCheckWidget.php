@@ -32,7 +32,10 @@ class SystemCheckWidget extends Card
             {
                 $state = '<span class="is-ok">' . Card::icon('check') . Card::e($row['last']) . '</span>';
             }
-            $html .= '<li><span class="tssggs-tasks__name">' . Card::e($task) . '</span>' . $state . '</li>';
+            // clear name of the task (the command name stays in the tooltip)
+            $name  = $this->translate('name_' . $task);
+            $name  = strpos($name, 'name_') !== false ? $task : $name;
+            $html .= '<li><span class="tssggs-tasks__name" title="' . Card::e($task) . '">' . Card::e($name) . '</span>' . $state . '</li>';
             if($row['error'] !== '')
             {
                 $html .= '<li class="tssggs-tasks__error">' . Card::e($this->translate('error') . ': ' . $row['error']) . '</li>';

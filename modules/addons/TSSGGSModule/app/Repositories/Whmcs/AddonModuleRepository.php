@@ -151,11 +151,8 @@ class AddonModuleRepository
 
                 if($cronSettings[$name] == '3h')
                 {
-                    if(
-                        ($hour == '00' && $minute == '00') || ($hour == '00' && $minute == '03') || ($hour == '06' && $minute == '00') ||
-                        ($hour == '09' && $minute == '00') || ($hour == '12' && $minute == '00') || ($hour == '15' && $minute == '00') ||
-                        ($hour == '18' && $minute == '00') || ($hour == '21' && $minute == '00')
-                    )
+                    // every 3 hours on the hour (00, 03, 06 ... 21); 03:00 was missing and 00:03 was listed by mistake
+                    if($minute == '00' && (int)$hour % 3 === 0)
                     {
                         return true;
                     }

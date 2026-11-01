@@ -125,7 +125,9 @@ class SSLCertificates extends AbstractCommand
         $io->title('Progress Bar!');
         $io->progressStart($certificatesQuery->count());
 
-        foreach (array_merge($certificatesQuery->get()->toArray(), $legacyCertificates) as $certificate) {
+        $failed  = [];
+        $toCheck = array_merge($certificatesQuery->get()->toArray(), $legacyCertificates);
+        foreach ($toCheck as $certificate) {
 
             $io->progressAdvance(1);
 
@@ -135,7 +137,7 @@ class SSLCertificates extends AbstractCommand
 
             } catch (Exception $e) {
 
-                $errorToDB = $e->getMessage();
+                $failed[$certificate['id']] = $e->getMessage();
                 $io->write('Error: ' . $e->getMessage());
 
                 Logger::error($e->getMessage(), ['service' => $certificate['id']]);
@@ -145,6 +147,12 @@ class SSLCertificates extends AbstractCommand
             }
 
 
+        }
+
+        // one line that says how many orders failed and which, instead of the message of the last one
+        if($failed)
+        {
+            $errorToDB = \ModulesGarden\TSSGGSModule\App\Libs\CronErrors::summary($failed, count($toCheck));
         }
 
         CronCheck::updateOrCreate(
