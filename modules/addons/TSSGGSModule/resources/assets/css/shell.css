@@ -104,25 +104,14 @@
     width: 100% !important;
     max-width: none !important;
     display: grid !important;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(172px, 1fr));
     gap: 0;
     margin: 0;
     padding: 0;
     background: var(--tw-surface);
 }
 
-@media (min-width: 900px) {
-    #layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav {
-        grid-template-columns: repeat(6, minmax(0, 1fr));
-    }
-}
 
-/* 13 tabs (with Logs): seven per row on a wide column keeps it at two rows */
-@media (min-width: 1250px) {
-    #layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav {
-        grid-template-columns: repeat(7, minmax(0, 1fr));
-    }
-}
 
 #layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav > li.lu-nav__item {
     float: none;
@@ -612,4 +601,27 @@
 
 #layers2 .tssggs-settings form .lu-widget .lu-widget__header {
     padding: 0 !important;
+}
+
+/* phones: two columns, a long label wraps onto a second line inside its cell */
+@media (max-width: 559px) {
+    #layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
+
+    #layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav > li.lu-nav__item > a.lu-nav__link {
+        padding: 4px 8px;
+        font-size: 13px;
+        line-height: 18px;
+    }
+}
+
+/* the framework gives every tab a 56px cell: the link (min 45px) fills its cell exactly, so the active underline sits at the bottom */
+#layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav > li.lu-nav__item {
+    display: flex;
+    min-height: 0 !important;
+}
+
+#layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav > li.lu-nav__item > a.lu-nav__link {
+    flex: 1 1 auto;
 }
