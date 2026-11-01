@@ -56,4 +56,33 @@ class CronStatus
 
         return true;
     }
+
+    /** Every task has run and none ended with an error */
+    public static function healthy(): bool
+    {
+        foreach(self::rows() as $row)
+        {
+            if($row['last'] === null || $row['error'] !== '')
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /** Time of the most recent run of any task ('Y-m-d H:i:s'), null when nothing has run */
+    public static function latest()
+    {
+        $latest = null;
+        foreach(self::rows() as $row)
+        {
+            if($row['last'] !== null && ($latest === null || strcmp($row['last'], $latest) > 0))
+            {
+                $latest = $row['last'];
+            }
+        }
+
+        return $latest;
+    }
 }

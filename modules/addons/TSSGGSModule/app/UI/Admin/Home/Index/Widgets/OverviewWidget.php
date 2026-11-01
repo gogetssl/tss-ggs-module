@@ -7,24 +7,49 @@ use ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Shared\Card;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Shared\SalesSummary;
 
 /**
- * Sales overview: last month's paid / unpaid / overdue amounts
+ * Sales and margin of the last month: invoiced amount, reseller cost, gross profit and margin on cost, with the
+ * paid / unpaid / overdue split and a hint when the margin is low
  */
 class OverviewWidget extends Card
 {
+    /** below this margin on cost (%) the panel suggests raising prices */
+    const LOW_MARGIN = 10;
+
     public function loadHtml(): void
     {
-        $this->start('chart-bar', $this->translate('title'),
-            Card::link('addonmodules.php?module=TSSGGSModule&mg-page=statistics', $this->translate('statistics'), 'is-ghost'));
+        $this->start('chart-line', $this->translate('title'),
+            '<a class="tssggs-dcard__aside" href="addonmodules.php?module=TSSGGSModule&amp;mg-page=statistics">' . Card::e($this->translate('statistics')) . '</a>', 'info');
 
-        $sales = SalesSummary::get();
-        $html  = '<div class="tssggs-split">';
-        foreach(['paid' => 'is-ok', 'unpaid' => '', 'overdue' => 'is-bad'] as $key => $tone)
+        $sales    = SalesSummary::get();
+        $invoiced = $sales['paid'] + $sales['unpaid'] + $sales['overdue'];
+        $cost     = $invoiced - $sales['profit'];
+        $margin   = $cost > 0 ? $sales['profit'] / $cost * 100 : 0;
+
+        $tiles = '';
+        foreach([
+            ['currency-usd', 'invoiced', Helpers::formatDefaultCurrency($invoiced)],
+            ['package-variant-closed', 'cost', Helpers::formatDefaultCurrency($cost)],
+            ['trending-up', 'profit', Helpers::formatDefaultCurrency($sales['profit'])],
+            ['tag-outline', 'margin', number_format($margin, 1) . '%'],
+        ] as [$icon, $key, $value])
         {
-            $html .= '<div><p class="tssggs-label">' . Card::e($this->translate($key)) . '</p>'
-                . '<p class="tssggs-amount ' . $tone . '">' . Card::e(Helpers::formatDefaultCurrency($sales[$key])) . '</p></div>';
+            $tiles .= '<div><span>' . Card::icon($icon) . Card::e($this->translate($key)) . '</span><b>' . Card::e($value) . '</b></div>';
         }
-        $html .= '</div>';
 
-        $this->addElement(Card::html($html . '<div class="tssggs-dcard__note">' . Card::icon('clock-outline') . Card::e($this->translate('period')) . '</div>'));
+        $note = $this->translate('split', [
+            'paid'    => Helpers::formatDefaultCurrency($sales['paid']),
+            'unpaid'  => Helpers::formatDefaultCurrency($sales['unpaid']),
+            'overdue' => Helpers::formatDefaultCurrency($sales['overdue']),
+        ]);
+        if($invoiced > 0 && $margin < self::LOW_MARGIN)
+        {
+            $note .= ' ' . $this->translate('low', ['margin' => self::LOW_MARGIN]);
+        }
+
+        $this->addElement(Card::html('<div class="tssggs-money">' . $tiles . '</div>'
+            . '<div class="tssggs-money__bar"><i style="width:' . max(0, min(100, round($margin, 1))) . '%"></i></div>'
+            . '<p class="tssggs-money__note">' . Card::e($note) . '</p>'));
+
+        $this->foot('addonmodules.php?module=TSSGGSModule&mg-page=pricing', 'tag-outline', $this->translate('pricing'));
     }
 }

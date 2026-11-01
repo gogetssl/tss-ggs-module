@@ -33,24 +33,24 @@ class NextStepsWidget extends Container
 
     public function loadHtml(): void
     {
-        $this->setCss('tssggs-steps');
+        $this->setCss('tssggs-setup');
 
         $base  = 'addonmodules.php?module=TSSGGSModule&mg-page=';
         $steps = [
-            [1, 'layers-outline', 'step_products', $base . 'products', (int)Capsule::table('tblproducts')->where('servertype', 'TSSGGSModule')->count() > 0],
-            [2, 'cash', 'step_pricing', $base . 'pricing', false],
-            [3, 'autorenew', 'step_renewals', $base . 'settings&settings-page=sslSettings', false],
+            [1, 'package-variant-closed', 'step_products', $base . 'products', (int)Capsule::table('tblproducts')->where('servertype', 'TSSGGSModule')->count() > 0],
+            [2, 'tag-outline', 'step_pricing', $base . 'pricing', false],
+            [3, 'sync', 'step_renewals', $base . 'settings&settings-page=sslSettings', false],
         ];
 
-        $html = '<div class="tssggs-steps__head"><h3><span class="tssggs-steps__badge">' . Card::icon('cog-outline') . '</span>' . Card::e($this->translate('title')) . '</h3>'
-            . '<span class="tssggs-steps__chip">' . Card::e($this->translate('chip')) . '</span></div><div class="tssggs-steps__grid">';
+        // one strip: the lead, the three steps, when the guide disappears
+        $html = '<span class="tssggs-setup__lead">' . Card::tile('format-list-checks', 'ok') . Card::e($this->translate('lead')) . '</span>';
         foreach($steps as [$number, $icon, $key, $url, $done])
         {
-            $html .= '<a class="tssggs-step' . ($done ? ' is-done' : '') . '" href="' . Card::e($url) . '"><span class="tssggs-step__num">' . ($done ? Card::icon('check') : $number) . '</span>'
-                . '<span class="tssggs-step__text"><strong>' . Card::icon($icon) . Card::e($this->translate($key)) . '</strong><small>' . Card::e($this->translate($key . '_detail')) . '</small></span>'
-                . Card::icon('arrow-right') . '</a>';
+            $html .= '<a class="tssggs-setup__step' . ($done ? ' is-done' : '') . '" href="' . Card::e($url) . '">' . Card::tile($done ? 'check' : $icon, $done ? 'ok' : '')
+                . '<span><b>' . Card::e($this->translate($key)) . '</b><small>' . Card::e($this->translate($key . '_detail')) . '</small></span>'
+                . ($done ? '' : Card::icon('arrow-right')) . '</a>';
         }
-        $html .= '</div><p class="tssggs-steps__note">' . Card::icon('information-outline') . Card::e($this->translate('note', ['hours' => self::HOURS])) . '</p>';
+        $html .= '<span class="tssggs-setup__note">' . Card::icon('clock-outline') . Card::e($this->translate('note_short', ['hours' => self::HOURS])) . '</span>';
 
         $this->addElement(Card::html($html));
     }

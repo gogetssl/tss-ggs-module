@@ -5,15 +5,14 @@ namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index;
 use ModulesGarden\TSSGGSModule\App\Libs\Edition;
 use ModulesGarden\TSSGGSModule\App\Libs\Helpers;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Shared\Card;
-use ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Shared\CronStatus;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Shared\SalesSummary;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Widgets\AnnouncementsWidget;
-use ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Widgets\DocumentationWidget;
+use ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Widgets\AttentionWidget;
+use ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Widgets\GatewayWidget;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Widgets\MigrationWidget;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Widgets\NextStepsWidget;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Widgets\OverviewWidget;
-use ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Widgets\PartnerWidget;
-use ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Widgets\ReportingWidget;
+use ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Widgets\PipelineWidget;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Widgets\SupportWidget;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Widgets\SystemCheckWidget;
 use ModulesGarden\TSSGGSModule\Components\Container\Container;
@@ -21,9 +20,9 @@ use ModulesGarden\TSSGGSModule\Core\Contracts\Components\AdminAreaInterface;
 use ModulesGarden\TSSGGSModule\Core\Support\Facades\Config;
 
 /**
- * Module dashboard (design: github.com/gogetssl/ssl-plugin-refresh, dashboard route; the module menu stays the
- * framework's own). Heading, cron attention banner, KPI tiles, two card columns, footer.
- * Styles in resources/assets/css/dashboard.css, scoped to .tssggs-dash.
+ * Module dashboard: heading, setup strip (first 72 hours), KPI tiles, then rows of a wide and a narrow panel:
+ * pipeline + system health, needs attention + gateway, sales and margin + migration, announcements + help.
+ * Styles in resources/assets/css/dashboard.css and theme.css, scoped to .tssggs-dash.
  */
 class HomeContainer extends Container implements AdminAreaInterface
 {
@@ -32,10 +31,6 @@ class HomeContainer extends Container implements AdminAreaInterface
         $this->setCss('tssggs-dash');
 
         $this->addElement(Card::html($this->headHtml()));
-        if(!CronStatus::ok())
-        {
-            $this->addElement(Card::html($this->attentionHtml()));
-        }
         // guide for the first 72 hours
         if(NextStepsWidget::visible())
         {
@@ -43,29 +38,26 @@ class HomeContainer extends Container implements AdminAreaInterface
         }
         $this->addElement(Card::html($this->kpisHtml()));
 
-        $main = new Container();
-        $main->setCss('tssggs-dash__col');
-        $main->addElement(new OverviewWidget())
-             ->addElement(new AnnouncementsWidget())
-             ->addElement(new SupportWidget());
-
-        $side = new Container();
-        $side->setCss('tssggs-dash__col');
-        $side->addElement(new SystemCheckWidget());
-        if(MigrationWidget::relevant())
-        {
-            $side->addElement(new MigrationWidget());
-        }
-        $side->addElement(new PartnerWidget())
-             ->addElement(new ReportingWidget())
-             ->addElement(new DocumentationWidget());
-
-        $grid = new Container();
-        $grid->setCss('tssggs-dash__grid');
-        $grid->addElement($main)->addElement($side);
-        $this->addElement($grid);
+        $this->addElement($this->row(new PipelineWidget(), new SystemCheckWidget()));
+        $this->addElement($this->row(new AttentionWidget(), new GatewayWidget()));
+        $this->addElement($this->row(new OverviewWidget(), MigrationWidget::relevant() ? new MigrationWidget() : null));
+        $this->addElement($this->row(new AnnouncementsWidget(), new SupportWidget()));
 
         $this->addElement(Card::html($this->footHtml()));
+    }
+
+    /** A wide panel and, when given, a narrow one beside it */
+    protected function row(Container $wide, Container $narrow = null): Container
+    {
+        $row = new Container();
+        $row->setCss('tssggs-dash__row' . ($narrow ? '' : ' is-single'));
+        $row->addElement($wide);
+        if($narrow)
+        {
+            $row->addElement($narrow);
+        }
+
+        return $row;
     }
 
     protected function headHtml(): string
@@ -77,32 +69,23 @@ class HomeContainer extends Container implements AdminAreaInterface
             . '</div>';
     }
 
-    protected function attentionHtml(): string
-    {
-        return '<div class="tssggs-dash__alert" role="alert">' . Card::icon('alert-outline')
-            . '<div><strong>' . Card::e($this->translate('attention_title')) . '</strong>'
-            . '<p>' . Card::e($this->translate('attention_body')) . '</p></div>'
-            . Card::link('#tssggs-health', $this->translate('attention_button'), 'is-danger')
-            . '</div>';
-    }
-
     protected function kpisHtml(): string
     {
         $sales    = SalesSummary::get();
         $currency = (string)Helpers::getDefaultCurrencyCode();
         $tiles    = [
-            ['kpi_sales', Helpers::formatDefaultCurrency($sales['paid']), 'credit-card-outline'],
-            ['kpi_profit', Helpers::formatDefaultCurrency($sales['profit']), 'chart-bar'],
-            ['kpi_issued', (string)$sales['issued'], 'shield-check-outline'],
-            ['kpi_expiring', (string)$sales['expiring'], 'clock-outline'],
+            ['kpi_sales', Helpers::formatDefaultCurrency($sales['paid']), 'currency-usd', 'credit-card-outline'],
+            ['kpi_profit', Helpers::formatDefaultCurrency($sales['profit']), 'trending-up', 'chart-line'],
+            ['kpi_issued', (string)$sales['issued'], 'certificate-outline', 'calendar-month-outline'],
+            ['kpi_expiring', (string)$sales['expiring'], 'timer-sand', 'check-circle-outline'],
         ];
 
         $html = '<section class="tssggs-dash__kpis" aria-label="' . Card::e($this->translate('period')) . '">';
-        foreach($tiles as [$key, $value, $icon])
+        foreach($tiles as [$key, $value, $icon, $detailIcon])
         {
             $html .= '<article class="tssggs-kpi"><div class="tssggs-kpi__top"><h3>' . Card::e($this->translate($key)) . '</h3>' . Card::icon($icon) . '</div>'
                 . '<p class="tssggs-kpi__value">' . Card::e($value) . '</p>'
-                . '<p class="tssggs-kpi__detail">' . Card::e($this->translate($key . '_detail', ['currency' => $currency])) . '</p></article>';
+                . '<p class="tssggs-kpi__detail">' . Card::icon($detailIcon) . Card::e($this->translate($key . '_detail', ['currency' => $currency])) . '</p></article>';
         }
 
         return $html . '</section>';

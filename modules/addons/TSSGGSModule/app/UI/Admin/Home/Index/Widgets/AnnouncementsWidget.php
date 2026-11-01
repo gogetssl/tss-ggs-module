@@ -12,6 +12,12 @@ class AnnouncementsWidget extends Card
 {
     const ALLOWED_TAGS = '<a><b><strong><i><em><br><p><ul><ol><li>';
 
+    /** category => [tile icon, tile tone] */
+    const TONES = [
+        'critical' => ['alert-octagon-outline', 'bad'],
+        'warning'  => ['alert-outline', 'warn'],
+    ];
+
     public function loadHtml(): void
     {
         $this->start('bell-outline', $this->translate('title'), '<span class="tssggs-dcard__aside">' . Card::e($this->translate('latest')) . '</span>');
@@ -34,18 +40,16 @@ class AnnouncementsWidget extends Card
             return;
         }
 
-        $html = '<div class="tssggs-list">';
+        $html = '';
         foreach($items as $a)
         {
-            $tag   = implode(' · ', array_filter([ucfirst(str_replace('_', ' ', $a['category'])), $a['vendor']]));
-            $html .= '<article class="tssggs-news' . ($a['category'] !== '' ? ' is-' . preg_replace('/[^a-z0-9_-]/', '', $a['category']) : '') . '">'
-                . '<div class="tssggs-news__meta"><span class="tssggs-news__tag">' . Card::e($tag) . '</span>'
-                . '<time>' . Card::e($a['date'] !== '' ? date('j M Y', strtotime($a['date'])) : '') . '</time></div>'
-                . '<h4>' . Card::e($a['title']) . '</h4>'
-                . '<div class="tssggs-news__body">' . strip_tags($a['body'], self::ALLOWED_TAGS) . '</div>'
-                . '</article>';
+            [$icon, $tone] = self::TONES[$a['category']] ?? ['bullhorn-outline', 'info'];
+            $html .= '<article class="tssggs-alertrow">' . Card::tile($icon, $tone)
+                . '<div><h4>' . Card::e($a['title']) . ($a['vendor'] !== '' ? ' <small>' . Card::e($a['vendor']) . '</small>' : '') . '</h4>'
+                . '<div class="tssggs-alertrow__text">' . strip_tags($a['body'], self::ALLOWED_TAGS) . '</div></div>'
+                . '<time>' . Card::e($a['date'] !== '' ? date('j M Y', strtotime($a['date'])) : '') . '</time></article>';
         }
-        $this->addElement(Card::html($html . '</div>'));
+        $this->body('<div class="tssggs-alerts">' . $html . '</div>');
     }
 
     /** Announcements of the configured vendors; every gateway returns all of them, so one call is enough */
