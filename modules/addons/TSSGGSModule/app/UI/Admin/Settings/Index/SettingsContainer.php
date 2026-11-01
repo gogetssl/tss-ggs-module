@@ -20,6 +20,9 @@ class SettingsContainer extends Container implements AdminAreaInterface
 {
     public function loadHtml(): void
     {
+        // skin of the settings pages (resources/assets/css/shell.css)
+        $this->setCss('tssggs-settings');
+
         if(Request::get('settings-page') == 'apiSettings')
         {
             $mainWidget = new ApiSettingsWidget();

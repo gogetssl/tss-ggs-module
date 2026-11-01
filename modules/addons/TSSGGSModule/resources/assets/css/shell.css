@@ -1,0 +1,376 @@
+/*
+ * Module shell (design: github.com/gogetssl/ssl-plugin-refresh): header with logo and edition name, the two-row
+ * navigation, and the skin of the Settings pages. Scoped to #layers2.
+ */
+
+#layers2 {
+    --tw-primary: #007136;
+    --tw-primary-soft: #e4f8e8;
+    --tw-fg: #020618;
+    --tw-muted: #62748e;
+    --tw-surface: #ffffff;
+    --tw-surface-alt: #f8fafc;
+    --tw-border: #e2e8f0;
+    --tw-danger: #e7000b;
+    --tw-radius: 8px;
+}
+
+/* ---- header ---- */
+
+#layers2 .tssggs-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 20px;
+    border: 1px solid var(--tw-border);
+    border-radius: var(--tw-radius) var(--tw-radius) 0 0;
+    background: var(--tw-surface);
+}
+
+#layers2 .tssggs-head__brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--tw-fg);
+    text-decoration: none;
+}
+
+#layers2 .tssggs-head__logo {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    background: var(--tw-primary);
+    color: #fff;
+    font-size: 24px;
+}
+
+#layers2 .tssggs-head__text strong {
+    display: block;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.3;
+}
+
+#layers2 .tssggs-head__text small {
+    display: block;
+    margin-top: 2px;
+    color: var(--tw-muted);
+    font-size: 12px;
+}
+
+#layers2 .tssggs-head__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border: 1px solid var(--tw-border);
+    border-radius: 6px;
+    background: var(--tw-surface);
+    color: var(--tw-fg);
+    font-size: 12px;
+    font-weight: 500;
+    text-decoration: none;
+}
+
+#layers2 .tssggs-head__btn:hover {
+    background: var(--tw-surface-alt);
+}
+
+#layers2 .tssggs-head .lu-navbar__burger {
+    display: none;
+}
+
+/* ---- navigation: every tab visible, 6 per row (3 on a narrow column) ---- */
+
+#layers2 .lu-app-navbar {
+    margin: 0;
+    padding: 0;
+    border: 1px solid var(--tw-border);
+    border-top: 0;
+    border-radius: 0 0 var(--tw-radius) var(--tw-radius);
+    background: var(--tw-surface);
+    overflow: hidden;
+}
+
+#layers2 .lu-app-navbar .lu-navbar__nav {
+    padding: 0;
+}
+
+#layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav {
+    width: 100% !important;
+    max-width: none !important;
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1px;
+    margin: 0;
+    padding: 0;
+    background: var(--tw-border);
+}
+
+@media (min-width: 900px) {
+    #layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav {
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+    }
+}
+
+/* 13 tabs (with Logs): seven per row on a wide column keeps it at two rows */
+@media (min-width: 1250px) {
+    #layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav {
+        grid-template-columns: repeat(7, minmax(0, 1fr));
+    }
+}
+
+#layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav > li.lu-nav__item {
+    float: none;
+    min-width: 0;
+    margin: 0;
+    background: var(--tw-surface);
+}
+
+#layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav > li.lu-nav__item > a.lu-nav__link {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    height: 48px;
+    padding: 4px 10px;
+    border-bottom: 2px solid transparent;
+    color: var(--tw-muted);
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 16px;
+    text-decoration: none;
+    white-space: normal;
+}
+
+#layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav > li.lu-nav__item > a.lu-nav__link:hover {
+    background: var(--tw-surface-alt);
+    color: var(--tw-fg);
+}
+
+#layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav > li.lu-nav__item.is-active > a.lu-nav__link {
+    border-bottom-color: var(--tw-primary);
+    background: var(--tw-primary-soft);
+    color: var(--tw-primary);
+    font-weight: 500;
+}
+
+#layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav > li.lu-nav__item > a.lu-nav__link > i {
+    flex: 0 0 auto;
+    margin: 0;
+    font-size: 15px;
+    line-height: 1;
+    position: static;
+    float: none;
+}
+
+#layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav > li.lu-nav__item > a.lu-nav__link .drop-arrow,
+#layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav > li.lu-nav__item > a.lu-nav__link::after,
+#layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav > li.lu-nav__item > a.lu-nav__link::before {
+    display: none;
+}
+
+/* ---- Settings pages ---- */
+
+#layers2 .tssggs-settings .lu-widget {
+    border: 1px solid var(--tw-border);
+    border-radius: var(--tw-radius);
+    background: var(--tw-surface);
+    box-shadow: none;
+}
+
+#layers2 .tssggs-settings .lu-widget__header {
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--tw-border);
+    background: transparent;
+}
+
+#layers2 .tssggs-settings .lu-widget__header .lu-top__title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--tw-fg);
+}
+
+/* the sections inside the form: no card, a small heading (design: section headings with a divider-free list) */
+#layers2 .tssggs-settings form .lu-widget {
+    margin: 0 0 22px;
+    border: 0;
+    border-radius: 0;
+}
+
+#layers2 .tssggs-settings form .lu-widget__header {
+    padding: 0 0 6px;
+    border-bottom: 0;
+}
+
+#layers2 .tssggs-settings form .lu-widget__header .lu-top__title {
+    font-size: 12px !important;
+    font-weight: 600 !important;
+}
+
+#layers2 .tssggs-settings form .lu-widget__body,
+#layers2 .tssggs-settings form .lu-widget__content {
+    padding: 0;
+}
+
+/* sidebar of the settings sections */
+#layers2 .tssggs-settings .lu-widget__header .lu-top__title {
+    text-transform: none;
+}
+
+#layers2 .tssggs-settings ul.slu-nav,
+#layers2 .tssggs-settings .lu-navbar__nav ul {
+    margin: 0;
+    padding: 4px 0;
+    list-style: none;
+}
+
+#layers2 .tssggs-settings .lu-navbar__nav li.lu-nav__item {
+    float: none;
+    display: block;
+    margin: 1px 0;
+}
+
+#layers2 .tssggs-settings .lu-navbar__nav li.lu-nav__item > a.lu-nav__link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: var(--tw-fg);
+    font-size: 12px;
+    line-height: 20px;
+    text-decoration: none;
+}
+
+#layers2 .tssggs-settings .lu-navbar__nav li.lu-nav__item > a.lu-nav__link:hover {
+    background: var(--tw-surface-alt);
+}
+
+#layers2 .tssggs-settings .lu-navbar__nav li.lu-nav__item.is-active > a.lu-nav__link {
+    background: var(--tw-primary-soft);
+    color: var(--tw-primary);
+    font-weight: 500;
+}
+
+#layers2 .tssggs-settings .lu-navbar__nav li.lu-nav__item.is-active > a.lu-nav__link::after {
+    content: "\203A";
+    margin-left: 6px;
+    font-size: 16px;
+    line-height: 1;
+}
+
+/* toggle rows: the label on the left, the switch on the right, a divider between rows */
+#layers2 .tssggs-settings .lu-form-group.lu-form-check {
+    margin: 0;
+    padding: 0;
+    border-bottom: 1px solid var(--tw-border);
+}
+
+#layers2 .tssggs-settings .lu-form-group.lu-form-check:last-child {
+    border-bottom: 0;
+}
+
+#layers2 .tssggs-settings .lu-form-group.lu-form-check > label {
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    width: 100%;
+    margin: 0;
+    padding: 10px 0;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+/* text fields and dropdowns */
+#layers2 .tssggs-settings .lu-form-group {
+    margin-bottom: 12px;
+}
+
+#layers2 .tssggs-settings .lu-form-control,
+#layers2 .tssggs-settings select.lu-form-control,
+#layers2 .tssggs-settings textarea.lu-form-control {
+    border: 1px solid var(--tw-border);
+    border-radius: 6px;
+    font-size: 12px;
+    box-shadow: none;
+}
+
+#layers2 .tssggs-settings input.lu-form-control,
+#layers2 .tssggs-settings select.lu-form-control {
+    height: 36px;
+}
+
+#layers2 .tssggs-settings .lu-form-control:focus {
+    border-color: var(--tw-primary);
+}
+
+#layers2 .tssggs-settings label,
+#layers2 .tssggs-settings .lu-form-group__label {
+    font-size: 12px;
+}
+
+/* the Save bar */
+#layers2 .tssggs-settings form .lu-top__toolbar {
+    margin: 8px -18px -18px;
+    padding: 14px 18px;
+    border-top: 1px solid var(--tw-border);
+    border-radius: 0 0 var(--tw-radius) var(--tw-radius);
+    background: var(--tw-surface-alt);
+}
+
+#layers2 .tssggs-settings form .lu-btn--success,
+#layers2 .tssggs-settings form .lu-btn.lu-btn--success {
+    border-color: var(--tw-primary);
+    background: var(--tw-primary);
+    color: #fff;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+/* ---- polish ---- */
+
+/* section headings inside the forms sit right above their rows */
+#layers2 .tssggs-settings form .lu-widget__top {
+    min-height: 0;
+    padding: 0;
+}
+
+#layers2 .tssggs-settings form .lu-widget__header {
+    margin: 0 0 2px;
+}
+
+#layers2 .tssggs-settings form .lu-widget__body {
+    margin: 0;
+}
+
+/* the sections list: a small caps label as the title */
+#layers2 .tssggs-settings .lu-widget:has(.lu-navbar__nav) > .lu-widget__header {
+    padding: 12px 12px 4px;
+    border-bottom: 0;
+}
+
+#layers2 .tssggs-settings .lu-widget:has(.lu-navbar__nav) > .lu-widget__header .lu-top__title {
+    color: var(--tw-muted);
+    font-size: 10px !important;
+    font-weight: 600 !important;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+}
+
+#layers2 .tssggs-settings .lu-widget:has(.lu-navbar__nav) > .lu-widget__body {
+    padding: 0 6px 8px;
+}
+
+/* Settings page heading above the grid: closer to the design */
+#layers2 .tssggs-settings > .lu-row,
+#layers2 .tssggs-settings > div {
+    margin-top: 4px;
+}

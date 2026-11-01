@@ -15,6 +15,7 @@ $files = [
     'wizard.css',
     'migration.css',
     'dashboard.css',
+    'shell.css',
 ];
 
 if (isset($_REQUEST['type']) && $_REQUEST['type'] == 'module')
