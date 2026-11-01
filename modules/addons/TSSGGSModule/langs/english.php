@@ -1121,3 +1121,6 @@ $_LANG['admin.settings.index.forms.cron_configuration_form.howOften'] = 'How oft
 $_LANG['admin.settings.index.widgets.cron_settings_widget.subtitle'] = 'Scheduled tasks that keep prices, orders and certificates up to date';
 $_LANG['admin.settings.index.widgets.cron_settings_widget.copy'] = 'Copy';
 $_LANG['admin.settings.index.widgets.cron_settings_widget.copied'] = 'Copied';
+$_LANG['admin.settings.index.forms.cron_configuration_form.saveChanges'] = 'Save changes';
+$_LANG['admin.settings.index.forms.cron_configuration_form.noUnsaved'] = 'No unsaved changes';
+$_LANG['admin.settings.index.forms.cron_configuration_form.unsaved'] = 'Unsaved changes';

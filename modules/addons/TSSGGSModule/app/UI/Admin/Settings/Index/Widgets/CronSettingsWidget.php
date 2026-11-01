@@ -27,8 +27,8 @@ class CronSettingsWidget extends Widget
             . '<div class="tssggs-cronone"><div class="tssggs-cronone__title"><i class="mdi mdi-console"></i>' . $this->translate('oneLineTitle') . '</div>'
             . '<p>' . $this->translate('oneLineInfo') . '</p>'
             . '<div class="tssggs-cronone__code"><code>' . htmlspecialchars($line) . '</code>'
-            . '<button type="button" class="tssggs-copy" onclick="var b=this;navigator.clipboard.writeText(b.previousElementSibling.textContent);b.textContent=\'' . $copied
-            . '\';setTimeout(function(){b.textContent=\'' . $copy . '\'},1500)">' . $this->translate('copy') . '</button></div></div>'
+            . '<button type="button" class="tssggs-copy" onclick="var b=this,o=b.innerHTML;navigator.clipboard.writeText(b.previousElementSibling.textContent);b.textContent=\'' . $copied
+            . '\';setTimeout(function(){b.innerHTML=o},1500)"><i class="mdi mdi-content-copy"></i>' . $this->translate('copy') . '</button></div></div>'
         ));
 
         $this->addElement(new CronConfigurationForm());

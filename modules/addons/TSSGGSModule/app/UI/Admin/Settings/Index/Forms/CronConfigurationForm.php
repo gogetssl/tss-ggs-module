@@ -64,19 +64,23 @@ class CronConfigurationForm extends Form implements AdminAreaInterface, AjaxComp
             $row     = isset($status[$job]) ? $status[$job] : ['last' => null, 'error' => ''];
             $failing = $row['error'] !== '';
             $badge   = $row['last'] === null
-                ? '<span class="tssggs-badge tssggs-badge--idle">' . $this->translate('neverRunBadge') . '</span>'
+                ? '<span class="tssggs-badge tssggs-badge--idle"><i class="mdi mdi-clock-outline"></i>' . $this->translate('neverRunBadge') . '</span>'
                 : ($failing
-                    ? '<span class="tssggs-badge tssggs-badge--bad">' . $this->translate('failing') . '</span>'
-                    : '<span class="tssggs-badge tssggs-badge--ok">' . $this->translate('healthy') . '</span>');
+                    ? '<span class="tssggs-badge tssggs-badge--bad"><i class="mdi mdi-alert-outline"></i>' . $this->translate('failing') . '</span>'
+                    : '<span class="tssggs-badge tssggs-badge--ok"><i class="mdi mdi-check-circle-outline"></i>' . $this->translate('healthy') . '</span>');
             $last    = $row['last'] === null ? $this->translate('neverRun') : htmlspecialchars($row['last']);
 
-            $html = '<div class="tssggs-cronjob__head"><h3>' . $this->translate('name_' . $job) . '</h3>' . $badge . '</div>'
+            $block->addElement((new Text())->setText(
+                '<div class="tssggs-cronjob__head"><h3>' . $this->translate('name_' . $job) . '</h3>' . $badge . '</div>'
                 . '<p class="tssggs-cronjob__about">' . $this->translate('about_' . $job) . '</p>'
-                . ($failing ? '<div class="tssggs-cronjob__fail">' . $this->translate('lastRun') . ' ' . $last . ' &mdash; ' . htmlspecialchars($row['error']) . ' (' . $this->translate('seeLog') . ')</div>' : '')
+                . ($failing ? '<div class="tssggs-cronjob__fail">' . $this->translate('lastRun') . ' ' . $last . ' &mdash; ' . htmlspecialchars($row['error']) . '</div>' : '')
                 . '<hr class="tssggs-cronjob__sep">'
-                . '<div class="tssggs-cronjob__freq"><i class="mdi mdi-clock-outline"></i><span>' . $this->translate('howOften') . '</span>'
-                . ($key === null ? ' <b>' . $this->translate('everyStart') . '</b>' : '') . '</div>';
-            $block->addElement((new Text())->setText($html));
+            ));
+
+            $block->addElement((new Text())->setText(
+                '<div class="tssggs-cronjob__freq"><i class="mdi mdi-clock-outline"></i><span>' . $this->translate('howOften') . '</span>'
+                . ($key === null ? '<span class="tssggs-cronjob__fixed">' . $this->translate('everyStart') . '</span>' : '') . '</div>'
+            ));
 
             if($key !== null)
             {
@@ -94,18 +98,24 @@ class CronConfigurationForm extends Form implements AdminAreaInterface, AjaxComp
             }
 
             $block->addElement((new Text())->setText(
-                '<p class="tssggs-cronjob__meta">' . $this->translate('lastRun') . ' ' . $last . '<br>'
-                . $this->translate('runNow') . ' <code>php -q ' . $script . ' ' . $job . ' --force</code></p>'
+                '<p class="tssggs-cronjob__meta"><span><i class="mdi mdi-clock-outline"></i>' . $this->translate('lastRun') . ' ' . $last . '</span>'
+                . '<span><i class="mdi mdi-console"></i>' . $this->translate('runNow') . ' <code>php -q &hellip;/cron/cron.php ' . $job . ' --force</code></span></p>'
             ));
         }
 
         $toolbar = new Toolbar();
+        $toolbar->setCss('tssggs-cronsave');
         $toolbar->addElement(
             (new ButtonSuccess())
                 ->setId('buttonSave')
-                ->setTitle($this->translate('save'))
+                ->setTitle($this->translate('saveChanges'))
                 ->onClick(new FormSubmit($this))
         );
+        // the indicator switches to "Unsaved changes" as soon as a frequency is changed (one delegated listener)
+        $toolbar->addElement((new Text())->setText(
+            '<span id="tssggs-dirty" class="tssggs-dirty">' . $this->translate('noUnsaved') . '</span>'
+            . '<img src="data:," alt="" style="display:none" data-text="' . htmlspecialchars($this->translate('unsaved')) . '" onerror="if(!window.tssggsDirty){window.tssggsDirty=1;var t=this.getAttribute(\'data-text\');document.addEventListener(\'change\',function(e){var s=document.getElementById(\'tssggs-dirty\');if(s&&e.target.closest&&e.target.closest(\'#CronConfigurationForm\')){s.textContent=t;s.className=\'tssggs-dirty is-dirty\'}})}">'
+        ));
 
         $this->addElement($toolbar);
     }

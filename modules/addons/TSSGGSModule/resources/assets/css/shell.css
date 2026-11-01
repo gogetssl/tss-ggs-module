@@ -657,3 +657,29 @@
 #layers2 .tssggs-badge--idle { background: #f3f4f6; color: #6b7280; }
 #layers2 .tssggs-cronjob .lu-form-group > label, #layers2 .tssggs-cronjob .lu-form-group__label { display: none; }
 #layers2 .tssggs-cronjob .lu-form-group { margin: 0; }
+
+/* CRON page: 1:1 with the Lovable design */
+#layers2 .tssggs-cronpanel > .lu-widget__header { padding-bottom: 0; border-bottom: 0; }
+#layers2 .tssggs-cronpanel__sub { margin: 0 -24px 24px; padding: 0 24px 16px; border-bottom: 1px solid #e5e7eb; }
+#layers2 .tssggs-cronone { border-color: color-mix(in srgb, var(--tw-primary) 25%, #fff); }
+#layers2 .tssggs-cronone__title i { color: var(--tw-primary); }
+#layers2 .tssggs-copy { display: inline-flex; align-items: center; gap: 6px; }
+#layers2 .tssggs-cronjob { padding: 20px 20px 16px; }
+#layers2 .tssggs-cronjob > .lu-widget__body > .lu-widget__content { display: flex; flex-wrap: wrap; align-items: center; column-gap: 12px; }
+#layers2 .tssggs-cronjob > .lu-widget__body > .lu-widget__content > span:first-child,
+#layers2 .tssggs-cronjob > .lu-widget__body > .lu-widget__content > span:last-child { flex: 0 0 100%; }
+#layers2 .tssggs-cronjob .lu-form-group { flex: 0 0 150px; }
+#layers2 .tssggs-cronjob__freq { margin: 0; }
+#layers2 .tssggs-cronjob__freq i { color: var(--tw-primary); font-size: 16px; }
+#layers2 .tssggs-cronjob__fixed { margin-left: 4px; font-weight: 400; }
+#layers2 .tssggs-cronjob__meta { display: flex; flex-direction: column; gap: 4px; margin-top: 16px; }
+#layers2 .tssggs-cronjob__meta i, #layers2 .tssggs-badge i { margin-right: 6px; font-size: 14px; vertical-align: -2px; }
+#layers2 .tssggs-badge { display: inline-flex; align-items: center; border: 1px solid transparent; }
+#layers2 .tssggs-badge--ok { background: color-mix(in srgb, var(--tw-primary) 8%, #fff); border-color: color-mix(in srgb, var(--tw-primary) 25%, #fff); color: var(--tw-primary); }
+#layers2 .tssggs-badge--bad { background: #fef2f2; border-color: #fecaca; }
+#layers2 .tssggs-cronsave { display: flex; align-items: center; gap: 12px; }
+#layers2 .tssggs-dirty { color: var(--tw-muted); font-size: 12px; }
+#layers2 .tssggs-dirty.is-dirty { color: #a65f00; }
+#layers2 .tssggs-settings form .lu-widget.tssggs-cronjob { margin: 0 0 16px !important; padding: 20px 20px 16px !important; border: 1px solid #e5e7eb !important; border-radius: 8px !important; background: #fff !important; box-shadow: none !important; }
+#layers2 .tssggs-badge i { display: inline-block; margin-right: 4px; line-height: 1; }
+#layers2 .tssggs-badge { padding: 2px 8px; font-size: 12px; line-height: 18px; }
