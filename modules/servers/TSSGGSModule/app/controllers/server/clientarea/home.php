@@ -790,7 +790,7 @@ class home extends AbstractController
 
             openssl_csr_export($csr, $csrOut);
 
-            return ['json' => ['status' => 'success', 'data' => ['csr' => $csrOut, 'private_key' => \encrypt($pKeyOut)]]];
+            return ['json' => ['status' => 'success', 'data' => ['csr' => $csrOut, 'private_key' => \ModulesGarden\TSSGGSModule\App\Libs\PrivateKeyDownload::store((int)$input['id'], $pKeyOut)]]];
 
         }
         catch(\Exception $e)
@@ -804,8 +804,21 @@ class home extends AbstractController
 
     public function downloadKeyHTML($input, $vars = [])
     {
-        $pkey      = $input['pkey'];
-        $decodeKey = \decrypt(str_replace(' ', '+', $pkey));
+        // POST + token, and only a key this client's session generated for this service (no URL, no decrypt oracle)
+        try
+        {
+            $this->requireCsrfToken();
+            $decodeKey = \ModulesGarden\TSSGGSModule\App\Libs\PrivateKeyDownload::fetch((int)$input['id'], (string)($_POST['handle'] ?? ''));
+            if($decodeKey === null)
+            {
+                throw new \Exception(Lang::absoluteT('private_key_expired'));
+            }
+        }
+        catch(\Exception $e)
+        {
+            $_SESSION['mg-error'] = $e->getMessage();
+            redir('action=productdetails&id=' . (int)$input['id'], 'clientarea.php');
+        }
         header('Content-Type: application/octet-stream');
         header('Content-Disposition: attachment; filename=privatekey.pem');
         header('Expires: 0');
@@ -1675,7 +1688,8 @@ class home extends AbstractController
 
         if($withinWindow)
         {
-            // Added within 30 days — delete the row entirely so the slot is freed
+            // Added within 30 days — delete the row entirely so the slot is freed. No money is credited here; the text
+            // (despite the key name) only says that the slot limit was reduced.
             $acmeSubscriptionDomain->delete();
 
             return [
@@ -1763,9 +1777,14 @@ class home extends AbstractController
         }
 
         $creditPrefix          = 'ACME refund for invoice #' . (int)$invoice->invoiceid;
+        // the prefix match must not catch the credit of another invoice (#12 vs #120): the number is followed by the end
+        // of the text or by ". Reason: ..."
         $alreadyCreditedAmount = Capsule::table('tblcredit')
                                         ->where('clientid', (int)$invoice->userid)
-                                        ->where('description', 'LIKE', $creditPrefix . '%')
+                                        ->where(function($query) use ($creditPrefix) {
+                                            $query->where('description', $creditPrefix)
+                                                  ->orWhere('description', 'LIKE', $creditPrefix . '. %');
+                                        })
                                         ->sum('amount');
 
         if((float)$alreadyCreditedAmount > 0)
@@ -2560,6 +2579,8 @@ class home extends AbstractController
                 : [];
         }
 
+        \ModulesGarden\TSSGGSModule\App\Libs\SanUpgrade::assertWithinLimits($serviceId, $commonName, $allDomains, \ModulesGarden\TSSGGSModule\App\Libs\SanUpgrade::paidQuantities($params));
+
         foreach($allDomains as $domain)
         {
             $domainMethod = $dcvMethod;
@@ -2687,7 +2708,7 @@ class home extends AbstractController
         if($installType === 'manual' && !empty($privateKey))
         {
             $response['private_key']     = $privateKey;
-            $response['private_key_url'] = 'clientarea.php?action=productdetails&id=' . $serviceId . '&mg-action=downloadKey&pkey=' . rawurlencode(\encrypt($privateKey));
+            $response['private_key_handle'] = \ModulesGarden\TSSGGSModule\App\Libs\PrivateKeyDownload::store((int)$serviceId, $privateKey);
         }
 
         return $response;

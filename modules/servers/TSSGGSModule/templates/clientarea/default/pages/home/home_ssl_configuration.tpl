@@ -787,7 +787,15 @@
                 $('html, body').animate({ scrollTop: 0 }, 300);
             } else if (data.private_key) {
                 $('#ssl-private-key').val(data.private_key);
-                $('#ssl-private-key-download').attr('href', data.private_key_url);
+                var keyHandle = data.private_key_handle;
+                $('#ssl-private-key-download').attr('href', '#').off('click').on('click', function (e) {
+                    e.preventDefault();
+                    var f = $('<form method="post" target="_blank"></form>').attr('action', 'clientarea.php?action=productdetails&id={$serviceid}');
+                    f.append($('<input type="hidden" name="mg-action" value="downloadKey">'));
+                    f.append($('<input type="hidden" name="token">').val('{$csrfToken}'));
+                    f.append($('<input type="hidden" name="handle">').val(keyHandle));
+                    f.appendTo('body').submit().remove();
+                });
                 $('#ssl-config-wrap').hide();
                 $('#ssl-thankyou-manual-key').show();
                 $('html, body').animate({ scrollTop: 0 }, 300);

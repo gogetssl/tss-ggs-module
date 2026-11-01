@@ -524,3 +524,4 @@ $_LANG['serverCA']['home']['sslConfigAgreement'] = 'He leído y acepto el';
 $_LANG['serverCA']['home']['sslConfigAgreementRequired'] = 'Acepte el acuerdo de suscriptor de la autoridad de certificación.';
 $_LANG['serverCA']['home']['sslConfigValidationDnsCname'] = 'DNS - registro CNAME';
 $_LANG['serverCA']['home']['sslConfigValidationDnsTxt'] = 'DNS - registro TXT';
+$_LANG['private_key_expired'] = 'La clave privada ya no está disponible (se conserva una hora en su sesión). Genere la clave de nuevo.';

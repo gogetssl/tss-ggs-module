@@ -38,7 +38,7 @@ function TSSGGSModule_output($params)
 
     if (is_array($html))
     {
-        print_r($html);
+        echo json_encode($html);
     }
     elseif ($html)
     {

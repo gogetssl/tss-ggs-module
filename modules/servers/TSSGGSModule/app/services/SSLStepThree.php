@@ -77,6 +77,8 @@ class SSLStepThree
             $decode = openssl_csr_get_subject($params['csr']);
             $mainMethod = $params['method'][$decode['CN']] == 'email' ? $params['approver'][$decode['CN']] : $params['method'][$decode['CN']];
 
+            SanUpgrade::assertWithinLimits($params['serviceid'], $decode['CN'], array_keys($params['method']), SanUpgrade::paidQuantities($params));
+
             $san = [];
             foreach ($params['method'] as $domain_san => $method_san)
             {

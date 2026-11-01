@@ -524,3 +524,4 @@ $_LANG['serverCA']['home']['sslConfigAgreement'] = 'Přečetl(a) jsem si a souhl
 $_LANG['serverCA']['home']['sslConfigAgreementRequired'] = 'Přijměte prosím smlouvu s odběratelem (subscriber agreement) certifikační autority.';
 $_LANG['serverCA']['home']['sslConfigValidationDnsCname'] = 'DNS - záznam CNAME';
 $_LANG['serverCA']['home']['sslConfigValidationDnsTxt'] = 'DNS - záznam TXT';
+$_LANG['private_key_expired'] = 'Soukromý klíč již není k dispozici (v relaci se uchovává jednu hodinu). Vygenerujte klíč prosím znovu.';

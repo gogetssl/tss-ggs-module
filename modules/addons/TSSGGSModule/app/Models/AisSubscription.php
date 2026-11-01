@@ -2,6 +2,7 @@
 
 namespace ModulesGarden\TSSGGSModule\App\Models;
 
+use ModulesGarden\TSSGGSModule\App\Libs\SecretValue;
 use ModulesGarden\TSSGGSModule\Core\Models\ExtendedEloquentModel;
 
 class AisSubscription extends ExtendedEloquentModel
@@ -44,6 +45,27 @@ class AisSubscription extends ExtendedEloquentModel
         'renewal_date',
         'cancelled_at'
     ];
+
+    // SSO links are logins to the vendor's panel: stored encrypted (see SecretValue)
+    public function setLoginSsoLinkAttribute($value)
+    {
+        $this->attributes['login_sso_link'] = SecretValue::seal($value);
+    }
+
+    public function getLoginSsoLinkAttribute($value)
+    {
+        return SecretValue::open($value);
+    }
+
+    public function setManageSsoLinkAttribute($value)
+    {
+        $this->attributes['manage_sso_link'] = SecretValue::seal($value);
+    }
+
+    public function getManageSsoLinkAttribute($value)
+    {
+        return SecretValue::open($value);
+    }
 
     static public function getByServiceId($serviceId)
     {

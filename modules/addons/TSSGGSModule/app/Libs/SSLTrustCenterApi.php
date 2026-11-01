@@ -579,7 +579,8 @@ class SSLTrustCenterApi
     {
         if(GeneralSettings::enabled('moduleLog'))
         {
-            logModuleCall('tss_gss_module', $action, $request, $response);
+            // credentials, EAB keys, SSO links and private keys never go to the log
+            logModuleCall('tss_gss_module', $action, SecretValue::redact($request), SecretValue::redact($response));
         }
     }
 

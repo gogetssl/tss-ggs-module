@@ -115,9 +115,14 @@ class Renew
 
             $request = ['orderData' => $orderData, 'orderFiles' => $orderFiles];
 
-            Request::where('serviceid', $serviceId)->where('name', 'certificate')->insert([
+            // (insert() ignores the where() conditions: the row needs its own serviceid and name)
+            Request::where('serviceid', $serviceId)->where('name', 'certificate')->delete();
+            Request::insert([
+                'serviceid' => $serviceId,
+                'name' => 'certificate',
                 'request' => \encrypt(json_encode($request)),
                 'status' => 'pending',
+                'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s')
             ]);
 

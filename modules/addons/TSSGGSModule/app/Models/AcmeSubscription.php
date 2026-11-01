@@ -2,6 +2,7 @@
 
 namespace ModulesGarden\TSSGGSModule\App\Models;
 
+use ModulesGarden\TSSGGSModule\App\Libs\SecretValue;
 use ModulesGarden\TSSGGSModule\Core\Models\ExtendedEloquentModel;
 
 class AcmeSubscription extends ExtendedEloquentModel
@@ -45,6 +46,17 @@ class AcmeSubscription extends ExtendedEloquentModel
         'renewal_date',
         'cancelled_at'
     ];
+
+    // the EAB HMAC key registers ACME accounts at the CA: stored encrypted (see SecretValue)
+    public function setEabHmacKeyAttribute($value)
+    {
+        $this->attributes['eab_hmac_key'] = SecretValue::seal($value);
+    }
+
+    public function getEabHmacKeyAttribute($value)
+    {
+        return SecretValue::open($value);
+    }
 
     static public function getByServiceId($serviceId)
     {

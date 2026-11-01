@@ -683,8 +683,6 @@ class Invoice
             }
             $result = localAPI('UpdateClientProduct', $postData, $adminUsername);
         }
-        \MGModule\SSLCENTERWHMCS\eHelpers\Whmcs::savelogActivitySSLCenter(print_r($postData, true));
-        \MGModule\SSLCENTERWHMCS\eHelpers\Whmcs::savelogActivitySSLCenter(print_r($result, true));
         return $results;
     }
 

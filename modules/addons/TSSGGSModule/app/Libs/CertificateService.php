@@ -326,6 +326,8 @@ class CertificateService
         {
             throw new \Exception('No validation method for ' . $commonName);
         }
+        // the names come from posted form keys: never trust them beyond the SANs that were paid for
+        SanUpgrade::assertWithinLimits($serviceId, $commonName, array_keys($methods));
 
         $request      = Request::where('serviceid', (int)$serviceId)->where('name', 'addOrder')->first();
         $requestOrder = $request && $request->request ? (json_decode(\decrypt($request->request), true) ?: []) : [];

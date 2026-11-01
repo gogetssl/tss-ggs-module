@@ -1,4 +1,13 @@
-<Files ~ "\.(jpg|jpeg|png|gif)$">
-    order deny,allow
-    allow from all
- </Files>
+<IfModule mod_authz_core.c>
+    Require all denied
+    <FilesMatch "\.(jpg|jpeg|png|gif)$">
+        Require all granted
+    </FilesMatch>
+</IfModule>
+<IfModule !mod_authz_core.c>
+    Order deny,allow
+    Deny from all
+    <FilesMatch "\.(jpg|jpeg|png|gif)$">
+        Allow from all
+    </FilesMatch>
+</IfModule>
