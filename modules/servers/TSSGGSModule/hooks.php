@@ -305,6 +305,14 @@ add_hook('ClientAreaSecondarySidebar', 1, function($secondarySidebar) {
             $menu->addChild('tssggsSsl_domains', [
                 'label' => $t['byDomain'],
                 'uri'   => 'index.php?m=TSSGGSModule&page=domains',
+                'order' => $order++,
+            ]);
+        }
+        if(\ModulesGarden\TSSGGSModule\App\Libs\GeneralSettings::enabled('sslTools'))
+        {
+            $menu->addChild('tssggsSsl_tools', [
+                'label' => 'SSL Tools',
+                'uri'   => 'index.php?m=TSSGGSModule&page=tools',
                 'order' => $order,
             ]);
         }

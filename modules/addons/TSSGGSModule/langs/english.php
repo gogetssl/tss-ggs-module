@@ -1018,3 +1018,5 @@ $_LANG['admin.settings.index.forms.general_settings_form.defaultWebServer']     
 $_LANG['admin.settings.index.forms.general_settings_form.defaultWebServer_description'] = 'Sent with every order as webserver_type so clients are never asked. Leave empty when your gateway does not need it.';
 $_LANG['admin.emails.name_product_discontinued']     = 'Product discontinued';
 $_LANG['admin.emails.when_product_discontinued']     = 'Sent to the client with the renewal invoice when the gateway no longer sells the service\'s product (retired or removed), so renewal under the same product may be refused.';
+$_LANG['admin.settings.index.forms.general_settings_form.sslTools']             = 'SSL Tools For Clients';
+$_LANG['admin.settings.index.forms.general_settings_form.sslTools_description'] = 'Client area page with a CSR / certificate decoder, key match, format converter, CSR generator and SSL checker. They run on this server and call no API.';

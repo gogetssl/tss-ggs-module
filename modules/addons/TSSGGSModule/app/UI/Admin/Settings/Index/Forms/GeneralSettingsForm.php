@@ -47,6 +47,7 @@ class GeneralSettingsForm extends Form implements AdminAreaInterface, AjaxCompon
         $this->builder->addFieldInContainer($clientArea, (new FormInputText())->setName('sidebarTemplates'), true);
         $this->builder->addFieldInContainer($clientArea, (new Dropdown())->setName('expiresSoonDays'), true);
         $this->builder->addFieldInContainer($clientArea, (new Switcher())->setName('certificatesByDomain')->addClass('switcher-revert'), true);
+        $this->builder->addFieldInContainer($clientArea, (new Switcher())->setName('sslTools')->addClass('switcher-revert'), true);
 
         $logging = $this->widget($left, 'logging');
         $this->builder->addFieldInContainer($logging, (new Switcher())->setName('whmcsActivityLog')->addClass('switcher-revert'), true);

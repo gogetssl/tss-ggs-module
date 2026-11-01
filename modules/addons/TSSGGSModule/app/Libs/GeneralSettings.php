@@ -15,6 +15,7 @@ class GeneralSettings
         'sidebarTemplates'         => '',
         'expiresSoonDays'          => 30,
         'certificatesByDomain'     => true,
+        'sslTools'                 => true,
         // Messages
         'processingGuide'          => '',
         'issuedMessage'            => '',
