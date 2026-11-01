@@ -55,6 +55,7 @@
 #layers2 .tssggs-head__logo { background: var(--tw-primary); }
 #layers2 .tssggs-head__text strong { display: block; color: var(--tw-fg); font-size: 20px; font-weight: 600; line-height: 1; }
 #layers2 .lu-app-navbar { border-color: var(--tw-border); }
+#layers2 .lu-navbar { min-height: 0; }
 #layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav { padding: 0 12px !important; gap: 4px; }
 #layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav > li.lu-nav__item > a.lu-nav__link { height: 46px; min-height: 46px; gap: 7px; color: var(--tw-fg-soft); font-size: 13.5px; transition: color .2s, border-color .2s; }
 #layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav > li.lu-nav__item.is-active > a.lu-nav__link { color: var(--tw-primary); }

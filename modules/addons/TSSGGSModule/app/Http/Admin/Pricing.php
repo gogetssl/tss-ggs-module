@@ -4,6 +4,7 @@ namespace ModulesGarden\TSSGGSModule\App\Http\Admin;
 
 use ModulesGarden\TSSGGSModule\App\Libs\PricingService;
 use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\ProductRepository;
+use ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Widgets\NextStepsWidget;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Pricing\Index\PricingContainer;
 use ModulesGarden\TSSGGSModule\Core\Contracts\Controllers\AdminAreaInterface;
 use ModulesGarden\TSSGGSModule\Core\Http\AbstractController;
@@ -69,6 +70,8 @@ class Pricing extends AbstractController implements AdminAreaInterface
                 }
             }
 
+            NextStepsWidget::markDone(NextStepsWidget::STEP_PRICING);
+
             return ['saved' => $changed];
         });
     }
@@ -83,6 +86,8 @@ class Pricing extends AbstractController implements AdminAreaInterface
                 throw new \RuntimeException('The margin must be greater than -100 %');
             }
             $currencyId = ($_POST['scope'] ?? '') === 'all' ? null : (int)($_POST['currency'] ?? 0);
+
+            NextStepsWidget::markDone(NextStepsWidget::STEP_PRICING);
 
             return ['margin_applied' => (new PricingService())->applyMargin($margin, $currencyId)];
         });
@@ -127,6 +132,8 @@ class Pricing extends AbstractController implements AdminAreaInterface
             {
                 throw new \RuntimeException('The import preview has expired, upload the file again');
             }
+
+            NextStepsWidget::markDone(NextStepsWidget::STEP_PRICING);
 
             return ['imported' => (new PricingService())->applyCsv($preview['accepted'])];
         });
