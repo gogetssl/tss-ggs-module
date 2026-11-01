@@ -288,20 +288,7 @@ class SSLCertificatesProcessing extends AbstractCommand
         }
 
         $io->progressFinish();
-        $io->title('SSL AutoInstall (cPanel)');
-
-        try
-        {
-            $autoInstallError = AutoInstallHelpers::processQueue();
-            if($autoInstallError)
-            {
-                $errorToDB = $autoInstallError;
-            }
-        }
-        catch(\Throwable $e)
-        {
-            $errorToDB = $e->getMessage();
-        }
+        // (the AutoInstall queue has its own job, SSLAutoInstall: it was run from here as well)
 
         // legacy migration housekeeping: expired backup tables, log rows older than 30 days
         try

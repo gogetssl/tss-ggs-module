@@ -47,7 +47,8 @@ abstract class AbstractCommand extends \Symfony\Component\Console\Command\Comman
         $this
             ->setName($this->name)
             ->setDescription($this->description)
-            ->setHelp($this->help);
+            ->setHelp($this->help)
+            ->addOption('force', null, InputOption::VALUE_NONE, 'Run now, whatever the schedule of the job says');
 
         $this->setup();
     }
@@ -71,6 +72,12 @@ abstract class AbstractCommand extends \Symfony\Component\Console\Command\Comman
             if (!CommandHelper::calledViaCli())
             {
                 throw new CommandMustCalledViaCli();
+            }
+
+            // --force: the schedule check of the job (AddonModuleRepository::checkCron) lets it run
+            if($input->getOption('force'))
+            {
+                \ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository::$forceRun = true;
             }
 
             // one run of a job at a time: a run that is still going (or a second cron entry) makes the next one skip

@@ -32,10 +32,8 @@ class CronLauncher
 
             $php    = self::phpBinary();
             $script = ModuleConstants::getFullPath('cron', 'cron.php');
-            foreach(CronStatus::TASKS as $task)
-            {
-                exec('nohup ' . escapeshellarg($php) . ' -q ' . escapeshellarg($script) . ' ' . escapeshellarg($task) . ' > /dev/null 2>&1 &');
-            }
+            // the same single command a reseller schedules by hand: every job runs when it is due
+            exec('nohup ' . escapeshellarg($php) . ' -q ' . escapeshellarg($script) . ' RunAll > /dev/null 2>&1 &');
         }
         catch(\Throwable $e)
         {

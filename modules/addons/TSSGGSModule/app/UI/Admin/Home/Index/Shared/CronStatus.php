@@ -10,12 +10,12 @@ use ModulesGarden\TSSGGSModule\Packages\ModuleSettings\Models\ModuleSettings;
  */
 class CronStatus
 {
+    /** the jobs, in the order RunAll starts them (ReSyncProducts is part of ProductPricingUpdate now) */
     const TASKS = [
         'ProductPricingUpdate',
+        'SSLCertificatesProcessing',
         'SSLCertificates',
         'RenewalNotifyCertificate',
-        'ReSyncProducts',
-        'SSLCertificatesProcessing',
         'SSLAutoInstall',
     ];
 

@@ -72,6 +72,15 @@ class ProductPricingUpdate extends AbstractCommand
 
             RemoteProduct::synchronize();
 
+            // catalogue refresh (formerly the separate job ReSyncProducts): announcements, account manager, product configuration
+            $countryCode = \WHMCS\Config\Setting::getValue('DefaultCountry');
+            foreach(Helpers::getConfiguredApis() as $configuredApi)
+            {
+                $configuredApi->getAnnouncements(true);
+                $configuredApi->getManager($countryCode, true);
+            }
+            Helpers::reSyncProducts();
+
             //$baseCurrencyId - USD or default WHMCS currency
             $baseCurrencyId = Helpers::getCurrencyIdByCode('USD');
 
