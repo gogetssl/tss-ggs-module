@@ -364,6 +364,7 @@
         <div class="modal-content">
             <form method="POST">
                 <input type="hidden" name="mg-action" value="cancel">
+                <input type="hidden" name="token" value="{$csrfToken}">
                 <input type="hidden" name="remoteid" value="{$api_order_id}">
                 <div class="modal-header" style="display: block;">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>

@@ -45,6 +45,7 @@ class home extends AbstractController
 
     function indexHTML($input, $vars = [])
     {
+        $vars['csrfToken'] = \generate_token('plain');
 
         try
         {
@@ -229,6 +230,7 @@ class home extends AbstractController
     {
         try
         {
+            $this->requireCsrfToken();
             CertificateService::sendCertificate((int)$input['id']);
             redir('action=productdetails&id=' . (int)$input['id'] . '&sendEmail=true', 'clientarea.php');
         }
@@ -382,6 +384,7 @@ class home extends AbstractController
     public function reissueStep2($input, $serviceId, $ssl, $certificate)
     {
         $vars = [];
+        $vars['csrfToken'] = \generate_token('plain');
 
         try
         {
@@ -467,6 +470,7 @@ class home extends AbstractController
     {
         try
         {
+            $this->requireCsrfToken();
             $serviceId = (int)$input['id'];
             $methods   = [];
             foreach((array)$input['method'] as $domain => $method)
@@ -736,6 +740,7 @@ class home extends AbstractController
 
         try
         {
+            $this->requireCsrfToken();
 
             list($invoiceId, $created) = (new InvoiceRenew())->getOrCreateInvoice((int)$input['id']);
 
@@ -813,6 +818,15 @@ class home extends AbstractController
 
     public function cancelHTML($input, $vars = [])
     {
+        try
+        {
+            $this->requireCsrfToken();
+        }
+        catch(\Exception $e)
+        {
+            $_SESSION['mg-error'] = $e->getMessage();
+            redir('action=productdetails&id=' . (int)$input['id'], 'clientarea.php');
+        }
         $service       = Service::where('id', $input['id'])->first();
         $configProduct = (new ProductRepository())->getProductConfiguration($service->packageid);
         $addonConfig   = (new AddonModuleRepository())->getModuleConfiguration();
@@ -1225,6 +1239,7 @@ class home extends AbstractController
 
     public function createSubscriptionJSON($input, $vars = array())
     {
+        $this->requireCsrfToken();
         $whmcsProductId  = (int)$input['params']['packageid'];
         $serviceId       = (int)$input['id'];
         $singleDomains   = $this->extractDomainsFromInput(isset($input['single_domains']) ? $input['single_domains'] : '');
@@ -1398,6 +1413,7 @@ class home extends AbstractController
 
     public function buyMoreDomainsJSON($input, $vars = array())
     {
+        $this->requireCsrfToken();
         $serviceId       = (int)$input['id'];
         $singleDomains   = $this->extractDomainsFromInput(isset($input['single_domains']) ? $input['single_domains'] : '');
         $wildcardDomains = $this->extractDomainsFromInput(isset($input['wildcard_domains']) ? $input['wildcard_domains'] : '');
@@ -1510,6 +1526,7 @@ class home extends AbstractController
 
     public function upgradeConfigOptionsJSON($input, $vars = array())
     {
+        $this->requireCsrfToken();
         $params    = $input['params'];
         $serviceId = (int)$input['id'];
         $service   = Service::find($serviceId);
@@ -1627,6 +1644,7 @@ class home extends AbstractController
 
     public function removeDomainJSON($input, $vars = array())
     {
+        $this->requireCsrfToken();
         $serviceId = (int)$input['id'];
         $domain    = isset($input['domain']) ? strtolower(trim($input['domain'])) : '';
         if(empty($domain))
@@ -1674,6 +1692,7 @@ class home extends AbstractController
 
     public function cancelSubscriptionJSON($input, $vars = array())
     {
+        $this->requireCsrfToken();
         $serviceId    = (int)$input['id'];
         $subscription = AcmeSubscription::getByServiceId($serviceId);
 
@@ -1714,6 +1733,7 @@ class home extends AbstractController
 
     public function stopAutoRenewalJSON($input, $vars = array())
     {
+        $this->requireCsrfToken();
         $serviceId    = (int)$input['id'];
         $subscription = AcmeSubscription::getByServiceId($serviceId);
 
@@ -1961,6 +1981,7 @@ class home extends AbstractController
 
     public function createAisJSON($input, $vars = array())
     {
+        $this->requireCsrfToken();
         $serviceId = (int)$input['id'];
         $domain    = isset($input['domain']) ? strtolower(trim($input['domain'])) : '';
 
@@ -2062,6 +2083,7 @@ class home extends AbstractController
 
     public function stopAisAutoRenewalJSON($input, $vars = array())
     {
+        $this->requireCsrfToken();
         $serviceId    = (int)$input['id'];
         $subscription = AisSubscription::getByServiceId($serviceId);
 
@@ -2084,6 +2106,7 @@ class home extends AbstractController
 
     public function cancelAisSubscriptionJSON($input, $vars = array())
     {
+        $this->requireCsrfToken();
         $serviceId    = (int)$input['id'];
         $subscription = AisSubscription::getByServiceId($serviceId);
 

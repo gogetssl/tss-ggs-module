@@ -117,7 +117,7 @@
                     <button style="margin-bottom: 5px;" data-toggle="modal" data-target="#myModalCancel" type="button" class="btn btn-default">{$MGLANG->T('validation_page', 'CancelCertificate')}</button>
 
 
-                    <a href="{$whmcs_url}/clientarea.php?action=productdetails&id={$serviceid}&mg-action=sendCertificate" style="margin-bottom: 5px;" class="btn btn-default">{$MGLANG->T('validation_page', 'Send Certificate')}</a>
+                    <form method="post" action="{$whmcs_url}/clientarea.php?action=productdetails&id={$serviceid}" style="display:inline-block;margin:0 0 5px;"><input type="hidden" name="mg-action" value="sendCertificate"><input type="hidden" name="token" value="{$csrfToken}"><button type="submit" class="btn btn-default">{$MGLANG->T('validation_page', 'Send Certificate')}</button></form>
                     <button style="margin-bottom: 5px;" data-toggle="modal" data-target="#tssggsViewCertificate" type="button" class="btn btn-default">{$MGLANG->T('validation_page', 'View Certificate')}</button>
                     <div class="btn-group" style="margin-bottom: 5px;">
                         <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{$MGLANG->T('validation_page', 'Download')} <span class="caret"></span></button>
@@ -311,6 +311,7 @@
         <div class="modal-content">
             <form method="POST">
                 <input type="hidden" name="mg-action" value="cancel">
+                <input type="hidden" name="token" value="{$csrfToken}">
                 <input type="hidden" name="remoteid" value="{$api_order_id}">
                 <div class="modal-header" style="display: block;">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -333,6 +334,7 @@
         <div class="modal-content">
             <form method="POST">
                 <input type="hidden" name="mg-action" value="renew">
+                <input type="hidden" name="token" value="{$csrfToken}">
                 <input type="hidden" name="remoteid" value="{$api_order_id}">
                 <div class="modal-header" style="display: block;">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>

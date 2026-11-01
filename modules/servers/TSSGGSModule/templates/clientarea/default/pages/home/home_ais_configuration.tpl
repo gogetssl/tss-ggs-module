@@ -44,7 +44,7 @@
 
             btn.prop('disabled', true).text('...');
 
-            $.post(serviceUrl, {ldelim}'mg-action': 'createAis', domain: domain{rdelim}, function (ret) {
+            $.post(serviceUrl, {ldelim}'mg-action': 'createAis', token: '{$csrfToken}', domain: domain{rdelim}, function (ret) {
                 ret = ret.replace('<JSONRESPONSE#', '').replace('#ENDJSONRESPONSE>', '');
                 var payload = JSON.parse(ret);
                 if (payload.result === 'error') {

@@ -52,6 +52,7 @@
 
                 $.post(serviceUrl, {
                     'mg-action': 'createSubscription',
+                    'token': '{$csrfToken}',
                     single_domains: singleDomainsInput,
                     wildcard_domains: wildcardDomainsInput
                 }, function (ret) {

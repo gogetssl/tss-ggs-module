@@ -319,7 +319,7 @@
             let EA = $('#emailAddress').val();
 
             $.ajax({
-                url: "clientarea.php?action=productdetails&id=68&mg-page=home&mg-action=generateCSR&json=1",
+                url: "clientarea.php?action=productdetails&id={$serviceid}&mg-page=home&mg-action=generateCSR&json=1",
                 method: "POST",
                 dataType: "json",
                 data: {
@@ -362,13 +362,13 @@
 
         function downloadPkey()
         {
-            window.open('clientarea.php?action=productdetails&id=68&mg-page=home&mg-action=downloadKey&pkey='+$('#pkeyField').val(), '_blank').focus();
+            window.open('clientarea.php?action=productdetails&id={$serviceid}&mg-page=home&mg-action=downloadKey&pkey='+$('#pkeyField').val(), '_blank').focus();
         }
 
 
         function checkCSR(csrValue) {
             $.ajax({
-                url: "clientarea.php?action=productdetails&id=68&mg-page=home&mg-action=checkCSR&json=1",
+                url: "clientarea.php?action=productdetails&id={$serviceid}&mg-page=home&mg-action=checkCSR&json=1",
                 method: "POST",
                 dataType: "json",
                 data: {

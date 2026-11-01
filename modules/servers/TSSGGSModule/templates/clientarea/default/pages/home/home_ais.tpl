@@ -145,6 +145,7 @@
             options = options || {};
             data = data || {};
             data['mg-action'] = action;
+            data['token'] = '{$csrfToken}';
             $.post(serviceUrl, data, function (ret) {
                 ret = ret.replace('<JSONRESPONSE#', '').replace('#ENDJSONRESPONSE>', '');
                 var payload = JSON.parse(ret);
