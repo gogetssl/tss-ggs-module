@@ -21,7 +21,7 @@ class SystemCheckWidget extends Card
     public function loadHtml(): void
     {
         $latest = CronStatus::latest();
-        $aside  = $latest !== null ? '<span class="tssggs-dcard__aside">' . Card::icon('clock-outline') . Card::e(self::when($latest)) . '</span>' : '';
+        $aside  = $latest !== null ? '<span class="tssggs-dcard__aside">' . Card::icon('clock-outline') . Card::e($this->when($latest)) . '</span>' : '';
         $this->start('pulse', $this->translate('title'), $aside, CronStatus::healthy() ? 'ok' : 'bad');
 
         $html = '';
@@ -37,7 +37,7 @@ class SystemCheckWidget extends Card
             }
             else
             {
-                $state = Card::status('ok', self::when($row['last']), 'check', $row['last']);
+                $state = Card::status('ok', $this->when($row['last']), 'check', $row['last']);
             }
             // clear name of the task (the command name stays in the tooltip)
             $name  = $this->translate('name_' . $task);
@@ -49,11 +49,21 @@ class SystemCheckWidget extends Card
         $this->foot('addonmodules.php?module=TSSGGSModule&mg-page=settings&settings-page=cronSettings', 'cog-outline', $this->translate('review'));
     }
 
-    /** Time only for today, otherwise the date */
-    public static function when(string $datetime): string
+    /** "17:00" today, "Yesterday 13:30", "1 Nov 13:30" this year, "1 Nov 2025 13:30" before */
+    protected function when(string $datetime): string
     {
         $time = strtotime($datetime);
+        $day  = date('Y-m-d', $time);
 
-        return date('Y-m-d', $time) === date('Y-m-d') ? date('H:i', $time) : date('j M', $time);
+        if($day === date('Y-m-d'))
+        {
+            return date('H:i', $time);
+        }
+        if($day === date('Y-m-d', strtotime('-1 day')))
+        {
+            return $this->translate('yesterday', ['time' => date('H:i', $time)]);
+        }
+
+        return date(date('Y', $time) === date('Y') ? 'j M H:i' : 'j M Y H:i', $time);
     }
 }

@@ -1200,3 +1200,4 @@ $_LANG['admin.home.index.widgets.support_widget.report_detail'] = 'Send the acti
 $_LANG['admin.home.index.widgets.support_widget.report_button'] = 'Send report';
 $_LANG['admin.home.index.widgets.next_steps_widget.lead'] = 'Finish setting up';
 $_LANG['admin.home.index.widgets.next_steps_widget.note_short'] = 'Hides :hours h after the first view';
+$_LANG['admin.home.index.widgets.system_check_widget.yesterday'] = 'Yesterday :time';
