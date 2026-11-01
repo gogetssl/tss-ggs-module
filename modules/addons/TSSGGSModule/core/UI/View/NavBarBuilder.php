@@ -17,6 +17,9 @@ use function ModulesGarden\TSSGGSModule\Core\fire;
 
 class NavBarBuilder
 {
+    /** admin tabs always visible in the bar; the other sections live in the "More" dropdown (Lovable plugin-nav) */
+    const PRIMARY = ['home', 'products', 'pricing', 'certificateLog', 'emails', 'settings'];
+
     protected AppNavBar $navbar;
 
     public function __construct()
@@ -66,6 +69,8 @@ class NavBarBuilder
 
         fire(NavBarBuilderBeforeCreateMenu::class);
 
+        $more = null;
+
         /**
          * @var \ModulesGarden\TSSGGSModule\Core\UI\Menu\Item $menuItem
          */
@@ -101,7 +106,32 @@ class NavBarBuilder
                 }
             }
 
+            if ($level === ModuleConstants::LEVEL_ADMIN && !in_array($menuItem->getName(), self::PRIMARY, true))
+            {
+                if (!$more)
+                {
+                    $more = new NavBarItem();
+                    $more->setTitle(Translator::get($level . '.menu.more'));
+                    $more->setUrl('#');
+                    $more->setIcon('dots-horizontal');
+                }
+                // the dropdown shows the open section's name instead of "More"
+                if (Router::getCurrentRoute()->is($menuItem->getName()))
+                {
+                    $more->setActive(true);
+                    $more->setTitle(Translator::get($level . '.menu.' . $menuItem->getName()));
+                }
+                $more->addItem($item);
+
+                continue;
+            }
+
             $this->navbar->addMenuItem($item);
+        }
+
+        if ($more)
+        {
+            $this->navbar->addMenuItem($more);
         }
 
         foreach (Menu::getToolbarElements() as $toolbarElement)

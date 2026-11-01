@@ -10,6 +10,7 @@ $_LANG['admin.menu.pricing'] = 'Preise';
 $_LANG['admin.menu.settings'] = 'Einstellungen';
 $_LANG['admin.menu.automationQueue'] = 'Automatisierungswarteschlange';
 $_LANG['admin.menu.migration'] = 'Migration';
+$_LANG['admin.menu.more'] = 'Mehr';
 $_LANG['admin.breadcrumbs.Migration_index'] = 'Migration';
 
 $_LANG['admin.home.index.home_container.title'] = 'Dashboard';

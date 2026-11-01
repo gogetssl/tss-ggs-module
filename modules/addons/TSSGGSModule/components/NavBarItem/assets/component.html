@@ -1,7 +1,8 @@
-<li :id="cid_" :class="[active ? 'is-active' : '', elements_.elements ? 'lu-has-dropdown': '']" class="lu-nav__item">
-    <a :href="url_" :target="getTarget" class="lu-nav__link">
+<li :id="cid_" :class="[active ? 'is-active' : '', elements_.elements ? 'lu-has-dropdown': '', open_ ? 'tssggs-open' : '']" class="lu-nav__item">
+    <a :href="url_" :target="getTarget" class="lu-nav__link" @click="toggle">
         <i :class="iconClass" class="lu-nav__link-icon lu-mdi mdi" v-if="iconClass"></i>
         <span class="lu-nav__link-text" v-if="title_">{{title_}}</span>
+        <i class="mdi mdi-chevron-down tssggs-nav-chevron" v-if="elements_.elements" aria-hidden="true"></i>
         <span class="lu-nav__link-drop-arrow"></span>
         <span class="drop-arrow"></span>
     </a>
@@ -10,8 +11,3 @@
         <component v-bind="element.slots" v-bind:is="element.name" v-for="(element, key) in elements_.elements" v-bind:key="element.uniq"></component>
     </ul>
 </li>
-
-
-
-
-

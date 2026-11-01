@@ -10,6 +10,7 @@ $_LANG['admin.menu.pricing']    = 'Priser';
 $_LANG['admin.menu.settings']   = 'Indstillinger';
 $_LANG['admin.menu.automationQueue'] = 'Automatiseringskø';
 $_LANG['admin.menu.migration']       = 'Migrering';
+$_LANG['admin.menu.more'] = 'Mere';
 $_LANG['admin.breadcrumbs.Migration_index'] = 'Migrering';
 
 $_LANG['admin.home.index.home_container.title']                 = 'Dashboard';

@@ -708,3 +708,54 @@
 #layers2 .tssggs-settings .lu-widget:has(.lu-navbar__nav) > .lu-widget__header .lu-top { height: auto !important; }
 #layers2 .tssggs-settings .lu-widget:has(.lu-navbar__nav) .lu-navbar__nav ul { flex: 1 1 auto; width: 100% !important; margin: 0 !important; }
 #layers2 .tssggs-settings .lu-widget:has(.lu-navbar__nav) .lu-navbar__nav ul { gap: 7px; }
+
+/* ---- main navigation: one row of tabs + "More" dropdown (Lovable plugin-nav, final) ---- */
+#layers2 .tssggs-head { border-radius: 12px 12px 0 0; }
+#layers2 .lu-app-navbar,
+#layers2 .lu-app-navbar.lu-off-canvas-responsive,
+#layers2 .lu-app-navbar > div,
+#layers2 .lu-app-navbar .lu-navbar__nav { overflow: visible !important; }
+#layers2 .lu-app-navbar { border-radius: 0 0 12px 12px; }
+#layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav {
+    display: flex !important; flex-wrap: wrap; align-items: center; grid-template-columns: none !important;
+    padding: 0 4px !important; overflow: visible !important; transform: none !important;
+}
+#layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav > li.lu-nav__item {
+    position: relative; flex: none !important; width: auto !important; margin: 0 !important;
+    border: 0 !important; background: none !important;
+}
+#layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav > li.lu-nav__item > a.lu-nav__link {
+    display: inline-flex; align-items: center; gap: 6px; height: 44px; min-height: 44px; padding: 0 12px !important;
+    border: 0; border-bottom: 2px solid transparent; background: none !important;
+    color: var(--tw-muted); font-size: 14px; font-weight: 400; line-height: 20px; white-space: nowrap;
+}
+#layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav > li.lu-nav__item > a.lu-nav__link:hover { color: var(--tw-fg); }
+#layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav > li.lu-nav__item.is-active > a.lu-nav__link {
+    border-bottom-color: var(--tw-primary); color: var(--tw-primary); font-weight: 500;
+}
+#layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav > li.lu-nav__item > a.lu-nav__link > i {
+    width: 16px; height: 16px; font-size: 16px; line-height: 16px;
+}
+#layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav > li.lu-nav__item > a.lu-nav__link > i.tssggs-nav-chevron { width: 14px; height: 14px; font-size: 14px; }
+#layers2 .lu-app-navbar .lu-nav__link-drop-arrow,
+#layers2 .lu-app-navbar .drop-arrow { display: none !important; }
+
+/* the dropdown */
+#layers2 .lu-app-navbar li.lu-has-dropdown > ul.lu-nav--sub {
+    display: none !important; position: absolute; top: calc(100% + 4px); right: 0; left: auto; z-index: 1000;
+    width: 208px; min-width: 208px; margin: 0; padding: 4px; list-style: none;
+    border: 1px solid var(--tw-border); border-radius: 8px; background: var(--tw-surface);
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,.1), 0 2px 4px -2px rgba(0,0,0,.1);
+    opacity: 1 !important; visibility: visible !important; transform: none !important;
+}
+#layers2 .lu-app-navbar li.lu-has-dropdown.tssggs-open > ul.lu-nav--sub { display: flex !important; flex-direction: column; }
+#layers2 .lu-app-navbar ul.lu-nav--sub > li.lu-nav__item { display: block; float: none; width: auto; margin: 0; border: 0; background: none; }
+#layers2 .lu-app-navbar ul.lu-nav--sub > li.lu-nav__item > a.lu-nav__link {
+    display: flex; align-items: center; gap: 8px; height: auto; min-height: 36px; padding: 6px 8px !important;
+    border: 0; border-radius: 6px; background: none; color: var(--tw-fg); font-size: 14px; font-weight: 400; line-height: 20px; white-space: nowrap;
+}
+#layers2 .lu-app-navbar ul.lu-nav--sub > li.lu-nav__item > a.lu-nav__link:hover { background: var(--tw-surface-alt); }
+#layers2 .lu-app-navbar ul.lu-nav--sub > li.lu-nav__item.is-active > a.lu-nav__link { color: var(--tw-primary); font-weight: 500; }
+#layers2 .lu-app-navbar ul.lu-nav--sub > li.lu-nav__item > a.lu-nav__link > i { width: 16px; height: 16px; margin: 0; font-size: 16px; line-height: 16px; }
+#layers2 .lu-app-navbar a.lu-nav__link:focus { outline: none; box-shadow: none; }
+#layers2 .lu-app-navbar a.lu-nav__link:focus-visible { outline: 2px solid var(--tw-primary); outline-offset: -2px; border-radius: 6px; }
