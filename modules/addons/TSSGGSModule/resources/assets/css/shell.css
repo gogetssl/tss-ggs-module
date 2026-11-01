@@ -707,3 +707,4 @@
 }
 #layers2 .tssggs-settings .lu-widget:has(.lu-navbar__nav) > .lu-widget__header .lu-top { height: auto !important; }
 #layers2 .tssggs-settings .lu-widget:has(.lu-navbar__nav) .lu-navbar__nav ul { flex: 1 1 auto; width: 100% !important; margin: 0 !important; }
+#layers2 .tssggs-settings .lu-widget:has(.lu-navbar__nav) .lu-navbar__nav ul { gap: 7px; }
