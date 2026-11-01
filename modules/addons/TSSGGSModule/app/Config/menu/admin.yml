@@ -12,6 +12,8 @@ pricing:
   icon: 'mdi mdi-cash'
 automationQueue:
   icon: 'mdi mdi-format-list-checks'
+certificateLog:
+  icon: 'mdi mdi-text-box-search-outline'
 settings:
   icon: 'mdi mdi-cog'
 migration:

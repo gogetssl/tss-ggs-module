@@ -749,3 +749,74 @@ $_LANG['admin.configuration.shared.forms.legacy_choice_form.next_step_btn'] = 'N
 $_LANG['admin.configuration.shared.providers.legacy_choice_provider.option_migrate'] = 'Migrate to this module';
 $_LANG['admin.configuration.shared.providers.legacy_choice_provider.option_skip']    = 'Install as a new standalone module';
 $_LANG['admin.configuration.shared.providers.legacy_choice_provider.saved']          = 'Saved';
+
+//general settings
+$_LANG['admin.settings.index.widgets.sidebar.generalSettings']                               = 'General Settings';
+$_LANG['admin.settings.index.widgets.general_settings_widget.title']                         = 'General Settings';
+$_LANG['admin.settings.index.forms.general_settings_form.clientArea']                        = 'Client Area';
+$_LANG['admin.settings.index.forms.general_settings_form.clientSummary']                     = 'SSL Summary';
+$_LANG['admin.settings.index.forms.general_settings_form.clientSummary_description']         = 'Show the client\'s SSL orders (all, unpaid, processing, expiring soon) on the client area home page and in the sidebar';
+$_LANG['admin.settings.index.forms.general_settings_form.sidebarTemplates']                  = 'Pages With The SSL Sidebar';
+$_LANG['admin.settings.index.forms.general_settings_form.sidebarTemplates_description']      = 'Comma separated WHMCS template names, e.g. clientareaproducts,clientareaproductdetails. Empty = every page except the client home page';
+$_LANG['admin.settings.index.forms.general_settings_form.expiresSoonDays']                   = 'Expires Soon (days)';
+$_LANG['admin.settings.index.forms.general_settings_form.expiresSoonDays_description']       = 'A certificate is shown as "Expires Soon" this many days before its due date';
+$_LANG['admin.settings.index.forms.general_settings_form.certificatesByDomain']              = 'SSL Certificates By Domain';
+$_LANG['admin.settings.index.forms.general_settings_form.certificatesByDomain_description']  = 'Client area page listing every domain with its current certificate and the history of the earlier ones';
+$_LANG['admin.settings.index.forms.general_settings_form.logging']                           = 'Logging';
+$_LANG['admin.settings.index.forms.general_settings_form.whmcsActivityLog']                  = 'WHMCS Activity Log';
+$_LANG['admin.settings.index.forms.general_settings_form.whmcsActivityLog_description']      = 'Write certificate events (order placed, reissue, validation, installation, cancellation) to the WHMCS activity log';
+$_LANG['admin.settings.index.forms.general_settings_form.moduleLog']                         = 'Module Log';
+$_LANG['admin.settings.index.forms.general_settings_form.moduleLog_description']             = 'Write the gateway and cPanel requests to the WHMCS module log (only while the module log is enabled in WHMCS)';
+$_LANG['admin.settings.index.forms.general_settings_form.lifecycle']                         = 'Service Lifecycle';
+$_LANG['admin.settings.index.forms.general_settings_form.terminateCancelsOrder']             = 'Cancel Vendor Order On Terminate';
+$_LANG['admin.settings.index.forms.general_settings_form.terminateCancelsOrder_description'] = 'Terminating the service in WHMCS also cancels the certificate order / subscription at the vendor';
+$_LANG['admin.settings.index.forms.general_settings_form.messages']                          = 'Client Messages';
+$_LANG['admin.settings.index.forms.general_settings_form.processingGuide']                   = 'Processing Guide';
+$_LANG['admin.settings.index.forms.general_settings_form.processingGuide_description']       = 'Shown to the client while the certificate is being validated (HTML allowed). Can be overridden per product';
+$_LANG['admin.settings.index.forms.general_settings_form.issuedMessage']                     = 'Issued SSL Message';
+$_LANG['admin.settings.index.forms.general_settings_form.issuedMessage_description']         = 'Shown to the client once the certificate is issued, e.g. installation instructions (HTML allowed). Can be overridden per product';
+$_LANG['admin.settings.index.forms.general_settings_form.certificateEmailTemplate']          = 'Certificate Email Template';
+$_LANG['admin.settings.index.forms.general_settings_form.certificateEmailTemplate_description'] = 'Template used when the certificate is sent to the client';
+$_LANG['admin.settings.index.forms.general_settings_form.agreement']                         = 'Subscriber Agreement';
+$_LANG['admin.settings.index.forms.general_settings_form.requireAgreement']                  = 'Require Agreement';
+$_LANG['admin.settings.index.forms.general_settings_form.requireAgreement_description']      = 'The client has to accept the certificate authority\'s subscriber agreement before the order is placed';
+$_LANG['admin.settings.index.forms.general_settings_form.agreementText']                     = 'Agreement Text';
+$_LANG['admin.settings.index.forms.general_settings_form.agreementText_description']         = 'Optional text shown above the checkbox (HTML allowed). The link to the agreement of the product\'s certificate authority is added automatically';
+$_LANG['admin.settings.index.forms.general_settings_form.save']                              = 'Save';
+$_LANG['admin.settings.index.providers.general_settings_provider.moduleTemplate']            = 'Module template (Send Certificate)';
+
+//product configuration: per-product settings
+$_LANG['admin.products.index.data_tables.products.forms.configuration_form.payType']                  = 'Payment Type';
+$_LANG['admin.products.index.data_tables.products.forms.configuration_form.months']                   = 'Certificate Term';
+$_LANG['admin.products.index.data_tables.products.forms.configuration_form.commission']               = 'Profit Margin (%)';
+$_LANG['admin.products.index.data_tables.products.forms.configuration_form.commission_placeholder']   = 'Global margin from Finance Settings';
+$_LANG['admin.products.index.data_tables.products.forms.configuration_form.processingGuide']          = 'Processing Guide';
+$_LANG['admin.products.index.data_tables.products.forms.configuration_form.issuedMessage']            = 'Issued SSL Message';
+$_LANG['admin.products.index.data_tables.products.providers.configuration_provider.payTypeRecurring'] = 'Recurring';
+$_LANG['admin.products.index.data_tables.products.providers.configuration_provider.payTypeOnetime']   = 'One Time';
+$_LANG['admin.products.index.data_tables.products.providers.configuration_provider.payTypeFree']       = 'Free';
+$_LANG['admin.products.index.data_tables.products.providers.configuration_provider.monthsBillingCycle'] = 'From the billing cycle';
+$_LANG['admin.products.index.data_tables.products.providers.configuration_provider.monthsValue']      = ':months months';
+
+//certificate log
+$_LANG['admin.menu.certificateLog']                   = 'Certificate Log';
+$_LANG['admin.breadcrumbs.CertificateLog_index']      = 'Certificate Log';
+$_LANG['admin.certificate_log.service_id']             = 'Service ID';
+$_LANG['admin.certificate_log.all_types']              = 'All events';
+$_LANG['admin.certificate_log.type_success']           = 'Success';
+$_LANG['admin.certificate_log.type_info']              = 'Info';
+$_LANG['admin.certificate_log.type_error']             = 'Error';
+$_LANG['admin.certificate_log.search']                 = 'Message or domain';
+$_LANG['admin.certificate_log.filter']                 = 'Filter';
+$_LANG['admin.certificate_log.clear_30']               = 'Clear older than 30 days';
+$_LANG['admin.certificate_log.clear_all']              = 'Clear all';
+$_LANG['admin.certificate_log.confirm_clear_30']       = 'Delete the events older than 30 days?';
+$_LANG['admin.certificate_log.confirm_clear_all']      = 'Delete all certificate events? Clients will no longer see the activity of their certificates.';
+$_LANG['admin.certificate_log.cleared']                = ':count events deleted.';
+$_LANG['admin.certificate_log.date']                   = 'Date';
+$_LANG['admin.certificate_log.service']                = 'Service';
+$_LANG['admin.certificate_log.client']                 = 'Client';
+$_LANG['admin.certificate_log.type']                   = 'Event';
+$_LANG['admin.certificate_log.message']                = 'Message';
+$_LANG['admin.certificate_log.empty']                  = 'No events found.';
+$_LANG['admin.certificate_log.page']                   = 'Page :page of :pages (:total events)';

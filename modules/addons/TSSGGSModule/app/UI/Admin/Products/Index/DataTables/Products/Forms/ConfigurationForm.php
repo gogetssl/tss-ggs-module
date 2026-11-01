@@ -115,5 +115,25 @@ class ConfigurationForm extends Form implements AdminAreaInterface, AjaxComponen
         $this->builder->addField(
             (new Switcher())->setName('hidden')->addClass('switcher-revert')
         );
+
+        $this->builder->addField(
+            (new Dropdown())->setName('payType')
+        );
+
+        $this->builder->addField(
+            (new Dropdown())->setName('months')
+        );
+
+        $this->builder->addField(
+            (new FormInputText())->setName('commission')
+        );
+
+        $this->builder->addField(
+            (new TextArea())->setName('processingGuide')
+        );
+
+        $this->builder->addField(
+            (new TextArea())->setName('issuedMessage')
+        );
     }
 }

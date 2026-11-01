@@ -1,4 +1,7 @@
 <div class="validate-ssl-unified">
+    {if $processing_guide}
+        <div class="alert alert-info tssggs-processing-guide" role="alert">{$processing_guide}</div>
+    {/if}
     {if $autoinstall}
         {assign var=aiDomain value=$autoinstall.domain|escape}
         <div class="alert {if $autoinstall.status == 'installed'}alert-success{elseif $autoinstall.status == 'failed'}alert-danger{elseif $autoinstall.status == 'disabled'}alert-warning{else}alert-info{/if}" role="alert">

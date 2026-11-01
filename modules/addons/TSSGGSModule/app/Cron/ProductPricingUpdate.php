@@ -4,6 +4,7 @@ namespace ModulesGarden\TSSGGSModule\App\Cron;
 
 use Exception;
 use ModulesGarden\TSSGGSModule\App\Libs\Helpers;
+use ModulesGarden\TSSGGSModule\App\Libs\ProductSettings;
 use ModulesGarden\TSSGGSModule\App\Libs\SSLTrustCenterApi;
 use ModulesGarden\TSSGGSModule\App\Models\CronCheck;
 use ModulesGarden\TSSGGSModule\App\Models\RemoteProduct;
@@ -112,6 +113,8 @@ class ProductPricingUpdate extends AbstractCommand
                     continue;
                 }
 
+                $margin = ProductSettings::margin($whmcsProduct->id, $profitMargin);
+
                 foreach($remoteProductData['prices'] as $remotePriceData)
                 {
                     if(isset($remotePriceData['base']['single']['selling']))
@@ -132,7 +135,7 @@ class ProductPricingUpdate extends AbstractCommand
                     }
 
                     $baseCurrencyPrice = $apiPrice * $baseCurrencyRate;
-                    $baseCurrencyPrice = $baseCurrencyPrice + ($baseCurrencyPrice * $profitMargin / 100);
+                    $baseCurrencyPrice = $baseCurrencyPrice + ($baseCurrencyPrice * $margin / 100);
                     $currencies        = Currency::get();
 
                     foreach($currencies as $currency)
@@ -207,7 +210,7 @@ class ProductPricingUpdate extends AbstractCommand
                             continue;
                         }
 
-                        $apiPrice          = $apiPrice + ($apiPrice * $profitMargin / 100);
+                        $apiPrice          = $apiPrice + ($apiPrice * $margin / 100);
                         $baseCurrencyPrice = $apiPrice * $baseCurrencyRate;
                         $currencies        = Currency::get();
 

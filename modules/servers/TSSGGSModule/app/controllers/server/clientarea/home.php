@@ -24,6 +24,7 @@ use ModulesGarden\TSSGGSModule\App\Libs\CertificateService;
 use ModulesGarden\TSSGGSModule\App\Libs\CertificateSyncHelpers;
 use ModulesGarden\TSSGGSModule\App\Libs\Cpanel;
 use ModulesGarden\TSSGGSModule\App\Libs\GeneralSettings;
+use ModulesGarden\TSSGGSModule\App\Libs\ProductSettings;
 use ModulesGarden\TSSGGSModule\App\Libs\SslProductHelpers;
 use ModulesGarden\TSSGGSModule\App\Libs\Helpers;
 use ModulesGarden\TSSGGSModule\App\Libs\SSLTrustCenterApi;
@@ -217,8 +218,9 @@ class home extends AbstractController
             unset($_SESSION['mg-error']);
         }
 
-        $vars['autoinstall'] = AutoInstallHelpers::getStatusForView($service->id);
-        $vars['csrfToken']   = \generate_token('plain');
+        $vars['autoinstall']      = AutoInstallHelpers::getStatusForView($service->id);
+        $vars['csrfToken']        = \generate_token('plain');
+        $vars['processing_guide'] = ProductSettings::message($product->id, 'processingGuide');
 
         return ['tpl' => 'configuration_submitted', 'vars' => $vars];
     }
@@ -671,7 +673,7 @@ class home extends AbstractController
             strpos((string)$name, '*.') === 0 ? $vars['countSANWildcard']++ : $vars['countSAN']++;
         }
 
-        $vars['issued_message']   = trim((string)GeneralSettings::get('issuedMessage'));
+        $vars['issued_message']   = ProductSettings::message($params['product']->id, 'issuedMessage');
         $vars['organization']     = isset($params['order']['orderData']['contacts']['organization']) ? array_filter((array)$params['order']['orderData']['contacts']['organization'], 'is_scalar') : [];
         $vars['download_formats'] = ['zip', 'crt', 'ca', 'fullchain', 'nginx', 'apache', 'pkcs7'];
         $vars['csrfToken']        = \generate_token('plain');

@@ -6,6 +6,7 @@ use ModulesGarden\Servers\TSSGGSModule\app\models\whmcs\Service;
 use ModulesGarden\Servers\TSSGGSModule\app\models\whmcs\SSL;
 use ModulesGarden\TSSGGSModule\App\Libs\CertificateService;
 use ModulesGarden\TSSGGSModule\App\Libs\Helpers;
+use ModulesGarden\TSSGGSModule\App\Libs\ProductSettings;
 use ModulesGarden\TSSGGSModule\App\Libs\SanUpgrade;
 use ModulesGarden\TSSGGSModule\App\Libs\SSLTrustCenterApi;
 use ModulesGarden\TSSGGSModule\App\Models\DemonTask;
@@ -49,6 +50,13 @@ class SSLStepThree
                 case "Triennially":
                     $billingCycle = 36;
                     break;
+            }
+
+            // Term set on the Products page wins over the billing cycle (e.g. a monthly billed 1-year certificate)
+            $productMonths = (int)ProductSettings::get($params['packageid'])['months'];
+            if($productMonths > 0)
+            {
+                $billingCycle = $productMonths;
             }
 
             $configProduct = (new ProductRepository())->getProductConfiguration($params['packageid']);

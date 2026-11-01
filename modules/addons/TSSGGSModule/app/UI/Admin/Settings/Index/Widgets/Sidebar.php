@@ -17,6 +17,7 @@ class Sidebar extends \ModulesGarden\TSSGGSModule\Components\Sidebar\Sidebar
             'sslSettings',
             'financeSettings',
             'cronSettings',
+            'generalSettings',
         ];
 
         foreach($pages as $page)
