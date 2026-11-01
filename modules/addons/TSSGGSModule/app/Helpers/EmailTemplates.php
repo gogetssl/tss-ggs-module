@@ -117,7 +117,19 @@ class EmailTemplates
             }
         }
 
-        \sendMessage(self::resolveTemplate($template, $subject, $message), $id, $fields, false, $attachments);
+        \sendMessage(self::resolveTemplate($template, $subject, $message), $id, $fields + self::commonFields($id), false, $attachments);
+    }
+
+    /**
+     * Merge fields every module e-mail can use (the ones a template gets explicitly win): the service domain and the
+     * client area page of the service
+     */
+    public static function commonFields($serviceId)
+    {
+        $domain    = (string)\WHMCS\Database\Capsule::table('tblhosting')->where('id', (int)$serviceId)->value('domain');
+        $systemUrl = rtrim((string)\WHMCS\Database\Capsule::table('tblconfiguration')->where('setting', 'SystemURL')->value('value'), '/');
+
+        return ['domain' => $domain, 'order_url' => $systemUrl . '/clientarea.php?action=productdetails&id=' . (int)$serviceId];
     }
 
     /**

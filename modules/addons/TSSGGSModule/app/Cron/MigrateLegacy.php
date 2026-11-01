@@ -17,7 +17,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  *
  *   php -q cron.php MigrateLegacy detect
  *   php -q cron.php MigrateLegacy dry-run  --source=ggs|tss [--no-store]
- *   php -q cron.php MigrateLegacy start    --source=ggs|tss [--no-keys] [--keep-legacy-active] [--copy-templates]
+ *   php -q cron.php MigrateLegacy start    --source=ggs|tss [--no-keys] [--keep-legacy-active] [--no-templates]
  *   php -q cron.php MigrateLegacy run      [--id=N]      (runs batches until finished)
  *   php -q cron.php MigrateLegacy status   [--id=N]
  *   php -q cron.php MigrateLegacy rollback --id=N
@@ -36,7 +36,7 @@ class MigrateLegacy extends AbstractCommand
         $this->addOption('id', null, InputOption::VALUE_REQUIRED, 'migration run id');
         $this->addOption('no-keys', null, InputOption::VALUE_NONE, 'do not fetch AutoInstall private keys from cPanel');
         $this->addOption('keep-legacy-active', null, InputOption::VALUE_NONE, 'do not deactivate the legacy addon after the switch');
-        $this->addOption('copy-templates', null, InputOption::VALUE_NONE, 'also copy the customised legacy e-mail texts (opt-in)');
+        $this->addOption('no-templates', null, InputOption::VALUE_NONE, 'do not copy the legacy e-mail texts');
         $this->addOption('no-store', null, InputOption::VALUE_NONE, 'dry-run: print the report without storing it (pure read)');
     }
 
@@ -72,7 +72,7 @@ class MigrateLegacy extends AbstractCommand
 
             case 'start':
                 $engine = new Engine($this->source($input));
-                $id     = $engine->start('cli', ['fetch_cpanel_keys' => !$input->getOption('no-keys'), 'deactivate_legacy' => !$input->getOption('keep-legacy-active'), 'copy_templates' => (bool)$input->getOption('copy-templates')]);
+                $id     = $engine->start('cli', ['fetch_cpanel_keys' => !$input->getOption('no-keys'), 'deactivate_legacy' => !$input->getOption('keep-legacy-active'), 'copy_templates' => !$input->getOption('no-templates')]);
                 $io->success('Migration #' . $id . ' prepared. Running batches...');
                 $this->runAll($engine, $id, $io);
                 break;

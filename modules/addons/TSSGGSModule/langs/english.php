@@ -999,5 +999,3 @@ $_LANG['admin.emails.name_renewal']                      = 'Renewal (not used)';
 $_LANG['admin.emails.when_renewal']                      = 'Defined for compatibility with the GoGetSSL module; this version does not send it.';
 $_LANG['admin.emails.name_auto_reissue_failed']          = 'Automatic reissue failed';
 $_LANG['admin.emails.when_auto_reissue_failed']          = 'Sent when the automatic reissue before expiry failed after all attempts.';
-$_LANG['admin.migration.btn_start_templates']   = 'Start and copy my customised e-mail templates';
-$_LANG['admin.migration.confirm_start_templates'] = 'Start the migration and copy the legacy e-mail texts that differ from the unified ones? The previous texts are kept in the backup and come back on rollback. Backup tables are created first.';

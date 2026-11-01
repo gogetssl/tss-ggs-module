@@ -35,7 +35,7 @@ class EmailCatalog
     /**
      * Merge fields WHMCS fills for every service e-mail (shown in the editor next to the template's own fields)
      */
-    const STANDARD_FIELDS = ['client_name', 'client_first_name', 'client_last_name', 'client_email', 'service_product_name', 'service_domain', 'service_id', 'signature', 'company_name', 'whmcs_url'];
+    const STANDARD_FIELDS = ['client_name', 'client_first_name', 'client_last_name', 'client_email', 'service_product_name', 'service_domain', 'service_id', 'domain', 'order_url', 'signature', 'company_name', 'whmcs_url'];
 
     protected static $all;
 

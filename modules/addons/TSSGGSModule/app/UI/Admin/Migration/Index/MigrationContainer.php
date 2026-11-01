@@ -116,7 +116,6 @@ class MigrationContainer extends Container implements AdminAreaInterface
                 . '<div class="tssggs-actions">'
                 . '<a class="lu-btn lu-btn--default" href="' . $report . '">' . htmlspecialchars($this->t('btn_report')) . '</a>'
                 . $this->link($base . '&mg-action=start', $this->t('btn_start'), 'lu-btn lu-btn--success', $this->t('confirm_start'))
-                . $this->link($base . '&mg-action=start&opt_templates=1', $this->t('btn_start_templates'), 'lu-btn lu-btn--default', $this->t('confirm_start_templates'))
                 . $this->link($base . '&mg-action=start&opt_keys=0', $this->t('btn_start_nokeys'), 'lu-btn lu-btn--default', $this->t('confirm_start'))
                 . $this->link($base . '&mg-action=start&opt_deactivate=0', $this->t('btn_start_keeplegacy'), 'lu-btn lu-btn--default', $this->t('confirm_start'))
                 . $this->link($base . '&mg-action=skip', $this->t('btn_skip'), 'lu-btn lu-btn--default')

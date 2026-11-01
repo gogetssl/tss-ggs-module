@@ -184,7 +184,7 @@ class Engine
             throw new \RuntimeException('Gateway products for ' . strtoupper($this->source) . ' are not synced yet (complete the API connection step first).');
         }
 
-        $options = array_merge(['batch_size' => self::BATCH_SIZE, 'fetch_cpanel_keys' => true, 'copy_templates' => false, 'backup_logs' => true, 'deactivate_legacy' => true], $options);
+        $options = array_merge(['batch_size' => self::BATCH_SIZE, 'fetch_cpanel_keys' => true, 'copy_templates' => true, 'backup_logs' => true, 'deactivate_legacy' => true], $options);
         $runId   = Store::createRun($this->source, $this->reader->version(), $startedBy, $options, Store::RUN_PREPARING);
         $token   = bin2hex(random_bytes(16));
         Store::updateRun($runId, ['lock_token' => $token, 'started_at' => date('Y-m-d H:i:s'), 'heartbeat_at' => date('Y-m-d H:i:s')]);
@@ -250,20 +250,18 @@ class Engine
             Store::addJob($runId, Store::KIND_SETTINGS, 0, 0, Store::JOB_DONE, null, ['filled' => $filled]);
             $this->log($runId, 'info', self::PHASE_PREPARE, 'Settings merged', ['filled' => $filled]);
 
-            // 2b. opt-in (D5): the e-mail texts the reseller customised in the legacy module
+            // 2b. the e-mail texts of the legacy module (D5, automatic): only texts whose merge fields the unified module fills;
+            // the rest stays at the unified default and is listed in the log and on the Emails page
             if(!empty($options['copy_templates']))
             {
-                $ids = [];
-                foreach(LegacyEmailImport::candidates() as $candidate)
-                {
-                    if($candidate['source'] === $this->source && !$candidate['same'])
-                    {
-                        $ids[] = $candidate['id'];
-                    }
-                }
-                $copy = LegacyEmailImport::import($ids);
+                $plan = LegacyEmailImport::auto($this->source);
+                $copy = LegacyEmailImport::import($plan['ids']);
                 Store::addJob($runId, Store::KIND_SETTINGS, 0, 0, Store::JOB_DONE, null, ['template_ids' => $copy['created_ids']]);
                 $this->log($runId, 'info', self::PHASE_PREPARE, 'E-mail templates copied from the legacy module', ['templates' => $copy['copied'], 'new_rows' => count($copy['created_ids'])]);
+                foreach($plan['skipped'] as $skip)
+                {
+                    $this->log($runId, 'info', self::PHASE_PREPARE, 'E-mail template not copied: ' . $skip['legacy'], ['unified' => $skip['key'], 'reason' => $skip['reason'], 'fields' => $skip['fields']]);
+                }
             }
 
             // 3. products (configoptions + SAN option rename; servertype flips in the switch phase)
