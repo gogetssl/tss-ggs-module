@@ -410,12 +410,14 @@
 #layers2 .tssggs-promo-wrap > :has(.ssl-promo) { flex: 1 1 auto; display: flex; flex-direction: column; }
 #layers2 .tssggs-promo-wrap .tssggs-html { display: flex; flex: 1 1 auto; flex-direction: column; }
 #layers2 .ssl-promo {
-  --promo: oklch(0.955 0.03 152);
-  --promo-text: oklch(0.25 0.008 260);
-  --promo-muted: oklch(0.48 0.015 260);
+  --promo: oklch(0.31 0.055 152);
+  --promo-text: oklch(0.96 0.02 152);
+  --promo-muted: oklch(0.78 0.03 152);
   --promo-amber: oklch(0.82 0.15 85);
   --promo-green: oklch(0.509 0.13 152);
-  --promo-line: oklch(0.86 0.05 152);
+  --promo-line: oklch(0.44 0.07 152);
+  --promo-accent: oklch(0.76 0.13 152);
+  --promo-ink: oklch(0.28 0.04 152);
   position: relative; overflow: hidden; flex: 1 1 auto; border-radius: 8px;
   border: 1px solid var(--promo-line); background: var(--promo);
   color: var(--promo-text); margin: 0;
@@ -425,7 +427,7 @@
 #layers2 .ssl-promo p, #layers2 .ssl-promo h3 { margin: 0; }
 #layers2 .ssl-promo .ssl-promo-content { position: relative; display: flex; flex-wrap: wrap; align-items: center; align-content: center; gap: 24px; height: 100%; padding: 20px; }
 #layers2 .ssl-promo .ssl-promo-copy { flex: 1 1 320px; min-width: 0; }
-#layers2 .ssl-promo .ssl-promo-eyebrow { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .28em; color: var(--promo-green); }
+#layers2 .ssl-promo .ssl-promo-eyebrow { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .28em; color: var(--promo-accent); }
 #layers2 .ssl-promo .ssl-promo-title { margin-top: 8px; color: var(--promo-text); font-size: 20px; font-weight: 700; line-height: 1.333; overflow-wrap: break-word; }
 #layers2 .ssl-promo .ssl-promo-messages { position: relative; margin-top: 8px; height: 24px; overflow: hidden; }
 #layers2 .ssl-promo .ssl-promo-msg { position: absolute; inset: 0; color: var(--promo-muted); font-size: 14px; opacity: 0; animation: ssl-promo-message 16s cubic-bezier(.25,.9,.25,1) infinite; }
@@ -433,12 +435,12 @@
 #layers2 .ssl-promo .ssl-promo-msg:nth-child(3) { animation-delay: 8s; }
 #layers2 .ssl-promo .ssl-promo-msg:nth-child(4) { animation-delay: 12s; }
 #layers2 .ssl-promo .ssl-promo-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
-#layers2 .ssl-promo .ssl-promo-chip { display: inline-flex; align-items: center; gap: 6px; border-radius: 999px; border: 1px solid color-mix(in oklch, var(--promo-green) 40%, transparent); background: color-mix(in oklch, white 72%, transparent); padding: 6px 12px; font-size: 12px; font-weight: 600; }
-#layers2 .ssl-promo .ssl-promo-check { width: 16px; height: 16px; display: grid; place-items: center; border-radius: 50%; background: var(--promo-green); color: var(--promo); }
+#layers2 .ssl-promo .ssl-promo-chip { display: inline-flex; align-items: center; gap: 6px; border-radius: 999px; border: 1px solid color-mix(in oklch, white 60%, transparent); background: color-mix(in oklch, white 90%, transparent); color: var(--promo-ink); padding: 6px 12px; font-size: 12px; font-weight: 600; }
+#layers2 .ssl-promo .ssl-promo-check { width: 16px; height: 16px; display: grid; place-items: center; border-radius: 50%; background: var(--promo-green); color: oklch(0.98 0.01 152); }
 #layers2 .ssl-promo .ssl-promo-check svg { width: 10px; height: 10px; }
 #layers2 .ssl-promo .ssl-promo-actions { display: flex; align-items: center; gap: 20px; min-width: 0; }
-#layers2 .ssl-promo .ssl-promo-shield { position: relative; display: none; flex: 0 0 64px; width: 64px; height: 64px; place-items: center; color: var(--promo-green); }
-#layers2 .ssl-promo .ssl-promo-ring { position: absolute; inset: 0; border: 1px dashed color-mix(in oklch, var(--promo-green) 70%, transparent); border-radius: 50%; animation: ssl-promo-spin 6s linear infinite; }
+#layers2 .ssl-promo .ssl-promo-shield { position: relative; display: none; flex: 0 0 64px; width: 64px; height: 64px; place-items: center; color: var(--promo-accent); }
+#layers2 .ssl-promo .ssl-promo-ring { position: absolute; inset: 0; border: 1px dashed color-mix(in oklch, var(--promo-accent) 70%, transparent); border-radius: 50%; animation: ssl-promo-spin 6s linear infinite; }
 #layers2 .ssl-promo .ssl-promo-shield svg { width: 28px; height: 28px; }
 #layers2 .ssl-promo .ssl-promo-cta { display: inline-flex; justify-content: center; align-items: center; gap: 8px; min-height: 36px; padding: 8px 16px; border-radius: 6px; background: var(--promo-green); color: oklch(0.984 0.003 247.858) !important; font-size: 14px; font-weight: 700; line-height: 20px; text-decoration: none; transition: background .15s; }
 #layers2 .ssl-promo .ssl-promo-cta:hover { background: color-mix(in oklch, var(--promo-green) 90%, black); }
