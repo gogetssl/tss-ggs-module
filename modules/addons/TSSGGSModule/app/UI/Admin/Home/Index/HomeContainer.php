@@ -2,12 +2,14 @@
 
 namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index;
 
+use ModulesGarden\TSSGGSModule\App\Libs\AutomatedSsl;
 use ModulesGarden\TSSGGSModule\App\Libs\Edition;
 use ModulesGarden\TSSGGSModule\App\Libs\Helpers;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Shared\Card;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Shared\SalesSummary;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Widgets\AnnouncementsWidget;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Widgets\AttentionWidget;
+use ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Widgets\AutomatedSslBanner;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Widgets\GatewayWidget;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Widgets\MigrationWidget;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Widgets\NextStepsWidget;
@@ -31,14 +33,15 @@ class HomeContainer extends Container implements AdminAreaInterface
         $this->setCss('tssggs-dash');
 
         $this->addElement(Card::html($this->headHtml()));
-        // guide for the first 72 hours
+        // setup guide until all three steps are done
         if(NextStepsWidget::visible())
         {
             $this->addElement(new NextStepsWidget());
         }
         $this->addElement(Card::html($this->kpisHtml()));
 
-        $this->addElement($this->row(new PipelineWidget(), new SystemCheckWidget()));
+        // the Automated SSL banner until a CaaS and an AIS product are enabled, then the certificate pipeline
+        $this->addElement($this->row(AutomatedSsl::enabled() ? new PipelineWidget() : new AutomatedSslBanner(), new SystemCheckWidget()));
         $this->addElement($this->row(new AttentionWidget(), new GatewayWidget()));
         $this->addElement($this->row(new OverviewWidget(), MigrationWidget::relevant() ? new MigrationWidget() : null));
         $this->addElement($this->row(new AnnouncementsWidget(), new SupportWidget()));
