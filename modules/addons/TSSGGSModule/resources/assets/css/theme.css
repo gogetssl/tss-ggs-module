@@ -457,3 +457,6 @@
 
 /* dashboard heading: no extra padding, the 25px of the page body above and the 16px above the tiles do the spacing */
 #layers2 .tssggs-dash .tssggs-dash__head { padding: 0; }
+
+/* form controls inside the module's HTML pages (Pricing, Commissions, Certificate log ...) */
+#layers2 .lu-app-main .tssggs-html .form-control { border-color: #666; }
