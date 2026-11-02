@@ -16,6 +16,7 @@ $files = [
     'dashboard.css',
     'shell.css',
     'icons.css',
+    'tinymce-icons.css',
     'theme.css',
 ];
 
