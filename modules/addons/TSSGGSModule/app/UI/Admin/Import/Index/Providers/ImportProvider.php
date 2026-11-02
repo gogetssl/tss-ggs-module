@@ -26,15 +26,6 @@ class ImportProvider extends CrudProvider
         $this->availableValues['clientId']  = Helpers::getClientOptions();
         $this->availableValues['payMethod'] = Helpers::getPayMethodOptions();
 
-        $configuredApis = Helpers::getConfiguredApis();
-        $vendorOptions  = [];
-
-        foreach($configuredApis as $vendor => $api)
-        {
-            $vendorOptions[$vendor] = Helpers::vendorToDisplay($vendor);
-        }
-
-        $this->availableValues['vendor'] = $vendorOptions;
     }
 
 
@@ -42,9 +33,10 @@ class ImportProvider extends CrudProvider
     {
         $addonConfig     = (new AddonModuleRepository())->getModuleConfiguration();
         $mode            = $this->formData['mode'];
-        $vendor          = trim($this->formData['vendor']);
-        $generateInvoice = (bool)$this->formData['generateInvoice'];
+                $generateInvoice = (bool)$this->formData['generateInvoice'];
         $configuredApis  = Helpers::getConfiguredApis();
+        // the provider is no longer asked: the order is looked up at the configured gateway
+        $vendor          = trim($this->formData['vendor'] ?? '') ?: (string)key($configuredApis);
 
         if(!isset($configuredApis[$vendor]))
         {

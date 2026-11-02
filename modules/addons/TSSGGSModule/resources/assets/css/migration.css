@@ -156,3 +156,16 @@
 .tssggs-emails .em-inline { display: flex; gap: 8px; }
 .tssggs-emails .em-labelrow { display: flex; justify-content: space-between; align-items: center;  margin: 20px 0 0 0; }
 .tssggs-emails .em-rich { font-size: 12px; font-weight: 400; margin: 12px 0 4px; }
+
+/* ---- import page: tabs as segmented buttons, the selected one green with a white title ---- */
+#layers2 .tssggs-import .lu-nav--tabs { display: flex; gap: 8px; padding: 0 !important; border: 0 !important; }
+#layers2 .tssggs-import .lu-nav--tabs::after, #layers2 .tssggs-import .lu-nav--tabs.lu-nav--horizontal:after { display: none !important; }
+#layers2 .tssggs-import .lu-nav--tabs .lu-nav__item { margin: 0; }
+#layers2 .tssggs-import .lu-nav--tabs .lu-nav__link { display: inline-flex; align-items: center; gap: 8px; padding: 9px 18px; border: 1px solid var(--tw-border); border-radius: 8px; background: var(--tw-surface); color: var(--tw-fg); font-weight: 600; transition: background .15s, color .15s, border-color .15s; }
+#layers2 .tssggs-import .lu-nav--tabs .lu-nav__link:hover { border-color: var(--tw-primary); color: var(--tw-primary); }
+#layers2 .tssggs-import .lu-nav--tabs .lu-nav__item.is-active .lu-nav__link { background: var(--tw-primary); border-color: var(--tw-primary); color: #fff; }
+#layers2 .tssggs-import .lu-nav--tabs .lu-nav__link:after { display: none !important; }
+#layers2 .tssggs-import .lu-nav--tabs .lu-nav__link::before { content: ''; flex: none; width: 18px; height: 18px; background: currentColor; -webkit-mask: var(--tab-ico) center/18px 18px no-repeat; mask: var(--tab-ico) center/18px 18px no-repeat; }
+#layers2 .tssggs-import .lu-nav--tabs .lu-nav__item:nth-child(1) .lu-nav__link { --tab-ico: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6,2A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2H6M6,4H13V9H18V20H6V4M8,12V14H16V12H8M8,16V18H13V16H8Z'/%3E%3C/svg%3E"); }
+#layers2 .tssggs-import .lu-nav--tabs .lu-nav__item:nth-child(2) .lu-nav__link { --tab-ico: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M9,16V10H5L12,3L19,10H15V16H9M5,20V18H19V20H5Z'/%3E%3C/svg%3E"); }
+#layers2 .tssggs-import .lu-widget__nav { padding: 0 0 4px; }

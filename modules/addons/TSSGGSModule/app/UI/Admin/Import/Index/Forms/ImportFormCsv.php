@@ -33,7 +33,7 @@ class ImportFormCsv extends Form implements AdminAreaInterface, AjaxComponentInt
 
     public function loadHtml(): void
     {
-        $this->builder = BuilderCreator::oneColumn($this);
+        $this->builder = BuilderCreator::twoColumns($this);
         $this->setId('ImportFormCsv');
         $toolbar = new Toolbar();
 
@@ -58,13 +58,6 @@ class ImportFormCsv extends Form implements AdminAreaInterface, AjaxComponentInt
                 ->setName('csv')
                 ->setAllowedFileTypes(['text/csv'])
                 //->required()
-        );
-
-        $this->builder->addField(
-            (new Dropdown())
-                ->setTitle($this->translate('vendor'))
-                ->setName('vendor')
-                ->required()
         );
 
         $this->builder->addField(

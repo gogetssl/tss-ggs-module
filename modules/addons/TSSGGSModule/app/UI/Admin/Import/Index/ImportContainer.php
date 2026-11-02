@@ -23,7 +23,11 @@ class ImportContainer extends Container implements AdminAreaInterface
 {
     public function loadHtml(): void
     {
-        //$this->addElement(new ImportWidget());
+        $this->setCss('tssggs-import');
+        $text = new Text();
+        $text->setCss('tssggs-html');
+        $text->setText($this->explanation());
+        $this->addElement($text);
 
         $tab1 = new Tab();
         $tab1->setTitle($this->translate("single"));
@@ -41,5 +45,18 @@ class ImportContainer extends Container implements AdminAreaInterface
 
         $this->addElement($tabs);
 
+    }
+
+    /** What the page is for and how to use the two tabs */
+    protected function explanation(): string
+    {
+        $t    = function($key) { return htmlspecialchars((string)$this->translate($key, [], ['admin.import']), ENT_QUOTES); };
+        $item = function($key) use ($t) { return '<li>' . $t($key) . '</li>'; };
+
+        return '<div class="tssggs-explain"><span class="tssggs-explain__icon">' . Icons::svg('information-outline') . '</span><div>'
+            . '<h3>' . $t('about_title') . '</h3>'
+            . '<p>' . $t('about_intro') . '</p>'
+            . '<ul>' . $item('about_single') . $item('about_csv') . $item('about_service') . '</ul>'
+            . '</div></div>';
     }
 }

@@ -336,6 +336,11 @@ $_LANG['admin.statistics.index.widgets.invoices_widget.date']      = 'Date';
 $_LANG['admin.breadcrumbs.Import']                   = 'Import';
 $_LANG['admin.import.index.import_container.single'] = 'Single Order';
 $_LANG['admin.import.index.import_container.csv']    = 'From CSV';
+$_LANG['admin.import.about_title']  = 'What you will find here';
+$_LANG['admin.import.about_intro']  = 'Bring certificates that were ordered outside WHMCS into WHMCS. Each order becomes a service of the client you choose and stays linked to its certificate.';
+$_LANG['admin.import.about_single'] = 'Single order: enter the order ID, pick the client and the payment method, and import it.';
+$_LANG['admin.import.about_csv']    = 'From CSV: download the template, add one row per order, and upload the file to import many orders at once.';
+$_LANG['admin.import.about_service'] = 'Enter a Service ID to attach the order to an existing service instead of creating a new one.';
 
 
 $_LANG['admin.import.index.forms.import_form.remoteOrderId']       = 'Order ID';
