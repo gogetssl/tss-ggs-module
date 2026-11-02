@@ -5,6 +5,7 @@ namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Emails\Index;
 use ModulesGarden\TSSGGSModule\App\Http\Admin\Emails as EmailsController;
 use ModulesGarden\TSSGGSModule\App\Libs\EmailCatalog;
 use ModulesGarden\TSSGGSModule\App\Libs\EmailManager;
+use ModulesGarden\TSSGGSModule\App\Libs\Icons;
 use ModulesGarden\TSSGGSModule\Components\Container\Container;
 use ModulesGarden\TSSGGSModule\Components\Text\Text;
 use ModulesGarden\TSSGGSModule\Core\Contracts\Components\AdminAreaInterface;
@@ -63,9 +64,23 @@ class EmailsContainer extends Container implements AdminAreaInterface
             $html .= '<div class="tssggs-note is-ok">' . $this->e($this->t('notice_' . $session['notice'], ['count' => (int)($session['count'] ?? 0)])) . '</div>';
         }
 
-        return $html . '<p class="tssggs-muted">' . $this->e($this->t('intro')) . '</p>'
+        return $html . $this->explanation()
             . '<div class="em-layout"><div class="em-card em-nav">' . $this->nav($overview, $key) . '</div>'
             . '<div class="em-card">' . $this->editor($overview[$key], $language, $languages, $session) . '</div></div>';
+    }
+
+    /** What the page is for and how the e-mails behave */
+    protected function explanation()
+    {
+        $item = function($key) {
+            return '<li>' . $this->e($this->t($key)) . '</li>';
+        };
+
+        return '<div class="tssggs-explain"><span class="tssggs-explain__icon">' . Icons::svg('information-outline') . '</span><div>'
+            . '<h3>' . $this->e($this->t('about_title')) . '</h3>'
+            . '<p>' . $this->e($this->t('intro')) . '</p>'
+            . '<ul>' . $item('about_edit') . $item('about_languages') . $item('about_fields') . $item('about_reset') . '</ul>'
+            . '</div></div>';
     }
 
     protected function nav(array $overview, $current)
