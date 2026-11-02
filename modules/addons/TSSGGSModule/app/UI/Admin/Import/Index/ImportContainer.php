@@ -15,8 +15,8 @@ use ModulesGarden\TSSGGSModule\App\UI\Admin\Reports\Index\DataTables\Renewal\Arr
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Reports\Index\DataTables\Renewal\Widgets\FilterWidget as RenewFilterWidget;
 use ModulesGarden\TSSGGSModule\Components\Alert\Alert;
 use ModulesGarden\TSSGGSModule\Components\Container\Container;
-use ModulesGardenTSSGGSModuleAppLibsIcons;
-use ModulesGardenTSSGGSModuleComponentsTextText;
+use ModulesGarden\TSSGGSModule\App\Libs\Icons;
+use ModulesGarden\TSSGGSModule\Components\Text\Text;
 use ModulesGarden\TSSGGSModule\Components\Tab\Tab;
 use ModulesGarden\TSSGGSModule\Components\TabsWidget\TabsWidget;
 use ModulesGarden\TSSGGSModule\Core\Contracts\Components\AdminAreaInterface;
