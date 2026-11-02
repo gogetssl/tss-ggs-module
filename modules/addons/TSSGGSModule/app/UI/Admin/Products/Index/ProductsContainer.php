@@ -41,7 +41,7 @@ class ProductsContainer extends Container implements AdminAreaInterface
     protected function explanation(): string
     {
         $t    = function($key) { return htmlspecialchars((string)$this->translate($key, [], ['admin.products']), ENT_QUOTES); };
-        $item = function($key) use ($t) { return '<li><b>' . $t($key . '_name') . '</b> ' . $t($key) . '</li>'; };
+        $item = function($key) use ($t) { return '<li><b>' . $t($key . '_name') . '</b>: ' . $t($key) . '</li>'; };
 
         return '<div class="tssggs-explain"><span class="tssggs-explain__icon">' . Icons::svg('information-outline') . '</span><div>'
             . '<h3>' . $t('about_title') . '</h3>'
