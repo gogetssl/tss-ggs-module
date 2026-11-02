@@ -659,6 +659,10 @@ $_LANG['admin.products.index.data_tables.products.array_data_provider.data_table
 $_LANG['admin.products.index.data_tables.products.array_data_provider.data_table.validation']  = 'Validation';
 $_LANG['admin.products.index.data_tables.products.array_data_provider.data_table.provider']    = 'Provider';
 $_LANG['admin.products.index.data_tables.products.array_data_provider.data_table.status']      = 'Status';
+$_LANG['admin.products.index.data_tables.products.array_data_provider.data_table.billing']     = 'Billing type';
+$_LANG['admin.products.index.data_tables.products.array_data_provider.data_table.billing_recurring'] = 'Recurring';
+$_LANG['admin.products.index.data_tables.products.array_data_provider.data_table.billing_onetime']   = 'One time';
+$_LANG['admin.products.index.data_tables.products.array_data_provider.data_table.billing_free']      = 'Free';
 $_LANG['admin.products.index.data_tables.products.array_data_provider.data_table.imported']    = 'Imported';
 $_LANG['admin.products.index.data_tables.products.array_data_provider.data_table.import']      = 'Import';
 

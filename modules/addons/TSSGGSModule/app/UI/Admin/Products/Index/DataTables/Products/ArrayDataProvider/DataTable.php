@@ -51,6 +51,10 @@ class DataTable extends \ModulesGarden\TSSGGSModule\Components\DataTable\DataTab
                              ->setTitle($this->translate('provider'))
                              ->setSortable(true)
                              ->setSearchable(true))
+             ->addColumn((new Column('billing'))
+                             ->setTitle($this->translate('billing'))
+                             ->setSortable(true)
+                             ->setSearchable(true))
              ->addColumn((new Column('status'))
                              ->setTitle($this->translate('status'))
                              ->setSortable(true)
@@ -118,6 +122,7 @@ class DataTable extends \ModulesGarden\TSSGGSModule\Components\DataTable\DataTab
                 'brand'          => $remoteProduct->brand,
                 'validation'     => $remoteProduct->validation,
                 'provider'       => Helpers::vendorToDisplay($remoteProduct->vendor),
+                'billing'        => $whmcsProduct ? $this->translate('billing_' . ($whmcsProduct->paytype ?: 'recurring')) : '-',
                 'status'         => $this->badges(ProductCatalog::badges((array)$remoteProduct->rawData, $whmcsProduct)),
                 'manage'         => $whmcsProduct ? $this->manageLinks($whmcsProduct) : '',
                 'hidePricing'    => !$whmcsProduct,
