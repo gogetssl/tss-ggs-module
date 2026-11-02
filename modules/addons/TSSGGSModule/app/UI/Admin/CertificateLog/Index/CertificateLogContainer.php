@@ -2,6 +2,7 @@
 
 namespace ModulesGarden\TSSGGSModule\App\UI\Admin\CertificateLog\Index;
 
+use ModulesGarden\TSSGGSModule\App\Libs\Icons;
 use ModulesGarden\TSSGGSModule\App\Libs\AutoInstallQueue;
 use ModulesGarden\TSSGGSModule\Components\Container\Container;
 use ModulesGarden\TSSGGSModule\Components\Text\Text;
@@ -58,12 +59,26 @@ class CertificateLogContainer extends Container implements AdminAreaInterface
             unset($_SESSION['tssggs_log_notice']);
         }
 
-        $html .= $this->filters($service, $type, $search) . $this->table($rows) . $this->pager($page, $total, $service, $type, $search);
+        $html .= $this->explanation() . $this->filters($service, $type, $search) . $this->table($rows) . $this->pager($page, $total, $service, $type, $search);
 
         $text = new Text();
         $text->setCss('tssggs-html');
         $text->setText($html);
         $this->addElement($text);
+    }
+
+    /** What the page is for, what the entries mean and what is not logged here */
+    protected function explanation()
+    {
+        $item = function($key) {
+            return '<li>' . $this->t($key, ['logs' => '<a href="addonmodules.php?module=TSSGGSModule&mg-page=logs">' . $this->e($this->t('logs_page')) . '</a>']) . '</li>';
+        };
+
+        return '<div class="tssggs-explain"><span class="tssggs-explain__icon">' . Icons::svg('information-outline') . '</span><div>'
+            . '<h3>' . $this->e($this->t('about_title')) . '</h3>'
+            . '<p>' . $this->e($this->t('about_intro')) . '</p>'
+            . '<ul>' . $item('about_service') . $item('about_steps') . $item('about_types') . $item('about_kept') . $item('about_other') . '</ul>'
+            . '</div></div>';
     }
 
     protected function filters($service, $type, $search)

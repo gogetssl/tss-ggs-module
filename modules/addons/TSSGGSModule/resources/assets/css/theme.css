@@ -460,3 +460,13 @@
 
 /* form controls inside the module's HTML pages (Pricing, Commissions, Certificate log ...) */
 #layers2 .lu-app-main .tssggs-html .form-control { border-color: #666; }
+
+/* Certificate log: explanation block */
+#layers2 .tssggs-explain { display: flex; gap: 14px; align-items: flex-start; margin: 0 0 20px; padding: 16px 18px; border: 1px solid #c9dbf5; border-radius: 8px; background: var(--th-info-soft); }
+#layers2 .tssggs-explain__icon { display: inline-flex; align-items: center; justify-content: center; flex: none; width: 28px; height: 28px; border-radius: 6px; background: #fff; color: var(--th-info); }
+#layers2 .tssggs-explain__icon svg.tssggs-ico { width: 16px; height: 16px; }
+#layers2 .tssggs-explain h3 { margin: 0 0 4px; color: var(--tw-fg); font-size: 14.5px; font-weight: 600; line-height: 20px; }
+#layers2 .tssggs-explain p { margin: 0; color: var(--tw-fg-soft); font-size: 13px; line-height: 20px; }
+#layers2 .tssggs-explain ul { margin: 10px 0 0; padding-left: 18px; list-style: disc; color: var(--tw-fg-soft); font-size: 13px; line-height: 20px; }
+#layers2 .tssggs-explain li + li { margin-top: 4px; }
+#layers2 .tssggs-explain a { color: var(--th-info); font-weight: 500; }
