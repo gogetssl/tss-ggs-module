@@ -30,9 +30,14 @@ class PricingContainer extends Container implements AdminAreaInterface
         $token      = function_exists('generate_token') ? \generate_token('plain') : '';
         $session    = $_SESSION[PricingController::SESSION] ?? [];
 
-        $html = $this->notices($session);
+        // notes sit right under the page header, the grid in its own card
+        $notes = new Text();
+        $notes->setCss('tssggs-html tssggs-notes');
+        $notes->setText($this->notices($session) . '<div class="tssggs-note">' . $this->e($this->t('grid_help')) . '</div>');
+        $this->addElement($notes);
         unset($_SESSION[PricingController::SESSION]['notice'], $_SESSION[PricingController::SESSION]['error']);
 
+        $html = '';
         if(!empty($session['preview']))
         {
             $html .= $this->preview($session['preview'], $token);
@@ -100,7 +105,6 @@ class PricingContainer extends Container implements AdminAreaInterface
         // Only changed fields are posted (a large catalogue would exceed max_input_vars)
         $html = '<form method="post" action="' . self::BASE . '&mg-action=save" onsubmit="this.querySelectorAll(\'input[name^=price]\').forEach(function(i){ if(i.value === i.defaultValue){ i.disabled = true; } });">'
             . '<input type="hidden" name="token" value="' . $this->e($token) . '"><input type="hidden" name="currency" value="' . $currencyId . '">'
-            . '<p class="tssggs-muted">' . $this->e($this->t('grid_help')) . '</p>'
             . '<table class="table table-condensed tssggs-pricing__grid"><thead><tr><th>' . $this->e($this->t('product')) . '</th><th style="width:70px">' . $this->e($this->t('auto')) . '</th>';
         foreach(array_keys(PricingService::TERMS) as $term)
         {

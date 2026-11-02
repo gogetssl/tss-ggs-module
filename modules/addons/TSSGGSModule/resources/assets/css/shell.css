@@ -781,7 +781,8 @@
     display: block; padding: var(--sp-6); border: 1px solid var(--tw-border); border-radius: var(--tw-radius); background: var(--tw-surface);
 }
 /* notes above that card (right under the page header) stay on the page background */
-#layers2 .tssggs-log .tssggs-html.tssggs-notes { padding: 0; border: 0; border-radius: 0; background: none; margin-bottom: var(--sp-6); }
+#layers2 .tssggs-log .tssggs-html.tssggs-notes,
+#layers2 .tssggs-pricing .tssggs-html.tssggs-notes { padding: 0; border: 0; border-radius: 0; background: none; margin-bottom: var(--sp-6); }
 #layers2 .tssggs-notes > :first-child { margin-top: 0; }
 #layers2 .tssggs-notes > :last-child { margin-bottom: 0; }
 #layers2 .lu-app-main .lu-widget { border: 1px solid var(--tw-border); border-radius: var(--tw-radius); box-shadow: none; }
