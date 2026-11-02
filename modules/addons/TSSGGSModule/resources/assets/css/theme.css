@@ -482,3 +482,44 @@
 #layers2 .tssggs-settings form .lu-widget .lu-widget__header,
 #layers2 .tssggs-settings form .lu-widget .lu-widget__top { min-height: 0 !important; height: auto !important; }
 #layers2 .tssggs-settings form .lu-widget .lu-widget__header { padding: 0 0 12px !important; margin-bottom: 8px; }
+
+/* Notices (palette & notification guide): blue = information, red = failure, green = confirmed success, amber = warning.
+   One pattern for every note of the module: soft background, 1px coloured border, 3px left accent, 20px icon, neutral dark text. */
+#layers2 {
+    --nt-success: #0b7a3e;
+    --nt-success-soft: oklch(0.935 0.025 152);
+    --nt-info: oklch(0.48 0.16 255);
+    --nt-info-soft: oklch(0.945 0.028 255);
+    --nt-error: oklch(0.49 0.19 27);
+    --nt-error-soft: oklch(0.96 0.03 27);
+    --nt-warning: oklch(0.55 0.13 70);
+    --nt-warning-soft: oklch(0.96 0.05 85);
+    --nt-text: oklch(0.25 0.008 260);
+    --nt-icon-info: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M12 11v6M12 7h.01'/%3E%3C/svg%3E");
+    --nt-icon-warn: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M10.3 4.4 2.6 18a2 2 0 0 0 1.7 3h15.4a2 2 0 0 0 1.7-3L13.7 4.4a2 2 0 0 0-3.4 0Z'/%3E%3Cpath d='M12 9v4M12 17h.01'/%3E%3C/svg%3E");
+    --nt-icon-ok: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='m8 12 3 3 5-6'/%3E%3C/svg%3E");
+}
+#layers2 .tssggs-note {
+    --notice-color: var(--nt-info); --notice-bg: var(--nt-info-soft); --notice-icon: var(--nt-icon-info);
+    position: relative; margin: 12px 0; padding: 16px 16px 16px 48px;
+    border: 1px solid var(--notice-color); border-left-width: 3px; border-radius: 8px;
+    background: var(--notice-bg); color: var(--nt-text); font-size: 14px; line-height: 22px; overflow-wrap: anywhere;
+}
+#layers2 .tssggs-note::before {
+    content: ''; position: absolute; left: 16px; top: 18px; width: 20px; height: 20px;
+    background: var(--notice-color); -webkit-mask: var(--notice-icon) center/20px 20px no-repeat; mask: var(--notice-icon) center/20px 20px no-repeat;
+}
+#layers2 .tssggs-note.is-ok   { --notice-color: var(--nt-success); --notice-bg: var(--nt-success-soft); --notice-icon: var(--nt-icon-ok); }
+#layers2 .tssggs-note.is-warn { --notice-color: var(--nt-warning); --notice-bg: var(--nt-warning-soft); --notice-icon: var(--nt-icon-warn); }
+#layers2 .tssggs-note.is-bad  { --notice-color: var(--nt-error);   --notice-bg: var(--nt-error-soft);   --notice-icon: var(--nt-icon-warn); }
+#layers2 .tssggs-note a { color: var(--notice-color); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+#layers2 .tssggs-note a:focus-visible, #layers2 .tssggs-explain a:focus-visible { outline: 2px solid var(--notice-color, var(--nt-info)); outline-offset: 3px; }
+
+/* the explanation blocks are information notices */
+#layers2 .tssggs-explain { gap: 12px; padding: 16px; border: 1px solid var(--nt-info); border-left-width: 3px; background: var(--nt-info-soft); color: var(--nt-text); }
+#layers2 .tssggs-explain__icon { width: 20px; height: 20px; border-radius: 0; background: none; color: var(--nt-info); }
+#layers2 .tssggs-explain__icon svg.tssggs-ico { width: 20px; height: 20px; }
+#layers2 .tssggs-explain h3 { color: var(--nt-text); font-size: 14px; line-height: 20px; }
+#layers2 .tssggs-explain p, #layers2 .tssggs-explain ul { color: var(--nt-text); font-size: 14px; line-height: 22px; }
+#layers2 .tssggs-explain a { color: var(--nt-info); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+@media (max-width: 600px) { #layers2 .tssggs-note { padding: 12px 12px 12px 44px; } #layers2 .tssggs-note::before { left: 12px; top: 14px; } #layers2 .tssggs-explain { padding: 12px; } }
