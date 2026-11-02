@@ -7,6 +7,7 @@ use ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Widgets\AutomatedSett
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Widgets\CronSettingsWidget;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Widgets\FinanceSettingsWidget;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Widgets\GeneralSettingsWidget;
+use ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Widgets\LogsSettingsWidget;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Widgets\Sidebar;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Widgets\SslSettingsWidget;
 use ModulesGarden\TSSGGSModule\Components\Container\Container;
@@ -42,6 +43,10 @@ class SettingsContainer extends Container implements AdminAreaInterface
         elseif(Request::get('settings-page') == 'cronSettings')
         {
             $mainWidget = new CronSettingsWidget();
+        }
+        elseif(Request::get('settings-page') == 'logsSettings')
+        {
+            $mainWidget = new LogsSettingsWidget();
         }
         elseif(Request::get('settings-page') == 'generalSettings')
         {

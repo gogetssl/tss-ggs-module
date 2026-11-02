@@ -241,6 +241,12 @@ class AutoInstallQueue
 
     public static function addLog($clientId, $serviceId, $type, $message)
     {
+        // Settings > Logs > Certificate Log
+        if(!GeneralSettings::enabled('certificateLog'))
+        {
+            return;
+        }
+
         self::createTables();
 
         Capsule::table(self::LOGS_TABLE)->insert([

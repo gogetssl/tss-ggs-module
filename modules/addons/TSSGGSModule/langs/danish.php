@@ -768,11 +768,6 @@ $_LANG['admin.settings.index.forms.general_settings_form.expiresSoonDays']      
 $_LANG['admin.settings.index.forms.general_settings_form.expiresSoonDays_description']       = 'Et certifikat vises som "Udløber snart" dette antal dage før forfaldsdatoen';
 $_LANG['admin.settings.index.forms.general_settings_form.certificatesByDomain']              = 'SSL-certifikater pr. domæne';
 $_LANG['admin.settings.index.forms.general_settings_form.certificatesByDomain_description']  = 'Side i kundeområdet, der viser hvert domæne med dets nuværende certifikat og historikken for de tidligere';
-$_LANG['admin.settings.index.forms.general_settings_form.logging']                           = 'Logning';
-$_LANG['admin.settings.index.forms.general_settings_form.whmcsActivityLog']                  = 'WHMCS-aktivitetslog';
-$_LANG['admin.settings.index.forms.general_settings_form.whmcsActivityLog_description']      = 'Skriv certifikathændelser (ordre afgivet, genudstedelse, validering, installation, annullering) til WHMCS-aktivitetsloggen';
-$_LANG['admin.settings.index.forms.general_settings_form.moduleLog']                         = 'Modullog';
-$_LANG['admin.settings.index.forms.general_settings_form.moduleLog_description']             = 'Skriv gateway- og cPanel-forespørgsler til WHMCS-modulloggen (kun mens modulloggen er aktiveret i WHMCS)';
 $_LANG['admin.settings.index.forms.general_settings_form.lifecycle']                         = 'Tjenestens livscyklus';
 $_LANG['admin.settings.index.forms.general_settings_form.terminateCancelsOrder']             = 'Annuller leverandørordre ved opsigelse';
 $_LANG['admin.settings.index.forms.general_settings_form.terminateCancelsOrder_description'] = 'Når tjenesten opsiges i WHMCS, annulleres også certifikatordren/abonnementet hos leverandøren';

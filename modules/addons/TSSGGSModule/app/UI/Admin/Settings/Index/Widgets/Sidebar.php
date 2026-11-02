@@ -15,6 +15,7 @@ class Sidebar extends \ModulesGarden\TSSGGSModule\Components\Sidebar\Sidebar
         'automatedSettings' => 'sync',
         'financeSettings'   => 'email-outline',
         'cronSettings'      => 'file-clock-outline',
+        'logsSettings'      => 'text-box-outline',
     ];
 
     function loadHtml(): void
@@ -29,6 +30,7 @@ class Sidebar extends \ModulesGarden\TSSGGSModule\Components\Sidebar\Sidebar
             'automatedSettings',
             'financeSettings',
             'cronSettings',
+            'logsSettings',
         ];
 
         foreach($pages as $page)

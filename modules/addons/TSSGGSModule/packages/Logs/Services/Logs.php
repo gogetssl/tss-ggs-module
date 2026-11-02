@@ -3,6 +3,7 @@
 namespace ModulesGarden\TSSGGSModule\Packages\Logs\Services;
 
 use DateTime;
+use ModulesGarden\TSSGGSModule\App\Libs\GeneralSettings;
 use ModulesGarden\TSSGGSModule\Packages\Logs\Models\Logs as Log;
 use ModulesGarden\TSSGGSModule\Packages\ModuleSettings\Support\Facades\ModuleSettings;
 use Psr\Log\LoggerInterface;
@@ -16,6 +17,12 @@ class Logs implements LoggerInterface
 
     public function log($level, $message, array $data = [])
     {
+        // Settings > Logs > Module Log
+        if(!GeneralSettings::enabled('internalLog'))
+        {
+            return;
+        }
+
         $settings = ModuleSettings::get('logs.types', []);
         //log only selected types
         if (!empty($settings) && !in_array($level, $settings))

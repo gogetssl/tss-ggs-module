@@ -33,6 +33,8 @@ class GeneralSettings
         // Logging
         'whmcsActivityLog'         => true,
         'moduleLog'                => true,
+        'certificateLog'           => true,
+        'internalLog'              => true,
         // Lifecycle
         'terminateCancelsOrder'    => true,
         'terminateUnpaidOnExpiry'  => true,

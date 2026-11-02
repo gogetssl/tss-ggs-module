@@ -470,3 +470,7 @@
 #layers2 .tssggs-explain ul { margin: 10px 0 0; padding-left: 18px; list-style: disc; color: var(--tw-fg-soft); font-size: 13px; line-height: 20px; }
 #layers2 .tssggs-explain li + li { margin-top: 4px; }
 #layers2 .tssggs-explain a { color: var(--th-info); font-weight: 500; }
+
+/* Settings > Logs: the short explanation under a group heading */
+#layers2 .tssggs-logs-about { display: flex; gap: 8px; align-items: flex-start; margin: 0 0 12px; color: var(--th-quiet); font-size: 12.5px; line-height: 18px; }
+#layers2 .tssggs-logs-about svg.tssggs-ico { width: 14px; height: 14px; margin-top: 2px; }
