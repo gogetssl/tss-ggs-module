@@ -1008,3 +1008,6 @@ $_LANG['admin.emails.when_renewal_invoice_created']  = 'Sendes, når dette modul
 $_LANG['admin.breadcrumbs.CertificateLog'] = 'Certifikatlog';
 $_LANG['admin.breadcrumbs.Commissions'] = 'Provisioner';
 $_LANG['admin.breadcrumbs.Migration'] = 'Migrering';
+
+$_LANG['admin.switcher.yes'] = 'Ja';
+$_LANG['admin.switcher.no']  = 'Nej';

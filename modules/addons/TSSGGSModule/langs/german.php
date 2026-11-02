@@ -1006,3 +1006,6 @@ $_LANG['admin.emails.when_renewal_invoice_created'] = 'Wird gesendet, wenn diese
 $_LANG['admin.breadcrumbs.CertificateLog'] = 'Zertifikatsprotokoll';
 $_LANG['admin.breadcrumbs.Commissions'] = 'Provisionen';
 $_LANG['admin.breadcrumbs.Migration'] = 'Migration';
+
+$_LANG['admin.switcher.yes'] = 'Ja';
+$_LANG['admin.switcher.no']  = 'Nein';

@@ -1,0 +1,13 @@
+/* Yes / No segmented choice (replaces the on/off switch); native radios, brand green for Yes, red for No */
+#layers2 .tssggs-yn { display: inline-flex; align-items: center; }
+#layers2 .tssggs-yn__state { display: none; }
+#layers2 .tssggs-yn__segments { display: inline-flex; max-width: 100%; padding: 2px; border: 1px solid #d3d7dd; border-radius: 6px; background: #f1f2f4; }
+#layers2 .tssggs-yn__segment { position: relative; display: flex; margin: 0; cursor: pointer; flex: 1 1 auto; }
+#layers2 .tssggs-yn__radio { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip-path: inset(50%); border: 0; opacity: 0; }
+#layers2 .tssggs-yn__segment > span { display: flex; align-items: center; justify-content: center; min-width: 52px; min-height: 28px; padding: 3px 12px; border-radius: 5px; color: #5b616b; font-weight: 600; line-height: 20px; }
+#layers2 .tssggs-yn__segment:hover > span { color: #25282d; }
+#layers2 .tssggs-yn__radio:checked + span { background: #0b7a3e; color: #fff; box-shadow: 0 1px 3px rgba(37,40,45,.12); transition: background-color .3s ease-out, color .3s ease-out; }
+#layers2 .tssggs-yn__radio--danger:checked + span { background: #d4183d; }
+#layers2 .tssggs-yn__radio:focus-visible + span { outline: 2px solid #0b7a3e; outline-offset: 3px; }
+#layers2 .tssggs-yn__radio:disabled + span { opacity: .5; cursor: not-allowed; }
+@media (prefers-reduced-motion: reduce) { #layers2 .tssggs-yn__radio:checked + span { transition: none; } }

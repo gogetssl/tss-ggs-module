@@ -1,4 +1,4 @@
-<label :id="cid_" :class="elements_.elements && elements_.elements.length == 1 ? 'lu-single-element' : ''">
+<div :id="cid_" class="tssggs-yn" :class="elements_.elements && elements_.elements.length == 1 ? 'lu-single-element' : ''">
     <component @change="change"
                v-bind="element.slots"
                v-bind:is="element.name"
@@ -7,9 +7,10 @@
                v-if="elements_.elements"
                v-on="$listeners">
     </component>
-    <div class="lu-switch" ref="switcher" :disabled="disabled_ == true || readonly_ == true">
+    <div class="lu-switch tssggs-yn__state" ref="switcher" :disabled="disabled_ == true || readonly_ == true">
         <input :name="name_" type="hidden" :value="normaliseValue(false)" />
         <input :name="name_" type="hidden" :value="normaliseValue(value_)" v-if="readonly_ == true"/>
+        <!-- the submitted value: a checkbox kept in sync with the Yes / No choice below -->
         <input :name="name_"
                :value="normaliseValue(true)"
                :disabled="disabled_ == true || readonly_ == true"
@@ -20,7 +21,20 @@
                v-model="value_"
                v-on:change="change"
                :readonly="readonly_ != '' ? true : false"
+               style="display:none"
         />
-        <span class="lu-switch__container"><span class="lu-switch__handle"></span></span>
     </div>
-</label>
+    <!-- Yes / No segmented choice; the radios have no form owner, only the checkbox above is submitted -->
+    <div class="tssggs-yn__segments" role="radiogroup">
+        <label class="tssggs-yn__segment">
+            <input class="tssggs-yn__radio no-icheck" type="radio" form="" :name="'yn_' + cid_" value="1"
+                   :checked="!!value_" :disabled="disabled_ == true || readonly_ == true" @change="choose(true, $event)" />
+            <span>{{yesLabel || 'Yes'}}</span>
+        </label>
+        <label class="tssggs-yn__segment">
+            <input class="tssggs-yn__radio tssggs-yn__radio--danger no-icheck" type="radio" form="" :name="'yn_' + cid_" value="0"
+                   :checked="!value_" :disabled="disabled_ == true || readonly_ == true" @change="choose(false, $event)" />
+            <span>{{noLabel || 'No'}}</span>
+        </label>
+    </div>
+</div>

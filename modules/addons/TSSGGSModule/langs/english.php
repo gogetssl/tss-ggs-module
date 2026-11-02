@@ -1262,3 +1262,6 @@ $_LANG['admin.settings.index.forms.logs_settings_form.moduleLog'] = 'WHMCS Modul
 $_LANG['admin.settings.index.forms.logs_settings_form.moduleLog_description'] = 'Write the gateway and cPanel requests and responses to the WHMCS module log (Utilities > Logs > Module Log). It also has to be enabled in WHMCS. Passwords, keys and private keys are never written';
 $_LANG['admin.settings.index.forms.logs_settings_form.save'] = 'Save';
 $_LANG['admin.settings.index.forms.logs_settings_form.update_success'] = 'Settings updated successfully';
+
+$_LANG['admin.switcher.yes'] = 'Yes';
+$_LANG['admin.switcher.no']  = 'No';
