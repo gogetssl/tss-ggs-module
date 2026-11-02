@@ -59,11 +59,15 @@ class CertificateLogContainer extends Container implements AdminAreaInterface
             unset($_SESSION['tssggs_log_notice']);
         }
 
-        $html .= $this->explanation() . $this->filters($service, $type, $search) . $this->table($rows) . $this->pager($page, $total, $service, $type, $search);
+        // notes sit right under the page header, the log itself in its own card
+        $notes = new Text();
+        $notes->setCss('tssggs-html tssggs-notes');
+        $notes->setText($html . $this->explanation());
+        $this->addElement($notes);
 
         $text = new Text();
         $text->setCss('tssggs-html');
-        $text->setText($html);
+        $text->setText($this->filters($service, $type, $search) . $this->table($rows) . $this->pager($page, $total, $service, $type, $search));
         $this->addElement($text);
     }
 
