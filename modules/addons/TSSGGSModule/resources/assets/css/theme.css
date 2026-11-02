@@ -454,3 +454,6 @@
 @media (min-width: 640px) { #layers2 .ssl-promo .ssl-promo-content { padding: 24px; } #layers2 .ssl-promo .ssl-promo-title { font-size: 24px; } #layers2 .ssl-promo .ssl-promo-shield { display: grid; } }
 @media (max-width: 399px) { #layers2 .ssl-promo .ssl-promo-messages { height: 42px; } }
 @media (prefers-reduced-motion: reduce) { #layers2 .ssl-promo .ssl-promo-msg { animation: none; opacity: 0; } #layers2 .ssl-promo .ssl-promo-msg:first-child { opacity: 1; transform: none; } #layers2 .ssl-promo .ssl-promo-halo, #layers2 .ssl-promo .ssl-promo-ring { animation: none; } #layers2 .ssl-promo .ssl-promo-cta { transition: none; } }
+
+/* dashboard heading: no extra padding, the 25px of the page body above and the 16px above the tiles do the spacing */
+#layers2 .tssggs-dash .tssggs-dash__head { padding: 0; }
