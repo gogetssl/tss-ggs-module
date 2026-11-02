@@ -37,8 +37,8 @@ class ImportContainer extends Container implements AdminAreaInterface
 
         $tab2 = new Tab();
         $tab2->setTitle($this->translate("csv"));
-        $tab2->addElement(new TemplateDownloadWidget());
         $tab2->addElement(new ImportWidgetCsv());
+        $tab2->addElement(new TemplateDownloadWidget());
 
         $tabs = new TabsWidget();
         $tabs->addTab($tab1);

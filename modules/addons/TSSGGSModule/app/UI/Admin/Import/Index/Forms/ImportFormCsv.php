@@ -33,7 +33,7 @@ class ImportFormCsv extends Form implements AdminAreaInterface, AjaxComponentInt
 
     public function loadHtml(): void
     {
-        $this->builder = BuilderCreator::twoColumns($this);
+        $this->builder = BuilderCreator::oneColumn($this);
         $this->setId('ImportFormCsv');
         $toolbar = new Toolbar();
 
