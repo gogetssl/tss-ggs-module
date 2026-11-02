@@ -474,3 +474,11 @@
 /* Settings > Logs: the short explanation under a group heading */
 #layers2 .tssggs-logs-about { display: flex; gap: 8px; align-items: flex-start; margin: 0 0 12px; color: var(--th-quiet); font-size: 12.5px; line-height: 18px; }
 #layers2 .tssggs-logs-about svg.tssggs-ico { width: 14px; height: 14px; margin-top: 2px; }
+
+/* settings pages: group titles like the Logs page (16px semibold), the same gap under every title */
+#layers2 .tssggs-settings form .lu-widget .lu-widget__header .lu-top__title {
+    color: var(--tw-fg); font-size: 16px !important; font-weight: 600 !important; line-height: 24px !important;
+}
+#layers2 .tssggs-settings form .lu-widget .lu-widget__header,
+#layers2 .tssggs-settings form .lu-widget .lu-widget__top { min-height: 0 !important; height: auto !important; }
+#layers2 .tssggs-settings form .lu-widget .lu-widget__header { padding: 0 0 12px !important; margin-bottom: 8px; }
