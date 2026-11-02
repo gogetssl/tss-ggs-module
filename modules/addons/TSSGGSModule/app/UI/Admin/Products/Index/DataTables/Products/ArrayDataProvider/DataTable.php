@@ -124,7 +124,7 @@ class DataTable extends \ModulesGarden\TSSGGSModule\Components\DataTable\DataTab
                 'provider'       => Helpers::vendorToDisplay($remoteProduct->vendor),
                 'billing'        => $whmcsProduct ? $this->translate('billing_' . ($whmcsProduct->paytype ?: 'recurring')) : '-',
                 'status'         => $this->badges(ProductCatalog::badges((array)$remoteProduct->rawData, $whmcsProduct)),
-                'manage'         => $whmcsProduct ? $this->manageLinks($whmcsProduct) : '',
+                'manage'         => $whmcsProduct ? $this->manageLinks($whmcsProduct, (bool)ProductCatalog::optionProblems((int)$whmcsProduct->id, (array)$remoteProduct->rawData)) : '',
                 'hidePricing'    => !$whmcsProduct,
                 'hideImport'     => (bool)$whmcsProduct,
             ];
@@ -161,7 +161,7 @@ class DataTable extends \ModulesGarden\TSSGGSModule\Components\DataTable\DataTab
     /**
      * Hide / show, retire / un-retire, fix configurable options, cancel all renewals (App\Http\Admin\Products)
      */
-    protected function manageLinks($whmcsProduct)
+    protected function manageLinks($whmcsProduct, $optionsNeedFix = false)
     {
         $base    = 'addonmodules.php?module=TSSGGSModule&mg-page=products&pid=' . (int)$whmcsProduct->id . '&token=' . urlencode(function_exists('generate_token') ? \generate_token('plain') : '') . '&mg-action=';
         $actions = [];
@@ -170,7 +170,11 @@ class DataTable extends \ModulesGarden\TSSGGSModule\Components\DataTable\DataTab
             $actions[$whmcsProduct->hidden ? 'show' : 'hide'] = '';
         }
         $actions[$whmcsProduct->retired ? 'unretire' : 'retire'] = $whmcsProduct->retired ? '' : 'confirm_retire';
-        $actions['fixOptions']     = '';
+        if($optionsNeedFix)
+        {
+            // the "Check options" badge: only then is there something to fix
+            $actions['fixOptions'] = '';
+        }
         $actions['cancelRenewals'] = 'confirm_cancel_renewals';
 
         $links = [];
