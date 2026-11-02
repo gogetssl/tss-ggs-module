@@ -3,6 +3,7 @@
 namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Widgets;
 
 use ModulesGarden\TSSGGSModule\App\Libs\Helpers;
+use ModulesGarden\TSSGGSModule\App\Libs\SSLTrustCenterApi;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Shared\Card;
 
 /**
@@ -55,18 +56,16 @@ class AnnouncementsWidget extends Card
     /** Announcements of the configured vendors; every gateway returns all of them, so one call is enough */
     protected function announcements(): array
     {
-        $apis = Helpers::getConfiguredApis();
-        $api  = reset($apis);
-        if(!$api)
-        {
-            return [];
-        }
+        // only the news of this edition's gateway (GoGetSSL or TheSSLStore). The list needs no sign-in at the
+        // gateway, so it also works before the API credentials are entered.
+        $vendor = GatewayWidget::vendor();
+        $apis   = Helpers::getConfiguredApis();
+        $api    = $apis[$vendor] ?? reset($apis) ?: new SSLTrustCenterApi($vendor, '', '');
 
         $items = [];
         foreach((array)$api->getAnnouncements() as $a)
         {
-            $owner = strtoupper((string)($a['owner'] ?? ''));
-            if(!array_key_exists($owner, $apis))
+            if(strtoupper((string)($a['owner'] ?? '')) !== $vendor)
             {
                 continue;
             }
@@ -75,7 +74,7 @@ class AnnouncementsWidget extends Card
                 'body'     => (string)($a['body'] ?? ''),
                 'date'     => (string)($a['date'] ?? ''),
                 'category' => strtolower((string)($a['category'] ?? '')),
-                'vendor'   => count($apis) > 1 ? Helpers::vendorToDisplay($owner) : '',
+                'vendor'   => '',
             ];
         }
 
