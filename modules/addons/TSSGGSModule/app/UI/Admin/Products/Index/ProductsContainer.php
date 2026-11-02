@@ -27,10 +27,24 @@ class ProductsContainer extends Container implements AdminAreaInterface
             $this->addElement((new AlertSuccess())->setText($this->translate('notice_' . $notice['key'], ['product' => $notice['product'], 'detail' => $notice['detail'] !== '' ? $notice['detail'] : '-'])));
         }
 
-        $alert = new AlertInfo();
-        $alert->setText($this->translate("productsInfo"));
-        $this->addElement($alert);
+        $text = new Text();
+        $text->setCss('tssggs-html');
+        $text->setText($this->explanation());
+        $this->addElement($text);
 
         $this->addElement(new DataTable());
+    }
+
+    /** What the page is for and what the actions in the Manage column do */
+    protected function explanation(): string
+    {
+        $t    = function($key) { return htmlspecialchars((string)$this->translate($key, [], ['admin.products']), ENT_QUOTES); };
+        $item = function($key) use ($t) { return '<li><b>' . $t($key . '_name') . '</b> ' . $t($key) . '</li>'; };
+
+        return '<div class="tssggs-explain"><span class="tssggs-explain__icon">' . Icons::svg('information-outline') . '</span><div>'
+            . '<h3>' . $t('about_title') . '</h3>'
+            . '<p>' . $t('about_intro') . '</p>'
+            . '<ul>' . $item('about_import') . $item('about_hide') . $item('about_retire') . $item('about_fix') . $item('about_cancel') . '</ul>'
+            . '</div></div>';
     }
 }

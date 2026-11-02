@@ -655,6 +655,18 @@ $_LANG['admin.automation_queue.index.data_tables.queue.forms.reset_task_form.upd
 
 //info
 $_LANG['admin.products.index.products_container.productsInfo'] = 'To import a product, please select it and click the Import button.';
+$_LANG['admin.products.about_title'] = 'What you will find here';
+$_LANG['admin.products.about_intro'] = 'The products of the gateway. Import one to sell it in WHMCS; the Status column shows what state it is in.';
+$_LANG['admin.products.about_import_name'] = 'Import';
+$_LANG['admin.products.about_import'] = 'Select products and click Import to create them in WHMCS.';
+$_LANG['admin.products.about_hide_name'] = 'Hide';
+$_LANG['admin.products.about_hide'] = 'Temporarily removes the product from the order form. Clients with a direct link can still order it. Show puts it back.';
+$_LANG['admin.products.about_retire_name'] = 'Retire';
+$_LANG['admin.products.about_retire'] = 'The product is discontinued: nobody can order it, and clients with it get a "Product discontinued" notice on renewal invoices. Un-retire reverses it.';
+$_LANG['admin.products.about_fix_name'] = 'Fix options';
+$_LANG['admin.products.about_fix'] = 'Shown only when the status says "Check options": updates the product's configurable options to match what the gateway allows.';
+$_LANG['admin.products.about_cancel_name'] = 'Cancel all renewals';
+$_LANG['admin.products.about_cancel'] = 'Sends a cancellation request at the end of the billing period for every active service of the product, so none renews.';
 $_LANG['admin.configuration.content.step5.productsInfo']       = 'To import a product, please select it and click the Import button.';
 
 //Datatable
