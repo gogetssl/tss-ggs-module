@@ -79,7 +79,7 @@ class EmailsContainer extends Container implements AdminAreaInterface
         return '<div class="tssggs-explain"><span class="tssggs-explain__icon">' . Icons::svg('information-outline') . '</span><div>'
             . '<h3>' . $this->e($this->t('about_title')) . '</h3>'
             . '<p>' . $this->e($this->t('intro')) . '</p>'
-            . '<ul>' . $item('about_edit') . $item('about_languages') . $item('about_fields') . $item('about_reset') . '</ul>'
+            . '<ul>' . $item('about_edit') . $item('about_fields') . '</ul>'
             . '</div></div>';
     }
 
