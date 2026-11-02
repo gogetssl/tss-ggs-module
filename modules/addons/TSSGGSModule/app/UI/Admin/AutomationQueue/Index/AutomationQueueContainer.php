@@ -11,9 +11,12 @@ class AutomationQueueContainer extends Container implements AdminAreaInterface
 {
     public function loadHtml(): void
     {
-        $alert = new AlertInfo();
-        $alert->setText($this->translate('queueInfo'));
-        $this->addElement($alert);
+        if(!\ModulesGarden\TSSGGSModule\App\Libs\GeneralSettings::enabled('hideInfoMessages'))
+        {
+            $alert = new AlertInfo();
+            $alert->setText($this->translate('queueInfo'));
+            $this->addElement($alert);
+        }
 
         $this->addElement(new DataTable());
     }

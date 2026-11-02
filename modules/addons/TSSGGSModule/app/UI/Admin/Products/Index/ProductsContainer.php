@@ -29,10 +29,13 @@ class ProductsContainer extends Container implements AdminAreaInterface
             $this->addElement((new AlertSuccess())->setText($this->translate('notice_' . $notice['key'], ['product' => $notice['product'], 'detail' => $notice['detail'] !== '' ? $notice['detail'] : '-'])));
         }
 
-        $text = new Text();
-        $text->setCss('tssggs-html');
-        $text->setText($this->explanation());
-        $this->addElement($text);
+        if(!\ModulesGarden\TSSGGSModule\App\Libs\GeneralSettings::enabled('hideInfoMessages'))
+        {
+            $text = new Text();
+            $text->setCss('tssggs-html');
+            $text->setText($this->explanation());
+            $this->addElement($text);
+        }
 
         $this->addElement(new DataTable());
     }

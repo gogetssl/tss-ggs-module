@@ -50,6 +50,9 @@ class GeneralSettingsForm extends Form implements AdminAreaInterface, AjaxCompon
         $this->builder->addFieldInContainer($clientArea, (new Switcher())->setName('certificatesByDomain')->addClass('switcher-revert'), true);
         $this->builder->addFieldInContainer($clientArea, (new Switcher())->setName('sslTools')->addClass('switcher-revert'), true);
 
+        $interface = $this->widget($left, 'interface');
+        $this->builder->addFieldInContainer($interface, (new Switcher())->setName('hideInfoMessages')->addClass('switcher-revert'), true);
+
         $lifecycle = $this->widget($right, 'lifecycle');
         $this->builder->addFieldInContainer($lifecycle, (new Switcher())->setName('terminateCancelsOrder')->addClass('switcher-revert'), true);
         $this->builder->addFieldInContainer($lifecycle, (new Switcher())->setName('terminateUnpaidOnExpiry')->addClass('switcher-revert'), true);

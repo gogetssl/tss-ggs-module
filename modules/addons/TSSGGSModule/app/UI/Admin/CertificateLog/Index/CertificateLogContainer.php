@@ -74,6 +74,10 @@ class CertificateLogContainer extends Container implements AdminAreaInterface
     /** What the page is for and what the entries mean, then a separate note on what is not logged here */
     protected function explanation()
     {
+        if(\ModulesGarden\TSSGGSModule\App\Libs\GeneralSettings::enabled('hideInfoMessages'))
+        {
+            return '';
+        }
         $item = function($key) {
             return '<li>' . $this->e($this->t($key)) . '</li>';
         };

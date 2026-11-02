@@ -38,6 +38,8 @@ class GeneralSettings
         // Lifecycle
         'terminateCancelsOrder'    => true,
         'terminateUnpaidOnExpiry'  => true,
+        // Interface
+        'hideInfoMessages'         => false,
         // Orders
         'defaultWebServer'         => '',
         // Renewal rules: days before the end of the certificate / subscription on which the service falls due

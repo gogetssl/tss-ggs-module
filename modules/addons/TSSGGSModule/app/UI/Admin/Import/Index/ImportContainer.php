@@ -26,10 +26,13 @@ class ImportContainer extends Container implements AdminAreaInterface
     public function loadHtml(): void
     {
         $this->setCss('tssggs-import');
-        $text = new Text();
-        $text->setCss('tssggs-html');
-        $text->setText($this->explanation());
-        $this->addElement($text);
+        if(!\ModulesGarden\TSSGGSModule\App\Libs\GeneralSettings::enabled('hideInfoMessages'))
+        {
+            $text = new Text();
+            $text->setCss('tssggs-html');
+            $text->setText($this->explanation());
+            $this->addElement($text);
+        }
 
         $tab1 = new Tab();
         $tab1->setTitle($this->translate("single"));

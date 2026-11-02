@@ -8,7 +8,7 @@ use WHMCS\Database\Capsule;
 
 class GeneralSettingsProvider extends CrudProvider
 {
-    const SWITCHES = ['downloadFormat_zip', 'downloadFormat_crt', 'downloadFormat_ca', 'downloadFormat_fullchain', 'downloadFormat_nginx', 'downloadFormat_apache', 'downloadFormat_pkcs7', 'clientSummary', 'certificatesByDomain', 'sslTools', 'whmcsActivityLog', 'moduleLog', 'certificateLog', 'internalLog', 'terminateCancelsOrder', 'terminateUnpaidOnExpiry', 'requireAgreement', 'keepMarginOnSync', 'belowCostEmail'];
+    const SWITCHES = ['downloadFormat_zip', 'downloadFormat_crt', 'downloadFormat_ca', 'downloadFormat_fullchain', 'downloadFormat_nginx', 'downloadFormat_apache', 'downloadFormat_pkcs7', 'clientSummary', 'certificatesByDomain', 'sslTools', 'whmcsActivityLog', 'moduleLog', 'certificateLog', 'internalLog', 'terminateCancelsOrder', 'terminateUnpaidOnExpiry', 'requireAgreement', 'keepMarginOnSync', 'belowCostEmail', 'hideInfoMessages'];
 
     public function read()
     {

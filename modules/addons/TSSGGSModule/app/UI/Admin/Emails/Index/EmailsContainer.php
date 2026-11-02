@@ -64,7 +64,7 @@ class EmailsContainer extends Container implements AdminAreaInterface
             $html .= '<div class="tssggs-note is-ok">' . $this->e($this->t('notice_' . $session['notice'], ['count' => (int)($session['count'] ?? 0)])) . '</div>';
         }
 
-        return $html . $this->explanation()
+        return $html . (\ModulesGarden\TSSGGSModule\App\Libs\GeneralSettings::enabled('hideInfoMessages') ? '' : $this->explanation())
             . '<div class="em-layout"><div class="em-card em-nav">' . $this->nav($overview, $key) . '</div>'
             . '<div class="em-card">' . $this->editor($overview[$key], $language, $languages, $session) . '</div></div>';
     }

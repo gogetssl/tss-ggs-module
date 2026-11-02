@@ -33,7 +33,7 @@ class PricingContainer extends Container implements AdminAreaInterface
         // notes sit right under the page header, the grid in its own card
         $notes = new Text();
         $notes->setCss('tssggs-html tssggs-notes');
-        $notes->setText($this->notices($session) . '<div class="tssggs-note">' . $this->e($this->t('grid_help')) . '</div>');
+        $notes->setText($this->notices($session) . (\ModulesGarden\TSSGGSModule\App\Libs\GeneralSettings::enabled('hideInfoMessages') ? '' : '<div class="tssggs-note">' . $this->e($this->t('grid_help')) . '</div>'));
         $this->addElement($notes);
         unset($_SESSION[PricingController::SESSION]['notice'], $_SESSION[PricingController::SESSION]['error']);
 

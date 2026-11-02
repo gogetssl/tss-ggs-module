@@ -36,7 +36,7 @@ class CommissionsContainer extends Container implements AdminAreaInterface
             $html .= '<div class="tssggs-note is-ok">' . $this->e($this->t('notice_' . $session['notice'])) . '</div>';
         }
 
-        $html .= '<p class="tssggs-muted">' . $this->e($this->t('intro')) . '</p>' . $this->form($token) . $this->table($token);
+        $html .= (\ModulesGarden\TSSGGSModule\App\Libs\GeneralSettings::enabled('hideInfoMessages') ? '' : '<p class="tssggs-muted">' . $this->e($this->t('intro')) . '</p>') . $this->form($token) . $this->table($token);
 
         $text = new Text();
         $text->setCss('tssggs-html');

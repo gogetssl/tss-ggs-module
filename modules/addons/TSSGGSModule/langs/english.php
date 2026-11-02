@@ -777,7 +777,7 @@ $_LANG['admin.configuration.shared.providers.legacy_choice_provider.option_skip'
 $_LANG['admin.configuration.shared.providers.legacy_choice_provider.saved']          = 'Saved';
 
 //general settings
-$_LANG['admin.settings.index.widgets.sidebar.generalSettings']                               = 'General (all products)';
+$_LANG['admin.settings.index.widgets.sidebar.generalSettings']                               = 'General';
 $_LANG['admin.settings.index.widgets.general_settings_widget.title']                         = 'General Settings';
 $_LANG['admin.settings.index.forms.general_settings_form.clientArea']                        = 'Client Area';
 $_LANG['admin.settings.index.forms.general_settings_form.clientSummary']                     = 'SSL Summary';
@@ -893,6 +893,9 @@ $_LANG['admin.settings.index.forms.general_settings_form.keepMarginOnSync']     
 $_LANG['admin.settings.index.forms.general_settings_form.keepMarginOnSync_description']  = 'Products with manual prices ("Auto" off on the Pricing page) follow reseller cost changes, so their margin stays the same';
 $_LANG['admin.settings.index.forms.general_settings_form.belowCostEmail']                = 'Below-Cost Email';
 $_LANG['admin.settings.index.forms.general_settings_form.belowCostEmail_description']    = 'E-mail the administrators when prices are below the reseller cost (checked by the price update cron, sent once per change)';
+$_LANG['admin.settings.index.forms.general_settings_form.interface']                       = 'Admin Area';
+$_LANG['admin.settings.index.forms.general_settings_form.hideInfoMessages']                = 'Hide Info Messages';
+$_LANG['admin.settings.index.forms.general_settings_form.hideInfoMessages_description']    = 'Removes the large information blocks under the page titles of the module. Warnings, errors and confirmations stay.';
 
 //products: lifecycle
 $_LANG['admin.products.index.data_tables.products.array_data_provider.data_table.manage']                  = 'Manage';
