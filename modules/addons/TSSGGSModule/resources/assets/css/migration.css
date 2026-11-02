@@ -161,7 +161,8 @@
 #layers2 .tssggs-import .lu-nav--tabs { display: flex; gap: 8px; padding: 0 !important; border: 0 !important; }
 #layers2 .tssggs-import .lu-nav--tabs::after, #layers2 .tssggs-import .lu-nav--tabs.lu-nav--horizontal:after { display: none !important; }
 #layers2 .tssggs-import .lu-nav--tabs .lu-nav__item { margin: 0; }
-#layers2 .tssggs-import .lu-nav--tabs .lu-nav__link { display: inline-flex; align-items: center; gap: 8px; padding: 9px 18px; border: 1px solid var(--tw-border); border-radius: 8px; background: var(--tw-surface); color: var(--tw-fg); font-weight: 600; transition: background .15s, color .15s, border-color .15s; }
+#layers2 .tssggs-import .lu-nav--md .lu-nav__item { min-height: 40px; }
+#layers2 .tssggs-import .lu-nav--tabs .lu-nav__link { display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; border: 1px solid var(--tw-border); border-radius: 8px; background: var(--tw-surface); color: var(--tw-fg); font-weight: 600; transition: background .15s, color .15s, border-color .15s; }
 #layers2 .tssggs-import .lu-nav--tabs .lu-nav__link:hover { border-color: var(--tw-primary); color: var(--tw-primary); }
 #layers2 .tssggs-import .lu-nav--tabs .lu-nav__item.is-active .lu-nav__link { background: var(--tw-primary); border-color: var(--tw-primary); color: #fff; }
 #layers2 .tssggs-import .lu-nav--tabs .lu-nav__link:after { display: none !important; }
