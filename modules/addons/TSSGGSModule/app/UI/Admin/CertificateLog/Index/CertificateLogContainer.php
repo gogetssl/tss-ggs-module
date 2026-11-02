@@ -67,18 +67,20 @@ class CertificateLogContainer extends Container implements AdminAreaInterface
         $this->addElement($text);
     }
 
-    /** What the page is for, what the entries mean and what is not logged here */
+    /** What the page is for and what the entries mean, then a separate note on what is not logged here */
     protected function explanation()
     {
         $item = function($key) {
-            return '<li>' . $this->t($key, ['logs' => '<a href="addonmodules.php?module=TSSGGSModule&mg-page=logs">' . $this->e($this->t('logs_page')) . '</a>']) . '</li>';
+            return '<li>' . $this->e($this->t($key)) . '</li>';
         };
+        $logs = '<a href="addonmodules.php?module=TSSGGSModule&mg-page=logs">' . $this->e($this->t('logs_page')) . '</a>';
 
         return '<div class="tssggs-explain"><span class="tssggs-explain__icon">' . Icons::svg('information-outline') . '</span><div>'
             . '<h3>' . $this->e($this->t('about_title')) . '</h3>'
             . '<p>' . $this->e($this->t('about_intro')) . '</p>'
-            . '<ul>' . $item('about_service') . $item('about_steps') . $item('about_types') . $item('about_kept') . $item('about_other') . '</ul>'
-            . '</div></div>';
+            . '<ul>' . $item('about_service') . $item('about_steps') . $item('about_types') . '</ul>'
+            . '</div></div>'
+            . '<div class="tssggs-note">' . $this->t('about_other', ['logs' => $logs]) . '</div>';
     }
 
     protected function filters($service, $type, $search)
