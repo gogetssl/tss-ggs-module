@@ -28,6 +28,12 @@ class Emails extends AbstractController implements AdminAreaInterface
         return Helper\view()->addElement(EmailsContainer::class);
     }
 
+    /** A posted field as typed: WHMCS HTML-encodes request values (< becomes &lt;), which would be saved into the template */
+    protected static function posted($name, $default = "")
+    {
+        return html_entity_decode((string)($_POST[$name] ?? $default), ENT_QUOTES, "UTF-8");
+    }
+
     public static function can($permission)
     {
         return Permission::currentAdminHasPermissionName($permission);
@@ -39,7 +45,7 @@ class Emails extends AbstractController implements AdminAreaInterface
             $this->require(self::EDIT);
             $this->requireLanguagePermission($language);
             $this->keepDraft($key, $language);
-            EmailManager::save($key, $language, $_POST['subject'] ?? '', $_POST['message'] ?? '', $language === '' ? EmailManager::options($_POST) : []);
+            EmailManager::save($key, $language, self::posted('subject'), self::posted('message'), $language === '' ? EmailManager::options($_POST) : []);
             $this->forgetDraft();
 
             return 'saved';
@@ -51,7 +57,7 @@ class Emails extends AbstractController implements AdminAreaInterface
         return $this->run(function($key, $language) {
             $this->require(self::VIEW);
             $this->keepDraft($key, $language);
-            $rendered = EmailManager::render($key, $language, (string)($_POST['subject'] ?? ''), (string)($_POST['message'] ?? ''));
+            $rendered = EmailManager::render($key, $language, self::posted('subject'), self::posted('message'));
             $_SESSION[self::SESSION]['preview'] = ['subject' => $rendered['subject'], 'body' => $rendered['body']];
 
             return null;
@@ -64,7 +70,7 @@ class Emails extends AbstractController implements AdminAreaInterface
             $this->require(self::EDIT);
             $this->keepDraft($key, $language);
             $saved = EmailManager::load($key, $language);
-            EmailManager::sendTest($key, $language, (string)($_POST['subject'] ?? $saved['subject']), (string)($_POST['message'] ?? $saved['message']));
+            EmailManager::sendTest($key, $language, self::posted('subject', $saved['subject']), self::posted('message', $saved['message']));
 
             return 'test_sent';
         });
@@ -160,7 +166,7 @@ class Emails extends AbstractController implements AdminAreaInterface
      */
     protected function keepDraft($key, $language)
     {
-        $_SESSION[self::SESSION]['draft'] = ['key' => $key, 'lang' => $language, 'subject' => (string)($_POST['subject'] ?? ''), 'message' => (string)($_POST['message'] ?? '')]
+        $_SESSION[self::SESSION]['draft'] = ['key' => $key, 'lang' => $language, 'subject' => self::posted('subject'), 'message' => self::posted('message')]
             + array_map('strval', array_intersect_key($_POST, array_flip(['fromname', 'fromemail', 'copyto', 'blind_copy_to', 'plaintext', 'disabled'])));
     }
 
