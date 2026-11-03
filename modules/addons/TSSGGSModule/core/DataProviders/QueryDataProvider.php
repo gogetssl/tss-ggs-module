@@ -13,7 +13,7 @@ class QueryDataProvider extends AbstractRecordsListDataProvider implements Query
     use \ModulesGarden\TSSGGSModule\Core\Components\FallbackTraits\QueryDataProvider;
 
     private $fullDataLength = 0;
-    private $query = null;
+    protected $query = null;
 
     public function __construct($query = null)
     {
