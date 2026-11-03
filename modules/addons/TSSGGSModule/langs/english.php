@@ -1052,7 +1052,7 @@ $_LANG['admin.settings.index.forms.general_settings_form.downloadFormat_nginx'] 
 $_LANG['admin.settings.index.forms.general_settings_form.downloadFormat_apache']               = 'Apache (.crt + .ca-bundle, ZIP)';
 $_LANG['admin.settings.index.forms.general_settings_form.downloadFormat_pkcs7']                = 'IIS / Tomcat (PKCS#7 .p7b)';
 $_LANG['admin.settings.index.forms.ssl_settings_form.ordering']                = 'Ordering And Agreement';
-$_LANG['admin.settings.index.forms.ssl_settings_form.delivery']                = 'Delivery And Messages';
+$_LANG['admin.settings.index.forms.ssl_settings_form.delivery']                = 'Certificate Delivery';
 $_LANG['admin.settings.index.forms.ssl_settings_form.dueDates']                = 'Due Dates';
 $_LANG['admin.settings.index.forms.ssl_settings_form.autoInstall']             = 'AutoInstall (cPanel)';
 $_LANG['admin.settings.index.providers.ssl_settings_provider.moduleTemplate']  = 'Module template (Send Certificate)';
@@ -1265,3 +1265,44 @@ $_LANG['admin.settings.index.forms.logs_settings_form.update_success'] = 'Settin
 
 $_LANG['admin.switcher.yes'] = 'Yes';
 $_LANG['admin.switcher.no']  = 'No';
+
+/* ---- Settings screens: page subtitles, section descriptions, the sticky save bar ---- */
+$_LANG['admin.settings.index.savebar.saveChanges']  = 'Save changes';
+$_LANG['admin.settings.index.savebar.noUnsaved']    = 'No unsaved changes';
+$_LANG['admin.settings.index.savebar.unsaved']      = 'Unsaved changes';
+$_LANG['admin.settings.index.savebar.notSaved']     = 'Not saved. Check the highlighted fields and try again.';
+$_LANG['admin.settings.index.savebar.leaveConfirm'] = 'You have unsaved changes. Leave this page and discard them?';
+
+$_LANG['admin.settings.index.widgets.api_settings_widget.subtitle']       = 'Credentials of the certificate authorities you resell';
+$_LANG['admin.settings.index.widgets.general_settings_widget.subtitle']   = 'Client area, admin area, service lifecycle and pricing behaviour';
+$_LANG['admin.settings.index.widgets.ssl_settings_widget.subtitle']       = 'Certificate validation, ordering, delivery and renewal preferences';
+$_LANG['admin.settings.index.widgets.automated_settings_widget.subtitle'] = 'AutoInstall (cPanel), ACME and plan subscriptions';
+$_LANG['admin.settings.index.widgets.finance_settings_widget.subtitle']   = 'Margin and currency used when prices are calculated';
+$_LANG['admin.settings.index.widgets.logs_settings_widget.subtitle']      = 'Choose which logs the module keeps';
+
+$_LANG['admin.settings.index.forms.api_settings_form.tss_desc'] = 'Partner code and auth token of your The SSL Store account. Sandbox values are used in test mode.';
+$_LANG['admin.settings.index.forms.api_settings_form.ggs_desc'] = 'Partner code and auth token of your GoGetSSL account.';
+
+$_LANG['admin.settings.index.forms.general_settings_form.clientArea_desc'] = 'What clients see on their certificate pages.';
+$_LANG['admin.settings.index.forms.general_settings_form.interface_desc']  = 'How the module looks for administrators.';
+$_LANG['admin.settings.index.forms.general_settings_form.lifecycle_desc']  = 'What happens to a service when it is terminated or not paid.';
+$_LANG['admin.settings.index.forms.general_settings_form.pricing_desc']    = 'How prices are kept in line with the certificate authority.';
+
+$_LANG['admin.settings.index.forms.logs_settings_form.moduleLogs_desc'] = 'Kept in the module and shown on its own pages. Switching one off stops new entries; stored entries stay until you clear them.';
+$_LANG['admin.settings.index.forms.logs_settings_form.whmcsLogs_desc']  = 'Written into WHMCS itself and read there, not in this module.';
+
+$_LANG['admin.settings.index.forms.finance_settings_form.majorSettings_desc'] = 'Your profit margin on top of the certificate authority price.';
+$_LANG['admin.settings.index.forms.finance_settings_form.exchangeRate_desc']  = 'Needed because USD is not defined as a currency in WHMCS.';
+
+$_LANG['admin.settings.index.forms.ssl_settings_form.sslValidation_desc']        = 'Choose how client and contact details are used for validation.';
+$_LANG['admin.settings.index.forms.ssl_settings_form.csrGenerator_desc']         = 'Set the defaults for certificate signing requests.';
+$_LANG['admin.settings.index.forms.ssl_settings_form.ordering_desc']             = 'Set the server default and the customer agreement.';
+$_LANG['admin.settings.index.forms.ssl_settings_form.delivery_desc']             = 'Choose the file formats included with issued certificates.';
+$_LANG['admin.settings.index.forms.ssl_settings_form.clientMessages']            = 'Client Messages';
+$_LANG['admin.settings.index.forms.ssl_settings_form.clientMessages_desc']       = 'Manage the guidance and messages shown to clients.';
+$_LANG['admin.settings.index.forms.ssl_settings_form.renewals_desc']             = 'Control renewal availability and order processing.';
+$_LANG['admin.settings.index.forms.ssl_settings_form.recurringAndOneTime']       = 'Recurring and One-time Orders';
+$_LANG['admin.settings.index.forms.ssl_settings_form.recurringAndOneTime_desc']  = 'Configure renewal invoices and expiry reminders separately.';
+$_LANG['admin.settings.index.forms.ssl_settings_form.dueDates_desc']             = 'Set when payment becomes due before a certificate or subscription ends.';
+$_LANG['admin.settings.index.forms.ssl_settings_form.autoInstall_desc']          = 'DNS wait, TLS check of the cPanel servers and automatic reissue.';
+$_LANG['admin.settings.index.forms.ssl_settings_form.renewalsSubscription_desc'] = 'Renewal invoices and reminders for ACME and plan subscriptions.';

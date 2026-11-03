@@ -14,6 +14,7 @@ class LogsSettingsWidget extends Widget
     {
         $this->setTitle($this->translate('title'));
         $this->setIcon('text-box-outline');
+        $this->addElement((new \ModulesGarden\TSSGGSModule\Components\Text\Text())->setText('<p class="tssggs-page__desc">' . htmlspecialchars($this->translate('subtitle')) . '</p>'));
         $this->addElement(new LogsSettingsForm());
     }
 }

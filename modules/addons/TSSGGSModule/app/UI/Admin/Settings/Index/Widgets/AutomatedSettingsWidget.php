@@ -12,6 +12,7 @@ class AutomatedSettingsWidget extends Widget
     {
         $this->setTitle($this->translate('title'));
         $this->setIcon('sync');
+        $this->addElement((new \ModulesGarden\TSSGGSModule\Components\Text\Text())->setText('<p class="tssggs-page__desc">' . htmlspecialchars($this->translate('subtitle')) . '</p>'));
         $this->addElement(new SslSettingsForm(false, SslSettingsForm::SCOPE_AUTOMATED));
     }
 }

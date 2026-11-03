@@ -4,6 +4,7 @@ namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Forms;
 
 
 use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
+use ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Concerns\SettingsLayout;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Providers\ApiSettingsProvider;
 use ModulesGarden\TSSGGSModule\Components\Button\ButtonPrimary;
 use ModulesGarden\TSSGGSModule\Components\Button\ButtonSuccess;
@@ -22,6 +23,8 @@ use ModulesGarden\TSSGGSModule\Core\Contracts\Components\AjaxComponentInterface;
 
 class ApiSettingsForm extends Form implements AdminAreaInterface, AjaxComponentInterface
 {
+    use SettingsLayout;
+
     protected $configuration;
 
     public function __construct($configuration = false)
@@ -37,54 +40,35 @@ class ApiSettingsForm extends Form implements AdminAreaInterface, AjaxComponentI
     {
         $this->builder = BuilderCreator::oneColumn($this);
         $this->setId('SettingsForm');
-        $toolbar = new Toolbar();
-
-        $btnName = $this->translate('save');
-        if($this->configuration === true) $btnName = $this->translate('next_step');
-
-        $toolbar->addElement(
-            (new ButtonSuccess())
-                ->setId('buttonSave')
-                ->setTitle($btnName)
-                ->onClick(new FormSubmit($this))
-        );
-
-        $toolbar->addElement(
-            (new ButtonPrimary())
-                ->setId('buttonTestConnection')
-                ->setTitle($this->translate('testConnection'))
-                ->onClick((new FormSubmit($this))->setCustomAction(ApiSettingsProvider::ACTION_TEST_CONNECTION))
-        );
 
         $moduleConfiguration = (new AddonModuleRepository())->getModuleConfiguration();
-        $selectVendors = $moduleConfiguration['vendors'];
 
-        $rows = [];
-        foreach ($selectVendors as $vendor)
+        foreach($moduleConfiguration['vendors'] as $vendor)
         {
-            $widget = new Widget();
-            $widget->setTitle($this->translate($vendor));
-            $rows[] = [$widget, 6];
-        }
+            $widget = $this->section($vendor, 'key-outline');
 
-        $grid = new Grid();
-        $grid->setRows([$rows]);
-        $this->addElement($grid);
+            $this->builder->addFieldInContainer($widget, (new FormInputText())->setName($vendor . 'LivePartnerCode'));
+            $this->builder->addFieldInContainer($widget, (new FormInputPassword())->setName($vendor . 'LiveAuthToken'));
 
-        foreach ($rows as $key => $row)
-        {
-            $this->builder->addFieldInContainer($row[0], (new FormInputText())->setName($selectVendors[$key].'LivePartnerCode'));
-            $this->builder->addFieldInContainer($row[0], (new FormInputPassword())->setName($selectVendors[$key].'LiveAuthToken'));
-
-            if($selectVendors[$key] == 'tss')
+            if($vendor == 'tss')
             {
-                $this->builder->addFieldInContainer($row[0], (new FormInputText())->setName($selectVendors[$key].'TestPartnerCode'));
-                $this->builder->addFieldInContainer($row[0], (new FormInputPassword())->setName($selectVendors[$key].'TestAuthToken'));
-                $this->builder->addFieldInContainer($row[0], (new Dropdown())->setName('OperationMode')->setOptions(['live' => 'Live', 'sandbox' => 'Sandbox'])->setDefaultValueAsFirstOption());
+                $this->builder->addFieldInContainer($widget, (new FormInputText())->setName($vendor . 'TestPartnerCode'));
+                $this->builder->addFieldInContainer($widget, (new FormInputPassword())->setName($vendor . 'TestAuthToken'));
+                $this->builder->addFieldInContainer($widget, (new Dropdown())->setName('OperationMode')->setOptions(['live' => 'Live', 'sandbox' => 'Sandbox'])->setDefaultValueAsFirstOption());
             }
-
         }
 
-        $this->addElement($toolbar);
+        // Saving tests the connection first and the credentials may be prefilled from the legacy modules (not stored yet),
+        // so Save stays enabled on this screen
+        $this->saveBar(
+            $this->configuration === true ? $this->translate('next_step') : null,
+            true,
+            [
+                (new ButtonPrimary())
+                    ->setId('buttonTestConnection')
+                    ->setTitle($this->translate('testConnection'))
+                    ->onClick((new FormSubmit($this))->setCustomAction(ApiSettingsProvider::ACTION_TEST_CONNECTION)),
+            ]
+        );
     }
 }

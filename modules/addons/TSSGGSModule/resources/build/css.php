@@ -15,6 +15,7 @@ $files = [
     'migration.css',
     'dashboard.css',
     'shell.css',
+    'settings.css',
     'icons.css',
     'tinymce-icons.css',
     'yesno.css',

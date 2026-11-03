@@ -3,7 +3,7 @@
 namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Forms;
 
 
-use ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Components\RevertSwitcher;
+use ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Concerns\SettingsLayout;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Providers\SslSettingsProvider;
 use ModulesGarden\TSSGGSModule\Components\Button\ButtonSuccess;
 use ModulesGarden\TSSGGSModule\Components\Container\Container;
@@ -30,6 +30,8 @@ use ModulesGarden\TSSGGSModule\Core\Contracts\Components\AjaxComponentInterface;
  */
 class SslSettingsForm extends Form implements AdminAreaInterface, AjaxComponentInterface
 {
+    use SettingsLayout;
+
     const SCOPE_ALL       = 'all';
     const SCOPE_SSL       = 'ssl';
     const SCOPE_AUTOMATED = 'automated';
@@ -55,64 +57,41 @@ class SslSettingsForm extends Form implements AdminAreaInterface, AjaxComponentI
         $ssl  = in_array($this->scope, [self::SCOPE_ALL, self::SCOPE_SSL], true);
         $auto = in_array($this->scope, [self::SCOPE_ALL, self::SCOPE_AUTOMATED], true);
 
-        $leftContainer  = new Container();
-        $rightContainer = new Container();
-
-        $grid = new Grid();
-        $grid->setRows([[[$leftContainer, 6], [$rightContainer, 6]]]);
-        $this->addElement($grid);
-
         if($ssl)
         {
-            $sslValidationWidget = $this->widget($leftContainer, 'sslValidation');
-            $this->validationFields($sslValidationWidget, $this->scope === self::SCOPE_ALL);
+            $this->validationFields($this->section('sslValidation', 'shield-check-outline'), $this->scope === self::SCOPE_ALL);
+            $this->csrFields($this->section('csrGenerator', 'key-variant'));
         }
 
         if($this->scope === self::SCOPE_SSL)
         {
-            $this->orderingFields($this->widget($leftContainer, 'ordering'));
-            $this->deliveryFields($this->widget($leftContainer, 'delivery'));
+            $this->orderingFields($this->section('ordering', 'web'));
+            $this->deliveryFields($this->section('delivery', 'file-document-outline'));
+            $this->messageFields($this->section('clientMessages', 'email-outline'));
         }
 
         if($this->scope === self::SCOPE_AUTOMATED)
         {
-            $this->autoInstallFields($this->widget($leftContainer, 'autoInstall'));
+            $this->autoInstallFields($this->section('autoInstall', 'cog-outline'));
         }
 
         if($ssl)
         {
-            $this->csrFields($this->widget($rightContainer, 'csrGenerator'));
-            $this->renewalFields($this->widget($rightContainer, 'renewals'), $this->scope === self::SCOPE_ALL);
+            $this->renewalFields($this->section('renewals', 'sync'), $this->scope === self::SCOPE_ALL);
+            $this->orderFields($this->section('recurringAndOneTime', 'credit-card-clock-outline'));
         }
 
         if($this->scope === self::SCOPE_SSL)
         {
-            $this->dueDateFields($this->widget($rightContainer, 'dueDates'));
+            $this->dueDateFields($this->section('dueDates', 'calendar-month-outline'));
         }
 
-        if($auto)
+        if($this->scope === self::SCOPE_ALL || $this->scope === self::SCOPE_AUTOMATED)
         {
-            $this->subscriptionFields($this->widget($rightContainer, 'renewalsSubscription'));
+            $this->subscriptionFields($this->section('renewalsSubscription', 'sync'));
         }
 
-        $toolbar = new Toolbar();
-        $toolbar->addElement(
-            (new ButtonSuccess())
-                ->setId('buttonSave')
-                ->setTitle($this->translate('save'))
-                ->onClick(new FormSubmit($this))
-        );
-
-        $this->addElement($toolbar);
-    }
-
-    protected function widget(Container $container, $title)
-    {
-        $widget = new Widget();
-        $widget->setTitle($this->translate($title));
-        $container->addElement($widget);
-
-        return $widget;
+        $this->saveBar(null, $this->scope === self::SCOPE_ALL);
     }
 
     protected function validationFields($widget, $withAutomated)
@@ -227,9 +206,14 @@ class SslSettingsForm extends Form implements AdminAreaInterface, AjaxComponentI
             $this->builder->addFieldInContainer($widget, (new Dropdown())->setName('autoReissueDaysBeforeExpire'));
         }
 
-        $recurringOrdersWidget = new Widget();
-        $recurringOrdersWidget->setTitle($this->translate('recurringOrders'));
-        $widget->addElement($recurringOrdersWidget);
+    }
+
+    /**
+     * Renewal invoices and reminders of recurring and one-time orders (two sub-sections of one section)
+     */
+    protected function orderFields($widget)
+    {
+        $recurringOrdersWidget = $this->subSection('recurringOrders', $widget);
 
         $recurringSwitcher = $this->builder->addFieldInContainer(
             $recurringOrdersWidget,
@@ -259,9 +243,7 @@ class SslSettingsForm extends Form implements AdminAreaInterface, AjaxComponentI
                 ->setDefaultValueAsFirstOption()
         );
 
-        $oneTimeOrdersWidget = new Widget();
-        $oneTimeOrdersWidget->setTitle($this->translate('oneTimeOrders'));
-        $widget->addElement($oneTimeOrdersWidget);
+        $oneTimeOrdersWidget = $this->subSection('oneTimeOrders', $widget);
 
         $oneTimeSwitcher = $this->builder->addFieldInContainer(
             $oneTimeOrdersWidget,
@@ -285,9 +267,7 @@ class SslSettingsForm extends Form implements AdminAreaInterface, AjaxComponentI
      */
     protected function subscriptionFields($widget)
     {
-        $recurringOrdersWidget = new Widget();
-        $recurringOrdersWidget->setTitle($this->translate('recurringOrders'));
-        $widget->addElement($recurringOrdersWidget);
+        $recurringOrdersWidget = $this->subSection('recurringOrders', $widget);
 
         $recurringSwitcher = $this->builder->addFieldInContainer(
             $recurringOrdersWidget,
@@ -321,6 +301,10 @@ class SslSettingsForm extends Form implements AdminAreaInterface, AjaxComponentI
         {
             $this->builder->addFieldInContainer($widget, (new Switcher())->setName('downloadFormat_' . $format)->addClass('switcher-revert'), true);
         }
+    }
+
+    protected function messageFields($widget)
+    {
         $this->builder->addFieldInContainer($widget, (new TextArea())->setName('processingGuide'), true);
         $this->builder->addFieldInContainer($widget, (new TextArea())->setName('issuedMessage'), true);
         $this->builder->addFieldInContainer($widget, (new Dropdown())->setName('certificateEmailTemplate'), true);

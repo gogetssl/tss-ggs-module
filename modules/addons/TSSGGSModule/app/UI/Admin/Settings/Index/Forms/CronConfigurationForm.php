@@ -5,6 +5,7 @@ namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Forms;
 
 use ModulesGarden\TSSGGSModule\App\Libs\Icons;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Shared\CronStatus;
+use ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Concerns\SettingsLayout;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Providers\CronSettingsProvider;
 use ModulesGarden\TSSGGSModule\Components\Button\ButtonSuccess;
 use ModulesGarden\TSSGGSModule\Components\Dropdown\Dropdown;
@@ -23,6 +24,8 @@ use ModulesGarden\TSSGGSModule\Core\Contracts\Components\AjaxComponentInterface;
  */
 class CronConfigurationForm extends Form implements AdminAreaInterface, AjaxComponentInterface
 {
+    use SettingsLayout;
+
     /** job => [setting key of its frequency (null: runs with every start), choices] */
     const JOBS = [
         'ProductPricingUpdate'      => ['cron1', ['1d', '1w', '1mo', 'never']],
@@ -104,20 +107,6 @@ class CronConfigurationForm extends Form implements AdminAreaInterface, AjaxComp
             ));
         }
 
-        $toolbar = new Toolbar();
-        $toolbar->setCss('tssggs-cronsave');
-        $toolbar->addElement(
-            (new ButtonSuccess())
-                ->setId('buttonSave')
-                ->setTitle($this->translate('saveChanges'))
-                ->onClick(new FormSubmit($this))
-        );
-        // the indicator switches to "Unsaved changes" as soon as a frequency is changed (one delegated listener)
-        $toolbar->addElement((new Text())->setText(
-            '<span id="tssggs-dirty" class="tssggs-dirty">' . $this->translate('noUnsaved') . '</span>'
-            . '<img src="data:," alt="" style="display:none" data-text="' . htmlspecialchars($this->translate('unsaved')) . '" onerror="if(!window.tssggsDirty){window.tssggsDirty=1;var t=this.getAttribute(\'data-text\');document.addEventListener(\'change\',function(e){var s=document.getElementById(\'tssggs-dirty\');if(s&&e.target.closest&&e.target.closest(\'#CronConfigurationForm\')){s.textContent=t;s.className=\'tssggs-dirty is-dirty\'}})}">'
-        ));
-
-        $this->addElement($toolbar);
+        $this->saveBar();
     }
 }

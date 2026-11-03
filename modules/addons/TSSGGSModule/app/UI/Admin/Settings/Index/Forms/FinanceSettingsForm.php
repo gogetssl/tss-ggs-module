@@ -4,32 +4,21 @@ namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Forms;
 
 
 use ModulesGarden\TSSGGSModule\App\Libs\Helpers;
-use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
-use ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Components\RevertSwitcher;
-use ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Providers\ApiSettingsProvider;
+use ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Concerns\SettingsLayout;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Providers\FinanceSettingsProvider;
-use ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Providers\SslSettingsProvider;
 use ModulesGarden\TSSGGSModule\Components\Alert\AlertInfo;
-use ModulesGarden\TSSGGSModule\Components\Button\ButtonPrimary;
-use ModulesGarden\TSSGGSModule\Components\Button\ButtonSuccess;
-use ModulesGarden\TSSGGSModule\Components\Container\Container;
-use ModulesGarden\TSSGGSModule\Components\Dropdown\Dropdown;
 use ModulesGarden\TSSGGSModule\Components\Form\Builder\BuilderCreator;
 use ModulesGarden\TSSGGSModule\Components\Form\Form;
-use ModulesGarden\TSSGGSModule\Components\FormInputPassword\FormInputPassword;
 use ModulesGarden\TSSGGSModule\Components\FormInputText\FormInputText;
-use ModulesGarden\TSSGGSModule\Components\Grid\Grid;
 use ModulesGarden\TSSGGSModule\Components\Number\Number;
-use ModulesGarden\TSSGGSModule\Components\Switcher\Switcher;
-use ModulesGarden\TSSGGSModule\Components\Toolbar\Toolbar;
-use ModulesGarden\TSSGGSModule\Components\Widget\Widget;
-use ModulesGarden\TSSGGSModule\Core\Components\Actions\FormSubmit;
 use ModulesGarden\TSSGGSModule\Core\Contracts\Components\AdminAreaInterface;
 use ModulesGarden\TSSGGSModule\Core\Contracts\Components\AjaxComponentInterface;
 
 
 class FinanceSettingsForm extends Form implements AdminAreaInterface, AjaxComponentInterface
 {
+    use SettingsLayout;
+
     protected $configuration;
 
     public function __construct($configuration = false)
@@ -46,21 +35,7 @@ class FinanceSettingsForm extends Form implements AdminAreaInterface, AjaxCompon
         $this->builder = BuilderCreator::oneColumn($this);
         $this->setId('FinanceSettingsForm');
 
-        $leftContainer  = new Container();
-        $rightContainer = new Container();
-
-        $grid = new Grid();
-        $grid->setRows([
-                           [
-                               [$leftContainer, 6], [$rightContainer, 6],
-                           ]
-                       ]);
-        $this->addElement($grid);
-
-        $majorSettingsWidget = new Widget();
-        $majorSettingsWidget->setTitle($this->translate('majorSettings'));
-        $leftContainer->addElement($majorSettingsWidget);
-
+        $majorSettingsWidget = $this->section('majorSettings', 'trending-up');
         $this->builder->addFieldInContainer(
             $majorSettingsWidget,
             (new Number())
@@ -72,9 +47,7 @@ class FinanceSettingsForm extends Form implements AdminAreaInterface, AjaxCompon
 
         if(!Helpers::getCurrencyIdByCode('USD')) //If USD not defined
         {
-            $exchangeRateWidget = new Widget();
-            $exchangeRateWidget->setTitle($this->translate('exchangeRate'));
-            $rightContainer->addElement($exchangeRateWidget);
+            $exchangeRateWidget = $this->section('exchangeRate', 'currency-usd');
 
             $this->builder->addFieldInContainer(
                 $exchangeRateWidget,
@@ -90,14 +63,6 @@ class FinanceSettingsForm extends Form implements AdminAreaInterface, AjaxCompon
             );
         }
 
-        $toolbar = new Toolbar();
-        $toolbar->addElement(
-            (new ButtonSuccess())
-                ->setId('buttonSave')
-                ->setTitle($this->translate('save'))
-                ->onClick(new FormSubmit($this))
-        );
-
-        $this->addElement($toolbar);
+        $this->saveBar();
     }
 }

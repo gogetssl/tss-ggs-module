@@ -1,0 +1,157 @@
+/* ---- Settings screens: one card, sections with an icon and a description, label left / control right, sticky Save bar ---- */
+
+#layers2 .tssggs-settings .tssggs-page__desc {
+    margin: 0 0 14px;
+    color: var(--tw-muted);
+    font-size: 12px;
+    line-height: 18px;
+}
+
+/* a section: icon + title, description, rows; a divider line between sections */
+#layers2 .tssggs-settings form .lu-widget.tssggs-sec {
+    margin: 0;
+    padding: 22px 0;
+    border: 0;
+    border-top: 1px solid var(--tw-border);
+    border-radius: 0;
+    background: transparent;
+}
+
+#layers2 .tssggs-settings form .lu-widget.tssggs-sec:first-child {
+    padding-top: 6px;
+    border-top: 0;
+}
+
+#layers2 .tssggs-settings form .lu-widget.tssggs-sec > .lu-widget__header {
+    margin: 0;
+    padding: 0;
+}
+
+#layers2 .tssggs-settings form .lu-widget.tssggs-sec > .lu-widget__header .lu-widget__top {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+#layers2 .tssggs-settings form .lu-widget.tssggs-sec > .lu-widget__header .lu-widget__icon {
+    display: inline-flex;
+    color: var(--tw-primary);
+}
+
+#layers2 .tssggs-settings form .lu-widget.tssggs-sec > .lu-widget__header .lu-top__title {
+    color: var(--tw-fg);
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    line-height: 20px;
+}
+
+#layers2 .tssggs-settings .tssggs-sec__desc {
+    margin: 2px 0 6px;
+    color: var(--tw-muted);
+    font-size: 12px;
+    line-height: 18px;
+}
+
+/* a heading inside a section ("Recurring Orders"): bold label, no icon, no divider */
+#layers2 .tssggs-settings form .lu-widget.tssggs-sec.tssggs-sec--sub {
+    padding: 14px 0 0;
+    border-top: 0;
+}
+
+#layers2 .tssggs-settings form .lu-widget.tssggs-sec--sub > .lu-widget__header .lu-top__title {
+    font-size: 12.5px !important;
+}
+
+/* rows: the label on the left, the control on the right, a divider between rows */
+#layers2 .tssggs-settings form .tssggs-sec .lu-form-group {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(200px, 300px);
+    column-gap: 24px;
+    align-items: center;
+    margin: 0;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--tw-border);
+}
+
+#layers2 .tssggs-settings form .tssggs-sec .lu-form-group:last-child {
+    border-bottom: 0;
+}
+
+#layers2 .tssggs-settings form .tssggs-sec .lu-form-group > .lu-form-label,
+#layers2 .tssggs-settings form .tssggs-sec .lu-form-group > label {
+    grid-column: 1;
+    margin: 0;
+    color: var(--tw-fg);
+    font-size: 12px;
+    font-weight: 500;
+}
+
+#layers2 .tssggs-settings form .tssggs-sec .lu-form-group > :not(label):not(.lu-preloader-container) {
+    grid-column: 2;
+}
+
+#layers2 .tssggs-settings form .tssggs-sec .lu-form-group:has(textarea) {
+    align-items: start;
+}
+
+/* Yes / No rows: the label fills the row, the choice sits at its right edge */
+#layers2 .tssggs-settings form .tssggs-sec .lu-form-group.lu-form-check {
+    display: block;
+}
+
+#layers2 .tssggs-settings form .tssggs-sec .lu-form-check .tssggs-yn {
+    display: flex;
+    justify-content: space-between;
+    gap: 24px;
+    width: 100%;
+}
+
+#layers2 .tssggs-settings form .tssggs-sec .lu-form-check .tssggs-yn > .lu-form-text,
+#layers2 .tssggs-settings form .tssggs-sec .lu-form-check .tssggs-yn > span {
+    flex: 1 1 auto;
+    color: var(--tw-fg);
+    font-size: 12px;
+    font-weight: 500;
+}
+
+#layers2 .tssggs-settings form .tssggs-sec .lu-form-check .tssggs-yn__segments {
+    flex: 0 0 auto;
+}
+
+/* ---- the sticky Save bar ---- */
+#layers2 .tssggs-settings form .tssggs-savebar {
+    position: sticky;
+    bottom: 0;
+    z-index: 10;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 16px;
+    min-height: 56px;
+    margin: 8px -18px -18px;
+    padding: 12px 24px;
+    box-sizing: border-box;
+    border-top: 1px solid var(--tw-border);
+    border-radius: 0 0 var(--tw-radius) var(--tw-radius);
+    background: var(--tw-surface);
+}
+
+#layers2 .tssggs-settings form .tssggs-savebar .lu-btn[disabled] {
+    opacity: .45;
+    cursor: not-allowed;
+}
+
+#layers2 .tssggs-settings .tssggs-savebar__status {
+    color: var(--tw-muted);
+    font-size: 12px;
+}
+
+#layers2 .tssggs-settings .tssggs-savebar__status.is-dirty {
+    color: var(--tw-fg);
+    font-weight: 500;
+}
+
+#layers2 .tssggs-settings .tssggs-savebar__status.is-failed {
+    color: var(--tw-danger);
+    font-weight: 500;
+}
