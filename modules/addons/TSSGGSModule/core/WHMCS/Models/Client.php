@@ -64,52 +64,52 @@ class Client extends \WHMCS\User\Client
 {
     public function group()
     {
-        return $this->belongsTo("ModulesGarden\TSSGGSModule\Core\WHMCS\Models\ClientGroup", 'groupid');
+        return $this->belongsTo('ModulesGarden\\TSSGGSModule\\Core\\WHMCS\\Models\\ClientGroup', 'groupid');
     }
 
     public function services()
     {
-        return $this->hasMany("ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Hosting", 'userid');
+        return $this->hasMany('ModulesGarden\\TSSGGSModule\\Core\\WHMCS\\Models\\Hosting', 'userid');
     }
 
     public function invoices()
     {
-        return $this->hasMany("ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Invoice", 'userid');
+        return $this->hasMany('ModulesGarden\\TSSGGSModule\\Core\\WHMCS\\Models\\Invoice', 'userid');
     }
 
     public function orders()
     {
-        return $this->hasMany("ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Order", 'userid');
+        return $this->hasMany('ModulesGarden\\TSSGGSModule\\Core\\WHMCS\\Models\\Order', 'userid');
     }
 
     public function transactions()
     {
-        return $this->hasMany("ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Transaction", 'userid');
+        return $this->hasMany('ModulesGarden\\TSSGGSModule\\Core\\WHMCS\\Models\\Transaction', 'userid');
     }
 
     public function domains()
     {
-        return $this->hasMany("ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Service\Domain", "userid");
+        return $this->hasMany('ModulesGarden\\TSSGGSModule\\Core\\WHMCS\\Models\\Service\\Domain', "userid");
     }
 
     public function addons()
     {
-        return $this->hasMany("ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Service\Addon", "userid");
+        return $this->hasMany('ModulesGarden\\TSSGGSModule\\Core\\WHMCS\\Models\\Service\\Addon', "userid");
     }
 
     public function contacts()
     {
-        return $this->hasMany("ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Contact", "userid");
+        return $this->hasMany('ModulesGarden\\TSSGGSModule\\Core\\WHMCS\\Models\\Contact', "userid");
     }
 
     public function billingContact()
     {
-        return $this->hasOne("ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Contact", "id", "billingcid");
+        return $this->hasOne('ModulesGarden\\TSSGGSModule\\Core\\WHMCS\\Models\\Contact', "id", "billingcid");
     }
 
     public function currencyObj()
     {
-        return $this->hasOne("ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Currency", 'id', 'currency');
+        return $this->hasOne('ModulesGarden\\TSSGGSModule\\Core\\WHMCS\\Models\\Currency', 'id', 'currency');
     }
 
     /**
@@ -117,7 +117,7 @@ class Client extends \WHMCS\User\Client
      */
     public function hostings()
     {
-        return $this->hasMany("ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Hosting", 'userid');
+        return $this->hasMany('ModulesGarden\\TSSGGSModule\\Core\\WHMCS\\Models\\Hosting', 'userid');
     }
 
     public function getFirstnameAttribute()

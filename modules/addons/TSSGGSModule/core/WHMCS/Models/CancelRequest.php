@@ -17,6 +17,6 @@ class CancelRequest extends \WHMCS\Service\CancellationRequest
 {
     public function service()
     {
-        return $this->belongsTo("ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Service", "relid");
+        return $this->belongsTo('ModulesGarden\\TSSGGSModule\\Core\\WHMCS\\Models\\Service', "relid");
     }
 }

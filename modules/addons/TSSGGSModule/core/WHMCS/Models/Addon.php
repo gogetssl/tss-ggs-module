@@ -22,11 +22,11 @@ class Addon extends \WHMCS\Product\Addon
 {
     public function customFields()
     {
-        return $this->hasMany("ModulesGarden\TSSGGSModule\Core\WHMCS\Models\CustomField", "relid")->where("type", "=", "addon")->orderBy("sortorder");
+        return $this->hasMany('ModulesGarden\\TSSGGSModule\\Core\\WHMCS\\Models\\CustomField', "relid")->where("type", "=", "addon")->orderBy("sortorder");
     }
 
     public function serviceAddons()
     {
-        return $this->hasMany("ModulesGarden\TSSGGSModule\Core\WHMCS\Models\ServiceAddon", "addonid");
+        return $this->hasMany('ModulesGarden\\TSSGGSModule\\Core\\WHMCS\\Models\\ServiceAddon', "addonid");
     }
 }

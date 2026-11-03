@@ -25,17 +25,17 @@ class CustomField extends \WHMCS\CustomField
 {
     public function product()
     {
-        return $this->hasOne("ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Product", "id", "relid");
+        return $this->hasOne('ModulesGarden\\TSSGGSModule\\Core\\WHMCS\\Models\\Product', "id", "relid");
     }
 
     public function addon()
     {
-        return $this->hasOne("ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Addon", "id", "relid");
+        return $this->hasOne('ModulesGarden\\TSSGGSModule\\Core\\WHMCS\\Models\\Addon', "id", "relid");
     }
 
     public function customFieldValues()
     {
-        return $this->hasMany("ModulesGarden\TSSGGSModule\Core\WHMCS\Models\CustomFieldValue", "fieldid");
+        return $this->hasMany('ModulesGarden\\TSSGGSModule\\Core\\WHMCS\\Models\\CustomFieldValue', "fieldid");
     }
 
     public function getValueByRelid($relid)

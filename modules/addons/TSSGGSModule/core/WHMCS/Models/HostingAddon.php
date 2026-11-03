@@ -50,7 +50,7 @@ class HostingAddon extends EloquentModel
 
     public function addon()
     {
-        return $this->belongsTo("ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Addon", 'addonid');
+        return $this->belongsTo('ModulesGarden\\TSSGGSModule\\Core\\WHMCS\\Models\\Addon', 'addonid');
     }
 
     public function getBillingcycleFriendlyAttribute()
@@ -60,11 +60,11 @@ class HostingAddon extends EloquentModel
 
     public function hosting()
     {
-        return $this->belongsTo("ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Hosting", 'hostingid');
+        return $this->belongsTo('ModulesGarden\\TSSGGSModule\\Core\\WHMCS\\Models\\Hosting', 'hostingid');
     }
 
     public function order()
     {
-        return $this->belongsTo("ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Order", 'orderid');
+        return $this->belongsTo('ModulesGarden\\TSSGGSModule\\Core\\WHMCS\\Models\\Order', 'orderid');
     }
 }

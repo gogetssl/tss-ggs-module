@@ -9,32 +9,32 @@ class Product extends \WHMCS\Product\Product
      */
     public function group()
     {
-        return $this->belongsTo("ModulesGarden\TSSGGSModule\Core\WHMCS\Models\ProductGroup", 'gid');
+        return $this->belongsTo('ModulesGarden\\TSSGGSModule\\Core\\WHMCS\\Models\\ProductGroup', 'gid');
     }
 
     public function productGroup()
     {
-        return $this->belongsTo("ModulesGarden\TSSGGSModule\Core\WHMCS\Models\ProductGroup", 'gid');
+        return $this->belongsTo('ModulesGarden\\TSSGGSModule\\Core\\WHMCS\\Models\\ProductGroup', 'gid');
     }
 
     public function upgrades()
     {
-        return $this->hasMany("ModulesGarden\TSSGGSModule\Core\WHMCS\Models\ProductUpgrade", 'product_id');
+        return $this->hasMany('ModulesGarden\\TSSGGSModule\\Core\\WHMCS\\Models\\ProductUpgrade', 'product_id');
     }
 
     public function upgradeProducts()
     {
-        return $this->belongsToMany("ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Product", "tblproduct_upgrade_products", "product_id", "upgrade_product_id");
+        return $this->belongsToMany('ModulesGarden\\TSSGGSModule\\Core\\WHMCS\\Models\\Product', "tblproduct_upgrade_products", "product_id", "upgrade_product_id");
     }
 
     public function services()
     {
-        return $this->hasMany("ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Service", "packageid");
+        return $this->hasMany('ModulesGarden\\TSSGGSModule\\Core\\WHMCS\\Models\\Service', "packageid");
     }
 
     public function customFields()
     {
-        return $this->hasMany("ModulesGarden\TSSGGSModule\Core\WHMCS\Models\CustomField", "relid")
+        return $this->hasMany('ModulesGarden\\TSSGGSModule\\Core\\WHMCS\\Models\\CustomField', "relid")
             ->where("type", "=", "product")
             ->orderBy("sortorder");
     }

@@ -16,6 +16,6 @@ class ClientGroup extends \WHMCS\User\Client\Group
 {
     public function clients()
     {
-        return $this->hasMany("ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Client", 'groupid');
+        return $this->hasMany('ModulesGarden\\TSSGGSModule\\Core\\WHMCS\\Models\\Client', 'groupid');
     }
 }

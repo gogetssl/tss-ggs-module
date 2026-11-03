@@ -51,11 +51,11 @@ class ProductUpgrade extends EloquentModel
 
     public function newproduct()
     {
-        return $this->belongsTo("ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Product", 'upgrade_product_id');
+        return $this->belongsTo('ModulesGarden\\TSSGGSModule\\Core\\WHMCS\\Models\\Product', 'upgrade_product_id');
     }
 
     public function product()
     {
-        return $this->belongsTo("ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Product", 'product_id');
+        return $this->belongsTo('ModulesGarden\\TSSGGSModule\\Core\\WHMCS\\Models\\Product', 'product_id');
     }
 }

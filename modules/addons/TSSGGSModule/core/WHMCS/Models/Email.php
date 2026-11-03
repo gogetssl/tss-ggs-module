@@ -6,6 +6,6 @@ class Email extends \WHMCS\Mail\Log
 {
     public function client()
     {
-        return $this->belongsTo("ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Client", 'userid');
+        return $this->belongsTo('ModulesGarden\\TSSGGSModule\\Core\\WHMCS\\Models\\Client', 'userid');
     }
 }

@@ -9,17 +9,17 @@ class ProductConfigOption extends \WHMCS\Product\ConfigOption
      */
     public function suboptions()
     {
-        return $this->hasMany("ModulesGarden\TSSGGSModule\Core\WHMCS\Models\ProductConfigOptionSub", 'configid', "id");
+        return $this->hasMany('ModulesGarden\\TSSGGSModule\\Core\\WHMCS\\Models\\ProductConfigOptionSub', 'configid', "id");
     }
 
     public function selectableOptions()
     {
-        return $this->hasMany("ModulesGarden\TSSGGSModule\Core\WHMCS\Models\ProductConfigOptionSub", "configid", "id");
+        return $this->hasMany('ModulesGarden\\TSSGGSModule\\Core\\WHMCS\\Models\\ProductConfigOptionSub', "configid", "id");
     }
 
     public function configGroup()
     {
-        return $this->belongsTo("ModulesGarden\TSSGGSModule\Core\WHMCS\Models\ProductConfigGroup", "gid", "id");
+        return $this->belongsTo('ModulesGarden\\TSSGGSModule\\Core\\WHMCS\\Models\\ProductConfigGroup', "gid", "id");
     }
 
     public function scopeOfProductId($query, $productId)
