@@ -33,9 +33,16 @@ class Logs implements LoggerInterface
         }
 
         // The same message for the same service within a few hours (a failing cron retried every 5 minutes) is one row with a counter
-        $last = Log::where('type', $level)->where('message', $message)
-            ->where('date', '>=', date('Y-m-d H:i:s', time() - self::REPEAT_WINDOW))->orderBy('id', 'desc')->first();
-        if($last && (((array)$last->data)['service'] ?? null) == ($data['service'] ?? null))
+        $last = null;
+        foreach(Log::where('type', $level)->where('message', $message)->where('date', '>=', date('Y-m-d H:i:s', time() - self::REPEAT_WINDOW))->orderBy('id', 'desc')->limit(50)->get() as $candidate)
+        {
+            if((((array)$candidate->data)['service'] ?? null) == ($data['service'] ?? null))
+            {
+                $last = $candidate;
+                break;
+            }
+        }
+        if($last)
         {
             $old             = (array)$last->data;
             $data['repeats'] = (int)($old['repeats'] ?? 0) + 1;
