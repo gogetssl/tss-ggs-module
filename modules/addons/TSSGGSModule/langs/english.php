@@ -317,6 +317,14 @@ $_LANG['admin.breadcrumbs.Statistics']                               = 'Statisti
 $_LANG['admin.statistics.index.statistics_container.statisticsInfo'] = 'Income figures are calculated from paid WHMCS invoices of the products managed by this module. The charts cover the last six months (total income) and the five best-selling products; the tables list the most profitable resellers and the latest invoices.';
 $_LANG['admin.statistics.index.widgets.total_income_widget.title']   = 'Total Income';
 $_LANG['admin.statistics.index.widgets.product_income_widget.title'] = 'Product Income (Top 5)';
+$_LANG['admin.statistics.index.widgets.expiring_certificates_widget.title'] = 'Expiring Certificates';
+$_LANG['admin.statistics.index.widgets.orders_by_status_widget.title'] = 'Orders by Status';
+$_LANG['admin.statistics.index.widgets.revenue_by_provider_widget.title'] = 'Revenue by Provider (Last 6 Months)';
+$_LANG['admin.statistics.index.graphs.expiring_certificates_graph.expired'] = 'Expired';
+$_LANG['admin.statistics.index.graphs.expiring_certificates_graph.days30'] = 'Next 30 days';
+$_LANG['admin.statistics.index.graphs.expiring_certificates_graph.days60'] = '31-60 days';
+$_LANG['admin.statistics.index.graphs.expiring_certificates_graph.days90'] = '61-90 days';
+$_LANG['admin.statistics.index.graphs.expiring_certificates_graph.certificates'] = 'Active certificates';
 $_LANG['admin.statistics.index.widgets.resellers_widget.title']      = 'Most Profitable Resellers';
 $_LANG['admin.statistics.index.widgets.invoices_widget.title']       = 'Latest Invoices';
 

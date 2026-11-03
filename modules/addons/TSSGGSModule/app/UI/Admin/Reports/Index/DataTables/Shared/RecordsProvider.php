@@ -81,6 +81,7 @@ class RecordsProvider
                                     'tblhosting.domainstatus',
                                     'tblproducts.name',
                                     'tblproducts.id as productId',
+                                    'tblproducts.configoption1',
                                     'tblproducts.configoption2',
                                     'tblproducts.configoption3',
                                     'tblproducts.configoption4',
@@ -186,6 +187,9 @@ class RecordsProvider
             $profit               = ($cost > 0) ? $income - $cost : 0;
 
             $rows[] = [
+                'serviceId'      => $item->serviceId,
+                'serviceStatus'  => $item->domainstatus,
+                'vendor'         => $item->configoption1,
                 'date'           => $item->regdate,
                 'storeId'        => $storeId,
                 'clientDetails'  => "{$clientName}<br><strong>{$this->translate('country')}</strong> {$item->country}",
