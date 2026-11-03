@@ -17,6 +17,7 @@ class ConfigurationProvider extends CrudProvider
     {
         $this->data->set('logging', GeneralSettings::enabled('internalLog'));
         $this->data->set('api_log', GeneralSettings::enabled('apiLog'));
+        $this->data->set('api_log_reads', GeneralSettings::enabled('apiLogReads'));
         $this->data->set('types', $this->formData->get('types', ModuleSettings::get('logs.types')));
         $this->data->set('auto_prune', $this->formData->get('auto_prune', ModuleSettings::get('logs.auto_prune', 1)));
         $this->data->set('auto_prune_older_than', $this->formData->get('auto_prune_older_than', ModuleSettings::get('logs.auto_prune_older_than', 30)));
@@ -41,6 +42,7 @@ class ConfigurationProvider extends CrudProvider
         GeneralSettingsProvider::saveGeneral([
             'internalLog' => $this->formData->get('logging'),
             'apiLog'      => $this->formData->get('api_log'),
+            'apiLogReads' => $this->formData->get('api_log_reads'),
         ]);
 
         ModuleSettings::save([

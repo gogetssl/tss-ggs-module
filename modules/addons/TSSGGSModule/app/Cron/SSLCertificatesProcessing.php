@@ -120,6 +120,7 @@ class SSLCertificatesProcessing extends AbstractCommand
 
                 $request = ['orderData' => $orderData, 'orderFiles' => $orderFiles];
 
+                $previousStatus = Request::where('serviceid', $certificate['id'])->where('name', 'certificate')->value('status');
                 Request::where('serviceid', $certificate['id'])->where('name', 'certificate')->delete();
                 Request::insert([
                     'serviceid' => $certificate['id'],
@@ -250,7 +251,10 @@ class SSLCertificatesProcessing extends AbstractCommand
                     ]);
                 }
 
-                Logger::info("The certificate details has been updated", ['service' => $certificate['id']]);
+                if($previousStatus !== $orderData['order']['status'])
+                {
+                    Logger::info('Certificate status: ' . ($previousStatus ?: 'new') . ' -> ' . $orderData['order']['status'], ['service' => $certificate['id'], 'from' => $previousStatus, 'to' => $orderData['order']['status']]);
+                }
 
             } catch (Exception $e) {
 

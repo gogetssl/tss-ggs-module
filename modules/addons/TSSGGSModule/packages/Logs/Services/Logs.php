@@ -10,6 +10,8 @@ use Psr\Log\LoggerInterface;
 
 class Logs implements LoggerInterface
 {
+    const REPEAT_WINDOW = 21600; // 6 hours
+
     public function alert($message, array $data = [])
     {
         $this->log(__FUNCTION__, $message, $data);
@@ -27,6 +29,19 @@ class Logs implements LoggerInterface
         //log only selected types
         if (!empty($settings) && !in_array($level, $settings))
         {
+            return;
+        }
+
+        // The same message for the same service within a few hours (a failing cron retried every 5 minutes) is one row with a counter
+        $last = Log::where('type', $level)->where('message', $message)
+            ->where('date', '>=', date('Y-m-d H:i:s', time() - self::REPEAT_WINDOW))->orderBy('id', 'desc')->first();
+        if($last && (((array)$last->data)['service'] ?? null) == ($data['service'] ?? null))
+        {
+            $old             = (array)$last->data;
+            $data['repeats'] = (int)($old['repeats'] ?? 0) + 1;
+            $data['since']   = $old['since'] ?? (string)$last->date;
+            $last->update(['date' => (new DateTime())->format('Y-m-d H:i:s'), 'data' => $data]);
+
             return;
         }
 

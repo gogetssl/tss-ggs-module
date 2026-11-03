@@ -62,6 +62,9 @@ $_LANG['packages.logs.forms.edit_configuration_form.logging_description'] = 'Rec
 $_LANG['packages.logs.forms.edit_configuration_form.api_log']             = 'API requests';
 $_LANG['packages.logs.forms.edit_configuration_form.api_log_description'] = 'Record every request to the certificate gateway with its answer. Needs Module Log on.';
 
+$_LANG['packages.logs.forms.edit_configuration_form.api_log_reads']             = 'Also log successful reads';
+$_LANG['packages.logs.forms.edit_configuration_form.api_log_reads_description'] = 'By default only failed requests and requests that change something are logged. Turn this on only while debugging: the crons read every pending order every few minutes.';
+
 //Export CSV Modal
 $_LANG['packages.logs.buttons.export_csv_button.title']                    = 'Export CSV';
 $_LANG['packages.logs.modals.export_csv_modal.title']                      = 'Export CSV';

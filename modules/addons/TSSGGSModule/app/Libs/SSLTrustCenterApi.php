@@ -607,6 +607,10 @@ class SSLTrustCenterApi
 
             $path   = strtok($uri, '?');
             $failed = $error !== '' || $httpCode < 200 || $httpCode >= 400;
+            if(!$failed && $method === 'GET' && !GeneralSettings::enabled('apiLogReads'))
+            {
+                return; // the crons read the same orders every few minutes - only failures and changes are worth a row
+            }
             $reason = $error;
             if($error === '' && $failed)
             {

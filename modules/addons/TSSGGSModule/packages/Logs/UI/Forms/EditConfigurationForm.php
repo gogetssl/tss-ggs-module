@@ -21,6 +21,7 @@ class EditConfigurationForm extends Form implements AjaxComponentInterface, Admi
     {
         $this->builder->addField((new Switcher())->setName('logging'), true);
         $this->builder->addField((new Switcher())->setName('api_log'), true);
+        $this->builder->addField((new Switcher())->setName('api_log_reads'), true);
 
         $this->builder->addField((new Dropdown())
             ->setMultiple()

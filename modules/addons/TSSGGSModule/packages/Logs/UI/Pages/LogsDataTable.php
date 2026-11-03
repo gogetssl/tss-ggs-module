@@ -98,7 +98,9 @@ class LogsDataTable extends DataTable implements AdminAreaInterface, AjaxCompone
                 }
             }
 
-            return strtr($this->translate($fieldValue), $replace);
+            $suffix = !empty($row['data']['repeats']) ? ' (x' . ((int)$row['data']['repeats'] + 1) . ', since ' . substr((string)($row['data']['since'] ?? ''), 11, 5) . ')' : '';
+
+            return strtr($this->translate($fieldValue), $replace) . $suffix;
         });
 
         if (Config::get('logs.related_item.show', true))

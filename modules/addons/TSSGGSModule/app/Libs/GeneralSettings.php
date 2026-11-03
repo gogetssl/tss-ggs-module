@@ -36,6 +36,7 @@ class GeneralSettings
         'certificateLog'           => true,
         'internalLog'              => true,
         'apiLog'                   => true,
+        'apiLogReads'              => false,
         // Lifecycle
         'terminateCancelsOrder'    => true,
         'terminateUnpaidOnExpiry'  => true,
