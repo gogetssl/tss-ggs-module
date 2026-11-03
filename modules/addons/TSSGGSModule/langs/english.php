@@ -645,7 +645,13 @@ $_LANG['admin.breadcrumbs.Products'] = 'Products';
 
 // Automation Queue (AutoInstall cron tasks)
 $_LANG['admin.breadcrumbs.AutomationQueue'] = 'Automation Queue';
-$_LANG['admin.automation_queue.index.automation_queue_container.queueInfo'] = 'This is the work list of SSL AutoInstall, the feature that installs certificates on cPanel automatically. The cron picks up tasks from here and processes them one by one. Validate waits until the certificate order is issued by the vendor. Install puts the issued certificate on the hosting account. Reissue replaces a certificate that is close to expiry. Pending tasks are waiting for the next cron run, Processing is running now, and Done is finished. A task that fails is retried up to 5 times, then it gets the Error status and stops: read the Message column to see why, fix the cause, and use Reset Task to run it again. Nothing on this page changes prices or orders; it only shows what the automation has done and lets you restart failed tasks.';
+$_LANG['admin.automation_queue.index.automation_queue_container.about_title'] = 'What you will find here';
+$_LANG['admin.automation_queue.index.automation_queue_container.about_intro'] = 'The work list of SSL AutoInstall, which installs certificates on cPanel automatically. The cron processes the tasks one by one. This page only shows what the automation has done; it does not change prices or orders.';
+$_LANG['admin.automation_queue.index.automation_queue_container.about_validate'] = 'Validate: waits until the vendor has issued the certificate, then creates an Install task.';
+$_LANG['admin.automation_queue.index.automation_queue_container.about_install'] = 'Install: puts the issued certificate on the hosting account.';
+$_LANG['admin.automation_queue.index.automation_queue_container.about_reissue'] = 'Reissue: replaces a certificate that is close to expiry.';
+$_LANG['admin.automation_queue.index.automation_queue_container.about_status'] = 'Statuses: Pending waits for the next cron run, Processing is running now, Done is finished, Cancelled was replaced by a newer task.';
+$_LANG['admin.automation_queue.index.automation_queue_container.about_error'] = 'A failed task is retried up to 5 times, then it gets the Error status and stops. Read the Message column, fix the cause, and use Reset Task to run it again.';
 
 $_LANG['admin.automation_queue.index.data_tables.queue.data_table.id']       = 'ID';
 $_LANG['admin.automation_queue.index.data_tables.queue.data_table.service']  = 'Service';
