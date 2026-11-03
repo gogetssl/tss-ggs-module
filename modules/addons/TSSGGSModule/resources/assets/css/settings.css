@@ -173,4 +173,4 @@ body:has(.tssggs-savebar) {
 
 /* Logs: note under the counter cards */
 #layers2 .tssggs-cardnote { margin-top: 4px; }
-#layers2 .tssggs-cardnote small { display: block; color: var(--tw-fg-soft, #5b6673); font-size: 12px; line-height: 16px; white-space: normal; }
+#layers2 .tssggs-cardnote small { display: block; color: var(--tw-fg-soft, #5b6673); font-size: 14px; line-height: 20px; white-space: normal; }
