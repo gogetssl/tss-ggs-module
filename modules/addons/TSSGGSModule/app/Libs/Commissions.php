@@ -97,7 +97,7 @@ class Commissions
             {
                 // client + product (3) > client + all products (2) > all clients + product (1) > all clients + all products (0)
                 $rank = ((int)$rule->client_id ? 2 : 0) + ((int)$rule->product_id ? 1 : 0);
-                if($best === null || $rank > $best[0]))
+                if($best === null || $rank > $best[0])
                 {
                     $best = [$rank, (float)$rule->commission];
                 }
