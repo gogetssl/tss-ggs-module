@@ -2,6 +2,7 @@
 
 namespace ModulesGarden\TSSGGSModule\App\Migration;
 
+use ModulesGarden\TSSGGSModule\App\Libs\Edition;
 use ModulesGarden\TSSGGSModule\App\Migration\Readers\GgsReader;
 use ModulesGarden\TSSGGSModule\App\Migration\Readers\LegacyReaderInterface;
 use ModulesGarden\TSSGGSModule\App\Migration\Readers\TssReader;
@@ -14,7 +15,8 @@ class Detector
     /** @return LegacyReaderInterface[] keyed by source */
     public static function readers(): array
     {
-        return ['ggs' => new GgsReader(), 'tss' => new TssReader()];
+        // GoGetSSL Module migrates from the GoGetSSL legacy module, TheSSLStore Plugin from the TheSSLStore one
+        return Edition::get() === Edition::TSS ? ['tss' => new TssReader()] : ['ggs' => new GgsReader()];
     }
 
     public static function reader(string $source): LegacyReaderInterface

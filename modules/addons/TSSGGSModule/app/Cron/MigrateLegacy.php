@@ -120,9 +120,9 @@ class MigrateLegacy extends AbstractCommand
     protected function source(InputInterface $input): string
     {
         $source = strtolower((string)$input->getOption('source'));
-        if(!in_array($source, ['ggs', 'tss'], true))
+        if(!in_array($source, [\ModulesGarden\TSSGGSModule\App\Libs\Edition::get()], true))
         {
-            throw new \InvalidArgumentException('--source=ggs|tss is required');
+            throw new \InvalidArgumentException('--source=' . \ModulesGarden\TSSGGSModule\App\Libs\Edition::get() . ' is required');
         }
 
         return $source;

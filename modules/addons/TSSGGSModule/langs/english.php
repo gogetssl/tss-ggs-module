@@ -76,7 +76,7 @@ $_LANG['admin.home.index.widgets.reporting_widget.sendReport'] = 'Send report';
 
 
 $_LANG['admin.migration.title']                 = 'Legacy module migration';
-$_LANG['admin.migration.none_found']            = 'No legacy GoGetSSL or TheSSLStore module was found on this installation.';
+$_LANG['admin.migration.none_found']            = 'No legacy module of an earlier version of this plugin was found on this installation.';
 $_LANG['admin.migration.card_products']         = 'Products';
 $_LANG['admin.migration.card_products_sub']     = ':hidden hidden, :retired retired';
 $_LANG['admin.migration.card_services']         = 'Active services';
@@ -102,7 +102,7 @@ $_LANG['admin.migration.btn_skip']              = 'Skip (keep standalone)';
 $_LANG['admin.migration.credentials_already_set'] = 'API credentials: this module has its own.';
 $_LANG['admin.migration.credentials_available']   = 'API credentials: will be copied from the legacy module if still empty when the migration starts.';
 $_LANG['admin.migration.credentials_missing']     = 'API credentials: none in this module nor in the legacy module; enter them in Settings before migrating.';
-$_LANG['admin.migration.start_defaults']        = 'Start migration: backup tables first; AutoInstall private keys are fetched from cPanel (TheSSLStore); the legacy addon is deactivated after the switch; legacy log tables are included in the backup.';
+$_LANG['admin.migration.start_defaults']        = 'Start migration: backup tables first; AutoInstall private keys are fetched from cPanel; the legacy addon is deactivated after the switch; legacy log tables are included in the backup.';
 $_LANG['admin.migration.btn_start_nokeys']      = 'Start without fetching cPanel keys';
 $_LANG['admin.migration.btn_start_keeplegacy']  = 'Start and keep the legacy addon active';
 $_LANG['admin.migration.confirm_start']         = 'Start the migration now? Backup tables are created first. Do not configure SSL services while it runs.';
@@ -1275,7 +1275,7 @@ $_LANG['admin.settings.index.forms.logs_settings_form.certificateLog_description
 $_LANG['admin.settings.index.forms.logs_settings_form.internalLog'] = 'Module Log';
 $_LANG['admin.settings.index.forms.logs_settings_form.internalLog_description'] = 'Technical messages of the module (gateway and cron errors, notices), on the Logs page. With it off, failures are harder to trace';
 $_LANG['admin.settings.index.forms.logs_settings_form.apiLog'] = 'API requests in Module Log';
-$_LANG['admin.settings.index.forms.logs_settings_form.apiLog_description'] = 'Add every request to the GoGetSSL / The SSL Store gateway and its answer to the Module Log, so a failed order or sync can be traced. Needs Module Log on. Keys and passwords are masked. Turn it off if the log grows too fast';
+$_LANG['admin.settings.index.forms.logs_settings_form.apiLog_description'] = 'Add every request to the certificate gateway and its answer to the Module Log, so a failed order or sync can be traced. Needs Module Log on. Keys and passwords are masked. Turn it off if the log grows too fast';
 $_LANG['admin.settings.index.forms.logs_settings_form.whmcsLogs'] = 'WHMCS logs';
 $_LANG['admin.settings.index.forms.logs_settings_form.whmcsLogs_about'] = 'Written into WHMCS itself and read there, not in this module.';
 $_LANG['admin.settings.index.forms.logs_settings_form.whmcsActivityLog'] = 'WHMCS Activity Log';

@@ -623,7 +623,7 @@ class SSLTrustCenterApi
             $data['api'] = [
                 'provider'  => $this->type,
                 'method'    => $method,
-                'url'       => $this->apiUrl . $uri,
+                'url'       => Edition::get() === Edition::GGS ? $this->apiUrl . $uri : '/whmcs/v2' . $uri,
                 'http_code' => $httpCode ?: 'no response',
                 'duration'  => round($seconds, 2) . ' s',
                 'request'   => self::logBody($requestBody),

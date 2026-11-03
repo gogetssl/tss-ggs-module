@@ -166,7 +166,7 @@ class Migration extends AbstractController implements AdminAreaInterface
     protected function source(): string
     {
         $source = strtolower((string)($_REQUEST['source'] ?? ''));
-        if(!in_array($source, ['ggs', 'tss'], true))
+        if(!in_array($source, [\ModulesGarden\TSSGGSModule\App\Libs\Edition::get()], true))
         {
             throw new \InvalidArgumentException('Unknown legacy source');
         }

@@ -60,7 +60,7 @@ $_LANG['packages.logs.forms.clean_log_form.deletingLogsIsNotAllowed'] = 'Deletin
 $_LANG['packages.logs.forms.edit_configuration_form.logging']             = 'Module Log';
 $_LANG['packages.logs.forms.edit_configuration_form.logging_description'] = 'Record the technical events of the module (cron results, errors, order actions). With it off, nothing new is written here.';
 $_LANG['packages.logs.forms.edit_configuration_form.api_log']             = 'API requests';
-$_LANG['packages.logs.forms.edit_configuration_form.api_log_description'] = 'Record every request to the GoGetSSL / The SSL Store gateway with its answer. Needs Module Log on.';
+$_LANG['packages.logs.forms.edit_configuration_form.api_log_description'] = 'Record every request to the certificate gateway with its answer. Needs Module Log on.';
 
 //Export CSV Modal
 $_LANG['packages.logs.buttons.export_csv_button.title']                    = 'Export CSV';
@@ -100,7 +100,7 @@ $_LANG['packages.logs.formatters.related_item.ticket']  = "Ticket";
 
 $_LANG['packages.logs.widgets.summary.aboutTitle'] = 'What you will find here';
 $_LANG['packages.logs.widgets.summary.aboutIntro'] = 'The technical log of the module: what the crons and the order actions did, and every request sent to the certificate gateway with its answer. Use it to find out why an order, validation or sync failed.';
-$_LANG['packages.logs.widgets.summary.aboutApi'] = 'API requests: each call to the GoGetSSL / The SSL Store gateway is logged as API, with the method, URL, HTTP code and duration.';
+$_LANG['packages.logs.widgets.summary.aboutApi'] = 'API requests: each call to the certificate gateway is logged as API, with the method, URL, HTTP code and duration.';
 $_LANG['packages.logs.widgets.summary.aboutError'] = 'Error entries are failures: an API answer with an error code, an exception in a cron, or an action that could not finish.';
 $_LANG['packages.logs.widgets.summary.aboutDetails'] = 'Show details opens the full request and response (keys and passwords are masked), the service and client concerned, and the other entries of the same service around that time.';
 $_LANG['packages.logs.widgets.summary.aboutRelated'] = 'Related Item links to the service the entry is about. Click it to open the service.';
