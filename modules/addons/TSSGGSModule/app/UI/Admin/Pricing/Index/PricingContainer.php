@@ -3,6 +3,7 @@
 namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Pricing\Index;
 
 use ModulesGarden\TSSGGSModule\App\Http\Admin\Pricing as PricingController;
+use ModulesGarden\TSSGGSModule\App\Libs\Commissions;
 use ModulesGarden\TSSGGSModule\App\Libs\Helpers;
 use ModulesGarden\TSSGGSModule\App\Libs\PricingService;
 use ModulesGarden\TSSGGSModule\Components\Container\Container;
@@ -33,7 +34,7 @@ class PricingContainer extends Container implements AdminAreaInterface
         // notes sit right under the page header, the grid in its own card
         $notes = new Text();
         $notes->setCss('tssggs-html tssggs-notes');
-        $notes->setText($this->notices($session) . (\ModulesGarden\TSSGGSModule\App\Libs\GeneralSettings::enabled('hideInfoMessages') ? '' : '<div class="tssggs-note">' . $this->e($this->t('grid_help')) . '</div>'));
+        $notes->setText($this->notices($session) . $this->commissionNote() . (\ModulesGarden\TSSGGSModule\App\Libs\GeneralSettings::enabled('hideInfoMessages') ? '' : '<div class="tssggs-note">' . $this->e($this->t('grid_help')) . '</div>'));
         $this->addElement($notes);
         unset($_SESSION[PricingController::SESSION]['notice'], $_SESSION[PricingController::SESSION]['error']);
 
@@ -49,6 +50,36 @@ class PricingContainer extends Container implements AdminAreaInterface
         $text->setCss('tssggs-html');
         $text->setText($html);
         $this->addElement($text);
+    }
+
+    /**
+     * Commission rules are added on top of the base prices at order time; tell the admin they exist
+     */
+    protected function commissionNote()
+    {
+        $rules = Commissions::all();
+        if(!count($rules))
+        {
+            return '';
+        }
+        $global = null;
+        $other  = 0;
+        foreach($rules as $rule)
+        {
+            if(!(int)$rule->client_id && !(int)$rule->product_id)
+            {
+                $global = (float)$rule->commission;
+            }
+            else
+            {
+                $other++;
+            }
+        }
+
+        return '<div class="tssggs-note">' . $this->e($this->t('commission_note', [
+            'global' => $global === null ? '-' : ($global > 0 ? '+' : '') . rtrim(rtrim(number_format($global, 2, '.', ''), '0'), '.') . ' %',
+            'count'  => $other,
+        ])) . ' <a href="addonmodules.php?module=TSSGGSModule&mg-page=commissions">' . $this->e($this->t('commission_edit')) . '</a></div>';
     }
 
     protected function notices(array $session)
@@ -136,12 +167,34 @@ class PricingContainer extends Container implements AdminAreaInterface
                     . ($cell['price'] === null ? '' : number_format($cell['price'], 2, '.', '')) . '" placeholder="' . $this->e($this->t('disabled')) . '">'
                     . '<br><small style="color:' . ($cell['below_cost'] ? '#a8322d;font-weight:600' : '#5b6673') . '">'
                     . ($cell['cost'] === null ? $this->e($this->t('no_cost')) : $this->e($this->t('cost', ['cost' => number_format($cell['cost'], 2)])) . ($cell['margin'] !== null ? ' · ' . $this->e($cell['margin']) . ' %' : ''))
-                    . ($cell['below_cost'] ? ' · ' . $this->e($this->t('below_cost')) : '') . '</small></td>';
+                    . ($cell['below_cost'] ? ' · ' . $this->e($this->t('below_cost')) : '') . '</small>'
+                    . $this->clientPrice($isBase, $product['id'], $cell['price']) . '</td>';
             }
             $html .= '</tr>';
         }
 
         return $html . '</tbody></table><button class="lu-btn lu-btn--success" type="submit">' . $this->e($this->t('save_all')) . '</button></form>';
+    }
+
+    /**
+     * Price a client without a client-specific rule pays: base price with the "all clients" commission
+     */
+    protected function clientPrice($isBase, $productId, $price)
+    {
+        if(!$isBase || $price === null)
+        {
+            return '';
+        }
+        $commission = Commissions::forProduct(0, (int)$productId);
+        if($commission === null)
+        {
+            return '';
+        }
+
+        return '<br><small style="color:#1a6fb5;font-weight:600" title="' . $this->e($this->t('client_price_title')) . '">' . $this->e($this->t('client_price', [
+            'price' => number_format(Commissions::apply($price, $commission), 2),
+            'rate'  => ($commission > 0 ? '+' : '') . rtrim(rtrim(number_format($commission, 2, '.', ''), '0'), '.'),
+        ])) . '</small>';
     }
 
     protected function preview(array $preview, $token)
