@@ -3,7 +3,7 @@
  * One bar saves the whole screen: any change in the form enables "Save changes" and switches the status to
  * "Unsaved changes"; a successful save clears it; leaving the page with unsaved changes asks first.
  */
-(function () {
+;(function () {
     var dirty = false;
 
     function bars() {
