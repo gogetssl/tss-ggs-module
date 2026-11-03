@@ -15,6 +15,7 @@ class TemplateDownloadWidget extends Widget
 {
     public function loadHtml(): void
     {
+        $this->setCss('tssggs-dl');
         $this->addElement(new TemplateDownloadForm());
     }
 }
