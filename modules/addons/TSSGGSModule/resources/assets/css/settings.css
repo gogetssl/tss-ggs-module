@@ -169,3 +169,5 @@ body:has(.tssggs-savebar) {
 #layers2 .tssggs-dl { align-self: stretch; }
 #layers2 .tssggs-dl .lu-widget__body { align-items: center; }
 #layers2 .tssggs-dl .lu-widget__content { width: 100%; }
+#layers2 .tssggs-dl { flex-direction: column; }
+#layers2 .tssggs-dl .lu-widget__body { flex: 1 1 auto; }
