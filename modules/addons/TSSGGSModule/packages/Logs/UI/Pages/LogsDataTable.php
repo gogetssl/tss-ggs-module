@@ -12,6 +12,7 @@ use ModulesGarden\TSSGGSModule\Core\DataProviders\AbstractRecordsListDataProvide
 use ModulesGarden\TSSGGSModule\Core\DataProviders\QueryDataProvider;
 use ModulesGarden\TSSGGSModule\Core\Support\Facades\Config;
 use ModulesGarden\TSSGGSModule\Packages\Logs\Models\Logs;
+use ModulesGarden\TSSGGSModule\Packages\Logs\UI\Buttons\CleanLogButton;
 use ModulesGarden\TSSGGSModule\Packages\Logs\UI\Buttons\DeleteLogButton;
 use ModulesGarden\TSSGGSModule\Packages\Logs\UI\Buttons\EditConfiguration;
 use ModulesGarden\TSSGGSModule\Packages\Logs\UI\Buttons\ExportCsvButton;
@@ -62,6 +63,7 @@ class LogsDataTable extends DataTable implements AdminAreaInterface, AjaxCompone
             $this->addActionButton(new DeleteLogButton());
             $this->addMassActionButton(new MassDeleteButton());
             $burger->addItem(new MenuDeleteButton());
+            $this->addToToolbar(new CleanLogButton());
         }
 
         $this->addToToolbar($burger);

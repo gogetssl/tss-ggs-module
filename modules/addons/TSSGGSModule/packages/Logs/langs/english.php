@@ -50,6 +50,18 @@ $_LANG['packages.logs.forms.edit_configuration_form.formValidationError']       
 $_LANG['packages.logs.providers.configuration_provider.attributes.auto_prune'] = 'Clear Automatically';
 $_LANG['packages.logs.providers.configuration_provider.values.auto_prune.1']   = 'enabled';
 
+
+//Clean log
+$_LANG['packages.logs.buttons.clean_log_button.title']        = 'Clean log';
+$_LANG['packages.logs.modals.clean_log_modal.title']          = 'Clean log';
+$_LANG['packages.logs.modals.clean_log_modal.description']    = 'Delete all entries of the module log? This cannot be undone. The Certificate Log and the WHMCS logs are not affected.';
+$_LANG['packages.logs.forms.clean_log_form.delete_success']   = 'The log has been cleaned';
+$_LANG['packages.logs.forms.clean_log_form.deletingLogsIsNotAllowed'] = 'Deleting logs is not permitted';
+$_LANG['packages.logs.forms.edit_configuration_form.logging']             = 'Module Log';
+$_LANG['packages.logs.forms.edit_configuration_form.logging_description'] = 'Record the technical events of the module (cron results, errors, order actions). With it off, nothing new is written here.';
+$_LANG['packages.logs.forms.edit_configuration_form.api_log']             = 'API requests';
+$_LANG['packages.logs.forms.edit_configuration_form.api_log_description'] = 'Record every request to the GoGetSSL / The SSL Store gateway with its answer. Needs Module Log on.';
+
 //Export CSV Modal
 $_LANG['packages.logs.buttons.export_csv_button.title']                    = 'Export CSV';
 $_LANG['packages.logs.modals.export_csv_modal.title']                      = 'Export CSV';
