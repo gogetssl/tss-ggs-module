@@ -4,6 +4,7 @@ namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Commissions\Index;
 
 use ModulesGarden\TSSGGSModule\App\Http\Admin\Commissions as CommissionsController;
 use ModulesGarden\TSSGGSModule\App\Libs\Commissions;
+use ModulesGarden\TSSGGSModule\Components\Alert\AlertInfo;
 use ModulesGarden\TSSGGSModule\Components\Container\Container;
 use ModulesGarden\TSSGGSModule\Components\Text\Text;
 use ModulesGarden\TSSGGSModule\Core\Contracts\Components\AdminAreaInterface;
@@ -36,7 +37,14 @@ class CommissionsContainer extends Container implements AdminAreaInterface
             $html .= '<div class="tssggs-note is-ok">' . $this->e($this->t('notice_' . $session['notice'])) . '</div>';
         }
 
-        $html .= (\ModulesGarden\TSSGGSModule\App\Libs\GeneralSettings::enabled('hideInfoMessages') ? '' : '<p class="tssggs-muted">' . $this->e($this->t('intro')) . '</p>') . $this->form($token) . $this->table($token);
+        $html .= $this->form($token) . $this->table($token);
+
+        if(!\ModulesGarden\TSSGGSModule\App\Libs\GeneralSettings::enabled('hideInfoMessages'))
+        {
+            $alert = new AlertInfo();
+            $alert->setText($this->t('intro'));
+            $this->addElement($alert);
+        }
 
         $text = new Text();
         $text->setCss('tssggs-html');

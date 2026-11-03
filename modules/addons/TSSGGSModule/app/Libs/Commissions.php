@@ -6,7 +6,7 @@ use WHMCS\Database\Capsule;
 
 /**
  * Per-client commissions: a % added to (or, negative, taken off) the product price for a client.
- * Rules: client + product, client + all products, all clients + product. The most specific rule wins.
+ * Rules: client + product, client + all products, all clients + product, all clients + all products. The most specific rule wins.
  */
 class Commissions
 {
@@ -50,10 +50,6 @@ class Commissions
     public static function set($clientId, $productId, $commission)
     {
         self::createTable();
-        if((int)$clientId === 0 && (int)$productId === 0)
-        {
-            throw new \InvalidArgumentException('Choose a client or a product - a rule for everybody and every product is the price itself');
-        }
         if($productId && !Capsule::table('tblproducts')->where('id', (int)$productId)->where('servertype', 'TSSGGSModule')->exists())
         {
             throw new \InvalidArgumentException('Unknown product');
@@ -99,9 +95,9 @@ class Commissions
             $best = null;
             foreach($rules as $rule)
             {
-                // client + product (3) > client + all products (2) > all clients + product (1)
+                // client + product (3) > client + all products (2) > all clients + product (1) > all clients + all products (0)
                 $rank = ((int)$rule->client_id ? 2 : 0) + ((int)$rule->product_id ? 1 : 0);
-                if($rank && ($best === null || $rank > $best[0]))
+                if($best === null || $rank > $best[0]))
                 {
                     $best = [$rank, (float)$rule->commission];
                 }
