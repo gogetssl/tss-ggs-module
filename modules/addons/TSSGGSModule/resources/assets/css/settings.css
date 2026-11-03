@@ -173,3 +173,4 @@ body:has(.tssggs-savebar) {
 #layers2 .tssggs-dl .lu-widget__body { flex: 1 1 auto; }
 #layers2 .tssggs-dl .lu-widget__body { justify-content: center; }
 #layers2 .tssggs-dl .lu-widget__content { padding-top: 0; padding-bottom: 0; }
+#layers2 .tssggs-dl .lu-top__toolbar, #layers2 .tssggs-dl form, #layers2 .tssggs-dl .lu-single-element { margin: 0 !important; padding-top: 0 !important; padding-bottom: 0 !important; }
