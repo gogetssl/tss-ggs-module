@@ -5,7 +5,9 @@ namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Forms;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Concerns\SettingsLayout;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Providers\GeneralSettingsProvider;
 use ModulesGarden\TSSGGSModule\Components\Form\Builder\BuilderCreator;
+use ModulesGarden\TSSGGSModule\Components\Dropdown\Dropdown;
 use ModulesGarden\TSSGGSModule\Components\Form\Form;
+use ModulesGarden\TSSGGSModule\Components\FormInputText\FormInputText;
 use ModulesGarden\TSSGGSModule\Components\Switcher\Switcher;
 use ModulesGarden\TSSGGSModule\Core\Contracts\Components\AdminAreaInterface;
 use ModulesGarden\TSSGGSModule\Core\Contracts\Components\AjaxComponentInterface;
@@ -35,8 +37,12 @@ class LogsSettingsForm extends Form implements AdminAreaInterface, AjaxComponent
         $module = $this->section('moduleLogs', 'text-box-outline');
         $this->builder->addFieldInContainer($module, (new Switcher())->setName('certificateLog')->addClass('switcher-revert'), true);
         $this->builder->addFieldInContainer($module, (new Switcher())->setName('internalLog')->addClass('switcher-revert'), true);
-        $this->builder->addFieldInContainer($module, (new Switcher())->setName('apiLog')->addClass('switcher-revert'), true);
-        $this->builder->addFieldInContainer($module, (new Switcher())->setName('apiLogReads')->addClass('switcher-revert'), true);
+        $this->builder->addFieldInContainer($module, (new Dropdown())->setName('apiLogMode'), true);
+        $this->builder->addFieldInContainer($module, (new Switcher())->setName('eventLog')->addClass('switcher-revert'), true);
+
+        $debug = $this->section('debugLogs', 'bug-outline');
+        $this->builder->addFieldInContainer($debug, (new FormInputText())->setName('debugServices'), true);
+        $this->builder->addFieldInContainer($debug, (new Dropdown())->setName('debugHours'), true);
 
         $whmcs = $this->section('whmcsLogs', 'clipboard-text');
         $this->builder->addFieldInContainer($whmcs, (new Switcher())->setName('whmcsActivityLog')->addClass('switcher-revert'), true);

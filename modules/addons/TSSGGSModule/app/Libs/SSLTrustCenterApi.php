@@ -600,16 +600,13 @@ class SSLTrustCenterApi
 
         try
         {
-            if(!GeneralSettings::enabled('apiLog'))
-            {
-                return;
-            }
-
             $path   = strtok($uri, '?');
             $failed = $error !== '' || $httpCode < 200 || $httpCode >= 400;
-            if(!$failed && $method === 'GET' && !GeneralSettings::enabled('apiLogReads'))
+
+            // cheap decision first; the service lookup is only needed for services in debug mode
+            if(!LogPolicy::debugServices() && !LogPolicy::logApi($failed, $method, null))
             {
-                return; // the crons read the same orders every few minutes - only failures and changes are worth a row
+                return;
             }
             $reason = $error;
             if($error === '' && $failed)
@@ -620,6 +617,10 @@ class SSLTrustCenterApi
 
             $data      = [];
             $serviceId = $serviceHint ?: self::serviceFromUri($uri);
+            if(!LogPolicy::logApi($failed, $method, $serviceId))
+            {
+                return;
+            }
             if($serviceId)
             {
                 $data['service'] = (int)$serviceId;

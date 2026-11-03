@@ -8,7 +8,7 @@ use WHMCS\Database\Capsule;
 
 class GeneralSettingsProvider extends CrudProvider
 {
-    const SWITCHES = ['downloadFormat_zip', 'downloadFormat_crt', 'downloadFormat_ca', 'downloadFormat_fullchain', 'downloadFormat_nginx', 'downloadFormat_apache', 'downloadFormat_pkcs7', 'clientSummary', 'certificatesByDomain', 'sslTools', 'whmcsActivityLog', 'moduleLog', 'certificateLog', 'internalLog', 'apiLog', 'apiLogReads', 'terminateCancelsOrder', 'terminateUnpaidOnExpiry', 'requireAgreement', 'keepMarginOnSync', 'belowCostEmail', 'hideInfoMessages'];
+    const SWITCHES = ['downloadFormat_zip', 'downloadFormat_crt', 'downloadFormat_ca', 'downloadFormat_fullchain', 'downloadFormat_nginx', 'downloadFormat_apache', 'downloadFormat_pkcs7', 'clientSummary', 'certificatesByDomain', 'sslTools', 'whmcsActivityLog', 'moduleLog', 'certificateLog', 'internalLog', 'eventLog', 'terminateCancelsOrder', 'terminateUnpaidOnExpiry', 'requireAgreement', 'keepMarginOnSync', 'belowCostEmail', 'hideInfoMessages'];
 
     public function read()
     {
@@ -17,6 +17,10 @@ class GeneralSettingsProvider extends CrudProvider
             $this->data[$key] = in_array($key, self::SWITCHES, true) ? GeneralSettings::enabled($key) : $value;
         }
 
+        $this->data['debugServices'] = implode(', ', \ModulesGarden\TSSGGSModule\App\Libs\LogPolicy::debugServices());
+        $this->data['debugHours']    = 4;
+        $this->availableValues['apiLogMode'] = self::apiModeOptions($this);
+        $this->availableValues['debugHours'] = self::debugHourOptions($this);
         $this->availableValues['expiresSoonDays'] = ['10' => '10', '15' => '15', '30' => '30', '60' => '60', '90' => '90'];
         $offsets = ['0' => '0', '3' => '3', '7' => '7', '15' => '15', '30' => '30'];
         $this->availableValues['dueDateOffsetRegular']      = $offsets;
@@ -57,6 +61,34 @@ class GeneralSettingsProvider extends CrudProvider
             $data['sidebarTemplates'] = preg_replace('/[^a-z0-9_,-]/i', '', (string)$data['sidebarTemplates']);
         }
 
+        // debug mode: the service list and for how long (the hours are not stored, only the end time)
+        if(array_key_exists('debugServices', $data))
+        {
+            $data = array_merge($data, \ModulesGarden\TSSGGSModule\App\Libs\LogPolicy::debugSettings($data['debugServices'], $data['debugHours'] ?? 0));
+        }
+
         GeneralSettings::save($data);
+    }
+
+    public static function apiModeOptions($provider): array
+    {
+        $options = [];
+        foreach(\ModulesGarden\TSSGGSModule\App\Libs\LogPolicy::API_MODES as $mode)
+        {
+            $options[$mode] = $provider->translate('apiMode_' . $mode, [], ['admin.log_policy']);
+        }
+
+        return $options;
+    }
+
+    public static function debugHourOptions($provider): array
+    {
+        $options = [];
+        foreach(\ModulesGarden\TSSGGSModule\App\Libs\LogPolicy::DEBUG_HOURS as $hours)
+        {
+            $options[(string)$hours] = $provider->translate('hours_' . $hours, [], ['admin.log_policy']);
+        }
+
+        return $options;
     }
 }

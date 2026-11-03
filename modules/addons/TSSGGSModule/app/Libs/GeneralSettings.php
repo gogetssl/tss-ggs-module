@@ -35,8 +35,10 @@ class GeneralSettings
         'moduleLog'                => true,
         'certificateLog'           => true,
         'internalLog'              => true,
-        'apiLog'                   => true,
-        'apiLogReads'              => false,
+        'apiLogMode'               => 'changes',
+        'eventLog'                 => true,
+        'debugServices'            => '',
+        'debugUntil'               => 0,
         // Lifecycle
         'terminateCancelsOrder'    => true,
         'terminateUnpaidOnExpiry'  => true,

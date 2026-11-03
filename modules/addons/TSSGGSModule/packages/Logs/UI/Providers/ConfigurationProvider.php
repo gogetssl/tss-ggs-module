@@ -16,12 +16,16 @@ class ConfigurationProvider extends CrudProvider
     public function read()
     {
         $this->data->set('logging', GeneralSettings::enabled('internalLog'));
-        $this->data->set('api_log', GeneralSettings::enabled('apiLog'));
-        $this->data->set('api_log_reads', GeneralSettings::enabled('apiLogReads'));
+        $this->data->set('api_mode', \ModulesGarden\TSSGGSModule\App\Libs\LogPolicy::apiMode());
+        $this->data->set('events', GeneralSettings::enabled('eventLog'));
+        $this->data->set('debug_services', implode(', ', \ModulesGarden\TSSGGSModule\App\Libs\LogPolicy::debugServices()));
+        $this->data->set('debug_hours', '4');
         $this->data->set('types', $this->formData->get('types', ModuleSettings::get('logs.types')));
         $this->data->set('auto_prune', $this->formData->get('auto_prune', ModuleSettings::get('logs.auto_prune', 1)));
         $this->data->set('auto_prune_older_than', $this->formData->get('auto_prune_older_than', ModuleSettings::get('logs.auto_prune_older_than', 30)));
 
+        $this->availableValues['api_mode']    = GeneralSettingsProvider::apiModeOptions($this);
+        $this->availableValues['debug_hours'] = GeneralSettingsProvider::debugHourOptions($this);
         $this->availableValues['types'] = (new LogsTypeTranslator)->getAvailableTranslated();
     }
 
@@ -41,8 +45,10 @@ class ConfigurationProvider extends CrudProvider
 
         GeneralSettingsProvider::saveGeneral([
             'internalLog' => $this->formData->get('logging'),
-            'apiLog'      => $this->formData->get('api_log'),
-            'apiLogReads' => $this->formData->get('api_log_reads'),
+            'apiLogMode'  => $this->formData->get('api_mode'),
+            'eventLog'    => $this->formData->get('events'),
+            'debugServices' => $this->formData->get('debug_services', ''),
+            'debugHours'  => $this->formData->get('debug_hours', 0),
         ]);
 
         ModuleSettings::save([
