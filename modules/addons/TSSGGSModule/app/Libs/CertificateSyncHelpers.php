@@ -61,7 +61,7 @@ class CertificateSyncHelpers
             try {
                 $orderFiles = $api->getCertificateFiles($certificate['remoteid']);
             } catch (Exception $exception) {
-                Logger::error('Get Certificate Files Error:' . $exception->getMessage(), ['service' => $certificate['id']]);
+                Logger::error('Get Certificate Files Error:' . $exception->getMessage(), \ModulesGarden\TSSGGSModule\App\Libs\LogContext::exception($exception, ['service' => $certificate['id']]));
             }
         }
 

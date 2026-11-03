@@ -170,3 +170,7 @@ body:has(.tssggs-savebar) {
 #layers2 .tssggs-dl .lu-widget__body { padding: 20px; }
 #layers2 .tssggs-dl .lu-widget__content { padding: 0 !important; margin: 0 !important; width: 100%; }
 #layers2 .tssggs-dl .lu-top__toolbar, #layers2 .tssggs-dl form, #layers2 .tssggs-dl .lu-single-element { margin: 0 !important; padding: 0 !important; }
+
+/* Logs: note under the counter cards */
+#layers2 .tssggs-cardnote { margin-top: 4px; }
+#layers2 .tssggs-cardnote small { display: block; color: var(--tw-fg-soft, #5b6673); font-size: 12px; line-height: 16px; white-space: normal; }

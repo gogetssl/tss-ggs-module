@@ -204,7 +204,7 @@ class ImportProvider extends CrudProvider
                 }
                 catch(\Throwable $e)
                 {
-                    Logger::error($e->getMessage(), $localOrderData);
+                    Logger::error($e->getMessage(), \ModulesGarden\TSSGGSModule\App\Libs\LogContext::exception($e, $localOrderData));
                     $errorsCount++;
                     continue;
                 }
@@ -243,7 +243,7 @@ class ImportProvider extends CrudProvider
                 }
                 catch(\Throwable $e)
                 {
-                    Logger::error($e->getMessage(), $localOrderData);
+                    Logger::error($e->getMessage(), \ModulesGarden\TSSGGSModule\App\Libs\LogContext::exception($e, $localOrderData));
                     $errorsCount++;
                     continue;
                 }

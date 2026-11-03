@@ -35,6 +35,7 @@ class LogsSettingsForm extends Form implements AdminAreaInterface, AjaxComponent
         $module = $this->section('moduleLogs', 'text-box-outline');
         $this->builder->addFieldInContainer($module, (new Switcher())->setName('certificateLog')->addClass('switcher-revert'), true);
         $this->builder->addFieldInContainer($module, (new Switcher())->setName('internalLog')->addClass('switcher-revert'), true);
+        $this->builder->addFieldInContainer($module, (new Switcher())->setName('apiLog')->addClass('switcher-revert'), true);
 
         $whmcs = $this->section('whmcsLogs', 'clipboard-text');
         $this->builder->addFieldInContainer($whmcs, (new Switcher())->setName('whmcsActivityLog')->addClass('switcher-revert'), true);

@@ -259,7 +259,7 @@ class ProductPricingUpdate extends AbstractCommand
         }
         catch(\Throwable $exception)
         {
-            Logger::error('ProductPricingUpdate Cron Error: ' . $exception->getMessage());
+            Logger::error('ProductPricingUpdate Cron Error: ' . $exception->getMessage(), \ModulesGarden\TSSGGSModule\App\Libs\LogContext::exception($exception));
             $errorToDB = $exception->getMessage();
         }
 

@@ -140,7 +140,7 @@ class SSLCertificates extends AbstractCommand
                 $failed[$certificate['id']] = $e->getMessage();
                 $io->write('Error: ' . $e->getMessage());
 
-                Logger::error($e->getMessage(), ['service' => $certificate['id']]);
+                Logger::error($e->getMessage(), \ModulesGarden\TSSGGSModule\App\Libs\LogContext::exception($e, ['service' => $certificate['id']]));
 
                 continue;
 

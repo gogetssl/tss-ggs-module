@@ -142,7 +142,7 @@ class RenewalNotifyCertificate extends AbstractCommand
             {
 
                 $errorToDB = $e->getMessage();
-                Logger::error("The notification error " . $e->getMessage(), ['service' => $srv->id]);
+                Logger::error("The notification error " . $e->getMessage(), \ModulesGarden\TSSGGSModule\App\Libs\LogContext::exception($e, ['service' => $srv->id]));
 
             }
         }
@@ -172,7 +172,7 @@ class RenewalNotifyCertificate extends AbstractCommand
                 {
 
                     $errorToDB = $e->getMessage();
-                    Logger::error("The renewal invoice generate error " . $e->getMessage(), ['service' => $serviceID]);
+                    Logger::error("The renewal invoice generate error " . $e->getMessage(), \ModulesGarden\TSSGGSModule\App\Libs\LogContext::exception($e, ['service' => $serviceID]));
 
                 }
             }
@@ -304,7 +304,7 @@ class RenewalNotifyCertificate extends AbstractCommand
             {
                 // the vendor still bills the subscription: keep the service open and retry on the next run, give up
                 // (and tell the admin) after 14 days
-                Logger::error('The overdue ACME subscription could not be cancelled: ' . $e->getMessage(), ['service' => $row->service_id]);
+                Logger::error('The overdue ACME subscription could not be cancelled: ' . $e->getMessage(), \ModulesGarden\TSSGGSModule\App\Libs\LogContext::exception($e, ['service' => $row->service_id]));
                 if($row->duedate >= date('Y-m-d', strtotime('-14 days')))
                 {
                     continue;
@@ -356,7 +356,7 @@ class RenewalNotifyCertificate extends AbstractCommand
                 catch (\Exception $e)
                 {
                     // keep the subscription open and retry on the next run; give up (and tell the admin) after 14 days
-                    Logger::error('The expired ACME subscription could not be cancelled: ' . $e->getMessage(), ['service' => $subscriptionData->service_id]);
+                    Logger::error('The expired ACME subscription could not be cancelled: ' . $e->getMessage(), \ModulesGarden\TSSGGSModule\App\Libs\LogContext::exception($e, ['service' => $subscriptionData->service_id]));
                     $ended = $subscriptionData->renewal_date ?: $subscriptionData->period_end;
                     if(!$ended || date('Y-m-d', strtotime((string)$ended)) >= date('Y-m-d', strtotime('-14 days')))
                     {

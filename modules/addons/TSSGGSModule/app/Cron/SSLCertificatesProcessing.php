@@ -110,7 +110,7 @@ class SSLCertificatesProcessing extends AbstractCommand
                     try {
                         $orderFiles = $api->getCertificateFiles($certificate['remoteid']);
                     } catch (Exception $exception) {
-                        Logger::error('Get Certificate Files Error:'.$exception->getMessage(), ['service' => $certificate['id']]);
+                        Logger::error('Get Certificate Files Error:'.$exception->getMessage(), \ModulesGarden\TSSGGSModule\App\Libs\LogContext::exception($exception, ['service' => $certificate['id']]));
                     }
                 }
 
@@ -257,7 +257,7 @@ class SSLCertificatesProcessing extends AbstractCommand
                 $failed[$certificate['id']] = $e->getMessage();
                 $io->write('Error: ' . $e->getMessage());
 
-                Logger::error($e->getMessage(), ['service' => $certificate['id']]);
+                Logger::error($e->getMessage(), \ModulesGarden\TSSGGSModule\App\Libs\LogContext::exception($e, ['service' => $certificate['id']]));
 
                 continue;
 

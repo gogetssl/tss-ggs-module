@@ -4,6 +4,7 @@ namespace ModulesGarden\TSSGGSModule\App\Libs;
 
 use ModulesGarden\TSSGGSModule\App\Models\Request;
 use ModulesGarden\TSSGGSModule\Core\Support\Facades\Config;
+use ModulesGarden\TSSGGSModule\Packages\Logs\Support\Facades\Logger;
 use stdClass;
 
 class SSLTrustCenterApi
@@ -20,6 +21,7 @@ class SSLTrustCenterApi
     protected $code;
     protected $type;
     protected $category;
+    protected $serviceHint = null;
 
     public function __construct($type, $code, $key, $category = 'tls')
     {
@@ -115,7 +117,8 @@ class SSLTrustCenterApi
 
     public function addOrder($data, $serviceId)
     {
-        $order = $this->call('/certificates/' . $this->category, $data);
+        $this->serviceHint = $serviceId;
+        $order             = $this->call('/certificates/' . $this->category, $data);
         Request::insert([
                             'serviceid'  => $serviceId,
                             'name'       => 'addOrder',
@@ -128,7 +131,8 @@ class SSLTrustCenterApi
 
     public function renewOrder($serviceId, $data)
     {
-        $order = $this->call('/certificates/' . $this->category, $data);
+        $this->serviceHint = $serviceId;
+        $order             = $this->call('/certificates/' . $this->category, $data);
         Request::insert([
                             'serviceid'  => $serviceId,
                             'name'       => 'renewOrder',
@@ -171,6 +175,7 @@ class SSLTrustCenterApi
 
         if($serviceId !== false)
         {
+            $this->serviceHint = $serviceId;
             $request      = Request::where('serviceid', $serviceId)->where('name', 'addOrder')->first();
             $requestRenew = Request::where('serviceid', $serviceId)->where('name', 'renewOrder')->first();
 
@@ -584,6 +589,85 @@ class SSLTrustCenterApi
         }
     }
 
+    /**
+     * Every gateway request and its answer goes to the module log (Logs page), so a failed order or sync can be traced
+     * to the exact request. Secrets are masked, long bodies are cut, logging never breaks the request.
+     */
+    protected function logCall($method, $uri, $requestBody, $httpCode, $responseBody, $seconds, $error = '')
+    {
+        $serviceHint       = $this->serviceHint;
+        $this->serviceHint = null;
+
+        try
+        {
+            if(!GeneralSettings::enabled('apiLog'))
+            {
+                return;
+            }
+
+            $path   = strtok($uri, '?');
+            $failed = $error !== '' || $httpCode < 200 || $httpCode >= 400;
+            $reason = $error;
+            if($error === '' && $failed)
+            {
+                $decoded = json_decode((string)$responseBody, true);
+                $reason  = is_array($decoded) && isset($decoded['message']) && is_scalar($decoded['message']) ? (string)$decoded['message'] : '';
+            }
+
+            $data      = [];
+            $serviceId = $serviceHint ?: self::serviceFromUri($uri);
+            if($serviceId)
+            {
+                $data['service'] = (int)$serviceId;
+            }
+            $data['api'] = [
+                'provider'  => $this->type,
+                'method'    => $method,
+                'url'       => $this->apiUrl . $uri,
+                'http_code' => $httpCode ?: 'no response',
+                'duration'  => round($seconds, 2) . ' s',
+                'request'   => self::logBody($requestBody),
+                'response'  => self::logBody($error !== '' ? $error : $responseBody),
+            ];
+
+            $message = 'API ' . $method . ' ' . $path . ' - ' . ($error !== '' ? 'failed' : 'HTTP ' . $httpCode) . ($reason !== '' ? ': ' . $reason : '');
+            $failed ? Logger::error($message, $data) : Logger::info($message, $data);
+        }
+        catch(\Throwable $e)
+        {
+            // the log must never break an API request
+        }
+    }
+
+    /** The service an item / order ID of the request belongs to (tblsslorders keeps the link), null when unknown */
+    protected static function serviceFromUri($uri)
+    {
+        if(!preg_match_all('~/(\d+)(?=/|$|\?)~', (string)$uri, $matches))
+        {
+            return null;
+        }
+
+        return \WHMCS\Database\Capsule::table('tblsslorders')->where('remoteid', (string)end($matches[1]))->value('serviceid') ?: null;
+    }
+
+    /** Body for the log: decoded JSON when possible, secrets masked, cut to fit the log column */
+    protected static function logBody($body, $limit = 24000)
+    {
+        if($body === null || $body === '')
+        {
+            return '';
+        }
+        $decoded = is_string($body) ? json_decode($body, true) : null;
+        $value   = SecretValue::redact(is_array($decoded) ? $decoded : $body);
+        $json    = json_encode($value);
+        if($json !== false && strlen($json) <= $limit)
+        {
+            return $value;
+        }
+
+        return ['truncated' => true, 'preview' => mb_strcut(is_string($value) ? $value : (string)$json, 0, $limit)];
+    }
+
     protected function call($uri, $postData = [], $customMethod = false, $multilineResponse = false)
     {
 
@@ -635,20 +719,24 @@ class SSLTrustCenterApi
         curl_setopt($c, CURLOPT_CONNECTTIMEOUT, self::CONNECT_TIMEOUT);
         curl_setopt($c, CURLOPT_TIMEOUT, self::TIMEOUT);
 
-        $data = curl_exec($c);
-        $info = curl_getinfo($c);
+        $started = microtime(true);
+        $data    = curl_exec($c);
+        $info    = curl_getinfo($c);
+        $method  = $customMethod !== false ? strtoupper((string)$customMethod) : ($post ? 'POST' : 'GET');
 
         if($data === false)
         {
             $error = curl_error($c);
             curl_close($c);
             self::log('Time: ' . $info['total_time'] . ' ' . $uri, $queryData, $error);
+            $this->logCall($method, $uri, $queryData, 0, '', microtime(true) - $started, $error);
             throw new \Exception('Gateway request failed: ' . $error);
         }
 
         $result = substr($data, $info['header_size']);
 
         self::log('Time: ' . $info['total_time'] . ' ' . $uri, $info['request_header'] . $queryData, $data);
+        $this->logCall($method, $uri, $queryData, (int)$info['http_code'], (string)$result, microtime(true) - $started);
 
         curl_close($c);
 
