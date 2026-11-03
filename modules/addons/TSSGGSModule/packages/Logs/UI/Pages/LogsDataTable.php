@@ -21,6 +21,7 @@ use ModulesGarden\TSSGGSModule\Packages\Logs\UI\Buttons\MenuDeleteButton;
 use ModulesGarden\TSSGGSModule\Packages\Logs\UI\Buttons\ShowDataButton;
 use ModulesGarden\TSSGGSModule\Packages\Logs\UI\Formatters\RelatedItem;
 use ModulesGarden\TSSGGSModule\Packages\Logs\UI\Others\TypeLabel;
+use ModulesGarden\TSSGGSModule\Packages\Logs\UI\Providers\LogsQueryProvider;
 use WHMCS\Database\Capsule as DB;
 
 class LogsDataTable extends DataTable implements AdminAreaInterface, AjaxComponentInterface
@@ -71,7 +72,7 @@ class LogsDataTable extends DataTable implements AdminAreaInterface, AjaxCompone
 
     public function loadData(): void
     {
-        $dataProv = new QueryDataProvider(
+        $dataProv = new LogsQueryProvider(
             Logs::select('id', 'type', 'date', 'data', 'message', DB::raw("(data IS NOT NULL) AND (data != '[]') as isDataEnabled"))
         );
 
