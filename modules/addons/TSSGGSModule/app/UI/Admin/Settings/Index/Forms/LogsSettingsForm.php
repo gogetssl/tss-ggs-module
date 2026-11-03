@@ -40,7 +40,7 @@ class LogsSettingsForm extends Form implements AdminAreaInterface, AjaxComponent
         $this->builder->addFieldInContainer($module, (new Dropdown())->setName('apiLogMode'), true);
         $this->builder->addFieldInContainer($module, (new Switcher())->setName('eventLog')->addClass('switcher-revert'), true);
 
-        $debug = $this->section('debugLogs', 'bug-outline');
+        $debug = $this->section('debugLogs', 'bug');
         $this->builder->addFieldInContainer($debug, (new FormInputText())->setName('debugServices'), true);
         $this->builder->addFieldInContainer($debug, (new Dropdown())->setName('debugHours'), true);
 
