@@ -58,7 +58,7 @@ trait SettingsLayout
         $toolbar->addElement(
             (new ButtonSuccess())
                 ->setId('buttonSave')
-                ->setTitle($saveTitle ?: $this->translate('saveChanges'))
+                ->setTitle($saveTitle ?: $this->translate('saveChanges', [], ['admin.savebar']))
                 ->onClick(new FormSubmit($this))
         );
 
@@ -68,7 +68,7 @@ trait SettingsLayout
         }
 
         $attr = function($key) {
-            return htmlspecialchars($this->translate($key));
+            return htmlspecialchars($this->translate($key, [], ['admin.savebar']));
         };
         $toolbar->addElement((new Text())->setText(
             '<span class="tssggs-savebar__status" role="status" aria-live="polite"' . ($alwaysOn ? ' data-always="1"' : '')

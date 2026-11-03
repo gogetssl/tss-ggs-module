@@ -1267,11 +1267,11 @@ $_LANG['admin.switcher.yes'] = 'Yes';
 $_LANG['admin.switcher.no']  = 'No';
 
 /* ---- Settings screens: page subtitles, section descriptions, the sticky save bar ---- */
-$_LANG['admin.settings.index.savebar.saveChanges']  = 'Save changes';
-$_LANG['admin.settings.index.savebar.noUnsaved']    = 'No unsaved changes';
-$_LANG['admin.settings.index.savebar.unsaved']      = 'Unsaved changes';
-$_LANG['admin.settings.index.savebar.notSaved']     = 'Not saved. Check the highlighted fields and try again.';
-$_LANG['admin.settings.index.savebar.leaveConfirm'] = 'You have unsaved changes. Leave this page and discard them?';
+$_LANG['admin.savebar.saveChanges']  = 'Save changes';
+$_LANG['admin.savebar.noUnsaved']    = 'No unsaved changes';
+$_LANG['admin.savebar.unsaved']      = 'Unsaved changes';
+$_LANG['admin.savebar.notSaved']     = 'Not saved. Check the highlighted fields and try again.';
+$_LANG['admin.savebar.leaveConfirm'] = 'You have unsaved changes. Leave this page and discard them?';
 
 $_LANG['admin.settings.index.widgets.api_settings_widget.subtitle']       = 'Credentials of the certificate authorities you resell';
 $_LANG['admin.settings.index.widgets.general_settings_widget.subtitle']   = 'Client area, admin area, service lifecycle and pricing behaviour';

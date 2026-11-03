@@ -155,3 +155,8 @@
     color: var(--tw-danger);
     font-weight: 500;
 }
+
+/* the page body is its own (non-clipping) scroll container in WHMCS, which stops position: sticky from reaching the window */
+body:has(.tssggs-savebar) {
+    overflow: visible !important;
+}
