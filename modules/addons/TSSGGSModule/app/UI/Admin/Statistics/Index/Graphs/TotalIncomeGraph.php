@@ -16,7 +16,7 @@ class TotalIncomeGraph extends GraphArea implements AdminAreaInterface, AjaxComp
 {
     public function loadData(): void
     {
-        $this->options->chart->height = "500px";
+        $this->options->chart->height = "380px";
 
         $labels   = [];
         $dataSet1 = new DataSet();

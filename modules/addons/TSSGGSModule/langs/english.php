@@ -314,6 +314,7 @@ $_LANG['admin.home.index.forms.reporting_form.send_success'] = 'Your activity lo
 //===[Statistics]=======================================================================================================
 
 $_LANG['admin.breadcrumbs.Statistics']                               = 'Statistics';
+$_LANG['admin.statistics.index.statistics_container.statisticsInfo'] = 'Income figures are calculated from paid WHMCS invoices of the products managed by this module. The charts cover the last six months (total income) and the five best-selling products; the tables list the most profitable resellers and the latest invoices.';
 $_LANG['admin.statistics.index.widgets.total_income_widget.title']   = 'Total Income';
 $_LANG['admin.statistics.index.widgets.product_income_widget.title'] = 'Product Income (Top 5)';
 $_LANG['admin.statistics.index.widgets.resellers_widget.title']      = 'Most Profitable Resellers';

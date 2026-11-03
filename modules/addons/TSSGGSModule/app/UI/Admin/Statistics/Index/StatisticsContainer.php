@@ -14,14 +14,19 @@ class StatisticsContainer extends Container implements AdminAreaInterface
 {
     public function loadHtml(): void
     {
+        if(!\ModulesGarden\TSSGGSModule\App\Libs\GeneralSettings::enabled('hideInfoMessages'))
+        {
+            $alert = new AlertInfo();
+            $alert->setText($this->translate('statisticsInfo'));
+            $this->addElement($alert);
+        }
+
         $grid = new Grid();
         $grid->setRows(
             [
                 [
-                    [new TotalIncomeWidget(), 12]
-                ],
-                [
-                    [new ProductIncomeWidget(), 12]
+                    [new TotalIncomeWidget(), 6],
+                    [new ProductIncomeWidget(), 6]
                 ],
                 [
                     [new ResellersWidget(), 6],
