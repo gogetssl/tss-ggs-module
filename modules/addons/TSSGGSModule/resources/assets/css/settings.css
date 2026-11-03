@@ -165,12 +165,8 @@ body:has(.tssggs-savebar) {
 #layers2 .lu-row > .lu-single-element { display: flex; flex-direction: column; }
 #layers2 .lu-row > .lu-single-element > .lu-widget { flex: 1 1 auto; }
 
-/* CSV template download block: same height as the import form, button centred */
-#layers2 .tssggs-dl { align-self: stretch; }
-#layers2 .tssggs-dl .lu-widget__body { align-items: center; }
-#layers2 .tssggs-dl .lu-widget__content { width: 100%; }
-#layers2 .tssggs-dl { flex-direction: column; }
-#layers2 .tssggs-dl .lu-widget__body { flex: 1 1 auto; }
-#layers2 .tssggs-dl .lu-widget__body { justify-content: center; }
-#layers2 .tssggs-dl .lu-widget__content { padding-top: 0; padding-bottom: 0; }
-#layers2 .tssggs-dl .lu-top__toolbar, #layers2 .tssggs-dl form, #layers2 .tssggs-dl .lu-single-element { margin: 0 !important; padding-top: 0 !important; padding-bottom: 0 !important; }
+/* CSV template download block: compact, 20px around the button */
+#layers2 .tssggs-dl { align-self: start; }
+#layers2 .tssggs-dl .lu-widget__body { padding: 20px; }
+#layers2 .tssggs-dl .lu-widget__content { padding: 0 !important; margin: 0 !important; width: 100%; }
+#layers2 .tssggs-dl .lu-top__toolbar, #layers2 .tssggs-dl form, #layers2 .tssggs-dl .lu-single-element { margin: 0 !important; padding: 0 !important; }
