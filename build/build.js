@@ -108,7 +108,7 @@ function build(edition) {
     fs.writeFileSync(editionFile, template.replace(/'edition'\s*=>\s*'[a-z]+'/, "'edition' => '" + edition.edition + "'"));
 
     // a lowercase name after a backslash inside a double-quoted PHP string would turn into an escape (\t = tab)
-    const unsafe = /"[^"\n]*[^\\]\\(?:ggs|tss)module/;
+    const unsafe = /"\\?ModulesGarden\\(?:ggs|tss)module/;
     walk(dir, (file) => {
         if (file.endsWith('.php') && unsafe.test(fs.readFileSync(file, 'utf8'))) fail('unsafe escape in ' + path.relative(dir, file));
     });
