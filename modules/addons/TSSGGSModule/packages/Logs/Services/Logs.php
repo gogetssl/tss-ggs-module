@@ -40,8 +40,9 @@ class Logs implements LoggerInterface
         }
 
         // The same message for the same service within a few hours (a failing cron retried every 5 minutes) is one row with a counter
+        // (not for a service in debug mode: there every call keeps its own time)
         $last = null;
-        foreach(Log::where('type', $level)->where('message', $message)->where('date', '>=', date('Y-m-d H:i:s', time() - self::REPEAT_WINDOW))->orderBy('id', 'desc')->limit(50)->get() as $candidate)
+        foreach(LogPolicy::debugging($data['service'] ?? null) ? [] : Log::where('type', $level)->where('message', $message)->where('date', '>=', date('Y-m-d H:i:s', time() - self::REPEAT_WINDOW))->orderBy('id', 'desc')->limit(50)->get() as $candidate)
         {
             if((((array)$candidate->data)['service'] ?? null) == ($data['service'] ?? null))
             {
