@@ -6,6 +6,7 @@ use ModulesGarden\TSSGGSModule\App\UI\Admin\Statistics\Index\Widgets\InvoicesWid
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Statistics\Index\Widgets\ProductIncomeWidget;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Statistics\Index\Widgets\ResellersWidget;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Statistics\Index\Widgets\TotalIncomeWidget;
+use ModulesGarden\TSSGGSModule\Components\Alert\AlertInfo;
 use ModulesGarden\TSSGGSModule\Components\Container\Container;
 use ModulesGarden\TSSGGSModule\Components\Grid\Grid;
 use ModulesGarden\TSSGGSModule\Core\Contracts\Components\AdminAreaInterface;
