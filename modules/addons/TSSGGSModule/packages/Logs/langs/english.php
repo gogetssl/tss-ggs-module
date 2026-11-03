@@ -132,3 +132,7 @@ $_LANG['packages.logs.forms.edit_configuration_form.debug_services'] = 'Debug on
 $_LANG['packages.logs.forms.edit_configuration_form.debug_services_description'] = 'For example 71, 58. Everything is recorded for these services, including reads, whatever the settings above say. Empty = off.';
 $_LANG['packages.logs.forms.edit_configuration_form.debug_hours'] = 'Record for';
 $_LANG['packages.logs.forms.edit_configuration_form.debug_hours_description'] = 'Saving starts this period again. Debug mode ends by itself.';
+$_LANG['packages.logs.widgets.summary.debugTitle'] = 'Debug mode is on.';
+$_LANG['packages.logs.widgets.summary.debugText'] = 'Everything is being recorded for services :services until :until, including every gateway request and event. This can fill the log quickly.';
+$_LANG['packages.logs.widgets.summary.debugStop'] = 'Stop now';
+$_LANG['packages.logs.widgets.summary.aboutLevels'] = 'What is recorded is set in Actions > Settings: gateway requests (off, failures only, failures and changes, or everything), events, and a debug mode that records everything for chosen services for a few hours.';
