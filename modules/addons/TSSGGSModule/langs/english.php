@@ -377,6 +377,7 @@ $_LANG['admin.import.index.providers.template_download_provider.success'] = 'Suc
 $_LANG['admin.breadcrumbs.Reports'] = 'Reports';
 
 //tabs
+$_LANG['admin.reports.index.reports_container.reportsInfo'] = 'Reports are based on WHMCS invoices of the products managed by this module. Renewal Report lists certificates by expiry date, Datewise Sales Report shows sales for a chosen period, and Profit & Loss Report compares sales with the vendor cost. Profit is shown only for orders where the vendor price is known.';
 $_LANG['admin.reports.index.reports_container.renewalReport']       = 'Renewal Report';
 $_LANG['admin.reports.index.reports_container.datewiseSalesReport'] = 'Datewise Sales Report';
 $_LANG['admin.reports.index.reports_container.profitLossReport']    = 'Profit & Loss Report';
