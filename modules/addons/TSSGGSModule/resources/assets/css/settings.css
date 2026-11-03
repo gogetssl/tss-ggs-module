@@ -160,3 +160,7 @@
 body:has(.tssggs-savebar) {
     overflow: visible !important;
 }
+
+/* Widgets in one grid row share the row height */
+#layers2 .lu-row > .lu-single-element { display: flex; flex-direction: column; }
+#layers2 .lu-row > .lu-single-element > .lu-widget { flex: 1 1 auto; }
