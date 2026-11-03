@@ -937,7 +937,7 @@ $_LANG['admin.products.index.products_container.notice_renewals_cancelled'] = 'C
 //commissions
 $_LANG['admin.menu.commissions']                = 'Commissions';
 $_LANG['admin.breadcrumbs.Commissions_index']   = 'Commissions';
-$_LANG['admin.commissions.intro']               = 'Raise or lower the price of SSL products for a client: +10 adds 10 % to the product price, -5 is a 5 % discount. Choose All clients and All SSL products to change every price at once. The most specific rule wins: client + product, then client + all products, then all clients + product, then the rule for everybody. Applies to new orders in the cart, on the standard and the Lagom order form.';
+$_LANG['admin.commissions.intro']               = 'Commissions change the price your clients pay, not the base prices set in Pricing. A rule adds a percentage to the product price when a client orders (+10 makes it 10 % higher, -5 gives a 5 % discount). The price is calculated from the Pricing value for each billing cycle and currency, and shown in the cart and at checkout on the standard and Lagom order forms. A rule for All clients and All SSL products raises or lowers every price for every client, so use it with care. More specific rules take priority: client + product, then client + all products, then all clients + product, then the rule for everybody. Existing services keep the price they were ordered at.';
 $_LANG['admin.commissions.client']              = 'Client';
 $_LANG['admin.commissions.product']             = 'Product';
 $_LANG['admin.commissions.commission']          = 'Commission %';
