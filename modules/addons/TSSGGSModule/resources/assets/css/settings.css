@@ -10,7 +10,7 @@
 /* a section: icon + title, description, rows; a divider line between sections */
 #layers2 .tssggs-settings form .lu-widget.tssggs-sec {
     margin: 0;
-    padding: 32px 0 12px;
+    padding: 32px 0 0; /* the last row ends at the divider with the same 10px as every row */
     border: 0;
     border-top: 1px solid var(--tw-border);
     border-radius: 0;
