@@ -239,8 +239,8 @@
                 data['mg-action'] = action;
                 data['token'] = '{$csrfToken}';
                 $.post(serviceUrl, data, function (ret) {
-                    ret = ret.replace("<JSONRESPONSE#", "").replace("#ENDJSONRESPONSE>", "");
-                    var payload = JSON.parse(ret);
+                    // the JSON answer comes with an application/json header, so jQuery may already have parsed it
+                    var payload = typeof ret === 'object' ? ret : JSON.parse(String(ret).replace("<JSONRESPONSE#", "").replace("#ENDJSONRESPONSE>", ""));
                     if (payload.result === 'error') {
                         var errorMessage = payload.error || 'Error';
                         if (typeof options.onError === 'function') {

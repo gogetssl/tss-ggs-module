@@ -417,6 +417,10 @@
     };
 
     function parseResponse(ret) {
+        // the JSON answer comes with an application/json header, so jQuery may already have parsed it
+        if (ret && typeof ret === 'object') {
+            return ret;
+        }
         ret = String(ret).replace('<JSONRESPONSE#', '').replace('#ENDJSONRESPONSE>', '');
         return JSON.parse(ret);
     }

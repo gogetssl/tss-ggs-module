@@ -20,9 +20,18 @@ var JSONParser = {
                 jQuery('#MGLoader').loader('hide');
             }
             
-            var start = json.indexOf(this.startString);            
-            json = json.substr(start+this.startString.length,json.indexOf(this.stopString)-start-this.startString.length);
-                               
+            // the JSON answer comes with an application/json header, so jQuery may already have parsed it
+            if(json && typeof json === 'object')
+            {
+                return json;
+            }
+            json  = String(json);
+            var start = json.indexOf(this.startString);
+            if(start >= 0)
+            {
+                json = json.substr(start+this.startString.length,json.indexOf(this.stopString)-start-this.startString.length);
+            }
+
             try{
                 return jQuery.parseJSON(json);
             }catch(e)

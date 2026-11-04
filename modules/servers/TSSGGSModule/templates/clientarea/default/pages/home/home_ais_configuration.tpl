@@ -45,8 +45,8 @@
             btn.prop('disabled', true).text('...');
 
             $.post(serviceUrl, {ldelim}'mg-action': 'createAis', token: '{$csrfToken}', domain: domain{rdelim}, function (ret) {
-                ret = ret.replace('<JSONRESPONSE#', '').replace('#ENDJSONRESPONSE>', '');
-                var payload = JSON.parse(ret);
+                // the JSON answer comes with an application/json header, so jQuery may already have parsed it
+                var payload = typeof ret === 'object' ? ret : JSON.parse(String(ret).replace('<JSONRESPONSE#', '').replace('#ENDJSONRESPONSE>', ''));
                 if (payload.result === 'error') {
                     $('#MGAlerts').alerts('error', payload.error || 'An error occurred.');
                     btn.prop('disabled', false).text('{$MGLANG->T('aisSubmitConfiguration')}');
