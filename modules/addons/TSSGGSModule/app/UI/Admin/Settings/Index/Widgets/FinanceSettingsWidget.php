@@ -12,8 +12,8 @@ class FinanceSettingsWidget extends Widget
     public function loadHtml(): void
     {
         $this->setTitle($this->translate('title'));
-        $this->setIcon('cash-multiple');
-        $this->addElement((new \ModulesGarden\TSSGGSModule\Components\Text\Text())->setText('<p class="tssggs-page__desc">' . htmlspecialchars($this->translate('subtitle')) . '</p>'));
+$this->setIcon('cash-multiple');
+        $this->setSubtitle($this->translate('subtitle'));
         $this->addElement(new FinanceSettingsForm());
     }
 }

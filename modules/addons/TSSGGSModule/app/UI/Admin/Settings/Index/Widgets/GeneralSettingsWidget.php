@@ -10,8 +10,8 @@ class GeneralSettingsWidget extends Widget
     public function loadHtml(): void
     {
         $this->setTitle($this->translate('title'));
-        $this->setIcon('web');
-        $this->addElement((new \ModulesGarden\TSSGGSModule\Components\Text\Text())->setText('<p class="tssggs-page__desc">' . htmlspecialchars($this->translate('subtitle')) . '</p>'));
+$this->setIcon('web');
+        $this->setSubtitle($this->translate('subtitle'));
         $this->addElement(new GeneralSettingsForm());
     }
 }

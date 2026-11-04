@@ -11,8 +11,8 @@ class AutomatedSettingsWidget extends Widget
     public function loadHtml(): void
     {
         $this->setTitle($this->translate('title'));
-        $this->setIcon('sync');
-        $this->addElement((new \ModulesGarden\TSSGGSModule\Components\Text\Text())->setText('<p class="tssggs-page__desc">' . htmlspecialchars($this->translate('subtitle')) . '</p>'));
+$this->setIcon('sync');
+        $this->setSubtitle($this->translate('subtitle'));
         $this->addElement(new SslSettingsForm(false, SslSettingsForm::SCOPE_AUTOMATED));
     }
 }

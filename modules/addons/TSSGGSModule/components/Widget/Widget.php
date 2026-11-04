@@ -15,6 +15,14 @@ class Widget extends Container implements ComponentContainerInterface
 
     public const COMPONENT = 'Widget';
 
+    /** A second line under the title, in the widget header */
+    public function setSubtitle(string $subtitle)
+    {
+        $this->setSlot('subtitle', $subtitle);
+
+        return $this;
+    }
+
     public function setIcon(string $icon)
     {
         // inline SVG; the class only for a name that has no SVG yet

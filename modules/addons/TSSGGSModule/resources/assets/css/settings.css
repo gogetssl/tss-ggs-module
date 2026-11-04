@@ -23,30 +23,109 @@
 }
 
 #layers2 .tssggs-settings form .lu-widget.tssggs-sec > .lu-widget__header {
-    margin: 0;
-    padding: 0;
+    margin: 0 0 14px !important;
+    padding: 0 !important;
 }
 
+/* section heading: icon in a soft square, the title centred on it */
 #layers2 .tssggs-settings form .lu-widget.tssggs-sec > .lu-widget__header .lu-widget__top {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 12px;
 }
 
 #layers2 .tssggs-settings form .lu-widget.tssggs-sec > .lu-widget__header .lu-widget__icon {
     display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 36px;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: var(--tw-primary-soft);
     color: var(--tw-primary);
 }
 
+#layers2 .tssggs-settings form .lu-widget.tssggs-sec > .lu-widget__header .lu-widget__icon svg {
+    width: 20px;
+    height: 20px;
+}
+
 #layers2 .tssggs-settings form .lu-widget.tssggs-sec > .lu-widget__header .lu-top__title {
+    margin: 0;
     color: var(--tw-fg);
-    font-size: 14px !important;
+    font-size: 18px !important;
     font-weight: 600 !important;
+    line-height: 36px !important;
+}
+
+/* the section's information message: soft background, info icon on the left */
+#layers2 .tssggs-settings .tssggs-sec__desc {
+    position: relative;
+    margin: 0 0 12px;
+    padding: 12px 16px 12px 46px;
+    border-radius: 8px;
+    background: var(--tw-surface-alt);
+    color: var(--tw-fg-soft);
+    font-size: 14px;
     line-height: 20px;
 }
 
-#layers2 .tssggs-settings .tssggs-sec__desc {
-    margin: 2px 0 12px;
+#layers2 .tssggs-settings .tssggs-sec__desc::before {
+    content: '';
+    position: absolute;
+    left: 16px;
+    top: 12px;
+    width: 20px;
+    height: 20px;
+    background: var(--tw-fg-soft);
+    -webkit-mask: var(--nt-icon-info) center / 20px 20px no-repeat;
+    mask: var(--nt-icon-info) center / 20px 20px no-repeat;
+}
+
+/* the card heading (Log settings): a larger icon in a grey square, the title and a second row under it */
+#layers2 .tssggs-settings .lu-widget__header:has(.lu-top--sub) {
+    padding: 18px 24px !important;
+    background: var(--tw-surface-alt);
+}
+
+#layers2 .tssggs-settings .lu-widget__top.lu-top--sub {
+    display: grid;
+    grid-template-columns: 48px minmax(0, 1fr);
+    grid-template-rows: auto auto;
+    column-gap: 16px;
+    align-items: center;
+}
+
+#layers2 .tssggs-settings .lu-top--sub .lu-widget__icon {
+    grid-row: 1 / span 2;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border: 1px solid var(--tw-border);
+    border-radius: 10px;
+    background: var(--tw-surface);
+    color: var(--tw-fg);
+}
+
+#layers2 .tssggs-settings .lu-top--sub .lu-widget__icon svg {
+    width: 26px;
+    height: 26px;
+}
+
+#layers2 .tssggs-settings .lu-top--sub .lu-top__title {
+    grid-column: 2;
+    align-self: end;
+    font-size: 22px !important;
+    font-weight: 600 !important;
+    line-height: 28px !important;
+}
+
+#layers2 .tssggs-settings .lu-top--sub .lu-top__subtitle {
+    grid-column: 2;
+    align-self: start;
     color: var(--tw-muted);
     font-size: 14px;
     line-height: 20px;
