@@ -29,7 +29,14 @@ class GeneralSettings
         'issuedMessage'            => '',
         'certificateEmailTemplate' => '',
         'requireAgreement'         => true,
-        'agreementText'            => '',
+        'agreementText'            => '',    // other certificate authorities (and the fallback text)
+        // subscriber agreement of each certificate authority (CertificateService::AUTHORITIES)
+        'agreementUrl_sectigo'     => 'https://www.sectigo.com/legal',
+        'agreementText_sectigo'    => '',
+        'agreementUrl_digicert'    => 'https://www.digicert.com/legal-repository',
+        'agreementText_digicert'   => '',
+        'agreementUrl_gogetssl'    => 'https://www.gogetssl.com/legal/',
+        'agreementText_gogetssl'   => '',
         // Logging
         'whmcsActivityLog'         => true,
         'moduleLog'                => true,

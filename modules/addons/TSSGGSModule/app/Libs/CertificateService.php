@@ -654,38 +654,47 @@ class CertificateService
             return null;
         }
 
+        $authority = self::authority($packageId);
+        $shared    = trim((string)GeneralSettings::get('agreementText'));
+        if($authority === null)
+        {
+            return ['name' => 'Subscriber Agreement of the certificate authority', 'url' => '', 'text' => $shared];
+        }
+
+        $own = trim((string)GeneralSettings::get('agreementText_' . $authority));
+
+        return [
+            'name' => self::AUTHORITIES[$authority]['name'] . ' Subscriber Agreement',
+            'url'  => trim((string)GeneralSettings::get('agreementUrl_' . $authority)),
+            'text' => $own !== '' ? $own : $shared,
+        ];
+    }
+
+    /** Certificate authorities with their own subscriber agreement, and the brands that belong to each */
+    const AUTHORITIES = [
+        'sectigo'  => ['name' => 'Sectigo',  'brands' => ['sectigo', 'comodo', 'positivessl', 'instantssl', 'essentialssl', 'enterprisessl', 'trustedsite']],
+        'digicert' => ['name' => 'DigiCert', 'brands' => ['digicert', 'geotrust', 'rapidssl', 'thawte', 'symantec', 'encryption everywhere']],
+        'gogetssl' => ['name' => 'GoGetSSL', 'brands' => ['gogetssl']],
+    ];
+
+    /** Key of AUTHORITIES the product belongs to (from its brand), null for any other authority */
+    public static function authority($packageId)
+    {
         $product = (new ProductRepository())->getProductConfiguration($packageId);
         $brand   = strtolower((string)$product['brand'] . ' ' . (string)RemoteProduct::where('remoteId', $product['product_id'])->where('vendor', $product['provider'])->value('brand'));
 
-        $authorities = [
-            'Sectigo'  => ['sectigo', 'comodo', 'positivessl', 'instantssl', 'essentialssl', 'enterprisessl', 'trustedsite'],
-            'DigiCert' => ['digicert', 'geotrust', 'rapidssl', 'thawte', 'symantec', 'encryption everywhere'],
-            'GoGetSSL' => ['gogetssl'],
-        ];
-        $urls = [
-            'Sectigo'  => 'https://www.sectigo.com/legal',
-            'DigiCert' => 'https://www.digicert.com/legal-repository',
-            'GoGetSSL' => 'https://www.gogetssl.com/legal/',
-        ];
-
-        $name = '';
-        foreach($authorities as $authority => $needles)
+        foreach(self::AUTHORITIES as $key => $authority)
         {
-            foreach($needles as $needle)
+            foreach($authority['brands'] as $needle)
             {
                 if(strpos($brand, $needle) !== false)
                 {
-                    $name = $authority;
-                    break 2;
+                    return $key;
                 }
             }
         }
 
-        return [
-            'name' => $name !== '' ? $name . ' Subscriber Agreement' : 'Subscriber Agreement of the certificate authority',
-            'url'  => $name !== '' ? $urls[$name] : '',
-            'text' => trim((string)GeneralSettings::get('agreementText')),
-        ];
+        return null;
     }
 
     /**

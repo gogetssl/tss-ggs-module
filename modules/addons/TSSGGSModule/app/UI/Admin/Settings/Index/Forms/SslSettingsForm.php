@@ -289,7 +289,16 @@ class SslSettingsForm extends Form implements AdminAreaInterface, AjaxComponentI
     {
         $this->builder->addFieldInContainer($widget, (new Switcher())->setName('useDefaultWebServer')->addClass('switcher-revert'), true);
         $this->builder->addFieldInContainer($widget, (new Switcher())->setName('requireAgreement')->addClass('switcher-revert'), true);
-        $this->builder->addFieldInContainer($widget, (new TextArea())->setName('agreementText'), true);
+
+        // one agreement per certificate authority, picked automatically from the product's brand
+        foreach(array_keys(\ModulesGarden\TSSGGSModule\App\Libs\CertificateService::AUTHORITIES) as $authority)
+        {
+            $sub = $this->subSection('agreement_' . $authority, $widget);
+            $this->builder->addFieldInContainer($sub, (new FormInputText())->setName('agreementUrl_' . $authority), true);
+            $this->builder->addFieldInContainer($sub, (new TextArea())->setName('agreementText_' . $authority), true);
+        }
+        $other = $this->subSection('agreement_other', $widget);
+        $this->builder->addFieldInContainer($other, (new TextArea())->setName('agreementText'), true);
     }
 
     protected function deliveryFields($widget)
