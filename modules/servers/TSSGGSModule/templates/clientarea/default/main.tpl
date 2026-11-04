@@ -29,9 +29,14 @@
             </div>
         </div>
         <div id="mg-container">
-            {* WHMCS escapes template variables (escape_html); the module output is already HTML, so skip the
-               escaping instead of decoding it back - decoding would also undo the |escape used in page templates *}
-            {$content nofilter}
+            {* The module output is HTML. WHMCS 9 HTML-escapes the variables a module returns before this template
+               runs, so nofilter alone shows the page as text: decode that one layer back. Only when it arrived
+               escaped - decoding raw HTML would undo the |escape the page templates use for client data. *}
+            {if $content|trim|substr:0:4 == '&lt;'}
+                {$content|htmlspecialchars_decode nofilter}
+            {else}
+                {$content nofilter}
+            {/if}
         </div>
         {literal}
             <script type="text/javascript">
