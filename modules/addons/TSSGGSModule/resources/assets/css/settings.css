@@ -172,7 +172,7 @@
     grid-column: 1;
     margin: 0;
     color: var(--tw-fg);
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 500;
 }
 
@@ -202,7 +202,7 @@
 #layers2 .tssggs-settings form .tssggs-sec .lu-form-check .tssggs-yn > span {
     flex: 1 1 auto;
     color: var(--tw-fg);
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 500;
 }
 
