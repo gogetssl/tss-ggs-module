@@ -93,11 +93,18 @@
     display: grid !important;
     grid-template-columns: 48px minmax(0, 1fr);
     grid-template-rows: auto auto;
+    row-gap: 2px;
     column-gap: 16px;
     align-items: center;
 }
 
 #layers2 .lu-app-main .tssggs-settings .lu-widget__top.lu-top--sub .lu-widget__icon {
+    align-self: center;
+    flex: none !important;
+    width: 48px !important;
+    height: 48px !important;
+    margin: 0 !important;
+    padding: 0 !important;
     grid-row: 1 / span 2;
     display: inline-flex;
     align-items: center;
@@ -116,6 +123,7 @@
 }
 
 #layers2 .lu-app-main .tssggs-settings .lu-widget__top.lu-top--sub .lu-top__title {
+    margin: 0 !important;
     grid-column: 2;
     align-self: end;
     font-size: 22px !important;
@@ -124,6 +132,7 @@
 }
 
 #layers2 .lu-app-main .tssggs-settings .lu-widget__top.lu-top--sub .lu-top__subtitle {
+    margin: 0 !important;
     grid-column: 2;
     align-self: start;
     color: var(--tw-muted);
