@@ -34,7 +34,7 @@ class GeneralSettingsForm extends Form implements AdminAreaInterface, AjaxCompon
 
         $clientArea = $this->section('clientArea', 'account-group-outline');
         $this->builder->addFieldInContainer($clientArea, (new Switcher())->setName('clientSummary')->addClass('switcher-revert'), true);
-        $this->builder->addFieldInContainer($clientArea, (new FormInputText())->setName('sidebarTemplates'), true);
+        $this->builder->addFieldInContainer($clientArea, (new Dropdown())->setName('sidebarTemplates')->setMultiple()->setAllowToCreate()->setPlaceholder($this->translate('sidebarTemplates_placeholder')), true);
         $this->builder->addFieldInContainer($clientArea, (new Dropdown())->setName('expiresSoonDays'), true);
         $this->builder->addFieldInContainer($clientArea, (new Switcher())->setName('certificatesByDomain')->addClass('switcher-revert'), true);
         $this->builder->addFieldInContainer($clientArea, (new Switcher())->setName('sslTools')->addClass('switcher-revert'), true);

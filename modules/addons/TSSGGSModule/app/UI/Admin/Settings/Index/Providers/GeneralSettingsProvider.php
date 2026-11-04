@@ -10,12 +10,29 @@ class GeneralSettingsProvider extends CrudProvider
 {
     const SWITCHES = ['downloadFormat_zip', 'downloadFormat_crt', 'downloadFormat_ca', 'downloadFormat_fullchain', 'downloadFormat_nginx', 'downloadFormat_apache', 'downloadFormat_pkcs7', 'clientSummary', 'certificatesByDomain', 'sslTools', 'whmcsActivityLog', 'moduleLog', 'certificateLog', 'internalLog', 'eventLog', 'terminateCancelsOrder', 'terminateUnpaidOnExpiry', 'requireAgreement', 'useDefaultWebServer', 'keepMarginOnSync', 'belowCostEmail', 'hideInfoMessages'];
 
+    /** WHMCS client area templates offered in "Show the SSL menu on" (any other template name can be typed in) */
+    const SIDEBAR_PAGES = ['clientareahome', 'clientareaproducts', 'clientareaproductdetails', 'clientareadomains', 'clientareadomaindetails', 'clientareainvoices',
+                           'supportticketslist', 'viewticket', 'clientareadetails', 'knowledgebase', 'announcements'];
+
     public function read()
     {
         foreach(GeneralSettings::all() as $key => $value)
         {
             $this->data[$key] = in_array($key, self::SWITCHES, true) ? GeneralSettings::enabled($key) : $value;
         }
+
+        // client area pages for the SSL menu: the usual ones by name, plus any template name saved before
+        $this->data['sidebarTemplates'] = array_values(array_filter(array_map('trim', explode(',', (string)GeneralSettings::get('sidebarTemplates')))));
+        $pages = [];
+        foreach(self::SIDEBAR_PAGES as $template)
+        {
+            $pages[$template] = $this->translate('page_' . $template);
+        }
+        foreach($this->data['sidebarTemplates'] as $template)
+        {
+            $pages += [$template => $template];
+        }
+        $this->availableValues['sidebarTemplates'] = $pages;
 
         $this->data['debugServices'] = implode(', ', \ModulesGarden\TSSGGSModule\App\Libs\LogPolicy::debugServices());
         $this->data['debugHours']    = 4;
@@ -58,7 +75,10 @@ class GeneralSettingsProvider extends CrudProvider
         }
         if(array_key_exists('sidebarTemplates', $data))
         {
-            $data['sidebarTemplates'] = preg_replace('/[^a-z0-9_,-]/i', '', (string)$data['sidebarTemplates']);
+            $pages = is_array($data['sidebarTemplates']) ? $data['sidebarTemplates'] : explode(',', (string)$data['sidebarTemplates']);
+            $data['sidebarTemplates'] = implode(',', array_unique(array_filter(array_map(function($page) {
+                return preg_replace('/[^a-z0-9_-]/i', '', (string)$page);
+            }, $pages))));
         }
 
         // debug mode: the service list and for how long (the hours are not stored, only the end time)
