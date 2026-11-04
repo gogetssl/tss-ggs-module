@@ -528,3 +528,4 @@ $_LANG['private_key_expired'] = 'The private key is no longer available (it is k
 $_LANG['serverCA']['home']['sslConfigRefreshDomains'] = 'Domain list not up to date? Refresh the list';
 $_LANG['serverCA']['home']['validation_page']['DNS Record Type'] = 'DNS Record Type';
 $_LANG['serverCA']['home']['validation_page']['DNS Host'] = 'DNS Host (name)';
+$_LANG['serverCA']['home']['validation_page']['DNS value pending'] = 'Not received from the certificate authority yet - it appears here after the next status check (use Revalidate or reload later)';

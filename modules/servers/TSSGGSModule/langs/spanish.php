@@ -528,3 +528,4 @@ $_LANG['private_key_expired'] = 'La clave privada ya no está disponible (se con
 $_LANG['serverCA']['home']['sslConfigRefreshDomains'] = '¿La lista de dominios no está actualizada? Actualizar la lista';
 $_LANG['serverCA']['home']['validation_page']['DNS Record Type'] = 'Tipo de registro DNS';
 $_LANG['serverCA']['home']['validation_page']['DNS Host'] = 'Host DNS (nombre)';
+$_LANG['serverCA']['home']['validation_page']['DNS value pending'] = 'Aún no recibido de la autoridad de certificación - aparecerá aquí tras la próxima comprobación (Revalidar o recargue más tarde)';

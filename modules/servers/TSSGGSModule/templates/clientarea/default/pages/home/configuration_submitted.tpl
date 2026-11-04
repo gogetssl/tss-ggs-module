@@ -181,7 +181,7 @@
             </tr>
             <tr>
                 <td>{$MGLANG->T('validation_page', 'DNS Content')}</td>
-                <td class="break-all" colspan="2">{$mainDomainDns.value|escape}</td>
+                <td class="break-all" colspan="2">{if $mainDomainDns.value}{$mainDomainDns.value|escape}{else}<i>{$MGLANG->T('validation_page', 'DNS value pending')}</i>{/if}</td>
             </tr>
         {/if}
 
@@ -202,7 +202,7 @@
                                         {$san.methodLabel|escape}<br>
                                         {if $san.dns.type}{$MGLANG->T('validation_page', 'DNS Record Type')}: {$san.dns.type|escape}<br>{/if}
                                         {$MGLANG->T('validation_page', 'DNS Host')}: {$san.dns.host|escape}<br>
-                                        {$MGLANG->T('validation_page', 'DNS Content')}: {$san.dns.value|escape}
+                                        {$MGLANG->T('validation_page', 'DNS Content')}: {if $san.dns.value}{$san.dns.value|escape}{else}<i>{$MGLANG->T('validation_page', 'DNS value pending')}</i>{/if}
                                     {elseif $san.method == 'http' || $san.method == 'https'}
                                         {$san.method|upper}<br>{$san.validation.file_name}<br>{$san.validation.value}
                                     {else}

@@ -528,3 +528,4 @@ $_LANG['private_key_expired'] = 'Soukromý klíč již není k dispozici (v rela
 $_LANG['serverCA']['home']['sslConfigRefreshDomains'] = 'Seznam domén není aktuální? Obnovit seznam';
 $_LANG['serverCA']['home']['validation_page']['DNS Record Type'] = 'Typ DNS záznamu';
 $_LANG['serverCA']['home']['validation_page']['DNS Host'] = 'DNS hostitel (název)';
+$_LANG['serverCA']['home']['validation_page']['DNS value pending'] = 'Zatím nepřijato od certifikační autority - zobrazí se zde po další kontrole stavu (Revalidovat nebo načtěte později)';

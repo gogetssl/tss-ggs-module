@@ -183,7 +183,7 @@ class home extends AbstractController
                 $vars['hasEmailValidation'] = true;
             }
 
-            $domain['dns']         = self::dnsRecord($domain['name'], $domain['method'], $domain['validation'] ?? []);
+            $domain['dns']         = self::dnsRecord($domain['name'], $domain['method'], $domain['validation'] ?? [], (string)($order['orderData']['csr'] ?? ''));
             $domain['methodLabel'] = self::methodLabel($domain['method']);
 
             if($domain['name'] == $mainDomain)
@@ -236,7 +236,7 @@ class home extends AbstractController
      * The gateway sends the value and, depending on the authority, the host and the record type; when the host is
      * missing the record goes on the domain itself.
      */
-    public static function dnsRecord($domainName, $method, $validation)
+    public static function dnsRecord($domainName, $method, $validation, $csr = '')
     {
         $method = strtolower((string)$method);
         if(!in_array($method, ['dns', 'dns-cname', 'dns-txt'], true))
@@ -256,12 +256,28 @@ class home extends AbstractController
             return '';
         };
 
-        $type = $method === 'dns-cname' ? 'CNAME' : ($method === 'dns-txt' ? 'TXT' : strtoupper($pick(['type', 'record_type'])));
+        $type   = $method === 'dns-cname' ? 'CNAME' : ($method === 'dns-txt' ? 'TXT' : strtoupper($pick(['type', 'record_type'])));
+        $domain = ltrim((string)$domainName, '*.');
+        $value  = $pick(['value', 'target', 'content', 'record_value']);
+        $host   = $pick(['name', 'host', 'record_name', 'record']);
+
+        // Sectigo CNAME: the gateway sends only the target "<SHA-256 of the CSR, in two halves>.<unique>.sectigo.com";
+        // the record name is "_<MD5 of the CSR>.<domain>" - computed here when the target belongs to this CSR
+        if($host === '' && ($type === 'CNAME' || $method === 'dns') && $csr !== ''
+            && preg_match('/^([0-9a-f]{32})\.([0-9a-f]{32})\.[^.]+\.(?:comodoca|sectigo)\.com\.?$/i', $value, $parts))
+        {
+            $der = base64_decode(preg_replace('/-----[^-]+-----|\s+/', '', (string)$csr), true);
+            if($der !== false && strcasecmp(hash('sha256', $der), $parts[1] . $parts[2]) === 0)
+            {
+                $type = 'CNAME';
+                $host = '_' . strtolower(md5($der)) . '.' . $domain;
+            }
+        }
 
         return [
             'type'  => $type,
-            'host'  => $pick(['name', 'host', 'record_name', 'record']) ?: ltrim((string)$domainName, '*.'),
-            'value' => $pick(['value', 'target', 'content', 'record_value']),
+            'host'  => $host !== '' ? $host : $domain,
+            'value' => $value,
         ];
     }
 

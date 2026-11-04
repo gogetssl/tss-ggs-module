@@ -528,3 +528,4 @@ $_LANG['private_key_expired'] = 'Den private nøgle er ikke længere tilgængeli
 $_LANG['serverCA']['home']['sslConfigRefreshDomains'] = 'Domænelisten er ikke opdateret? Opdater listen';
 $_LANG['serverCA']['home']['validation_page']['DNS Record Type'] = 'DNS-posttype';
 $_LANG['serverCA']['home']['validation_page']['DNS Host'] = 'DNS-vært (navn)';
+$_LANG['serverCA']['home']['validation_page']['DNS value pending'] = 'Endnu ikke modtaget fra certifikatudstederen - vises her efter næste statuskontrol (brug Revalider eller genindlæs senere)';
