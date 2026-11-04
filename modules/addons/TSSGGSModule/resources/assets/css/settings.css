@@ -86,7 +86,7 @@
 /* the card heading (Log settings): a larger icon in a grey square, the title and a second row under it */
 #layers2 .lu-app-main .tssggs-settings .lu-widget > .lu-widget__header:has(.lu-top--sub) {
     padding: 18px 24px !important;
-    background: var(--tw-surface-alt);
+    background: transparent !important;
 }
 
 #layers2 .lu-app-main .tssggs-settings .lu-widget > .lu-widget__header > .lu-widget__top.lu-top--sub {
