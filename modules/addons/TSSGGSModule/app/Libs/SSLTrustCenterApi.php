@@ -593,7 +593,7 @@ class SSLTrustCenterApi
      * Every gateway request and its answer goes to the module log (Logs page), so a failed order or sync can be traced
      * to the exact request. Secrets are masked, long bodies are cut, logging never breaks the request.
      */
-    protected function logCall($method, $uri, $requestBody, $httpCode, $responseBody, $seconds, $error = '')
+    protected function logCall($method, $uri, $requestBody, $httpCode, $responseBody, $seconds, $error = '', array $whmcsLog = [])
     {
         $serviceHint       = $this->serviceHint;
         $this->serviceHint = null;
@@ -620,6 +620,12 @@ class SSLTrustCenterApi
             if(!LogPolicy::logApi($failed, $method, $serviceId))
             {
                 return;
+            }
+
+            // the same decision governs the WHMCS Module Log (Utilities > Logs > Module Log), if that switch is on
+            if($whmcsLog)
+            {
+                self::log($whmcsLog[0], $whmcsLog[1], $whmcsLog[2]);
             }
             if($serviceId)
             {
@@ -733,15 +739,13 @@ class SSLTrustCenterApi
         {
             $error = curl_error($c);
             curl_close($c);
-            self::log('Time: ' . $info['total_time'] . ' ' . $uri, $queryData, $error);
-            $this->logCall($method, $uri, $queryData, 0, '', microtime(true) - $started, $error);
+            $this->logCall($method, $uri, $queryData, 0, '', microtime(true) - $started, $error, ['Time: ' . $info['total_time'] . ' ' . $uri, $queryData, $error]);
             throw new \Exception('Gateway request failed: ' . $error);
         }
 
         $result = substr($data, $info['header_size']);
 
-        self::log('Time: ' . $info['total_time'] . ' ' . $uri, $info['request_header'] . $queryData, $data);
-        $this->logCall($method, $uri, $queryData, (int)$info['http_code'], (string)$result, microtime(true) - $started);
+        $this->logCall($method, $uri, $queryData, (int)$info['http_code'], (string)$result, microtime(true) - $started, '', ['Time: ' . $info['total_time'] . ' ' . $uri, $info['request_header'] . $queryData, $data]);
 
         curl_close($c);
 

@@ -1283,7 +1283,7 @@ $_LANG['admin.settings.index.forms.logs_settings_form.whmcsLogs_about'] = 'Writt
 $_LANG['admin.settings.index.forms.logs_settings_form.whmcsActivityLog'] = 'WHMCS Activity Log';
 $_LANG['admin.settings.index.forms.logs_settings_form.whmcsActivityLog_description'] = 'Write certificate events (order placed, reissue, validation, installation, cancellation) to the WHMCS activity log';
 $_LANG['admin.settings.index.forms.logs_settings_form.moduleLog'] = 'WHMCS Module Log';
-$_LANG['admin.settings.index.forms.logs_settings_form.moduleLog_description'] = 'Write the gateway and cPanel requests and responses to the WHMCS module log (Utilities > Logs > Module Log). It also has to be enabled in WHMCS. Passwords, keys and private keys are never written';
+$_LANG['admin.settings.index.forms.logs_settings_form.moduleLog_description'] = 'Write the gateway and cPanel requests and responses to the WHMCS module log (Utilities > Logs > Module Log). It also has to be enabled in WHMCS. Which requests are written follows the API requests setting above. Passwords, keys and private keys are never written';
 $_LANG['admin.settings.index.forms.logs_settings_form.save'] = 'Save';
 $_LANG['admin.settings.index.forms.logs_settings_form.update_success'] = 'Settings updated successfully';
 
@@ -1340,7 +1340,7 @@ $_LANG['admin.log_policy.hours_12'] = '12 hours';
 $_LANG['admin.log_policy.hours_24'] = '24 hours';
 $_LANG['admin.log_policy.hours_72'] = '3 days';
 $_LANG['admin.settings.index.forms.logs_settings_form.apiLogMode'] = 'API requests';
-$_LANG['admin.settings.index.forms.logs_settings_form.apiLogMode_description'] = 'Requests to the certificate gateway and its answers. Failures = the gateway returned an error or did not answer. Changes = orders, validations, reissues, cancellations. Reads = the crons asking for the status of every pending order every few minutes: they fill the log, so use Everything only while debugging';
+$_LANG['admin.settings.index.forms.logs_settings_form.apiLogMode_description'] = 'Requests to the certificate gateway and its answers. Failures = the gateway returned an error or did not answer. Changes = orders, validations, reissues, cancellations. Reads = the crons asking for the status of every pending order every few minutes: they fill the log, so use Everything only while debugging. The same choice decides what is written to the WHMCS Module Log';
 $_LANG['admin.settings.index.forms.logs_settings_form.eventLog'] = 'Events';
 $_LANG['admin.settings.index.forms.logs_settings_form.eventLog_description'] = 'What the crons and order actions did: status changes, notifications, renewal invoices, price updates. Errors are always recorded';
 $_LANG['admin.settings.index.forms.logs_settings_form.debugLogs'] = 'Debug one order';
