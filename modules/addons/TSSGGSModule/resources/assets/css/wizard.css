@@ -362,11 +362,28 @@ a.tssggs-wizard__item:focus-visible {
     border-bottom: 0;
 }
 
-/* the check column takes the free width and wraps; Required stays on one line, Found wraps when long */
-.tssggs-checks td:first-child {
-    width: 100%;
+/* fixed columns: Required / Found / Status get set widths, the check (name, hint, fix command) takes the rest and
+   wraps - long hints and long "found" values never push the table out of the card. The framework sizes table
+   cells and spans with !important rules, hence the !important here. */
+.tssggs-checks table {
+    table-layout: fixed;
+}
+
+#layers2 .tssggs-checks th:nth-child(2) { width: 130px !important; }
+#layers2 .tssggs-checks th:nth-child(3) { width: 220px !important; }
+#layers2 .tssggs-checks th:nth-child(4) { width: 100px !important; }
+
+.tssggs-checks td:first-child,
+.tssggs-checks td:nth-child(3) {
     white-space: normal;
     overflow-wrap: anywhere;
+}
+
+#layers2 .tssggs-checks__name,
+#layers2 .tssggs-checks__hint,
+#layers2 .tssggs-checks__cmd {
+    width: auto !important;
+    max-width: 100%;
 }
 
 .tssggs-checks td:nth-child(2),
@@ -380,11 +397,11 @@ a.tssggs-wizard__item:focus-visible {
     white-space: nowrap;
 }
 
-.tssggs-checks td:nth-child(3) {
-    min-width: 120px;
-    max-width: 260px;
-    white-space: normal;
-    overflow-wrap: anywhere;
+/* the wizard card body is a flex item that would otherwise grow to the table's natural width */
+.tssggs-step > .lu-widget__body {
+    flex: 1 1 auto;
+    min-width: 0;
+    max-width: 100%;
 }
 
 /* the command that fixes a failed check, ready to copy */
