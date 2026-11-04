@@ -59,6 +59,15 @@
         }, true);
     });
 
+    // the selects are selectize widgets: they announce a change with a jQuery event, which a native listener does not see
+    if (window.jQuery) {
+        window.jQuery(document).on('change', 'form select', function () {
+            if (inScreen(this)) {
+                setState('dirty');
+            }
+        });
+    }
+
     document.addEventListener('tssggs-form-result', function (e) {
         if (!bars().length || (e.detail && e.detail.custom)) {
             return;
