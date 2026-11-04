@@ -266,3 +266,15 @@ body:has(.tssggs-savebar) {
 /* Logs: note under the counter cards */
 #layers2 .tssggs-cardnote { margin-top: 4px; }
 #layers2 .tssggs-cardnote small { display: block; color: var(--tw-fg-soft, #5b6673); font-size: 14px; line-height: 20px; white-space: normal; }
+
+/* section information message with a list of points (e.g. the renewal price options) */
+#layers2 .tssggs-settings .tssggs-sec__desc > p { margin: 0; }
+#layers2 .tssggs-settings .tssggs-sec__desc > ul { margin: 8px 0 0; padding-left: 18px; list-style: disc; }
+#layers2 .tssggs-settings .tssggs-sec__desc > ul > li + li { margin-top: 4px; }
+#layers2 .tssggs-settings .tssggs-sec__desc > ul b { color: var(--tw-fg); font-weight: 600; }
+
+/* every select of the settings pages is clickable as a whole */
+#layers2 .tssggs-settings .lu-selectize-control .lu-selectize-input,
+#layers2 .tssggs-settings .lu-selectize-control .lu-selectize-input > input,
+#layers2 .tssggs-settings .lu-selectize-control .lu-selectize-input > .item,
+#layers2 .tssggs-settings select { cursor: pointer !important; }

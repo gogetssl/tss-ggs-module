@@ -19,14 +19,23 @@ trait SettingsLayout
     /**
      * A section of the screen: icon + title + description ("<title>_desc" in the language file), fields go inside
      */
-    protected function section($title, $icon, $parent = null)
+    protected function section($title, $icon, $parent = null, array $list = [])
     {
         $widget = new Widget();
         $widget->setCss('tssggs-sec');
         $widget->setIcon($icon);
         $widget->setTitle($this->translate($title));
         ($parent ?: $this)->addElement($widget);
-        $widget->addElement((new Text())->setText('<p class="tssggs-sec__desc">' . htmlspecialchars($this->translate($title . '_desc')) . '</p>'));
+
+        // $list: language keys of points shown under the description ("<key>" = bold lead-in, "<key>_text" = the explanation)
+        $items = '';
+        foreach($list as $key)
+        {
+            $items .= '<li><b>' . htmlspecialchars($this->translate($key)) . '</b> ' . htmlspecialchars($this->translate($key . '_text')) . '</li>';
+        }
+        $widget->addElement((new Text())->setText(
+            '<div class="tssggs-sec__desc"><p>' . htmlspecialchars($this->translate($title . '_desc')) . '</p>' . ($items ? '<ul>' . $items . '</ul>' : '') . '</div>'
+        ));
 
         return $widget;
     }

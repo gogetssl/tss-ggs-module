@@ -52,7 +52,7 @@ class FinanceSettingsForm extends Form implements AdminAreaInterface, AjaxCompon
         $this->builder->addFieldInContainer($belowCost, (new Dropdown())->setName('belowCostAction'), true);
         $this->builder->addFieldInContainer($belowCost, (new Switcher())->setName('belowCostEmail')->addClass('switcher-revert'), true);
 
-        $renewals = $this->section('renewalPrices', 'refresh');
+        $renewals = $this->section('renewalPrices', 'refresh', null, ['renewalPoint_never', 'renewalPoint_belowCost', 'renewalPoint_always']);
         $this->builder->addFieldInContainer($renewals, (new Dropdown())->setName('renewalPriceMode'), true);
         $this->builder->addFieldInContainer($renewals, (new Switcher())->setName('renewalPriceClientEmail')->addClass('switcher-revert'), true);
         $this->builder->addFieldInContainer($renewals, (new TextArea())->setName('renewalPriceEmailText'), true);
