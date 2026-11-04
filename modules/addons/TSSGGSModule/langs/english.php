@@ -1466,3 +1466,18 @@ $_LANG['admin.settings.index.forms.ssl_settings_form.agreementText_digicert_desc
 $_LANG['admin.settings.index.forms.ssl_settings_form.agreementText_gogetssl_description'] = 'Optional, HTML allowed. Empty = the text for other certificate authorities below';
 $_LANG['admin.settings.index.forms.ssl_settings_form.agreementText'] = 'Text above the checkbox';
 $_LANG['admin.settings.index.forms.ssl_settings_form.agreementText_description'] = 'Optional, HTML allowed. Shown for products of any other certificate authority, and for the authorities above that have no text of their own';
+$_LANG['admin.settings.index.forms.ssl_settings_form.delivery_desc'] = 'The download buttons clients see once their certificate is issued. Each one gives the same certificate, packed the way a type of server expects. Turn off the ones your clients do not need; if all are off, the ZIP with everything is offered.';
+$_LANG['admin.settings.index.forms.ssl_settings_form.downloadFormat_zip'] = 'Everything in one ZIP';
+$_LANG['admin.settings.index.forms.ssl_settings_form.downloadFormat_zip_description'] = 'One ZIP with all the files below (certificate, CA bundle, chained certificate, .p7b). The safe choice when you do not know the client\'s server';
+$_LANG['admin.settings.index.forms.ssl_settings_form.downloadFormat_crt'] = 'Certificate only';
+$_LANG['admin.settings.index.forms.ssl_settings_form.downloadFormat_crt_description'] = 'The client\'s certificate alone (.crt), without the intermediate certificates. For control panels that ask for the certificate and the CA bundle in separate fields (cPanel, Plesk, DirectAdmin)';
+$_LANG['admin.settings.index.forms.ssl_settings_form.downloadFormat_ca'] = 'Intermediate certificates (CA bundle)';
+$_LANG['admin.settings.index.forms.ssl_settings_form.downloadFormat_ca_description'] = 'Only the certificate authority\'s intermediate certificates (.ca-bundle). Installed together with the certificate; browsers show errors when they are missing';
+$_LANG['admin.settings.index.forms.ssl_settings_form.downloadFormat_fullchain'] = 'Certificate with intermediates (full chain)';
+$_LANG['admin.settings.index.forms.ssl_settings_form.downloadFormat_fullchain_description'] = 'Certificate and intermediates in one file (.fullchain.crt). For most modern servers and tools: HAProxy, load balancers, Caddy, newer Apache';
+$_LANG['admin.settings.index.forms.ssl_settings_form.downloadFormat_nginx'] = 'Nginx';
+$_LANG['admin.settings.index.forms.ssl_settings_form.downloadFormat_nginx_description'] = 'Same content as the full chain, named for Nginx (.chained.crt), the file the ssl_certificate line points to';
+$_LANG['admin.settings.index.forms.ssl_settings_form.downloadFormat_apache'] = 'Apache';
+$_LANG['admin.settings.index.forms.ssl_settings_form.downloadFormat_apache_description'] = 'A ZIP with the certificate and the CA bundle as two files, for Apache\'s SSLCertificateFile and SSLCertificateChainFile';
+$_LANG['admin.settings.index.forms.ssl_settings_form.downloadFormat_pkcs7'] = 'Windows IIS / Tomcat';
+$_LANG['admin.settings.index.forms.ssl_settings_form.downloadFormat_pkcs7_description'] = 'Certificate and intermediates in one PKCS#7 file (.p7b), the format Windows (IIS, Exchange) and Java servers (Tomcat) import';
