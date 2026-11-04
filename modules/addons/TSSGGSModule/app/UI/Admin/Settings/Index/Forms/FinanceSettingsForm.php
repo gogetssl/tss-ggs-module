@@ -3,7 +3,11 @@
 namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Forms;
 
 
+use ModulesGarden\TSSGGSModule\App\Libs\Commissions;
 use ModulesGarden\TSSGGSModule\App\Libs\Helpers;
+use ModulesGarden\TSSGGSModule\App\Libs\PricingService;
+use ModulesGarden\TSSGGSModule\App\Libs\ProductSettings;
+use ModulesGarden\TSSGGSModule\Components\Text\Text;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Concerns\SettingsLayout;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Providers\FinanceSettingsProvider;
 use ModulesGarden\TSSGGSModule\Components\Dropdown\Dropdown;
@@ -42,6 +46,7 @@ class FinanceSettingsForm extends Form implements AdminAreaInterface, AjaxCompon
         $this->setId('FinanceSettingsForm');
 
         $pricing = $this->section('pricing', 'trending-up');
+        $pricing->addElement((new Text())->setText($this->otherPriceRules()));
         $this->builder->addFieldInContainer($pricing, (new Number())->setName('profitMargin')->setMin(0)->setMax(1000)->required()->numeric()->between(0, 1000), true);
         $this->builder->addFieldInContainer($pricing, (new FormInputText())->setName('minProfit')->numeric()->between(0, 100000), true);
         $this->builder->addFieldInContainer($pricing, (new Number())->setName('termMarginStep')->setMin(0)->setMax(100)->numeric()->between(0, 100), true);
@@ -74,5 +79,48 @@ class FinanceSettingsForm extends Form implements AdminAreaInterface, AjaxCompon
         $this->builder->addFieldInContainer($balance, (new Switcher())->setName('balanceAlert')->addClass('switcher-revert'), true);
 
         $this->saveBar();
+    }
+
+    /**
+     * The other places that decide a price, with what is set there now: the default margin here only prices products
+     * with automatic pricing, a product margin replaces it, and commission rules are added on top at checkout.
+     */
+    protected function otherPriceRules(): string
+    {
+        $products = (new PricingService())->products();
+        $auto     = count(array_filter($products, function($p) { return $p['auto']; }));
+        $own      = 0;
+        foreach($products as $product)
+        {
+            if(trim((string)ProductSettings::get($product['id'])['commission']) !== '')
+            {
+                $own++;
+            }
+        }
+        $rules  = Commissions::all();
+        $global = null;
+        foreach($rules as $rule)
+        {
+            if(!(int)$rule->client_id && !(int)$rule->product_id)
+            {
+                $global = (float)$rule->commission;
+            }
+        }
+
+        $url  = function($page) {
+            return 'addonmodules.php?module=TSSGGSModule&mg-page=' . $page;
+        };
+        $item = function($key, array $vars, $page, $link) use ($url) {
+            return '<li><b>' . htmlspecialchars($this->translate($key)) . '</b> ' . htmlspecialchars($this->translate($key . '_text', $vars))
+                . ' <a href="' . htmlspecialchars($url($page)) . '">' . htmlspecialchars($this->translate($link)) . '</a></li>';
+        };
+
+        $commissionKey = !count($rules) ? 'rulesCommissionsNone' : ($global !== null ? 'rulesCommissionsGlobal' : 'rulesCommissions');
+
+        return '<div class="tssggs-sec__desc tssggs-sec__desc--rules"><p>' . htmlspecialchars($this->translate('rulesIntro')) . '</p><ul>'
+            . $item('rulesAuto', [':auto' => $auto, ':manual' => count($products) - $auto], 'pricing', 'openPricing')
+            . $item('rulesProducts', [':count' => $own], 'products', 'openProducts')
+            . $item($commissionKey, [':count' => count($rules), ':global' => rtrim(rtrim(number_format((float)$global, 2, '.', ''), '0'), '.')], 'commissions', 'openCommissions')
+            . '</ul></div>';
     }
 }
