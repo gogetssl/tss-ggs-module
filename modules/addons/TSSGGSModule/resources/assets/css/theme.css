@@ -523,3 +523,6 @@
 #layers2 .tssggs-explain p, #layers2 .tssggs-explain ul { color: var(--nt-text); font-size: 14px; line-height: 22px; }
 #layers2 .tssggs-explain a { color: var(--nt-info); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
 @media (max-width: 600px) { #layers2 .tssggs-note { padding: 12px 12px 12px 44px; } #layers2 .tssggs-note::before { left: 12px; top: 14px; } #layers2 .tssggs-explain { padding: 12px; } }
+
+/* inline code: no grey chip, a calmer red than the framework default (#ff3860) */
+#layers2 code { background-color: transparent; color: #b4233a; }
