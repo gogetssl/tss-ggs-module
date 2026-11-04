@@ -84,20 +84,20 @@
 }
 
 /* the card heading (Log settings): a larger icon in a grey square, the title and a second row under it */
-#layers2 .tssggs-settings .lu-widget__header:has(.lu-top--sub) {
+#layers2 .lu-app-main .tssggs-settings .lu-widget > .lu-widget__header:has(.lu-top--sub) {
     padding: 18px 24px !important;
     background: var(--tw-surface-alt);
 }
 
-#layers2 .tssggs-settings .lu-widget__top.lu-top--sub {
-    display: grid;
+#layers2 .lu-app-main .tssggs-settings .lu-widget > .lu-widget__header > .lu-widget__top.lu-top--sub {
+    display: grid !important;
     grid-template-columns: 48px minmax(0, 1fr);
     grid-template-rows: auto auto;
     column-gap: 16px;
     align-items: center;
 }
 
-#layers2 .tssggs-settings .lu-top--sub .lu-widget__icon {
+#layers2 .lu-app-main .tssggs-settings .lu-widget__top.lu-top--sub .lu-widget__icon {
     grid-row: 1 / span 2;
     display: inline-flex;
     align-items: center;
@@ -110,12 +110,12 @@
     color: var(--tw-fg);
 }
 
-#layers2 .tssggs-settings .lu-top--sub .lu-widget__icon svg {
+#layers2 .lu-app-main .tssggs-settings .lu-widget__top.lu-top--sub .lu-widget__icon svg {
     width: 26px;
     height: 26px;
 }
 
-#layers2 .tssggs-settings .lu-top--sub .lu-top__title {
+#layers2 .lu-app-main .tssggs-settings .lu-widget__top.lu-top--sub .lu-top__title {
     grid-column: 2;
     align-self: end;
     font-size: 22px !important;
@@ -123,7 +123,7 @@
     line-height: 28px !important;
 }
 
-#layers2 .tssggs-settings .lu-top--sub .lu-top__subtitle {
+#layers2 .lu-app-main .tssggs-settings .lu-widget__top.lu-top--sub .lu-top__subtitle {
     grid-column: 2;
     align-self: start;
     color: var(--tw-muted);
