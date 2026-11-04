@@ -62,10 +62,11 @@
                             <td>{$domain}</td>
                             <td>
                                 <select name="method[{$domain}]" class="select_method form-control">
-                                    {if 'email'|in_array:$available_method_validation}<option value="email">EMAIL</option>{/if}
-                                    {if 'dns'|in_array:$available_method_validation}<option value="dns">DNS</option>{/if}
-                                    {if 'http'|in_array:$available_method_validation}<option value="http">HTTP</option>{/if}
-                                    {if 'https'|in_array:$available_method_validation}<option value="https">HTTPS</option>{/if}
+                                    {assign var=currentMethod value=$currentMethods[$domain]|default:''}
+                                    {if 'email'|in_array:$available_method_validation}<option value="email"{if $currentMethod == 'email'} selected{/if}>EMAIL</option>{/if}
+                                    {if 'dns'|in_array:$available_method_validation}<option value="dns"{if $currentMethod == 'dns'} selected{/if}>DNS</option>{/if}
+                                    {if 'http'|in_array:$available_method_validation}<option value="http"{if $currentMethod == 'http'} selected{/if}>HTTP</option>{/if}
+                                    {if 'https'|in_array:$available_method_validation}<option value="https"{if $currentMethod == 'https'} selected{/if}>HTTPS</option>{/if}
                                 </select>
                             </td>
                             <td>

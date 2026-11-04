@@ -1129,6 +1129,19 @@ class home extends AbstractController
             $domains[] = $san['name'];
         }
         $vars['domains']   = $domains;
+
+        // each domain starts on the method it uses now (dns-cname / dns-txt are the "DNS" choice here, an address is e-mail)
+        $current = [$certificate['orderData']['orderData']['common_name']['name'] => $certificate['orderData']['orderData']['common_name']['validation_method'] ?? ''];
+        foreach($certificate['orderData']['orderData']['alternative_names'] as $san)
+        {
+            $current[$san['name']] = $san['validation_method'] ?? '';
+        }
+        $vars['currentMethods'] = array_map(function($method) {
+            $method = strtolower((string)$method);
+
+            return strpos($method, '@') !== false ? 'email' : (strpos($method, 'dns') === 0 ? 'dns' : $method);
+        }, $current);
+
         $approvers         = $api->getDomainEmails($domains);
         $vars['approvers'] = $this->approversToOptions($approvers);
 
