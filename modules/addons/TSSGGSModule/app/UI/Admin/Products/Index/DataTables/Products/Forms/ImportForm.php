@@ -139,11 +139,11 @@ class ImportForm extends Form implements AdminAreaInterface, AjaxComponentInterf
         {
             $profitMarginField = new Number();
             $profitMarginField->setDefaultValue(1);
-            $profitMarginField->setMin(1);
+            $profitMarginField->setMin(0);
             $profitMarginField->setMax(1000);
             $profitMarginField->setName('profitMargin');
             $profitMarginField->required();
-            $profitMarginField->numeric()->between(1, 1000);
+            $profitMarginField->numeric()->between(0, 1000);
             $this->builder->addFieldInContainer($rightColumn, $profitMarginField, true);
         }
 

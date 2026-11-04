@@ -731,6 +731,7 @@ class SSLTrustCenterApi
         curl_setopt($c, CURLOPT_TIMEOUT, self::TIMEOUT);
 
         $started = microtime(true);
+        $hint    = $this->serviceHint; // logCall() clears it
         $data    = curl_exec($c);
         $info    = curl_getinfo($c);
         $method  = $customMethod !== false ? strtoupper((string)$customMethod) : ($post ? 'POST' : 'GET');
@@ -779,6 +780,18 @@ class SSLTrustCenterApi
 
         if(!$isSuccess)
         {
+            // an order refused for lack of funds: tell the administrators at once (Settings > Finance > Reseller balance)
+            if(isset($response['message']) && FinancePolicy::isBalanceError($response['message']))
+            {
+                try
+                {
+                    FinancePolicy::balanceAlert($response['message'], $hint);
+                }
+                catch(\Throwable $e)
+                {
+                }
+            }
+
             if(isset($response['message']))
             {
                 throw new \Exception('Invalid response code: ' . $httpCode . ' ' . $response['message']);

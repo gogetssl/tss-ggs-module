@@ -222,7 +222,7 @@ class PricingService
                         {
                             continue; // a disabled cycle stays disabled
                         }
-                        $value = round($this->convert($remoteCost, $currency) * (1 + (float)$margin / 100), 2);
+                        $value = FinancePolicy::sell($remoteCost * $this->rate, $margin, $term, $currency, $item === 'base');
                         $changed += $this->setPrice($product, $item, $term, $currency, $value) ? 1 : 0;
                     }
                 }
@@ -294,7 +294,7 @@ class PricingService
                         $price = $this->price($product, $item, $term, $currencyId);
                         if($price !== null && $price > 0)
                         {
-                            $changed += $this->setPrice($product, $item, $term, $currencyId, round($price * $cost / $old, 2)) ? 1 : 0;
+                            $changed += $this->setPrice($product, $item, $term, $currencyId, FinancePolicy::round($price * $cost / $old)) ? 1 : 0;
                         }
                     }
                 }
@@ -304,6 +304,56 @@ class PricingService
         $this->saveSetting(self::SNAPSHOT_SETTING, json_encode($current));
 
         return $changed;
+    }
+
+    /**
+     * "Raise the price automatically": every price below the reseller cost gets the normal price of the product
+     * (cost + its margin, minimum profit, rounding). Returns the changed prices (same rows as belowCost()) and e-mails
+     * them to the administrators when the below-cost e-mail is on.
+     */
+    public function raiseBelowCost($globalMargin, $email = true)
+    {
+        $list     = $this->belowCost();
+        $products = $this->products();
+        $ids      = [];
+        foreach(self::currencies() as $currency)
+        {
+            $ids[$currency->code] = (int)$currency->id;
+        }
+
+        $raised = [];
+        foreach($list as $row)
+        {
+            $product    = $products[$row['pid']] ?? null;
+            $remoteCost = $product ? $this->remoteCost($product['remote'], $row['item'], $row['term']) : null;
+            if($remoteCost === null || !isset($ids[$row['currency']]))
+            {
+                continue;
+            }
+            $margin = ProductSettings::margin($product['id'], $globalMargin);
+            $value  = FinancePolicy::sell($remoteCost * $this->rate, $margin, $row['term'], $ids[$row['currency']], $row['item'] === 'base');
+            if($value <= $row['price'] || !$this->setPrice($product, $row['item'], (int)$row['term'], $ids[$row['currency']], $value))
+            {
+                continue;
+            }
+            $raised[] = $row + ['new' => $value];
+        }
+
+        if($raised && $email)
+        {
+            $rows = '';
+            foreach(array_slice($raised, 0, 200) as $row)
+            {
+                $rows .= '<tr><td>' . htmlspecialchars($row['product']) . ' (#' . (int)$row['pid'] . ')</td><td>' . htmlspecialchars($row['item']) . '</td><td>' . (int)$row['term']
+                    . ' months</td><td>' . htmlspecialchars($row['currency']) . '</td><td>' . number_format($row['cost'], 2) . '</td><td>' . number_format($row['price'], 2) . '</td><td>' . number_format($row['new'], 2) . '</td></tr>';
+            }
+            $message = '<p>' . count($raised) . ' prices of the ' . htmlspecialchars(Edition::name()) . ' were below your reseller cost and have been raised to the normal price (cost + margin):</p>'
+                . '<table border="1" cellpadding="4" cellspacing="0"><tr><th>Product</th><th>Item</th><th>Term</th><th>Currency</th><th>Reseller cost</th><th>Old price</th><th>New price</th></tr>' . $rows . '</table>'
+                . (count($raised) > 200 ? '<p>... and ' . (count($raised) - 200) . ' more.</p>' : '');
+            localAPI('SendAdminEmail', ['customsubject' => Edition::name() . ': ' . count($raised) . ' prices raised to cover the reseller cost', 'custommessage' => $message, 'type' => 'system']);
+        }
+
+        return $raised;
     }
 
     /**

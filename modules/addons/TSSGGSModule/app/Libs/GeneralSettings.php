@@ -52,6 +52,18 @@ class GeneralSettings
         // Pricing
         'keepMarginOnSync'         => false,
         'belowCostEmail'           => true,
+        // Finance (App\Libs\FinancePolicy)
+        'minProfit'                => 0,
+        'termMarginStep'           => 0,
+        'priceRounding'            => 'none',
+        'belowCostAction'          => 'notify',
+        'renewalPriceMode'         => 'never',
+        'renewalPriceClientEmail'  => false,
+        'renewalPriceEmailText'    => '',
+        'rateSource'               => 'manual',
+        'currencyBuffer'           => 0,
+        'balanceAlert'             => true,
+        'balanceAlertSent'         => 0,
     ];
 
     protected static $settings;

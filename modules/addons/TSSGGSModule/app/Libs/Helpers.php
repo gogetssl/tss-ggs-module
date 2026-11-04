@@ -608,17 +608,17 @@ class Helpers
                                 continue;
                             }
 
-                            $price             = $price + ($price * $profitMargin / 100);
-                            $baseCurrencyPrice = $price * $baseCurrencyRate;
+                            $baseCost          = $price * $baseCurrencyRate;
+                            $margin            = ProductSettings::margin($whmcsProduct->id, $profitMargin);
                             $currencies        = Currency::get();
 
                             foreach($currencies as $currency)
                             {
-                                $pricingArray[$currency->id][$billingPeriod] = \convertCurrency($baseCurrencyPrice, $baseCurrencyId, $currency->id);
+                                $pricingArray[$currency->id][$billingPeriod] = FinancePolicy::sell($baseCost, $margin, (int)$remotePriceData['term'], $currency->id, false);
 
                                 if(AcmeHelpers::isAcmeWhmcsProduct($whmcsProduct->id) && $billingPeriod == 'annually')
                                 {
-                                    $pricingArray[$currency->id]['monthly'] = \convertCurrency($baseCurrencyPrice, $baseCurrencyId, $currency->id);
+                                    $pricingArray[$currency->id]['monthly'] = FinancePolicy::sell($baseCost, $margin, (int)$remotePriceData['term'], $currency->id, false);
                                 }
                             }
                         }

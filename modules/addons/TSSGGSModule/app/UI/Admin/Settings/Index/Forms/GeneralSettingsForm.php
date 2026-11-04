@@ -44,11 +44,7 @@ class GeneralSettingsForm extends Form implements AdminAreaInterface, AjaxCompon
 
         $lifecycle = $this->section('lifecycle', 'sync');
         $this->builder->addFieldInContainer($lifecycle, (new Switcher())->setName('terminateCancelsOrder')->addClass('switcher-revert'), true);
-        $this->builder->addFieldInContainer($lifecycle, (new Switcher())->setName('terminateUnpaidOnExpiry')->addClass('switcher-revert'), true);
-
-        $pricing = $this->section('pricing', 'cash-multiple');
-        $this->builder->addFieldInContainer($pricing, (new Switcher())->setName('keepMarginOnSync')->addClass('switcher-revert'), true);
-        $this->builder->addFieldInContainer($pricing, (new Switcher())->setName('belowCostEmail')->addClass('switcher-revert'), true);
+        // termination of unpaid services and the pricing switches are on Settings > Finance
 
         $this->saveBar();
     }

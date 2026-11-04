@@ -81,10 +81,7 @@ class SslSettingsForm extends Form implements AdminAreaInterface, AjaxComponentI
             $this->orderFields($this->section('recurringAndOneTime', 'credit-card-clock-outline'));
         }
 
-        if($this->scope === self::SCOPE_SSL)
-        {
-            $this->dueDateFields($this->section('dueDates', 'calendar-month-outline'));
-        }
+        // the due dates are on Settings > Finance (Billing)
 
         if($this->scope === self::SCOPE_ALL || $this->scope === self::SCOPE_AUTOMATED)
         {

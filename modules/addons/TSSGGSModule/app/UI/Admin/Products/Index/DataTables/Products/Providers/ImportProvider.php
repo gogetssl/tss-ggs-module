@@ -3,6 +3,7 @@
 namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Products\Index\DataTables\Products\Providers;
 
 use ModulesGarden\TSSGGSModule\App\Libs\AcmeHelpers;
+use ModulesGarden\TSSGGSModule\App\Libs\FinancePolicy;
 use ModulesGarden\TSSGGSModule\App\Libs\Helpers;
 use ModulesGarden\TSSGGSModule\App\Models\RemoteProduct;
 use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\ProductRepository;
@@ -88,6 +89,7 @@ class ImportProvider extends CrudProvider
         $localIds           = explode(',', $this->formData['id']);
         $baseCurrencyRate   = $this->formData['rate'] ?: 1;
         $pricingTypePercent = (bool)$this->formData['pricingTypePercent'];
+        $importMargin       = max(0, floatval($this->formData['profitMargin'] ?? 0)); // the margin entered in the import form
 
         //$baseCurrencyId - USD or default WHMCS currency
         $baseCurrencyId = Helpers::getCurrencyIdByCode('USD');
@@ -142,22 +144,16 @@ class ImportProvider extends CrudProvider
                     continue;
                 }
 
-                if(isset($this->formData['profitMargin']) && floatval($this->formData['profitMargin']) > 0)
-                {
-                    $profitMargin = floatval($this->formData['profitMargin']);
-                    $apiPrice     = $apiPrice + ($apiPrice * $profitMargin / 100);
-                }
-
-                $baseCurrencyPrice = $apiPrice * $baseCurrencyRate;
+                $baseCost   = $apiPrice * $baseCurrencyRate;
                 $currencies        = Currency::get();
 
                 foreach($currencies as $currency)
                 {
-                    $pricing[$currency->id][$billingPeriod] = \convertCurrency($baseCurrencyPrice, $baseCurrencyId, $currency->id);
+                    $pricing[$currency->id][$billingPeriod] = FinancePolicy::sell($baseCost, $importMargin, (int)$remotePriceData['term'], $currency->id, true);
 
                     if(AcmeHelpers::isAcmeRemoteProduct($remoteProduct->remoteId) && $billingPeriod == 'annually')
                     {
-                        $pricing[$currency->id]['monthly'] = \convertCurrency($baseCurrencyPrice, $baseCurrencyId, $currency->id);
+                        $pricing[$currency->id]['monthly'] = FinancePolicy::sell($baseCost, $importMargin, (int)$remotePriceData['term'], $currency->id, true);
                     }
                 }
             }
@@ -281,17 +277,16 @@ class ImportProvider extends CrudProvider
                             continue;
                         }
 
-                        $apiPrice          = $apiPrice + ($apiPrice * $profitMargin / 100);
-                        $baseCurrencyPrice = $apiPrice * $baseCurrencyRate;
+                        $baseCost          = $apiPrice * $baseCurrencyRate;
                         $currencies        = Currency::get();
 
                         foreach($currencies as $currency)
                         {
-                            $pricingArray[$currency->id][$billingPeriod] = \convertCurrency($baseCurrencyPrice, $baseCurrencyId, $currency->id);
+                            $pricingArray[$currency->id][$billingPeriod] = FinancePolicy::sell($baseCost, $importMargin, (int)$remotePriceData['term'], $currency->id, false);
 
                             if(AcmeHelpers::isAcmeRemoteProduct($remoteProduct->remoteId) && $billingPeriod == 'annually')
                             {
-                                $pricingArray[$currency->id]['monthly'] = \convertCurrency($baseCurrencyPrice, $baseCurrencyId, $currency->id);
+                                $pricingArray[$currency->id]['monthly'] = FinancePolicy::sell($baseCost, $importMargin, (int)$remotePriceData['term'], $currency->id, false);
                             }
                         }
                     }
