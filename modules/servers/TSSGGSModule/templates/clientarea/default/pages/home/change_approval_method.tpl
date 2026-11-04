@@ -163,7 +163,15 @@
         });
 
 
-        $('.switch-row div.col-md-3:first-child input.change-dcv-method').prop('checked', true).trigger("change");
+        // start on the current methods: the "... for all" switch is on only when every domain uses the same one
+        var current = $('.select_method').map(function () { return $(this).val(); }).get();
+        var same    = current.length && current.every(function (m) { return m === current[0]; }) ? current[0] : '';
+        var sw      = same ? $('input.change-dcv-method[value="' + same + '"]') : $();
+        if (sw.length) {
+            sw.prop('checked', true).trigger("change");
+        } else {
+            $('.select_method').trigger("change");
+        }
 
     });
 
