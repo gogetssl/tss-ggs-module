@@ -362,7 +362,7 @@
 
         function downloadPkey()
         {
-            var f = $('<form method="post" target="_blank"></form>').attr('action', 'clientarea.php?action=productdetails&id={$serviceid}');
+            var f = $('<form></form>').attr({ method: 'post', target: '_blank' }).attr('action', 'clientarea.php?action=productdetails&id={$serviceid}');
             f.append($('<input type="hidden" name="mg-action" value="downloadKey">'));
             f.append($('<input type="hidden" name="token">').val(typeof csrfToken !== 'undefined' ? csrfToken : '{$csrfToken}'));
             f.append($('<input type="hidden" name="handle">').val($('#pkeyField').val()));
