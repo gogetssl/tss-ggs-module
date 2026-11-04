@@ -502,8 +502,8 @@ $_LANG['admin.settings.index.forms.ssl_settings_form.autoDetailsForDvOrders_desc
 $_LANG['admin.settings.index.forms.ssl_settings_form.wildcardDnsTimeoutMinutes'] = 'Timeout der Wildcard-DNS-Validierung (Minuten)';
 $_LANG['admin.settings.index.forms.ssl_settings_form.wildcardDnsTimeoutMinutes_description'] = 'AutoInstall (cPanel): Wenn die DNS-Validierung eines Wildcard-Zertifikats nicht innerhalb dieser Anzahl von Minuten abgeschlossen wird, wechselt das System automatisch zur E-Mail-Validierung und benachrichtigt den Kunden. Standard: 65';
 $_LANG['admin.settings.index.providers.ssl_settings_provider.wildcardDnsTimeoutMinutesInvalidValue'] = 'Der Wert muss eine ganze Zahl von Minuten größer als 0 sein';
-$_LANG['admin.settings.index.forms.ssl_settings_form.cpanelTlsVerifyDisabled'] = 'Überprüfung des cPanel-TLS-Zertifikats überspringen';
-$_LANG['admin.settings.index.forms.ssl_settings_form.cpanelTlsVerifyDisabled_description'] = 'AutoInstall (cPanel): Das TLS-Zertifikat des WHM-/cPanel-Servers nicht überprüfen. Aktivieren Sie dies nur für Server mit selbstsigniertem Zertifikat - die WHM-Zugangsdaten werden bei jeder Anfrage gesendet. Standard: aus';
+$_LANG['admin.settings.index.forms.ssl_settings_form.cpanelTlsVerifyDisabled'] = 'cPanel-Server mit selbstsigniertem Zertifikat erlauben';
+$_LANG['admin.settings.index.forms.ssl_settings_form.cpanelTlsVerifyDisabled_description'] = 'AutoInstall meldet sich an Ihren cPanel- / WHM-Servern an, um Zertifikate zu installieren. Normalerweise prüft es zuerst, ob der Server selbst ein gültiges Zertifikat hat, damit Ihre WHM-Zugangsdaten nicht an einen gefälschten Server gesendet werden. Aktivieren Sie dies nur, wenn AutoInstall mit einem SSL- oder Zertifikatsfehler scheitert, weil ein Server ein selbstsigniertes oder abgelaufenes Zertifikat verwendet. Aus ist sicherer';
 $_LANG['admin.settings.index.forms.ssl_settings_form.useFixedTechnicalDetails'] = 'Feste technische Daten verwenden';
 $_LANG['admin.settings.index.forms.ssl_settings_form.useFixedTechnicalDetails_description'] = '';
 $_LANG['admin.settings.index.forms.ssl_settings_form.firstName'] = 'Vorname';

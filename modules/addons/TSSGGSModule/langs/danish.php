@@ -503,8 +503,8 @@ $_LANG['admin.settings.index.forms.ssl_settings_form.autoDetailsForDvOrders_desc
 $_LANG['admin.settings.index.forms.ssl_settings_form.wildcardDnsTimeoutMinutes']            = 'Timeout for wildcard DNS-validering (minutter)';
 $_LANG['admin.settings.index.forms.ssl_settings_form.wildcardDnsTimeoutMinutes_description'] = 'AutoInstall (cPanel): hvis DNS-valideringen af et wildcard-certifikat ikke er gennemført inden for dette antal minutter, skifter systemet automatisk til e-mailvalidering og giver kunden besked. Standard: 65';
 $_LANG['admin.settings.index.providers.ssl_settings_provider.wildcardDnsTimeoutMinutesInvalidValue'] = 'Værdien skal være et helt antal minutter større end 0';
-$_LANG['admin.settings.index.forms.ssl_settings_form.cpanelTlsVerifyDisabled']             = 'Spring verifikation af cPanel TLS-certifikat over';
-$_LANG['admin.settings.index.forms.ssl_settings_form.cpanelTlsVerifyDisabled_description'] = 'AutoInstall (cPanel): verificér ikke WHM/cPanel-serverens TLS-certifikat. Aktiver kun dette for servere med et selvsigneret certifikat - WHM-legitimationsoplysningerne sendes med hver forespørgsel. Standard: fra';
+$_LANG['admin.settings.index.forms.ssl_settings_form.cpanelTlsVerifyDisabled'] = 'Tillad cPanel-servere med et selvsigneret certifikat';
+$_LANG['admin.settings.index.forms.ssl_settings_form.cpanelTlsVerifyDisabled_description'] = 'AutoInstall logger ind på dine cPanel- / WHM-servere for at installere certifikater. Normalt kontrollerer det først, at serveren selv har et gyldigt certifikat, så dine WHM-loginoplysninger ikke kan sendes til en falsk server. Slå kun dette til, hvis AutoInstall fejler med en SSL- eller certifikatfejl, fordi en server bruger et selvsigneret eller udløbet certifikat. Fra er mere sikkert';
 $_LANG['admin.settings.index.forms.ssl_settings_form.useFixedTechnicalDetails']             = 'Brug faste tekniske oplysninger';
 $_LANG['admin.settings.index.forms.ssl_settings_form.useFixedTechnicalDetails_description'] = '';
 $_LANG['admin.settings.index.forms.ssl_settings_form.firstName']                            = 'Fornavn';
