@@ -877,5 +877,4 @@
 #layers2 .tssggs-cronjob__freq { height: 36px; margin: 0; line-height: 20px; }
 
 /* Settings side menu: the font's glyphs sit a little low in the line box, so the icon is nudged down to match the text */
-#layers2 .tssggs-settings .lu-navbar__nav li.lu-nav__item > a.lu-nav__link > svg.tssggs-ico,
-#layers2 .tssggs-settings .lu-navbar__nav li.lu-nav__item > a.lu-nav__link > i { position: relative; top: 1px; }
+#layers2 .tssggs-settings .lu-navbar__nav li.lu-nav__item > a.lu-nav__link .lu-nav__icon { position: relative; top: 1px; }
