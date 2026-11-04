@@ -526,3 +526,5 @@ $_LANG['serverCA']['home']['sslConfigValidationDnsCname'] = 'DNS - CNAME-record'
 $_LANG['serverCA']['home']['sslConfigValidationDnsTxt']   = 'DNS - TXT-record';
 $_LANG['private_key_expired'] = 'Den private nøgle er ikke længere tilgængelig (den gemmes i en time i din session). Generér nøglen igen.';
 $_LANG['serverCA']['home']['sslConfigRefreshDomains'] = 'Domænelisten er ikke opdateret? Opdater listen';
+$_LANG['serverCA']['home']['validation_page']['DNS Record Type'] = 'DNS-posttype';
+$_LANG['serverCA']['home']['validation_page']['DNS Host'] = 'DNS-vært (navn)';

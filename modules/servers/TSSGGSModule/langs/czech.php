@@ -526,3 +526,5 @@ $_LANG['serverCA']['home']['sslConfigValidationDnsCname'] = 'DNS - záznam CNAME
 $_LANG['serverCA']['home']['sslConfigValidationDnsTxt'] = 'DNS - záznam TXT';
 $_LANG['private_key_expired'] = 'Soukromý klíč již není k dispozici (v relaci se uchovává jednu hodinu). Vygenerujte klíč prosím znovu.';
 $_LANG['serverCA']['home']['sslConfigRefreshDomains'] = 'Seznam domén není aktuální? Obnovit seznam';
+$_LANG['serverCA']['home']['validation_page']['DNS Record Type'] = 'Typ DNS záznamu';
+$_LANG['serverCA']['home']['validation_page']['DNS Host'] = 'DNS hostitel (název)';

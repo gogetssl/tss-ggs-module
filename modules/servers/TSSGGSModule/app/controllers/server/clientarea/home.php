@@ -183,10 +183,15 @@ class home extends AbstractController
                 $vars['hasEmailValidation'] = true;
             }
 
+            $domain['dns']         = self::dnsRecord($domain['name'], $domain['method'], $domain['validation'] ?? []);
+            $domain['methodLabel'] = self::methodLabel($domain['method']);
+
             if($domain['name'] == $mainDomain)
             {
                 $vars['mainDomainMethod']     = $domain['method'];
                 $vars['mainDomainValidation'] = $domain['validation'];
+                $vars['mainDomainDns']        = $domain['dns'];
+                $vars['mainDomainMethodLabel'] = $domain['methodLabel'];
             }
             else
             {
@@ -224,6 +229,53 @@ class home extends AbstractController
         $vars['processing_guide'] = ProductSettings::message($product->id, 'processingGuide');
 
         return ['tpl' => 'configuration_submitted', 'vars' => $vars];
+    }
+
+    /**
+     * The DNS record a client has to create for "dns", "dns-cname" or "dns-txt" validation, null for other methods.
+     * The gateway sends the value and, depending on the authority, the host and the record type; when the host is
+     * missing the record goes on the domain itself.
+     */
+    public static function dnsRecord($domainName, $method, $validation)
+    {
+        $method = strtolower((string)$method);
+        if(!in_array($method, ['dns', 'dns-cname', 'dns-txt'], true))
+        {
+            return null;
+        }
+        $validation = is_array($validation) ? $validation : [];
+        $pick = function(array $keys) use ($validation) {
+            foreach($keys as $key)
+            {
+                if(isset($validation[$key]) && is_scalar($validation[$key]) && trim((string)$validation[$key]) !== '')
+                {
+                    return trim((string)$validation[$key]);
+                }
+            }
+
+            return '';
+        };
+
+        $type = $method === 'dns-cname' ? 'CNAME' : ($method === 'dns-txt' ? 'TXT' : strtoupper($pick(['type', 'record_type'])));
+
+        return [
+            'type'  => $type,
+            'host'  => $pick(['name', 'host', 'record_name', 'record']) ?: ltrim((string)$domainName, '*.'),
+            'value' => $pick(['value', 'target', 'content', 'record_value']),
+        ];
+    }
+
+    /** "DNS (CNAME)", "HTTP", or the approver e-mail address */
+    public static function methodLabel($method)
+    {
+        $method = (string)$method;
+        $lower  = strtolower($method);
+        if($lower === 'dns-cname' || $lower === 'dns-txt')
+        {
+            return 'DNS (' . strtoupper(substr($lower, 4)) . ')';
+        }
+
+        return in_array($lower, ['dns', 'http', 'https', 'email'], true) ? strtoupper($lower) : $method;
     }
 
     public function sendCertificateHTML($input, $vars = [])

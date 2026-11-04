@@ -146,7 +146,9 @@
         <tr>
             <td>{$MGLANG->T('validation_page', 'CN validation method')}</td>
             <td>
-                {if $order_details_api.orderData.common_name.validation_method == 'dns' || $order_details_api.orderData.common_name.validation_method == 'http' || $order_details_api.orderData.common_name.validation_method == 'https'}
+                {if $mainDomainMethodLabel}
+                    {$mainDomainMethodLabel|escape}
+                {elseif $order_details_api.orderData.common_name.validation_method == 'dns' || $order_details_api.orderData.common_name.validation_method == 'http' || $order_details_api.orderData.common_name.validation_method == 'https'}
                     {$order_details_api.orderData.common_name.validation_method|upper}
                 {else}
                     {$order_details_api.orderData.common_name.validation_method}
@@ -166,10 +168,20 @@
             </tr>
         {/if}
 
-        {if $order_details_api.orderData.common_name.validation_method == 'dns'}
+        {if $mainDomainDns}
+            {if $mainDomainDns.type}
+            <tr>
+                <td>{$MGLANG->T('validation_page', 'DNS Record Type')}</td>
+                <td colspan="2">{$mainDomainDns.type|escape}</td>
+            </tr>
+            {/if}
+            <tr>
+                <td>{$MGLANG->T('validation_page', 'DNS Host')}</td>
+                <td class="break-all" colspan="2">{$mainDomainDns.host|escape}</td>
+            </tr>
             <tr>
                 <td>{$MGLANG->T('validation_page', 'DNS Content')}</td>
-                <td class="break-all" colspan="2">{$mainDomainValidation.value}</td>
+                <td class="break-all" colspan="2">{$mainDomainDns.value|escape}</td>
             </tr>
         {/if}
 
@@ -186,8 +198,11 @@
                             </tr>
                             <tr>
                                 <td style="word-break: break-all;" class="break-all">
-                                    {if $san.method == 'dns'}
-                                        {$san.method|upper}<br>{$san.validation.value}
+                                    {if $san.dns}
+                                        {$san.methodLabel|escape}<br>
+                                        {if $san.dns.type}{$MGLANG->T('validation_page', 'DNS Record Type')}: {$san.dns.type|escape}<br>{/if}
+                                        {$MGLANG->T('validation_page', 'DNS Host')}: {$san.dns.host|escape}<br>
+                                        {$MGLANG->T('validation_page', 'DNS Content')}: {$san.dns.value|escape}
                                     {elseif $san.method == 'http' || $san.method == 'https'}
                                         {$san.method|upper}<br>{$san.validation.file_name}<br>{$san.validation.value}
                                     {else}

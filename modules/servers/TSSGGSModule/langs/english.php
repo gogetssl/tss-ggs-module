@@ -526,3 +526,5 @@ $_LANG['serverCA']['home']['sslConfigValidationDnsCname'] = 'DNS - CNAME record'
 $_LANG['serverCA']['home']['sslConfigValidationDnsTxt']   = 'DNS - TXT record';
 $_LANG['private_key_expired'] = 'The private key is no longer available (it is kept for one hour in your session). Please generate the key again.';
 $_LANG['serverCA']['home']['sslConfigRefreshDomains'] = 'Domain list not up to date? Refresh the list';
+$_LANG['serverCA']['home']['validation_page']['DNS Record Type'] = 'DNS Record Type';
+$_LANG['serverCA']['home']['validation_page']['DNS Host'] = 'DNS Host (name)';

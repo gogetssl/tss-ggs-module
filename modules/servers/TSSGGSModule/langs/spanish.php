@@ -526,3 +526,5 @@ $_LANG['serverCA']['home']['sslConfigValidationDnsCname'] = 'DNS - registro CNAM
 $_LANG['serverCA']['home']['sslConfigValidationDnsTxt'] = 'DNS - registro TXT';
 $_LANG['private_key_expired'] = 'La clave privada ya no está disponible (se conserva una hora en su sesión). Genere la clave de nuevo.';
 $_LANG['serverCA']['home']['sslConfigRefreshDomains'] = '¿La lista de dominios no está actualizada? Actualizar la lista';
+$_LANG['serverCA']['home']['validation_page']['DNS Record Type'] = 'Tipo de registro DNS';
+$_LANG['serverCA']['home']['validation_page']['DNS Host'] = 'Host DNS (nombre)';
