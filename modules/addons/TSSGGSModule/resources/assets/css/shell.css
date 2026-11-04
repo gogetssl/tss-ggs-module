@@ -644,7 +644,7 @@
 #layers2 .tssggs-cronjob > .lu-widget__header { display: none; }
 #layers2 .tssggs-cronjob__head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
 #layers2 .tssggs-cronjob__head h3 { margin: 0; font-size: 16px; font-weight: 600; line-height: 24px; }
-#layers2 .tssggs-cronjob__about { margin: 4px 0 0; color: var(--tw-muted); font-size: 14px; line-height: 20px; }
+#layers2 .tssggs-cronjob__about { margin: 9px 0 0; color: var(--tw-muted); font-size: 14px; line-height: 20px; }
 #layers2 .tssggs-cronjob__fail { margin-top: 12px; padding: 8px 12px; border: 1px solid #fecaca; border-radius: 6px; background: #fef2f2; color: #b91c1c; font-size: 12px; line-height: 20px; }
 #layers2 .tssggs-cronjob__sep { margin: 16px 0; border: 0; border-top: 1px solid #e5e7eb; }
 #layers2 .tssggs-cronjob__freq { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font-size: 14px; font-weight: 500; }
