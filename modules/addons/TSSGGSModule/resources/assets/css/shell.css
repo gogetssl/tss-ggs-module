@@ -871,3 +871,7 @@
 /* breadcrumb chevron on the text's centre line */
 #layers2 .tssggs-pagehead__crumb i { display: inline-flex; align-items: center; height: 16px; }
 #layers2 .tssggs-pagehead__crumb i::before { line-height: 16px; }
+
+/* CRON job: "How often it runs" is as tall as the select next to it, so its text centres on the select */
+#layers2 .tssggs-cronjob .lu-widget__content > span:has(> .tssggs-cronjob__freq) { display: flex; align-items: center; }
+#layers2 .tssggs-cronjob__freq { height: 36px; margin: 0; line-height: 20px; }
