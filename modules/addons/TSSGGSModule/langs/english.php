@@ -1495,3 +1495,5 @@ $_LANG['admin.settings.index.providers.general_settings_provider.page_viewticket
 $_LANG['admin.settings.index.providers.general_settings_provider.page_clientareadetails'] = 'Account details';
 $_LANG['admin.settings.index.providers.general_settings_provider.page_knowledgebase'] = 'Knowledgebase';
 $_LANG['admin.settings.index.providers.general_settings_provider.page_announcements'] = 'Announcements';
+$_LANG['admin.configuration.content.step2.hint_storage'] = 'PHP must be able to write to the module\'s storage folder (:subject) and its subfolders app, crons and logs. Usually the files were unpacked or uploaded with permissions that only let their owner write, while PHP runs as another user.';
+$_LANG['admin.configuration.content.step2.command_hint'] = 'Run this on the server (SSH, as the file owner or root), then reload this page:';

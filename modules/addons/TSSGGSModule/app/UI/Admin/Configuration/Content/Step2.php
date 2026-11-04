@@ -39,7 +39,10 @@ class Step2 extends Widget implements AjaxComponentInterface
 
             $rows .= '<tr class="is-' . $check['status'] . '">'
                 . '<td><span class="tssggs-checks__name">' . htmlspecialchars($name) . '</span>'
-                . ($hint !== '' ? '<span class="tssggs-checks__hint">' . htmlspecialchars($hint) . '</span>' : '') . '</td>'
+                . ($hint !== '' ? '<span class="tssggs-checks__hint">' . htmlspecialchars($hint) . '</span>' : '')
+                . (!empty($check['command']) && $check['status'] !== SystemRequirements::STATUS_PASSED
+                    ? '<span class="tssggs-checks__hint">' . htmlspecialchars($this->translate('command_hint')) . '</span><code class="tssggs-checks__cmd">' . htmlspecialchars($check['command']) . '</code>' : '')
+                . '</td>'
                 . '<td>' . htmlspecialchars($check['required']) . '</td>'
                 . '<td>' . htmlspecialchars($check['found']) . '</td>'
                 . '<td><span class="tssggs-checks__status">' . htmlspecialchars($this->translate('status_' . $check['status'])) . '</span></td>'

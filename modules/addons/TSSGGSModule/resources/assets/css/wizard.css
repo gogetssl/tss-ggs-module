@@ -362,11 +362,44 @@ a.tssggs-wizard__item:focus-visible {
     border-bottom: 0;
 }
 
+/* the check column takes the free width and wraps; Required stays on one line, Found wraps when long */
+.tssggs-checks td:first-child {
+    width: 100%;
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+
 .tssggs-checks td:nth-child(2),
 .tssggs-checks td:nth-child(3) {
-    white-space: nowrap;
     color: var(--tw-muted);
     font-variant-numeric: tabular-nums;
+}
+
+.tssggs-checks td:nth-child(2),
+.tssggs-checks td:nth-child(4) {
+    white-space: nowrap;
+}
+
+.tssggs-checks td:nth-child(3) {
+    min-width: 120px;
+    max-width: 260px;
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+
+/* the command that fixes a failed check, ready to copy */
+.tssggs-checks__cmd {
+    display: block;
+    margin-top: 6px;
+    padding: 8px 10px;
+    border: 1px solid var(--tw-border);
+    border-radius: 6px;
+    background: var(--tw-surface-alt);
+    color: var(--tw-fg);
+    font-size: 12px;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    user-select: all;
 }
 
 .tssggs-checks__name {

@@ -93,7 +93,32 @@ class SystemRequirements
         }
 
         // One row for all storage folders; the failed ones are named in "found"
-        return $this->result('storage', 'writable', $problems ? implode(', ', $problems) : 'writable', !$problems);
+        $result = $this->result('storage', 'writable', $problems ? implode(', ', $problems) : 'writable', !$problems, true, $root . DIRECTORY_SEPARATOR . 'storage');
+        if($problems)
+        {
+            $result['command'] = self::storageCommand($root . DIRECTORY_SEPARATOR . 'storage');
+        }
+
+        return $result;
+    }
+
+    /**
+     * Shell command that makes the storage folder writable for the user PHP runs as: its group gets write access
+     * (the files keep their owner, so FTP / deploy tools still work). Without posix: plain 775.
+     */
+    public static function storageCommand(string $path): string
+    {
+        $path = escapeshellarg($path);
+        if(function_exists('posix_getegid') && function_exists('posix_getgrgid'))
+        {
+            $group = posix_getgrgid(posix_getegid());
+            if(!empty($group['name']))
+            {
+                return 'chgrp -R ' . escapeshellarg($group['name']) . ' ' . $path . ' && chmod -R g+rwX ' . $path;
+            }
+        }
+
+        return 'chmod -R 775 ' . $path;
     }
 
     /**
