@@ -282,3 +282,6 @@ body:has(.tssggs-savebar) {
 /* Finance > Pricing: the other places that change prices, with links */
 #layers2 .tssggs-settings .tssggs-sec__desc--rules { margin-top: -4px; }
 #layers2 .tssggs-settings .tssggs-sec__desc a { color: var(--tw-primary); font-weight: 500; text-decoration: underline; text-underline-offset: 2px; white-space: nowrap; }
+
+/* help icon after a field label: the same gap as on the Yes / No rows */
+#layers2 .lu-form-label > span + * { margin-left: 4px; }
