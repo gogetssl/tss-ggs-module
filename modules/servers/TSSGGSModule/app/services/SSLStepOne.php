@@ -76,6 +76,7 @@ class SSLStepOne
             'default_csr_country' => isset($configuration['sslSettings']['defaultCsrCountry']) ? $configuration['sslSettings']['defaultCsrCountry'] : false,
             'adminFormHidden' => isset($configuration['sslSettings']['autoDetailsForDvOrders']) ? $configuration['sslSettings']['autoDetailsForDvOrders'] : false,
             'domain' => $domain,
+            'ask_webserver' => !\ModulesGarden\TSSGGSModule\App\Libs\GeneralSettings::enabled('useDefaultWebServer'),
             'client' => $clientData,
             'post' => $_POST
         ]);

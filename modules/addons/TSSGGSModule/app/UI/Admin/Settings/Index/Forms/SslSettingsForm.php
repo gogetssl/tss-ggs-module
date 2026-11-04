@@ -287,7 +287,7 @@ class SslSettingsForm extends Form implements AdminAreaInterface, AjaxComponentI
 
     protected function orderingFields($widget)
     {
-        $this->builder->addFieldInContainer($widget, (new FormInputText())->setName('defaultWebServer'), true);
+        $this->builder->addFieldInContainer($widget, (new Switcher())->setName('useDefaultWebServer')->addClass('switcher-revert'), true);
         $this->builder->addFieldInContainer($widget, (new Switcher())->setName('requireAgreement')->addClass('switcher-revert'), true);
         $this->builder->addFieldInContainer($widget, (new TextArea())->setName('agreementText'), true);
     }

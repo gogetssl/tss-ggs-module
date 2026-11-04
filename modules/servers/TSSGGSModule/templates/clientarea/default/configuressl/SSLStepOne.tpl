@@ -340,8 +340,10 @@
         $('textarea[name="fields[sans_domains]"]').addClass("form-control");
         $('textarea[name="fields[wildcard_san]"]').addClass("form-control");
         $("#inputCsr").parents(".card-body").find(".alert-info").text("{$MGLANG->T('csr_details', 'description')}");
+        {if !$ask_webserver}
         $("#inputServerType").parent(".form-group").hide();
         $("#inputServerType").val("1000");
+        {/if}
 
         {if $adminFormHidden}
 

@@ -45,7 +45,8 @@ class GeneralSettings
         // Interface
         'hideInfoMessages'         => false,
         // Orders
-        'defaultWebServer'         => '',
+        'defaultWebServer'         => '',     // legacy free text (migrated TSS setting), still sent when set
+        'useDefaultWebServer'      => true,   // true: clients are not asked for their web server
         // Renewal rules: days before the end of the certificate / subscription on which the service falls due
         'dueDateOffsetRegular'      => 0,
         'dueDateOffsetSubscription' => 0,
