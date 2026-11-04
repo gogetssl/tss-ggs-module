@@ -29,7 +29,7 @@ class RenewalPrices
             return $stats;
         }
 
-        foreach(['orderfunctions', 'invoicefunctions', 'configoptionsfunctions'] as $file)
+        foreach(['orderfunctions', 'invoicefunctions', 'clientfunctions', 'configoptionsfunctions'] as $file)
         {
             if(defined('ROOTDIR') && is_file(ROOTDIR . '/includes/' . $file . '.php'))
             {
