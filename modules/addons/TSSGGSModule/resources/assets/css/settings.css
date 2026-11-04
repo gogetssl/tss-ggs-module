@@ -3,8 +3,8 @@
 #layers2 .tssggs-settings .tssggs-page__desc {
     margin: 0 0 14px;
     color: var(--tw-muted);
-    font-size: 12px;
-    line-height: 18px;
+    font-size: 14px;
+    line-height: 20px;
 }
 
 /* a section: icon + title, description, rows; a divider line between sections */
@@ -48,8 +48,8 @@
 #layers2 .tssggs-settings .tssggs-sec__desc {
     margin: 2px 0 6px;
     color: var(--tw-muted);
-    font-size: 12px;
-    line-height: 18px;
+    font-size: 14px;
+    line-height: 20px;
 }
 
 /* a heading inside a section ("Recurring Orders"): bold label, no icon, no divider */
