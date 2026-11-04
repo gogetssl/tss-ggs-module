@@ -17,6 +17,7 @@ class CronSettingsWidget extends Widget
     {
         $this->setTitle($this->translate('title'));
         $this->setIcon('file-clock-outline');
+        $this->setSubtitle($this->translate('subtitle'));
         $this->setCss('tssggs-cronpanel');
 
         $script = dirname(__DIR__, 6) . '/cron/cron.php';
@@ -25,8 +26,7 @@ class CronSettingsWidget extends Widget
         $copy   = addslashes($this->translate('copy'));
 
         $this->addElement((new Text())->setText(
-            '<p class="tssggs-cronpanel__sub">' . $this->translate('subtitle') . '</p>'
-            . '<div class="tssggs-cronone"><div class="tssggs-cronone__title">' . Icons::svg('console') . '' . $this->translate('oneLineTitle') . '</div>'
+            '<div class="tssggs-cronone"><div class="tssggs-cronone__title">' . Icons::svg('console') . '' . $this->translate('oneLineTitle') . '</div>'
             . '<p>' . $this->translate('oneLineInfo') . '</p>'
             . '<div class="tssggs-cronone__code"><code>' . htmlspecialchars($line) . '</code>'
             . '<button type="button" class="tssggs-copy" onclick="var b=this,o=b.innerHTML;navigator.clipboard.writeText(b.previousElementSibling.textContent);b.textContent=\'' . $copied

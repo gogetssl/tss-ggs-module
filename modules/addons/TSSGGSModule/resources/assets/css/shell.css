@@ -633,7 +633,6 @@
 #layers2 .tssggs-settings .lu-navbar__nav li.lu-nav__item.is-active > a.lu-nav__link { font-weight: 600; }
 
 /* CRON page cards (Lovable) */
-#layers2 .tssggs-cronpanel__sub { margin: 0 0 16px; color: var(--tw-muted); font-size: 14px; line-height: 20px; }
 #layers2 .tssggs-cronone { margin-bottom: 24px; padding: 16px; border: 1px solid var(--tw-primary); border-radius: 8px; background: var(--tw-primary-soft); }
 #layers2 .tssggs-cronone__title { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; }
 #layers2 .tssggs-cronone p { margin: 8px 0 12px; font-size: 12px; line-height: 20px; color: var(--tw-muted); }
@@ -659,8 +658,6 @@
 #layers2 .tssggs-cronjob .lu-form-group { margin: 0; }
 
 /* CRON page: 1:1 with the Lovable design */
-#layers2 .tssggs-cronpanel > .lu-widget__header { padding-bottom: 0; border-bottom: 0; }
-#layers2 .tssggs-cronpanel__sub { margin: 0 -24px 24px; padding: 0 24px 16px; border-bottom: 1px solid #e5e7eb; }
 #layers2 .tssggs-cronone { border-color: color-mix(in srgb, var(--tw-primary) 25%, #fff); }
 #layers2 .tssggs-cronone__title i { color: var(--tw-primary); }
 #layers2 .tssggs-copy { display: inline-flex; align-items: center; gap: 6px; }
