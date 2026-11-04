@@ -365,7 +365,13 @@ a.tssggs-wizard__item:focus-visible {
 /* fixed columns: Required / Found / Status get set widths, the check (name, hint, fix command) takes the rest and
    wraps - long hints and long "found" values never push the table out of the card. The framework sizes table
    cells and spans with !important rules, hence the !important here. */
-.tssggs-checks table {
+#layers2 .tssggs-checks {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+#layers2 .tssggs-checks table {
+    width: 100% !important;
     table-layout: fixed;
 }
 
