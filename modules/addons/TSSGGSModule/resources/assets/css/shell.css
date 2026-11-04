@@ -875,3 +875,7 @@
 /* CRON job: "How often it runs" is as tall as the select next to it, so its text centres on the select */
 #layers2 .tssggs-cronjob .lu-widget__content > span:has(> .tssggs-cronjob__freq) { display: flex; align-items: center; }
 #layers2 .tssggs-cronjob__freq { height: 36px; margin: 0; line-height: 20px; }
+
+/* Settings side menu: the font's glyphs sit a little low in the line box, so the icon is nudged down to match the text */
+#layers2 .tssggs-settings .lu-navbar__nav li.lu-nav__item > a.lu-nav__link > svg.tssggs-ico,
+#layers2 .tssggs-settings .lu-navbar__nav li.lu-nav__item > a.lu-nav__link > i { position: relative; top: 1px; }
