@@ -686,7 +686,7 @@
 #layers2 .tssggs-settings .lu-widget:has(.lu-navbar__nav) > .lu-widget__header { height: auto !important; min-height: 0 !important; padding: 8px 12px !important; margin: 0 !important; }
 #layers2 .tssggs-settings .lu-widget:has(.lu-navbar__nav) > .lu-widget__header .lu-top { min-height: 0 !important; margin: 0 !important; padding: 0 !important; }
 #layers2 .tssggs-settings .lu-widget:has(.lu-navbar__nav) > .lu-widget__header .lu-top__title { margin: 0 !important; padding: 0 !important; font-size: 12px !important; font-weight: 500 !important; line-height: 16px !important; letter-spacing: .05em; color: var(--tw-muted); }
-#layers2 .tssggs-settings .lu-widget:has(.lu-navbar__nav) > .lu-widget__body { padding: 0 !important; }
+#layers2 .tssggs-settings .lu-widget:has(.lu-navbar__nav) > .lu-widget__body { padding: 10px 0 0 !important; }
 #layers2 .tssggs-settings .lu-navbar__nav ul { padding: 0 !important; display: flex; flex-direction: column; gap: 2px; }
 #layers2 .tssggs-settings .lu-navbar__nav li.lu-nav__item,
 #layers2 .tssggs-settings .lu-navbar__nav li.lu-nav__item.is-active { margin: 0 !important; border: 0 !important; box-shadow: none !important; width: auto !important; }
@@ -704,7 +704,7 @@
 }
 #layers2 .tssggs-settings .lu-widget:has(.lu-navbar__nav) > .lu-widget__header .lu-top { height: auto !important; }
 #layers2 .tssggs-settings .lu-widget:has(.lu-navbar__nav) .lu-navbar__nav ul { flex: 1 1 auto; width: 100% !important; margin: 0 !important; }
-#layers2 .tssggs-settings .lu-widget:has(.lu-navbar__nav) .lu-navbar__nav ul { gap: 7px; }
+#layers2 .tssggs-settings .lu-widget:has(.lu-navbar__nav) .lu-navbar__nav ul { gap: 3px; }
 
 /* ---- main navigation: one row of tabs + "More" dropdown (Lovable plugin-nav, final) ---- */
 #layers2 .tssggs-head { border-radius: 12px 12px 0 0; }
