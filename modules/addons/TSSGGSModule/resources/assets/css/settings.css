@@ -68,8 +68,10 @@
     grid-template-columns: minmax(0, 1fr) minmax(200px, 300px);
     column-gap: 24px;
     align-items: center;
-    margin: 0;
+    margin: 0 !important;
     padding: 10px 0;
+    min-height: 56px;
+    box-sizing: border-box;
     border-bottom: 1px solid var(--tw-border);
 }
 
@@ -96,7 +98,9 @@
 
 /* Yes / No rows: the label fills the row, the choice sits at its right edge */
 #layers2 .tssggs-settings form .tssggs-sec .lu-form-group.lu-form-check {
-    display: block;
+    display: flex;
+    align-items: center;
+    margin: 0 !important;
 }
 
 #layers2 .tssggs-settings form .tssggs-sec .lu-form-check .tssggs-yn {
