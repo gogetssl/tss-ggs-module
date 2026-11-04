@@ -1440,3 +1440,7 @@ $_LANG['admin.settings.index.forms.finance_settings_form.openPricing'] = 'Open P
 $_LANG['admin.settings.index.forms.finance_settings_form.openProducts'] = 'Open Products';
 $_LANG['admin.settings.index.forms.finance_settings_form.openCommissions'] = 'Open Commissions';
 $_LANG['admin.settings.index.forms.finance_settings_form.profitMargin_description'] = 'Added on top of the reseller cost for products with automatic pricing that have no margin of their own. 0 sells at cost';
+$_LANG['admin.settings.index.forms.finance_settings_form.rulesAuto_text'] = 'automatic pricing (uses the margin below): :auto, manual prices (not changed by this margin): :manual.';
+$_LANG['admin.settings.index.forms.finance_settings_form.rulesProducts_text'] = 'products with their own margin, which replaces the default margin below: :count.';
+$_LANG['admin.settings.index.forms.finance_settings_form.rulesCommissions_text'] = 'rules that add a percentage on top of the price for chosen clients or products, at checkout and on renewals: :count.';
+$_LANG['admin.settings.index.forms.finance_settings_form.rulesCommissionsGlobal_text'] = '+:global% for all clients on all products (rules in total: :count). It is added on top of every price at checkout and on renewals, so clients pay more than the prices calculated here.';
