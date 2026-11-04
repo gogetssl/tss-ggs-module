@@ -373,9 +373,9 @@ a.tssggs-wizard__item:focus-visible {
 #layers2 .tssggs-checks th:nth-child(3) { width: 220px !important; }
 #layers2 .tssggs-checks th:nth-child(4) { width: 100px !important; }
 
-.tssggs-checks td:first-child,
-.tssggs-checks td:nth-child(3) {
-    white-space: normal;
+#layers2 .tssggs-checks td:first-child,
+#layers2 .tssggs-checks td:nth-child(3) {
+    white-space: normal !important;
     overflow-wrap: anywhere;
 }
 
