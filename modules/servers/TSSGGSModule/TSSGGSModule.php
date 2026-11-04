@@ -8,7 +8,7 @@ if(!defined('DS'))define('DS',DIRECTORY_SEPARATOR);
 require_once __DIR__.DS.'Loader.php';
 new \ModulesGarden\Servers\TSSGGSModule\Loader();
 
-// Edition name (GoGetSSL Module / TheSSLStore Plugin) - loaded directly, without booting the addon framework
+// Edition name (GoGetSSL Module / TheSSLStore Module) - loaded directly, without booting the addon framework
 if(file_exists(dirname(__DIR__, 2).DS.'addons'.DS.'TSSGGSModule'.DS.'app'.DS.'Libs'.DS.'Edition.php'))
 {
     require_once dirname(__DIR__, 2).DS.'addons'.DS.'TSSGGSModule'.DS.'app'.DS.'Libs'.DS.'Edition.php';

@@ -56,7 +56,7 @@ class NavBarBuilder
         $this->navbar->setModuleLogo(BuildUrl::getAssetsURL('/img/products/' . $icon . '.png'), str_replace('_', '-', $icon));
         $this->navbar->setVendorLogo(BuildUrl::getAssetsURL('/img/modules-garden-logo.svg'));
         $this->navbar->setMainUrl(BuildUrl::getUrl());
-        // the header shows the edition's name (GoGetSSL Module / TheSSLStore Plugin)
+        // the header shows the edition's name (GoGetSSL Module / TheSSLStore Module)
         $this->navbar->setModuleName(\ModulesGarden\TSSGGSModule\App\Libs\Edition::name());
         $this->navbar->setModuleVersion(Config::get('configuration.version'));
     }

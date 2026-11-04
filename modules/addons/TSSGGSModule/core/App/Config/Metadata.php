@@ -14,7 +14,7 @@ class Metadata
     }
 
     /**
-     * Display name and description depend on the distribution (GoGetSSL Module / TheSSLStore Plugin)
+     * Display name and description depend on the distribution (GoGetSSL Module / TheSSLStore Module)
      */
     protected function loadEdition(Container $container)
     {

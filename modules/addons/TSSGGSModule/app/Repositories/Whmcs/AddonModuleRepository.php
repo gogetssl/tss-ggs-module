@@ -26,7 +26,9 @@ class AddonModuleRepository
             }
             if($setting['setting'] == 'vendors')
             {
-                $result[$setting['setting']] = explode(',', $setting['value']);
+                // only the vendors of this edition (TheSSLStore Module: TheSSLStore only)
+                $vendors = array_values(array_intersect(explode(',', $setting['value']), \ModulesGarden\TSSGGSModule\App\Libs\Edition::vendors()));
+                $result[$setting['setting']] = $vendors ?: \ModulesGarden\TSSGGSModule\App\Libs\Edition::vendors();
             }
             if($setting['setting'] == 'sslSettings')
             {
@@ -44,6 +46,12 @@ class AddonModuleRepository
             {
                 $result[$setting['setting']] = json_decode($setting['value'], true);
             }
+        }
+
+        // credentials of vendors outside the edition stay stored but are not used
+        if(isset($result['credentials']) && is_array($result['credentials']))
+        {
+            $result['credentials'] = array_intersect_key($result['credentials'], array_flip(\ModulesGarden\TSSGGSModule\App\Libs\Edition::vendors()));
         }
 
         return $result;
@@ -167,6 +175,17 @@ class AddonModuleRepository
                 'OperationMode' => $operationMode ?: "",
             ],
         ];
+
+        // a vendor outside the edition has no fields on the settings page: keep what is stored for it
+        $stored = AddonModule::where('module', 'configuration_TSSGGSModule')->where('setting', 'credentials')->value('value');
+        $stored = $stored ? (json_decode(\decrypt($stored), true) ?: []) : [];
+        foreach(array_keys($credentials) as $vendor)
+        {
+            if(!in_array($vendor, \ModulesGarden\TSSGGSModule\App\Libs\Edition::vendors(), true) && isset($stored[$vendor]))
+            {
+                $credentials[$vendor] = $stored[$vendor];
+            }
+        }
 
         $credentialsJson = json_encode($credentials);
 

@@ -3,7 +3,7 @@
 namespace ModulesGarden\TSSGGSModule\App\Libs;
 
 /**
- * Distribution edition (GoGetSSL Module / TheSSLStore Plugin) - see app/Config/edition.php.
+ * Distribution edition (GoGetSSL Module / TheSSLStore Module) - see app/Config/edition.php.
  * Self-contained on purpose: it is also used by the server module before the addon framework is booted.
  */
 class Edition
@@ -16,14 +16,17 @@ class Edition
      */
     const LEGACY_NAME = 'The SSL Store & GoGetSSL Module';
 
+    /** Names editions used before (email templates created under them are renamed too) */
+    const OLD_NAMES = ['TheSSLStore Plugin'];
+
     protected static $editions = [
         self::GGS => [
             'name'        => 'GoGetSSL Module',
             'description' => 'GoGetSSL module for WHMCS: sell and manage SSL/TLS certificates, ACME and AutoInstall SSL subscriptions and other security products.',
         ],
         self::TSS => [
-            'name'        => 'TheSSLStore Plugin',
-            'description' => 'TheSSLStore plugin for WHMCS: sell and manage SSL/TLS certificates, ACME and AutoInstall SSL subscriptions and other security products.',
+            'name'        => 'TheSSLStore Module',
+            'description' => 'TheSSLStore module for WHMCS: sell and manage SSL/TLS certificates, ACME and AutoInstall SSL subscriptions and other security products.',
         ],
     ];
 
@@ -56,13 +59,22 @@ class Edition
      */
     public static function knownNames()
     {
-        $names = [self::LEGACY_NAME];
+        $names = array_merge([self::LEGACY_NAME], self::OLD_NAMES);
         foreach(self::$editions as $edition)
         {
             $names[] = $edition['name'];
         }
 
         return array_values(array_unique($names));
+    }
+
+    /**
+     * Certificate vendors (API credentials) of the edition: TheSSLStore Module works with TheSSLStore only, the
+     * GoGetSSL Module with both
+     */
+    public static function vendors()
+    {
+        return self::get() === self::TSS ? ['tss'] : ['ggs', 'tss'];
     }
 
     /**

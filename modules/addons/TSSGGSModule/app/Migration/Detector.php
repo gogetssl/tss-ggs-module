@@ -15,7 +15,7 @@ class Detector
     /** @return LegacyReaderInterface[] keyed by source */
     public static function readers(): array
     {
-        // GoGetSSL Module migrates from the GoGetSSL legacy module, TheSSLStore Plugin from the TheSSLStore one
+        // GoGetSSL Module migrates from the GoGetSSL legacy module, TheSSLStore Module from the TheSSLStore one
         return Edition::get() === Edition::TSS ? ['tss' => new TssReader()] : ['ggs' => new GgsReader()];
     }
 

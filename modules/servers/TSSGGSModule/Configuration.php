@@ -20,7 +20,7 @@ class Configuration extends AbstractConfiguration
 
     function __construct()
     {
-        // GoGetSSL Module / TheSSLStore Plugin - see modules/addons/TSSGGSModule/app/Config/edition.php
+        // GoGetSSL Module / TheSSLStore Module - see modules/addons/TSSGGSModule/app/Config/edition.php
         if(class_exists('\ModulesGarden\TSSGGSModule\App\Libs\Edition', false))
         {
             $this->name           = \ModulesGarden\TSSGGSModule\App\Libs\Edition::name();
