@@ -529,3 +529,4 @@ $_LANG['serverCA']['home']['sslConfigRefreshDomains'] = 'Seznam domén není akt
 $_LANG['serverCA']['home']['validation_page']['DNS Record Type'] = 'Typ DNS záznamu';
 $_LANG['serverCA']['home']['validation_page']['DNS Host'] = 'DNS hostitel (název)';
 $_LANG['serverCA']['home']['validation_page']['DNS value pending'] = 'Zatím nepřijato od certifikační autority - zobrazí se zde po další kontrole stavu (Revalidovat nebo načtěte později)';
+$_LANG['serverCA']['home']['validation_page']['Validation details preparing'] = 'Certifikační autorita připravuje údaje pro ověření vašich domén. Stránka se sama znovu načte; pokud se nic nezobrazí do několika minut, načtěte ji později.';

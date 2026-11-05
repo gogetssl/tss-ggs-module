@@ -110,6 +110,22 @@
     <h3>{$MGLANG->T('validation_page', 'Order validation')}</h3>
     <p>{$MGLANG->T('validation_page', 'Order validation_desc')}</p>
 
+    {if $validationPreparing}
+        <div class="alert alert-info" id="validation-preparing">{$MGLANG->T('validation_page', 'Validation details preparing')}</div>
+        <script>
+            (function () {
+                // the gateway adds the file / DNS values a few seconds after the order - reload a few times to show them
+                var key = 'validationPreparing{$serviceid}', tries = 0;
+                try { tries = parseInt(sessionStorage.getItem(key) || '0', 10); } catch (e) {}
+                if (tries < 6) {
+                    try { sessionStorage.setItem(key, String(tries + 1)); } catch (e) {}
+                    setTimeout(function () { window.location.reload(); }, 10000);
+                }
+            })();
+        </script>
+    {else}
+        <script>try { sessionStorage.removeItem('validationPreparing{$serviceid}'); } catch (e) {}</script>
+    {/if}
 
     <table class="table-validation-details">
         <tbody>
@@ -128,7 +144,11 @@
         </tr>
         <tr>
             <td>{$MGLANG->T('validation_page', 'DCV Status')}</td>
-            <td class="gold-bold"><i class="fa fa-cog" aria-hidden="true"></i> {$MGLANG->T('validation_page', 'Pending')}</td>
+            {if $mainDomainApproved}
+                <td class="green-bold"><i class="fa fa-check" aria-hidden="true"></i> {$MGLANG->T('validation_page', 'Completed')}</td>
+            {else}
+                <td class="gold-bold"><i class="fa fa-cog" aria-hidden="true"></i> {$MGLANG->T('validation_page', 'Pending')}</td>
+            {/if}
             <td>-</td>
         </tr>
         {if $validation_product == 'OV' || $validation_product == 'EV'}
@@ -157,10 +177,10 @@
             <td></td>
         </tr>
 
-        {if $order_details_api.orderData.common_name.validation_method == 'http' || $order_details_api.orderData.common_name.validation_method == 'https'}
+        {if ($mainDomainMethod == 'http' || $mainDomainMethod == 'https') && $mainDomainValidation.file_name}
             <tr>
                 <td>{$MGLANG->T('validation_page', 'File Url')}</td>
-                <td colspan="2">{$order_details_api.orderData.common_name.validation_method}://{$domain}/.well-known/pki-validation/{$mainDomainValidation.file_name}</td>
+                <td colspan="2">{$mainDomainMethod}://{$domain}/.well-known/pki-validation/{$mainDomainValidation.file_name}</td>
             </tr>
             <tr>
                 <td>{$MGLANG->T('validation_page', 'File Content')}</td>
@@ -185,7 +205,8 @@
             </tr>
         {/if}
 
-        {if $order_details_api.orderData.alternative_names}
+        {* every other domain the gateway validates: SANs and the www name some authorities add *}
+        {if $additional_names}
 
             <tr>
                 <td style="vertical-align: top">{$MGLANG->T('validation_page', 'SAN validation')}</td>
@@ -209,7 +230,11 @@
                                         {$san.method|upper}<br>{$san.validation.value}
                                     {/if}
                                 </td>
-                                <td class="gold-bold"><i class="fa fa-cog" aria-hidden="true"></i> Pending</td>
+                                {if $san.approved}
+                                    <td class="green-bold"><i class="fa fa-check" aria-hidden="true"></i> {$MGLANG->T('validation_page', 'Completed')}</td>
+                                {else}
+                                    <td class="gold-bold"><i class="fa fa-cog" aria-hidden="true"></i> {$MGLANG->T('validation_page', 'Pending')}</td>
+                                {/if}
                             </tr>
                         {/foreach}
                         </tbody>

@@ -73,7 +73,9 @@ class SSLCertificatesProcessing extends AbstractCommand
             ->join('tblsslorders', 'tblsslorders.serviceid', '=', 'tblhosting.id')
             ->join('tblproducts', 'tblhosting.packageid', '=', 'tblproducts.id')
             ->join('TSSGGSModule_Requests', 'TSSGGSModule_Requests.serviceid', '=', 'tblhosting.id')
-            ->whereIn('TSSGGSModule_Requests.status', ['pending'])
+            // a new order is stored as "processing" until the gateway reports it (GoGetSSL adds the validation details
+            // a few seconds after the order is placed) - without it such orders were never re-read
+            ->whereIn('TSSGGSModule_Requests.status', ['pending', 'processing'])
             ->where('tblproducts.servertype', 'TSSGGSModule')
             ->where('tblhosting.domainstatus', 'Active')
             ->where('tblsslorders.status', 'Configuration Submitted')

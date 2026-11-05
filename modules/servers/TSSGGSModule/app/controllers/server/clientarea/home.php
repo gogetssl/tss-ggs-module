@@ -124,8 +124,11 @@ class home extends AbstractController
 
         $vars['configurableOptions'] = ProductConfigOptions::get($product->id, $input['id'], $service->billingcycle);
 
-        $orderDetails = Request::getOrder($input['id']);
+        // The stored copy is written when the order is placed; some gateways (GoGetSSL) only add the validation
+        // details a few seconds later - re-read the order instead of showing an empty file / DNS block
+        $orderDetails = CertificateService::refreshIfIncomplete($input['id'], (array)Request::getOrder($input['id']));
         $order        = $orderDetails['orderData'];
+        $vars['validationPreparing'] = CertificateService::validationDataMissing($orderDetails);
 
         $remoteProductId = isset($order['orderData']['product']['id']) ? $order['orderData']['product']['id'] : $product->configoption2;
         $remoteProduct   = RemoteProduct::where('remoteId', $remoteProductId)->where('vendor', $product->configoption1)->first();
@@ -185,13 +188,17 @@ class home extends AbstractController
 
             $domain['dns']         = self::dnsRecord($domain['name'], $domain['method'], $domain['validation'] ?? [], (string)($order['orderData']['csr'] ?? ''));
             $domain['methodLabel'] = self::methodLabel($domain['method']);
+            $domain['method']      = strtolower((string)$domain['method']);
+            $domain['approved']    = !empty($domain['approved']);
 
+            // the method the gateway reports now - the one saved at enrollment is stale after "Change Approval Method"
             if($domain['name'] == $mainDomain)
             {
-                $vars['mainDomainMethod']     = $domain['method'];
-                $vars['mainDomainValidation'] = $domain['validation'];
-                $vars['mainDomainDns']        = $domain['dns'];
+                $vars['mainDomainMethod']      = $domain['method'];
+                $vars['mainDomainValidation']  = $domain['validation'];
+                $vars['mainDomainDns']         = $domain['dns'];
                 $vars['mainDomainMethodLabel'] = $domain['methodLabel'];
+                $vars['mainDomainApproved']    = $domain['approved'];
             }
             else
             {
@@ -260,6 +267,21 @@ class home extends AbstractController
         $domain = ltrim((string)$domainName, '*.');
         $value  = $pick(['value', 'target', 'content', 'record_value']);
         $host   = $pick(['name', 'host', 'record_name', 'record']);
+
+        // GoGetSSL sends the whole record as one zone-file line in the value:
+        //   "_A94C….whmcs2.example.com CNAME 7D00….sectigo.com"   or   "example.com.   IN   TXT   \"_rgkb…\""
+        // split it into host, type and value so the client creates the right record
+        if($host === '' && preg_match('/^(\S+)\s+(?:\d+\s+)?(?:IN\s+)?(CNAME|TXT)\s+(.+)$/i', $value, $record))
+        {
+            $host  = rtrim($record[1], '.');
+            $type  = strtoupper($record[2]);
+            $value = trim($record[3]);
+            if(strlen($value) >= 2 && $value[0] === '"' && substr($value, -1) === '"')
+            {
+                $value = substr($value, 1, -1);
+            }
+            $value = $type === 'CNAME' ? rtrim($value, '.') : $value;
+        }
 
         // Sectigo CNAME: the gateway sends only the target "<SHA-256 of the CSR, in two halves>.<unique>.sectigo.com";
         // the record name is "_<MD5 of the CSR>.<domain>" - computed here when the target belongs to this CSR

@@ -129,6 +129,75 @@ class CertificateService
         return CertificateSyncHelpers::syncCertificate($certificate->toArray(), (new AddonModuleRepository())->getModuleConfiguration());
     }
 
+    /**
+     * True while a pending order lacks what the client needs to validate: no domains yet, or a domain on a file / DNS
+     * method without its value. $stored = Request::getOrder() (['orderData' => .., 'orderFiles' => ..]).
+     */
+    public static function validationDataMissing(array $stored)
+    {
+        $status = isset($stored['orderData']['order']['status']) ? (string)$stored['orderData']['order']['status'] : '';
+        if(in_array($status, ['active', 'cancelled', 'rejected', 'expired', 'filed'], true))
+        {
+            return false;
+        }
+
+        $items   = isset($stored['orderData']['items']) && is_array($stored['orderData']['items']) ? $stored['orderData']['items'] : [];
+        $item    = $items ? reset($items) : [];
+        $domains = isset($item['domains']) && is_array($item['domains']) ? $item['domains'] : [];
+        if(!$domains)
+        {
+            return true;
+        }
+
+        foreach($domains as $domain)
+        {
+            $method = strtolower((string)($domain['method'] ?? ''));
+            if(!empty($domain['approved']) || $method === '' || $method === 'email' || strpos($method, '@') !== false)
+            {
+                continue;
+            }
+            if(empty($domain['validation']['value']))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Re-reads the order from the gateway when the stored copy has no validation details yet (at most every
+     * REFRESH_SECONDS, so a page that keeps being reloaded does not hit the gateway each time).
+     */
+    const REFRESH_SECONDS = 5;
+
+    public static function refreshIfIncomplete($serviceId, array $stored)
+    {
+        if(!self::validationDataMissing($stored))
+        {
+            return $stored;
+        }
+
+        $row = Request::where('serviceid', (int)$serviceId)->where('name', 'certificate')->first();
+        if($row && !empty($row->updated_at) && strtotime($row->updated_at) > time() - self::REFRESH_SECONDS)
+        {
+            return $stored;
+        }
+
+        try
+        {
+            self::refresh($serviceId);
+        }
+        catch(\Throwable $e)
+        {
+            return $stored;
+        }
+
+        $fresh = Request::getOrder($serviceId);
+
+        return is_array($fresh) && $fresh ? $fresh : $stored;
+    }
+
     protected static function requireOrder($serviceId)
     {
         $ssl = self::sslOrder($serviceId);

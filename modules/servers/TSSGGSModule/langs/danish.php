@@ -529,3 +529,4 @@ $_LANG['serverCA']['home']['sslConfigRefreshDomains'] = 'Domænelisten er ikke o
 $_LANG['serverCA']['home']['validation_page']['DNS Record Type'] = 'DNS-posttype';
 $_LANG['serverCA']['home']['validation_page']['DNS Host'] = 'DNS-vært (navn)';
 $_LANG['serverCA']['home']['validation_page']['DNS value pending'] = 'Endnu ikke modtaget fra certifikatudstederen - vises her efter næste statuskontrol (brug Revalider eller genindlæs senere)';
+$_LANG['serverCA']['home']['validation_page']['Validation details preparing'] = 'Certifikatudstederen forbereder valideringsoplysningerne for dine domæner. Siden genindlæses af sig selv; hvis intet vises inden for et par minutter, så genindlæs den senere.';
