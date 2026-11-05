@@ -985,32 +985,23 @@ class home extends AbstractController
             $_SESSION['mg-error'] = $e->getMessage();
             redir('action=productdetails&id=' . (int)$input['id'], 'clientarea.php');
         }
-        $service       = Service::where('id', $input['id'])->first();
-        $configProduct = (new ProductRepository())->getProductConfiguration($service->packageid);
-        $addonConfig   = (new AddonModuleRepository())->getModuleConfiguration();
-
-        $provider    = strtolower($configProduct['provider']);
-        $credentials = $addonConfig['credentials'][$provider];
-
-        if($provider == 'tss' && $credentials['OperationMode'] == 'sandbox')
+        // the same cancellation as Terminate / admin "Cancel Order" (vendor order, stored statuses, WHMCS SSL order,
+        // AutoInstall tasks), then the service itself
+        try
         {
-            $credentials['PartnerCode'] = $credentials['TestPartnerCode'];
-            $credentials['AuthToken']   = $credentials['TestAuthToken'];
+            if(!CertificateService::serviceOpen((int)$input['id']))
+            {
+                throw new \Exception('The certificate is not available: the service has been cancelled or terminated.');
+            }
+            CertificateService::cancel((int)$input['id'], 'Cancelled by customer');
+            Service::where('id', (int)$input['id'])->update(['domainstatus' => 'Cancelled']);
+        }
+        catch(\Exception $e)
+        {
+            $_SESSION['mg-error'] = $e->getMessage();
         }
 
-        $api = new SSLTrustCenterApi($configProduct['provider'], $credentials['PartnerCode'], $credentials['AuthToken'], $configProduct['category']);
-        // remoteid is the certificate (item) ID
-        $api->cancelItem((int)SSL::getByServiceId($input['id'])->remoteid, 'Cancelled by customer');
-
-        Service::where('id', $input['id'])->update([
-                                                       'domainstatus' => 'Cancelled'
-                                                   ]);
-
-        Request::where('name', 'addOrder')->where('serviceid', $input['id'])->update([
-                                                                                         'status' => 'cancelled'
-                                                                                     ]);
-
-        redir('action=productdetails&id=' . $input['id'], 'clientarea.php');
+        redir('action=productdetails&id=' . (int)$input['id'], 'clientarea.php');
     }
 
     public function revalidateHTML($input, $vars = [])
