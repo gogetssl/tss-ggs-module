@@ -150,6 +150,9 @@ $_LANG['serverCA']['home']['validation_page']['Are you sure you want to cancel t
 $_LANG['serverCA']['home']['validation_page']['Close'] = 'Zavřít';
 $_LANG['serverCA']['home']['validation_page']['Cancel'] = 'Storno';
 $_LANG['serverCA']['home']['validation_page']['send_email'] = 'Certifikát byl úspěšně odeslán.';
+$_LANG['serverCA']['home']['validation_page']['cancelDialogBody'] = 'Zrušení ukončí objednávku u certifikační autority: vydaný certifikát přestane fungovat a nelze jej znovu použít. Chcete certifikát zrušit?';
+$_LANG['serverCA']['home']['validation_page']['cancelDialogKeep'] = 'Ponechat certifikát';
+$_LANG['serverCA']['home']['validation_page']['cancelDialogConfirm'] = 'Zrušit certifikát';
 
 $_LANG['Download CRT'] = 'Stáhnout CRT';
 $_LANG['Download Intermediate CRT'] = 'Stáhnout zprostředkující CRT';

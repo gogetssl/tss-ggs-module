@@ -269,7 +269,7 @@ add_hook('ClientAreaHomepagePanels', 1, function($homePagePanels) {
         }
         $body .= '</div>';
 
-        $homePagePanels->addChild('tssggs_ssl_summary', [
+        $panel = $homePagePanels->addChild('tssggs_ssl_summary', [
             'label'    => $t['summaryTitle'],
             'icon'     => 'fa-lock',
             'order'    => 60,
@@ -281,12 +281,31 @@ add_hook('ClientAreaHomepagePanels', 1, function($homePagePanels) {
             ],
             'bodyHtml' => $body,
         ]);
+        unifiedSslLabelBlock($panel, $t['summaryTitle'], \ModulesGarden\TSSGGSModule\App\Libs\Edition::brand(), 'panel');
     }
     catch(\Throwable $e)
     {
         logActivity('TSSGGSModule SSL summary panel: ' . $e->getMessage());
     }
 });
+
+// Both editions (GoGetSSL Module, TheSSLStore Module) can run on one WHMCS and each adds its own "SSL Certificates"
+// block: once a second block appears, every block shows its brand so the client can tell them apart. Shared by
+// the editions (same function name in both packages), hence the function_exists guard and the $GLOBALS list.
+if(!function_exists('unifiedSslLabelBlock'))
+{
+    function unifiedSslLabelBlock($item, $title, $brand, $kind = 'sidebar')
+    {
+        $GLOBALS['unifiedSslBlocks'][$kind][] = [$item, $title, $brand];
+        if(count($GLOBALS['unifiedSslBlocks'][$kind]) > 1)
+        {
+            foreach($GLOBALS['unifiedSslBlocks'][$kind] as list($block, $blockTitle, $blockBrand))
+            {
+                $block->setLabel($blockTitle . ' - ' . $blockBrand);
+            }
+        }
+    }
+}
 
 // SSL summary in the secondary sidebar (on all pages, or on the pages listed in the settings)
 add_hook('ClientAreaSecondarySidebar', 1, function($secondarySidebar) {
@@ -317,6 +336,7 @@ add_hook('ClientAreaSecondarySidebar', 1, function($secondarySidebar) {
             'icon'  => 'fa-lock',
             'order' => 99,
         ]);
+        unifiedSslLabelBlock($menu, $t['summaryTitle'], \ModulesGarden\TSSGGSModule\App\Libs\Edition::brand());
         $order = 10;
         foreach(\ModulesGarden\TSSGGSModule\App\Libs\ClientSslSummary::TYPES as $type)
         {

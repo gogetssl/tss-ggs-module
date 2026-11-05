@@ -503,7 +503,7 @@ class Helpers
                 {
                     $optionNames['single'] = [
                         'name'         => 'sans',
-                        'nameFriendly' => 'Additional Single domain SAN\'s',
+                        'nameFriendly' => ProductCatalog::optionLabel('single', $includedSan),
                         'unit'         => 'SAN'
                     ];
                 }
@@ -512,7 +512,7 @@ class Helpers
                 {
                     $optionNames['wildcard'] = [
                         'name'         => 'sans_wildcard',
-                        'nameFriendly' => 'Additional Wildcard domain SAN\'s',
+                        'nameFriendly' => ProductCatalog::optionLabel('wildcard', $includedSanWildcard),
                         'unit'         => 'SAN'
                     ];
                 }

@@ -745,7 +745,7 @@ $_LANG['admin.products.index.data_tables.products.forms.configuration_form.inclu
 $_LANG['admin.products.index.data_tables.products.forms.configuration_form.update_success'] = 'Configuration updated successfully';
 
 //default option
-$_LANG['choseProductGroup']     = '--- Chose Product Group ---';
+$_LANG['choseProductGroup']     = '--- Choose Product Group ---';
 $_LANG['createNewProductGroup'] = '--- New Product Group ---';
 
 

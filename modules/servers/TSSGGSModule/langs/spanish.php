@@ -150,6 +150,9 @@ $_LANG['serverCA']['home']['validation_page']['Are you sure you want to cancel t
 $_LANG['serverCA']['home']['validation_page']['Close'] = 'Cerrar';
 $_LANG['serverCA']['home']['validation_page']['Cancel'] = 'Cancelar';
 $_LANG['serverCA']['home']['validation_page']['send_email'] = 'El certificado se ha enviado correctamente.';
+$_LANG['serverCA']['home']['validation_page']['cancelDialogBody'] = 'La cancelación detiene el pedido en la autoridad de certificación: un certificado emitido deja de funcionar y no se puede volver a usar. ¿Desea cancelar el certificado?';
+$_LANG['serverCA']['home']['validation_page']['cancelDialogKeep'] = 'Conservar el certificado';
+$_LANG['serverCA']['home']['validation_page']['cancelDialogConfirm'] = 'Cancelar el certificado';
 
 $_LANG['Download CRT'] = 'Descargar CRT';
 $_LANG['Download Intermediate CRT'] = 'Descargar CRT intermedio';

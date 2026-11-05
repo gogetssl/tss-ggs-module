@@ -124,7 +124,7 @@ class Writer
         $renamed = [];
         foreach((array)$product['san_options'] as $option)
         {
-            $display = $option['display'] !== '' ? $option['display'] : ($option['role'] === 'sans' ? "Additional Single domain SAN's" : "Additional Wildcard domain SAN's");
+            $display = $option['display'] !== '' ? $option['display'] : \ModulesGarden\TSSGGSModule\App\Libs\ProductCatalog::optionLabel($option['role'] === 'sans' ? 'single' : 'wildcard');
             $newName = $option['role'] . '|' . $display;
             Capsule::table('tblproductconfigoptions')->where('id', $option['id'])->update(['optionname' => $newName, 'hidden' => 0]);
             // the unified code counts sub-options named "SAN"

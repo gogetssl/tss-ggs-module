@@ -150,6 +150,9 @@ $_LANG['serverCA']['home']['validation_page']['Are you sure you want to cancel t
 $_LANG['serverCA']['home']['validation_page']['Close']                                            = 'Luk';
 $_LANG['serverCA']['home']['validation_page']['Cancel']                                           = 'Annuller';
 $_LANG['serverCA']['home']['validation_page']['send_email']                                       = 'Certifikatet er blevet sendt.';
+$_LANG['serverCA']['home']['validation_page']['cancelDialogBody'] = 'Annullering stopper ordren hos certifikatudstederen: et udstedt certifikat holder op med at virke og kan ikke bruges igen. Vil du annullere certifikatet?';
+$_LANG['serverCA']['home']['validation_page']['cancelDialogKeep'] = 'Behold certifikatet';
+$_LANG['serverCA']['home']['validation_page']['cancelDialogConfirm'] = 'Annuller certifikatet';
 
 $_LANG['Download CRT']              = 'Download CRT';
 $_LANG['Download Intermediate CRT'] = 'Download mellemliggende CRT';

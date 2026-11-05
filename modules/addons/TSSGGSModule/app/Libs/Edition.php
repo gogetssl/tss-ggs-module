@@ -22,10 +22,12 @@ class Edition
     protected static $editions = [
         self::GGS => [
             'name'        => 'GoGetSSL Module',
+            'brand'       => 'GoGetSSL',
             'description' => 'GoGetSSL module for WHMCS: sell and manage SSL/TLS certificates, ACME and AutoInstall SSL subscriptions and other security products.',
         ],
         self::TSS => [
             'name'        => 'TheSSLStore Module',
+            'brand'       => 'TheSSLStore',
             'description' => 'TheSSLStore module for WHMCS: sell and manage SSL/TLS certificates, ACME and AutoInstall SSL subscriptions and other security products.',
         ],
     ];
@@ -47,6 +49,12 @@ class Edition
     public static function name()
     {
         return self::$editions[self::get()]['name'];
+    }
+
+    /** Short brand for labels the client sees when both editions are installed */
+    public static function brand()
+    {
+        return self::$editions[self::get()]['brand'];
     }
 
     public static function description()

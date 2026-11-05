@@ -583,6 +583,8 @@ class CertificateService
                 self::api($serviceId)->cancelItem((int)$ssl->remoteid, $reason);
                 Request::where('serviceid', (int)$serviceId)->where('name', 'addOrder')->update(['status' => 'cancelled']);
                 Request::where('serviceid', (int)$serviceId)->where('name', 'certificate')->update(['status' => 'cancelled']);
+                // WHMCS's own SSL order list shows the order as cancelled (the syncs only take "Configuration Submitted")
+                Capsule::table('tblsslorders')->where('serviceid', (int)$serviceId)->update(['status' => 'Cancelled']);
                 try
                 {
                     AutoInstallQueue::cancelOpenTasks($serviceId, 'Order cancelled');

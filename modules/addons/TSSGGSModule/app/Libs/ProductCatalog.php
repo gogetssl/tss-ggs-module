@@ -10,7 +10,20 @@ use WHMCS\Database\Capsule;
  */
 class ProductCatalog
 {
-    const OPTIONS = ['single' => ['sans', "Additional Single domain SAN's"], 'wildcard' => ['sans_wildcard', "Additional Wildcard domain SAN's"]];
+    const OPTIONS = ['single' => ['sans', 'Additional domains (SANs)'], 'wildcard' => ['sans_wildcard', 'Additional wildcard domains (*.example.com)']];
+
+    /** Default option names of earlier versions */
+    const OLD_LABELS = ["Additional Single domain SAN's", "Additional Wildcard domain SAN's"];
+
+    /**
+     * Name of a SAN configurable option as the client sees it on the order form, with what the price already includes
+     */
+    public static function optionLabel($kind, $included = 0)
+    {
+        $label = self::OPTIONS[$kind === 'wildcard' ? 'wildcard' : 'single'][1];
+
+        return $label . ((int)$included > 0 ? ' - ' . (int)$included . ' included in the price' : '');
+    }
 
     /**
      * Status badges of a gateway product and its WHMCS product
@@ -170,7 +183,7 @@ class ProductCatalog
             if(empty($existing[$name]))
             {
                 $optionId = Capsule::table('tblproductconfigoptions')->insertGetId([
-                    'gid' => self::configGroup($product), 'optionname' => $name . '|' . $label, 'optiontype' => 4,
+                    'gid' => self::configGroup($product), 'optionname' => $name . '|' . self::optionLabel($remote, $included), 'optiontype' => 4,
                     'qtyminimum' => 0, 'qtymaximum' => $max, 'order' => 0, 'hidden' => 0,
                 ]);
                 $fixed[] = $name . ' created';
@@ -178,7 +191,14 @@ class ProductCatalog
             else
             {
                 $optionId = (int)$existing[$name]->id;
-                Capsule::table('tblproductconfigoptions')->where('id', $optionId)->update(['optiontype' => 4, 'qtyminimum' => 0, 'qtymaximum' => $max]);
+                $update   = ['optiontype' => 4, 'qtyminimum' => 0, 'qtymaximum' => $max];
+                // the old default name ("Additional Single domain SAN's") gets the clearer one; names an admin wrote stay
+                if(in_array(explode('|', (string)$existing[$name]->optionname, 2)[1] ?? '', self::OLD_LABELS, true))
+                {
+                    $update['optionname'] = $name . '|' . self::optionLabel($remote, $included);
+                    $fixed[]              = $name . ' renamed';
+                }
+                Capsule::table('tblproductconfigoptions')->where('id', $optionId)->update($update);
             }
 
             $subId = (int)Capsule::table('tblproductconfigoptionssub')->where('configid', $optionId)->value('id');

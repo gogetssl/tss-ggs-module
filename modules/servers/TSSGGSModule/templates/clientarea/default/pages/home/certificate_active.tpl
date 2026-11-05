@@ -320,11 +320,11 @@
                     <h4 class="modal-title" style="text-align: left;" id="myModalCancelLabel">{$MGLANG->T('validation_page', 'Cancel Certificate')}</h4>
                 </div>
                 <div class="modal-body" style="text-align: left;">
-                    {$MGLANG->T('validation_page', 'Are you sure you want to cancel the certificate?')}
+                    {$MGLANG->T('validation_page', 'cancelDialogBody')}
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">{$MGLANG->T('validation_page', 'Close')}</button>
-                    <button type="submit" class="btn btn-primary">{$MGLANG->T('validation_page', 'Cancel')}</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">{$MGLANG->T('validation_page', 'cancelDialogKeep')}</button>
+                    <button type="submit" class="btn btn-danger">{$MGLANG->T('validation_page', 'cancelDialogConfirm')}</button>
                 </div>
             </form>
         </div>

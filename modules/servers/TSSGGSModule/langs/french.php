@@ -150,6 +150,9 @@ $_LANG['serverCA']['home']['validation_page']['Are you sure you want to cancel t
 $_LANG['serverCA']['home']['validation_page']['Close']                                            = 'Fermer';
 $_LANG['serverCA']['home']['validation_page']['Cancel']                                           = 'Annuler';
 $_LANG['serverCA']['home']['validation_page']['send_email']                                       = 'Le certificat a été envoyé avec succès.';
+$_LANG['serverCA']['home']['validation_page']['cancelDialogBody'] = 'L’annulation arrête la commande auprès de l’autorité de certification : un certificat émis cesse de fonctionner et ne peut plus être utilisé. Voulez-vous annuler le certificat ?';
+$_LANG['serverCA']['home']['validation_page']['cancelDialogKeep'] = 'Conserver le certificat';
+$_LANG['serverCA']['home']['validation_page']['cancelDialogConfirm'] = 'Annuler le certificat';
 
 $_LANG['Download CRT']              = 'Télécharger le CRT';
 $_LANG['Download Intermediate CRT'] = 'Télécharger le CRT intermédiaire';

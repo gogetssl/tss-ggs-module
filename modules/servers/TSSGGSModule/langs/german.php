@@ -150,6 +150,9 @@ $_LANG['serverCA']['home']['validation_page']['Are you sure you want to cancel t
 $_LANG['serverCA']['home']['validation_page']['Close'] = 'Schließen';
 $_LANG['serverCA']['home']['validation_page']['Cancel'] = 'Abbrechen';
 $_LANG['serverCA']['home']['validation_page']['send_email'] = 'Das Zertifikat wurde erfolgreich gesendet.';
+$_LANG['serverCA']['home']['validation_page']['cancelDialogBody'] = 'Mit der Kündigung wird die Bestellung bei der Zertifizierungsstelle beendet: Ein ausgestelltes Zertifikat funktioniert nicht mehr und kann nicht wieder verwendet werden. Möchten Sie das Zertifikat kündigen?';
+$_LANG['serverCA']['home']['validation_page']['cancelDialogKeep'] = 'Zertifikat behalten';
+$_LANG['serverCA']['home']['validation_page']['cancelDialogConfirm'] = 'Zertifikat kündigen';
 
 $_LANG['Download CRT'] = 'CRT herunterladen';
 $_LANG['Download Intermediate CRT'] = 'Zwischenzertifikat (CRT) herunterladen';

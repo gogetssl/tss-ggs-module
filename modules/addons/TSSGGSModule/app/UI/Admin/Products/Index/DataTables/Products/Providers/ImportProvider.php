@@ -203,11 +203,12 @@ class ImportProvider extends CrudProvider
 
             $optionNames = [];
 
+            // the client sees these names on the order form: say what is already in the price
             if($remoteProductData['san']['single_allowed'])
             {
                 $optionNames['single'] = [
                     'name'         => 'sans',
-                    'nameFriendly' => 'Additional Single domain SAN\'s',
+                    'nameFriendly' => \ModulesGarden\TSSGGSModule\App\Libs\ProductCatalog::optionLabel('single', $includedSan),
                     'unit'         => 'SAN'
                 ];
             }
@@ -216,7 +217,7 @@ class ImportProvider extends CrudProvider
             {
                 $optionNames['wildcard'] = [
                     'name'         => 'sans_wildcard',
-                    'nameFriendly' => 'Additional Wildcard domain SAN\'s',
+                    'nameFriendly' => \ModulesGarden\TSSGGSModule\App\Libs\ProductCatalog::optionLabel('wildcard', $includedSanWildcard),
                     'unit'         => 'SAN'
                 ];
             }
