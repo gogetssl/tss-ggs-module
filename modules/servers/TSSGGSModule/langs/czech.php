@@ -530,3 +530,4 @@ $_LANG['serverCA']['home']['validation_page']['DNS Record Type'] = 'Typ DNS záz
 $_LANG['serverCA']['home']['validation_page']['DNS Host'] = 'DNS hostitel (název)';
 $_LANG['serverCA']['home']['validation_page']['DNS value pending'] = 'Zatím nepřijato od certifikační autority - zobrazí se zde po další kontrole stavu (Revalidovat nebo načtěte později)';
 $_LANG['serverCA']['home']['validation_page']['Validation details preparing'] = 'Certifikační autorita připravuje údaje pro ověření vašich domén. Stránka se sama znovu načte; pokud se nic nezobrazí do několika minut, načtěte ji později.';
+$_LANG['serverCA']['home']['validation_page']['Certificate not available'] = 'Tento certifikát již není k dispozici, protože služba byla zrušena nebo ukončena. Stahování, převydání a ověření jsou vypnuté.';

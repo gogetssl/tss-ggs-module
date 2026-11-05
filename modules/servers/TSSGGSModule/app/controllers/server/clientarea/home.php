@@ -128,7 +128,8 @@ class home extends AbstractController
         // details a few seconds later - re-read the order instead of showing an empty file / DNS block
         $orderDetails = CertificateService::refreshIfIncomplete($input['id'], (array)Request::getOrder($input['id']));
         $order        = $orderDetails['orderData'];
-        $vars['validationPreparing'] = CertificateService::validationDataMissing($orderDetails);
+        $vars['serviceOpen']         = CertificateService::serviceOpen((int)$input['id']);
+        $vars['validationPreparing'] = $vars['serviceOpen'] && CertificateService::validationDataMissing($orderDetails);
 
         $remoteProductId = isset($order['orderData']['product']['id']) ? $order['orderData']['product']['id'] : $product->configoption2;
         $remoteProduct   = RemoteProduct::where('remoteId', $remoteProductId)->where('vendor', $product->configoption1)->first();
@@ -340,6 +341,7 @@ class home extends AbstractController
 
         try
         {
+            CertificateService::requireUsable((int)$input['id']);
             if(!in_array($format, CertificateBundle::enabledFormats(), true))
             {
                 throw new \Exception(Lang::absoluteT('download_unknown_format'));
@@ -374,6 +376,7 @@ class home extends AbstractController
         {
 
             $serviceId   = $input['id'];
+            CertificateService::requireUsable((int)$serviceId);
             $ssl         = SSL::getByServiceId($serviceId);
             $certificate = Request::getOrder($serviceId);
 
@@ -698,6 +701,8 @@ class home extends AbstractController
         $vars['subscribtion_starts']                = date('F j, Y', strtotime($itemOrder['subscription']['begin']));
         $vars['subscribtion_ends']                  = date('F j, Y', strtotime($itemOrder['subscription']['end']));
         $vars['serviceid']                          = $params['service']->id;
+        // cancelled / terminated: the page stays readable, but no downloads, sending, reissue or install
+        $vars['certificateUsable']                  = CertificateService::usable((int)$params['service']->id);
         $vars['order_details']['registration_date'] = date('l F jS, Y', strtotime($params['service']->regdate));
         $vars['order_details']['expiration_date']   = $params['service']->nextduedate != '0000-00-00' ? date('l F jS, Y', strtotime($params['service']->nextduedate)) : "";
         $vars['order_details']['reccuring_amount']  = formatCurrency($params['service']->amount, $params['client']->currency);
@@ -802,6 +807,7 @@ class home extends AbstractController
         try
         {
             $this->requireCsrfToken();
+            CertificateService::requireUsable($serviceId);
             if(!$this->acquireServiceLock($serviceId))
             {
                 throw new \Exception(Lang::absoluteT('sslConfigInProgress'));
@@ -968,7 +974,7 @@ class home extends AbstractController
 
             $ssl     = SSL::getByServiceId($serviceId);
             $service = Service::where('id', $serviceId)->first();
-            if(!$ssl || !$service || $ssl->status !== 'Configuration Submitted' || empty($ssl->remoteid))
+            if(!$ssl || !$service || $ssl->status !== 'Configuration Submitted' || empty($ssl->remoteid) || !CertificateService::serviceOpen($serviceId))
             {
                 throw new \Exception(Lang::absoluteT('revalidate_not_available'));
             }
@@ -1003,7 +1009,7 @@ class home extends AbstractController
 
             $ssl     = SSL::getByServiceId($serviceId);
             $service = Service::where('id', $serviceId)->first();
-            if(!$ssl || !$service || $ssl->status !== 'Configuration Submitted' || empty($ssl->remoteid))
+            if(!$ssl || !$service || $ssl->status !== 'Configuration Submitted' || empty($ssl->remoteid) || !CertificateService::serviceOpen($serviceId))
             {
                 throw new \Exception(Lang::absoluteT('resend_dcv_not_available'));
             }
@@ -1066,6 +1072,10 @@ class home extends AbstractController
     public function changeApprovalMethodHTML($input, $vars = [])
     {
         $serviceId   = $input['id'];
+        if(!CertificateService::serviceOpen((int)$serviceId))
+        {
+            return ['tpl' => 'error', 'vars' => ['error' => 'The certificate is not available: the service has been cancelled or terminated.']];
+        }
         $certificate = Request::getOrder($serviceId);
         $service     = Service::where('id', $serviceId)->first();
 

@@ -130,6 +130,36 @@ class CertificateService
     }
 
     /**
+     * The service still owns its certificate: the WHMCS service is Active and the vendor order was not cancelled.
+     * A cancelled / terminated service keeps its stored order data, which still says "active" - never offer
+     * downloads, reissue or validation actions for it.
+     */
+    public static function serviceOpen($serviceId)
+    {
+        if(Capsule::table('tblhosting')->where('id', (int)$serviceId)->value('domainstatus') !== 'Active')
+        {
+            return false;
+        }
+        $status = Request::where('serviceid', (int)$serviceId)->where('name', 'certificate')->value('status');
+
+        return !in_array((string)$status, ['cancelled', 'rejected', 'revoked'], true);
+    }
+
+    /** An issued certificate the client may download, send or reissue */
+    public static function usable($serviceId)
+    {
+        return self::serviceOpen($serviceId) && self::status($serviceId) === 'active';
+    }
+
+    public static function requireUsable($serviceId)
+    {
+        if(!self::usable($serviceId))
+        {
+            throw new \Exception('The certificate is not available: the service has been cancelled or terminated.');
+        }
+    }
+
+    /**
      * True while a pending order lacks what the client needs to validate: no domains yet, or a domain on a file / DNS
      * method without its value. $stored = Request::getOrder() (['orderData' => .., 'orderFiles' => ..]).
      */
@@ -173,7 +203,7 @@ class CertificateService
 
     public static function refreshIfIncomplete($serviceId, array $stored)
     {
-        if(!self::validationDataMissing($stored))
+        if(!self::validationDataMissing($stored) || !self::serviceOpen($serviceId))
         {
             return $stored;
         }
@@ -230,6 +260,7 @@ class CertificateService
      */
     public static function sendCertificate($serviceId)
     {
+        self::requireUsable($serviceId);
         $stored = self::stored($serviceId);
         $bundle = CertificateBundle::fromOrder($stored);
         $cn     = $stored['orderData']['orderData']['common_name']['name'] ?? '';
@@ -384,6 +415,7 @@ class CertificateService
      */
     public static function reissue($serviceId, $csr, array $methods)
     {
+        self::requireUsable($serviceId);
         $ssl     = self::requireOrder($serviceId);
         $subject = @openssl_csr_get_subject($csr);
         if(!$subject || empty($subject['CN']))

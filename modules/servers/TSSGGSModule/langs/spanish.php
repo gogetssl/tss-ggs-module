@@ -530,3 +530,4 @@ $_LANG['serverCA']['home']['validation_page']['DNS Record Type'] = 'Tipo de regi
 $_LANG['serverCA']['home']['validation_page']['DNS Host'] = 'Host DNS (nombre)';
 $_LANG['serverCA']['home']['validation_page']['DNS value pending'] = 'Aún no recibido de la autoridad de certificación - aparecerá aquí tras la próxima comprobación (Revalidar o recargue más tarde)';
 $_LANG['serverCA']['home']['validation_page']['Validation details preparing'] = 'La autoridad de certificación está preparando los datos de validación de sus dominios. Esta página se recarga sola; si no aparece nada en unos minutos, recárguela más tarde.';
+$_LANG['serverCA']['home']['validation_page']['Certificate not available'] = 'Este certificado ya no está disponible porque el servicio se ha cancelado o finalizado. Las descargas, la reemisión y la validación están desactivadas.';

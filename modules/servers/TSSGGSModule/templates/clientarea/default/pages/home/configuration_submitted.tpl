@@ -96,8 +96,12 @@
                         </tr>
                         </tbody>
                     </table>
+                    {if $serviceOpen}
                     <h4 style="margin-top:30px;">{$MGLANG->T('validation_page', 'Actions')}</h4>
                     <button type="button" data-toggle="modal" data-target="#myModalCancel" class="btn btn-default">{$MGLANG->T('validation_page', 'CancelCertificate')}</button>
+                    {else}
+                    <div class="alert alert-warning" style="margin-top:30px;">{$MGLANG->T('validation_page', 'Certificate not available')}</div>
+                    {/if}
                 </div>
             </div>
         </div>
@@ -249,6 +253,7 @@
     </table>
 
     <a href="clientarea.php?action=productdetails&id={$serviceid}&mg-action=downloadCSR" class="btn btn-default">{$MGLANG->T('validation_page', 'Download CSR')}</a>
+    {if $serviceOpen}
     {if $mainDomainMethod == 'http' || $mainDomainMethod == 'https'}
         <a href="clientarea.php?action=productdetails&id={$serviceid}&mg-action=downloadAuthFile" class="btn btn-default">{$MGLANG->T('validation_page', 'Download Auth File')}</a>
     {/if}
@@ -266,6 +271,7 @@
             <input type="hidden" name="token" value="{$csrfToken}">
             <button type="submit" class="btn btn-default" title="{$MGLANG->T('validation_page', 'ResendDcvEmailDesc')}">{$MGLANG->T('validation_page', 'Resend DCV email')}</button>
         </form>
+    {/if}
     {/if}
 
     {if $configurableOptions.sans || $configurableOptions.sans_wildcard}

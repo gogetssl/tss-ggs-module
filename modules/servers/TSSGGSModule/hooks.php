@@ -27,7 +27,10 @@ add_hook('ClientAreaPrimarySidebar', 1, function($primarySidebar) {
         $serviceId = (int)$_REQUEST['id'];
         $orderData = \ModulesGarden\TSSGGSModule\App\Libs\CertificateService::stored($serviceId);
 
-        if(isset($orderData['orderData']['order']['status']) && $orderData['orderData']['order']['status'] == 'active')
+        // a cancelled / terminated service keeps "active" in its stored order: no downloads or reissue for it
+        $serviceOpen = \ModulesGarden\TSSGGSModule\App\Libs\CertificateService::serviceOpen($serviceId);
+
+        if($serviceOpen && isset($orderData['orderData']['order']['status']) && $orderData['orderData']['order']['status'] == 'active')
         {
             $myAccount = $primarySidebar->getChild('Service Details Actions');
             if($myAccount)
@@ -91,7 +94,7 @@ add_hook('ClientAreaPrimarySidebar', 1, function($primarySidebar) {
             }
         }
 
-        if(isset($orderData['orderData']['order']['status']) && $orderData['orderData']['order']['status'] == 'pending')
+        if($serviceOpen && isset($orderData['orderData']['order']['status']) && $orderData['orderData']['order']['status'] == 'pending')
         {
             $myAccount = $primarySidebar->getChild('Service Details Actions');
             if($myAccount)

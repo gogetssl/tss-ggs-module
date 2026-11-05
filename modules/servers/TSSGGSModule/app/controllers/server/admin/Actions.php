@@ -134,6 +134,10 @@ class Actions {
      */
     public function ReissueCertificate($params)
     {
+        if(!CertificateService::serviceOpen($params['serviceid']))
+        {
+            return 'The certificate is not available: the service has been cancelled or terminated.';
+        }
         if(CertificateService::status($params['serviceid']) !== 'active')
         {
             return 'The certificate can be reissued once it has been issued';
@@ -143,8 +147,14 @@ class Actions {
         exit;
     }
 
+    /** Client "Download Certificate" button (the admin uses GetCertificate) */
     public function DownloadCertificate($params)
     {
+        if(!CertificateService::usable($params['serviceid']))
+        {
+            return 'The certificate is not available: the service has been cancelled or terminated.';
+        }
+
         return $this->GetCertificate($params);
     }
 
@@ -182,7 +192,7 @@ class Actions {
         }
 
         $buttons = [];
-        if(CertificateService::status($serviceId) === 'active')
+        if(CertificateService::usable($serviceId))
         {
             $buttons['Reissue Certificate']  = 'ClientAreaCustomReissueCertificate';
             $buttons['Download Certificate'] = 'ClientAreaCustomDownloadCertificate';

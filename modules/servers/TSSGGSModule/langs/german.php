@@ -530,3 +530,4 @@ $_LANG['serverCA']['home']['validation_page']['DNS Record Type'] = 'DNS-Eintrags
 $_LANG['serverCA']['home']['validation_page']['DNS Host'] = 'DNS-Host (Name)';
 $_LANG['serverCA']['home']['validation_page']['DNS value pending'] = 'Noch nicht von der Zertifizierungsstelle erhalten - erscheint hier nach der nächsten Statusprüfung (Erneut validieren oder später neu laden)';
 $_LANG['serverCA']['home']['validation_page']['Validation details preparing'] = 'Die Zertifizierungsstelle bereitet die Validierungsdaten für Ihre Domains vor. Diese Seite lädt sich selbst neu; erscheint nach einigen Minuten nichts, laden Sie sie später neu.';
+$_LANG['serverCA']['home']['validation_page']['Certificate not available'] = 'Dieses Zertifikat ist nicht mehr verfügbar, da der Dienst gekündigt oder beendet wurde. Downloads, Neuausstellung und Validierung sind deaktiviert.';

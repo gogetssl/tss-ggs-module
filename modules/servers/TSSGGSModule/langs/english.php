@@ -530,3 +530,4 @@ $_LANG['serverCA']['home']['validation_page']['DNS Record Type'] = 'DNS Record T
 $_LANG['serverCA']['home']['validation_page']['DNS Host'] = 'DNS Host (name)';
 $_LANG['serverCA']['home']['validation_page']['DNS value pending'] = 'Not received from the certificate authority yet - it appears here after the next status check (use Revalidate or reload later)';
 $_LANG['serverCA']['home']['validation_page']['Validation details preparing'] = 'The certificate authority is preparing the validation details for your domains. This page reloads by itself; if nothing appears within a few minutes, reload it later.';
+$_LANG['serverCA']['home']['validation_page']['Certificate not available'] = 'This certificate is no longer available because the service has been cancelled or terminated. Downloads, reissue and validation are turned off.';

@@ -530,3 +530,4 @@ $_LANG['serverCA']['home']['validation_page']['DNS Record Type'] = 'Type d\'enre
 $_LANG['serverCA']['home']['validation_page']['DNS Host'] = 'Hôte DNS (nom)';
 $_LANG['serverCA']['home']['validation_page']['DNS value pending'] = 'Pas encore reçu de l\'autorité de certification - apparaîtra ici après la prochaine vérification (Revalider ou rechargez plus tard)';
 $_LANG['serverCA']['home']['validation_page']['Validation details preparing'] = 'L’autorité de certification prépare les informations de validation de vos domaines. Cette page se recharge d’elle-même ; si rien n’apparaît d’ici quelques minutes, rechargez-la plus tard.';
+$_LANG['serverCA']['home']['validation_page']['Certificate not available'] = 'Ce certificat n’est plus disponible, car le service a été annulé ou résilié. Les téléchargements, la réémission et la validation sont désactivés.';

@@ -113,6 +113,9 @@
                         </tr>
                         </tbody>
                     </table>
+                    {if !$certificateUsable}
+                    <div class="alert alert-warning" style="margin-top:30px;">{$MGLANG->T('validation_page', 'Certificate not available')}</div>
+                    {else}
                     <h4 style="margin-top:30px;">{$MGLANG->T('validation_page', 'Actions')}</h4>
                     <button style="margin-bottom: 5px;" data-toggle="modal" data-target="#myModalCancel" type="button" class="btn btn-default">{$MGLANG->T('validation_page', 'CancelCertificate')}</button>
 
@@ -135,6 +138,7 @@
                     {foreach $cpanel_services as $cpanelService}
                         <a href="{$whmcs_url}/clientarea.php?action=productdetails&id={$cpanelService.id}&dosinglesignon=1" target="_blank" rel="noopener" style="margin-bottom: 5px;" class="btn btn-default">{$MGLANG->T('validation_page', 'Login to cPanel')}{if $cpanel_services|@count > 1} ({$cpanelService.domain|escape}){/if}</a>
                     {/foreach}
+                    {/if}
                 </div>
             </div>
         </div>

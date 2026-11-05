@@ -530,3 +530,4 @@ $_LANG['serverCA']['home']['validation_page']['DNS Record Type'] = 'DNS-posttype
 $_LANG['serverCA']['home']['validation_page']['DNS Host'] = 'DNS-vært (navn)';
 $_LANG['serverCA']['home']['validation_page']['DNS value pending'] = 'Endnu ikke modtaget fra certifikatudstederen - vises her efter næste statuskontrol (brug Revalider eller genindlæs senere)';
 $_LANG['serverCA']['home']['validation_page']['Validation details preparing'] = 'Certifikatudstederen forbereder valideringsoplysningerne for dine domæner. Siden genindlæses af sig selv; hvis intet vises inden for et par minutter, så genindlæs den senere.';
+$_LANG['serverCA']['home']['validation_page']['Certificate not available'] = 'Dette certifikat er ikke længere tilgængeligt, fordi tjenesten er annulleret eller afsluttet. Downloads, genudstedelse og validering er slået fra.';
