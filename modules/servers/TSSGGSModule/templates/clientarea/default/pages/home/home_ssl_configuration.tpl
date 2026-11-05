@@ -660,6 +660,8 @@
 
     // ---- Submit ----
     function showError(message) {
+        // only the current problem: earlier messages no longer apply after the client changed the form
+        $('#MGAlerts').alerts('clear');
         $('#MGAlerts').alerts('error', message || lang.error);
         $('html, body').animate({ scrollTop: 0 }, 300);
     }

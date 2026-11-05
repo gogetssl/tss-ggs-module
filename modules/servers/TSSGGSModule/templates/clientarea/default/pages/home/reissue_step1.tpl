@@ -127,7 +127,7 @@
                     <div class="form-group row">
                         <label class="col-md-4 col-form-label text-md-right" for="inputAdditionalField">{$lang_san}</label>
                         <div class="col-md-8">
-                            <textarea name="fields[sans_domains]" cols="60" rows="" class="form-control">{$post_san}</textarea> {$MGLANG->T('reissue_page', 'desc_san')}
+                            <textarea name="fields[sans_domains]" cols="60" rows="" class="form-control">{$post_san|escape}</textarea> {$MGLANG->T('reissue_page', 'desc_san')}
                         </div>
                     </div>
                 </fieldset>
@@ -138,7 +138,7 @@
                     <div class="form-group row">
                         <label class="col-md-4 col-form-label text-md-right" for="inputAdditionalField">{$lang_san_wildcard}</label>
                         <div class="col-md-8">
-                            <textarea name="fields[sans_domains_wildcard]" cols="60" rows="" class="form-control">{$post_san_wildcard}</textarea> {$MGLANG->T('reissue_page', 'desc_san_wildcard')}
+                            <textarea name="fields[sans_domains_wildcard]" cols="60" rows="" class="form-control">{$post_san_wildcard|escape}</textarea> {$MGLANG->T('reissue_page', 'desc_san_wildcard')}
                         </div>
                     </div>
                 </fieldset>

@@ -770,7 +770,7 @@ class SSLTrustCenterApi
             {
                 return [];
             }
-            throw new \Exception('Invalid response code: ' . $httpCode);
+            throw new \Exception(self::readableError('', $httpCode), $httpCode);
         }
 
         if($multilineResponse)
@@ -798,14 +798,36 @@ class SSLTrustCenterApi
                 }
             }
 
-            if(isset($response['message']))
-            {
-                throw new \Exception('Invalid response code: ' . $httpCode . ' ' . $response['message']);
-            }
-            throw new \Exception('Invalid response code: ' . $httpCode);
+            throw new \Exception(self::readableError(isset($response['message']) ? $response['message'] : '', $httpCode), $httpCode);
         }
 
         return $response;
+    }
+
+    /**
+     * Gateway error as a sentence a client can read (it is shown in the client area as is); the HTTP code stays in
+     * the exception code and in the API log. "Vendor returns error:ErrorCode:x|ErrorMessage:y" becomes "y".
+     */
+    public static function readableError($message, $httpCode)
+    {
+        $message = trim((string)$message);
+        if(preg_match('/ErrorMessage:\s*(.+)$/is', $message, $m))
+        {
+            $message = trim($m[1]);
+        }
+        $message = trim(preg_replace('/^Vendor returns error:\s*/i', '', $message));
+        $message = rtrim($message, '!.') ;
+
+        if($message === '')
+        {
+            return $httpCode >= 500
+                ? 'The SSL service is temporarily unavailable (HTTP ' . (int)$httpCode . '). Please try again later.'
+                : 'The SSL service could not process the request (HTTP ' . (int)$httpCode . ').';
+        }
+
+        return $httpCode >= 500
+            ? 'The SSL service could not complete the request: ' . $message . '. Please try again later.'
+            : $message . '.';
     }
 }
 

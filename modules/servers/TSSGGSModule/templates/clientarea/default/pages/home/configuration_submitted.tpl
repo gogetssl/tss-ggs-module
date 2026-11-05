@@ -42,7 +42,7 @@
                         </tr>
                         <tr>
                             <td>{$MGLANG->T('validation_page', 'Status')}</td>
-                            <td class="blue-bold">{if $status == 'pending'}<i class="fa fa-cog" aria-hidden="true"></i> {$MGLANG->T('validation_page', 'Validating')}{/if}</td>
+                            <td class="blue-bold">{if $status == 'pending' || $status == 'processing'}<i class="fa fa-cog" aria-hidden="true"></i> {$MGLANG->T('validation_page', 'Validating')}{else}{$status|escape|capitalize}{/if}</td>
                         </tr>
                         <tr>
                             <td>{$MGLANG->T('validation_page', 'ValidFrom')}</td>
@@ -114,6 +114,20 @@
     <h3>{$MGLANG->T('validation_page', 'Order validation')}</h3>
     <p>{$MGLANG->T('validation_page', 'Order validation_desc')}</p>
 
+    {if $previousValidTill}
+        <div class="alert alert-success">
+            {$previousNotice|escape}
+            <div class="btn-group" style="margin-left:8px;">
+                <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{$MGLANG->T('validation_page', 'Download')} <span class="caret"></span></button>
+                <ul class="dropdown-menu">
+                    {foreach $download_formats as $format}
+                        <li><a class="dropdown-item" href="clientarea.php?action=productdetails&id={$serviceid}&mg-action=download&format={$format}">{$MGLANG->T('download_formats', $format)}</a></li>
+                    {/foreach}
+                </ul>
+            </div>
+        </div>
+    {/if}
+
     {if $validationPreparing}
         <div class="alert alert-info" id="validation-preparing">{$MGLANG->T('validation_page', 'Validation details preparing')}</div>
         <script>
@@ -164,7 +178,7 @@
         {/if}
         <tr>
             <td>{$MGLANG->T('validation_page', 'Vendor Status')}</td>
-            <td>{$MGLANG->T('validation_page', 'awaiting validation (full)')}</td>
+            <td>{if $vendor_status}{$vendor_status|escape|capitalize}{else}{$MGLANG->T('validation_page', 'awaiting validation (full)')}{/if}</td>
             <td></td>
         </tr>
         <tr>

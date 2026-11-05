@@ -51,7 +51,7 @@ $_LANG['csr_details']['email']                                            = 'E-m
 $_LANG['csr_details']['division']                                         = 'Afdeling:';
 $_LANG['csr_details']['city']                                             = 'By:';
 $_LANG['csr_details']['error']                                            = 'CSR er ugyldig. Kontroller din CSR, og prøv igen.';
-$_LANG['csr_details']['description']                                      = 'Du skal have en gyldig CSR (Certificate Signing Request) for at generere dit SSL-certifikat. CSR er en krypteret tekst, som genereres af den webserver, hvor SSL-certifikatet skal installeres. Sørg for at angive de korrekte oplysninger, da de ikke kan ændres, efter SSL-certifikatet er udstedt. Når du indsætter din CSR, skal du sikre dig, at den begynder med: -----BEGIN NEW CERTIFICATE REQUEST----- og slutter med: -----END NEW CERTIFICATE REQUEST-----';
+$_LANG['csr_details']['description']                                      = 'Du skal have en gyldig CSR (Certificate Signing Request) for at generere dit SSL-certifikat. CSR er en krypteret tekst, som genereres af den webserver, hvor SSL-certifikatet skal installeres. Sørg for at angive de korrekte oplysninger, da de ikke kan ændres, efter SSL-certifikatet er udstedt. Når du indsætter din CSR, skal du sikre dig, at den begynder med: -----BEGIN CERTIFICATE REQUEST----- og slutter med: -----END CERTIFICATE REQUEST-----';
 $_LANG['validaion_page']['description']                                   = 'Certifikatudstederen (CA) kan validere ved at sende instruktioner via e-mail til den adresse, du vælger nedenfor. Du kan også bruge HTTP/DNS-valideringsmetoder.';
 $_LANG['validaion_page']['email']                                         = 'E-MAIL:';
 $_LANG['validaion_page']['dns']                                           = 'DNS:';
@@ -142,6 +142,8 @@ $_LANG['serverCA']['home']['validation_page']['Technical Details']              
 $_LANG['serverCA']['home']['validation_page']['Validating']                     = 'Validerer...';
 $_LANG['serverCA']['home']['validation_page']['Issued']                         = 'Udstedt';
 $_LANG['next_reissue']                                                          = 'Inden for de næste <b>%s</b> dage';
+$_LANG['previous_certificate_valid'] = 'Dit nuværende certifikat er gyldigt indtil %s og kan stadig downloades:';
+$_LANG['validation_method_changed'] = 'Valideringsmetoden er ændret. De nye valideringsoplysninger vises nedenfor.';
 
 $_LANG['serverCA']['home']['validation_page']['Cancel Certificate']                               = 'Annuller certifikat';
 $_LANG['serverCA']['home']['validation_page']['Are you sure you want to cancel the certificate?'] = 'Er du sikker på, at du vil annullere certifikatet?';
@@ -188,7 +190,7 @@ $_LANG['serverCA']['home']['validation_page']['Renew']                          
 $_LANG['Download SSL']                                                                           = 'Download SSL';
 
 $_LANG['serverCA']['home']['reissue_page']['Reissue Certificate']                                 = 'Genudsted certifikat';
-$_LANG['serverCA']['home']['reissue_page']['desc_page']                                           = 'Du skal have en gyldig CSR (Certificate Signing Request) for at generere dit SSL-certifikat. CSR er en krypteret tekst, som genereres af den webserver, hvor SSL-certifikatet skal installeres. Sørg for at angive de korrekte oplysninger, da de ikke kan ændres, efter SSL-certifikatet er udstedt. Når du indsætter din CSR, skal du sikre dig, at den begynder med: -----BEGIN NEW CERTIFICATE REQUEST----- og slutter med: -----END NEW CERTIFICATE REQUEST-----';
+$_LANG['serverCA']['home']['reissue_page']['desc_page']                                           = 'Du skal have en gyldig CSR (Certificate Signing Request) for at generere dit SSL-certifikat. CSR er en krypteret tekst, som genereres af den webserver, hvor SSL-certifikatet skal installeres. Sørg for at angive de korrekte oplysninger, da de ikke kan ændres, efter SSL-certifikatet er udstedt. Når du indsætter din CSR, skal du sikre dig, at den begynder med: -----BEGIN CERTIFICATE REQUEST----- og slutter med: -----END CERTIFICATE REQUEST-----';
 $_LANG['serverCA']['home']['reissue_page']['Certificate Signing Request']                         = 'Certificate Signing Request';
 $_LANG['serverCA']['home']['reissue_page']['Generate CSR']                                        = 'Generer CSR';
 $_LANG['serverCA']['home']['reissue_page']['Download Private Key']                                = 'Download privat nøgle';
@@ -210,8 +212,8 @@ $_LANG['serverCA']['home']['reissue_page']['Division']                          
 $_LANG['serverCA']['home']['reissue_page']['City']                                                = 'By';
 $_LANG['serverCA']['home']['reissue_page']['Click to Continue']                                   = 'Klik for at fortsætte';
 $_LANG['serverCA']['home']['reissue_page']['Subject Alternative Names (SANs)']                    = 'Subject Alternative Names (SAN\'er)';
-$_LANG['serverCA']['home']['reissue_page']['desc_san']                                            = 'Angiv yderligere SAN\'er (Subject Alternative Names), som du vil sikre med dette SSL-certifikat. Adskil hver SAN med et komma.';
-$_LANG['serverCA']['home']['reissue_page']['desc_san_wildcard']                                   = 'Angiv yderligere SAN\'er (Subject Alternative Names), som du vil sikre med dette SSL-certifikat. Adskil hver SAN med et komma.';
+$_LANG['serverCA']['home']['reissue_page']['desc_san']                                            = 'Angiv de ekstra domæner (SAN\'er), ét pr. linje eller adskilt med kommaer. SAN\'erne fra dit nuværende certifikat er udfyldt - fjern et for at udelade det.';
+$_LANG['serverCA']['home']['reissue_page']['desc_san_wildcard']                                   = 'Angiv de ekstra domæner (SAN\'er), ét pr. linje eller adskilt med kommaer. SAN\'erne fra dit nuværende certifikat er udfyldt - fjern et for at udelade det.';
 $_LANG['sans_additional']                                                                         = 'Yderligere SAN (maks. %s)';
 $_LANG['sans_additional_wildcard']                                                                = 'Yderligere SAN wildcard (maks. %s)';
 
@@ -425,7 +427,7 @@ $_LANG['serverCA']['home']['autoinstallOvNextStep']          = 'Dit næste trin:
 $_LANG['serverCA']['home']['autoinstallOvMsg']               = 'Gennemfør organisationsvalidering. CA\'en kontakter administratoren via e-mail og telefon for at bekræfte, at organisationen er korrekt, og at kontaktpersonen er autoriseret.';
 $_LANG['serverCA']['home']['autoinstallOutroDomainOrg']      = 'Når CA\'en har valideret dit domæne og din organisation, installeres certifikatet på din server. Du kan se status på din ordreside.';
 $_LANG['serverCA']['home']['manualPrivateKeyTitle']          = 'Din certifikatordre er indsendt';
-$_LANG['serverCA']['home']['manualPrivateKeyMsg']            = 'Din CSR er genereret sammen med en privat nøgle. Gem den private nøgle nu - den skal bruges til at installere certifikatet, og den vises ikke igen.';
+$_LANG['serverCA']['home']['manualPrivateKeyMsg']            = 'Din CSR er genereret sammen med en privat nøgle. Gem den private nøgle nu - den skal bruges til at installere certifikatet og kan kun downloades fra denne side.';
 $_LANG['serverCA']['home']['manualPrivateKeyDownload']       = 'Download privat nøgle';
 $_LANG['serverCA']['home']['goToCertificateDetails']         = 'Se mit certifikat';
 $_LANG['serverCA']['home']['autoinstallBoxTitle']            = 'AutoInstall (cPanel)';

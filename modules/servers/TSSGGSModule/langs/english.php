@@ -51,7 +51,7 @@ $_LANG['csr_details']['email']                                            = 'Ema
 $_LANG['csr_details']['division']                                         = 'Division:';
 $_LANG['csr_details']['city']                                             = 'City:';
 $_LANG['csr_details']['error']                                            = 'CSR is invalid. Please check your CSR and try again.';
-$_LANG['csr_details']['description']                                      = 'You must have a valid CSR (Certificate Signing Request) to generate your SSL Certificate. The CSR is an encrypted text the web server generates where the SSL Certificate will be installed. Please ensure you entered the correct information, as it cannot be changed after issuing the SSL Certificate. When pasting your CSR, make sure it begins with: -----BEGIN NEW CERTIFICATE REQUEST----- and ends with: -----END NEW CERTIFICATE REQUEST-----';
+$_LANG['csr_details']['description']                                      = 'You must have a valid CSR (Certificate Signing Request) to generate your SSL Certificate. The CSR is an encrypted text the web server generates where the SSL Certificate will be installed. Please ensure you entered the correct information, as it cannot be changed after issuing the SSL Certificate. When pasting your CSR, make sure it begins with: -----BEGIN CERTIFICATE REQUEST----- and ends with: -----END CERTIFICATE REQUEST-----';
 $_LANG['validaion_page']['description']                                   = 'The Certificate Authority can validate by emailing instructions to the address you choose below. You may also use HTTP/DNS validation methods.';
 $_LANG['validaion_page']['email']                                         = 'EMAIL:';
 $_LANG['validaion_page']['dns']                                           = 'DNS:';
@@ -76,14 +76,14 @@ $_LANG['serverCA']['home']['validation_page']['DomainName']         = 'Domain Na
 $_LANG['serverCA']['home']['validation_page']['Status']             = 'Status';
 $_LANG['serverCA']['home']['validation_page']['ValidFrom']          = 'Valid From';
 $_LANG['serverCA']['home']['validation_page']['ValidTill']          = 'Valid Till';
-$_LANG['serverCA']['home']['validation_page']['SubscribtionStarts'] = 'Subscribtion Starts';
-$_LANG['serverCA']['home']['validation_page']['SubscribtionsEnds']  = 'Subscribtions Ends';
+$_LANG['serverCA']['home']['validation_page']['SubscribtionStarts'] = 'Subscription Starts';
+$_LANG['serverCA']['home']['validation_page']['SubscribtionsEnds']  = 'Subscription Ends';
 $_LANG['serverCA']['home']['validation_page']['NextReissue']        = 'Next Reissue';
 $_LANG['serverCA']['home']['validation_page']['SSLIssuer']          = 'SSL Issuer';
 $_LANG['serverCA']['home']['validation_page']['OrderDetails']       = 'Order Details';
 $_LANG['serverCA']['home']['validation_page']['RegistrationDate']   = 'Registration Date';
 $_LANG['serverCA']['home']['validation_page']['OrderExpires']       = 'Order Expires';
-$_LANG['serverCA']['home']['validation_page']['ReccuringAmount']    = 'Reccuring Amount';
+$_LANG['serverCA']['home']['validation_page']['ReccuringAmount']    = 'Recurring Amount';
 $_LANG['serverCA']['home']['validation_page']['BillingCycle']       = 'Billing Cycle';
 $_LANG['serverCA']['home']['validation_page']['PaymentMethod']      = 'Payment Method';
 $_LANG['serverCA']['home']['validation_page']['Actions']            = 'Actions';
@@ -95,9 +95,9 @@ $_LANG['product_title_active']                                      = 'Your %s i
 
 $_LANG['serverCA']['home']['validation_page']['Order validation']               = 'Order validation';
 $_LANG['serverCA']['home']['validation_page']['Order validation_desc']          = 'Extra information may be required from you to complete the validation before the certificate can be issued. Make sure to check the status of your validation to see if anything else is needed.';
-$_LANG['serverCA']['home']['validation_page']['Authentification Statuses']      = 'Authentification Statuses';
-$_LANG['serverCA']['home']['validation_page']['Authentification Step']          = 'Authentification Step';
-$_LANG['serverCA']['home']['validation_page']['Authentification Status']        = 'Authentification Status';
+$_LANG['serverCA']['home']['validation_page']['Authentification Statuses']      = 'Validation Status';
+$_LANG['serverCA']['home']['validation_page']['Authentification Step']          = 'Step';
+$_LANG['serverCA']['home']['validation_page']['Authentification Status']        = 'Status';
 $_LANG['serverCA']['home']['validation_page']['Last Updated']                   = 'Last Updated';
 $_LANG['serverCA']['home']['validation_page']['CSR Status']                     = 'CSR Status';
 $_LANG['serverCA']['home']['validation_page']['Completed']                      = 'Completed';
@@ -141,13 +141,15 @@ $_LANG['serverCA']['home']['validation_page']['Phone']                          
 $_LANG['serverCA']['home']['validation_page']['Technical Details']              = 'Technical Details';
 $_LANG['serverCA']['home']['validation_page']['Validating']                     = 'Validating...';
 $_LANG['serverCA']['home']['validation_page']['Issued']                         = 'Issued';
-$_LANG['next_reissue']                                                          = 'Witin next <b>%s</b> days';
+$_LANG['next_reissue']                                                          = 'Within the next <b>%s</b> days';
+$_LANG['previous_certificate_valid'] = 'Your current certificate stays valid until %s and can still be downloaded:';
+$_LANG['validation_method_changed'] = 'The validation method has been changed. The new validation details are shown below.';
 
 $_LANG['serverCA']['home']['validation_page']['Cancel Certificate']                               = 'Cancel Certificate';
 $_LANG['serverCA']['home']['validation_page']['Are you sure you want to cancel the certificate?'] = 'Are you sure you want to cancel the certificate?';
 $_LANG['serverCA']['home']['validation_page']['Close']                                            = 'Close';
 $_LANG['serverCA']['home']['validation_page']['Cancel']                                           = 'Cancel';
-$_LANG['serverCA']['home']['validation_page']['send_email']                                       = 'The certificate has been send successfully.';
+$_LANG['serverCA']['home']['validation_page']['send_email']                                       = 'The certificate has been sent successfully.';
 
 $_LANG['Download CRT']              = 'Download CRT';
 $_LANG['Download Intermediate CRT'] = 'Download Intermediate CRT';
@@ -188,7 +190,7 @@ $_LANG['serverCA']['home']['validation_page']['Renew']                          
 $_LANG['Download SSL']                                                                           = 'Download SSL';
 
 $_LANG['serverCA']['home']['reissue_page']['Reissue Certificate']                                 = 'Reissue Certificate';
-$_LANG['serverCA']['home']['reissue_page']['desc_page']                                           = 'You must have a valid CSR (Certificate Signing Request) to generate your SSL Certificate. The CSR is an encrypted text the web server generates where the SSL Certificate will be installed. Please ensure you entered the correct information, as it cannot be changed after issuing the SSL Certificate. When pasting your CSR, make sure it begins with: -----BEGIN NEW CERTIFICATE REQUEST----- and ends with: -----END NEW CERTIFICATE REQUEST-----';
+$_LANG['serverCA']['home']['reissue_page']['desc_page']                                           = 'You must have a valid CSR (Certificate Signing Request) to generate your SSL Certificate. The CSR is an encrypted text the web server generates where the SSL Certificate will be installed. Please ensure you entered the correct information, as it cannot be changed after issuing the SSL Certificate. When pasting your CSR, make sure it begins with: -----BEGIN CERTIFICATE REQUEST----- and ends with: -----END CERTIFICATE REQUEST-----';
 $_LANG['serverCA']['home']['reissue_page']['Certificate Signing Request']                         = 'Certificate Signing Request';
 $_LANG['serverCA']['home']['reissue_page']['Generate CSR']                                        = 'Generate CSR';
 $_LANG['serverCA']['home']['reissue_page']['Download Private Key']                                = 'Download Private Key';
@@ -210,8 +212,8 @@ $_LANG['serverCA']['home']['reissue_page']['Division']                          
 $_LANG['serverCA']['home']['reissue_page']['City']                                                = 'City';
 $_LANG['serverCA']['home']['reissue_page']['Click to Continue']                                   = 'Click to Continue';
 $_LANG['serverCA']['home']['reissue_page']['Subject Alternative Names (SANs)']                    = 'Subject Alternative Names (SANs)';
-$_LANG['serverCA']['home']['reissue_page']['desc_san']                                            = 'Enter additional SANs (Subject Alternative Names) that you want to secure with this SSL Certificate. Separate each SAN with a comma.';
-$_LANG['serverCA']['home']['reissue_page']['desc_san_wildcard']                                   = 'Enter additional SANs (Subject Alternative Names) that you want to secure with this SSL Certificate. Separate each SAN with a comma.';
+$_LANG['serverCA']['home']['reissue_page']['desc_san']                                            = 'Enter the additional domains (SANs), one per line or separated by commas. The SANs of your current certificate are filled in - remove one to leave it out.';
+$_LANG['serverCA']['home']['reissue_page']['desc_san_wildcard']                                   = 'Enter the additional domains (SANs), one per line or separated by commas. The SANs of your current certificate are filled in - remove one to leave it out.';
 $_LANG['sans_additional']                                                                         = 'Additional SAN (max %s)';
 $_LANG['sans_additional_wildcard']                                                                = 'Additional SAN Wildcard (max %s)';
 
@@ -425,7 +427,7 @@ $_LANG['serverCA']['home']['autoinstallOvNextStep']          = 'Your next step:'
 $_LANG['serverCA']['home']['autoinstallOvMsg']               = 'Perform Organization Validation, the CA will be emailing and calling the admin contact to confirm the organization is accurate and the contact is authorized.';
 $_LANG['serverCA']['home']['autoinstallOutroDomainOrg']      = 'Once the CA validates your domain and organization the certificate will be installed on your server. You can check the status on your order detail page.';
 $_LANG['serverCA']['home']['manualPrivateKeyTitle']          = 'Your certificate order has been submitted';
-$_LANG['serverCA']['home']['manualPrivateKeyMsg']            = 'Your CSR was generated together with a private key. Save the private key now - it is required to install the certificate and it will not be shown again.';
+$_LANG['serverCA']['home']['manualPrivateKeyMsg']            = 'Your CSR was generated together with a private key. Save the private key now - it is required to install the certificate and can be downloaded only from this page.';
 $_LANG['serverCA']['home']['manualPrivateKeyDownload']       = 'Download Private Key';
 $_LANG['serverCA']['home']['goToCertificateDetails']         = 'View My Certificate';
 $_LANG['serverCA']['home']['autoinstallBoxTitle']            = 'AutoInstall (cPanel)';

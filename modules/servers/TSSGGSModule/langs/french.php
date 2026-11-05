@@ -51,7 +51,7 @@ $_LANG['csr_details']['email']                                            = 'E-m
 $_LANG['csr_details']['division']                                         = 'Service :';
 $_LANG['csr_details']['city']                                             = 'Ville :';
 $_LANG['csr_details']['error']                                            = 'La CSR n\'est pas valide. Veuillez vérifier votre CSR et réessayer.';
-$_LANG['csr_details']['description']                                      = 'Vous devez disposer d\'une CSR (demande de signature de certificat) valide pour générer votre certificat SSL. La CSR est un texte chiffré généré par le serveur web sur lequel le certificat SSL sera installé. Veuillez vous assurer que les informations saisies sont correctes, car elles ne peuvent plus être modifiées après l\'émission du certificat SSL. Lorsque vous collez votre CSR, assurez-vous qu\'elle commence par : -----BEGIN NEW CERTIFICATE REQUEST----- et se termine par : -----END NEW CERTIFICATE REQUEST-----';
+$_LANG['csr_details']['description']                                      = 'Vous devez disposer d\'une CSR (demande de signature de certificat) valide pour générer votre certificat SSL. La CSR est un texte chiffré généré par le serveur web sur lequel le certificat SSL sera installé. Veuillez vous assurer que les informations saisies sont correctes, car elles ne peuvent plus être modifiées après l\'émission du certificat SSL. Lorsque vous collez votre CSR, assurez-vous qu\'elle commence par : -----BEGIN CERTIFICATE REQUEST----- et se termine par : -----END CERTIFICATE REQUEST-----';
 $_LANG['validaion_page']['description']                                   = 'L\'autorité de certification peut effectuer la validation en envoyant des instructions par e-mail à l\'adresse que vous choisissez ci-dessous. Vous pouvez également utiliser les méthodes de validation HTTP/DNS.';
 $_LANG['validaion_page']['email']                                         = 'E-MAIL :';
 $_LANG['validaion_page']['dns']                                           = 'DNS :';
@@ -142,6 +142,8 @@ $_LANG['serverCA']['home']['validation_page']['Technical Details']              
 $_LANG['serverCA']['home']['validation_page']['Validating']                     = 'Validation en cours...';
 $_LANG['serverCA']['home']['validation_page']['Issued']                         = 'Émis';
 $_LANG['next_reissue']                                                          = 'Dans les <b>%s</b> prochains jours';
+$_LANG['previous_certificate_valid'] = 'Votre certificat actuel reste valide jusqu’au %s et peut toujours être téléchargé :';
+$_LANG['validation_method_changed'] = 'La méthode de validation a été modifiée. Les nouvelles informations de validation sont affichées ci-dessous.';
 
 $_LANG['serverCA']['home']['validation_page']['Cancel Certificate']                               = 'Annuler le certificat';
 $_LANG['serverCA']['home']['validation_page']['Are you sure you want to cancel the certificate?'] = 'Voulez-vous vraiment annuler le certificat ?';
@@ -188,7 +190,7 @@ $_LANG['serverCA']['home']['validation_page']['Renew']                          
 $_LANG['Download SSL']                                                                           = 'Télécharger le SSL';
 
 $_LANG['serverCA']['home']['reissue_page']['Reissue Certificate']                                 = 'Réémettre le certificat';
-$_LANG['serverCA']['home']['reissue_page']['desc_page']                                           = 'Vous devez disposer d\'une CSR (demande de signature de certificat) valide pour générer votre certificat SSL. La CSR est un texte chiffré généré par le serveur web sur lequel le certificat SSL sera installé. Veuillez vous assurer que les informations saisies sont correctes, car elles ne peuvent plus être modifiées après l\'émission du certificat SSL. Lorsque vous collez votre CSR, assurez-vous qu\'elle commence par : -----BEGIN NEW CERTIFICATE REQUEST----- et se termine par : -----END NEW CERTIFICATE REQUEST-----';
+$_LANG['serverCA']['home']['reissue_page']['desc_page']                                           = 'Vous devez disposer d\'une CSR (demande de signature de certificat) valide pour générer votre certificat SSL. La CSR est un texte chiffré généré par le serveur web sur lequel le certificat SSL sera installé. Veuillez vous assurer que les informations saisies sont correctes, car elles ne peuvent plus être modifiées après l\'émission du certificat SSL. Lorsque vous collez votre CSR, assurez-vous qu\'elle commence par : -----BEGIN CERTIFICATE REQUEST----- et se termine par : -----END CERTIFICATE REQUEST-----';
 $_LANG['serverCA']['home']['reissue_page']['Certificate Signing Request']                         = 'Demande de signature de certificat';
 $_LANG['serverCA']['home']['reissue_page']['Generate CSR']                                        = 'Générer la CSR';
 $_LANG['serverCA']['home']['reissue_page']['Download Private Key']                                = 'Télécharger la clé privée';
@@ -210,8 +212,8 @@ $_LANG['serverCA']['home']['reissue_page']['Division']                          
 $_LANG['serverCA']['home']['reissue_page']['City']                                                = 'Ville';
 $_LANG['serverCA']['home']['reissue_page']['Click to Continue']                                   = 'Cliquez pour continuer';
 $_LANG['serverCA']['home']['reissue_page']['Subject Alternative Names (SANs)']                    = 'Noms alternatifs du sujet (SAN)';
-$_LANG['serverCA']['home']['reissue_page']['desc_san']                                            = 'Saisissez les SAN (noms alternatifs du sujet) supplémentaires que vous souhaitez sécuriser avec ce certificat SSL. Séparez chaque SAN par une virgule.';
-$_LANG['serverCA']['home']['reissue_page']['desc_san_wildcard']                                   = 'Saisissez les SAN (noms alternatifs du sujet) supplémentaires que vous souhaitez sécuriser avec ce certificat SSL. Séparez chaque SAN par une virgule.';
+$_LANG['serverCA']['home']['reissue_page']['desc_san']                                            = 'Saisissez les domaines supplémentaires (SAN), un par ligne ou séparés par des virgules. Les SAN de votre certificat actuel sont déjà indiqués - supprimez-en un pour l’exclure.';
+$_LANG['serverCA']['home']['reissue_page']['desc_san_wildcard']                                   = 'Saisissez les domaines supplémentaires (SAN), un par ligne ou séparés par des virgules. Les SAN de votre certificat actuel sont déjà indiqués - supprimez-en un pour l’exclure.';
 $_LANG['sans_additional']                                                                         = 'SAN supplémentaire (max. %s)';
 $_LANG['sans_additional_wildcard']                                                                = 'SAN Wildcard supplémentaire (max. %s)';
 
@@ -425,7 +427,7 @@ $_LANG['serverCA']['home']['autoinstallOvNextStep']          = 'Votre prochaine 
 $_LANG['serverCA']['home']['autoinstallOvMsg']               = 'Effectuez la validation de l\'organisation : l\'autorité de certification enverra un e-mail et appellera le contact administratif afin de confirmer que l\'organisation est exacte et que le contact est autorisé.';
 $_LANG['serverCA']['home']['autoinstallOutroDomainOrg']      = 'Une fois votre domaine et votre organisation validés par l\'autorité de certification, le certificat sera installé sur votre serveur. Vous pouvez consulter le statut sur la page de détails de votre commande.';
 $_LANG['serverCA']['home']['manualPrivateKeyTitle']          = 'Votre commande de certificat a été envoyée';
-$_LANG['serverCA']['home']['manualPrivateKeyMsg']            = 'Votre CSR a été générée avec une clé privée. Enregistrez dès maintenant la clé privée - elle est indispensable pour installer le certificat et ne sera plus affichée.';
+$_LANG['serverCA']['home']['manualPrivateKeyMsg']            = 'Votre CSR a été générée avec une clé privée. Enregistrez dès maintenant la clé privée - elle est indispensable pour installer le certificat et ne peut être téléchargée que depuis cette page.';
 $_LANG['serverCA']['home']['manualPrivateKeyDownload']       = 'Télécharger la clé privée';
 $_LANG['serverCA']['home']['goToCertificateDetails']         = 'Voir mon certificat';
 $_LANG['serverCA']['home']['autoinstallBoxTitle']            = 'AutoInstall (cPanel)';

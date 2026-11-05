@@ -65,6 +65,8 @@
                                     {assign var=currentMethod value=$currentMethods[$domain]|default:''}
                                     {if 'email'|in_array:$available_method_validation}<option value="email"{if $currentMethod == 'email'} selected{/if}>EMAIL</option>{/if}
                                     {if 'dns'|in_array:$available_method_validation}<option value="dns"{if $currentMethod == 'dns'} selected{/if}>DNS</option>{/if}
+                                    {if 'dns-cname'|in_array:$available_method_validation}<option value="dns-cname"{if $currentMethod == 'dns-cname'} selected{/if}>DNS (CNAME)</option>{/if}
+                                    {if 'dns-txt'|in_array:$available_method_validation}<option value="dns-txt"{if $currentMethod == 'dns-txt'} selected{/if}>DNS (TXT)</option>{/if}
                                     {if 'http'|in_array:$available_method_validation}<option value="http"{if $currentMethod == 'http'} selected{/if}>HTTP</option>{/if}
                                     {if 'https'|in_array:$available_method_validation}<option value="https"{if $currentMethod == 'https'} selected{/if}>HTTPS</option>{/if}
                                 </select>

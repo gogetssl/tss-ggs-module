@@ -59,7 +59,7 @@ class Config
                 $currentBrand = \MultibrandFunctionality\app\models\Brand::factory()->getDefaultOne();
             }
             $brandData['systemURL'] = $currentBrand->systemURL;
-            return $brandData['systemURL'];
+            return rtrim((string)$brandData['systemURL'], '/');
         }
         elseif(file_exists(dirname(dirname(dirname(__DIR__))) . DIRECTORY_SEPARATOR . 'addons' . DIRECTORY_SEPARATOR . 'Multibrand' . DIRECTORY_SEPARATOR . 'Loader.php') && !empty($mb2x))
         {
@@ -83,12 +83,12 @@ class Config
             $settings['domain']     = $Brand->domain;
             $systemURL              = \MGModule\Multibrand\Core\Server::getSystemURL($settings['domain']);
             $brandData['systemURL'] = $systemURL;
-            return $brandData['systemURL'];
+            return rtrim((string)$brandData['systemURL'], '/');
         }
         else
         {
             $brandData['systemURL'] = $systemURL;
-            return $brandData['systemURL'];
+            return rtrim((string)$brandData['systemURL'], '/');
         }
     }
 

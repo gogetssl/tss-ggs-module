@@ -109,6 +109,12 @@ class CertificateSyncHelpers
             ]);
         }
 
+        CertificateService::notifyIssued($certificate['id'], $previousStatus, $orderData['order']['status']);
+        if($orderData['order']['status'] === 'active')
+        {
+            CertificateService::forgetPreviousCertificate($certificate['id']);
+        }
+
         if($previousStatus !== $orderData['order']['status'])
         {
             Logger::info('Certificate status: ' . ($previousStatus ?: 'new') . ' -> ' . $orderData['order']['status'], ['service' => $certificate['id'], 'from' => $previousStatus, 'to' => $orderData['order']['status']]);

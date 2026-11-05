@@ -115,6 +115,9 @@ class Renew
 
             $request = ['orderData' => $orderData, 'orderFiles' => $orderFiles];
 
+            // keep the issued certificate: it stays valid (and downloadable) while the renewal waits for validation
+            \ModulesGarden\TSSGGSModule\App\Libs\CertificateService::keepPreviousCertificate($serviceId);
+
             // (insert() ignores the where() conditions: the row needs its own serviceid and name)
             Request::where('serviceid', $serviceId)->where('name', 'certificate')->delete();
             Request::insert([

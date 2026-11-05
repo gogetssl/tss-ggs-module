@@ -1,8 +1,6 @@
 <div class="validate-ssl-unified">
 
-    {if $success}
-        <div class="alert alert-success" role="alert">{$success}</div>
-    {/if}
+    {* $success is shown by main.tpl *}
     {if $errors}
         <div class="alert alert-danger" role="alert">{$errors|escape}</div>
     {/if}

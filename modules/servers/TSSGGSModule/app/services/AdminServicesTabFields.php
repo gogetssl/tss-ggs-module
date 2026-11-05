@@ -89,6 +89,26 @@ class AdminServicesTabFields
 
         $fields['Domain Validation'] = $this->validationTable($params, $item, $status);
 
+        // downloads as plain links (served by the AdminAreaPage hook) - WHMCS module buttons cannot deliver files
+        $downloadUrl = 'clientsservices.php?userid=' . (int)$params['userid'] . '&id=' . $serviceId . '&token=' . urlencode(\generate_token('plain')) . '&tssggs_download=';
+        $downloads   = [];
+        if($status === 'active')
+        {
+            $downloads[] = '<a class="btn btn-default btn-sm" href="' . htmlspecialchars($downloadUrl . 'certificate') . '"><i class="fas fa-download"></i> Certificate (ZIP, all formats)</a>';
+        }
+        foreach(isset($item['domains']) ? (array)$item['domains'] : [] as $domain)
+        {
+            if(in_array($domain['method'] ?? '', ['http', 'https'], true) && !empty($domain['validation']['file_name']) && empty($domain['approved']))
+            {
+                $downloads[] = '<a class="btn btn-default btn-sm" href="' . htmlspecialchars($downloadUrl . 'authfile') . '"><i class="fas fa-file-download"></i> Validation file (' . htmlspecialchars(basename($domain['validation']['file_name'])) . ')</a>';
+                break;
+            }
+        }
+        if($downloads)
+        {
+            $fields['Downloads'] = implode(' ', $downloads);
+        }
+
         if($status === 'active')
         {
             try

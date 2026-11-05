@@ -99,6 +99,9 @@ class Actions {
             {
                 throw new \Exception('There is no open vendor order to cancel');
             }
+            // the certificate no longer exists - stop renewal invoices and client actions (same as the client's cancel)
+            \WHMCS\Database\Capsule::table('tblhosting')->where('id', (int)$params['serviceid'])
+                ->whereIn('domainstatus', ['Pending', 'Active', 'Suspended'])->update(['domainstatus' => 'Cancelled']);
         });
     }
 
@@ -183,6 +186,57 @@ class Actions {
         ];
     }
 
+    /**
+     * Admin download as a normal page request (the AdminAreaPage hook in hooks.php calls it): WHMCS runs module
+     * buttons through AJAX, where a file never reaches the browser. $what: certificate (ZIP) | authfile
+     */
+    public static function adminDownload($serviceId, $what)
+    {
+        try
+        {
+            if($what === 'authfile')
+            {
+                $stored = CertificateService::stored($serviceId);
+                $items  = isset($stored['orderData']['items']) ? (array)$stored['orderData']['items'] : [];
+                $item   = (array)reset($items);
+                foreach(isset($item['domains']) ? (array)$item['domains'] : [] as $domain)
+                {
+                    if(in_array($domain['method'] ?? '', ['http', 'https'], true) && !empty($domain['validation']['file_name']))
+                    {
+                        CertificateBundle::output(['filename' => basename($domain['validation']['file_name']), 'mime' => 'text/plain', 'content' => (string)$domain['validation']['value']]);
+                    }
+                }
+                throw new \Exception('The order does not use file (HTTP/HTTPS) validation');
+            }
+
+            CertificateBundle::output(CertificateService::bundle($serviceId)->get('zip'));
+        }
+        catch(\Exception $e)
+        {
+            header('Content-Type: text/plain; charset=utf-8', true, 404);
+            echo $e->getMessage();
+            exit;
+        }
+    }
+
+    /** "Resend Approver Email" only makes sense while a domain waits for an e-mail approval */
+    private static function usesEmailValidation($serviceId)
+    {
+        $stored = CertificateService::stored($serviceId);
+        $items  = isset($stored['orderData']['items']) ? (array)$stored['orderData']['items'] : [];
+        $item   = (array)reset($items);
+        foreach(isset($item['domains']) ? (array)$item['domains'] : [] as $domain)
+        {
+            $method = strtolower((string)($domain['method'] ?? ''));
+            if(empty($domain['approved']) && ($method === 'email' || strpos($method, '@') !== false))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public function ClientAreaCustomButtonArray($params = [])
     {
         $serviceId = isset($params['serviceid']) ? (int)$params['serviceid'] : 0;
@@ -192,11 +246,7 @@ class Actions {
         }
 
         $buttons = [];
-        if(CertificateService::usable($serviceId))
-        {
-            $buttons['Reissue Certificate']  = 'ClientAreaCustomReissueCertificate';
-            $buttons['Download Certificate'] = 'ClientAreaCustomDownloadCertificate';
-        }
+        // Reissue and Download are already in the sidebar (hooks.php) - no second entry under another name
         if(CertificateService::contacts($serviceId))
         {
             $buttons['Contact Details'] = 'ClientAreaCustomContactDetails';
@@ -293,14 +343,16 @@ class Actions {
 
         if(!$serviceId || in_array($status, ['processing', 'pending'], true))
         {
-            $buttons['Recheck Validation']    = 'RecheckValidation';
-            $buttons['Resend Approver Email'] = 'SSLAdminResendApproverEmail';
-            $buttons['Download Auth File']    = 'DownloadAuthFile';
+            $buttons['Recheck Validation'] = 'RecheckValidation';
+            if(!$serviceId || self::usesEmailValidation($serviceId))
+            {
+                $buttons['Resend Approver Email'] = 'SSLAdminResendApproverEmail';
+            }
+            // the validation file and the certificate are download links in the module tab (AdminServicesTabFields)
         }
         if(!$serviceId || $status === 'active')
         {
-            $buttons['Download Certificate'] = 'SSLAdminGetCertificate';
-            $buttons['Resend Certificate']   = 'SSLAdminResendCertificate';
+            $buttons['Resend Certificate'] = 'SSLAdminResendCertificate';
         }
         if(!$serviceId || ($status !== '' && !in_array($status, ['cancelled', 'expired', 'rejected', 'revoked', 'refunded'], true)))
         {

@@ -160,6 +160,65 @@ class CertificateService
     }
 
     /**
+     * Before a renewal replaces the stored order: keep a copy of the issued certificate, which stays valid until
+     * the renewal is issued (removed again by forgetPreviousCertificate once that happens)
+     */
+    public static function keepPreviousCertificate($serviceId)
+    {
+        $row = Request::where('serviceid', (int)$serviceId)->where('name', 'certificate')->first();
+        if(!$row || $row->status !== 'active' || empty($row->request))
+        {
+            return;
+        }
+        Request::where('serviceid', (int)$serviceId)->where('name', 'previousCertificate')->delete();
+        Request::insert([
+            'serviceid'  => (int)$serviceId,
+            'name'       => 'previousCertificate',
+            'request'    => $row->request,
+            'status'     => 'active',
+            'created_at' => date('Y-m-d H:i:s'),
+            'updated_at' => date('Y-m-d H:i:s'),
+        ]);
+    }
+
+    public static function forgetPreviousCertificate($serviceId)
+    {
+        Request::where('serviceid', (int)$serviceId)->where('name', 'previousCertificate')->delete();
+    }
+
+    /** The kept certificate while it is still valid, else [] */
+    public static function previousCertificate($serviceId)
+    {
+        $row    = Request::where('serviceid', (int)$serviceId)->where('name', 'previousCertificate')->first();
+        $stored = $row && $row->request ? (json_decode(\decrypt($row->request), true) ?: []) : [];
+        $end    = $stored['orderFiles']['validity']['end'] ?? '';
+
+        return $end !== '' && strtotime($end) > time() ? $stored : [];
+    }
+
+    /**
+     * Certificate the client may download: the issued one, or during a renewal the previous one that is still valid
+     */
+    public static function downloadableBundle($serviceId)
+    {
+        if(!self::serviceOpen($serviceId))
+        {
+            throw new \Exception('The certificate is not available: the service has been cancelled or terminated.');
+        }
+        if(self::status($serviceId) === 'active')
+        {
+            return self::bundle($serviceId);
+        }
+        $previous = self::previousCertificate($serviceId);
+        if($previous)
+        {
+            return CertificateBundle::fromOrder($previous);
+        }
+
+        throw new \Exception('The certificate has not been issued yet');
+    }
+
+    /**
      * True while a pending order lacks what the client needs to validate: no domains yet, or a domain on a file / DNS
      * method without its value. $stored = Request::getOrder() (['orderData' => .., 'orderFiles' => ..]).
      */
@@ -320,6 +379,154 @@ class CertificateService
     }
 
     /**
+     * Certificate authorities refuse RSA keys under 2048 bits and EC keys under 256 bits - say so before ordering
+     */
+    public static function assertCsrKey($csr)
+    {
+        $key     = @openssl_csr_get_public_key((string)$csr);
+        $details = $key ? openssl_pkey_get_details($key) : false;
+        if(!$details)
+        {
+            return;
+        }
+        $minimum = $details['type'] === OPENSSL_KEYTYPE_EC ? 256 : 2048;
+        if((int)$details['bits'] < $minimum)
+        {
+            throw new \Exception(sprintf('The CSR uses a %d-bit key. Certificate authorities need at least 2048-bit RSA or 256-bit ECC - please create a new CSR.', (int)$details['bits']));
+        }
+    }
+
+    /**
+     * DNS names (and IP addresses) of the subjectAltName extension inside a CSR - PHP has no function for CSR
+     * extensions, so the DER is walked: OID 2.5.29.17, its OCTET STRING, the GeneralNames SEQUENCE.
+     */
+    public static function csrSans($csr)
+    {
+        $der = base64_decode(preg_replace('/-----[^-]+-----|\s+/', '', (string)$csr), true);
+        $oid = "\x06\x03\x55\x1d\x11";
+        if($der === false || ($pos = strpos($der, $oid)) === false)
+        {
+            return [];
+        }
+
+        $readLength = function($der, &$i) {
+            $len = ord($der[$i++]);
+            if($len & 0x80)
+            {
+                $bytes = $len & 0x7f;
+                $len   = 0;
+                for($b = 0; $b < $bytes; $b++)
+                {
+                    $len = ($len << 8) | ord($der[$i++]);
+                }
+            }
+
+            return $len;
+        };
+
+        $i = $pos + strlen($oid);
+        if(isset($der[$i]) && $der[$i] === "\x01") // optional "critical" BOOLEAN
+        {
+            $i += 3;
+        }
+        if(!isset($der[$i]) || $der[$i++] !== "\x04") // OCTET STRING
+        {
+            return [];
+        }
+        $readLength($der, $i);
+        if(!isset($der[$i]) || $der[$i++] !== "\x30") // GeneralNames SEQUENCE
+        {
+            return [];
+        }
+        $end   = $readLength($der, $i) + $i;
+        $names = [];
+        while($i < $end && isset($der[$i]))
+        {
+            $tag   = ord($der[$i++]);
+            $len   = $readLength($der, $i);
+            $value = substr($der, $i, $len);
+            $i    += $len;
+            if($tag === 0x82)
+            {
+                $names[] = strtolower(trim($value));
+            }
+            elseif($tag === 0x87 && in_array($len, [4, 16], true))
+            {
+                $names[] = inet_ntop($value);
+            }
+        }
+
+        return array_values(array_unique(array_filter($names)));
+    }
+
+    /**
+     * SANs of the current order without the common name (and the free www. / bare twin of it) - what the client
+     * paid for and should keep when reissuing: ['single' => [...], 'wildcard' => [...]]
+     */
+    public static function currentSans($serviceId)
+    {
+        $stored = self::stored($serviceId);
+        $cn     = strtolower((string)($stored['orderData']['orderData']['common_name']['name'] ?? ''));
+        $names  = [];
+
+        foreach((array)($stored['orderData']['orderData']['alternative_names'] ?? []) as $san)
+        {
+            $names[] = is_array($san) ? ($san['name'] ?? ($san['domain'] ?? '')) : (string)$san;
+        }
+        if(!$names && !empty($stored['orderFiles']))
+        {
+            $crt    = AutoInstallHelpers::extractCertificate($stored['orderFiles'], $cn)['crt'];
+            $parsed = $crt ? openssl_x509_parse($crt) : false;
+            foreach(explode(',', (string)($parsed['extensions']['subjectAltName'] ?? '')) as $entry)
+            {
+                if(stripos(trim($entry), 'DNS:') === 0)
+                {
+                    $names[] = substr(trim($entry), 4);
+                }
+            }
+        }
+
+        $twin   = strpos($cn, 'www.') === 0 ? substr($cn, 4) : 'www.' . $cn;
+        $result = ['single' => [], 'wildcard' => []];
+        foreach(array_unique(array_map('strtolower', array_map('trim', $names))) as $name)
+        {
+            if($name === '' || $name === $cn || $name === $twin)
+            {
+                continue;
+            }
+            $result[strpos($name, '*.') === 0 ? 'wildcard' : 'single'][] = $name;
+        }
+
+        return $result;
+    }
+
+    /**
+     * "Certificate issued" e-mail: sent by whichever sync first sees the order go from waiting (pending / processing)
+     * to issued - the processing cron, the status-update cron, admin "Sync Certificate" or the client page refresh.
+     * No previous status (an order migrated or imported as already issued) sends nothing.
+     */
+    public static function notifyIssued($serviceId, $previousStatus, $newStatus)
+    {
+        if($newStatus !== 'active' || !in_array((string)$previousStatus, ['pending', 'processing'], true))
+        {
+            return false;
+        }
+
+        try
+        {
+            self::sendCertificate($serviceId);
+
+            return true;
+        }
+        catch(\Throwable $e)
+        {
+            self::event($serviceId, 'error', 'Certificate issued, but the certificate e-mail could not be sent: ' . $e->getMessage());
+
+            return false;
+        }
+    }
+
+    /**
      * Local folder of the WHMCS e-mail attachments storage (null when attachments are stored elsewhere)
      */
     protected static function attachmentsDir()
@@ -470,6 +677,8 @@ class CertificateService
         catch(\Exception $e)
         {
         }
+        // the current certificate stays downloadable until the reissued one is out
+        self::keepPreviousCertificate($serviceId);
         Request::where('serviceid', (int)$serviceId)->where('name', 'certificate')->update([
             'request'    => \encrypt(json_encode(['orderData' => $orderData, 'orderFiles' => $orderFiles])),
             'status'     => 'pending',

@@ -129,6 +129,11 @@ class home extends AbstractController
         $orderDetails = CertificateService::refreshIfIncomplete($input['id'], (array)Request::getOrder($input['id']));
         $order        = $orderDetails['orderData'];
         $vars['serviceOpen']         = CertificateService::serviceOpen((int)$input['id']);
+        // renewal / reissue in progress: the certificate issued before stays valid and downloadable
+        $previous                    = $vars['serviceOpen'] ? CertificateService::previousCertificate((int)$input['id']) : [];
+        $vars['previousValidTill']   = $previous ? date('F j, Y', strtotime($previous['orderFiles']['validity']['end'])) : '';
+        $vars['previousNotice']      = $previous ? sprintf(Lang::absoluteT('previous_certificate_valid'), $vars['previousValidTill']) : '';
+        $vars['download_formats']    = CertificateBundle::enabledFormats();
         $vars['validationPreparing'] = $vars['serviceOpen'] && CertificateService::validationDataMissing($orderDetails);
 
         $remoteProductId = isset($order['orderData']['product']['id']) ? $order['orderData']['product']['id'] : $product->configoption2;
@@ -166,7 +171,8 @@ class home extends AbstractController
         $vars['order_details']['expiration_date']    = $service->nextduedate != '0000-00-00' ? date('l F jS, Y', strtotime($service->nextduedate)) : "";
         $vars['order_details']['reccuring_amount']   = formatCurrency($service->amount, $client->currency);
         $vars['order_details']['billing_cycle']      = ucfirst($service->billingcycle);
-        $vars['order_details']['payment_method']     = ucfirst($service->paymentmethod);
+        $vars['order_details']['payment_method']     = self::paymentMethodName($service->paymentmethod);
+        $vars['vendor_status']                       = is_array($order['items'] ?? null) ? (string)(reset($order['items'])['vendor']['status'] ?? '') : '';
         $vars['order_details']['csr_status_updated'] = date('Y-m-d H:i', strtotime($order['order']['date']));
         $vars['order_details_api']                   = $order;
         $vars['serviceid']                           = $service->id;
@@ -304,6 +310,14 @@ class home extends AbstractController
         ];
     }
 
+    /** Display name of a payment gateway ("Bank Transfer"), not its system name ("banktransfer") */
+    public static function paymentMethodName($gateway)
+    {
+        $name = \WHMCS\Database\Capsule::table('tblpaymentgateways')->where('gateway', (string)$gateway)->where('setting', 'name')->value('value');
+
+        return $name !== null && $name !== '' ? (string)$name : ucfirst((string)$gateway);
+    }
+
     /** "DNS (CNAME)", "HTTP", or the approver e-mail address */
     public static function methodLabel($method)
     {
@@ -341,12 +355,12 @@ class home extends AbstractController
 
         try
         {
-            CertificateService::requireUsable((int)$input['id']);
             if(!in_array($format, CertificateBundle::enabledFormats(), true))
             {
                 throw new \Exception(Lang::absoluteT('download_unknown_format'));
             }
-            CertificateBundle::output(CertificateService::bundle((int)$input['id'])->get($format));
+            // the issued certificate, or during a renewal the previous one that is still valid
+            CertificateBundle::output(CertificateService::downloadableBundle((int)$input['id'])->get($format));
         }
         catch(\Exception $e)
         {
@@ -453,6 +467,13 @@ class home extends AbstractController
         $vars['post_csr']          = isset($_SESSION['post_csr']) ? $_SESSION['post_csr'] : false;
         $vars['post_san']          = isset($_SESSION['post_san']) ? $_SESSION['post_san'] : false;
         $vars['post_san_wildcard'] = isset($_SESSION['post_san_wildcard']) ? $_SESSION['post_san_wildcard'] : false;
+        // first visit: the SANs of the current certificate, so a reissue does not silently drop them
+        if($vars['post_san'] === false && $vars['post_san_wildcard'] === false)
+        {
+            $current                   = CertificateService::currentSans((int)$serviceId);
+            $vars['post_san']          = implode(', ', $current['single']);
+            $vars['post_san_wildcard'] = implode(', ', $current['wildcard']);
+        }
 
         if(isset($_SESSION['mg-error']))
         {
@@ -597,6 +618,8 @@ class home extends AbstractController
         {
             throw new \Exception(Lang::absoluteT('csr_error'));
         }
+        CertificateService::assertCsrKey($csr);
+
         return $decode;
     }
 
@@ -607,6 +630,18 @@ class home extends AbstractController
 
         $countSan         += $params['configoption7'];
         $countSanWildCard += $params['configoption8'];
+
+        // lower case, no duplicates, never the common name itself (it would use a paid SAN for nothing)
+        foreach(['sans_domains', 'wildcard_san'] as $key)
+        {
+            if(!empty($fields[$key]))
+            {
+                $list         = array_unique(array_filter(array_map(function($name) {
+                    return strtolower(Domain::toAscii(trim($name)));
+                }, explode(',', (string)$fields[$key]))));
+                $fields[$key] = implode(',', array_diff($list, [strtolower(trim((string)$commonName))]));
+            }
+        }
 
         $domainValidation = new Domain();
 
@@ -621,10 +656,11 @@ class home extends AbstractController
                 throw new \Exception(sprintf(Lang::absoluteT('using_max_san'), $countSan));
             }
 
+            $ipAllowed = !empty($params['packageid']) && $this->sanIpAllowed($params['packageid']);
             foreach($san as $domain)
             {
                 if(empty($domain)) continue;
-                $domainValidation->validateDomain($domain);
+                $domainValidation->validateDomain($domain, false, $ipAllowed);
             }
 
             $domains .= $fields['sans_domains'];
@@ -707,7 +743,7 @@ class home extends AbstractController
         $vars['order_details']['expiration_date']   = $params['service']->nextduedate != '0000-00-00' ? date('l F jS, Y', strtotime($params['service']->nextduedate)) : "";
         $vars['order_details']['reccuring_amount']  = formatCurrency($params['service']->amount, $params['client']->currency);
         $vars['order_details']['billing_cycle']     = ucfirst($params['service']->billingcycle);
-        $vars['order_details']['payment_method']    = ucfirst($params['service']->paymentmethod);
+        $vars['order_details']['payment_method']    = self::paymentMethodName($params['service']->paymentmethod);
         $vars['whmcs_url']                          = $CONFIG['SystemURL'];
         $vars['valid_from']                         = date('F j, Y', strtotime($params['certificate']['validity']['begin']));
         $vars['valid_till']                         = date('F j, Y', strtotime($params['certificate']['validity']['end']));
@@ -716,7 +752,8 @@ class home extends AbstractController
         $vars['visibleRenewButtonAfterExpiration']  = $configuration['sslSettings']['visibleRenewButtonAfterExpiration'];
 
         $today                      = strtotime(date('Y-m-d'));
-        $expiryDate                 = strtotime($params['certificate']['validity']['end']);
+        // renewal is about the subscription: within it an expiring certificate is reissued, not renewed
+        $expiryDate                 = strtotime(!empty($itemOrder['subscription']['end']) ? $itemOrder['subscription']['end'] : $params['certificate']['validity']['end']);
         $vars['visibleRenewButton'] = false;
         if($configuration['sslSettings']['visibleRenewButtonBeforeExpiration'] && $today < $expiryDate)
         {
@@ -775,6 +812,17 @@ class home extends AbstractController
         $vars['issued_message']   = ProductSettings::message($params['product']->id, 'issuedMessage');
         $vars['organization']     = isset($params['order']['orderData']['contacts']['organization']) ? array_filter((array)$params['order']['orderData']['contacts']['organization'], 'is_scalar') : [];
         $vars['download_formats'] = CertificateBundle::enabledFormats();
+        try
+        {
+            // no intermediate certificates (e.g. issued straight from a root): do not offer an empty CA bundle
+            if(trim(CertificateService::bundle((int)$params['service']->id)->ca()) === '')
+            {
+                $vars['download_formats'] = array_values(array_diff($vars['download_formats'], ['ca']));
+            }
+        }
+        catch(\Exception $e)
+        {
+        }
         $vars['csrfToken']        = \generate_token('plain');
 
         // Install on server / Login to cPanel - only for clients with an active cPanel account
@@ -915,8 +963,9 @@ class home extends AbstractController
             $_SESSION['mg-error'] = $e->getMessage();
             redir('action=productdetails&id=' . (int)$input['id'], 'clientarea.php');
         }
+        $keyDomain = (string)Service::where('id', (int)$input['id'])->value('domain');
         header('Content-Type: application/octet-stream');
-        header('Content-Disposition: attachment; filename=privatekey.pem');
+        header('Content-Disposition: attachment; filename="' . CertificateBundle::fileName($keyDomain !== '' ? $keyDomain : 'private') . '.key"');
         header('Expires: 0');
         header('Cache-Control: must-revalidate');
         header('Pragma: public');
@@ -1144,6 +1193,7 @@ class home extends AbstractController
                 $certificate['orderData']['items']     = $newData['items'];
                 Request::updateOrderData($serviceId, $certificate);
                 CertificateService::event($serviceId, 'info', '[Validation] Validation method changed by the client');
+                $_SESSION['mg-success'] = Lang::absoluteT('validation_method_changed');
 
             }
             catch(\Exception $exception)
@@ -1162,16 +1212,29 @@ class home extends AbstractController
         }
         $vars['domains']   = $domains;
 
-        // each domain starts on the method it uses now (dns-cname / dns-txt are the "DNS" choice here, an address is e-mail)
+        // each domain starts on the method it uses now - as the gateway reports it (the enrollment data goes stale
+        // after a change); an address is e-mail, dns-cname / dns-txt stay as they are when the product offers them
         $current = [$certificate['orderData']['orderData']['common_name']['name'] => $certificate['orderData']['orderData']['common_name']['validation_method'] ?? ''];
         foreach($certificate['orderData']['orderData']['alternative_names'] as $san)
         {
             $current[$san['name']] = $san['validation_method'] ?? '';
         }
-        $vars['currentMethods'] = array_map(function($method) {
+        $gatewayItems = isset($certificate['orderData']['items']) && is_array($certificate['orderData']['items']) ? $certificate['orderData']['items'] : [];
+        foreach((array)(reset($gatewayItems)['domains'] ?? []) as $gatewayDomain)
+        {
+            if(isset($current[$gatewayDomain['name'] ?? '']) && !empty($gatewayDomain['method']))
+            {
+                $current[$gatewayDomain['name']] = $gatewayDomain['method'];
+            }
+        }
+        $vars['currentMethods'] = array_map(function($method) use ($available_method_validation) {
             $method = strtolower((string)$method);
+            if(strpos($method, '@') !== false)
+            {
+                return 'email';
+            }
 
-            return strpos($method, '@') !== false ? 'email' : (strpos($method, 'dns') === 0 ? 'dns' : $method);
+            return strpos($method, 'dns') === 0 && !in_array($method, $available_method_validation, true) ? 'dns' : $method;
         }, $current);
 
         $approvers         = $api->getDomainEmails($domains);
@@ -2420,6 +2483,12 @@ class home extends AbstractController
         $defaultCountry = $settings['defaultCsrCountry'];
         $client         = Client::where('id', $userId)->first();
 
+        // no default country in the settings: the client's own country, not the first one of the list
+        if((!$defaultCountry || !isset($countries[strtoupper((string)$defaultCountry)])) && $client && isset($countries[strtoupper((string)$client->country)]))
+        {
+            $defaultCountry = strtoupper((string)$client->country);
+        }
+
         $csrDefaults = ['country' => $defaultCountry, 'state' => '', 'city' => '', 'org' => '', 'email' => ''];
         if($settings['useProfileForCsr'] && $client)
         {
@@ -2507,9 +2576,23 @@ class home extends AbstractController
         {
             $raw = implode("\n", $raw);
         }
-        $items = preg_split('/[\s,;]+/', strtolower(trim((string)$raw)));
+        $items = preg_split('/[\s,;]+/', trim((string)$raw));
 
-        return array_values(array_unique(array_filter(array_map('trim', $items))));
+        // Unicode names are ordered in their punycode form
+        return array_values(array_unique(array_filter(array_map(function($item) {
+            return strtolower(Domain::toAscii(trim($item)));
+        }, $items))));
+    }
+
+    /** The gateway product accepts IP addresses as SANs (san.ip_allowed) */
+    private function sanIpAllowed($packageId)
+    {
+        $config = (new ProductRepository())->getProductConfiguration((int)$packageId);
+        $remote = RemoteProduct::where('remoteId', (string)($config['product_id'] ?? ''))->where('vendor', (string)($config['provider'] ?? ''))->first();
+        $raw    = $remote ? $remote->rawData : [];
+        $raw    = is_array($raw) ? $raw : (json_decode((string)$raw, true) ?: []);
+
+        return !empty($raw['san']['ip_allowed']);
     }
 
     public function submitSslConfigurationJSON($input, $vars = array())
@@ -2586,11 +2669,12 @@ class home extends AbstractController
             {
                 throw new \Exception(Lang::absoluteT('csr_error'));
             }
+            CertificateService::assertCsrKey($ownCsr);
             $mainDomain = strtolower(trim($csrSubject['CN']));
         }
         else
         {
-            $mainDomain = isset($input['manual_domain']) ? strtolower(trim($input['manual_domain'])) : '';
+            $mainDomain = isset($input['manual_domain']) ? strtolower(Domain::toAscii($input['manual_domain'])) : '';
         }
         if(empty($mainDomain))
         {
@@ -2612,6 +2696,24 @@ class home extends AbstractController
         {
             $wildcardSans[] = strpos($wildcardSan, '*.') === 0 ? $wildcardSan : '*.' . $wildcardSan;
         }
+        // SANs written into the client's own CSR count when the SAN fields are left empty
+        if(!$sanDomains && !$wildcardSans && !empty($ownCsr) && ($settings['sansLimit'] > 0 || $settings['wildcardSansLimit'] > 0))
+        {
+            foreach(CertificateService::csrSans($ownCsr) as $csrSan)
+            {
+                if(strpos($csrSan, '*.') === 0)
+                {
+                    $wildcardSans[] = $csrSan;
+                }
+                else
+                {
+                    $sanDomains[] = $csrSan;
+                }
+            }
+        }
+        // a SAN equal to the common name, or listed twice, would use a paid slot for nothing
+        $sanDomains   = array_values(array_unique(array_diff($sanDomains, [$mainDomain])));
+        $wildcardSans = array_values(array_unique(array_diff($wildcardSans, [$mainDomain])));
 
         if(count($sanDomains) > $settings['sansLimit'])
         {
@@ -2621,9 +2723,10 @@ class home extends AbstractController
         {
             throw new \Exception(sprintf(Lang::absoluteT('using_max_san_wildcard'), $settings['wildcardSansLimit']));
         }
+        $ipAllowed = $this->sanIpAllowed($params['packageid']);
         foreach($sanDomains as $sanDomain)
         {
-            $domainValidation->validateDomain($sanDomain);
+            $domainValidation->validateDomain($sanDomain, false, $ipAllowed);
         }
         foreach($wildcardSans as $wildcardSan)
         {

@@ -19,6 +19,24 @@ new \ModulesGarden\Servers\TSSGGSModule\Loader();
 \ModulesGarden\Servers\TSSGGSModule\Server::I();
 
 
+// Admin downloads (certificate ZIP, validation file) from the module tab of the service page: a normal request, not
+// a WHMCS module button (those run through AJAX, where a file never reaches the browser). Admin session + CSRF token.
+add_hook('AdminAreaPage', 1, function($vars) {
+    if(empty($_GET['tssggs_download']) || basename((string)$_SERVER['SCRIPT_NAME']) !== 'clientsservices.php' || empty($_SESSION['adminid']))
+    {
+        return;
+    }
+    $serviceId = (int)($_GET['id'] ?? 0);
+    $module    = Capsule::table('tblhosting')->join('tblproducts', 'tblproducts.id', '=', 'tblhosting.packageid')
+        ->where('tblhosting.id', $serviceId)->value('tblproducts.servertype');
+    if(!$serviceId || strtolower((string)$module) !== strtolower(basename(__DIR__)))
+    {
+        return; // another module's service (both editions can be installed side by side)
+    }
+    \check_token('WHMCS.admin.default');
+    \ModulesGarden\Servers\TSSGGSModule\app\controllers\server\admin\Actions::adminDownload($serviceId, (string)$_GET['tssggs_download']);
+});
+
 add_hook('ClientAreaPrimarySidebar', 1, function($primarySidebar) {
 
 

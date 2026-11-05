@@ -221,6 +221,13 @@ class ImportProvider extends CrudProvider
                 ];
             }
 
+            // SAN options: let clients buy more SANs later (WHMCS "Configurable Options Upgrades")
+            if($optionNames && !(int)$product->configoptionsupgrade)
+            {
+                $product->configoptionsupgrade = 1;
+                $product->save();
+            }
+
             foreach($optionNames as $remoteOptionName => $localOptionNames)
             {
                 $localOptionName         = $localOptionNames['name'];

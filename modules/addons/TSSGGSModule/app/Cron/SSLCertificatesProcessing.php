@@ -6,6 +6,7 @@ use Exception;
 use ModulesGarden\TSSGGSModule\App\Helpers\EmailTemplates;
 use ModulesGarden\TSSGGSModule\App\Libs\AcmeHelpers;
 use ModulesGarden\TSSGGSModule\App\Libs\AutoInstallHelpers;
+use ModulesGarden\TSSGGSModule\App\Libs\CertificateService;
 use ModulesGarden\TSSGGSModule\App\Libs\SSLTrustCenterApi;
 use ModulesGarden\TSSGGSModule\App\Libs\SslProductHelpers;
 use ModulesGarden\TSSGGSModule\App\Models\AcmeSubscription;
@@ -144,98 +145,13 @@ class SSLCertificatesProcessing extends AbstractCommand
                             'nextduedate' => $nextDueDate,
                         ]);
                     }
+                }
 
-                    $serviceId = $certificate['id'];
-                    $userId = $certificate['userid'];
-
-                    $certificate = Request::getOrder($certificate['id']);
-
-                    $filename = str_replace('.', '_', $certificate['orderData']['orderData']['common_name']['name']).'.crt';
-                    $cert     = AutoInstallHelpers::extractCertificate($certificate['orderFiles'], $certificate['orderData']['orderData']['common_name']['name']);
-
-                    $fileContentCrt = $cert['crt'];
-                    $fileContentCA  = $cert['ca'];
-
-                    $pathAttachemts = false;
-                    $checkSettings = Capsule::schema()->hasTable('tblfileassetsettings');
-                    if($checkSettings !== false) {
-                        $filesetting = Capsule::table('tblfileassetsettings')->where('asset_type', 'email_attachments')->first();
-                        if(isset($filesetting->storageconfiguration_id) && !empty($filesetting->storageconfiguration_id))
-                        {
-                            $checkStorage = Capsule::schema()->hasTable('tblstorageconfigurations');
-                            if($checkStorage !== false) {
-
-                                $storage = Capsule::table('tblstorageconfigurations')->where('id', $filesetting->storageconfiguration_id)->first();
-                                if(isset($storage->settings) && !empty($storage->settings))
-                                {
-                                    $storageData = json_decode($storage->settings, true);
-                                    if(isset($storageData['local_path']) && !empty($storageData['local_path']))
-                                    {
-                                        $pathAttachemts = $storageData['local_path'];
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-
-                    $attachments = [];
-                    if(!empty($fileContentCrt)) {
-                        if($pathAttachemts === false) {
-                            $tmp_ca_code = tempnam("/tmp", "FOO");
-                            $handle = fopen($tmp_ca_code, "w");
-                            fwrite($handle, $fileContentCrt);
-                            fclose($handle);
-
-                            $attachments[] = array(
-                                'displayname' => 'crt_certificate.crt',
-                                'path' => $tmp_ca_code
-                            );
-                        }
-                        else
-                        {
-                            $filetemp = $pathAttachemts.DIRECTORY_SEPARATOR.$serviceId.$userId.'_crt_certificate.crt';
-                            file_exists($filetemp) or touch($filetemp);
-                            file_put_contents($filetemp, $fileContentCrt);
-
-                            $attachments[] = array(
-                                'displayname' => $serviceId.$userId.'_crt_certificate.crt',
-                                'filename' => $serviceId.$userId.'_crt_certificate.crt'
-                            );
-                        }
-                    }
-
-                    if(!empty($fileContentCA)) {
-                        if($pathAttachemts === false) {
-                            $tmp_crt_code = tempnam("/tmp", "FOO");
-                            $handle = fopen($tmp_crt_code, "w");
-                            fwrite($handle, $fileContentCA);
-                            fclose($handle);
-
-                            $attachments[] = array(
-                                'displayname' => 'ca_certificate.crt',
-                                'path' => $tmp_crt_code
-                            );
-                        }
-                        else
-                        {
-                            $filetemp = $pathAttachemts.DIRECTORY_SEPARATOR.$serviceId.$userId.'_ca_certificate.crt';
-                            file_exists($filetemp) or touch($filetemp);
-                            file_put_contents($filetemp, $fileContentCA);
-
-                            $attachments[] = array(
-                                'displayname' => $serviceId.$userId.'_ca_certificate.crt',
-                                'filename' => $serviceId.$userId.'_ca_certificate.crt'
-                            );
-                        }
-                    }
-
-
-                    EmailTemplates::sendEmail(EmailTemplates::SEND_CERTIFICATE_TEMPLATE, $serviceId, [
-                        'domain' => $filename,
-                        'ssl_certyficate' => nl2br($fileContentCA),
-                        'crt_code' => nl2br($fileContentCrt),
-                    ], $attachments);
+                // certificate e-mail - the same rule for every sync (CertificateService::notifyIssued)
+                CertificateService::notifyIssued($certificate['id'], $previousStatus, $orderData['order']['status']);
+                if($orderData['order']['status'] === 'active')
+                {
+                    CertificateService::forgetPreviousCertificate($certificate['id']);
                 }
 
                 // same rule as the order status sync (CertificateSyncHelpers): expired / filed = Terminated with a date
