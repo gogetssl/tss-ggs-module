@@ -77,12 +77,12 @@ class Edition
     }
 
     /**
-     * Certificate vendors (API credentials) of the edition: TheSSLStore Module works with TheSSLStore only, the
-     * GoGetSSL Module with both
+     * Certificate vendor (API credentials) of the edition: each edition works with its own account only -
+     * TheSSLStore Module with TheSSLStore, the GoGetSSL Module with GoGetSSL
      */
     public static function vendors()
     {
-        return self::get() === self::TSS ? ['tss'] : ['ggs', 'tss'];
+        return self::get() === self::TSS ? ['tss'] : ['ggs'];
     }
 
     /**

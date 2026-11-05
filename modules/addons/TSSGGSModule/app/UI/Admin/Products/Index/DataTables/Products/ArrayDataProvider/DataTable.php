@@ -107,7 +107,9 @@ class DataTable extends \ModulesGarden\TSSGGSModule\Components\DataTable\DataTab
             'Sectigo'  => 99,
         ];
 
-        $remoteProducts = RemoteProduct::get()->sortBy(function($product) use ($brandWeights) {
+        // only the edition's own vendor (a catalogue copied from the other edition is not offered)
+        $vendors        = array_map('strtoupper', \ModulesGarden\TSSGGSModule\App\Libs\Edition::vendors());
+        $remoteProducts = RemoteProduct::whereIn('vendor', $vendors)->get()->sortBy(function($product) use ($brandWeights) {
             return ($brandWeights[$product->brand] ?? 50) . $product->name;
         });
 
