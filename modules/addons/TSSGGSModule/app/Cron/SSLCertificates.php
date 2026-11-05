@@ -67,6 +67,9 @@ class SSLCertificates extends AbstractCommand
         $certificatesWhere = [];
 
         $lastSync = (new AddonModuleRepository())->getLastCertificatesSync();
+        // /services/updates?since=<unix time>: changes since the last successful run, 5 minutes overlap for changes
+        // made while the previous run was going; first run looks one week back
+        $since = $lastSync ? max(0, (int)$lastSync - 300) : $timestamp - 7 * 86400;
 
         $errorToDB = '';
 
@@ -84,7 +87,7 @@ class SSLCertificates extends AbstractCommand
                 if(empty($credential['PartnerCode']) || empty($credential['AuthToken'])) continue;
 
                 $api = new SSLTrustCenterApi($vendor, $credential['PartnerCode'], $credential['AuthToken']);
-                $updates = $api->ordersUpdate();
+                $updates = $api->ordersUpdate($since);
 
                 foreach ($updates as $update)
                 {
@@ -94,6 +97,7 @@ class SSLCertificates extends AbstractCommand
             } catch (Exception $e) {
 
                 $errorToDB = $e->getMessage();
+                $errors    = true; // keep the last sync time, so the next run asks for these changes again
                 $io->write('Error Check Status: ' . $e->getMessage());
                 continue;
 

@@ -163,9 +163,15 @@ class SSLTrustCenterApi
         throw new \Exception('Invalid response from API: missing certificate item ID');
     }
 
+    /**
+     * Certificates (item IDs) changed since a unix time - GET /services/updates?since=<unix time>.
+     * (/certificates/status is listed in the gateway documentation but does not exist - not used.)
+     */
     public function ordersUpdate($timestamp = null)
     {
-        return $this->call('/services/updates?since=' . $timestamp);
+        $query = is_numeric($timestamp) ? '?since=' . (int)$timestamp : '';
+
+        return (array)$this->call('/services/updates' . $query);
     }
 
     public function getOrder($order_id, $serviceId = false)
