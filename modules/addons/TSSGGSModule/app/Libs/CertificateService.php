@@ -396,8 +396,9 @@ class CertificateService
     public static function addSans($serviceId, $single, $wildcard)
     {
         $ssl = self::requireOrder($serviceId);
-        $data = array_filter(['single_san' => max(0, (int)$single), 'wildcard_san' => max(0, (int)$wildcard)]);
-        if(!$data)
+        // always send both counts - the GoGetSSL gateway fails ("san_w_count cannot be null") when one is left out
+        $data = ['single_san' => max(0, (int)$single), 'wildcard_san' => max(0, (int)$wildcard)];
+        if(!$data['single_san'] && !$data['wildcard_san'])
         {
             return false;
         }
