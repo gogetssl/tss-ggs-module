@@ -231,7 +231,7 @@ $_LANG['serverCA']['home']['reissue_page']['HTTPs for all']                     
 $_LANG['serverCA']['home']['reissue_page']['DNS for all']                                                                        = 'DNS for alle';
 $_LANG['serverCA']['home']['reissue_page']['Domain']                                                                             = 'Domæne';
 $_LANG['serverCA']['home']['reissue_page']['DCV Method']                                                                         = 'DCV-metode';
-$_LANG['reissue_success']                                                                                                        = 'Certifikatet er blevet genudstedt.';
+$_LANG['reissue_success']                                                                                                        = 'Genudstedelsen er bestilt. Gennemfør valideringen nedenfor - derefter udstedes det nye certifikat.';
 $_LANG['revalidate_success_active']                                                                                              = 'Domænevalideringen er gennemført, og certifikatet er udstedt.';
 $_LANG['revalidate_success_pending']                                                                                             = 'Kontrol af domænevalideringen er blevet anmodet. Certifikatet er endnu ikke udstedt - sørg for, at valideringsfilen / DNS-recorden / e-mailgodkendelsen er på plads, og prøv igen om et par minutter.';
 $_LANG['revalidate_not_available']                                                                                               = 'Valideringskontrol er ikke tilgængelig for dette certifikat.';

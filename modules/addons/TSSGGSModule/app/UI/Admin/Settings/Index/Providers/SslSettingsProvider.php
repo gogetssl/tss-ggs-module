@@ -39,7 +39,8 @@ class SslSettingsProvider extends CrudProvider
         }
 
         $this->availableValues['country']                               = Helpers::getCountryOptions();
-        $this->availableValues['defaultCsrCountry']                     = Helpers::getCountryOptions();
+        // empty = each client's own country (the first country of the list used to be saved without being chosen)
+        $this->availableValues['defaultCsrCountry']                     = ['' => "The client's own country"] + Helpers::getCountryOptions();
         $this->availableValues['additionalDaysForRenewalOrder']         = Helpers::get30DaysOptions();
         $reissueDays = [1, 3, 7, 10, 21, 30];
         $current     = (int)$this->data['autoReissueDaysBeforeExpire'];

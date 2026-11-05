@@ -231,7 +231,7 @@ $_LANG['serverCA']['home']['reissue_page']['HTTPs for all']                     
 $_LANG['serverCA']['home']['reissue_page']['DNS for all']                                                                        = 'DNS pour tous';
 $_LANG['serverCA']['home']['reissue_page']['Domain']                                                                             = 'Domaine';
 $_LANG['serverCA']['home']['reissue_page']['DCV Method']                                                                         = 'Méthode DCV';
-$_LANG['reissue_success']                                                                                                        = 'Le certificat a été réémis avec succès.';
+$_LANG['reissue_success']                                                                                                        = 'La réémission a été demandée. Terminez la validation ci-dessous - le nouveau certificat sera émis ensuite.';
 $_LANG['revalidate_success_active']                                                                                              = 'La validation du domaine est terminée et le certificat a été émis.';
 $_LANG['revalidate_success_pending']                                                                                             = 'La vérification de la validation du domaine a été demandée. Le certificat n\'est pas encore émis - veuillez vous assurer que le fichier de validation / l\'enregistrement DNS / l\'approbation par e-mail est en place et réessayez dans quelques minutes.';
 $_LANG['revalidate_not_available']                                                                                               = 'La vérification de la validation n\'est pas disponible pour ce certificat.';

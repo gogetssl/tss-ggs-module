@@ -185,7 +185,6 @@ class SslSettingsForm extends Form implements AdminAreaInterface, AjaxComponentI
             (new Dropdown())
                 ->setName('defaultCsrCountry')
                 ->setDefaultValueAsFirstOption()
-                ->required()
         );
     }
 
