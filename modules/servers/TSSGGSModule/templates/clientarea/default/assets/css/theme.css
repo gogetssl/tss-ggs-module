@@ -197,7 +197,7 @@ table.table-validation-details td.break-all {
 .tssggs-progress__bar { display: flex; height: 30px; border-radius: 30px; overflow: hidden; background: var(--c-green-tint); }
 .tssggs-pb { display: flex; align-items: center; justify-content: center; min-width: 0; font-size: 12px; font-weight: 600; white-space: nowrap; }
 .tssggs-pb span { overflow: hidden; text-overflow: ellipsis; padding: 0 6px; }
-.tssggs-pb--current { color: #fff; background-color: var(--c-green); background-size: 30px 30px; background-image: linear-gradient(135deg, var(--c-green-dark) 25%, transparent 25%, transparent 50%, var(--c-green-dark) 50%, var(--c-green-dark) 75%, transparent 75%, transparent); animation: tssggs-stripes 1.25s linear infinite; }
+.tssggs-pb--current { color: #fff; background-color: var(--c-green); background-size: 30px 30px; background-image: linear-gradient(135deg, var(--c-green-dark) 25%, transparent 25%, transparent 50%, var(--c-green-dark) 50%, var(--c-green-dark) 75%, transparent 75%, transparent); animation: tssggs-stripes 0.95s linear infinite; }
 .tssggs-pb--future { color: var(--c-green-dark); background: var(--c-green-soft); }
 .tssggs-pb--expired { color: #8a1c13; background-color: #f3dcd9; background-size: 30px 30px; background-image: linear-gradient(135deg, rgba(180, 35, 24, .12) 25%, transparent 25%, transparent 50%, rgba(180, 35, 24, .12) 50%, rgba(180, 35, 24, .12) 75%, transparent 75%, transparent); }
 .tssggs-pb + .tssggs-pb { border-left: 2px solid #fff; }
