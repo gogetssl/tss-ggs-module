@@ -561,3 +561,4 @@ $_LANG['serverCA']['home']['validation_page']['rowSubscription'] = 'Předplatné
 $_LANG['serverCA']['home']['validation_page']['linkSendCertificate'] = 'Poslat certifikát e-mailem';
 $_LANG['serverCA']['home']['validation_page']['tabContacts'] = 'Kontakty';
 $_LANG['serverCA']['home']['validation_page']['tabOptions'] = 'Konfigurovatelné možnosti';
+$_LANG['serverCA']['home']['validation_page']['pbExpires'] = 'Vyprší za <b>%s</b>';

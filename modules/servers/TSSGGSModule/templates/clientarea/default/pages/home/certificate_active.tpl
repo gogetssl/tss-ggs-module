@@ -63,7 +63,7 @@
                         <div style="width:{$segment[1]}%">
                             {if $segment[0] == 'current' && $progress.message}
                                 {assign var=pbDays value=$MGLANG->T('validation_page', $progress.daysKey)|sprintf:$progress.days}
-                                {if $progress.message == 'ends'}{$MGLANG->T('validation_page', 'pbSubExpires')|sprintf:$pbDays}{else}{$MGLANG->T('validation_page', 'pbNextReissue')|sprintf:$pbDays}{/if}
+                                {if $progress.message == 'ends'}{$MGLANG->T('validation_page', 'pbSubExpires')|sprintf:$pbDays}{elseif $progress.message == 'expires'}{$MGLANG->T('validation_page', 'pbExpires')|sprintf:$pbDays}{else}{$MGLANG->T('validation_page', 'pbNextReissue')|sprintf:$pbDays}{/if}
                             {/if}
                         </div>
                     {/foreach}
@@ -74,12 +74,11 @@
                     {/foreach}
                 </div>
                 <div class="tssggs-progress__labels">
-                    {foreach $progress.labels as $label}
-                        {if $label}
-                            <div class="tssggs-pl tssggs-pl--{$label[2]}{if $label[3]} tssggs-pl--{$label[3]}{/if}"><b>{$label[0]}</b><span>{$MGLANG->T('validation_page', $label[1])}</span></div>
-                        {else}
-                            <div></div>
-                        {/if}
+                    {foreach $progress.segments as $segment}
+                        <div class="tssggs-progress__cell" style="width:{$segment[1]}%">
+                            {if $segment[2]}<div class="tssggs-pl{if $segment[2][2]} tssggs-pl--{$segment[2][2]}{/if}"><b>{$segment[2][0]}</b><span>{$MGLANG->T('validation_page', $segment[2][1])}</span></div>{else}<div></div>{/if}
+                            {if $segment[3]}<div class="tssggs-pl tssggs-pl--right{if $segment[3][2]} tssggs-pl--{$segment[3][2]}{/if}"><b>{$segment[3][0]}</b><span>{$MGLANG->T('validation_page', $segment[3][1])}</span></div>{/if}
+                        </div>
                     {/foreach}
                 </div>
             </div>

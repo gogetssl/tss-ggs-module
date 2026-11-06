@@ -895,50 +895,99 @@ class home extends AbstractController
             return date('Y-m-d', $time);
         };
 
-        // each label: [date, caption key, alignment, tone]; four equal columns under the bar
+        // labels: [date, caption key, tone]; each segment carries the label at its start and at its end
+        $from    = [$date($created), 'pbValidFrom', 'green'];
+        $till    = [$date($expires), 'pbValidTill', 'green'];
+        $starts  = [$date($begin), 'pbSubStarts', 'muted'];
+        $expired = ['expired', $created - $begin, $starts, null];
         if($begin == $created && $end == $expires)
         {
-            return [
-                'state'    => 'single',
-                'days'     => $days,
-                'daysKey'  => $days == 1 ? 'pbDay' : 'pbDays',
-                // a single certificate longer than a year still has a reissue ahead
-                'message'  => strtotime('-1 year', $expires) > $today ? 'next' : '',
-                'segments' => [['current', 100]],
-                'labels'   => [[$date($created), 'pbValidFrom', 'left', 'green'], null, null, [$date($expires), 'pbValidTill', 'right', 'green']],
-            ];
+            // a single certificate longer than a year still has a reissue ahead, otherwise show when it expires
+            $state    = 'single';
+            $message  = strtotime('-1 year', $expires) > $today ? 'next' : 'expires';
+            $segments = [['current', 1, $from, $till]];
         }
-        if($begin == $created)
+        elseif($begin == $created)
         {
-            return [
-                'state'    => 'first',
-                'days'     => $days,
-                'daysKey'  => $days == 1 ? 'pbDay' : 'pbDays',
-                'message'  => 'next',
-                'segments' => [['current', 75], ['future', 25]],
-                'labels'   => [[$date($created), 'pbValidFrom', 'left', 'green'], null, [$date($expires), 'pbValidTill', 'right', 'green'], [$date($end), 'pbSubEnds', 'right', '']],
-            ];
+            $state    = 'first';
+            $message  = 'next';
+            $segments = [['current', $expires - $created, $from, $till], ['future', $end - $expires, null, [$date($end), 'pbSubEnds', '']]];
         }
-        if($end > $expires)
+        elseif($end > $expires)
         {
-            return [
-                'state'    => 'middle',
-                'days'     => $days,
-                'daysKey'  => $days == 1 ? 'pbDay' : 'pbDays',
-                'message'  => 'next',
-                'segments' => [['expired', 25], ['current', 50], ['future', 25]],
-                'labels'   => [[$date($begin), 'pbSubStarts', 'left', 'muted'], [$date($created), 'pbValidFrom', 'left', 'green'], [$date($expires), 'pbValidTill', 'right', 'green'], [$date($end), 'pbSubEnds', 'right', '']],
-            ];
+            $state    = 'middle';
+            $message  = 'next';
+            $segments = [$expired, ['current', $expires - $created, $from, $till], ['future', $end - $expires, null, [$date($end), 'pbSubEnds', '']]];
+        }
+        else
+        {
+            $state    = 'end';
+            $message  = 'ends';
+            $segments = [$expired, ['current', $expires - $created, $from, [$date($end), 'pbSubEnds', 'red']]];
         }
 
         return [
-            'state'    => 'end',
+            'state'    => $state,
             'days'     => $days,
             'daysKey'  => $days == 1 ? 'pbDay' : 'pbDays',
-            'message'  => 'ends',
-            'segments' => [['expired', 50], ['current', 50]],
-            'labels'   => [[$date($begin), 'pbSubStarts', 'left', 'muted'], null, [$date($created), 'pbValidFrom', 'left', 'green'], [$date($end), 'pbSubEnds', 'right', 'red']],
+            'message'  => $message,
+            'segments' => self::proportionalWidths($segments),
         ];
+    }
+
+    /**
+     * Segment widths in % of the subscription, as long as each period really is. A short period still gets
+     * enough room for its caption and dates (current 30%, others 18%); the rest is shared in proportion.
+     */
+    protected static function proportionalWidths(array $segments)
+    {
+        $total = 0;
+        foreach($segments as $segment)
+        {
+            $total += max(0, $segment[1]);
+        }
+        $widths = [];
+        foreach($segments as $i => $segment)
+        {
+            $widths[$i] = $total > 0 ? max(0, $segment[1]) / $total * 100 : 100 / count($segments);
+        }
+
+        // raise the segments under their minimum, take the room from the others in proportion (a few passes settle it)
+        $fixed = [];
+        for($pass = 0; $pass < count($segments); $pass++)
+        {
+            $changed = false;
+            foreach($segments as $i => $segment)
+            {
+                $min = count($segments) == 1 ? 100 : ($segment[0] == 'current' ? 30 : 18);
+                if(!isset($fixed[$i]) && $widths[$i] < $min)
+                {
+                    $widths[$i] = $min;
+                    $fixed[$i]  = true;
+                    $changed    = true;
+                }
+            }
+            $left = 100 - array_sum(array_intersect_key($widths, $fixed));
+            $free = array_sum(array_diff_key($widths, $fixed));
+            foreach($widths as $i => $width)
+            {
+                if(!isset($fixed[$i]) && $free > 0)
+                {
+                    $widths[$i] = $width / $free * $left;
+                }
+            }
+            if(!$changed)
+            {
+                break;
+            }
+        }
+
+        foreach($segments as $i => $segment)
+        {
+            $segments[$i][1] = round($widths[$i], 2);
+        }
+
+        return $segments;
     }
 
     /**

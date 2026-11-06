@@ -561,3 +561,4 @@ $_LANG['serverCA']['home']['validation_page']['rowSubscription'] = 'Abonnement';
 $_LANG['serverCA']['home']['validation_page']['linkSendCertificate'] = 'Zertifikat per E-Mail senden';
 $_LANG['serverCA']['home']['validation_page']['tabContacts'] = 'Kontakte';
 $_LANG['serverCA']['home']['validation_page']['tabOptions'] = 'Konfigurierbare Optionen';
+$_LANG['serverCA']['home']['validation_page']['pbExpires'] = 'Läuft ab in <b>%s</b>';
