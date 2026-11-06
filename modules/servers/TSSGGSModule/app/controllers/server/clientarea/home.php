@@ -167,8 +167,8 @@ class home extends AbstractController
         $vars['next_reissue']                        = '';
         $vars['ssl_issuer']                          = '';
         $vars['validation_product']                  = isset($productAPI['validation']) ? $productAPI['validation'] : '';
-        $vars['order_details']['registration_date']  = date('l F jS, Y', strtotime($service->regdate));
-        $vars['order_details']['expiration_date']    = $service->nextduedate != '0000-00-00' ? date('l F jS, Y', strtotime($service->nextduedate)) : "";
+        $vars['order_details']['registration_date']  = date('F j, Y', strtotime($service->regdate));
+        $vars['order_details']['expiration_date']    = $service->nextduedate != '0000-00-00' ? date('F j, Y', strtotime($service->nextduedate)) : "";
         $vars['order_details']['reccuring_amount']   = formatCurrency($service->amount, $client->currency);
         $vars['order_details']['billing_cycle']      = ucfirst($service->billingcycle);
         $vars['order_details']['payment_method']     = self::paymentMethodName($service->paymentmethod);
@@ -742,8 +742,8 @@ class home extends AbstractController
         $vars['serviceid']                          = $params['service']->id;
         // cancelled / terminated: the page stays readable, but no downloads, sending, reissue or install
         $vars['certificateUsable']                  = CertificateService::usable((int)$params['service']->id);
-        $vars['order_details']['registration_date'] = date('l F jS, Y', strtotime($params['service']->regdate));
-        $vars['order_details']['expiration_date']   = $params['service']->nextduedate != '0000-00-00' ? date('l F jS, Y', strtotime($params['service']->nextduedate)) : "";
+        $vars['order_details']['registration_date'] = date('F j, Y', strtotime($params['service']->regdate));
+        $vars['order_details']['expiration_date']   = $params['service']->nextduedate != '0000-00-00' ? date('F j, Y', strtotime($params['service']->nextduedate)) : "";
         $vars['order_details']['reccuring_amount']  = formatCurrency($params['service']->amount, $params['client']->currency);
         $vars['order_details']['billing_cycle']     = ucfirst($params['service']->billingcycle);
         $vars['order_details']['payment_method']    = self::paymentMethodName($params['service']->paymentmethod);
