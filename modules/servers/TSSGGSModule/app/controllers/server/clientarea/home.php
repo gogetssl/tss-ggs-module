@@ -736,6 +736,9 @@ class home extends AbstractController
         $vars['status']                             = $params['order']['order']['status'];
         $vars['subscribtion_starts']                = date('F j, Y', strtotime($itemOrder['subscription']['begin']));
         $vars['subscribtion_ends']                  = date('F j, Y', strtotime($itemOrder['subscription']['end']));
+        $vars['subscription_period']                = !empty($itemOrder['subscription']['begin']) && !empty($itemOrder['subscription']['end'])
+            ? date('M j, Y', strtotime($itemOrder['subscription']['begin'])) . ' – ' . date('M j, Y', strtotime($itemOrder['subscription']['end']))
+            : '';
         $vars['serviceid']                          = $params['service']->id;
         // cancelled / terminated: the page stays readable, but no downloads, sending, reissue or install
         $vars['certificateUsable']                  = CertificateService::usable((int)$params['service']->id);

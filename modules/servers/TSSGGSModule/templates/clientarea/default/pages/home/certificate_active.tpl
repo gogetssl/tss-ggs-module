@@ -128,7 +128,7 @@
                 <dt>{$MGLANG->T('validation_page', 'DomainName')}</dt><dd>{$domain|escape}</dd>
                 <dt>{$MGLANG->T('validation_page', 'ValidFrom')}</dt><dd>{if $valid_from}{$valid_from}{else}{$MGLANG->T('validation_page', 'NA')}{/if}</dd>
                 <dt>{$MGLANG->T('validation_page', 'ValidTill')}</dt><dd>{if $valid_till}{$valid_till}{else}{$MGLANG->T('validation_page', 'NA')}{/if}</dd>
-                <dt>{$MGLANG->T('validation_page', 'rowSubscription')}</dt><dd>{if $subscribtion_starts && $subscribtion_ends}{$subscribtion_starts} – {$subscribtion_ends}{else}{$MGLANG->T('validation_page', 'NA')}{/if}</dd>
+                <dt>{$MGLANG->T('validation_page', 'rowSubscription')}</dt><dd>{if $subscription_period}{$subscription_period}{else}{$MGLANG->T('validation_page', 'NA')}{/if}</dd>
                 {if $certificateUsable}<dt>{$MGLANG->T('validation_page', 'NextReissue')}</dt><dd>{if $next_reissue}{$next_reissue}{else}{$MGLANG->T('validation_page', 'NA')}{/if}</dd>{/if}
                 <dt>{$MGLANG->T('validation_page', 'StoreAPIOrder')}</dt><dd class="tssggs-mono">{$api_order_id|escape}</dd>
                 <dt>{$MGLANG->T('validation_page', 'VendorOrderID')}</dt><dd class="tssggs-mono">{$vendor_order_id|escape}</dd>
