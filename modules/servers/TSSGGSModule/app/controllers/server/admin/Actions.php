@@ -61,6 +61,8 @@ class Actions {
      */
     public function TerminateAccount($params)
     {
+        // the private keys go in any case, also when the vendor order is left open
+        CertificateService::forgetPrivateKeys($params['serviceid']);
         if(!GeneralSettings::enabled('terminateCancelsOrder'))
         {
             return 'success';
@@ -102,6 +104,7 @@ class Actions {
             // the certificate no longer exists - stop renewal invoices and client actions (same as the client's cancel)
             \WHMCS\Database\Capsule::table('tblhosting')->where('id', (int)$params['serviceid'])
                 ->whereIn('domainstatus', ['Pending', 'Active', 'Suspended'])->update(['domainstatus' => 'Cancelled']);
+            CertificateService::forgetPrivateKeys($params['serviceid']);
         });
     }
 

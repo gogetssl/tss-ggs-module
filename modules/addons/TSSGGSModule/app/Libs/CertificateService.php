@@ -595,8 +595,36 @@ class CertificateService
         }
 
         self::event($serviceId, 'info', 'Vendor order cancelled (' . $reason . ')');
+        self::forgetPrivateKeys($serviceId);
 
         return true;
+    }
+
+    /**
+     * Cancelled / terminated service: the private keys kept for it are deleted (kept key and the AutoInstall copy)
+     */
+    public static function forgetPrivateKeys($serviceId)
+    {
+        try
+        {
+            $deleted = Request::where('serviceid', (int)$serviceId)->where('name', self::PRIVATE_KEY_REQUEST)->delete();
+            $state   = AutoInstallHelpers::get($serviceId);
+            if($state && !empty($state['private_key']))
+            {
+                $status = $state['status'];
+                unset($state['private_key']);
+                AutoInstallQueue::cancelOpenTasks($serviceId, 'Service cancelled');
+                AutoInstallHelpers::save($serviceId, $state, $status === AutoInstallHelpers::STATUS_INSTALLED ? $status : AutoInstallHelpers::STATUS_DISABLED);
+                $deleted = true;
+            }
+            if($deleted)
+            {
+                self::event($serviceId, 'info', 'Stored private key deleted (service cancelled or terminated)');
+            }
+        }
+        catch(\Throwable $e)
+        {
+        }
     }
 
     /**

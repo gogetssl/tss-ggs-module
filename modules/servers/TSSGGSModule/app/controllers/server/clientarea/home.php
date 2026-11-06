@@ -1141,6 +1141,7 @@ class home extends AbstractController
             }
             CertificateService::cancel((int)$input['id'], 'Cancelled by customer');
             Service::where('id', (int)$input['id'])->update(['domainstatus' => 'Cancelled']);
+            CertificateService::forgetPrivateKeys((int)$input['id']);
         }
         catch(\Exception $e)
         {
