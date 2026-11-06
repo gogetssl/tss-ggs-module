@@ -842,7 +842,100 @@ class home extends AbstractController
         $vars['install_domain']      = !empty($aiState['domain']) ? $aiState['domain'] : (CertificateService::installTarget($params['service']->id) ?: ltrim((string)$params['service']->domain, '*.'));
         $vars['install_available']   = !empty($vars['cpanel_services']) && (empty($vars['autoinstall']) || $vars['autoinstall']['status'] !== 'installed');
 
+        // Subscription status bar at the top of the page (same rules as the my.gogetssl.com SSL page)
+        $vars['progress'] = $vars['certificateUsable'] ? self::subscriptionProgress(
+            isset($params['certificate']['validity']['begin']) ? $params['certificate']['validity']['begin'] : '',
+            isset($params['certificate']['validity']['end']) ? $params['certificate']['validity']['end'] : '',
+            isset($itemOrder['subscription']['begin']) ? $itemOrder['subscription']['begin'] : '',
+            isset($itemOrder['subscription']['end']) ? $itemOrder['subscription']['end'] : ''
+        ) : null;
+
         return ['tpl' => 'certificate_active', 'vars' => $vars];
+    }
+
+    /**
+     * Subscription status bar: where the current certificate sits in the subscription.
+     *  - single: the certificate covers the whole subscription (one period);
+     *  - first:  first certificate of a longer subscription (Current | Available);
+     *  - middle: a reissued certificate with time left after it (Expired | Current | Available);
+     *  - end:    the last certificate of the subscription (Expired | Current).
+     * Dates are whole days; a subscription end within 3 days of the certificate expiry counts as the same date.
+     */
+    protected static function subscriptionProgress($sslBegin, $sslEnd, $subBegin, $subEnd)
+    {
+        $day = function($value) {
+            $time = $value ? strtotime($value) : false;
+
+            return $time ? strtotime(date('Y-m-d', $time)) : null;
+        };
+
+        $created = $day($sslBegin);
+        $expires = $day($sslEnd);
+        if(!$created || !$expires)
+        {
+            return null;
+        }
+        $begin = $day($subBegin) ?: $created;
+        $end   = $day($subEnd) ?: $expires;
+        if($begin > $created)
+        {
+            $begin = $created;
+        }
+        if($end <= $expires || ($end - $expires) <= 3 * 86400)
+        {
+            $end = $expires;
+        }
+
+        $today = strtotime(date('Y-m-d'));
+        $days  = max(0, (int)round(($expires - $today) / 86400));
+        $date  = function($time) {
+            return date('Y-m-d', $time);
+        };
+
+        // each label: [date, caption key, alignment, tone]; four equal columns under the bar
+        if($begin == $created && $end == $expires)
+        {
+            return [
+                'state'    => 'single',
+                'days'     => $days,
+                'daysKey'  => $days == 1 ? 'pbDay' : 'pbDays',
+                // a single certificate longer than a year still has a reissue ahead
+                'message'  => strtotime('-1 year', $expires) > $today ? 'next' : '',
+                'segments' => [['current', 100]],
+                'labels'   => [[$date($created), 'pbValidFrom', 'left', 'green'], null, null, [$date($expires), 'pbValidTill', 'right', 'green']],
+            ];
+        }
+        if($begin == $created)
+        {
+            return [
+                'state'    => 'first',
+                'days'     => $days,
+                'daysKey'  => $days == 1 ? 'pbDay' : 'pbDays',
+                'message'  => 'next',
+                'segments' => [['current', 75], ['future', 25]],
+                'labels'   => [[$date($created), 'pbValidFrom', 'left', 'green'], null, [$date($expires), 'pbValidTill', 'right', 'green'], [$date($end), 'pbSubEnds', 'right', '']],
+            ];
+        }
+        if($end > $expires)
+        {
+            return [
+                'state'    => 'middle',
+                'days'     => $days,
+                'daysKey'  => $days == 1 ? 'pbDay' : 'pbDays',
+                'message'  => 'next',
+                'segments' => [['expired', 25], ['current', 50], ['future', 25]],
+                'labels'   => [[$date($begin), 'pbSubStarts', 'left', 'muted'], [$date($created), 'pbValidFrom', 'left', 'green'], [$date($expires), 'pbValidTill', 'right', 'green'], [$date($end), 'pbSubEnds', 'right', '']],
+            ];
+        }
+
+        return [
+            'state'    => 'end',
+            'days'     => $days,
+            'daysKey'  => $days == 1 ? 'pbDay' : 'pbDays',
+            'message'  => 'ends',
+            'segments' => [['expired', 50], ['current', 50]],
+            'labels'   => [[$date($begin), 'pbSubStarts', 'left', 'muted'], null, [$date($created), 'pbValidFrom', 'left', 'green'], [$date($end), 'pbSubEnds', 'right', 'red']],
+        ];
     }
 
     /**
