@@ -41,6 +41,35 @@ class PrivateKeyDownload
         return is_string($pem) && strpos($pem, 'PRIVATE KEY-----') !== false ? $pem : null;
     }
 
+    /**
+     * @return string|null the generated key (of this service, this session) that the CSR was made with
+     */
+    public static function matching($serviceId, $csr)
+    {
+        $csrPublic = @openssl_csr_get_public_key(trim((string)$csr));
+        if(!$csrPublic)
+        {
+            return null;
+        }
+        $public = openssl_pkey_get_details($csrPublic)['key'];
+
+        foreach(self::fresh() as $row)
+        {
+            if((int)$row['service'] !== (int)$serviceId)
+            {
+                continue;
+            }
+            $pem = \decrypt($row['key']);
+            $key = is_string($pem) ? @openssl_pkey_get_private($pem) : false;
+            if($key && openssl_pkey_get_details($key)['key'] === $public)
+            {
+                return $pem;
+            }
+        }
+
+        return null;
+    }
+
     protected static function fresh()
     {
         $keys = isset($_SESSION[self::SESSION]) && is_array($_SESSION[self::SESSION]) ? $_SESSION[self::SESSION] : [];

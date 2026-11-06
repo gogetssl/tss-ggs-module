@@ -841,7 +841,8 @@ class home extends AbstractController
         {
         }
         $aiState                     = AutoInstallHelpers::get($params['service']->id);
-        $vars['install_key_stored']  = !empty($aiState['private_key']);
+        // the client pastes the key only when none of the stored keys belongs to this certificate (own CSR)
+        $vars['install_key_stored']  = CertificateService::privateKeyForCertificate($params['service']->id) !== '';
         $vars['install_domain']      = !empty($aiState['domain']) ? $aiState['domain'] : (CertificateService::installTarget($params['service']->id) ?: ltrim((string)$params['service']->domain, '*.'));
         $vars['install_available']   = !empty($vars['cpanel_services']) && (empty($vars['autoinstall']) || $vars['autoinstall']['status'] !== 'installed');
 
@@ -3051,6 +3052,22 @@ class home extends AbstractController
                 'private_key'        => \encrypt($privateKey),
                 'created_at'         => date('Y-m-d H:i:s'),
             ], $validateTaskData);
+        }
+
+        // keep the key the module generated (here or in the CSR generator) for "Install on server"
+        try
+        {
+            if(!empty($privateKey))
+            {
+                CertificateService::storePrivateKey($serviceId, $privateKey);
+            }
+            elseif(!empty($ownCsr))
+            {
+                CertificateService::rememberGeneratedKey($serviceId, $ownCsr);
+            }
+        }
+        catch(\Throwable $e)
+        {
         }
 
         $response = [

@@ -692,6 +692,8 @@ class CertificateService
         $keepAutoInstall = self::csrUsesAutoInstallKey($serviceId, $csr);
         try
         {
+            // made with the module's CSR generator: keep the new key for "Install on server"
+            self::rememberGeneratedKey($serviceId, $csr);
             if($keepAutoInstall)
             {
                 self::queueAutoInstallAfterReissue($serviceId, $itemId, $methods[$commonName], count(array_filter(array_keys($methods), function($d) { return strpos($d, '*.') === 0; })) > 0);
@@ -709,6 +711,82 @@ class CertificateService
             . ($keepAutoInstall ? ' - it will be installed automatically once issued' : ''));
 
         return $itemId;
+    }
+
+    // ---- Private key of the certificate, kept (encrypted) when the module generated it ---- //
+
+    const PRIVATE_KEY_REQUEST = 'privateKey';
+
+    /**
+     * Keeps the private key of the service encrypted, so "Install on server" does not ask the client for it.
+     * Only keys the module generated (or the client pasted for an installation) are kept.
+     */
+    public static function storePrivateKey($serviceId, $pem)
+    {
+        $pem = trim((string)$pem);
+        if($pem === '' || !@openssl_pkey_get_private($pem))
+        {
+            return;
+        }
+        Request::where('serviceid', (int)$serviceId)->where('name', self::PRIVATE_KEY_REQUEST)->delete();
+        Request::insert([
+            'serviceid'  => (int)$serviceId,
+            'name'       => self::PRIVATE_KEY_REQUEST,
+            'request'    => \encrypt($pem),
+            'status'     => 'stored',
+            'created_at' => date('Y-m-d H:i:s'),
+            'updated_at' => date('Y-m-d H:i:s'),
+        ]);
+    }
+
+    /**
+     * A CSR the client made with the module's CSR generator in this session: keep its private key
+     */
+    public static function rememberGeneratedKey($serviceId, $csr)
+    {
+        $pem = PrivateKeyDownload::matching($serviceId, $csr);
+        if($pem !== null)
+        {
+            self::storePrivateKey($serviceId, $pem);
+        }
+    }
+
+    /**
+     * The stored private key (AutoInstall or kept above) that belongs to the current certificate, '' when none does
+     * (e.g. the certificate was reissued with the client's own CSR)
+     */
+    public static function privateKeyForCertificate($serviceId)
+    {
+        try
+        {
+            $crt = self::bundle($serviceId)->crt();
+        }
+        catch(\Exception $e)
+        {
+            return '';
+        }
+
+        $candidates = [];
+        $state      = AutoInstallHelpers::get($serviceId);
+        if(!empty($state['private_key']))
+        {
+            $candidates[] = \decrypt($state['private_key']);
+        }
+        $row = Request::where('serviceid', (int)$serviceId)->where('name', self::PRIVATE_KEY_REQUEST)->first();
+        if($row && $row->request)
+        {
+            $candidates[] = \decrypt($row->request);
+        }
+        foreach($candidates as $pem)
+        {
+            $pem = trim((string)$pem);
+            if($pem !== '' && @openssl_x509_check_private_key($crt, $pem))
+            {
+                return $pem;
+            }
+        }
+
+        return '';
     }
 
     /**
@@ -823,9 +901,9 @@ class CertificateService
         $state  = AutoInstallHelpers::get($serviceId) ?: [];
 
         $privateKey = trim((string)$privateKey);
-        if($privateKey === '' && !empty($state['private_key']))
+        if($privateKey === '')
         {
-            $privateKey = trim((string)\decrypt($state['private_key']));
+            $privateKey = self::privateKeyForCertificate($serviceId);
         }
         if($privateKey === '')
         {
