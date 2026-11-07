@@ -495,13 +495,42 @@ class Cpanel
         return $grouped;
     }
 
+    /**
+     * WHM API token / access hash from tblservers.accesshash. WHMCS stores it encrypted, sending the stored value
+     * gives 403 "Access denied" from WHM. Values that are already plain (32-char API token, legacy hex access hash) are kept.
+     */
+    public static function decodeAccessHash($stored)
+    {
+        $stored = trim((string)$stored);
+        if($stored === '')
+        {
+            return '';
+        }
+        $compact = str_replace(["\r", "\n"], '', $stored);
+        if(preg_match('/^[A-Za-z0-9]{32}$/', $compact) || (strlen($compact) >= 200 && ctype_xdigit($compact)))
+        {
+            return $stored;
+        }
+        if(function_exists('decrypt'))
+        {
+            $plain        = trim((string)decrypt($stored));
+            $plainCompact = str_replace(["\r", "\n"], '', $plain);
+            if($plainCompact !== '' && ctype_alnum($plainCompact))
+            {
+                return $plain;
+            }
+        }
+
+        return $stored;
+    }
+
     public function setService($service)
     {
         $this->service['hostname']  = $service->hostname;
         $this->service['ipaddress'] = $service->ipaddress;
         $this->service['ssl']       = $service->secure == 'on';
         $this->service['port']      = $service->port;
-        $this->service['hash']      = $service->hash;
+        $this->service['hash']      = self::decodeAccessHash($service->hash);
         $this->service['username']  = $service->username;
         $this->service['password']  = decrypt($service->password);
     }
