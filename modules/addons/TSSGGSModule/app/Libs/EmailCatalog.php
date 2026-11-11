@@ -75,11 +75,6 @@ class EmailCatalog
             {
                 continue;
             }
-            // S/MIME is sold through GoGetSSL only
-            if(in_array($key, EmailTemplates::SMIME_TEMPLATES, true) && !in_array('ggs', Edition::vendors(), true))
-            {
-                continue;
-            }
             self::$all[$key] = [
                 'key'     => $key,
                 'slug'    => self::slug($key),

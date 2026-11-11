@@ -15,7 +15,7 @@ class ProductCatalog
     /** Default option names of earlier versions */
     const OLD_LABELS = ["Additional Single domain SAN's", "Additional Wildcard domain SAN's"];
 
-    /** Gateway product categories the module can sell (S/MIME: GoGetSSL only, see importable()) */
+    /** Gateway product categories the module can sell */
     const SUPPORTED_CATEGORIES = ['tls', 'caas', 'ais', 'smime'];
 
     /**
@@ -24,8 +24,8 @@ class ProductCatalog
     const NOT_SSL_NAMES = '/docsign|document\s+signing|\b(common|verified)\s+mark\b|\b(cmc|vmc)\b/i';
 
     /**
-     * The module can sell the gateway product: SSL/TLS, ACME, AutoInstall SSL and GoGetSSL S/MIME. Code signing,
-     * document signing, mark certificates, TheSSLStore S/MIME and the website security services are not supported.
+     * The module can sell the gateway product: SSL/TLS, ACME, AutoInstall SSL and S/MIME. Code signing, document
+     * signing, mark certificates and the website security services are not supported.
      */
     public static function importable($remoteProduct)
     {

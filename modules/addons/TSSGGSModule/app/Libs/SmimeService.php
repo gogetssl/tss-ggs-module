@@ -8,7 +8,7 @@ use ModulesGarden\TSSGGSModule\App\Models\Request;
 use WHMCS\Database\Capsule;
 
 /**
- * S/MIME (email signing) certificates of GoGetSSL, ordered through the gateway (/certificates/smime).
+ * S/MIME (email signing) certificates of GoGetSSL and TheSSLStore, ordered through the gateway (/certificates/smime).
  *
  * The order is kept in the module's Requests table (name "smime", encrypted JSON):
  * orderId, itemId, status, emails [{email, approved}], vendorOrderId, validFrom, validTill, term, csrProvided,
@@ -59,11 +59,12 @@ class SmimeService
     }
 
     /**
-     * Gateway products the module can sell: GoGetSSL S/MIME (the TheSSLStore S/MIME products take other order data)
+     * Gateway products the module can sell: the S/MIME products of GoGetSSL and TheSSLStore (the gateway takes the same
+     * order for both: product, term, emails, optional CSR and contacts)
      */
     public static function isSupportedRemoteProduct($vendor, $category)
     {
-        return strtolower((string)$category) === self::CATEGORY && strtoupper((string)$vendor) === 'GGS';
+        return strtolower((string)$category) === self::CATEGORY && in_array(strtoupper((string)$vendor), ['GGS', 'TSS'], true);
     }
 
     /**
