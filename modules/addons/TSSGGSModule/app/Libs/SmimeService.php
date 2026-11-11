@@ -31,6 +31,8 @@ class SmimeService
     const ORGANIZATION_FIELDS  = ['name', 'division', 'duns', 'lei', 'phone', 'country', 'region', 'city', 'postal_code', 'address_line_1', 'address_line_2'];
     const ADMINISTRATOR_FIELDS = ['first_name', 'last_name', 'title', 'organization', 'email', 'phone', 'country', 'region', 'city', 'postal_code', 'address_line_1', 'address_line_2'];
     const ORGANIZATION_REQUIRED  = ['name', 'phone', 'country', 'city', 'address_line_1'];
+    // TheSSLStore also needs the organization's state / region ("stateorprovincename") for OV S/MIME
+    const ORGANIZATION_REQUIRED_TSS = ['region'];
     const ADMINISTRATOR_REQUIRED = ['first_name', 'last_name', 'email', 'phone', 'country'];
 
     // days after the order on which the client is reminded to confirm the mailbox
@@ -96,6 +98,16 @@ class SmimeService
         $name = $remote ? (string)$remote->name : (string)Capsule::table('tblproducts')->where('id', (int)$whmcsProductId)->value('name');
 
         return (bool)preg_match('/organi[sz]ation|business|\bOV[A-Z]?\b|sponsor/i', $name);
+    }
+
+    /**
+     * Organization fields the order needs for the product's vendor
+     */
+    public static function organizationRequired($whmcsProductId)
+    {
+        $vendor = strtoupper((string)Capsule::table('tblproducts')->where('id', (int)$whmcsProductId)->value('configoption1'));
+
+        return array_merge(self::ORGANIZATION_REQUIRED, $vendor === 'TSS' ? self::ORGANIZATION_REQUIRED_TSS : []);
     }
 
     /**
@@ -598,7 +610,7 @@ class SmimeService
      * Organization and administrator contacts with every field the gateway takes (empty = null), country codes
      * upper-case. Returns the first missing required field as [group, field] in $missing.
      */
-    public static function contacts(array $organization, array $administrator, &$missing = null)
+    public static function contacts(array $organization, array $administrator, &$missing = null, array $organizationRequired = self::ORGANIZATION_REQUIRED)
     {
         $missing = null;
         $org     = [];
@@ -618,7 +630,7 @@ class SmimeService
             $admin['organization'] = $org['name'];
         }
 
-        foreach(self::ORGANIZATION_REQUIRED as $field)
+        foreach($organizationRequired as $field)
         {
             if($org[$field] === null)
             {

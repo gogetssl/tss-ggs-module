@@ -61,7 +61,7 @@
                                 <input type="text" id="tssggs-org-country" name="org[country]" class="form-control" required maxlength="2" value="{$smimeClient.country|escape:'htmlall'}">
                             {/if}
                         </div>
-                        <div class="tssggs-field"><label for="tssggs-org-region">{$MGLANG->T('smimeOrg_region')}</label><input type="text" id="tssggs-org-region" name="org[region]" class="form-control" value="{$smimeClient.state|escape:'htmlall'}"></div>
+                        <div class="tssggs-field"><label for="tssggs-org-region">{$MGLANG->T('smimeOrg_region')}{if $smimeRegionRequired} <span class="tssggs-req">*</span>{/if}</label><input type="text" id="tssggs-org-region" name="org[region]" class="form-control" value="{$smimeClient.state|escape:'htmlall'}"{if $smimeRegionRequired} required{/if}></div>
                         <div class="tssggs-field"><label for="tssggs-org-city">{$MGLANG->T('smimeOrg_city')} <span class="tssggs-req">*</span></label><input type="text" id="tssggs-org-city" name="org[city]" class="form-control" required value="{$smimeClient.city|escape:'htmlall'}"></div>
                         <div class="tssggs-field"><label for="tssggs-org-postal">{$MGLANG->T('smimeOrg_postal_code')}</label><input type="text" id="tssggs-org-postal" name="org[postal_code]" class="form-control" value="{$smimeClient.postcode|escape:'htmlall'}"></div>
                         <div class="tssggs-field"><label for="tssggs-org-address1">{$MGLANG->T('smimeOrg_address_line_1')} <span class="tssggs-req">*</span></label><input type="text" id="tssggs-org-address1" name="org[address_line_1]" class="form-control" required value="{$smimeClient.address1|escape:'htmlall'}"></div>

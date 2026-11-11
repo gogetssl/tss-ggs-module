@@ -2335,6 +2335,7 @@ class home extends AbstractController
         $lastTill = !empty($last['validTill']) ? strtotime($last['validTill']) : false;
 
         $vars['smimeRequiresOrganization'] = SmimeService::requiresOrganization((int)$input['params']['pid']);
+        $vars['smimeRegionRequired']       = in_array('region', SmimeService::organizationRequired((int)$input['params']['pid']), true);
         $vars['smimeMaxEmails']            = SmimeService::MAX_EMAILS;
         $vars['smimeRenewal']              = (bool)$previous;
         // renewal: the certificate ordered before stays valid until its end date
@@ -2407,7 +2408,7 @@ class home extends AbstractController
         $order = ['emails' => $emails, 'csr' => $csr];
         if(SmimeService::requiresOrganization((int)$input['params']['pid']))
         {
-            $contacts = SmimeService::contacts((array)($input['org'] ?? []), (array)($input['admin'] ?? []), $missing);
+            $contacts = SmimeService::contacts((array)($input['org'] ?? []), (array)($input['admin'] ?? []), $missing, SmimeService::organizationRequired((int)$input['params']['pid']));
             if($missing)
             {
                 throw new \Exception(sprintf(Lang::absoluteT('smimeFieldRequired'), Lang::absoluteT('serverCA', 'home', ($missing[0] === 'org' ? 'smimeOrg_' : 'smimeAdmin_') . $missing[1])));
