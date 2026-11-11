@@ -19,10 +19,12 @@
             <div class="tssggs-hero__title">
                 <span class="tssggs-badge tssggs-badge--{$smimeTone}">{$smimeStatusText|escape}</span>
                 <h3>{$productName|escape}</h3>
+{if $smimeSubject}
                 <p class="tssggs-hero__domain">
                     <svg class="tssggs-ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-4 8"/></svg>
                     {$smimeSubject|escape}
                 </p>
+                {/if}
             </div>
         </div>
         <div class="tssggs-hero__foot">
