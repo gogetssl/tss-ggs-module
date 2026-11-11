@@ -10,6 +10,13 @@ class SSLStepOne
 {
     public function run($params)
     {
+        // S/MIME is ordered on the service page of the module, not on the WHMCS SSL configuration page
+        if(\ModulesGarden\TSSGGSModule\App\Libs\SmimeService::isSmimeWhmcsProduct($params['pid']))
+        {
+            header('Location: clientarea.php?action=productdetails&id=' . (int)$params['serviceid']);
+            exit;
+        }
+
         $sans = isset($params['configoptions']['sans']) ? $params['configoptions']['sans'] : 0;
         $sans_wildcard = isset($params['configoptions']['sans_wildcard']) ? $params['configoptions']['sans_wildcard'] : 0;
 

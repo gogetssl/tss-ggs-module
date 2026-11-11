@@ -566,6 +566,14 @@ class SSLTrustCenterApi
         return $this->call('/certificates/caas/' . (int)$itemId . '/subscription', [], 'DELETE');
     }
 
+    /**
+     * S/MIME order: product {id, term}, emails (first = subject), optional csr and contacts (OV products)
+     */
+    public function createSmime(array $data)
+    {
+        return $this->call('/certificates/smime', $data);
+    }
+
     public function createAis(array $data)
     {
         return $this->call('/certificates/ais', $data);

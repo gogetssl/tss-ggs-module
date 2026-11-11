@@ -117,6 +117,12 @@ class DataTable extends \ModulesGarden\TSSGGSModule\Components\DataTable\DataTab
         {
             $whmcsProduct = $remoteProduct->getWhmcsProduct();
 
+            // products the module can not sell yet are not offered for import (one imported earlier stays listed)
+            if(!$whmcsProduct && !\ModulesGarden\TSSGGSModule\App\Libs\ProductCatalog::importable($remoteProduct))
+            {
+                continue;
+            }
+
             $rows[] = [
                 'id'             => $remoteProduct->id,
                 'whmcsProductId' => $whmcsProduct->id,

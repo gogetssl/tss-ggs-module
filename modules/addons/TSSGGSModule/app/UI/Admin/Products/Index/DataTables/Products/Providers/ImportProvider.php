@@ -108,7 +108,7 @@ class ImportProvider extends CrudProvider
         {
             $remoteProduct = RemoteProduct::find($localId);
 
-            if(!$remoteProduct)
+            if(!$remoteProduct || !\ModulesGarden\TSSGGSModule\App\Libs\ProductCatalog::importable($remoteProduct))
             {
                 continue;
             }
@@ -163,9 +163,9 @@ class ImportProvider extends CrudProvider
 
             if($productId)
             {
-                $dcvArray            = $remoteProductData['dcv'] ?: [];
-                $includedSan         = (int)$remoteProductData['san']['included']['single'];
-                $includedSanWildcard = (int)$remoteProductData['san']['included']['wildcard'];
+                $dcvArray            = $remoteProductData['dcv'] ?? [];
+                $includedSan         = (int)($remoteProductData['san']['included']['single'] ?? 0);
+                $includedSanWildcard = (int)($remoteProductData['san']['included']['wildcard'] ?? 0);
 
                 $productRepository->updateProductConfiguration($productId, [
                     'provider'              => $remoteProduct->vendor,
@@ -204,7 +204,7 @@ class ImportProvider extends CrudProvider
             $optionNames = [];
 
             // the client sees these names on the order form: say what is already in the price
-            if($remoteProductData['san']['single_allowed'])
+            if(!empty($remoteProductData['san']['single_allowed']))
             {
                 $optionNames['single'] = [
                     'name'         => 'sans',
@@ -213,7 +213,7 @@ class ImportProvider extends CrudProvider
                 ];
             }
 
-            if($remoteProductData['san']['wildcard_allowed'])
+            if(!empty($remoteProductData['san']['wildcard_allowed']))
             {
                 $optionNames['wildcard'] = [
                     'name'         => 'sans_wildcard',

@@ -24,7 +24,11 @@ class CertificateSyncHelpers
             ->join('tblproducts', 'tblhosting.packageid', '=', 'tblproducts.id')
             ->where('tblproducts.servertype', 'TSSGGSModule')
             ->where('tblhosting.domainstatus', 'Active')
-            ->where('tblsslorders.status', 'Configuration Submitted');
+            ->where('tblsslorders.status', 'Configuration Submitted')
+            // S/MIME orders have their own data and refresh (SmimeService)
+            ->where(function($query) {
+                $query->whereNull('tblproducts.configoption9')->orWhere('tblproducts.configoption9', '!=', SmimeService::CATEGORY);
+            });
     }
 
     /**

@@ -20,6 +20,11 @@ class Config
             return $WHMCSUrl . '/clientarea.php?action=productdetails&id=' . $service->id . '&acmeconfig=1';
         }
 
+        if($service && \ModulesGarden\TSSGGSModule\App\Libs\SmimeService::isSmimeWhmcsProduct($service->packageid))
+        {
+            return $this->getBrandURL($serviceID) . '/clientarea.php?action=productdetails&id=' . $service->id . '&smimeconfig=1';
+        }
+
         if($service && AisHelpers::isAisWhmcsProduct($service->packageid))
         {
             $WHMCSUrl = $this->getBrandURL($serviceID);

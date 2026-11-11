@@ -42,6 +42,19 @@ class Renew
             return 'success';
         }
 
+        // S/MIME: a renewal is a new certificate order - the service goes back to Awaiting Configuration and the client
+        // gets the configuration link (the current certificate stays valid until it expires)
+        if($service && \ModulesGarden\TSSGGSModule\App\Libs\SmimeService::isSmimeWhmcsProduct($service->packageid)) {
+            if(\ModulesGarden\TSSGGSModule\App\Libs\SmimeService::resetForRenewal($serviceId)) {
+                $sslOrder = SSL::getByServiceId($serviceId);
+                \ModulesGarden\TSSGGSModule\App\Helpers\EmailTemplates::sendEmail(\ModulesGarden\TSSGGSModule\App\Helpers\EmailTemplates::CONFIGURATION_TEMPLATE, $serviceId, [
+                    'ssl_configuration_link' => (new \ModulesGarden\Servers\TSSGGSModule\app\repository\whmcs\Config())->getConfigureSSLUrl($sslOrder ? $sslOrder->id : 0, $serviceId),
+                ]);
+            }
+
+            return 'success';
+        }
+
         $userId = $params['userid'];
         $pid = $params['pid'];
         $billingCycle = $params['model']->billingcycle;

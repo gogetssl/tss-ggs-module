@@ -16,6 +16,25 @@ class ProductCatalog
     const OLD_LABELS = ["Additional Single domain SAN's", "Additional Wildcard domain SAN's"];
 
     /**
+     * The module can sell the gateway product: SSL/TLS, ACME, AutoInstall SSL and GoGetSSL S/MIME.
+     * Code signing and TheSSLStore S/MIME products are not supported yet.
+     */
+    public static function importable($remoteProduct)
+    {
+        $category = strtolower((string)$remoteProduct->category);
+        if($category === 'cs')
+        {
+            return false;
+        }
+        if($category === SmimeService::CATEGORY)
+        {
+            return SmimeService::isSupportedRemoteProduct($remoteProduct->vendor, $category);
+        }
+
+        return true;
+    }
+
+    /**
      * Name of a SAN configurable option as the client sees it on the order form, with what the price already includes
      */
     public static function optionLabel($kind, $included = 0)

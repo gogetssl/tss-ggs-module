@@ -486,8 +486,8 @@ class Helpers
             {
                 $remoteProductData = $remoteProduct->rawData;
 
-                $includedSan         = (int)$remoteProductData['san']['included']['single'];
-                $includedSanWildcard = (int)$remoteProductData['san']['included']['wildcard'];
+                $includedSan         = (int)($remoteProductData['san']['included']['single'] ?? 0);
+                $includedSanWildcard = (int)($remoteProductData['san']['included']['wildcard'] ?? 0);
 
                 $productRepository = new ProductRepository();
                 $productRepository->updateProductConfiguration($whmcsProduct->id, [
@@ -499,7 +499,7 @@ class Helpers
 
                 $optionNames = [];
 
-                if($remoteProductData['san']['single_allowed'])
+                if(!empty($remoteProductData['san']['single_allowed']))
                 {
                     $optionNames['single'] = [
                         'name'         => 'sans',
@@ -508,7 +508,7 @@ class Helpers
                     ];
                 }
 
-                if($remoteProductData['san']['wildcard_allowed'])
+                if(!empty($remoteProductData['san']['wildcard_allowed']))
                 {
                     $optionNames['wildcard'] = [
                         'name'         => 'sans_wildcard',

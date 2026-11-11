@@ -95,7 +95,8 @@ class RenewalNotifyCertificate extends AbstractCommand
 
         foreach($certificatesQuery->get() as $srv)
         {
-            if(AcmeHelpers::isAcmeWhmcsProduct($srv->packageid))
+            // S/MIME: no reissue reminders (a renewal is a new order)
+            if(AcmeHelpers::isAcmeWhmcsProduct($srv->packageid) || \ModulesGarden\TSSGGSModule\App\Libs\SmimeService::isSmimeWhmcsProduct($srv->packageid))
             {
                 continue;
             }

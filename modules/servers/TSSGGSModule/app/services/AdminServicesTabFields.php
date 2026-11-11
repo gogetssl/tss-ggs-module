@@ -38,6 +38,10 @@ class AdminServicesTabFields
                 throw new \Exception('The id not exist in this SSL order');
             }
 
+            if(CertificateService::category($params['serviceid']) === CertificateService::CATEGORY_SMIME)
+            {
+                return $this->getSmimeDetails((int)$params['serviceid'], $sslService);
+            }
             if(CertificateService::category($params['serviceid']) !== CertificateService::CATEGORY_TLS)
             {
                 return ['Gateway Item ID' => (int)$sslService->remoteid];
@@ -57,6 +61,48 @@ class AdminServicesTabFields
         {
             return ['Error' => htmlspecialchars($ex->getMessage())];
         }
+    }
+
+    /**
+     * S/MIME order on the module tab: status, gateway / CA order, email addresses and their confirmation, validity
+     */
+    private function getSmimeDetails($serviceId, $sslService)
+    {
+        $stored = \ModulesGarden\TSSGGSModule\App\Libs\SmimeService::stored($serviceId);
+        $status = (string)($stored['status'] ?? '');
+        $labels = ['active' => 'label-success', 'processing' => 'label-info', 'pending' => 'label-info', 'cancelled' => 'label-danger',
+                   'rejected' => 'label-danger', 'failed' => 'label-danger', 'revoked' => 'label-danger', 'expired' => 'label-default'];
+
+        $emails = [];
+        foreach((array)($stored['emails'] ?? []) as $entry)
+        {
+            $confirmed = !empty($entry['approved']) || $status === 'active';
+            $emails[]  = htmlspecialchars($entry['email']) . ' <span class="label ' . ($confirmed ? 'label-success' : 'label-warning') . '">' . ($confirmed ? 'confirmed' : 'not confirmed') . '</span>';
+        }
+
+        $fields = [];
+        $fields['Configuration Status'] = htmlspecialchars($sslService->status);
+        $fields['Gateway Order']        = 'Order #' . (int)($stored['orderId'] ?? 0) . ' | Item #' . (int)($stored['itemId'] ?? 0)
+            . (!empty($stored['vendorOrderId']) ? ' | Vendor (CA) order #' . htmlspecialchars($stored['vendorOrderId']) : '');
+        $fields['Vendor Status']        = '<span class="label ' . ($labels[$status] ?? 'label-default') . '">' . htmlspecialchars(ucfirst($status ?: 'unknown')) . '</span>'
+            . (!empty($stored['orderedAt']) ? ' &nbsp;ordered ' . htmlspecialchars($stored['orderedAt']) : '')
+            . (!empty($stored['refreshedAt']) ? ' &nbsp;<small class="text-muted">last refresh ' . htmlspecialchars($stored['refreshedAt']) . '</small>' : '');
+        $fields['Email Addresses']      = $emails ? implode('<br>', $emails) : '-';
+        $fields['Validity']             = (!empty($stored['validFrom']) ? htmlspecialchars(substr($stored['validFrom'], 0, 10)) : '-') . ' &rarr; '
+            . (!empty($stored['validTill']) ? htmlspecialchars(substr($stored['validTill'], 0, 10)) : '-');
+        $fields['CSR']                  = !empty($stored['csrProvided']) ? 'Sent by the client' : 'Not sent: the certificate authority emails the client how to collect the certificate';
+        if(!empty($stored['previous']))
+        {
+            $previous = [];
+            foreach(array_reverse((array)$stored['previous']) as $order)
+            {
+                $previous[] = 'Order #' . (int)($order['orderId'] ?? 0) . ' (' . htmlspecialchars((string)($order['status'] ?? ''))
+                    . (!empty($order['validTill']) ? ', valid till ' . htmlspecialchars(substr($order['validTill'], 0, 10)) : '') . ')';
+            }
+            $fields['Previous Orders'] = implode('<br>', $previous);
+        }
+
+        return $fields;
     }
 
     private function getCertificateDetails($params, $sslService)

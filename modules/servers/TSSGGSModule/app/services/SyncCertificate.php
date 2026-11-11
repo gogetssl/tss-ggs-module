@@ -13,6 +13,13 @@ class SyncCertificate
 {
     public function run($params)
     {
+        if(\ModulesGarden\TSSGGSModule\App\Libs\SmimeService::isSmimeService($params['serviceid']))
+        {
+            \ModulesGarden\TSSGGSModule\App\Libs\SmimeService::refresh($params['serviceid']);
+
+            return 'success';
+        }
+
         $certificate = CertificateSyncHelpers::getCertificatesQuery()
             ->where('tblhosting.id', $params['serviceid'])
             ->first();
