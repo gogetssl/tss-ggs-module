@@ -10,6 +10,7 @@
                 <span class="tssggs-badge tssggs-badge--wait">{$MGLANG->T('smimeAwaitingOrder')}</span>
                 <h3>{$productName|escape}</h3>
                 <p class="tssggs-hero__domain">{if $smimeRenewal}{$MGLANG->T('smimeRenewalIntro')}{else}{$MGLANG->T('smimeConfigurationIntro')}{/if}</p>
+                {if $smimeCurrentValidTill}<p class="tssggs-hero__domain">{$MGLANG->T('smimeCurrentValid')|sprintf:$smimeCurrentValidTill}</p>{/if}
             </div>
         </div>
     </section>
@@ -26,12 +27,13 @@
                 <div class="tssggs-field">
                     <label for="tssggs-smime-email">{$MGLANG->T('smimeEmailLabel')} <span class="tssggs-req">*</span></label>
                     <input type="email" id="tssggs-smime-email" name="smime_email" class="form-control" required
-                           value="{$smimeClient.email|escape:'htmlall'}" placeholder="john.doe@example.com">
+                           value="{if $smimePreviousEmails}{$smimePreviousEmails[0]|escape:'htmlall'}{else}{$smimeClient.email|escape:'htmlall'}{/if}" placeholder="john.doe@example.com">
                     <small>{$MGLANG->T('smimeEmailHint')}</small>
                 </div>
                 <div class="tssggs-field">
                     <label for="tssggs-smime-more">{$MGLANG->T('smimeAdditionalEmailsLabel')}</label>
-                    <textarea id="tssggs-smime-more" name="smime_additional_emails" class="form-control" rows="3" placeholder="j.doe@example.com"></textarea>
+                    <textarea id="tssggs-smime-more" name="smime_additional_emails" class="form-control" rows="3" placeholder="j.doe@example.com">{foreach from=$smimePreviousEmails item=previousEmail name=prev}{if !$smarty.foreach.prev.first}{$previousEmail|escape:'htmlall'}
+{/if}{/foreach}</textarea>
                     <small>{$MGLANG->T('smimeAdditionalEmailsHint')|sprintf:$smimeMaxEmails}</small>
                 </div>
                 <p class="tssggs-note">{$MGLANG->T('smimeValidationInfo')}</p>
@@ -116,6 +118,18 @@
                 </div>
             </details>
         </section>
+
+        {if $agreement}
+            <section class="tssggs-card">
+                <div class="tssggs-form tssggs-agreement">
+                    {if $agreement.text}<p class="tssggs-note tssggs-note--plain">{$agreement.text}</p>{/if}
+                    <label class="tssggs-check">
+                        <input type="checkbox" name="agreement" value="1" required>
+                        <span>{$MGLANG->T('sslConfigAgreement')} {if $agreement.url}<a href="{$agreement.url|escape}" target="_blank" rel="noopener">{$agreement.name|escape}</a>{else}{$agreement.name|escape}{/if}</span>
+                    </label>
+                </div>
+            </section>
+        {/if}
 
         <div class="tssggs-actions tssggs-actions--end">
             <button id="tssggs-smime-submit" type="button" class="tssggs-btn tssggs-btn--primary">

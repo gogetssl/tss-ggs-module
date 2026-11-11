@@ -354,6 +354,7 @@ $_LANG['aisSubscriptionCancelled'] = 'Předplatné AIS bylo zrušeno.';
 $_LANG['serverCA']['home']['smimeAwaitingOrder'] = 'Čeká na údaje objednávky';
 $_LANG['serverCA']['home']['smimeConfigurationIntro'] = 'Zadejte e-mailovou adresu, kterou chcete zabezpečit. Certifikační autorita poté ověří, že na ni dostáváte e-maily.';
 $_LANG['serverCA']['home']['smimeRenewalIntro'] = 'Prodloužení je zaplaceno. Objednejte další certifikát: vystaví se pro e-mailovou adresu, kterou zadáte níže.';
+$_LANG['serverCA']['home']['smimeCurrentValid'] = 'Váš současný certifikát zůstává platný do %s.';
 $_LANG['serverCA']['home']['smimeEmailsSection'] = 'E-mailové adresy';
 $_LANG['serverCA']['home']['smimeEmailLabel'] = 'E-mailová adresa k zabezpečení';
 $_LANG['serverCA']['home']['smimeEmailHint'] = 'Certifikát se vystaví pro tuto schránku. Na tuto adresu musíte dostávat e-maily.';

@@ -354,6 +354,7 @@ $_LANG['aisSubscriptionCancelled']       = 'AIS-abonnementet er opsagt.';
 $_LANG['serverCA']['home']['smimeAwaitingOrder'] = 'Afventer dine ordreoplysninger';
 $_LANG['serverCA']['home']['smimeConfigurationIntro'] = 'Angiv den e-mailadresse, der skal sikres. Certifikatudstederen kontrollerer derefter, at du kan modtage e-mail på adressen.';
 $_LANG['serverCA']['home']['smimeRenewalIntro'] = 'Din fornyelse er betalt. Bestil det næste certifikat: det udstedes til den e-mailadresse, du angiver nedenfor.';
+$_LANG['serverCA']['home']['smimeCurrentValid'] = 'Dit nuværende certifikat er gyldigt indtil %s.';
 $_LANG['serverCA']['home']['smimeEmailsSection'] = 'E-mailadresser';
 $_LANG['serverCA']['home']['smimeEmailLabel'] = 'E-mailadresse, der skal sikres';
 $_LANG['serverCA']['home']['smimeEmailHint'] = 'Certifikatet udstedes til denne postkasse. Du skal kunne modtage e-mail på adressen.';

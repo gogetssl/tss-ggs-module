@@ -2285,7 +2285,7 @@ class home extends AbstractController
 
         $stored = SmimeService::stored($serviceId);
         $vars['refreshError'] = '';
-        if(!empty($stored['itemId']) && !in_array($stored['status'] ?? '', SmimeService::FINAL_STATUSES, true))
+        if(SmimeService::refreshDue($stored))
         {
             try
             {
@@ -2330,9 +2330,17 @@ class home extends AbstractController
             $phone = '+' . ltrim((string)$client->phonecc, '+') . '.' . $phone;
         }
 
+        $previous = (array)(SmimeService::stored($serviceId)['previous'] ?? []);
+        $last     = $previous ? (array)end($previous) : [];
+        $lastTill = !empty($last['validTill']) ? strtotime($last['validTill']) : false;
+
         $vars['smimeRequiresOrganization'] = SmimeService::requiresOrganization((int)$input['params']['pid']);
         $vars['smimeMaxEmails']            = SmimeService::MAX_EMAILS;
-        $vars['smimeRenewal']              = !empty(SmimeService::stored($serviceId)['previous']);
+        $vars['smimeRenewal']              = (bool)$previous;
+        // renewal: the certificate ordered before stays valid until its end date
+        $vars['smimeCurrentValidTill']     = $lastTill && $lastTill > time() && ($last['status'] ?? '') === 'active' ? date('F j, Y', $lastTill) : '';
+        $vars['smimePreviousEmails']       = array_values((array)($last['emails'] ?? []));
+        $vars['agreement']                 = CertificateService::agreement((int)$input['params']['pid']);
         $vars['smimeClient']               = [
             'email'       => $client ? $client->email : '',
             'firstname'   => $client ? $client->firstname : '',
@@ -2383,6 +2391,11 @@ class home extends AbstractController
         if(count($emails) > SmimeService::MAX_EMAILS)
         {
             throw new \Exception(sprintf(Lang::absoluteT('smimeTooManyEmails'), SmimeService::MAX_EMAILS));
+        }
+
+        if(CertificateService::agreement((int)$input['params']['pid']) && empty($input['agreement']))
+        {
+            throw new \Exception(Lang::absoluteT('serverCA', 'home', 'sslConfigAgreementRequired'));
         }
 
         $csr = trim((string)($input['smime_csr'] ?? ''));

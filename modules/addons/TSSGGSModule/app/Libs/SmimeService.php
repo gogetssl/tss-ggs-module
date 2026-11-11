@@ -253,6 +253,7 @@ class SmimeService
             'updated_at' => date('Y-m-d H:i:s'),
         ]);
         Capsule::table('tblhosting')->where('id', (int)$serviceId)->update(['domain' => $emails[0]]);
+        self::saveCost($serviceId, (float)($response['order']['total_amount'] ?? 0));
 
         CertificateService::event($serviceId, 'info', 'S/MIME certificate ordered for ' . implode(', ', $emails) . ' (order #' . $orderId . ')', (int)$service->userid);
 
@@ -276,25 +277,71 @@ class SmimeService
         $stored['refreshedAt'] = date('Y-m-d H:i:s');
         self::save($serviceId, $stored);
 
+        // the cron takes the orders refreshed longest ago first
+        Capsule::table('tblsslorders')->where('serviceid', (int)$serviceId)->update(['updated_at' => date('Y-m-d H:i:s')]);
+
         $status = (string)($stored['status'] ?? '');
         if($status !== '' && $status !== $previousStatus)
         {
-            $update = ['updated_at' => date('Y-m-d H:i:s')];
+            $update = [];
             if($status === 'active')
             {
                 $update['status']         = 'Completed';
                 $update['completiondate'] = date('Y-m-d H:i:s');
+
+                // the certificate is valid from its issue date: the next due date follows its end (same rule and
+                // due date offset setting as the SSL certificates)
+                $dueDate = SslProductHelpers::getServiceDueDate((array)$response, []);
+                if($dueDate)
+                {
+                    Capsule::table('tblhosting')->where('id', (int)$serviceId)->update(['nextduedate' => $dueDate, 'nextinvoicedate' => $dueDate]);
+                }
             }
             elseif(in_array($status, ['cancelled', 'revoked', 'refunded'], true))
             {
                 $update['status'] = 'Cancelled';
             }
-            Capsule::table('tblsslorders')->where('serviceid', (int)$serviceId)->update($update);
+            if($update)
+            {
+                Capsule::table('tblsslorders')->where('serviceid', (int)$serviceId)->update($update);
+            }
 
             CertificateService::event($serviceId, in_array($status, ['failed', 'rejected'], true) ? 'error' : 'info', 'S/MIME certificate status: ' . ($previousStatus ?: '-') . ' -> ' . $status);
         }
 
         return $stored;
+    }
+
+    /**
+     * The client page reads the order from the gateway when it was last read more than $seconds ago
+     */
+    public static function refreshDue(array $stored, $seconds = 60)
+    {
+        if(empty($stored['itemId']) || in_array($stored['status'] ?? '', self::FINAL_STATUSES, true))
+        {
+            return false;
+        }
+
+        return empty($stored['refreshedAt']) || strtotime($stored['refreshedAt']) < time() - (int)$seconds;
+    }
+
+    /**
+     * Gateway cost, WHMCS price and invoice of the order on the request row (Reports: cost and profit)
+     */
+    protected static function saveCost($serviceId, $apiPrice)
+    {
+        $service   = Capsule::table('tblhosting')->where('id', (int)$serviceId)->first(['amount']);
+        $invoiceId = (int)Capsule::table('tblinvoiceitems')->where('relid', (int)$serviceId)->where('type', 'Hosting')->orderBy('invoiceid', 'desc')->value('invoiceid');
+        $rate      = (float)((new \ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository())->getModuleConfiguration()['financeSettings']['rate'] ?? 1) ?: 1;
+        $amount    = $service ? (float)$service->amount : 0;
+
+        Request::where('serviceid', (int)$serviceId)->where('name', self::REQUEST_NAME)->update([
+            'invoiceid'   => $invoiceId,
+            'api_price'   => $apiPrice,
+            'whmcs_price' => $amount,
+            'rate'        => $rate,
+            'diff_price'  => $amount - $apiPrice,
+        ]);
     }
 
     /**

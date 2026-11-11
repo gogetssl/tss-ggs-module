@@ -306,3 +306,6 @@ table.table-validation-details td.break-all {
 .tssggs-chip { display: inline-block; padding: 1px 8px; border-radius: 999px; background: var(--c-amber-tint); color: var(--c-amber); font-size: 12px; font-weight: 500; }
 .tssggs-chip--ok { background: var(--c-green-tint); color: var(--c-green-dark); }
 @media (prefers-reduced-motion: reduce) { .tssggs-details > summary::after { transition: none; } }
+.tssggs-check { display: flex; align-items: flex-start; gap: 8px; margin: 0; font-weight: 400; cursor: pointer; }
+.tssggs-check input { margin-top: 3px; flex: none; }
+.tssggs-hero__domain + .tssggs-hero__domain { margin-top: 4px; }

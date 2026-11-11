@@ -354,6 +354,7 @@ $_LANG['aisSubscriptionCancelled']       = 'AIS subscription has been cancelled.
 $_LANG['serverCA']['home']['smimeAwaitingOrder'] = 'Waiting for your order details';
 $_LANG['serverCA']['home']['smimeConfigurationIntro'] = 'Enter the email address to secure. The certificate authority then checks that you can receive email at it.';
 $_LANG['serverCA']['home']['smimeRenewalIntro'] = 'Your renewal is paid. Order the next certificate: it is issued for the email address you enter below.';
+$_LANG['serverCA']['home']['smimeCurrentValid'] = 'Your current certificate stays valid until %s.';
 $_LANG['serverCA']['home']['smimeEmailsSection'] = 'Email addresses';
 $_LANG['serverCA']['home']['smimeEmailLabel'] = 'Email address to secure';
 $_LANG['serverCA']['home']['smimeEmailHint'] = 'The certificate is issued for this mailbox. You must be able to receive email at this address.';

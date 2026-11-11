@@ -354,6 +354,7 @@ $_LANG['aisSubscriptionCancelled'] = 'Das AIS-Abonnement wurde gekündigt.';
 $_LANG['serverCA']['home']['smimeAwaitingOrder'] = 'Wartet auf Ihre Bestelldaten';
 $_LANG['serverCA']['home']['smimeConfigurationIntro'] = 'Geben Sie die zu schützende E-Mail-Adresse ein. Die Zertifizierungsstelle prüft danach, ob Sie an dieser Adresse E-Mails empfangen können.';
 $_LANG['serverCA']['home']['smimeRenewalIntro'] = 'Ihre Verlängerung ist bezahlt. Bestellen Sie das nächste Zertifikat: Es wird für die unten eingegebene E-Mail-Adresse ausgestellt.';
+$_LANG['serverCA']['home']['smimeCurrentValid'] = 'Ihr aktuelles Zertifikat bleibt bis zum %s gültig.';
 $_LANG['serverCA']['home']['smimeEmailsSection'] = 'E-Mail-Adressen';
 $_LANG['serverCA']['home']['smimeEmailLabel'] = 'Zu schützende E-Mail-Adresse';
 $_LANG['serverCA']['home']['smimeEmailHint'] = 'Das Zertifikat wird für dieses Postfach ausgestellt. Sie müssen an dieser Adresse E-Mails empfangen können.';
