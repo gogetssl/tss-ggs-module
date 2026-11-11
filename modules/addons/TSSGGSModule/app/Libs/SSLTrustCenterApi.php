@@ -622,7 +622,10 @@ class SSLTrustCenterApi
         $info   = curl_getinfo($c);
         $result = substr($data, $info['header_size']);
 
-        logModuleCall('tss_gss_module', 'Time: ' . $info['total_time'] . ' ' . $uri, $info['request_header'] . $queryData, $data);
+        // the Authorization header (partner code and API key), other credentials and private keys never go to the
+        // module log; WHMCS also masks the API key wherever else it appears ($replaceVars)
+        logModuleCall('tss_gss_module', 'Time: ' . $info['total_time'] . ' ' . $uri, SecretValue::redact($info['request_header'] . $queryData),
+            SecretValue::redact($data), '', array_values(array_filter([(string)$this->key], 'strlen')));
 
         if($result === false)
         {

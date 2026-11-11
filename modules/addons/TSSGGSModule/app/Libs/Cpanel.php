@@ -153,7 +153,27 @@ class Cpanel
 
     private function logCall($action, $request, $response, $processed = '', $replacements = [])
     {
-        logModuleCall('TSSGGSModule_cpanel', $action, $request, $response, $processed, $replacements);
+        // private keys and credentials never go to the module log
+        $replacements = array_values(array_filter((array)$replacements, function($value) {
+            return is_string($value) && trim($value) !== '';
+        }));
+        logModuleCall('TSSGGSModule_cpanel', $action, SecretValue::redact($request), SecretValue::redact($response),
+            SecretValue::redact($this->logData($processed)), $replacements);
+    }
+
+    /**
+     * Decoded cPanel answers are objects: as arrays, so SecretValue::redact() can mask them
+     */
+    private function logData($data)
+    {
+        if(is_object($data))
+        {
+            $array = json_decode(json_encode($data), true);
+
+            return is_array($array) ? $array : $data;
+        }
+
+        return $data;
     }
 
     private function getReplacements()
