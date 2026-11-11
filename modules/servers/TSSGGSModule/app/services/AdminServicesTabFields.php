@@ -30,7 +30,14 @@ class AdminServicesTabFields
 
             if($sslService->status === 'Awaiting Configuration')
             {
-                return ['Configuration Status' => '<span class="label label-warning">Awaiting Configuration</span>'];
+                $fields = ['Configuration Status' => '<span class="label label-warning">Awaiting Configuration</span>'];
+                // S/MIME after a renewal: the orders placed before
+                if(CertificateService::category($params['serviceid']) === CertificateService::CATEGORY_SMIME)
+                {
+                    $fields += $this->getSmimePreviousOrders(\ModulesGarden\TSSGGSModule\App\Libs\SmimeService::stored((int)$params['serviceid']));
+                }
+
+                return $fields;
             }
 
             if(empty($sslService->remoteid))
@@ -91,18 +98,29 @@ class AdminServicesTabFields
         $fields['Validity']             = (!empty($stored['validFrom']) ? htmlspecialchars(substr($stored['validFrom'], 0, 10)) : '-') . ' &rarr; '
             . (!empty($stored['validTill']) ? htmlspecialchars(substr($stored['validTill'], 0, 10)) : '-');
         $fields['CSR']                  = !empty($stored['csrProvided']) ? 'Sent by the client' : 'Not sent: the certificate authority emails the client how to collect the certificate';
-        if(!empty($stored['previous']))
+
+        return $fields + $this->getSmimePreviousOrders($stored);
+    }
+
+    /**
+     * S/MIME orders placed before the last renewal
+     */
+    private function getSmimePreviousOrders(array $stored)
+    {
+        if(empty($stored['previous']))
         {
-            $previous = [];
-            foreach(array_reverse((array)$stored['previous']) as $order)
-            {
-                $previous[] = 'Order #' . (int)($order['orderId'] ?? 0) . ' (' . htmlspecialchars((string)($order['status'] ?? ''))
-                    . (!empty($order['validTill']) ? ', valid till ' . htmlspecialchars(substr($order['validTill'], 0, 10)) : '') . ')';
-            }
-            $fields['Previous Orders'] = implode('<br>', $previous);
+            return [];
         }
 
-        return $fields;
+        $previous = [];
+        foreach(array_reverse((array)$stored['previous']) as $order)
+        {
+            $previous[] = 'Order #' . (int)($order['orderId'] ?? 0) . ' (' . htmlspecialchars((string)($order['status'] ?? ''))
+                . (!empty($order['validTill']) ? ', valid till ' . htmlspecialchars(substr($order['validTill'], 0, 10)) : '')
+                . (!empty($order['emails']) ? ', ' . htmlspecialchars(implode(', ', (array)$order['emails'])) : '') . ')';
+        }
+
+        return ['Previous Orders' => implode('<br>', $previous)];
     }
 
     private function getCertificateDetails($params, $sslService)

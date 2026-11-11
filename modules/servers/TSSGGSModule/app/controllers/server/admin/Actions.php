@@ -338,7 +338,10 @@ class Actions {
         $serviceId = isset($params['serviceid']) ? (int)$params['serviceid'] : 0;
         if($serviceId && CertificateService::category($serviceId) === CertificateService::CATEGORY_SMIME)
         {
-            return ['Refresh S/MIME Status' => 'SyncCertificate', 'Cancel Order' => 'CancelOrder'];
+            // nothing to refresh or cancel before the client orders the certificate
+            return \ModulesGarden\TSSGGSModule\App\Libs\SmimeService::isOrdered($serviceId)
+                ? ['Refresh S/MIME Status' => 'SyncCertificate', 'Cancel Order' => 'CancelOrder']
+                : [];
         }
         if($serviceId && CertificateService::category($serviceId) !== CertificateService::CATEGORY_TLS)
         {
