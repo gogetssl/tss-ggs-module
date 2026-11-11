@@ -269,6 +269,11 @@ class GgsReader extends AbstractReader
         {
             return $this->readAis($rec, $order, $cd);
         }
+        $remote = $this->mapper ? $this->mapper->forGgs(Configdata::get($cd, 'product_id', $svc['configoption1'])) : null;
+        if(!empty($cd['smime_item_id']) || ($remote && strtolower((string)$remote->category) === 'smime'))
+        {
+            return $this->readSmime($rec, $svc, $order, $cd, $remote);
+        }
 
         return $this->readSsl($rec, $svc, $order, $cd);
     }
@@ -508,6 +513,73 @@ class GgsReader extends AbstractReader
             'renewal_date' => $sub['renewal_date'], 'auto_renew' => (int)($sub['auto_renew'] ?? 1), 'cancelled_at' => $sub['cancelled_at'],
         ]];
         $rec['configdata'] = ['ssl_status' => (string)$sub['status']];
+
+        return $rec;
+    }
+
+    /**
+     * S/MIME (SSLCENTERWHMCS 3.4+, ordered through GoGetSSL API v2): configdata smime_item_id, smime_order_id, ssl_status,
+     * smime_emails, smime_term, smime_csr_provided, valid_from, valid_till, ordered_at, partner_order_id.
+     * Written as the unified module's "smime" request row (SmimeService).
+     */
+    protected function readSmime(array $rec, array $svc, array $order, array $cd, $remote): array
+    {
+        $rec['kind']              = 'smime';
+        $rec['remote_product_id'] = $remote ? (string)$remote->remoteId : (string)(int)Configdata::get($cd, 'product_id', $svc['configoption1']);
+        if(!$remote)
+        {
+            $rec['warnings'][] = 'Gateway product not found for GoGetSSL product id ' . $rec['remote_product_id'] . ' (sync products in step 4)';
+        }
+
+        $itemId = (int)Configdata::get($cd, 'smime_item_id', 0);
+        if($itemId <= 0 || $order['status'] === self::STATUS_AWAITING)
+        {
+            $rec['target_status']  = self::STATUS_AWAITING;
+            $rec['remote_id']      = '';
+            $rec['request_status'] = 'pending';
+
+            return $rec;
+        }
+
+        $status = strtolower((string)Configdata::get($cd, 'ssl_status', '')) ?: 'processing';
+        $emails = [];
+        foreach((array)Configdata::get($cd, 'smime_emails', []) as $entry)
+        {
+            $entry = is_string($entry) ? ['email' => $entry] : (array)$entry;
+            if(!empty($entry['email']))
+            {
+                $emails[] = ['email' => (string)$entry['email'], 'approved' => !empty($entry['approved'])];
+            }
+        }
+
+        $rec['remote_id']      = (string)$itemId;
+        $rec['request_status'] = $status;
+        $rec['target_status']  = $status === 'active' ? 'Completed' : (in_array($status, ['cancelled', 'revoked', 'refunded'], true) ? 'Cancelled' : self::STATUS_SUBMITTED);
+        $rec['smime'] = [
+            'orderId'       => (int)Configdata::get($cd, 'smime_order_id', $order['remoteid']),
+            'itemId'        => $itemId,
+            'status'        => $status,
+            'emails'        => $emails,
+            'vendorOrderId' => (string)Configdata::get($cd, 'partner_order_id', ''),
+            'validFrom'     => (string)Configdata::get($cd, 'valid_from', ''),
+            'validTill'     => (string)Configdata::get($cd, 'valid_till', ''),
+            'term'          => (int)Configdata::get($cd, 'smime_term', 12),
+            'csrProvided'   => (bool)Configdata::get($cd, 'smime_csr_provided', false),
+            'orderedAt'     => (string)Configdata::get($cd, 'ordered_at', ''),
+            'previous'      => [],
+            // the legacy module may have reminded the client already: no reminder e-mails for migrated orders
+            'remindersSent' => [2, 7],
+            'migrated'      => true,
+        ];
+        $rec['prices'] = [
+            'api_price'   => $this->apiPrice((int)$rec['remote_product_id'], (int)Configdata::get($cd, 'smime_term', 12)),
+            'whmcs_price' => (float)$svc['amount'],
+            'invoiceid'   => $this->lastInvoiceId($rec['service_id']),
+        ];
+        if(!$emails)
+        {
+            $rec['warnings'][] = 'S/MIME email addresses missing in legacy data; they are read from the gateway by the first refresh';
+        }
 
         return $rec;
     }

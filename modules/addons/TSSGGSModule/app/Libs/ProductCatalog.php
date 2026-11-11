@@ -15,20 +15,32 @@ class ProductCatalog
     /** Default option names of earlier versions */
     const OLD_LABELS = ["Additional Single domain SAN's", "Additional Wildcard domain SAN's"];
 
+    /** Gateway product categories the module can sell (S/MIME: GoGetSSL only, see importable()) */
+    const SUPPORTED_CATEGORIES = ['tls', 'caas', 'ais', 'smime'];
+
     /**
-     * The module can sell the gateway product: SSL/TLS, ACME, AutoInstall SSL and GoGetSSL S/MIME.
-     * Code signing and TheSSLStore S/MIME products are not supported yet.
+     * Products GoGetSSL lists in the "tls" category that are not SSL certificates (document signing, mark certificates)
+     */
+    const NOT_SSL_NAMES = '/docsign|document\s+signing|\b(common|verified)\s+mark\b|\b(cmc|vmc)\b/i';
+
+    /**
+     * The module can sell the gateway product: SSL/TLS, ACME, AutoInstall SSL and GoGetSSL S/MIME. Code signing,
+     * document signing, mark certificates, TheSSLStore S/MIME and the website security services are not supported.
      */
     public static function importable($remoteProduct)
     {
         $category = strtolower((string)$remoteProduct->category);
-        if($category === 'cs')
+        if(!in_array($category, self::SUPPORTED_CATEGORIES, true))
         {
             return false;
         }
         if($category === SmimeService::CATEGORY)
         {
             return SmimeService::isSupportedRemoteProduct($remoteProduct->vendor, $category);
+        }
+        if($category === 'tls' && preg_match(self::NOT_SSL_NAMES, (string)$remoteProduct->name))
+        {
+            return false;
         }
 
         return true;

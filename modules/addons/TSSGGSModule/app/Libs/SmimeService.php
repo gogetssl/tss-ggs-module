@@ -2,6 +2,7 @@
 
 namespace ModulesGarden\TSSGGSModule\App\Libs;
 
+use ModulesGarden\TSSGGSModule\App\Helpers\EmailTemplates;
 use ModulesGarden\TSSGGSModule\App\Models\RemoteProduct;
 use ModulesGarden\TSSGGSModule\App\Models\Request;
 use WHMCS\Database\Capsule;
@@ -31,6 +32,9 @@ class SmimeService
     const ADMINISTRATOR_FIELDS = ['first_name', 'last_name', 'title', 'organization', 'email', 'phone', 'country', 'region', 'city', 'postal_code', 'address_line_1', 'address_line_2'];
     const ORGANIZATION_REQUIRED  = ['name', 'phone', 'country', 'city', 'address_line_1'];
     const ADMINISTRATOR_REQUIRED = ['first_name', 'last_name', 'email', 'phone', 'country'];
+
+    // days after the order on which the client is reminded to confirm the mailbox
+    const REMINDER_DAYS = [2, 7];
 
     /** @var array WHMCS product ID => bool */
     protected static $products = [];
@@ -256,6 +260,10 @@ class SmimeService
         self::saveCost($serviceId, (float)($response['order']['total_amount'] ?? 0));
 
         CertificateService::event($serviceId, 'info', 'S/MIME certificate ordered for ' . implode(', ', $emails) . ' (order #' . $orderId . ')', (int)$service->userid);
+        if(($stored['status'] ?? '') === 'active')
+        {
+            self::sendIssuedEmail($serviceId, $stored);
+        }
 
         return $stored;
     }
@@ -307,6 +315,10 @@ class SmimeService
             }
 
             CertificateService::event($serviceId, in_array($status, ['failed', 'rejected'], true) ? 'error' : 'info', 'S/MIME certificate status: ' . ($previousStatus ?: '-') . ' -> ' . $status);
+            if($status === 'active')
+            {
+                self::sendIssuedEmail($serviceId, $stored);
+            }
         }
 
         return $stored;
@@ -323,6 +335,63 @@ class SmimeService
         }
 
         return empty($stored['refreshedAt']) || strtotime($stored['refreshedAt']) < time() - (int)$seconds;
+    }
+
+    /**
+     * "S/MIME Certificate Issued" e-mail: how the client gets the certificate
+     */
+    protected static function sendIssuedEmail($serviceId, array $stored)
+    {
+        try
+        {
+            EmailTemplates::sendEmail(EmailTemplates::SMIME_ISSUED_TEMPLATE, $serviceId, [
+                'smime_emails'       => implode(', ', array_column((array)($stored['emails'] ?? []), 'email')),
+                'smime_valid_till'   => !empty($stored['validTill']) ? date('F j, Y', strtotime($stored['validTill'])) : '',
+                'smime_csr_provided' => !empty($stored['csrProvided']) ? 1 : 0,
+            ]);
+        }
+        catch(\Throwable $e)
+        {
+            CertificateService::event($serviceId, 'error', 'S/MIME issued e-mail not sent: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * "S/MIME Mailbox Not Confirmed" e-mail on day 2 and day 7 after the order while an address is not confirmed
+     * (one e-mail per run; the days already passed are marked as sent)
+     */
+    public static function remindIfUnconfirmed($serviceId)
+    {
+        $stored = self::stored($serviceId);
+        if(!in_array($stored['status'] ?? '', ['pending', 'processing'], true) || empty($stored['orderedAt']))
+        {
+            return false;
+        }
+        $pending = [];
+        foreach((array)($stored['emails'] ?? []) as $entry)
+        {
+            if(empty($entry['approved']))
+            {
+                $pending[] = $entry['email'];
+            }
+        }
+        $days = (int)floor((time() - strtotime($stored['orderedAt'])) / 86400);
+        $sent = (array)($stored['remindersSent'] ?? []);
+        $due  = array_values(array_filter(self::REMINDER_DAYS, function($day) use ($days, $sent) { return $days >= $day && !in_array($day, $sent, true); }));
+        if(!$pending || !$due)
+        {
+            return false;
+        }
+
+        EmailTemplates::sendEmail(EmailTemplates::SMIME_REMINDER_TEMPLATE, $serviceId, [
+            'smime_pending_emails' => implode(', ', $pending),
+            'smime_ordered_date'   => date('F j, Y', strtotime($stored['orderedAt'])),
+        ]);
+        $stored['remindersSent'] = array_values(array_unique(array_merge($sent, $due)));
+        self::save($serviceId, $stored);
+        CertificateService::event($serviceId, 'info', 'S/MIME reminder sent: mailbox not confirmed (' . implode(', ', $pending) . ')');
+
+        return true;
     }
 
     /**
@@ -369,6 +438,7 @@ class SmimeService
                 if(!empty($stored['itemId']) && !in_array($stored['status'] ?? '', self::FINAL_STATUSES, true))
                 {
                     self::refresh($serviceId);
+                    self::remindIfUnconfirmed($serviceId);
                 }
             }
             catch(\Throwable $e)

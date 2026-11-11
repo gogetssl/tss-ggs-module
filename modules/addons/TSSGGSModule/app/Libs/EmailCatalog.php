@@ -19,10 +19,13 @@ class EmailCatalog
         'S/MIME Configuration Required'     => ['order', ['ssl_configuration_link'], true],
         'ACME Subscription Configuration'   => ['order', ['ssl_configuration_link'], true],
         'DNS Validation Switched to Email'  => ['validation', ['domain', 'dcv_email', 'order_url'], true],
+        'S/MIME Mailbox Not Confirmed'      => ['validation', ['smime_pending_emails', 'smime_ordered_date', 'order_url'], true],
         'Validation Warning'                => ['validation', ['domain', 'dcv_method', 'order_url'], true],
         'Send Certificate'                  => ['issued', ['domain', 'ssl_certyficate', 'crt_code'], true],
         'Certificate Installed'             => ['issued', ['domain', 'order_url'], true],
+        'S/MIME Certificate Issued'         => ['issued', ['smime_emails', 'smime_valid_till', 'smime_csr_provided', 'order_url'], true],
         'Service Expiration'                => ['renewals', ['expireDaysLeft'], true],
+        'S/MIME Expiration'                 => ['renewals', ['expireDaysLeft'], true],
         'Reissue'                           => ['renewals', [], true],
         'Renewal Started'                   => ['renewals', ['domain', 'cert_expiry', 'days_left', 'order_url'], true],
         'Renewal Invoice Created'           => ['renewals', ['invoice_id', 'invoice_total', 'invoice_due_date', 'invoice_url'], true],
@@ -73,7 +76,7 @@ class EmailCatalog
                 continue;
             }
             // S/MIME is sold through GoGetSSL only
-            if($key === EmailTemplates::SMIME_CONFIGURATION_TEMPLATE && !in_array('ggs', Edition::vendors(), true))
+            if(in_array($key, EmailTemplates::SMIME_TEMPLATES, true) && !in_array('ggs', Edition::vendors(), true))
             {
                 continue;
             }

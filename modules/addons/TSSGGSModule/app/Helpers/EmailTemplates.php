@@ -42,6 +42,45 @@ class EmailTemplates
                                  </p>
                                  <p>{$signature}</p>';
 
+    const SMIME_REMINDER_TEMPLATE = 'S/MIME Mailbox Not Confirmed';
+    const SMIME_REMINDER_SUBJECT  = 'Confirm your mailbox to receive your S/MIME certificate';
+    const SMIME_REMINDER_MESSAGE  = '<p>Dear {$client_name},</p>
+                                 <p>
+                                    On {$smime_ordered_date} the certificate authority emailed {$smime_pending_emails}
+                                    to confirm that you control the mailbox. The certificate can only be issued
+                                    after this confirmation.
+                                 </p>
+                                 <p>
+                                    Please open that email (check the spam folder too) and follow its instructions.
+                                    You can see the status of your order here: {$order_url}
+                                 </p>
+                                 <p>{$signature}</p>';
+
+    const SMIME_ISSUED_TEMPLATE = 'S/MIME Certificate Issued';
+    const SMIME_ISSUED_SUBJECT  = 'Your S/MIME certificate is issued - {$domain}';
+    const SMIME_ISSUED_MESSAGE  = '<p>Dear {$client_name},</p>
+                                 <p>Your S/MIME certificate for {$smime_emails} is issued. It is valid until {$smime_valid_till}.</p>
+                                 <p>
+                                    {if $smime_csr_provided}The certificate is issued for the CSR you sent: install it in your email
+                                    client together with the private key you created.{else}The certificate authority emails you how to
+                                    collect the certificate and its private key. Keep the private key safe: without it you can not read
+                                    the emails encrypted for this certificate.{/if}
+                                 </p>
+                                 <p>Order details: {$order_url}</p>
+                                 <p>{$signature}</p>';
+
+    const SMIME_EXPIRATION_TEMPLATE = 'S/MIME Expiration';
+    const SMIME_EXPIRATION_SUBJECT  = 'Your S/MIME certificate expires in {$expireDaysLeft} days - {$domain}';
+    const SMIME_EXPIRATION_MESSAGE  = '<p>Dear {$client_name},</p>
+                                 <p>Your S/MIME certificate for {$domain} expires in {$expireDaysLeft} days ({$cert_expiry_date}).</p>
+                                 <p>
+                                    To keep signing and encrypting your email, renew the service. After the renewal is paid you
+                                    order the next certificate in the client area, and the certificate authority confirms the
+                                    mailbox again. Your current certificate stays valid until it expires.
+                                 </p>
+                                 <p>{$order_url}</p>
+                                 <p>{$signature}</p>';
+
     const EXPIRATION_TEMPLATE = 'Service Expiration';
     const EXPIRATION_SUBJECT  = 'Service Expiration Notification - {$service_domain}';
     const EXPIRATION_MESSAGE  = '<p>Dear {$client_name},</p>
@@ -127,7 +166,10 @@ class EmailTemplates
                              </p>
                              <p>{$signature}</p>';
 
-    const TEMPLATE_NAMES = ['CONFIGURATION', 'SMIME_CONFIGURATION', 'EXPIRATION', 'SEND_CERTIFICATE', 'RENEWAL', 'REISSUE', 'SUBSCRIPTION', 'SUBSCRIPTION_EXPIRATION', 'SUBSCRIPTION_RENEWAL', 'RENEWAL_INVOICE', 'DISCONTINUED'];
+    const TEMPLATE_NAMES = ['CONFIGURATION', 'SMIME_CONFIGURATION', 'SMIME_REMINDER', 'SMIME_ISSUED', 'SMIME_EXPIRATION', 'EXPIRATION', 'SEND_CERTIFICATE', 'RENEWAL', 'REISSUE', 'SUBSCRIPTION', 'SUBSCRIPTION_EXPIRATION', 'SUBSCRIPTION_RENEWAL', 'RENEWAL_INVOICE', 'DISCONTINUED'];
+
+    /** S/MIME e-mails (GoGetSSL edition only) */
+    const SMIME_TEMPLATES = [self::SMIME_CONFIGURATION_TEMPLATE, self::SMIME_REMINDER_TEMPLATE, self::SMIME_ISSUED_TEMPLATE, self::SMIME_EXPIRATION_TEMPLATE];
 
     /** keys of the templates that are created disabled */
     const OPT_IN = [self::RENEWAL_INVOICE_TEMPLATE];

@@ -78,12 +78,19 @@ class RenewalNotifyCertificate extends AbstractCommand
 
         $daysNotify = explode(',', $send_expiration_notification_reccuring);
 
+        // SSL orders stay "Configuration Submitted" when issued; an issued S/MIME order is "Completed"
         $certificatesQuery = Service::select(['tblhosting.*', 'tblsslorders.remoteid', 'tblproducts.configoption1'])
                                     ->join('tblsslorders', 'tblsslorders.serviceid', '=', 'tblhosting.id')
                                     ->join('tblproducts', 'tblhosting.packageid', '=', 'tblproducts.id')
                                     ->where('tblproducts.servertype', 'TSSGGSModule')
                                     ->where('tblhosting.domainstatus', 'Active')
-                                    ->where('tblsslorders.status', 'Configuration Submitted');
+                                    ->where(function($query) {
+                                        $query->where('tblsslorders.status', 'Configuration Submitted')
+                                              ->orWhere(function($smime) {
+                                                  $smime->where('tblproducts.configoption9', \ModulesGarden\TSSGGSModule\App\Libs\SmimeService::CATEGORY)
+                                                        ->where('tblsslorders.status', 'Completed');
+                                              });
+                                    });
 
 
         $output->write('Start checking certificates...') .
@@ -95,21 +102,22 @@ class RenewalNotifyCertificate extends AbstractCommand
 
         foreach($certificatesQuery->get() as $srv)
         {
-            // S/MIME: no reissue reminders (a renewal is a new order)
-            if(AcmeHelpers::isAcmeWhmcsProduct($srv->packageid) || \ModulesGarden\TSSGGSModule\App\Libs\SmimeService::isSmimeWhmcsProduct($srv->packageid))
+            if(AcmeHelpers::isAcmeWhmcsProduct($srv->packageid))
             {
                 continue;
             }
+            // S/MIME: its own expiry e-mail, no reissue reminder (a renewal is a new order)
+            $isSmime = \ModulesGarden\TSSGGSModule\App\Libs\SmimeService::isSmimeWhmcsProduct($srv->packageid);
 
             $io->progressAdvance(1);
 
             try
             {
 
-                $certificate = Request::getOrder($srv->id);
+                $certificate = $isSmime ? [] : Request::getOrder($srv->id);
 
                 $daysLeft    = $this->checkOrderExpireDate($srv->nextduedate);
-                $daysReissue = $this->checkReissueDate($srv->id, $certificate);
+                $daysReissue = $isSmime ? false : $this->checkReissueDate($srv->id, $certificate);
 
                 if($srv->domainstatus == 'Active' && $daysReissue == '30' && !AutoInstallHelpers::isAutoReissueActive($srv->id))
                 {
@@ -123,7 +131,7 @@ class RenewalNotifyCertificate extends AbstractCommand
                     if($srv->billingcycle != 'One Time' && is_array($daysNotify) && in_array($daysLeft, $daysNotify))
                     {
                         $output->write('Send Email Expiration: ' . $srv->id . ' - ' . $srv->domain);
-                        EmailTemplates::sendEmail(EmailTemplates::EXPIRATION_TEMPLATE, $srv->id, ["expireDaysLeft" => $daysLeft]);
+                        EmailTemplates::sendEmail($isSmime ? EmailTemplates::SMIME_EXPIRATION_TEMPLATE : EmailTemplates::EXPIRATION_TEMPLATE, $srv->id, ["expireDaysLeft" => $daysLeft]);
                         Logger::info("The notification expire has been send", ['service' => $srv->id]);
                     }
                 }

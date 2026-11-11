@@ -34,7 +34,8 @@ class Pipeline
             $services = Capsule::table('tblhosting')
                 ->join('tblproducts', 'tblproducts.id', '=', 'tblhosting.packageid')
                 ->leftJoin('TSSGGSModule_Requests', function($join) {
-                    $join->on('TSSGGSModule_Requests.serviceid', '=', 'tblhosting.id')->where('TSSGGSModule_Requests.name', '=', 'certificate');
+                    // SSL orders keep their state in "certificate", S/MIME orders in "smime"
+                    $join->on('TSSGGSModule_Requests.serviceid', '=', 'tblhosting.id')->whereIn('TSSGGSModule_Requests.name', ['certificate', 'smime']);
                 })
                 ->where('tblproducts.servertype', 'TSSGGSModule')
                 ->whereNotIn('tblhosting.id', $subscriptions ?: [0])
@@ -55,8 +56,9 @@ class Pipeline
                 {
                     continue;
                 }
-                elseif($status === '')
+                elseif($status === '' || $status === 'renewal')
                 {
+                    // "renewal": an S/MIME service waiting for the next certificate order
                     $data['configure']++;
                 }
                 elseif(in_array($status, ['pending', 'processing', 'new'], true))
