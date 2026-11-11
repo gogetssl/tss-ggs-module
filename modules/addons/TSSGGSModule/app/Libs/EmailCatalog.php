@@ -16,6 +16,7 @@ class EmailCatalog
     /** key => [group, extra merge fields, sent by this version] */
     const META = [
         'Configuration Required'            => ['order', ['ssl_configuration_link'], true],
+        'S/MIME Configuration Required'     => ['order', ['ssl_configuration_link'], true],
         'ACME Subscription Configuration'   => ['order', ['ssl_configuration_link'], true],
         'DNS Validation Switched to Email'  => ['validation', ['domain', 'dcv_email', 'order_url'], true],
         'Validation Warning'                => ['validation', ['domain', 'dcv_method', 'order_url'], true],
@@ -68,6 +69,11 @@ class EmailCatalog
         foreach(self::META as $key => list($group, $fields, $sent))
         {
             if(!isset($defaults[$key]))
+            {
+                continue;
+            }
+            // S/MIME is sold through GoGetSSL only
+            if($key === EmailTemplates::SMIME_CONFIGURATION_TEMPLATE && !in_array('ggs', Edition::vendors(), true))
             {
                 continue;
             }

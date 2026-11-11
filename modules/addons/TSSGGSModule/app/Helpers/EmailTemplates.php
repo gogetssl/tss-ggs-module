@@ -27,6 +27,21 @@ class EmailTemplates
                                  <p>{$signature}</p>';
 
 
+    const SMIME_CONFIGURATION_TEMPLATE = 'S/MIME Configuration Required';
+    const SMIME_CONFIGURATION_SUBJECT  = 'S/MIME Certificate - order details required';
+    const SMIME_CONFIGURATION_MESSAGE  = '<p>Dear {$client_name},</p>
+                                 <p>
+                                    Your S/MIME certificate ({$service_product_name}) is ready to be ordered.
+                                    Enter the email address it should secure at the URL below.
+                                 </p>
+                                 <p>{$ssl_configuration_link}</p>
+                                 <p>
+                                    After you submit the order, the certificate authority emails that address
+                                    to confirm you control the mailbox. If you have any questions,
+                                    please open a ticket for assistance.
+                                 </p>
+                                 <p>{$signature}</p>';
+
     const EXPIRATION_TEMPLATE = 'Service Expiration';
     const EXPIRATION_SUBJECT  = 'Service Expiration Notification - {$service_domain}';
     const EXPIRATION_MESSAGE  = '<p>Dear {$client_name},</p>
@@ -112,7 +127,7 @@ class EmailTemplates
                              </p>
                              <p>{$signature}</p>';
 
-    const TEMPLATE_NAMES = ['CONFIGURATION', 'EXPIRATION', 'SEND_CERTIFICATE', 'RENEWAL', 'REISSUE', 'SUBSCRIPTION', 'SUBSCRIPTION_EXPIRATION', 'SUBSCRIPTION_RENEWAL', 'RENEWAL_INVOICE', 'DISCONTINUED'];
+    const TEMPLATE_NAMES = ['CONFIGURATION', 'SMIME_CONFIGURATION', 'EXPIRATION', 'SEND_CERTIFICATE', 'RENEWAL', 'REISSUE', 'SUBSCRIPTION', 'SUBSCRIPTION_EXPIRATION', 'SUBSCRIPTION_RENEWAL', 'RENEWAL_INVOICE', 'DISCONTINUED'];
 
     /** keys of the templates that are created disabled */
     const OPT_IN = [self::RENEWAL_INVOICE_TEMPLATE];

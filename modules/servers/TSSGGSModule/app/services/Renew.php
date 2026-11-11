@@ -47,7 +47,7 @@ class Renew
         if($service && \ModulesGarden\TSSGGSModule\App\Libs\SmimeService::isSmimeWhmcsProduct($service->packageid)) {
             if(\ModulesGarden\TSSGGSModule\App\Libs\SmimeService::resetForRenewal($serviceId)) {
                 $sslOrder = SSL::getByServiceId($serviceId);
-                \ModulesGarden\TSSGGSModule\App\Helpers\EmailTemplates::sendEmail(\ModulesGarden\TSSGGSModule\App\Helpers\EmailTemplates::CONFIGURATION_TEMPLATE, $serviceId, [
+                \ModulesGarden\TSSGGSModule\App\Helpers\EmailTemplates::sendEmail(\ModulesGarden\TSSGGSModule\App\Helpers\EmailTemplates::SMIME_CONFIGURATION_TEMPLATE, $serviceId, [
                     'ssl_configuration_link' => (new \ModulesGarden\Servers\TSSGGSModule\app\repository\whmcs\Config())->getConfigureSSLUrl($sslOrder ? $sslOrder->id : 0, $serviceId),
                 ]);
             }
