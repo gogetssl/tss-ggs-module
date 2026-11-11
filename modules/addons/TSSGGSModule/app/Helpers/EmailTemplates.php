@@ -57,7 +57,7 @@ class EmailTemplates
                                  <p>{$signature}</p>';
 
     const SMIME_ISSUED_TEMPLATE = 'S/MIME Certificate Issued';
-    const SMIME_ISSUED_SUBJECT  = 'Your S/MIME certificate is issued - {$domain}';
+    const SMIME_ISSUED_SUBJECT  = 'Your S/MIME certificate is issued - {$smime_emails}';
     const SMIME_ISSUED_MESSAGE  = '<p>Dear {$client_name},</p>
                                  <p>Your S/MIME certificate for {$smime_emails} is issued. It is valid until {$smime_valid_till}.</p>
                                  <p>
