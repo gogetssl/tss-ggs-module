@@ -16,6 +16,8 @@ class TssReader extends AbstractReader
 {
     const SUBSCRIPTION_CODES = ['rapidssl_automate', 'rapidssl_wc_automate', 'geotrust_automate', 'geotrust_wc_automate'];
     const ACME_CODES         = ['sectigo_caas_dv', 'positivessl_caas_dv'];
+    /** S/MIME products (migrated as S/MIME orders, see readSmime()) */
+    const SMIME_CODES = ['pacbasic', 'pacpro', 'pacenterprise', 'digi_class1_smime', 'digi_client_premium'];
     /** product code fragments the unified module has no flow for */
     const UNSUPPORTED_FRAGMENTS = ['cwatch', 'codeguard', 'sitelock', 'codesign', '_csc', '_cs_', 'smime', 'pac', 'vmc', 'cmc', 'scan', 'pci', 'ee_'];
 
@@ -222,8 +224,23 @@ class TssReader extends AbstractReader
         return strtolower($code);
     }
 
+    public function isSmimeCode(string $code): bool
+    {
+        if(in_array($code, self::SMIME_CODES, true))
+        {
+            return true;
+        }
+        $remote = $this->mapper && $code !== '' ? $this->mapper->forTss($code) : null;
+
+        return $remote && strtolower((string)$remote->category) === 'smime';
+    }
+
     public function isUnsupportedCode(string $code): bool
     {
+        if($this->isSmimeCode($code))
+        {
+            return false;
+        }
         foreach(self::UNSUPPORTED_FRAGMENTS as $fragment)
         {
             if(strpos($code, $fragment) !== false)
@@ -266,7 +283,7 @@ class TssReader extends AbstractReader
         }
         if($this->isUnsupportedCode($code))
         {
-            $warnings[] = 'Product type not supported by the unified module (web security / code signing / S/MIME / scanner)';
+            $warnings[] = 'Product type not supported by the unified module (web security / code signing / document signing / scanner)';
         }
 
         return [
@@ -337,8 +354,159 @@ class TssReader extends AbstractReader
         {
             return $this->readSubscription($rec, $order, $code);
         }
+        if($this->isSmimeCode($code))
+        {
+            return $this->readSmime($rec, $svc, $order, $code);
+        }
 
         return $this->readSsl($rec, $svc, $order, $cd, $code);
+    }
+
+    /**
+     * S/MIME: the TSS module places an "invite" order when the service is created and the client enrols on the
+     * certificate authority's page (TinyOrderLink). The order keeps its ID (gateway item ID = TheSSLStore order ID).
+     * The current state and the enrolment link are read from TheSSLStore (order/status); the legacy tables are the
+     * fallback. Written as the unified module's "smime" request row (SmimeService).
+     */
+    protected function readSmime(array $rec, array $svc, array $order, string $code): array
+    {
+        $rec['kind'] = 'smime';
+        $remote      = $this->mapper ? $this->mapper->forTss($code) : null;
+        $rec['remote_product_id'] = $remote ? (string)$remote->remoteId : $code;
+        if(!$remote)
+        {
+            $rec['warnings'][] = 'Gateway product not found for TheSSLStore product code "' . $code . '"';
+        }
+
+        $remoteId = trim((string)$order['remoteid']);
+        if($remoteId === '' || $remoteId === '0')
+        {
+            $rec['target_status']  = self::STATUS_AWAITING;
+            $rec['remote_id']      = '';
+            $rec['request_status'] = 'pending';
+
+            return $rec;
+        }
+
+        $od = Schema::tableExists('mod_sslstore_orders_data') ? Capsule::table('mod_sslstore_orders_data')->where('service_id', $rec['service_id'])->orderBy('id', 'desc')->first() : null;
+        $od = $od ? (array)$od : [];
+
+        $smime = [
+            'orderId' => (int)$remoteId, 'itemId' => (int)$remoteId, 'status' => '', 'emails' => [], 'vendorOrderId' => (string)($od['vendor_order_id'] ?? ''),
+            'validFrom' => '', 'validTill' => '', 'term' => (int)($od['no_of_months'] ?? 12) ?: 12, 'csrProvided' => false,
+            'orderedAt' => (string)($od['order_placed_date'] ?? ''), 'previous' => [], 'remindersSent' => [2, 7], 'migrated' => true,
+        ];
+
+        $tss = $this->tssOrderStatus($remoteId);
+        if($tss !== null)
+        {
+            $major = strtolower(trim((string)($tss['OrderStatus']['MajorStatus'] ?? '')));
+            $map   = ['initial' => 'invited', 'pending' => 'pending', 'active' => 'active', 'cancelled' => 'cancelled', 'canceled' => 'cancelled',
+                      'rejected' => 'rejected', 'expired' => 'expired', 'revoked' => 'revoked', 'refunded' => 'refunded'];
+            $smime['status'] = $map[$major] ?? 'processing';
+            if($smime['status'] === 'invited' && !empty($tss['TinyOrderLink']))
+            {
+                // the client has not opened the enrolment link yet: it stays valid after the migration
+                $smime['enrollmentLink'] = (string)$tss['TinyOrderLink'];
+            }
+            $commonName = strtolower(trim((string)($tss['CommonName'] ?? '')));
+            if(strpos($commonName, '@') !== false)
+            {
+                $smime['emails'] = [['email' => $commonName, 'approved' => $smime['status'] === 'active']];
+            }
+            if(!empty($tss['VendorOrderID']))
+            {
+                $smime['vendorOrderId'] = (string)$tss['VendorOrderID'];
+            }
+            if($smime['status'] === 'active')
+            {
+                $smime['validFrom'] = $this->tssDate($tss['CertificateStartDate'] ?? '');
+                $smime['validTill'] = $this->tssDate($tss['CertificateEndDate'] ?? '');
+            }
+        }
+        else
+        {
+            $rec['warnings'][] = 'TheSSLStore order status could not be read; the state comes from the legacy tables (the first refresh corrects it)';
+            $smime['status'] = $order['status'] === self::STATUS_AWAITING ? 'invited' : $this->normalizeStatus((string)($od['ssl_status'] ?? ''), (string)$order['status']);
+        }
+
+        if($smime['status'] === 'invited')
+        {
+            $rec['preordered'] = true;
+            $rec['warnings'][] = empty($smime['enrollmentLink'])
+                ? 'S/MIME order ' . $remoteId . ' waits for the client\'s enrolment; the enrolment link is in the e-mail the client received'
+                : 'S/MIME order ' . $remoteId . ' waits for the client\'s enrolment; the client area shows the enrolment link';
+        }
+        if(!$smime['emails'] && $smime['status'] !== 'invited')
+        {
+            $rec['warnings'][] = 'S/MIME email address not known yet; it is read from the gateway by the first refresh';
+        }
+
+        $rec['remote_id']      = $remoteId;
+        $rec['request_status'] = $smime['status'];
+        $rec['target_status']  = $smime['status'] === 'active' ? 'Completed'
+            : (in_array($smime['status'], ['cancelled', 'rejected', 'revoked', 'refunded'], true) ? 'Cancelled' : ($smime['status'] === 'expired' ? 'Expired' : self::STATUS_SUBMITTED));
+        $rec['smime']  = $smime;
+        $rec['prices'] = [
+            'api_price'   => (float)($od['purchase_amt'] ?? 0),
+            'whmcs_price' => (float)$svc['amount'],
+            'invoiceid'   => (int)($od['invoice_id'] ?? 0),
+        ];
+
+        return $rec;
+    }
+
+    /** @var array TheSSLStore order/status answers of this run */
+    protected $tssStatusCache = [];
+
+    /**
+     * TheSSLStore REST order/status with the TSS module's credentials (null when it can not be read)
+     */
+    protected function tssOrderStatus(string $orderId): ?array
+    {
+        if(array_key_exists($orderId, $this->tssStatusCache))
+        {
+            return $this->tssStatusCache[$orderId];
+        }
+
+        $result = null;
+        try
+        {
+            $c    = $this->readCredentials();
+            $live = $c['OperationMode'] === 'live';
+            $code = $live ? $c['PartnerCode'] : $c['TestPartnerCode'];
+            $key  = $live ? $c['AuthToken'] : $c['TestAuthToken'];
+            if($code !== '' && $key !== '' && function_exists('curl_init'))
+            {
+                $ch = curl_init(($live ? 'https://api.thesslstore.com' : 'https://sandbox-wbapi.thesslstore.com') . '/rest/order/status');
+                curl_setopt_array($ch, [
+                    CURLOPT_POST           => true,
+                    CURLOPT_POSTFIELDS     => json_encode(['AuthRequest' => ['PartnerCode' => $code, 'AuthToken' => $key], 'TheSSLStoreOrderID' => $orderId]),
+                    CURLOPT_RETURNTRANSFER => true,
+                    CURLOPT_TIMEOUT        => 20,
+                    CURLOPT_HTTPHEADER     => ['Content-Type: application/json', 'Accept: application/json'],
+                ]);
+                $answer = json_decode((string)curl_exec($ch), true);
+                curl_close($ch);
+                if(is_array($answer) && empty($answer['AuthResponse']['isError']) && isset($answer['OrderStatus']))
+                {
+                    $result = $answer;
+                }
+            }
+        }
+        catch(\Throwable $e)
+        {
+        }
+
+        return $this->tssStatusCache[$orderId] = $result;
+    }
+
+    /** TheSSLStore date ("11/11/2027 12:47:46 PM", 1/1/1900 = none) -> 'Y-m-d H:i:s' */
+    protected function tssDate($value): string
+    {
+        $time = $value ? strtotime((string)$value) : false;
+
+        return $time && (int)date('Y', $time) > 2000 ? date('Y-m-d H:i:s', $time) : '';
     }
 
     protected function readSsl(array $rec, array $svc, array $order, array $cd, string $code): array

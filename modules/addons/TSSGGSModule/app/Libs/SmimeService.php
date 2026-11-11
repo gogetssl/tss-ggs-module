@@ -456,7 +456,11 @@ class SmimeService
             }
             catch(\Throwable $e)
             {
-                $failed[(int)$serviceId] = $e->getMessage();
+                // a migrated invite order the client has not enrolled yet: the gateway can not read it until then
+                if((self::stored($serviceId)['status'] ?? '') !== 'invited')
+                {
+                    $failed[(int)$serviceId] = $e->getMessage();
+                }
             }
         }
 

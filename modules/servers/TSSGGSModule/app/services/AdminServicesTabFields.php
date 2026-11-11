@@ -98,6 +98,14 @@ class AdminServicesTabFields
         $fields['Validity']             = (!empty($stored['validFrom']) ? htmlspecialchars(substr($stored['validFrom'], 0, 10)) : '-') . ' &rarr; '
             . (!empty($stored['validTill']) ? htmlspecialchars(substr($stored['validTill'], 0, 10)) : '-');
         $fields['CSR']                  = !empty($stored['csrProvided']) ? 'Sent by the client' : 'Not sent: the certificate authority emails the client how to collect the certificate';
+        if(!empty($stored['enrollmentLink']) && empty($stored['emails']))
+        {
+            $fields['Enrolment'] = 'Migrated invite order: the client has not enrolled yet. <a href="' . htmlspecialchars($stored['enrollmentLink']) . '" target="_blank" rel="noopener">Enrolment link</a>';
+        }
+        if(!empty($stored['migrated']))
+        {
+            $fields['Migrated'] = 'Yes, from the legacy module';
+        }
 
         return $fields + $this->getSmimePreviousOrders($stored);
     }

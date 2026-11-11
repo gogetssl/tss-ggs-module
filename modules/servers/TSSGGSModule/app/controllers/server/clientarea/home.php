@@ -2293,13 +2293,14 @@ class home extends AbstractController
             }
             catch(\Exception $e)
             {
-                $vars['refreshError'] = $e->getMessage();
+                // an invite order (migrated) can not be read before the client enrols: no error for that
+                $vars['refreshError'] = ($stored['status'] ?? '') === 'invited' ? '' : $e->getMessage();
             }
         }
 
         $status = strtolower((string)($stored['status'] ?? 'processing'));
         $emails = (array)($stored['emails'] ?? []);
-        $tones  = ['active' => 'ok', 'processing' => 'wait', 'pending' => 'wait', 'unpaid' => 'warn', 'incomplete' => 'warn',
+        $tones  = ['active' => 'ok', 'invited' => 'wait', 'processing' => 'wait', 'pending' => 'wait', 'unpaid' => 'warn', 'incomplete' => 'warn',
                    'failed' => 'bad', 'rejected' => 'bad', 'cancelled' => 'off', 'revoked' => 'off', 'refunded' => 'off', 'expired' => 'off'];
 
         $vars['smimeStatus']        = $status;
@@ -2315,6 +2316,8 @@ class home extends AbstractController
         $vars['smimeValidTill']     = $this->smimeDate($stored['validTill'] ?? '');
         $vars['smimeOrderedAt']     = $this->smimeDate($stored['orderedAt'] ?? '');
         $vars['smimeCsrProvided']   = !empty($stored['csrProvided']);
+        // migrated TheSSLStore invite order: the client enrols on the certificate authority's page
+        $vars['smimeEnrollmentLink'] = !$emails && !empty($stored['enrollmentLink']) && $vars['smimeTone'] === 'wait' ? (string)$stored['enrollmentLink'] : '';
 
         return ['tpl' => 'home_smime', 'vars' => $vars];
     }
