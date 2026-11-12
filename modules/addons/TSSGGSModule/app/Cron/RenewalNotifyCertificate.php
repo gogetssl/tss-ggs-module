@@ -104,8 +104,12 @@ class RenewalNotifyCertificate extends AbstractCommand
         $serviceIDs   = [];
 
         // a run that ended with an error is repeated the same day: the reminders of that day are sent once only
+        // (the services whose reminder failed are kept in the marker and are tried again)
+        $today          = date('Y-m-d');
         $remindersDone  = CronCheck::where('type', self::REMINDERS_MARKER)->first();
-        $remindersToday = $remindersDone && substr((string)$remindersDone->last_run, 0, 10) === date('Y-m-d');
+        $remindersToday = $remindersDone && substr((string)$remindersDone->last_run, 0, 10) === $today;
+        $retryIds       = $remindersToday ? array_map('intval', (array)json_decode((string)$remindersDone->last_error, true)) : [];
+        $failedIds      = [];
 
         foreach($certificatesQuery->get() as $srv)
         {
@@ -119,6 +123,8 @@ class RenewalNotifyCertificate extends AbstractCommand
 
             $io->progressAdvance(1);
 
+            $remind   = !$remindersToday || in_array((int)$srv->id, $retryIds, true);
+            $reminded = false;
             try
             {
 
@@ -127,19 +133,21 @@ class RenewalNotifyCertificate extends AbstractCommand
                 $daysLeft    = $this->checkOrderExpireDate($srv->nextduedate);
                 $daysReissue = $isSmime ? false : $this->checkReissueDate($srv->id, $certificate);
 
-                if(!$remindersToday && $srv->domainstatus == 'Active' && $daysReissue == '30' && !AutoInstallHelpers::isAutoReissueActive($srv->id))
+                if($remind && $srv->domainstatus == 'Active' && $daysReissue == '30' && !AutoInstallHelpers::isAutoReissueActive($srv->id))
                 {
                     $output->write('Send Email Reissue: ' . $srv->id . ' - ' . $srv->domain);
                     EmailTemplates::sendEmail(EmailTemplates::REISSUE_TEMPLATE, $srv->id);
+                    $reminded = true;
                     Logger::info("The notification reissue has been send", ['service' => $srv->id]);
                 }
 
-                if($daysLeft >= 0 && !$remindersToday)
+                if($daysLeft >= 0 && $remind)
                 {
                     if($srv->billingcycle != 'One Time' && is_array($daysNotify) && in_array($daysLeft, $daysNotify))
                     {
                         $output->write('Send Email Expiration: ' . $srv->id . ' - ' . $srv->domain);
                         EmailTemplates::sendEmail($gatewayType === \ModulesGarden\TSSGGSModule\App\Libs\CodeSigningService::class ? EmailTemplates::CS_EXPIRATION_TEMPLATE : ($isSmime ? EmailTemplates::SMIME_EXPIRATION_TEMPLATE : EmailTemplates::EXPIRATION_TEMPLATE), $srv->id, ["expireDaysLeft" => $daysLeft]);
+                        $reminded = true;
                         Logger::info("The notification expire has been send", ['service' => $srv->id]);
                     }
                 }
@@ -147,7 +155,7 @@ class RenewalNotifyCertificate extends AbstractCommand
                 $savedRenewDays = $renew_invoice_days_reccuring;
                 if($daysLeft == (int)$savedRenewDays)
                 {
-                    if($srv->billingcycle != 'One Time' && $auto_renew_invoice_reccuring)
+                    if(!in_array($srv->billingcycle, ['One Time', 'Free Account'], true) && $auto_renew_invoice_reccuring)
                     {
                         $packageLists[$srv->packageid][] = $srv;
                         $serviceIDs[]                    = $srv->id;
@@ -158,13 +166,18 @@ class RenewalNotifyCertificate extends AbstractCommand
             catch(\Throwable $e)
             {
 
+                // a service that failed before its reminder went out gets it on the next run of the day
+                if($remind && !$reminded)
+                {
+                    $failedIds[] = (int)$srv->id;
+                }
                 $errorToDB = $e->getMessage();
                 Logger::error("The notification error " . $e->getMessage(), \ModulesGarden\TSSGGSModule\App\Libs\LogContext::exception($e, ['service' => $srv->id]));
 
             }
         }
 
-        CronCheck::updateOrCreate(['type' => self::REMINDERS_MARKER], ['last_run' => date('Y-m-d H:i:s'), 'last_error' => '']);
+        CronCheck::updateOrCreate(['type' => self::REMINDERS_MARKER], ['last_run' => $today . ' ' . date('H:i:s'), 'last_error' => $failedIds ? json_encode($failedIds) : '']);
 
         if(!$renew_new_order)
         {

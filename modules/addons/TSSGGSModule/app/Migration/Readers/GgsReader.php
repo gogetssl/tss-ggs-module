@@ -296,7 +296,7 @@ class GgsReader extends AbstractReader
         }
 
         // a closed order without a gateway order must not become configurable again
-        if($remoteId === '' && in_array((string)$order['status'], ['Cancelled', 'Expired', 'Completed'], true))
+        if($rec['remote_id'] === '' && in_array((string)$order['status'], ['Cancelled', 'Expired', 'Completed'], true))
         {
             $rec['skip_reason'] = 'SSL order has no gateway order ID (status ' . $order['status'] . ')';
 
@@ -678,7 +678,10 @@ class GgsReader extends AbstractReader
             return $byCycle[$cycle];
         }
 
-        return (int)($svc['configoption7'] ?? 0) ?: ((int)($svc['configoption2'] ?? 0) ?: 12);
+        // "one time months" (configoption7) applies to a one time service only; a free one uses the product's months
+        $oneTime = $cycle === 'One Time' ? (int)($svc['configoption7'] ?? 0) : 0;
+
+        return $oneTime ?: ((int)($svc['configoption2'] ?? 0) ?: 12);
     }
 
     protected function apiPrice(int $apiProductId, int $months): float

@@ -650,6 +650,12 @@ class Engine
         $writer = new Writer($runId, $source);
         Store::log($runId, 'info', self::PHASE_ROLLBACK, 'Rollback started by ' . $by);
 
+        // legacy tables that were dropped since are created before the transaction (creating a table would end it)
+        foreach((array)constant(get_class($reader) . '::TABLES') as $table)
+        {
+            $backup->createMissing($table);
+        }
+
         Capsule::connection()->transaction(function() use ($runId, $backup, $reader, $writer) {
             foreach(Store::jobsByStatus($runId, Store::KIND_SERVICE, Store::JOB_DONE) as $job)
             {

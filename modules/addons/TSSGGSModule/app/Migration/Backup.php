@@ -98,6 +98,20 @@ class Backup
     /**
      * Restores a legacy module table completely (truncate + insert from the copy)
      */
+    /** Creates a table that has a backup but no longer exists (empty; restoreTable() fills it) */
+    public function createMissing(string $table): bool
+    {
+        $source = $this->nameFor($table);
+        if(!Schema::tableExists($source) || Schema::tableExists($table))
+        {
+            return false;
+        }
+        Capsule::statement('CREATE TABLE ' . Schema::quoteIdentifier($table) . ' LIKE ' . Schema::quoteIdentifier($source));
+        Schema::refresh();
+
+        return true;
+    }
+
     public function restoreTable(string $table): int
     {
         $source = $this->nameFor($table);

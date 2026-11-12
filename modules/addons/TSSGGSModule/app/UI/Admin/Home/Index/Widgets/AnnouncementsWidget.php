@@ -60,7 +60,7 @@ class AnnouncementsWidget extends Card
             $name = strtolower($tag[1]);
             if($name === 'a' && preg_match('/href\s*=\s*(["\'])(https?:\/\/[^"\'<>\s]+)\1/i', $tag[0], $href))
             {
-                return '<a href="' . htmlspecialchars($href[2], ENT_QUOTES) . '" target="_blank" rel="noopener">';
+                return '<a href="' . htmlspecialchars($href[2], ENT_QUOTES, 'UTF-8', false) . '" target="_blank" rel="noopener">';
             }
 
             return '<' . $name . '>';
