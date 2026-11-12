@@ -1306,6 +1306,7 @@ class home extends AbstractController
             $domainChanges = [];
             $newOrderData  = $certificate['orderData']['orderData'];
             $orderDomains  = array_merge([(string)($newOrderData['common_name']['name'] ?? '')], array_column((array)($newOrderData['alternative_names'] ?? []), 'name'));
+            $emailDomains  = [];
             try
             {
                 $this->requireCsrfToken();
@@ -1316,7 +1317,20 @@ class home extends AbstractController
                     {
                         throw new \Exception(Lang::absoluteT('invalidValidationMethod'));
                     }
-                    if($methodDomain == 'email' && !filter_var((string)($_POST['approver'][$domainName] ?? ''), FILTER_VALIDATE_EMAIL))
+                    if($methodDomain == 'email')
+                    {
+                        $emailDomains[] = (string)$domainName;
+                    }
+                }
+                // an approver address must be one the certificate authority offers for that domain
+                $offered = [];
+                foreach($emailDomains ? (array)$api->getDomainEmails($emailDomains) : [] as $row)
+                {
+                    $offered[(string)($row['domain'] ?? '')] = array_map('strtolower', (array)($row['emails'] ?? []));
+                }
+                foreach($emailDomains as $domainName)
+                {
+                    if(!in_array(strtolower((string)($_POST['approver'][$domainName] ?? '')), $offered[$domainName] ?? [], true))
                     {
                         throw new \Exception(Lang::absoluteT('invalidValidationMethod'));
                     }

@@ -22,14 +22,16 @@ class OverviewWidget extends Card
 
         $sales    = SalesSummary::get();
         $invoiced = $sales['paid'] + $sales['unpaid'] + $sales['overdue'];
-        $cost     = $invoiced - $sales['profit'];
-        $margin   = $cost > 0 ? $sales['profit'] / $cost * 100 : 0;
+        // cost and margin over the invoiced rows whose reseller cost is known (an unknown cost is not a cost of 100%)
+        $cost     = $sales['cost'];
+        $profit   = $sales['costedSales'] - $cost;
+        $margin   = $cost > 0 ? $profit / $cost * 100 : 0;
 
         $tiles = '';
         foreach([
             ['currency-usd', 'invoiced', Helpers::formatDefaultCurrency($invoiced)],
             ['package-variant-closed', 'cost', Helpers::formatDefaultCurrency($cost)],
-            ['trending-up', 'profit', Helpers::formatDefaultCurrency($sales['profit'])],
+            ['trending-up', 'profit', Helpers::formatDefaultCurrency($profit)],
             ['tag-outline', 'margin', number_format($margin, 1) . '%'],
         ] as [$icon, $key, $value])
         {
@@ -41,7 +43,7 @@ class OverviewWidget extends Card
             'unpaid'  => Helpers::formatDefaultCurrency($sales['unpaid']),
             'overdue' => Helpers::formatDefaultCurrency($sales['overdue']),
         ]);
-        if($invoiced > 0 && $margin < self::LOW_MARGIN)
+        if($cost > 0 && $margin < self::LOW_MARGIN)
         {
             $note .= ' ' . $this->translate('low', ['margin' => self::LOW_MARGIN]);
         }

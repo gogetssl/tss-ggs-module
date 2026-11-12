@@ -32,6 +32,7 @@ class Pricing extends AbstractController implements AdminAreaInterface
             $products   = $service->products();
             $currencyId = (int)($_POST['currency'] ?? 0);
             $changed    = 0;
+            $invalid    = 0;
 
             foreach((array)($_POST['price'] ?? []) as $pid => $items)
             {
@@ -49,8 +50,9 @@ class Pricing extends AbstractController implements AdminAreaInterface
                             continue;
                         }
                         // anything that is not a plain amount is left as it is - it must never turn into a price of 0.00
-                        if($value !== '' && !preg_match('/^\d+([.,]\d{1,2})?$/', $value))
+                        if($value !== '' && !preg_match('/^\d+([.,]\d{1,4})?$/', $value))
                         {
+                            $invalid++;
                             continue;
                         }
                         $new = $value === '' ? ($item === 'base' ? -1 : 0) : round((float)str_replace(',', '.', $value), 2);
@@ -77,7 +79,7 @@ class Pricing extends AbstractController implements AdminAreaInterface
 
             NextStepsWidget::markDone(NextStepsWidget::STEP_PRICING);
 
-            return ['saved' => $changed];
+            return ['saved' => $changed] + ($invalid ? ['invalid' => $invalid] : []);
         });
     }
 

@@ -2,8 +2,8 @@
 
 namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Reports\Index\DataTables\DatewiseSales\Forms;
 
-use ModulesGarden\TSSGGSModule\App\UI\Admin\Reports\Index\DataTables\Renewal\Providers\GetCsvProvider;
-use ModulesGarden\TSSGGSModule\App\UI\Admin\Reports\Index\DataTables\Renewal\Providers\FilterProvider;
+use ModulesGarden\TSSGGSModule\App\UI\Admin\Reports\Index\DataTables\DatewiseSales\Providers\GetCsvProvider;
+use ModulesGarden\TSSGGSModule\App\UI\Admin\Reports\Index\DataTables\DatewiseSales\Providers\FilterProvider;
 use ModulesGarden\TSSGGSModule\Components\Button\ButtonPrimary;
 use ModulesGarden\TSSGGSModule\Components\Dropdown\Dropdown;
 use ModulesGarden\TSSGGSModule\Components\Form\Builder\BuilderCreator;

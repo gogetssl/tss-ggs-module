@@ -2,7 +2,7 @@
 
 namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Reports\Index\DataTables\DatewiseSales\Providers;
 
-use ModulesGarden\TSSGGSModule\App\UI\Admin\Reports\Index\DataTables\Renewal\Forms\GetCsvForm;
+use ModulesGarden\TSSGGSModule\App\UI\Admin\Reports\Index\DataTables\DatewiseSales\Forms\GetCsvForm;
 use ModulesGarden\TSSGGSModule\Core\Components\Actions\DownloadFileFromForm;
 use ModulesGarden\TSSGGSModule\Core\Components\Response\Response;
 use ModulesGarden\TSSGGSModule\Core\DataProviders\CrudProvider;

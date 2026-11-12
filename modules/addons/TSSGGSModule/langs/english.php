@@ -897,6 +897,7 @@ $_LANG['admin.pricing_grid.reason']            = 'Reason';
 $_LANG['admin.pricing_grid.import_confirm']    = 'Import :count changes';
 $_LANG['admin.pricing_grid.import_cancel']     = 'Cancel';
 $_LANG['admin.pricing_grid.notice_saved']      = ':count prices saved.';
+$_LANG['admin.pricing_grid.notice_invalid'] = ':count values were not saved because they are not amounts (use digits and a decimal point, for example 49.90).';
 $_LANG['admin.pricing_grid.notice_margin_applied'] = ':count prices updated from the reseller cost.';
 $_LANG['admin.pricing_grid.notice_imported']   = ':count prices imported.';
 $_LANG['admin.settings.index.forms.general_settings_form.pricing']                       = 'Pricing';

@@ -869,6 +869,7 @@ $_LANG['admin.pricing_grid.reason']            = 'Årsag';
 $_LANG['admin.pricing_grid.import_confirm']    = 'Importer :count ændringer';
 $_LANG['admin.pricing_grid.import_cancel']     = 'Annuller';
 $_LANG['admin.pricing_grid.notice_saved']      = ':count priser gemt.';
+$_LANG['admin.pricing_grid.notice_invalid'] = ':count værdier blev ikke gemt, fordi de ikke er beløb (brug cifre og decimalpunktum, for eksempel 49.90).';
 $_LANG['admin.pricing_grid.notice_margin_applied'] = ':count priser opdateret ud fra forhandlerens omkostning.';
 $_LANG['admin.pricing_grid.notice_imported']   = ':count priser importeret.';
 $_LANG['admin.settings.index.forms.general_settings_form.pricing']                       = 'Priser';

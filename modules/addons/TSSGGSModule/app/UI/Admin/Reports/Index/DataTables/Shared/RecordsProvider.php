@@ -21,6 +21,31 @@ class RecordsProvider
         return htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8', false);
     }
 
+    /**
+     * Sends the report as a CSV download: the given columns of the rows the filters select
+     */
+    public function outputCsv($filters, array $fields, $onlyPaid = false): void
+    {
+        header('Content-Type: text/csv; charset=utf-8');
+        header('Content-Disposition: attachment; filename=report.csv');
+
+        $output = fopen('php://output', 'w');
+        fputcsv($output, array_map(function($field) {
+            return ucwords(preg_replace('/(?<!^)([A-Z])/', ' $1', $field));
+        }, $fields));
+
+        foreach($this->getRecords($filters, $onlyPaid) as $record)
+        {
+            $row = [];
+            foreach($fields as $field)
+            {
+                // the table cells are HTML: a file gets the plain text
+                $row[] = html_entity_decode(strip_tags(str_replace('<br>', ' ', (string)$record[$field])), ENT_QUOTES, 'UTF-8');
+            }
+            fputcsv($output, $row);
+        }
+    }
+
     public function getRecords($filters = [], $onlyPaid = false)
     {
         $query = Capsule::table('tblinvoiceitems')
@@ -39,6 +64,8 @@ class RecordsProvider
         {
             $query->where('tblinvoices.status', 'Paid');
         }
+
+        $filters = (array)$filters + ['fromDate' => '', 'toDate' => '', 'productId' => '', 'brand' => '', 'sslStatus' => '', 'vendorOrderId' => '', 'renewalPeriod' => ''];
 
         if($filters['fromDate'])
         {
@@ -60,13 +87,7 @@ class RecordsProvider
             $query->where('tblproducts.configoption3', $filters['brand']);
         }
 
-        if($filters['sslStatus'])
-        {
-            $query->where('tblhosting.domainstatus', $filters['sslStatus']);
-        }
-
         $items = $query->select([
-
                                     'tblinvoiceitems.amount',
                                     'tblinvoiceitems.taxed',
                                     'tblinvoiceitems.userid',
@@ -79,6 +100,7 @@ class RecordsProvider
                                     'tblclients.lastname',
                                     'tblclients.companyname',
                                     'tblclients.country',
+                                    'tblclients.currency as clientCurrency',
                                     'tblhosting.id as serviceId',
                                     'tblhosting.regdate',
                                     'tblhosting.nextduedate',
@@ -95,70 +117,48 @@ class RecordsProvider
                                     'TSSGGSModule_Requests.whmcs_price',
                                     'TSSGGSModule_Requests.diff_price',
                                     'TSSGGSModule_Requests.status as orderStatus',
-                                    'TSSGGSModule_Requests.request as requestEncoded'
                                 ])
                        ->get();
 
+        // the stored certificates of all listed services in one query (a service is listed once per invoice)
+        $serviceIds   = array_values(array_unique(array_map(function($item) { return (int)$item->serviceId; }, $items->all())));
+        $certificates = [];
+        foreach(array_chunk($serviceIds, 1000) as $chunk)
+        {
+            foreach(Capsule::table('TSSGGSModule_Requests')->whereIn('serviceid', $chunk)->where('name', 'certificate')->get(['serviceid', 'request']) as $row)
+            {
+                $certificates[(int)$row->serviceid] = $row->request;
+            }
+        }
+        $defaultCurrencyId = (int)Helpers::getDefaultCurrency()->id;
+
         $rows         = [];
         $productTypes = [];
+        $states       = [];
 
         foreach($items as $item)
         {
-            $requestEncoded  = $item->requestEncoded;
-            $orderRequest    = decrypt($requestEncoded);
-            $serviceId       = $item->serviceId;
-            $orderStatus     = $item->orderStatus ? ucfirst($item->orderStatus) : 'Awaiting Configuration';
-            $certificateData = Capsule::table('TSSGGSModule_Requests')->where('serviceid', $serviceId)->where('name', 'certificate')->first();
-            $storeId         = '-';
-            $issueDate       = '-';
-            $expirationDate  = '-';
+            $serviceId = (int)$item->serviceId;
+            if(!isset($states[$serviceId]))
+            {
+                $states[$serviceId] = $this->certificateState($item, $certificates[$serviceId] ?? null, $productTypes);
+            }
+            [$orderStatus, $storeId, $issueDate, $expirationDate] = $states[$serviceId];
 
-            // ACME / AIS keep their state in the subscription tables, not in TSSGGSModule_Requests
-            if(!isset($productTypes[$item->productId]))
+            // the certificate status and the vendor order ID are known only now
+            if($filters['sslStatus'] && strtolower((string)$orderStatus) !== strtolower((string)$filters['sslStatus']))
             {
-                $productTypes[$item->productId] = AcmeHelpers::isAcmeWhmcsProduct($item->productId) ? 'acme' : (AisHelpers::isAisWhmcsProduct($item->productId) ? 'ais'
-                    : (\ModulesGarden\TSSGGSModule\App\Libs\GatewayOrderService::typeOfProduct($item->productId) ?: 'ssl'));
+                continue;
             }
-
-            $subscription = null;
-            if($productTypes[$item->productId] === 'acme')
+            if(trim((string)$filters['vendorOrderId']) !== '' && stripos((string)$storeId, trim((string)$filters['vendorOrderId'])) === false)
             {
-                $subscription = AcmeSubscription::getByServiceId($serviceId);
-            }
-            elseif($productTypes[$item->productId] === 'ais')
-            {
-                $subscription = AisSubscription::getByServiceId($serviceId);
-            }
-
-            if($productTypes[$item->productId] !== 'ssl' && is_subclass_of($productTypes[$item->productId], \ModulesGarden\TSSGGSModule\App\Libs\GatewayOrderService::class))
-            {
-                // S/MIME / code signing keep their order in their own request row (GatewayOrderService)
-                $smime          = $productTypes[$item->productId]::stored($serviceId);
-                $orderStatus    = !empty($smime['status']) ? ucfirst($smime['status']) : $orderStatus;
-                $storeId        = !empty($smime['itemId']) ? $smime['itemId'] : '-';
-                $issueDate      = !empty($smime['validFrom']) ? date('Y-m-d', strtotime($smime['validFrom'])) : '-';
-                $expirationDate = !empty($smime['validTill']) ? date('Y-m-d', strtotime($smime['validTill'])) : '-';
-            }
-            elseif($subscription)
-            {
-                $orderStatus    = $subscription->status ? ucfirst($subscription->status) : $orderStatus;
-                $storeId        = $subscription->api_order_id ?: '-';
-                $issueDate      = $subscription->period_start ? $subscription->period_start->format('Y-m-d') : '-';
-                $expirationDate = $subscription->period_end ? $subscription->period_end->format('Y-m-d') : '-';
-            }
-            elseif($certificateData)
-            {
-                $certificateRequest = json_decode(decrypt($certificateData->request));
-                $orderStatus        = ucfirst($certificateRequest->orderData->order->status);
-                $storeId            = $certificateRequest->orderData->order->id ?: '-';
-                $issueDate          = $certificateRequest->orderFiles->validity->begin ? date('Y-m-d', strtotime($certificateRequest->orderFiles->validity->begin)) : '-';
-                $expirationDate     = $certificateRequest->orderFiles->validity->end ? date('Y-m-d', strtotime($certificateRequest->orderFiles->validity->end)) : '-';
+                continue;
             }
 
             if($filters['renewalPeriod'])
             {
                 $explode = explode('_', $filters['renewalPeriod']);
-                $days    = (int)$explode[1];
+                $days    = (int)($explode[1] ?? 0);
 
                 if($explode[0] == 'last')
                 {
@@ -194,7 +194,7 @@ class RecordsProvider
                 $income = Helpers::getTaxedValue($income, $item->taxrate, $item->taxrate2);
             }
 
-            $income               = Helpers::clientCurrencyToDefaultCurrency($income, $item->userid);
+            $income               = (int)$item->clientCurrency === $defaultCurrencyId ? floatval($income) : \convertCurrency(floatval($income), (int)$item->clientCurrency, $defaultCurrencyId);
             $apiPrice             = floatval($item->api_price);
             $rate                 = floatval($item->rate ?: 1);
             $defaultCurrencyPrice = floatval($apiPrice * $rate);
@@ -227,4 +227,65 @@ class RecordsProvider
 
         return $rows;
     }
+
+    /**
+     * [status, vendor order ID, issue date, expiration date] of a service's certificate. ACME / AIS keep their state in
+     * the subscription tables, S/MIME and code signing in their own request row, SSL in the stored certificate.
+     */
+    protected function certificateState($item, $certificateRequest, array &$productTypes): array
+    {
+        $serviceId      = (int)$item->serviceId;
+        $orderStatus    = $item->orderStatus ? ucfirst($item->orderStatus) : 'Awaiting Configuration';
+        $storeId        = '-';
+        $issueDate      = '-';
+        $expirationDate = '-';
+
+        if(!isset($productTypes[$item->productId]))
+        {
+            $productTypes[$item->productId] = AcmeHelpers::isAcmeWhmcsProduct($item->productId) ? 'acme' : (AisHelpers::isAisWhmcsProduct($item->productId) ? 'ais'
+                : (\ModulesGarden\TSSGGSModule\App\Libs\GatewayOrderService::typeOfProduct($item->productId) ?: 'ssl'));
+        }
+        $type = $productTypes[$item->productId];
+
+        $subscription = null;
+        if($type === 'acme')
+        {
+            $subscription = AcmeSubscription::getByServiceId($serviceId);
+        }
+        elseif($type === 'ais')
+        {
+            $subscription = AisSubscription::getByServiceId($serviceId);
+        }
+
+        $date = function($value) {
+            return $value ? date('Y-m-d', strtotime((string)$value)) : '-';
+        };
+
+        if($type !== 'ssl' && is_subclass_of($type, \ModulesGarden\TSSGGSModule\App\Libs\GatewayOrderService::class))
+        {
+            $stored         = $type::stored($serviceId);
+            $orderStatus    = !empty($stored['status']) ? ucfirst($stored['status']) : $orderStatus;
+            $storeId        = !empty($stored['itemId']) ? $stored['itemId'] : '-';
+            $issueDate      = $date($stored['validFrom'] ?? '');
+            $expirationDate = $date($stored['validTill'] ?? '');
+        }
+        elseif($subscription)
+        {
+            $orderStatus    = $subscription->status ? ucfirst($subscription->status) : $orderStatus;
+            $storeId        = $subscription->api_order_id ?: '-';
+            $issueDate      = $subscription->period_start ? $subscription->period_start->format('Y-m-d') : '-';
+            $expirationDate = $subscription->period_end ? $subscription->period_end->format('Y-m-d') : '-';
+        }
+        elseif($certificateRequest)
+        {
+            $certificate    = json_decode((string)decrypt($certificateRequest), true) ?: [];
+            $orderStatus    = !empty($certificate['orderData']['order']['status']) ? ucfirst($certificate['orderData']['order']['status']) : $orderStatus;
+            $storeId        = !empty($certificate['orderData']['order']['id']) ? $certificate['orderData']['order']['id'] : '-';
+            $issueDate      = $date($certificate['orderFiles']['validity']['begin'] ?? '');
+            $expirationDate = $date($certificate['orderFiles']['validity']['end'] ?? '');
+        }
+
+        return [$orderStatus, $storeId, $issueDate, $expirationDate];
+    }
+
 }
