@@ -2308,7 +2308,8 @@ class home extends AbstractController
                    'failed' => 'bad', 'rejected' => 'bad', 'cancelled' => 'off', 'revoked' => 'off', 'refunded' => 'off', 'expired' => 'off'];
 
         $vars['csStatus']        = $status;
-        $vars['csStatusText']    = $this->smimeStatusText($status);
+        $csText                  = Lang::absoluteT('serverCA', 'home', 'csStatus_' . $status);
+        $vars['csStatusText']    = is_string($csText) && $csText !== '' && strpos($csText, 'csStatus_') === false ? $csText : $this->smimeStatusText($status);
         $vars['csTone']          = $tones[$status] ?? 'wait';
         $vars['csMethod']        = (string)($stored['method'] ?? '');
         $vars['csDelivery']      = $this->codeSigningDeliveryText($stored);

@@ -422,7 +422,10 @@ abstract class GatewayOrderService
         $service   = Capsule::table('tblhosting')->where('id', (int)$serviceId)->first(['amount', 'firstpaymentamount']);
         $invoiceId = (int)Capsule::table('tblinvoiceitems')->where('relid', (int)$serviceId)->where('type', 'Hosting')->orderBy('invoiceid', 'desc')->value('invoiceid');
         $rate      = (float)((new \ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository())->getModuleConfiguration()['financeSettings']['rate'] ?? 1) ?: 1;
-        $amount    = $service ? (float)$service->amount : 0;
+        // the first order is paid with the first payment (it includes one-time fees such as the token shipping),
+        // the order after a renewal with the recurring amount
+        $first     = empty(static::stored($serviceId)['previous']);
+        $amount    = $service ? (float)($first && (float)$service->firstpaymentamount > 0 ? $service->firstpaymentamount : $service->amount) : 0;
 
         Request::where('serviceid', (int)$serviceId)->where('name', static::REQUEST_NAME)->update([
             'invoiceid'   => $invoiceId,

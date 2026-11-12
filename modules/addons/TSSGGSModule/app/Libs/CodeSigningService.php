@@ -22,7 +22,7 @@ class CodeSigningService extends GatewayOrderService
 {
     const CATEGORY     = 'cs';
     const REQUEST_NAME = 'codesigning';
-    const LABEL        = 'Code signing';
+    const LABEL        = 'Code Signing';
 
     // GoGetSSL products the module sells (the Sectigo ones and cloud code signing are not supported)
     const SUPPORTED_PRODUCTS = ['GGS' => ['39', '89', '137', '138']];
