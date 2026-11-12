@@ -17,6 +17,8 @@ class AppBreadcrumb extends AbstractComponent
     {
         parent::__construct();
         $this->setSlot('items');
+        // the trail starts with the edition's name, like the dashboard heading
+        $this->setSlot('module', \ModulesGarden\TSSGGSModule\App\Libs\Edition::name());
     }
 
     /**

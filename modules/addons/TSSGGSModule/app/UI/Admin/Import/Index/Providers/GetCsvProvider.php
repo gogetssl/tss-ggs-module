@@ -14,7 +14,7 @@ class GetCsvProvider extends CrudProvider
         header('Content-Disposition: attachment; filename=' . $filename);
 
         $output = fopen('php://output', 'w');
-        fputcsv($output, ['API order ID', 'Customer ID', 'Payment method']);
+        fputcsv($output, ['API order ID', 'Customer ID', 'Payment method', 'Service ID']);
         die();
     }
 }

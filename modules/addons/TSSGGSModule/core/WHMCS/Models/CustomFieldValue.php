@@ -13,15 +13,15 @@ class CustomFieldValue extends \WHMCS\CustomField\CustomFieldValue
 {
     public function customField()
     {
-        return $this->belongsTo("ModulesGarden\TSSGGSModule\Core\WHMCS\Models\CustomField", "fieldid");
+        return $this->belongsTo('ModulesGarden\\TSSGGSModule\\Core\\WHMCS\\Models\\CustomField', "fieldid");
     }
     public function addon()
     {
-        return $this->belongsTo("ModulesGarden\TSSGGSModule\Core\WHMCS\Models\ServiceAddon", "relid");
+        return $this->belongsTo('ModulesGarden\\TSSGGSModule\\Core\\WHMCS\\Models\\ServiceAddon', "relid");
     }
     public function client()
     {
-        return $this->belongsTo("ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Client", "relid");
+        return $this->belongsTo('ModulesGarden\\TSSGGSModule\\Core\\WHMCS\\Models\\Client', "relid");
     }
     public function service()
     {

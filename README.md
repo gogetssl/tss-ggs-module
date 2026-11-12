@@ -16,6 +16,11 @@ The new module supports migration from previous TSS/GGS Modules. Please contact 
 - WHMCS License
 - SSH/FTP access to the server
 
+### Editions
+The same code is distributed under two names: **GoGetSSL Module** (from GoGetSSL) and **TheSSLStore Plugin** (from TheSSLStore).
+The edition is set in `modules/addons/TSSGGSModule/app/Config/edition.php` (`ggs` or `tss`) and only changes the name shown in WHMCS and the email template names.
+Build both packages from a tag with `php build/build.php vX.Y.Z` (output in `dist/`).
+
 ### Releases/Downloads
 Please check the latest [Releases](https://github.com/gogetssl/tss-ggs-module/releases) and Download files 
 

@@ -1,0 +1,175 @@
+/*
+ * Legacy migration: wizard step 3 (inside .tssggs-wizard) and the Migration page (.tssggs-migration).
+ * Same tokens as wizard.css; everything is scoped to the two roots.
+ */
+
+.tssggs-migration,
+.tssggs-wizard .tssggs-legacy {
+    --tw-primary: #007136;
+    --tw-primary-soft: #e4f8e8;
+    --tw-fg: #020618;
+    --tw-muted: #62748e;
+    --tw-surface: #ffffff;
+    --tw-surface-alt: #f8fafc;
+    --tw-border: #e2e8f0;
+    --tw-danger: #e7000b;
+    --tw-danger-soft: #fef2f2;
+    --tw-warning: #a65f00;
+    --tw-warning-soft: #fef6e7;
+}
+
+/* ---- shared bits ---- */
+
+.tssggs-muted { color: var(--tw-muted); font-size: 13px; margin: 8px 0; }
+
+.tssggs-note {
+    margin: 12px 0;
+    padding: 10px 14px;
+    border: 1px solid var(--tw-border);
+    border-radius: 8px;
+    background: var(--tw-surface-alt);
+    font-size: 14px;
+}
+.tssggs-note.is-ok   { border-color: rgba(0,113,54,.3);  background: var(--tw-primary-soft); }
+.tssggs-note.is-warn { border-color: rgba(166,95,0,.3);  background: var(--tw-warning-soft); }
+.tssggs-note.is-bad  { border-color: rgba(231,0,11,.3);  background: var(--tw-danger-soft); }
+
+.tssggs-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 14px;
+    margin-top: 16px;
+}
+.tssggs-actions form { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; margin: 0; }
+.tssggs-actions label { font-size: 13px; color: var(--tw-fg); }
+.tssggs-actions .lu-btn--success { background: var(--tw-primary); border-color: var(--tw-primary); color: #fff; }
+
+.tssggs-details { margin-top: 12px; }
+.tssggs-details summary { cursor: pointer; font-weight: 500; }
+.tssggs-details pre { margin: 8px 0; padding: 10px 12px; background: var(--tw-surface-alt); border: 1px solid var(--tw-border); border-radius: 6px; font-size: 12px; overflow-x: auto; }
+
+.tssggs-table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 13px; }
+.tssggs-table th, .tssggs-table td { padding: 6px 10px; border-bottom: 1px solid var(--tw-border); text-align: left; vertical-align: top; }
+.tssggs-table th { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--tw-muted); }
+
+/* ---- wizard step 3: legacy modules ---- */
+
+.tssggs-legacy {
+    margin: 12px 0 18px;
+    padding: 16px;
+    border: 1px solid var(--tw-border);
+    border-radius: 8px;
+    background: var(--tw-surface-alt);
+}
+.tssggs-legacy__head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 15px; }
+.tssggs-legacy__facts { margin: 10px 0 0; padding-left: 18px; font-size: 14px; }
+.tssggs-legacy__facts li { margin: 2px 0; }
+
+.tssggs-legacy__choice { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 14px; }
+.tssggs-legacy__choice label {
+    display: block;
+    padding: 12px 14px;
+    border: 1px solid var(--tw-border);
+    border-radius: 8px;
+    background: var(--tw-surface);
+    cursor: pointer;
+    font-weight: 400;
+}
+.tssggs-legacy__choice label:has(input:checked) { border-color: var(--tw-primary); background: var(--tw-primary-soft); }
+.tssggs-legacy__choice label b { display: inline-block; margin-left: 4px; }
+.tssggs-legacy__choice label span { display: block; margin-top: 4px; font-size: 12px; color: var(--tw-muted); }
+.tssggs-legacy__choice input { accent-color: var(--tw-primary); }
+
+/* ---- migration page: count cards ---- */
+
+.tssggs-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 10px;
+    margin: 4px 0 12px;
+}
+.tssggs-card {
+    padding: 12px 14px;
+    border: 1px solid var(--tw-border);
+    border-radius: 8px;
+    background: var(--tw-surface-alt);
+    min-width: 0;
+}
+.tssggs-card__label { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--tw-muted); }
+.tssggs-card__value { font-size: 24px; font-weight: 600; color: var(--tw-fg); font-variant-numeric: tabular-nums; }
+.tssggs-card__sub   { font-size: 12px; color: var(--tw-muted); overflow-wrap: anywhere; }
+
+/* ---- runner ---- */
+
+.tssggs-runner { padding: 4px 0 8px; }
+.tssggs-runner__head { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 6px; }
+.tssggs-runner__state { font-weight: 600; }
+.tssggs-runner__pct { color: var(--tw-muted); font-variant-numeric: tabular-nums; }
+.tssggs-runner__bar { height: 10px; border-radius: 999px; background: var(--tw-border); overflow: hidden; }
+.tssggs-runner__bar span { display: block; height: 100%; background: var(--tw-primary); transition: width .4s ease; }
+.tssggs-runner.is-failed .tssggs-runner__bar span,
+.tssggs-runner.is-rolled_back .tssggs-runner__bar span { background: var(--tw-danger); }
+.tssggs-runner__counts { display: flex; flex-wrap: wrap; gap: 6px 18px; list-style: none; margin: 10px 0 0; padding: 0; font-size: 13px; color: var(--tw-muted); }
+.tssggs-runner__counts b { color: var(--tw-fg); font-variant-numeric: tabular-nums; }
+.tssggs-runner__counts li.is-bad b { color: var(--tw-danger); }
+.tssggs-runner__note { margin: 10px 0 0; font-size: 13px; color: var(--tw-muted); }
+.tssggs-runner__error { margin: 10px 0 0; font-size: 13px; color: var(--tw-danger); }
+
+@media (max-width: 767px) {
+    .tssggs-legacy__choice { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* ---- emails page ---- */
+.tssggs-emails .em-layout { display: grid; grid-template-columns: 280px minmax(0, 1fr); gap: 20px; align-items: start; }
+@media (max-width: 900px) { .tssggs-emails .em-layout { grid-template-columns: 1fr; } }
+.tssggs-emails .em-card { background: var(--tw-surface); border: 1px solid var(--tw-border); border-radius: 10px; padding: 16px 18px; }
+.tssggs-emails .em-nav h4 { margin: 14px 0 4px !important; font-size: 11px !important; line-height: 1.3 !important; font-weight: 700 !important; text-transform: uppercase; letter-spacing: .06em; color: var(--tw-muted); }
+.tssggs-emails .em-nav h4:first-child { margin: 5px 0 4px !important; }
+.tssggs-emails .em-nav a { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 4px 10px; border-radius: 6px; color: var(--tw-fg); text-decoration: none; font-size: 13px; }
+.tssggs-emails .em-nav a:hover { background: var(--tw-surface-alt); }
+.tssggs-emails .em-nav a.is-current { background: var(--tw-primary-soft); color: var(--tw-primary); font-weight: 600; }
+.tssggs-emails .em-tag { font-size: 10px; font-weight: 600; border-radius: 10px; padding: 1px 7px; white-space: nowrap; background: var(--tw-surface-alt); color: var(--tw-muted); border: 1px solid var(--tw-border); }
+.tssggs-emails .em-tag.is-edited { background: var(--tw-warning-soft); color: var(--tw-warning); border-color: rgba(166,95,0,.3); }
+.tssggs-emails .em-tag.is-off { background: var(--tw-danger-soft); color: var(--tw-danger); border-color: rgba(231,0,11,.3); }
+.tssggs-emails .em-head h3 { margin: 0 0 6px !important; font-size: 20px !important; line-height: 1.25 !important; }
+.tssggs-emails .em-head p { margin: 0 0 4px; }
+.tssggs-emails .em-tabs { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; margin: 14px 0; padding-bottom: 12px; border-bottom: 1px solid var(--tw-border); }
+.tssggs-emails .em-tabs a { padding: 5px 12px; border-radius: 16px; border: 1px solid var(--tw-border); font-size: 12px; color: var(--tw-fg); text-decoration: none; }
+.tssggs-emails .em-tabs a.is-current { background: var(--tw-primary); border-color: var(--tw-primary); color: #fff; }
+.tssggs-emails .em-tabs select { width: auto; display: inline-block; height: 30px; font-size: 12px; margin-left: 6px; }
+.tssggs-emails label.em-label { display: block; font-weight: 600; font-size: 12px; margin: 12px 0 4px; color: var(--tw-muted); text-transform: uppercase; letter-spacing: .04em; }
+.tssggs-emails textarea.em-message { font-family: Consolas, monospace; font-size: 12px; line-height: 1.5; min-height: 340px; resize: vertical; }
+.tssggs-emails .em-fields { margin: 10px 0 0; }
+.tssggs-emails .em-fields small { display: block; color: #333; margin: 6px 0 2px; font-weight: 500; }
+.tssggs-emails .em-chip { display: inline-block; margin: 2px 4px 2px 0; padding: 2px 8px; border: 1px solid var(--tw-border); border-radius: 4px; background: var(--tw-surface-alt); font-family: Consolas, monospace; font-size: 11px; color: var(--tw-fg); text-decoration: none; }
+.tssggs-emails .em-chip:hover { border-color: var(--tw-primary); color: var(--tw-primary); }
+.tssggs-emails .em-chip.is-own { background: var(--tw-primary-soft); border-color: rgba(0,113,54,.3); }
+.tssggs-emails .em-bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--tw-border); }
+.tssggs-emails .em-bar .em-spacer { flex: 1; }
+.tssggs-emails .em-bar .lu-btn--success { background: var(--tw-primary); border-color: var(--tw-primary); color: #fff; }
+.tssggs-emails .em-bar .is-danger { color: var(--tw-danger); }
+.tssggs-emails .em-preview { margin-top: 18px; }
+.tssggs-emails .em-preview iframe { width: 100%; height: 420px; border: 1px solid var(--tw-border); border-radius: 6px; background: #fff; }
+.tssggs-emails .em-opts { display: grid; grid-template-columns: 130px minmax(0, 1fr); gap: 8px 12px; align-items: center; padding: 12px 14px; background: var(--tw-surface-alt); border: 1px solid var(--tw-border); border-radius: 8px;  margin: 0 0 20px 0; }
+.tssggs-emails .em-opts > label { margin: 0; font-weight: 600; font-size: 12px; color: var(--tw-muted); }
+.tssggs-emails .em-inline { display: flex; gap: 8px; }
+.tssggs-emails .em-labelrow { display: flex; justify-content: space-between; align-items: center;  margin: 20px 0 0 0; }
+.tssggs-emails .em-rich { font-size: 12px; font-weight: 400; margin: 12px 0 4px; }
+
+/* ---- import page: tabs as segmented buttons, the selected one green with a white title ---- */
+#layers2 .tssggs-import .lu-nav--tabs { display: flex; gap: 8px; padding: 0 !important; border: 0 !important; }
+#layers2 .tssggs-import .lu-nav--tabs::after, #layers2 .tssggs-import .lu-nav--tabs.lu-nav--horizontal:after { display: none !important; }
+#layers2 .tssggs-import .lu-nav--tabs .lu-nav__item { margin: 0; }
+#layers2 .tssggs-import .lu-nav--md .lu-nav__item { min-height: 40px; }
+#layers2 .tssggs-import .lu-nav--tabs .lu-nav__link { display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; border: 1px solid var(--tw-border); border-radius: 8px; background: var(--tw-surface); color: var(--tw-fg); font-weight: 600; transition: background .15s, color .15s, border-color .15s; }
+#layers2 .tssggs-import .lu-nav--tabs .lu-nav__link:hover { border-color: var(--tw-primary); color: var(--tw-primary); }
+#layers2 .tssggs-import .lu-nav--tabs .lu-nav__item.is-active .lu-nav__link { background: var(--tw-primary); border-color: var(--tw-primary); color: #fff; }
+#layers2 .tssggs-import .lu-nav--tabs .lu-nav__link:after { display: none !important; }
+#layers2 .tssggs-import .lu-nav--tabs .lu-nav__link::before { content: ''; flex: none; width: 18px; height: 18px; background: currentColor; -webkit-mask: var(--tab-ico) center/18px 18px no-repeat; mask: var(--tab-ico) center/18px 18px no-repeat; }
+#layers2 .tssggs-import .lu-nav--tabs .lu-nav__item:nth-child(1) .lu-nav__link { --tab-ico: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6,2A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2H6M6,4H13V9H18V20H6V4M8,12V14H16V12H8M8,16V18H13V16H8Z'/%3E%3C/svg%3E"); }
+#layers2 .tssggs-import .lu-nav--tabs .lu-nav__item:nth-child(2) .lu-nav__link { --tab-ico: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M9,16V10H5L12,3L19,10H15V16H9M5,20V18H19V20H5Z'/%3E%3C/svg%3E"); }
+#layers2 .tssggs-import .lu-widget__nav { padding: 0 0 4px; }
+/* From CSV tab: upload form + invoice switch on the left, the template download on the right */
+#layers2 .tssggs-import .lu-tab-content > .lu-tab-pane.is-active:nth-child(2) { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; align-items: start; }
+@media (max-width: 900px) { #layers2 .tssggs-import .lu-tab-content > .lu-tab-pane.is-active:nth-child(2) { grid-template-columns: minmax(0, 1fr); } }

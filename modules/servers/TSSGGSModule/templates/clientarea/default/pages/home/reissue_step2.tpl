@@ -4,9 +4,10 @@
         <form method="post">
 
             <input type="hidden" name="customAction" value="sendReissue">
+            <input type="hidden" name="token" value="{$csrfToken}">
             {foreach $postData as $key => $value}
-                {if $key != 'token'}
-                    <input type="hidden" name="{$key}" value="{$value}">
+                {if $key != 'token' && !is_array($value)}
+                    <input type="hidden" name="{$key|escape}" value="{$value|escape}">
                 {/if}
             {/foreach}
 

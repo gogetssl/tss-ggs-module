@@ -26,11 +26,34 @@ class SslProductHelpers
             $timestamp = $date ? strtotime($date) : false;
             if($timestamp && $timestamp > 0)
             {
-                return date('Y-m-d', $timestamp);
+                // the due date can be moved N days before the end (settings: regular certificates / subscriptions)
+                return date('Y-m-d', strtotime('-' . self::dueDateOffset($orderData) . ' days', $timestamp));
             }
         }
 
         return null;
+    }
+
+    /**
+     * A multi-year subscription (the gateway returns the subscription end) as opposed to a regular single certificate
+     */
+    public static function isSubscription($orderData)
+    {
+        $items = isset($orderData['items']) && is_array($orderData['items']) ? $orderData['items'] : [];
+        $item  = reset($items);
+
+        return !empty($item['subscription']['end']);
+    }
+
+    /**
+     * Days before the end of the certificate / subscription on which the service falls due (renewal rules differ for
+     * regular certificates and subscriptions)
+     */
+    public static function dueDateOffset($orderData)
+    {
+        $days = (int)GeneralSettings::get(self::isSubscription($orderData) ? 'dueDateOffsetSubscription' : 'dueDateOffsetRegular');
+
+        return max(0, min(60, $days));
     }
 
     /**

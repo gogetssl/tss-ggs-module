@@ -3,6 +3,7 @@
 namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Products\Index\DataTables\Products\Providers;
 
 use ModulesGarden\TSSGGSModule\App\Libs\Helpers;
+use ModulesGarden\TSSGGSModule\App\Libs\ProductSettings;
 use ModulesGarden\TSSGGSModule\App\Models\RemoteProduct;
 use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\ProductRepository;
 use ModulesGarden\TSSGGSModule\Core\DataProviders\CrudProvider;
@@ -52,6 +53,23 @@ class ConfigurationProvider extends CrudProvider
             }
         }
 
+        $this->data['payType'] = $whmcsProduct->paytype ?: 'recurring';
+        foreach(ProductSettings::get($whmcsProduct->id) as $key => $value)
+        {
+            $this->data[$key] = $value;
+        }
+
+        $this->availableValues['payType'] = [
+            'recurring' => $this->translate('payTypeRecurring'),
+            'onetime'   => $this->translate('payTypeOnetime'),
+            'free'      => $this->translate('payTypeFree'),
+        ];
+        $this->availableValues['months'] = [];
+        foreach(ProductSettings::MONTHS as $months)
+        {
+            $this->availableValues['months'][$months] = $months ? $this->translate('monthsValue', ['months' => $months]) : $this->translate('monthsBillingCycle');
+        }
+
         $this->availableValues['autoSetup'] =
             [
                 'order'   => $this->translate('autoSetupOrder'),
@@ -74,7 +92,18 @@ class ConfigurationProvider extends CrudProvider
         $whmcsProduct->description = $this->formData['description'];
         $whmcsProduct->autosetup   = ($this->formData['autoSetup'] == 'off') ? '' : $this->formData['autoSetup'];
         $whmcsProduct->hidden      = $this->formData['hidden'] ? 'on' : '';
+        if(in_array($this->formData['payType'], ['recurring', 'onetime', 'free'], true))
+        {
+            $whmcsProduct->paytype = $this->formData['payType'];
+        }
         $whmcsProduct->save();
+
+        ProductSettings::save($whmcsProduct->id, [
+            'months'          => $this->formData['months'],
+            'commission'      => $this->formData['commission'],
+            'processingGuide' => $this->formData['processingGuide'],
+            'issuedMessage'   => $this->formData['issuedMessage'],
+        ]);
 
         $data = [
             'included_san'          => (int)$this->formData['includedSan'],

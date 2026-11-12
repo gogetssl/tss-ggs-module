@@ -3,98 +3,53 @@
 namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Widgets;
 
 use ModulesGarden\TSSGGSModule\App\Libs\Helpers;
-use ModulesGarden\TSSGGSModule\App\UI\Admin\Reports\Index\DataTables\ProfitLoss\ArrayDataProvider\DataProvider;
-use ModulesGarden\TSSGGSModule\App\UI\Admin\Reports\Index\DataTables\Shared\RecordsProvider;
-use ModulesGarden\TSSGGSModule\Components\Alert\Alert;
-use ModulesGarden\TSSGGSModule\Components\Label\LabelDanger;
-use ModulesGarden\TSSGGSModule\Components\Link\Link;
-use ModulesGarden\TSSGGSModule\Components\Widget\Widget;
-use ModulesGarden\TSSGGSModule\Core\Components\Enums\Color;
-use ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Currency;
+use ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Shared\Card;
+use ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Shared\SalesSummary;
 
-class OverviewWidget extends Widget
+/**
+ * Sales and margin of the last month: invoiced amount, reseller cost, gross profit and margin on cost, with the
+ * paid / unpaid / overdue split and a hint when the margin is low
+ */
+class OverviewWidget extends Card
 {
+    /** below this margin on cost (%) the panel suggests raising prices */
+    const LOW_MARGIN = 10;
+
     public function loadHtml(): void
     {
-        $this->setTitle($this->translate('title'));
-        $this->setIcon('format-list-bulleted');
+        $this->start('chart-line', $this->translate('title'),
+            '<a class="tssggs-dcard__aside" href="addonmodules.php?module=TSSGGSModule&amp;mg-page=statistics">' . Card::e($this->translate('statistics')) . '</a>', 'info');
 
-        $filters['fromDate'] = date('Y-m-d', strtotime('-1 month'));
-        $filters['toDate']   = date('Y-m-d');
+        $sales    = SalesSummary::get();
+        $invoiced = $sales['paid'] + $sales['unpaid'] + $sales['overdue'];
+        $cost     = $invoiced - $sales['profit'];
+        $margin   = $cost > 0 ? $sales['profit'] / $cost * 100 : 0;
 
-        $recordsProvider = new RecordsProvider();
-        $records         = $recordsProvider->getRecords($filters);
-
-        $paid            = 0;
-        $unpaid          = 0;
-        $overdue         = 0;
-        $grossProfit     = 0;
-        $issuedLastMonth = 0;
-
-        foreach($records as $record)
+        $tiles = '';
+        foreach([
+            ['currency-usd', 'invoiced', Helpers::formatDefaultCurrency($invoiced)],
+            ['package-variant-closed', 'cost', Helpers::formatDefaultCurrency($cost)],
+            ['trending-up', 'profit', Helpers::formatDefaultCurrency($sales['profit'])],
+            ['tag-outline', 'margin', number_format($margin, 1) . '%'],
+        ] as [$icon, $key, $value])
         {
-            if($record['paymentStatus'] == 'Paid')
-            {
-                $paid += $record['salesAmount'];
-            }
-            if($record['paymentStatus'] == 'Unpaid')
-            {
-                $unpaid += $record['salesAmount'];
-            }
-            if($record['paymentStatus'] == 'Overdue')
-            {
-                $overdue += $record['salesAmount'];
-            }
-
-            $grossProfit += $record['grossProfit'];
-            $issuedLastMonth++;
+            $tiles .= '<div><span>' . Card::icon($icon) . Card::e($this->translate($key)) . '</span><b>' . Card::e($value) . '</b></div>';
         }
 
-        $paid    = Helpers::formatDefaultCurrency($paid);
-        $unpaid  = Helpers::formatDefaultCurrency($unpaid);
-        $overdue = Helpers::formatDefaultCurrency($overdue);
+        $note = $this->translate('split', [
+            'paid'    => Helpers::formatDefaultCurrency($sales['paid']),
+            'unpaid'  => Helpers::formatDefaultCurrency($sales['unpaid']),
+            'overdue' => Helpers::formatDefaultCurrency($sales['overdue']),
+        ]);
+        if($invoiced > 0 && $margin < self::LOW_MARGIN)
+        {
+            $note .= ' ' . $this->translate('low', ['margin' => self::LOW_MARGIN]);
+        }
 
-        $content = $this->translate('totalSales') . ' ';
-        $content .= $this->translate('paid') . " <span class='green'>{$paid}</span> ";
-        $content .= $this->translate('unpaid') . " <span class='red'>{$unpaid}</span> ";
-        $content .= $this->translate('overdue') . " <span class='yellow'>{$overdue}</span> ";
+        $this->addElement(Card::html('<div class="tssggs-money">' . $tiles . '</div>'
+            . '<div class="tssggs-money__bar"><i style="width:' . max(0, min(100, round($margin, 1))) . '%"></i></div>'
+            . '<p class="tssggs-money__note">' . Card::e($note) . '</p>'));
 
-        $item = (new Alert())->setType(Color::SECONDARY);
-        $item->setText($content);
-        $this->addElement($item);
-
-        $class       = ($grossProfit > 0) ? 'green' : 'red';
-        $grossProfit = Helpers::formatDefaultCurrency($grossProfit);
-        $content     = $this->translate('grossProfit') . " <span class='{$class}'>{$grossProfit}</span>";
-
-        $item = (new Alert())->setType(Color::SECONDARY);
-        $item->setText($content);
-        $this->addElement($item);
-
-        $content = $this->translate('issuedLastMonth') . " <strong>{$issuedLastMonth}</strong>";
-
-        $item = (new Alert())->setType(Color::SECONDARY);
-        $item->setText($content);
-        $this->addElement($item);
-
-        $recordsProvider = new RecordsProvider();
-        $records         = $recordsProvider->getRecords(['renewalPeriod' => 'next_90']);
-        $expireIn90Days  = count($records);
-
-        $content = $this->translate('expireIn90Days') . " <strong>{$expireIn90Days}</strong>";
-
-
-        $item = (new Alert())->setType(Color::SECONDARY);
-        $item->setText($content);
-        $this->addElement($item);
-
-
-        $this->addElement(
-            (new Link())
-                ->setTitle($this->translate('statistics'))
-                ->setUrl('addonmodules.php?module=TSSGGSModule&mg-page=statistics')
-                ->setSlot('class', 'lu-btn lu-btn--primary mt30_custom')
-
-        );
+        $this->foot('addonmodules.php?module=TSSGGSModule&mg-page=pricing', 'tag-outline', $this->translate('pricing'));
     }
 }

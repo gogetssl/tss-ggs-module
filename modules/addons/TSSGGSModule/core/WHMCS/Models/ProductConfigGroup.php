@@ -6,7 +6,7 @@ class ProductConfigGroup extends \WHMCS\Product\ConfigOptionGroup
 {
     public function configOptions()
     {
-        return $this->hasMany("ModulesGarden\TSSGGSModule\Core\WHMCS\Models\ProductConfigOption", "gid");
+        return $this->hasMany('ModulesGarden\\TSSGGSModule\\Core\\WHMCS\\Models\\ProductConfigOption', "gid");
     }
 
     public function scopeOfProductId($query, $productId)

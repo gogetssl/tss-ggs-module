@@ -3,6 +3,7 @@
 namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Products\Index\DataTables\Products\Providers;
 
 use ModulesGarden\TSSGGSModule\App\Libs\AcmeHelpers;
+use ModulesGarden\TSSGGSModule\App\Libs\FinancePolicy;
 use ModulesGarden\TSSGGSModule\App\Libs\Helpers;
 use ModulesGarden\TSSGGSModule\App\Models\RemoteProduct;
 use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\ProductRepository;
@@ -88,6 +89,7 @@ class ImportProvider extends CrudProvider
         $localIds           = explode(',', $this->formData['id']);
         $baseCurrencyRate   = $this->formData['rate'] ?: 1;
         $pricingTypePercent = (bool)$this->formData['pricingTypePercent'];
+        $importMargin       = max(0, floatval($this->formData['profitMargin'] ?? 0)); // the margin entered in the import form
 
         //$baseCurrencyId - USD or default WHMCS currency
         $baseCurrencyId = Helpers::getCurrencyIdByCode('USD');
@@ -106,7 +108,7 @@ class ImportProvider extends CrudProvider
         {
             $remoteProduct = RemoteProduct::find($localId);
 
-            if(!$remoteProduct)
+            if(!$remoteProduct || !\ModulesGarden\TSSGGSModule\App\Libs\ProductCatalog::importable($remoteProduct))
             {
                 continue;
             }
@@ -142,22 +144,16 @@ class ImportProvider extends CrudProvider
                     continue;
                 }
 
-                if(isset($this->formData['profitMargin']) && floatval($this->formData['profitMargin']) > 0)
-                {
-                    $profitMargin = floatval($this->formData['profitMargin']);
-                    $apiPrice     = $apiPrice + ($apiPrice * $profitMargin / 100);
-                }
-
-                $baseCurrencyPrice = $apiPrice * $baseCurrencyRate;
+                $baseCost   = $apiPrice * $baseCurrencyRate;
                 $currencies        = Currency::get();
 
                 foreach($currencies as $currency)
                 {
-                    $pricing[$currency->id][$billingPeriod] = \convertCurrency($baseCurrencyPrice, $baseCurrencyId, $currency->id);
+                    $pricing[$currency->id][$billingPeriod] = FinancePolicy::sell($baseCost, $importMargin, (int)$remotePriceData['term'], $currency->id, true);
 
                     if(AcmeHelpers::isAcmeRemoteProduct($remoteProduct->remoteId) && $billingPeriod == 'annually')
                     {
-                        $pricing[$currency->id]['monthly'] = \convertCurrency($baseCurrencyPrice, $baseCurrencyId, $currency->id);
+                        $pricing[$currency->id]['monthly'] = FinancePolicy::sell($baseCost, $importMargin, (int)$remotePriceData['term'], $currency->id, true);
                     }
                 }
             }
@@ -167,9 +163,9 @@ class ImportProvider extends CrudProvider
 
             if($productId)
             {
-                $dcvArray            = $remoteProductData['dcv'] ?: [];
-                $includedSan         = (int)$remoteProductData['san']['included']['single'];
-                $includedSanWildcard = (int)$remoteProductData['san']['included']['wildcard'];
+                $dcvArray            = $remoteProductData['dcv'] ?? [];
+                $includedSan         = (int)($remoteProductData['san']['included']['single'] ?? 0);
+                $includedSanWildcard = (int)($remoteProductData['san']['included']['wildcard'] ?? 0);
 
                 $productRepository->updateProductConfiguration($productId, [
                     'provider'              => $remoteProduct->vendor,
@@ -187,6 +183,12 @@ class ImportProvider extends CrudProvider
             else
             {
                 throw new \Exception('productCreationFailed');
+            }
+
+            // code signing: the "Certificate Delivery" option (token shipping as a one-time fee)
+            if(strtolower((string)$remoteProduct->category) === \ModulesGarden\TSSGGSModule\App\Libs\CodeSigningService::CATEGORY)
+            {
+                \ModulesGarden\TSSGGSModule\App\Libs\CodeSigningService::createDeliveryOption($productId, (array)$remoteProductData);
             }
 
             //create configOptions
@@ -207,22 +209,30 @@ class ImportProvider extends CrudProvider
 
             $optionNames = [];
 
-            if($remoteProductData['san']['single_allowed'])
+            // the client sees these names on the order form: say what is already in the price
+            if(!empty($remoteProductData['san']['single_allowed']))
             {
                 $optionNames['single'] = [
                     'name'         => 'sans',
-                    'nameFriendly' => 'Additional Single domain SAN\'s',
+                    'nameFriendly' => \ModulesGarden\TSSGGSModule\App\Libs\ProductCatalog::optionLabel('single', $includedSan),
                     'unit'         => 'SAN'
                 ];
             }
 
-            if($remoteProductData['san']['wildcard_allowed'])
+            if(!empty($remoteProductData['san']['wildcard_allowed']))
             {
                 $optionNames['wildcard'] = [
                     'name'         => 'sans_wildcard',
-                    'nameFriendly' => 'Additional Wildcard domain SAN\'s',
+                    'nameFriendly' => \ModulesGarden\TSSGGSModule\App\Libs\ProductCatalog::optionLabel('wildcard', $includedSanWildcard),
                     'unit'         => 'SAN'
                 ];
+            }
+
+            // SAN options: let clients buy more SANs later (WHMCS "Configurable Options Upgrades")
+            if($optionNames && !(int)$product->configoptionsupgrade)
+            {
+                $product->configoptionsupgrade = 1;
+                $product->save();
             }
 
             foreach($optionNames as $remoteOptionName => $localOptionNames)
@@ -281,17 +291,16 @@ class ImportProvider extends CrudProvider
                             continue;
                         }
 
-                        $apiPrice          = $apiPrice + ($apiPrice * $profitMargin / 100);
-                        $baseCurrencyPrice = $apiPrice * $baseCurrencyRate;
+                        $baseCost          = $apiPrice * $baseCurrencyRate;
                         $currencies        = Currency::get();
 
                         foreach($currencies as $currency)
                         {
-                            $pricingArray[$currency->id][$billingPeriod] = \convertCurrency($baseCurrencyPrice, $baseCurrencyId, $currency->id);
+                            $pricingArray[$currency->id][$billingPeriod] = FinancePolicy::sell($baseCost, $importMargin, (int)$remotePriceData['term'], $currency->id, false);
 
                             if(AcmeHelpers::isAcmeRemoteProduct($remoteProduct->remoteId) && $billingPeriod == 'annually')
                             {
-                                $pricingArray[$currency->id]['monthly'] = \convertCurrency($baseCurrencyPrice, $baseCurrencyId, $currency->id);
+                                $pricingArray[$currency->id]['monthly'] = FinancePolicy::sell($baseCost, $importMargin, (int)$remotePriceData['term'], $currency->id, false);
                             }
                         }
                     }

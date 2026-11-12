@@ -3,6 +3,7 @@
 namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Providers;
 
 use ModulesGarden\TSSGGSModule\App\Libs\SSLTrustCenterApi;
+use ModulesGarden\TSSGGSModule\App\Migration\Credentials;
 use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
 use ModulesGarden\TSSGGSModule\Core\Components\Actions\Redirect;
 use ModulesGarden\TSSGGSModule\Core\Components\Response\Response;
@@ -16,17 +17,17 @@ class ApiSettingsProvider extends CrudProvider
 
     public function read()
     {
-        $moduleRepository    = new AddonModuleRepository();
-        $moduleConfiguration = $moduleRepository->getModuleConfiguration();
+        // empty vendor blocks are prefilled from the legacy modules chosen for migration (nothing stored until saved)
+        [$credentials] = Credentials::prefilled();
 
-        $this->data['tssLivePartnerCode'] = $moduleConfiguration['credentials']['tss']['PartnerCode'];
-        $this->data['tssLiveAuthToken']   = $moduleConfiguration['credentials']['tss']['AuthToken'];
-        $this->data['tssTestPartnerCode'] = $moduleConfiguration['credentials']['tss']['TestPartnerCode'];
-        $this->data['tssTestAuthToken']   = $moduleConfiguration['credentials']['tss']['TestAuthToken'];
-        $this->data['OperationMode']      = $moduleConfiguration['credentials']['tss']['OperationMode'];
+        $this->data['tssLivePartnerCode'] = $credentials['tss']['PartnerCode'];
+        $this->data['tssLiveAuthToken']   = $credentials['tss']['AuthToken'];
+        $this->data['tssTestPartnerCode'] = $credentials['tss']['TestPartnerCode'];
+        $this->data['tssTestAuthToken']   = $credentials['tss']['TestAuthToken'];
+        $this->data['OperationMode']      = $credentials['tss']['OperationMode'];
 
-        $this->data['ggsLivePartnerCode'] = $moduleConfiguration['credentials']['ggs']['PartnerCode'];
-        $this->data['ggsLiveAuthToken']   = $moduleConfiguration['credentials']['ggs']['AuthToken'];
+        $this->data['ggsLivePartnerCode'] = $credentials['ggs']['PartnerCode'];
+        $this->data['ggsLiveAuthToken']   = $credentials['ggs']['AuthToken'];
     }
 
     public function update()

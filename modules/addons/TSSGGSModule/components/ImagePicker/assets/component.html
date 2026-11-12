@@ -2,7 +2,7 @@
     <div class="lu-selectize-input lu-form-control items has-options full has-items input-active">
         <div class="lu-w-100" @click="onInputClick()">
                 <div class="lu-selectize-search-input-container" v-if="!disableSearching_ && isOpen_ && !value_">
-                    <i class="lu-mdi mdi mdi-magnify"></i>
+                    <span class="tssggs-icobox"><svg class="tssggs-ico" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false"><path fill="currentColor" d="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z"/></svg></span>
                     <input class="lu-selectize-search-input" type="text" style="height: 100%; border: none" autofocus @input="updateSearchedPhrase">
                 </div>
                 <div v-else>
@@ -10,7 +10,7 @@
                     <div v-else class="lu-image-container">
                         <img :src="selectedImageUrl" class="lu-m-r-1x">
                         <span v-html="value_" class="lu-m-r-1x"></span>
-                        <i class="lu-mdi lu-i-c-2x mdi mdi-close" @click="clearField($event)" role="button"></i>
+                        <span class="lu-i-c-2x tssggs-icobox" @click="clearField($event)" role="button"><svg class="tssggs-ico" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false"><path fill="currentColor" d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z"/></svg></span>
                     </div>
                 </div>
                 <input :name="name_" :value="value_" type="hidden">

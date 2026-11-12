@@ -1,7 +1,7 @@
 <div :id="cid_" class="lu-image-text">
     <div class="lu-m-r-1x">
         <img :src="url_" v-if="url_">
-        <i class="lu-mdi mdi mdi-image-outline" :data-title="this.translate_('no_image')" :aria-label="this.translate_('no_image')" data-toggle="lu-tooltip" data-lu-tooltip rel="tooltip" v-else></i>
+        <span class="tssggs-icobox" :data-title="this.translate_('no_image')" :aria-label="this.translate_('no_image')" data-toggle="lu-tooltip" data-lu-tooltip rel="tooltip" v-else><svg class="tssggs-ico" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false"><path fill="currentColor" d="M19,19H5V5H19M19,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3M13.96,12.29L11.21,15.83L9.25,13.47L6.5,17H17.5L13.96,12.29Z"/></svg></span>
     </div>
     <span class="lu-text">{{text_}}</span>
 </div>

@@ -4,6 +4,7 @@ var component =
         mixins: [ActionsHandlerMixin, TooltipMixin, VisibilityMixin],
         template: '#template-name#',
         props: [
+            'iconSvg',
             'data',
             'icon',
             'type',
@@ -15,6 +16,7 @@ var component =
         ],
         data: function () {
             return {
+                iconSvg_: '',
                 data_: null,
                 icon_: '',
                 type_: '',

@@ -2,47 +2,37 @@
 
 namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Widgets;
 
-use ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Forms\ApiSettingsForm;
+use ModulesGarden\TSSGGSModule\App\Libs\Icons;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Forms\CronConfigurationForm;
-use ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Forms\CronSettingsForm;
-use ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Forms\FinanceSettingsForm;
-use ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Forms\SslSettingsForm;
-use ModulesGarden\TSSGGSModule\Components\PreBlock\PreBlock;
 use ModulesGarden\TSSGGSModule\Components\Text\Text;
 use ModulesGarden\TSSGGSModule\Components\Widget\Widget;
-use ModulesGarden\TSSGGSModule\Packages\ModuleSettings\Models\ModuleSettings;
 
+/**
+ * CRON settings: ONE cron line for the whole module (RunAll starts every job when it is due), then the form with one
+ * card per job (description, status, how often it runs).
+ */
 class CronSettingsWidget extends Widget
 {
     public function loadHtml(): void
     {
         $this->setTitle($this->translate('title'));
+        $this->setIcon('file-clock-outline');
+        $this->setSubtitle($this->translate('subtitle'));
+        $this->setCss('tssggs-cronpanel');
 
-        $timestamp = ModuleSettings::where('setting', 'cronLastUpdate')->first();
-        $dateCron = isset($timestamp->value) ? date('Y-m-d H:i:s', $timestamp->value) : 'not activated';
-        $this->addElement((new Text())->setText($this->translate('cronCommandTitle_processing').'<br>')->setCss('cronCommandTitle'));
-        $this->addElement((new Text())->setText($this->translate('cronCommand_processing').$dateCron));
-        $this->addElement((new PreBlock())->setContent('*/5 * * * * php -q '.dirname(__DIR__, 6) . '/cron/cronScript.php'));
+        $script = dirname(__DIR__, 6) . '/cron/cron.php';
+        $line   = '*/5 * * * * php -q ' . $script . ' RunAll';
+        $copied = addslashes($this->translate('copied'));
+        $copy   = addslashes($this->translate('copy'));
 
-        $expectedCrons = [
-            'ProductPricingUpdate',
-            'SSLCertificatesProcessing',
-            'SSLCertificates',
-            'SSLAutoInstall',
-            'RenewalNotifyCertificate',
-            'ReSyncProducts'
-        ];
-
-        foreach($expectedCrons as $cronCommand)
-        {
-            $cron    = '*/5 * * * *';
-            $command = 'php -q ' . dirname(__DIR__, 6) . '/cron/cron.php ' . $cronCommand;
-            $this->addElement((new Text())->setText($this->translate('cronCommandTitle_' . $cronCommand).'<br>')->setCss('cronCommandTitle'));
-            $this->addElement((new Text())->setText($this->translate('cronCommand_' . $cronCommand)));
-            $this->addElement((new PreBlock())->setContent($cron . ' ' . $command));
-        }
+        $this->addElement((new Text())->setText(
+            '<div class="tssggs-cronone"><div class="tssggs-cronone__title">' . Icons::svg('console') . '' . $this->translate('oneLineTitle') . '</div>'
+            . '<p>' . $this->translate('oneLineInfo') . '</p>'
+            . '<div class="tssggs-cronone__code"><code>' . htmlspecialchars($line) . '</code>'
+            . '<button type="button" class="tssggs-copy" onclick="var b=this,o=b.innerHTML;navigator.clipboard.writeText(b.previousElementSibling.textContent);b.textContent=\'' . $copied
+            . '\';setTimeout(function(){b.innerHTML=o},1500)">' . Icons::svg('content-copy') . '' . $this->translate('copy') . '</button></div></div>'
+        ));
 
         $this->addElement(new CronConfigurationForm());
-
     }
 }

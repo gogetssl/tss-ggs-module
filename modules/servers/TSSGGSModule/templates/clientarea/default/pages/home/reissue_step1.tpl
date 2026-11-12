@@ -103,6 +103,21 @@
             </div>
 
 
+            {if $autoinstall_key}
+                <div class="checkbox tssggs-reissue-autoinstall" style="margin:10px 0 20px;">
+                    <label>
+                        <input type="checkbox" name="use_autoinstall_key" value="1" checked onchange="document.getElementById('inputCsr').closest('.form-group').style.display = this.checked ? 'none' : '';">
+                        {$MGLANG->T('reissue_page', 'reissue_autoinstall_key')}
+                    </label>
+                    <small class="text-muted" style="display:block;">{$MGLANG->T('reissue_page', 'reissue_autoinstall_key_desc')}</small>
+                </div>
+                <script>document.addEventListener('DOMContentLoaded', function () { var f = document.getElementById('inputCsr'); if (f) { f.closest('.form-group').style.display = 'none'; } });</script>
+            {/if}
+
+            {if $buy_sans_url}
+                <p style="margin:10px 0 20px;">{$MGLANG->T('reissue_page', 'reissue_buy_sans_desc')} <a href="{$buy_sans_url}" class="btn btn-default btn-sm">{$MGLANG->T('reissue_page', 'reissue_buy_sans')}</a></p>
+            {/if}
+
             {if $sans || $sans_wildcard}
                 <div><strong>{$MGLANG->T('reissue_page', 'Subject Alternative Names (SANs)')}</strong></div>
             {/if}
@@ -112,7 +127,7 @@
                     <div class="form-group row">
                         <label class="col-md-4 col-form-label text-md-right" for="inputAdditionalField">{$lang_san}</label>
                         <div class="col-md-8">
-                            <textarea name="fields[sans_domains]" cols="60" rows="" class="form-control">{$post_san}</textarea> {$MGLANG->T('reissue_page', 'desc_san')}
+                            <textarea name="fields[sans_domains]" cols="60" rows="" class="form-control">{$post_san|escape}</textarea> {$MGLANG->T('reissue_page', 'desc_san')}
                         </div>
                     </div>
                 </fieldset>
@@ -123,7 +138,7 @@
                     <div class="form-group row">
                         <label class="col-md-4 col-form-label text-md-right" for="inputAdditionalField">{$lang_san_wildcard}</label>
                         <div class="col-md-8">
-                            <textarea name="fields[sans_domains_wildcard]" cols="60" rows="" class="form-control">{$post_san_wildcard}</textarea> {$MGLANG->T('reissue_page', 'desc_san_wildcard')}
+                            <textarea name="fields[sans_domains_wildcard]" cols="60" rows="" class="form-control">{$post_san_wildcard|escape}</textarea> {$MGLANG->T('reissue_page', 'desc_san_wildcard')}
                         </div>
                     </div>
                 </fieldset>
@@ -304,7 +319,7 @@
             let EA = $('#emailAddress').val();
 
             $.ajax({
-                url: "clientarea.php?action=productdetails&id=68&mg-page=home&mg-action=generateCSR&json=1",
+                url: "clientarea.php?action=productdetails&id={$serviceid}&mg-page=home&mg-action=generateCSR&json=1",
                 method: "POST",
                 dataType: "json",
                 data: {
@@ -347,13 +362,17 @@
 
         function downloadPkey()
         {
-            window.open('clientarea.php?action=productdetails&id=68&mg-page=home&mg-action=downloadKey&pkey='+$('#pkeyField').val(), '_blank').focus();
+            var f = $('<form></form>').attr({ method: 'post', target: '_blank' }).attr('action', 'clientarea.php?action=productdetails&id={$serviceid}');
+            f.append($('<input type="hidden" name="mg-action" value="downloadKey">'));
+            f.append($('<input type="hidden" name="token">').val(typeof csrfToken !== 'undefined' ? csrfToken : '{$csrfToken}'));
+            f.append($('<input type="hidden" name="handle">').val($('#pkeyField').val()));
+            f.appendTo('body').submit().remove();
         }
 
 
         function checkCSR(csrValue) {
             $.ajax({
-                url: "clientarea.php?action=productdetails&id=68&mg-page=home&mg-action=checkCSR&json=1",
+                url: "clientarea.php?action=productdetails&id={$serviceid}&mg-page=home&mg-action=checkCSR&json=1",
                 method: "POST",
                 dataType: "json",
                 data: {

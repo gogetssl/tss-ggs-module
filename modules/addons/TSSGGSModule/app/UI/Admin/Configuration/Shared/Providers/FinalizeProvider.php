@@ -18,8 +18,10 @@ class FinalizeProvider extends CrudProvider
     public function update()
     {
         (new AddonModuleRepository())->finalize();
+        // legacy modules chosen for migration: continue on the migration page
+        $page = \ModulesGarden\TSSGGSModule\App\Migration\Choice::toMigrate() ? 'migration' : 'home';
         return (new Response())->setSuccess($this->translate('successFinalize'))->setActions([new Redirect(Url::route('',
-            ['module' => 'TSSGGSModule', 'mg-page' => 'home', 'mg-action' => 'index']
+            ['module' => 'TSSGGSModule', 'mg-page' => $page, 'mg-action' => 'index']
         ))]);
 
     }

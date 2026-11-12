@@ -1,4 +1,4 @@
-<label :id="cid_" v-html="text_" :class="[css_, {'lu-single-element' : elements_.elements && elements_.elements.length == 1}]">
-    //{{ text_ }}
+<label :id="cid_" :class="[css_, {'lu-single-element' : elements_.elements && elements_.elements.length == 1}]">
+    <span v-html="text_"></span>
     <component v-bind="element.slots" v-bind:data="data_" v-bind:is="element.name" v-bind:key="key" v-for="(element,key) in elements_.elements" v-on="$listeners"></component>
 </label>

@@ -20,18 +20,24 @@ class CreateAccount {
 
         $serviceSSL = SSL::getByServiceId($serviceId);
         if (!is_null($serviceSSL)) {
-            throw new \Exception('The SSL order has already been created');
+            // A migrated legacy service ("setup on order" products) already has its row: adopt it instead of failing
+            if ($serviceSSL->status === 'Awaiting Configuration' && empty($serviceSSL->remoteid)) {
+                SSL::where('id', $serviceSSL->id)->update(['module' => (new Configuration())->systemName]);
+                $sslId = $serviceSSL->id;
+            } else {
+                throw new \Exception('The SSL order has already been created');
+            }
+        } else {
+            $sslId = SSL::insertGetId([
+                'userid' => $userId,
+                'serviceid' => $serviceId,
+                'remoteid' => '',
+                'module' => (new Configuration())->systemName,
+                'certtype' => '',
+                'completiondate' => '',
+                'status' => 'Awaiting Configuration'
+            ]);
         }
-
-        $sslId = SSL::insertGetId([
-            'userid' => $userId,
-            'serviceid' => $serviceId,
-            'remoteid' => '',
-            'module' => (new Configuration())->systemName,
-            'certtype' => '',
-            'completiondate' => '',
-            'status' => 'Awaiting Configuration'
-        ]);
         if(isset($_SESSION['TSSGGSModule']['importedServices']) && is_array($_SESSION['TSSGGSModule']['importedServices']) && in_array($serviceId, $_SESSION['TSSGGSModule']['importedServices']))
         {
             $key = array_search($serviceId, $_SESSION['TSSGGSModule']['importedServices']);
@@ -48,7 +54,9 @@ class CreateAccount {
             return 'success';
         }
 
-        EmailTemplates::sendEmail(EmailTemplates::CONFIGURATION_TEMPLATE, $serviceId, [
+        $gatewayType = \ModulesGarden\TSSGGSModule\App\Libs\GatewayOrderService::typeOfProduct($whmcsProductId);
+        $template    = $gatewayType ? $gatewayType::configurationTemplate() : EmailTemplates::CONFIGURATION_TEMPLATE;
+        EmailTemplates::sendEmail($template, $serviceId, [
             'ssl_configuration_link' => (new Config())->getConfigureSSLUrl($sslId, $serviceId),
         ]);
 

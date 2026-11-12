@@ -2,125 +2,69 @@
 
 namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Configuration\Content;
 
-use ModulesGarden\TSSGGSModule\App\Models\Whmcs\Configuration;
-use ModulesGarden\TSSGGSModule\Components\Alert\AlertDanger;
-use ModulesGarden\TSSGGSModule\Components\Alert\AlertSuccess;
+use ModulesGarden\TSSGGSModule\App\Libs\SystemRequirements;
+use ModulesGarden\TSSGGSModule\App\UI\Admin\Configuration\Shared\WizardLayout;
 use ModulesGarden\TSSGGSModule\Components\Button\ButtonSuccess;
+use ModulesGarden\TSSGGSModule\Components\Text\Text;
 use ModulesGarden\TSSGGSModule\Components\Widget\Widget;
 use ModulesGarden\TSSGGSModule\Core\Contracts\Components\AjaxComponentInterface;
 use ModulesGarden\TSSGGSModule\Core\Components\Action;
 use ModulesGarden\TSSGGSModule\Core\Translation\TranslatorTrait;
 
+/**
+ * System compatibility check - see App\Libs\SystemRequirements
+ */
 class Step2 extends Widget implements AjaxComponentInterface
 {
     use TranslatorTrait;
 
     public function loadHtml(): void
     {
-        $phpVersion = phpversion();
-        $whmcsVersion = '';
-        $whmcsConfiguration = Configuration::where('setting', 'Version')->first()->toArray();
-        if (isset($whmcsConfiguration['value']) && !empty($whmcsConfiguration['value'])) $whmcsVersion = $whmcsConfiguration['value'];
-        $intlExtension = extension_loaded('intl');
+        WizardLayout::prepareStep($this, 2, $this->translate('step2_title'));
 
-        $icuVersion = false;
-        if ($intlExtension !== false) {
-            // check ICU
-        }
+        $checks  = (new SystemRequirements())->check();
+        $blocked = SystemRequirements::hasBlockingFailure($checks);
 
-        $buttonStatus = true;
+        $intro = new Text();
+        $intro->setCss('tssggs-html');
+        $intro->setText('<p class="tssggs-checks__intro">' . htmlspecialchars($this->translate($blocked ? 'intro_failed' : 'intro_passed')) . '</p>');
+        $this->addElement($intro);
 
-        $checkDir = dirname(dirname(dirname(dirname(dirname(__DIR__))))) . DIRECTORY_SEPARATOR . 'storage';
-
-
-        $this->setTitle($this->translate('step2_title'));
-
-        if (version_compare($phpVersion, '8.1.0') >= 0)
+        $rows = '';
+        foreach($checks as $check)
         {
-            $alert = new AlertSuccess();
-            $alert->setText($this->translate('php_alert_success'));
-            $this->addElement($alert);
-        }
-        else
-        {
-            $alert = new AlertDanger();
-            $alert->setText($this->translate('php_alert_danger'));
-            $this->addElement($alert);
-            $buttonStatus = false;
-        }
+            $replace = ['subject' => $check['subject']];
+            $name    = $this->translate('check_' . $check['key'], $replace);
+            $hint    = $check['status'] === SystemRequirements::STATUS_PASSED ? '' : $this->translate('hint_' . $check['key'], $replace);
 
-        $whmcsVersion = str_replace('-beta', '', $whmcsVersion);
-        if (version_compare($whmcsVersion, '8.6.0') >= 0) {
-
-            $alert = new AlertSuccess();
-            $alert->setText($this->translate('whmcs_alert_success'));
-            $this->addElement($alert);
-        }
-        else
-        {
-            $alert = new AlertDanger();
-            $alert->setText($this->translate('whmcs_alert_danger'));
-            $this->addElement($alert);
-            $buttonStatus = false;
+            $rows .= '<tr class="is-' . $check['status'] . '">'
+                . '<td><span class="tssggs-checks__name">' . htmlspecialchars($name) . '</span>'
+                . ($hint !== '' ? '<span class="tssggs-checks__hint">' . htmlspecialchars($hint) . '</span>' : '')
+                . (!empty($check['command']) && $check['status'] !== SystemRequirements::STATUS_PASSED
+                    ? '<span class="tssggs-checks__hint">' . htmlspecialchars($this->translate('command_hint')) . '</span><code class="tssggs-checks__cmd">' . htmlspecialchars($check['command']) . '</code>' : '')
+                . '</td>'
+                . '<td>' . htmlspecialchars($check['required']) . '</td>'
+                . '<td>' . htmlspecialchars($check['found']) . '</td>'
+                . '<td><span class="tssggs-checks__status">' . htmlspecialchars($this->translate('status_' . $check['status'])) . '</span></td>'
+                . '</tr>';
         }
 
-//        if ($intlExtension !== false)
-//        {
-//            $alert = new AlertSuccess();
-//            $alert->setText($this->translate('intl_alert_success'));
-//            $this->addElement($alert);
-//        }
-//        else
-//        {
-//            $alert = new AlertDanger();
-//            $alert->setText($this->translate('intl_alert_danger'));
-//            $this->addElement($alert);
-//            $buttonStatus = false;
-//        }
-//
-//        if($icuVersion !== false)
-//        {
-//            $alert = new AlertSuccess();
-//            $alert->setText($this->translate('icu_alert_success'));
-//            $this->addElement($alert);
-//        }
-//        else
-//        {
-//            $alert = new AlertDanger();
-//            $alert->setText($this->translate('icu_alert_danger'));
-//            $this->addElement($alert);
-//            $buttonStatus = false;
-//        }
-
-        if (!is_writable($checkDir))
-        {
-            $alert = new AlertDanger();
-            $alert->setText($this->translate('config_folder_alert_danger'));
-            $this->addElement($alert);
-            $buttonStatus = false;
-        }
-        else
-        {
-            $alert = new AlertSuccess();
-            $alert->setText($this->translate('config_folder_alert_success'));
-            $this->addElement($alert);
-        }
-
-
-
-
+        $table = new Text();
+        $table->setCss('tssggs-html');
+        $table->setText('<div class="tssggs-checks"><table>'
+            . '<thead><tr><th>' . htmlspecialchars($this->translate('col_check')) . '</th><th>' . htmlspecialchars($this->translate('col_required'))
+            . '</th><th>' . htmlspecialchars($this->translate('col_found')) . '</th><th>' . htmlspecialchars($this->translate('col_status')) . '</th></tr></thead>'
+            . '<tbody>' . $rows . '</tbody></table></div>');
+        $this->addElement($table);
 
         $nextStep = new ButtonSuccess();
         $nextStep->setCss('lu-btn lu-btn--success mt30_custom');
-        $nextStep->onClick(Action::redirect('addonmodules.php?module=TSSGGSModule&mg-page=configuration&mg-action=step3'));
+        $nextStep->onClick(Action::redirect('addonmodules.php?module=TSSGGSModule&mg-page=configuration&mg-action=step' . WizardLayout::nextPage(2)));
         $nextStep->setTitle($this->translate('next_step_btn'));
-        if($buttonStatus === false)
+        if($blocked)
         {
             $nextStep->setDisabled();
         }
-
         $this->addElement($nextStep);
-
-
     }
 }

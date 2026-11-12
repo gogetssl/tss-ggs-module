@@ -1,16 +1,24 @@
 home:
-  icon: 'mdi mdi-view-dashboard'
+  icon: 'mdi mdi-view-dashboard-outline'
 products:
-  icon: 'mdi mdi-layers'
+  icon: 'mdi mdi-cube-outline'
 import:
-  icon: 'mdi mdi-import'
+  icon: 'mdi mdi-tray-arrow-down'
 statistics:
-  icon: 'mdi mdi-trending-up'
+  icon: 'mdi mdi-chart-bar'
 reports:
-  icon: 'mdi mdi-file-chart'
+  icon: 'mdi mdi-file-document-outline'
 pricing:
-  icon: 'mdi mdi-cash'
+  icon: 'mdi mdi-credit-card-outline'
+commissions:
+  icon: 'mdi mdi-hand-coin-outline'
 automationQueue:
+  icon: 'mdi mdi-pulse'
+certificateLog:
   icon: 'mdi mdi-format-list-checks'
+emails:
+  icon: 'mdi mdi-email-outline'
 settings:
-  icon: 'mdi mdi-cog'
+  icon: 'mdi mdi-cog-outline'
+migration:
+  icon: 'mdi mdi-database-outline'

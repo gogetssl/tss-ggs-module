@@ -102,7 +102,7 @@ class Lang
         if (file_exists($originalLanguageFile))
         {
             include $originalLanguageFile;
-            self::getInstance()->langs       = array_merge(self::getInstance()->langs, $_LANG);
+            self::getInstance()->langs       = array_replace_recursive(self::getInstance()->langs, $_LANG);
             self::getInstance()->currentLang = $lang;
         }
 
@@ -111,7 +111,7 @@ class Lang
         if (file_exists($file))
         {
             include $file;
-            self::getInstance()->langs       = array_merge(self::getInstance()->langs, $_LANG);
+            self::getInstance()->langs       = array_replace_recursive(self::getInstance()->langs, $_LANG);
             self::getInstance()->currentLang = $lang;
         }
     }

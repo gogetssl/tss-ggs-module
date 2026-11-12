@@ -7,13 +7,15 @@ var component =
             return {
                 text_: '',
                 css_: '',
-                title_: ''
+                title_: '',
+                iconSvg_: ''
             }
         },
         props: [
             'text',
             'css',
-            'title'
+            'title',
+            'iconSvg'
         ],
 
     }

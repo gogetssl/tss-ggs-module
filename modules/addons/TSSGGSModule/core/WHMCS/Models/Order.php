@@ -44,6 +44,6 @@ class Order extends \WHMCS\Order\Order
 
     public function promotion()
     {
-        return $this->hasOne("ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Promotion", "code", "promocode");
+        return $this->hasOne('ModulesGarden\\TSSGGSModule\\Core\\WHMCS\\Models\\Promotion', "code", "promocode");
     }
 }

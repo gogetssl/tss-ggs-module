@@ -13,9 +13,9 @@ class AutoPrune
 {
     public function run()
     {
-        if (Config::get('logs.auto_prune.enabled', true) && ModuleSettings::get('logs.auto_prune'))
+        if (Config::get('logs.auto_prune.enabled', true) && ModuleSettings::get('logs.auto_prune', 1))
         {
-            \ModulesGarden\TSSGGSModule\Packages\Logs\Models\Logs::where('date', '<', DB::raw('DATE_SUB(NOW(), INTERVAL ' . ((int)ModuleSettings::get('logs.auto_prune_older_than')) . ' day)'))->delete();
+            \ModulesGarden\TSSGGSModule\Packages\Logs\Models\Logs::where('date', '<', DB::raw('DATE_SUB(NOW(), INTERVAL ' . (max(1, (int)ModuleSettings::get('logs.auto_prune_older_than', 30))) . ' day)'))->delete();
         }
     }
 }

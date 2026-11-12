@@ -6,11 +6,11 @@ class TicketReply extends \WHMCS\Support\Ticket\Reply
 {
     public function client()
     {
-        return $this->belongsTo("ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Client", 'userid');
+        return $this->belongsTo('ModulesGarden\\TSSGGSModule\\Core\\WHMCS\\Models\\Client', 'userid');
     }
 
     public function ticket()
     {
-        return $this->belongsTo("ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Ticket", "tid");
+        return $this->belongsTo('ModulesGarden\\TSSGGSModule\\Core\\WHMCS\\Models\\Ticket', "tid");
     }
 }

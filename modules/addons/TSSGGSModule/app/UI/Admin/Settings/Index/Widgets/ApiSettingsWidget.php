@@ -10,6 +10,8 @@ class ApiSettingsWidget extends Widget
     public function loadHtml(): void
     {
         $this->setTitle($this->translate('title'));
+$this->setIcon('key-outline');
+        $this->setSubtitle($this->translate('subtitle'));
         $this->addElement(new ApiSettingsForm());
     }
 }

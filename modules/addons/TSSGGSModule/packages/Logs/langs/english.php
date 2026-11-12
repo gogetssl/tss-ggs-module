@@ -50,6 +50,21 @@ $_LANG['packages.logs.forms.edit_configuration_form.formValidationError']       
 $_LANG['packages.logs.providers.configuration_provider.attributes.auto_prune'] = 'Clear Automatically';
 $_LANG['packages.logs.providers.configuration_provider.values.auto_prune.1']   = 'enabled';
 
+
+//Clean log
+$_LANG['packages.logs.buttons.clean_log_button.title']        = 'Clean log';
+$_LANG['packages.logs.modals.clean_log_modal.title']          = 'Clean log';
+$_LANG['packages.logs.modals.clean_log_modal.description']    = 'Delete all entries of the module log? This cannot be undone. The Certificate Log and the WHMCS logs are not affected.';
+$_LANG['packages.logs.forms.clean_log_form.delete_success']   = 'The log has been cleaned';
+$_LANG['packages.logs.forms.clean_log_form.deletingLogsIsNotAllowed'] = 'Deleting logs is not permitted';
+$_LANG['packages.logs.forms.edit_configuration_form.logging']             = 'Module Log';
+$_LANG['packages.logs.forms.edit_configuration_form.logging_description'] = 'Record the technical events of the module (cron results, errors, order actions). With it off, nothing new is written here.';
+$_LANG['packages.logs.forms.edit_configuration_form.api_log']             = 'API requests';
+$_LANG['packages.logs.forms.edit_configuration_form.api_log_description'] = 'Record every request to the certificate gateway with its answer. Needs Module Log on.';
+
+$_LANG['packages.logs.forms.edit_configuration_form.api_log_reads']             = 'Also log successful reads';
+$_LANG['packages.logs.forms.edit_configuration_form.api_log_reads_description'] = 'By default only failed requests and requests that change something are logged. Turn this on only while debugging: the crons read every pending order every few minutes.';
+
 //Export CSV Modal
 $_LANG['packages.logs.buttons.export_csv_button.title']                    = 'Export CSV';
 $_LANG['packages.logs.modals.export_csv_modal.title']                      = 'Export CSV';
@@ -86,6 +101,18 @@ $_LANG['packages.logs.formatters.related_item.order']   = "Order";
 $_LANG['packages.logs.formatters.related_item.invoice'] = "Invoice";
 $_LANG['packages.logs.formatters.related_item.ticket']  = "Ticket";
 
+$_LANG['packages.logs.widgets.summary.aboutTitle'] = 'What you will find here';
+$_LANG['packages.logs.widgets.summary.aboutIntro'] = 'The technical log of the module: what the crons and the order actions did, and every request sent to the certificate gateway with its answer. Use it to find out why an order, validation or sync failed.';
+$_LANG['packages.logs.widgets.summary.aboutApi'] = 'API requests: each call to the certificate gateway is logged as API, with the method, URL, HTTP code and duration.';
+$_LANG['packages.logs.widgets.summary.aboutError'] = 'Error entries are failures: an API answer with an error code, an exception in a cron, or an action that could not finish.';
+$_LANG['packages.logs.widgets.summary.aboutDetails'] = 'Show details opens the full request and response (keys and passwords are masked), the service and client concerned, and the other entries of the same service around that time.';
+$_LANG['packages.logs.widgets.summary.aboutRelated'] = 'Related Item links to the service the entry is about. To see everything logged for one service, search for its number (#71), its domain, a product or client name, or the vendor order ID.';
+$_LANG['packages.logs.widgets.summary.aboutSettings'] = 'Entries are kept for the period set under Actions > Settings, then removed automatically; Clean log empties the log at once. For the order history of one certificate see the Certificate Log page.';
+$_LANG['packages.logs.widgets.summary.infoNote'] = 'Completed actions and successful API calls.';
+$_LANG['packages.logs.widgets.summary.errorNote'] = 'Failures. Open Show details to see the request, the answer and the cause.';
+$_LANG['packages.logs.widgets.summary.warningNote'] = 'Things that worked but need attention.';
+$_LANG['packages.logs.widgets.summary.debugNote'] = 'Extra technical detail.';
+$_LANG['packages.logs.widgets.summary.totalNote'] = 'All entries in the log. Click Show to list them.';
 $_LANG['packages.logs.widgets.summary.show']           = 'Show';
 $_LANG['packages.logs.widgets.summary.alertTitle']     = 'Alerts';
 $_LANG['packages.logs.widgets.summary.criticalTitle']  = 'Critical';
@@ -97,3 +124,15 @@ $_LANG['packages.logs.widgets.summary.successTitle']   = 'Success';
 $_LANG['packages.logs.widgets.summary.noticeTitle']    = 'Notice';
 $_LANG['packages.logs.widgets.summary.infoTitle']      = 'Info';
 $_LANG['packages.logs.widgets.summary.totalTitle']     = 'Total';
+$_LANG['packages.logs.forms.edit_configuration_form.api_mode'] = 'API requests';
+$_LANG['packages.logs.forms.edit_configuration_form.api_mode_description'] = 'Failures = the gateway returned an error. Changes = orders, validations, reissues, cancellations. Reads = the crons checking every pending order every few minutes (they flood the log; use Everything only while debugging).';
+$_LANG['packages.logs.forms.edit_configuration_form.events'] = 'Events';
+$_LANG['packages.logs.forms.edit_configuration_form.events_description'] = 'Status changes, notifications, renewal invoices, price updates. Errors are always recorded.';
+$_LANG['packages.logs.forms.edit_configuration_form.debug_services'] = 'Debug one order: service IDs';
+$_LANG['packages.logs.forms.edit_configuration_form.debug_services_description'] = 'For example 71, 58. Everything is recorded for these services, including reads, whatever the settings above say. Empty = off.';
+$_LANG['packages.logs.forms.edit_configuration_form.debug_hours'] = 'Record for';
+$_LANG['packages.logs.forms.edit_configuration_form.debug_hours_description'] = 'Saving starts this period again. Debug mode ends by itself.';
+$_LANG['packages.logs.widgets.summary.debugTitle'] = 'Debug mode is on.';
+$_LANG['packages.logs.widgets.summary.debugText'] = 'Everything is being recorded for services :services until :until, including every gateway request and event. This can fill the log quickly.';
+$_LANG['packages.logs.widgets.summary.debugStop'] = 'Stop now';
+$_LANG['packages.logs.widgets.summary.aboutLevels'] = 'What is recorded is set in Actions > Settings: gateway requests (off, failures only, failures and changes, or everything), events, and a debug mode that records everything for chosen services for a few hours.';

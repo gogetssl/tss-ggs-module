@@ -10,6 +10,16 @@ class Metadata
     public function updateConfig(Container $container)
     {
         $this->loadModuleVersion($container);
+        $this->loadEdition($container);
+    }
+
+    /**
+     * Display name and description depend on the distribution (GoGetSSL Module / TheSSLStore Module)
+     */
+    protected function loadEdition(Container $container)
+    {
+        $container->set('configuration.systemName', \ModulesGarden\TSSGGSModule\App\Libs\Edition::name());
+        $container->set('configuration.description', \ModulesGarden\TSSGGSModule\App\Libs\Edition::description());
     }
 
     protected function loadModuleVersion(Container $container)

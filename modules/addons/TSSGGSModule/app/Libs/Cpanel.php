@@ -3,6 +3,7 @@
 namespace ModulesGarden\TSSGGSModule\App\Libs;
 
 use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
+use ModulesGarden\TSSGGSModule\Core\ModuleConstants;
 use WHMCS\Database\Capsule;
 
 /**
@@ -38,7 +39,7 @@ class Cpanel
             ])
             ->join('tblproducts', 'tblhosting.packageid', '=', 'tblproducts.id')
             ->join('tblservers', 'tblhosting.server', '=', 'tblservers.id')
-            ->where('tblproducts.servertype', 'cpanel')
+            ->whereIn('tblproducts.servertype', ['cpanel', 'cpanelExtended', 'cpanelextended', 'cpanel_extended'])
             ->where('tblhosting.userid', (int)$userId)
             // terminated/cancelled accounts may be gone or reused by another customer on the server
             ->where('tblhosting.domainstatus', 'Active')
@@ -52,23 +53,28 @@ class Cpanel
     {
         $domain = strtolower(trim((string)$domain));
 
-        foreach(self::getServices($userId) as $service)
+        // The first pass may use cached domain lists; a domain that is missing there could have been added to cPanel
+        // since, so before giving up every account is asked live once.
+        foreach([false, true] as $live)
         {
-            try
+            foreach(self::getServices($userId) as $service)
             {
-                $cpanel = new self();
-                $cpanel->setService($service);
-                foreach($cpanel->listDomains($service->user) as $cpanelDomain)
+                try
                 {
-                    if(strtolower($cpanelDomain) === $domain)
+                    $cpanel = new self();
+                    $cpanel->setService($service);
+                    foreach($cpanel->listDomains($service->user, $live) as $cpanelDomain)
                     {
-                        return $service;
+                        if(strtolower($cpanelDomain) === $domain)
+                        {
+                            return $service;
+                        }
                     }
                 }
-            }
-            catch(\Throwable $e)
-            {
-                \logActivity('TSSGGSModule cPanel: ' . $e->getMessage(), 0);
+                catch(\Throwable $e)
+                {
+                    \logActivity('TSSGGSModule cPanel: ' . $e->getMessage(), 0);
+                }
             }
         }
 
@@ -79,7 +85,7 @@ class Cpanel
      * Domains from all client's cPanel accounts merged into one grouped list.
      * Returns null when the client has no reachable cPanel account with domains.
      */
-    public static function getMergedDomainsGrouped($userId)
+    public static function getMergedDomainsGrouped($userId, $live = false)
     {
         $services = self::getServices($userId);
         if($services->isEmpty())
@@ -96,7 +102,7 @@ class Cpanel
             {
                 $cpanel = new self();
                 $cpanel->setService($svcInfo);
-                $grouped = $cpanel->listDomainsGrouped($svcInfo->user);
+                $grouped = $cpanel->listDomainsGrouped($svcInfo->user, $live);
             }
             catch(\Throwable $e)
             {
@@ -153,6 +159,10 @@ class Cpanel
 
     private function logCall($action, $request, $response, $processed = '', $replacements = [])
     {
+        if(!GeneralSettings::enabled('moduleLog'))
+        {
+            return;
+        }
         // private keys and credentials never go to the module log
         $replacements = array_values(array_filter((array)$replacements, function($value) {
             return is_string($value) && trim($value) !== '';
@@ -352,9 +362,9 @@ class Cpanel
         return $safe;
     }
 
-    public function listDomains($username)
+    public function listDomains($username, $live = false)
     {
-        $grouped = $this->listDomainsGrouped($username);
+        $grouped = $this->listDomainsGrouped($username, $live);
 
         $domains = [];
         if(!empty($grouped['main']))
@@ -373,7 +383,76 @@ class Cpanel
         return $domains;
     }
 
-    public function listDomainsGrouped($username)
+    /**
+     * Domains of the cPanel account. The server is slow (15-30 s), so the answer is cached for CACHE_TTL seconds; when
+     * the server can not be reached the last answer (up to CACHE_KEEP seconds old) is used instead of nothing.
+     * $live = true skips the cache (and refreshes it).
+     */
+    public function listDomainsGrouped($username, $live = false)
+    {
+        $file   = self::cacheFile($this->service, $username);
+        $cached = self::readCache($file);
+        if(!$live && $cached && $cached['time'] > time() - self::CACHE_TTL)
+        {
+            return $cached['data'];
+        }
+
+        try
+        {
+            $grouped = $this->fetchDomainsGrouped($username);
+        }
+        catch(\Throwable $e)
+        {
+            if($cached && $cached['time'] > time() - self::CACHE_KEEP)
+            {
+                return $cached['data'];
+            }
+            throw $e;
+        }
+        self::writeCache($file, $grouped);
+
+        return $grouped;
+    }
+
+    const CACHE_TTL  = 600;
+    const CACHE_KEEP = 86400;
+
+    protected static function cacheFile($service, $username)
+    {
+        $host = is_object($service) ? (isset($service->hostname) ? $service->hostname : '') . (isset($service->port) ? $service->port : '') : '';
+
+        return ModuleConstants::getFullPath('storage', 'cpanel_domains', md5(strtolower($host . '|' . $username)) . '.json');
+    }
+
+    protected static function readCache($file)
+    {
+        $data = is_file($file) ? json_decode((string)@file_get_contents($file), true) : null;
+
+        return is_array($data) && isset($data['time'], $data['data']) ? $data : null;
+    }
+
+    /**
+     * Writes the list and removes lists nobody asked for within CACHE_KEEP seconds (that is the clean-up)
+     */
+    protected static function writeCache($file, array $grouped)
+    {
+        $dir = dirname($file);
+        if(!is_dir($dir))
+        {
+            @mkdir($dir, 0775, true);
+        }
+        @file_put_contents($file, json_encode(['time' => time(), 'data' => $grouped]), LOCK_EX);
+
+        foreach((array)glob($dir . DIRECTORY_SEPARATOR . '*.json') as $old)
+        {
+            if(filemtime($old) < time() - self::CACHE_KEEP)
+            {
+                @unlink($old);
+            }
+        }
+    }
+
+    protected function fetchDomainsGrouped($username)
     {
         $this->initiateConnection($username);
         $response = $this->exec("list_domains", "/execute/DomainInfo/");
@@ -437,13 +516,42 @@ class Cpanel
         return $grouped;
     }
 
+    /**
+     * WHM API token / access hash from tblservers.accesshash. WHMCS stores it encrypted, sending the stored value
+     * gives 403 "Access denied" from WHM. Values that are already plain (32-char API token, legacy hex access hash) are kept.
+     */
+    public static function decodeAccessHash($stored)
+    {
+        $stored = trim((string)$stored);
+        if($stored === '')
+        {
+            return '';
+        }
+        $compact = str_replace(["\r", "\n"], '', $stored);
+        if(preg_match('/^[A-Za-z0-9]{32}$/', $compact) || (strlen($compact) >= 200 && ctype_xdigit($compact)))
+        {
+            return $stored;
+        }
+        if(function_exists('decrypt'))
+        {
+            $plain        = trim((string)decrypt($stored));
+            $plainCompact = str_replace(["\r", "\n"], '', $plain);
+            if($plainCompact !== '' && ctype_alnum($plainCompact))
+            {
+                return $plain;
+            }
+        }
+
+        return $stored;
+    }
+
     public function setService($service)
     {
         $this->service['hostname']  = $service->hostname;
         $this->service['ipaddress'] = $service->ipaddress;
         $this->service['ssl']       = $service->secure == 'on';
         $this->service['port']      = $service->port;
-        $this->service['hash']      = $service->hash;
+        $this->service['hash']      = self::decodeAccessHash($service->hash);
         $this->service['username']  = $service->username;
         $this->service['password']  = decrypt($service->password);
     }
@@ -460,6 +568,73 @@ class Cpanel
             return $response->data->documentroot;
         }
         throw new \Exception(isset($response->errors[0]) ? $response->errors[0] : 'Unable to get document root for ' . $domain);
+    }
+
+    /**
+     * Private key stored in the cPanel account (UAPI SSL::show_key, the call the legacy TheSSLStore module uses), by key id or friendly name.
+     * Used by the legacy-module migration: the TheSSLStore module keeps AutoInstall keys in cPanel only.
+     */
+    public function getPrivateKey($username, $keyId, $csrPem = '')
+    {
+        $this->initiateConnection($username);
+        $response = null;
+        if((string)$keyId !== '')
+        {
+            foreach(['id' => $keyId, 'friendly_name' => $keyId] as $param => $value)
+            {
+                $response = $this->exec('show_key', '/execute/SSL/', [$param => $value]);
+                if(($pem = $this->keyPemFromResponse($response)) !== '')
+                {
+                    return $pem;
+                }
+            }
+        }
+
+        // the stored id may be stale (legacy module regenerated keys): find the key that matches the CSR's public key
+        $modulus = $csrPem !== '' ? self::csrModulus($csrPem) : '';
+        if($modulus !== '')
+        {
+            $list = $this->exec('list_keys', '/execute/SSL/', []);
+            foreach((array)($list->data ?? []) as $key)
+            {
+                if(isset($key->modulus) && strtolower((string)$key->modulus) === $modulus && !empty($key->id))
+                {
+                    $response = $this->exec('show_key', '/execute/SSL/', ['id' => (string)$key->id]);
+                    if(($pem = $this->keyPemFromResponse($response)) !== '')
+                    {
+                        return $pem;
+                    }
+                }
+            }
+            throw new \Exception('No private key in the cPanel account matches the CSR of this order' . ($keyId !== '' ? ' (key id ' . $keyId . ' not found either)' : ''));
+        }
+        throw new \Exception(isset($response->errors[0]) ? $response->errors[0] : 'Private key ' . $keyId . ' not found in the cPanel account');
+    }
+
+    protected function keyPemFromResponse($response)
+    {
+        foreach(['key', 'text', 'pem'] as $field)
+        {
+            if(isset($response->data->$field) && strpos(trim((string)$response->data->$field), '-----BEGIN') === 0)
+            {
+                return trim((string)$response->data->$field);
+            }
+        }
+
+        return '';
+    }
+
+    /** Lowercase hex RSA modulus of a CSR's public key, '' when it cannot be read */
+    public static function csrModulus($csrPem)
+    {
+        $pub = @openssl_csr_get_public_key($csrPem);
+        if(!$pub)
+        {
+            return '';
+        }
+        $details = openssl_pkey_get_details($pub);
+
+        return isset($details['rsa']['n']) ? strtolower(bin2hex($details['rsa']['n'])) : '';
     }
 
     public function installSSL($username, $domain, $cert, $key, $cabundle)

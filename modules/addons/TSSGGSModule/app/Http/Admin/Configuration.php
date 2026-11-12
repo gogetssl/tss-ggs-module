@@ -9,6 +9,9 @@ use ModulesGarden\TSSGGSModule\App\UI\Admin\Configuration\Pages\ConfigurationSte
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Configuration\Pages\ConfigurationStep5;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Configuration\Pages\ConfigurationStep6;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Configuration\Pages\ConfigurationStep7;
+use ModulesGarden\TSSGGSModule\App\Libs\Edition;
+use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
+use ModulesGarden\TSSGGSModule\App\UI\Admin\Configuration\Shared\WizardLayout;
 use ModulesGarden\TSSGGSModule\Core\Contracts\Controllers\AdminAreaInterface;
 use ModulesGarden\TSSGGSModule\Core\Http\AbstractController;
 use ModulesGarden\TSSGGSModule\Core\Helper;
@@ -31,11 +34,22 @@ class Configuration extends AbstractController implements AdminAreaInterface
         return Helper\view()
             ->addElement(ConfigurationStep2::class);
     }
+    /**
+     * Legacy modules found. Without one the wizard has no such step: the vendor is fixed by the edition.
+     */
     public function step3()
     {
+        if(!WizardLayout::hasLegacy())
+        {
+            (new AddonModuleRepository())->saveVendor([Edition::get()]);
+
+            return Helper\redirect('configuration', 'step4');
+        }
+
         return Helper\view()
             ->addElement(ConfigurationStep3::class);
     }
+
 
     public function step4()
     {

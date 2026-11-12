@@ -4,16 +4,24 @@ namespace ModulesGarden\TSSGGSModule\App\Libs;
 
 use ModulesGarden\TSSGGSModule\App\Models\Request;
 use ModulesGarden\TSSGGSModule\Core\Support\Facades\Config;
+use ModulesGarden\TSSGGSModule\Packages\Logs\Support\Facades\Logger;
 use stdClass;
 
 class SSLTrustCenterApi
 {
 
-    protected $apiUrl = 'https://my.gogetssl.com/whmcs/v2';
+    const API_URL = 'https://my.gogetssl.com/whmcs/v2';
+
+    // A hung gateway must not stall the crons or the client area pages (seconds)
+    const CONNECT_TIMEOUT = 10;
+    const TIMEOUT         = 60;
+
+    protected $apiUrl = self::API_URL;
     protected $key;
     protected $code;
     protected $type;
     protected $category;
+    protected $serviceHint = null;
 
     public function __construct($type, $code, $key, $category = 'tls')
     {
@@ -109,7 +117,8 @@ class SSLTrustCenterApi
 
     public function addOrder($data, $serviceId)
     {
-        $order = $this->call('/certificates/' . $this->category, $data);
+        $this->serviceHint = $serviceId;
+        $order             = $this->call('/certificates/' . $this->category, $data);
         Request::insert([
                             'serviceid'  => $serviceId,
                             'name'       => 'addOrder',
@@ -122,7 +131,8 @@ class SSLTrustCenterApi
 
     public function renewOrder($serviceId, $data)
     {
-        $order = $this->call('/certificates/' . $this->category, $data);
+        $this->serviceHint = $serviceId;
+        $order             = $this->call('/certificates/' . $this->category, $data);
         Request::insert([
                             'serviceid'  => $serviceId,
                             'name'       => 'renewOrder',
@@ -153,9 +163,15 @@ class SSLTrustCenterApi
         throw new \Exception('Invalid response from API: missing certificate item ID');
     }
 
+    /**
+     * Certificates (item IDs) changed since a unix time - GET /services/updates?since=<unix time>.
+     * (/certificates/status is listed in the gateway documentation but does not exist - not used.)
+     */
     public function ordersUpdate($timestamp = null)
     {
-        return $this->call('/services/updates?since=' . $timestamp);
+        $query = is_numeric($timestamp) ? '?since=' . (int)$timestamp : '';
+
+        return (array)$this->call('/services/updates' . $query);
     }
 
     public function getOrder($order_id, $serviceId = false)
@@ -165,6 +181,7 @@ class SSLTrustCenterApi
 
         if($serviceId !== false)
         {
+            $this->serviceHint = $serviceId;
             $request      = Request::where('serviceid', $serviceId)->where('name', 'addOrder')->first();
             $requestRenew = Request::where('serviceid', $serviceId)->where('name', 'renewOrder')->first();
 
@@ -549,6 +566,22 @@ class SSLTrustCenterApi
         return $this->call('/certificates/caas/' . (int)$itemId . '/subscription', [], 'DELETE');
     }
 
+    /**
+     * S/MIME order: product {id, term}, emails (first = subject), optional csr and contacts (OV products)
+     */
+    public function createSmime(array $data)
+    {
+        return $this->call('/certificates/smime', $data);
+    }
+
+    /**
+     * Code signing order: product {id, term}, provisioning {method, model | csr | shipping {id, contact}}, contacts
+     */
+    public function createCodeSigning(array $data)
+    {
+        return $this->call('/certificates/cs', $data);
+    }
+
     public function createAis(array $data)
     {
         return $this->call('/certificates/ais', $data);
@@ -567,6 +600,105 @@ class SSLTrustCenterApi
     public function disableAisAutoRenewal($itemId)
     {
         return $this->changeSubscriptionAutoRenewal('ais', $itemId, false);
+    }
+
+    protected static function log($action, $request, $response, array $replace = [])
+    {
+        if(GeneralSettings::enabled('moduleLog'))
+        {
+            // credentials, EAB keys, SSO links and private keys never go to the log
+            logModuleCall('tss_gss_module', $action, SecretValue::redact($request), SecretValue::redact($response), '', $replace);
+        }
+    }
+
+    /**
+     * Every gateway request and its answer goes to the module log (Logs page), so a failed order or sync can be traced
+     * to the exact request. Secrets are masked, long bodies are cut, logging never breaks the request.
+     */
+    protected function logCall($method, $uri, $requestBody, $httpCode, $responseBody, $seconds, $error = '', array $whmcsLog = [])
+    {
+        $serviceHint       = $this->serviceHint;
+        $this->serviceHint = null;
+
+        try
+        {
+            $path   = strtok($uri, '?');
+            $failed = $error !== '' || $httpCode < 200 || $httpCode >= 400;
+
+            // cheap decision first; the service lookup is only needed for services in debug mode
+            if(!LogPolicy::debugServices() && !LogPolicy::logApi($failed, $method, null))
+            {
+                return;
+            }
+            $reason = $error;
+            if($error === '' && $failed)
+            {
+                $decoded = json_decode((string)$responseBody, true);
+                $reason  = is_array($decoded) && isset($decoded['message']) && is_scalar($decoded['message']) ? (string)$decoded['message'] : '';
+            }
+
+            $data      = [];
+            $serviceId = $serviceHint ?: self::serviceFromUri($uri);
+            if(!LogPolicy::logApi($failed, $method, $serviceId))
+            {
+                return;
+            }
+
+            // the same decision governs the WHMCS Module Log (Utilities > Logs > Module Log), if that switch is on
+            if($whmcsLog)
+            {
+                self::log($whmcsLog[0], $whmcsLog[1], $whmcsLog[2], $whmcsLog[3] ?? []);
+            }
+            if($serviceId)
+            {
+                $data['service'] = (int)$serviceId;
+            }
+            $data['api'] = [
+                'provider'  => $this->type,
+                'method'    => $method,
+                'url'       => Edition::get() === Edition::GGS ? $this->apiUrl . $uri : '/whmcs/v2' . $uri,
+                'http_code' => $httpCode ?: 'no response',
+                'duration'  => round($seconds, 2) . ' s',
+                'request'   => self::logBody($requestBody),
+                'response'  => self::logBody($error !== '' ? $error : $responseBody),
+            ];
+
+            $message = 'API ' . $method . ' ' . $path . ' - ' . ($error !== '' ? 'failed' : 'HTTP ' . $httpCode) . ($reason !== '' ? ': ' . $reason : '');
+            $failed ? Logger::error($message, $data) : Logger::info($message, $data);
+        }
+        catch(\Throwable $e)
+        {
+            // the log must never break an API request
+        }
+    }
+
+    /** The service an item / order ID of the request belongs to (tblsslorders keeps the link), null when unknown */
+    protected static function serviceFromUri($uri)
+    {
+        if(!preg_match_all('~/(\d+)(?=/|$|\?)~', (string)$uri, $matches))
+        {
+            return null;
+        }
+
+        return \WHMCS\Database\Capsule::table('tblsslorders')->where('remoteid', (string)end($matches[1]))->value('serviceid') ?: null;
+    }
+
+    /** Body for the log: decoded JSON when possible, secrets masked, cut to fit the log column */
+    protected static function logBody($body, $limit = 24000)
+    {
+        if($body === null || $body === '')
+        {
+            return '';
+        }
+        $decoded = is_string($body) ? json_decode($body, true) : null;
+        $value   = SecretValue::redact(is_array($decoded) ? $decoded : $body);
+        $json    = json_encode($value);
+        if($json !== false && strlen($json) <= $limit)
+        {
+            return $value;
+        }
+
+        return ['truncated' => true, 'preview' => mb_strcut(is_string($value) ? $value : (string)$json, 0, $limit)];
     }
 
     protected function call($uri, $postData = [], $customMethod = false, $multilineResponse = false)
@@ -617,20 +749,26 @@ class SSLTrustCenterApi
         curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($c, CURLINFO_HEADER_OUT, true);
         curl_setopt($c, CURLOPT_HEADER, true);
+        curl_setopt($c, CURLOPT_CONNECTTIMEOUT, self::CONNECT_TIMEOUT);
+        curl_setopt($c, CURLOPT_TIMEOUT, self::TIMEOUT);
 
-        $data   = curl_exec($c);
-        $info   = curl_getinfo($c);
+        $started = microtime(true);
+        $hint    = $this->serviceHint; // logCall() clears it
+        $data    = curl_exec($c);
+        $info    = curl_getinfo($c);
+        $method  = $customMethod !== false ? strtoupper((string)$customMethod) : ($post ? 'POST' : 'GET');
+
+        if($data === false)
+        {
+            $error = curl_error($c);
+            curl_close($c);
+            $this->logCall($method, $uri, $queryData, 0, '', microtime(true) - $started, $error, ['Time: ' . $info['total_time'] . ' ' . $uri, $queryData, $error]);
+            throw new \Exception('Gateway request failed: ' . $error);
+        }
+
         $result = substr($data, $info['header_size']);
 
-        // the Authorization header (partner code and API key), other credentials and private keys never go to the
-        // module log; WHMCS also masks the API key wherever else it appears ($replaceVars)
-        logModuleCall('tss_gss_module', 'Time: ' . $info['total_time'] . ' ' . $uri, SecretValue::redact($info['request_header'] . $queryData),
-            SecretValue::redact($data), '', array_values(array_filter([(string)$this->key], 'strlen')));
-
-        if($result === false)
-        {
-            throw new \Exception(curl_error($c));
-        }
+        $this->logCall($method, $uri, $queryData, (int)$info['http_code'], (string)$result, microtime(true) - $started, '', ['Time: ' . $info['total_time'] . ' ' . $uri, $info['request_header'] . $queryData, $data, array_values(array_filter([(string)$this->key], 'strlen'))]);
 
         curl_close($c);
 
@@ -648,7 +786,7 @@ class SSLTrustCenterApi
             {
                 return [];
             }
-            throw new \Exception('Invalid response code: ' . $httpCode);
+            throw new \Exception(self::readableError('', $httpCode), $httpCode);
         }
 
         if($multilineResponse)
@@ -664,14 +802,48 @@ class SSLTrustCenterApi
 
         if(!$isSuccess)
         {
-            if(isset($response['message']))
+            // an order refused for lack of funds: tell the administrators at once (Settings > Finance > Reseller balance)
+            if(isset($response['message']) && FinancePolicy::isBalanceError($response['message']))
             {
-                throw new \Exception('Invalid response code: ' . $httpCode . ' ' . $response['message']);
+                try
+                {
+                    FinancePolicy::balanceAlert($response['message'], $hint);
+                }
+                catch(\Throwable $e)
+                {
+                }
             }
-            throw new \Exception('Invalid response code: ' . $httpCode);
+
+            throw new \Exception(self::readableError(isset($response['message']) ? $response['message'] : '', $httpCode), $httpCode);
         }
 
         return $response;
+    }
+
+    /**
+     * Gateway error as a sentence a client can read (it is shown in the client area as is); the HTTP code stays in
+     * the exception code and in the API log. "Vendor returns error:ErrorCode:x|ErrorMessage:y" becomes "y".
+     */
+    public static function readableError($message, $httpCode)
+    {
+        $message = trim((string)$message);
+        if(preg_match('/ErrorMessage:\s*(.+)$/is', $message, $m))
+        {
+            $message = trim($m[1]);
+        }
+        $message = trim(preg_replace('/^Vendor returns error:\s*/i', '', $message));
+        $message = rtrim($message, '!.') ;
+
+        if($message === '')
+        {
+            return $httpCode >= 500
+                ? 'The SSL service is temporarily unavailable (HTTP ' . (int)$httpCode . '). Please try again later.'
+                : 'The SSL service could not process the request (HTTP ' . (int)$httpCode . ').';
+        }
+
+        return $httpCode >= 500
+            ? 'The SSL service could not complete the request: ' . $message . '. Please try again later.'
+            : $message . '.';
     }
 }
 

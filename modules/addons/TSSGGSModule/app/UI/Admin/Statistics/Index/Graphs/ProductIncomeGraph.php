@@ -17,7 +17,7 @@ class ProductIncomeGraph extends GraphArea implements AdminAreaInterface, AjaxCo
 {
     public function loadData(): void
     {
-        $this->options->chart->height = "500px";
+        $this->options->chart->height = "380px";
 
         $labels       = [];
         $productNames = [];

@@ -62,10 +62,13 @@
                             <td>{$domain}</td>
                             <td>
                                 <select name="method[{$domain}]" class="select_method form-control">
-                                    {if 'email'|in_array:$available_method_validation}<option value="email">EMAIL</option>{/if}
-                                    {if 'dns'|in_array:$available_method_validation}<option value="dns">DNS</option>{/if}
-                                    {if 'http'|in_array:$available_method_validation}<option value="http">HTTP</option>{/if}
-                                    {if 'https'|in_array:$available_method_validation}<option value="https">HTTPS</option>{/if}
+                                    {assign var=currentMethod value=$currentMethods[$domain]|default:''}
+                                    {if 'email'|in_array:$available_method_validation}<option value="email"{if $currentMethod == 'email'} selected{/if}>EMAIL</option>{/if}
+                                    {if 'dns'|in_array:$available_method_validation}<option value="dns"{if $currentMethod == 'dns'} selected{/if}>DNS</option>{/if}
+                                    {if 'dns-cname'|in_array:$available_method_validation}<option value="dns-cname"{if $currentMethod == 'dns-cname'} selected{/if}>DNS (CNAME)</option>{/if}
+                                    {if 'dns-txt'|in_array:$available_method_validation}<option value="dns-txt"{if $currentMethod == 'dns-txt'} selected{/if}>DNS (TXT)</option>{/if}
+                                    {if 'http'|in_array:$available_method_validation}<option value="http"{if $currentMethod == 'http'} selected{/if}>HTTP</option>{/if}
+                                    {if 'https'|in_array:$available_method_validation}<option value="https"{if $currentMethod == 'https'} selected{/if}>HTTPS</option>{/if}
                                 </select>
                             </td>
                             <td>
@@ -162,7 +165,15 @@
         });
 
 
-        $('.switch-row div.col-md-3:first-child input.change-dcv-method').prop('checked', true).trigger("change");
+        // start on the current methods: the "... for all" switch is on only when every domain uses the same one
+        var current = $('.select_method').map(function () { return $(this).val(); }).get();
+        var same    = current.length && current.every(function (m) { return m === current[0]; }) ? current[0] : '';
+        var sw      = same ? $('input.change-dcv-method[value="' + same + '"]') : $();
+        if (sw.length) {
+            sw.prop('checked', true).trigger("change");
+        } else {
+            $('.select_method').trigger("change");
+        }
 
     });
 

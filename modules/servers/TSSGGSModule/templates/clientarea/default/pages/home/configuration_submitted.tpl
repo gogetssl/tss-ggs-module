@@ -1,4 +1,7 @@
 <div class="validate-ssl-unified">
+    {if $processing_guide}
+        <div class="alert alert-info tssggs-processing-guide" role="alert">{$processing_guide}</div>
+    {/if}
     {if $autoinstall}
         {assign var=aiDomain value=$autoinstall.domain|escape}
         <div class="alert {if $autoinstall.status == 'installed'}alert-success{elseif $autoinstall.status == 'failed'}alert-danger{elseif $autoinstall.status == 'disabled'}alert-warning{else}alert-info{/if}" role="alert">
@@ -39,7 +42,7 @@
                         </tr>
                         <tr>
                             <td>{$MGLANG->T('validation_page', 'Status')}</td>
-                            <td class="blue-bold">{if $status == 'pending'}<i class="fa fa-cog" aria-hidden="true"></i> {$MGLANG->T('validation_page', 'Validating')}{/if}</td>
+                            <td class="blue-bold">{if $status == 'pending' || $status == 'processing'}<i class="fa fa-cog" aria-hidden="true"></i> {$MGLANG->T('validation_page', 'Validating')}{else}{$status|escape|capitalize}{/if}</td>
                         </tr>
                         <tr>
                             <td>{$MGLANG->T('validation_page', 'ValidFrom')}</td>
@@ -93,8 +96,12 @@
                         </tr>
                         </tbody>
                     </table>
+                    {if $serviceOpen}
                     <h4 style="margin-top:30px;">{$MGLANG->T('validation_page', 'Actions')}</h4>
                     <button type="button" data-toggle="modal" data-target="#myModalCancel" class="btn btn-default">{$MGLANG->T('validation_page', 'CancelCertificate')}</button>
+                    {else}
+                    <div class="alert alert-warning" style="margin-top:30px;">{$MGLANG->T('validation_page', 'Certificate not available')}</div>
+                    {/if}
                 </div>
             </div>
         </div>
@@ -107,6 +114,36 @@
     <h3>{$MGLANG->T('validation_page', 'Order validation')}</h3>
     <p>{$MGLANG->T('validation_page', 'Order validation_desc')}</p>
 
+    {if $previousValidTill}
+        <div class="alert alert-success">
+            {$previousNotice|escape}
+            <div class="btn-group" style="margin-left:8px;">
+                <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{$MGLANG->T('validation_page', 'Download')} <span class="caret"></span></button>
+                <ul class="dropdown-menu">
+                    {foreach $download_formats as $format}
+                        <li><a class="dropdown-item" href="clientarea.php?action=productdetails&id={$serviceid}&mg-action=download&format={$format}">{$MGLANG->T('download_formats', $format)}</a></li>
+                    {/foreach}
+                </ul>
+            </div>
+        </div>
+    {/if}
+
+    {if $validationPreparing}
+        <div class="alert alert-info" id="validation-preparing">{$MGLANG->T('validation_page', 'Validation details preparing')}</div>
+        <script>
+            (function () {
+                // the gateway adds the file / DNS values a few seconds after the order - reload a few times to show them
+                var key = 'validationPreparing{$serviceid}', tries = 0;
+                try { tries = parseInt(sessionStorage.getItem(key) || '0', 10); } catch (e) {}
+                if (tries < 6) {
+                    try { sessionStorage.setItem(key, String(tries + 1)); } catch (e) {}
+                    setTimeout(function () { window.location.reload(); }, 10000);
+                }
+            })();
+        </script>
+    {else}
+        <script>try { sessionStorage.removeItem('validationPreparing{$serviceid}'); } catch (e) {}</script>
+    {/if}
 
     <table class="table-validation-details">
         <tbody>
@@ -125,7 +162,11 @@
         </tr>
         <tr>
             <td>{$MGLANG->T('validation_page', 'DCV Status')}</td>
-            <td class="gold-bold"><i class="fa fa-cog" aria-hidden="true"></i> {$MGLANG->T('validation_page', 'Pending')}</td>
+            {if $mainDomainApproved}
+                <td class="green-bold"><i class="fa fa-check" aria-hidden="true"></i> {$MGLANG->T('validation_page', 'Completed')}</td>
+            {else}
+                <td class="gold-bold"><i class="fa fa-cog" aria-hidden="true"></i> {$MGLANG->T('validation_page', 'Pending')}</td>
+            {/if}
             <td>-</td>
         </tr>
         {if $validation_product == 'OV' || $validation_product == 'EV'}
@@ -137,13 +178,15 @@
         {/if}
         <tr>
             <td>{$MGLANG->T('validation_page', 'Vendor Status')}</td>
-            <td>{$MGLANG->T('validation_page', 'awaiting validation (full)')}</td>
+            <td>{if $vendor_status}{$vendor_status|escape|capitalize}{else}{$MGLANG->T('validation_page', 'awaiting validation (full)')}{/if}</td>
             <td></td>
         </tr>
         <tr>
             <td>{$MGLANG->T('validation_page', 'CN validation method')}</td>
             <td>
-                {if $order_details_api.orderData.common_name.validation_method == 'dns' || $order_details_api.orderData.common_name.validation_method == 'http' || $order_details_api.orderData.common_name.validation_method == 'https'}
+                {if $mainDomainMethodLabel}
+                    {$mainDomainMethodLabel|escape}
+                {elseif $order_details_api.orderData.common_name.validation_method == 'dns' || $order_details_api.orderData.common_name.validation_method == 'http' || $order_details_api.orderData.common_name.validation_method == 'https'}
                     {$order_details_api.orderData.common_name.validation_method|upper}
                 {else}
                     {$order_details_api.orderData.common_name.validation_method}
@@ -152,10 +195,10 @@
             <td></td>
         </tr>
 
-        {if $order_details_api.orderData.common_name.validation_method == 'http' || $order_details_api.orderData.common_name.validation_method == 'https'}
+        {if ($mainDomainMethod == 'http' || $mainDomainMethod == 'https') && $mainDomainValidation.file_name}
             <tr>
                 <td>{$MGLANG->T('validation_page', 'File Url')}</td>
-                <td colspan="2">{$order_details_api.orderData.common_name.validation_method}://{$domain}/.well-known/pki-validation/{$mainDomainValidation.file_name}</td>
+                <td colspan="2">{$mainDomainMethod}://{$domain}/.well-known/pki-validation/{$mainDomainValidation.file_name}</td>
             </tr>
             <tr>
                 <td>{$MGLANG->T('validation_page', 'File Content')}</td>
@@ -163,14 +206,25 @@
             </tr>
         {/if}
 
-        {if $order_details_api.orderData.common_name.validation_method == 'dns'}
+        {if $mainDomainDns}
+            {if $mainDomainDns.type}
+            <tr>
+                <td>{$MGLANG->T('validation_page', 'DNS Record Type')}</td>
+                <td colspan="2">{$mainDomainDns.type|escape}</td>
+            </tr>
+            {/if}
+            <tr>
+                <td>{$MGLANG->T('validation_page', 'DNS Host')}</td>
+                <td class="break-all" colspan="2">{$mainDomainDns.host|escape}</td>
+            </tr>
             <tr>
                 <td>{$MGLANG->T('validation_page', 'DNS Content')}</td>
-                <td class="break-all" colspan="2">{$mainDomainValidation.value}</td>
+                <td class="break-all" colspan="2">{if $mainDomainDns.value}{$mainDomainDns.value|escape}{else}<i>{$MGLANG->T('validation_page', 'DNS value pending')}</i>{/if}</td>
             </tr>
         {/if}
 
-        {if $order_details_api.orderData.alternative_names}
+        {* every other domain the gateway validates: SANs and the www name some authorities add *}
+        {if $additional_names}
 
             <tr>
                 <td style="vertical-align: top">{$MGLANG->T('validation_page', 'SAN validation')}</td>
@@ -183,15 +237,22 @@
                             </tr>
                             <tr>
                                 <td style="word-break: break-all;" class="break-all">
-                                    {if $san.method == 'dns'}
-                                        {$san.method|upper}<br>{$san.validation.value}
+                                    {if $san.dns}
+                                        {$san.methodLabel|escape}<br>
+                                        {if $san.dns.type}{$MGLANG->T('validation_page', 'DNS Record Type')}: {$san.dns.type|escape}<br>{/if}
+                                        {$MGLANG->T('validation_page', 'DNS Host')}: {$san.dns.host|escape}<br>
+                                        {$MGLANG->T('validation_page', 'DNS Content')}: {if $san.dns.value}{$san.dns.value|escape}{else}<i>{$MGLANG->T('validation_page', 'DNS value pending')}</i>{/if}
                                     {elseif $san.method == 'http' || $san.method == 'https'}
                                         {$san.method|upper}<br>{$san.validation.file_name}<br>{$san.validation.value}
                                     {else}
                                         {$san.method|upper}<br>{$san.validation.value}
                                     {/if}
                                 </td>
-                                <td class="gold-bold"><i class="fa fa-cog" aria-hidden="true"></i> Pending</td>
+                                {if $san.approved}
+                                    <td class="green-bold"><i class="fa fa-check" aria-hidden="true"></i> {$MGLANG->T('validation_page', 'Completed')}</td>
+                                {else}
+                                    <td class="gold-bold"><i class="fa fa-cog" aria-hidden="true"></i> {$MGLANG->T('validation_page', 'Pending')}</td>
+                                {/if}
                             </tr>
                         {/foreach}
                         </tbody>
@@ -206,6 +267,7 @@
     </table>
 
     <a href="clientarea.php?action=productdetails&id={$serviceid}&mg-action=downloadCSR" class="btn btn-default">{$MGLANG->T('validation_page', 'Download CSR')}</a>
+    {if $serviceOpen}
     {if $mainDomainMethod == 'http' || $mainDomainMethod == 'https'}
         <a href="clientarea.php?action=productdetails&id={$serviceid}&mg-action=downloadAuthFile" class="btn btn-default">{$MGLANG->T('validation_page', 'Download Auth File')}</a>
     {/if}
@@ -223,6 +285,7 @@
             <input type="hidden" name="token" value="{$csrfToken}">
             <button type="submit" class="btn btn-default" title="{$MGLANG->T('validation_page', 'ResendDcvEmailDesc')}">{$MGLANG->T('validation_page', 'Resend DCV email')}</button>
         </form>
+    {/if}
     {/if}
 
     {if $configurableOptions.sans || $configurableOptions.sans_wildcard}
@@ -361,17 +424,18 @@
         <div class="modal-content">
             <form method="POST">
                 <input type="hidden" name="mg-action" value="cancel">
+                <input type="hidden" name="token" value="{$csrfToken}">
                 <input type="hidden" name="remoteid" value="{$api_order_id}">
                 <div class="modal-header" style="display: block;">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                     <h4 class="modal-title" style="text-align: left;" id="myModalCancelLabel">{$MGLANG->T('validation_page', 'Cancel Certificate')}</h4>
                 </div>
                 <div class="modal-body" style="text-align: left;">
-                    {$MGLANG->T('validation_page', 'Are you sure you want to cancel the certificate?')}
+                    {$MGLANG->T('validation_page', 'cancelDialogBody')}
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">{$MGLANG->T('validation_page', 'Close')}</button>
-                    <button type="submit" class="btn btn-primary">{$MGLANG->T('validation_page', 'Cancel')}</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">{$MGLANG->T('validation_page', 'cancelDialogKeep')}</button>
+                    <button type="submit" class="btn btn-danger">{$MGLANG->T('validation_page', 'cancelDialogConfirm')}</button>
                 </div>
             </form>
         </div>

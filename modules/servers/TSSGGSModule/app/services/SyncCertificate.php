@@ -13,6 +13,14 @@ class SyncCertificate
 {
     public function run($params)
     {
+        $gatewayType = \ModulesGarden\TSSGGSModule\App\Libs\GatewayOrderService::typeOfService($params['serviceid']);
+        if($gatewayType)
+        {
+            $gatewayType::refresh($params['serviceid']);
+
+            return 'success';
+        }
+
         $certificate = CertificateSyncHelpers::getCertificatesQuery()
             ->where('tblhosting.id', $params['serviceid'])
             ->first();

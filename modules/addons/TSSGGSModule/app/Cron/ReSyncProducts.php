@@ -28,7 +28,7 @@ class ReSyncProducts extends AbstractCommand
      * Command description
      * @var string
      */
-    protected $description = 'Re-Sync Products';
+    protected $description = 'Merged into ProductPricingUpdate (kept for existing cron lines)';
 
     /**
      * Command help text
@@ -51,39 +51,8 @@ class ReSyncProducts extends AbstractCommand
      */
     protected function process(InputInterface $input, OutputInterface $output, SymfonyStyle $io)
     {
-        try
-        {
-            $checkCron = (new AddonModuleRepository())->checkCron('cron4');
-            if($checkCron === false)
-            {
-                return;
-            }
-
-            $countryCode     = \WHMCS\Config\Setting::getValue("DefaultCountry");
-
-            $configuredApis = Helpers::getConfiguredApis();
-            foreach($configuredApis as $api)
-            {
-                $api->getAnnouncements(true);
-                $api->getManager($countryCode, true);
-
-            }
-
-           Helpers::reSyncProducts();
-        }
-        catch(\Throwable $exception)
-        {
-            Logger::error('ReSyncProducts Cron Error: '. $exception->getMessage());
-            $errorToDB = $exception->getMessage();
-        }
-
-
-        CronCheck::updateOrCreate(
-            ['type' => 'ReSyncProducts'],
-            ['last_run' => date('Y-m-d H:i:s'), 'last_error' => trim($errorToDB)]
-        );
-
-        $io->progressFinish();
-        $io->success('Finished!');
+        // merged into ProductPricingUpdate ("Prices and catalogue update"): kept so that cron lines that still call this
+        // command do not fail
+        $io->note('ReSyncProducts is part of ProductPricingUpdate now; nothing to do here.');
     }
 }

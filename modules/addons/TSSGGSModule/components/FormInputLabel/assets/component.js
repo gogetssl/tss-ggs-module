@@ -4,6 +4,7 @@ var component =
         template: '#template-name#',
         data: function () {
             return {
+                iconSvg_: '',
                 text_: '',
                 icon_: '',
                 for_: '',
@@ -11,6 +12,7 @@ var component =
             }
         },
         props: [
+            'iconSvg',
             'text',
             'icon',
             'for',

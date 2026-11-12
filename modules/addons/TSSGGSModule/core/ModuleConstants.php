@@ -20,7 +20,7 @@ class ModuleConstants
 
     protected static $mgCoreConfig = null;
     protected static $mgDevConfig = null;
-    protected static $mgModuleNamespace = "ModulesGarden\TSSGGSModule";
+    protected static $mgModuleNamespace = 'ModulesGarden\\TSSGGSModule';
     protected static $mgModuleRootDir = null;
     protected static $mgTemplateDir = null;
     protected static $prefixDataBase = '';

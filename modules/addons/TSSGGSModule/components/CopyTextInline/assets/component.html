@@ -2,11 +2,11 @@
     <span v-if="!hideIcon">{{text_}}</span>
     <span @click="onClick" role="button">
         <span v-if="hideIcon">{{text_}}</span>
-        <i class="lu-mdi mdi mdi-content-copy lu-i-c-2x lu-form-tooltip-helper-default"
+        <span class="lu-i-c-2x lu-form-tooltip-helper-default tssggs-icobox"
            :data-title="translate_('title')"
            :aria-label="translate_('title')"
            data-toggle="lu-tooltip"
            data-lu-tooltip rel="tooltip"
-           v-if="!hideIcon"></i>
+           v-if="!hideIcon"><svg class="tssggs-ico" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false"><path fill="currentColor" d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z"/></svg></span>
     </span>
 </span>

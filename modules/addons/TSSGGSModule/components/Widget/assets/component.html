@@ -1,10 +1,12 @@
 <div :id="cid_" class="lu-widget" :class="css_">
     <div class="lu-widget__header" v-if="title_ || elements_.toolbar">
-        <div class="lu-widget__top lu-top">
-            <i :class="[icon_]" v-if='icon'></i>
+        <div class="lu-widget__top lu-top" :class="{'lu-top--sub': subtitle_}">
+            <span class="lu-widget__icon" v-if="icon_ && icon_.indexOf('<svg') === 0" v-html="icon_"></span>
+            <i :class="[icon_]" v-else-if='icon'></i>
             <div class="lu-top__title">
                 {{title_}}
             </div>
+            <div class="lu-top__subtitle" v-if="subtitle_">{{subtitle_}}</div>
             <div class="lu-top__toolbar" v-if="elements_.toolbar">
                 <component :key="elements_.toolbar.uniq" v-bind="elements_.toolbar.slots" v-bind:is="elements_.toolbar.name"></component>
             </div>

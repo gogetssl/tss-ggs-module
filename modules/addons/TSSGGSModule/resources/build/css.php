@@ -5,13 +5,21 @@ require_once dirname(__FILE__, 3) . '/vendor/autoload.php';
 \ModulesGarden\TSSGGSModule\Core\ModuleConstants::initialize();
 
 $files = [
-    'materialdesignicons.min.css',
     'products-icons.css',
     'simplemde.min.css',
     'layers2-ui.css',
     'module_styles.css',
     'mg_styles.css',
     'vue2-datepicker.min.css',
+    'wizard.css',
+    'migration.css',
+    'dashboard.css',
+    'shell.css',
+    'settings.css',
+    'icons.css',
+    'tinymce-icons.css',
+    'yesno.css',
+    'theme.css',
 ];
 
 if (isset($_REQUEST['type']) && $_REQUEST['type'] == 'module')

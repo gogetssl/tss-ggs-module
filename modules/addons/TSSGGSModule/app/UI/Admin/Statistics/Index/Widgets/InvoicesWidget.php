@@ -17,6 +17,7 @@ class InvoicesWidget extends Widget
     public function loadHtml(): void
     {
         $this->setTitle($this->translate('title'));
+        $this->setIcon('file-document-outline');
 
         $table = new TableSimple;
 

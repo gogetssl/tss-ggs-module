@@ -4,7 +4,10 @@ namespace ModulesGarden\Servers\TSSGGSModule\app\services;
 
 use ModulesGarden\Servers\TSSGGSModule\app\models\whmcs\Service;
 use ModulesGarden\Servers\TSSGGSModule\app\models\whmcs\SSL;
+use ModulesGarden\TSSGGSModule\App\Libs\CertificateService;
 use ModulesGarden\TSSGGSModule\App\Libs\Helpers;
+use ModulesGarden\TSSGGSModule\App\Libs\ProductSettings;
+use ModulesGarden\TSSGGSModule\App\Libs\SanUpgrade;
 use ModulesGarden\TSSGGSModule\App\Libs\SSLTrustCenterApi;
 use ModulesGarden\TSSGGSModule\App\Models\DemonTask;
 use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
@@ -49,6 +52,13 @@ class SSLStepThree
                     break;
             }
 
+            // Term set on the Products page wins over the billing cycle (e.g. a monthly billed 1-year certificate)
+            $productMonths = (int)ProductSettings::get($params['packageid'])['months'];
+            if($productMonths > 0)
+            {
+                $billingCycle = $productMonths;
+            }
+
             $configProduct = (new ProductRepository())->getProductConfiguration($params['packageid']);
             $addonConfig = (new AddonModuleRepository())->getModuleConfiguration();
 
@@ -66,6 +76,8 @@ class SSLStepThree
             $api = new SSLTrustCenterApi($configProduct['provider'], $credentials['PartnerCode'], $credentials['AuthToken'], $configProduct['category']);
             $decode = openssl_csr_get_subject($params['csr']);
             $mainMethod = $params['method'][$decode['CN']] == 'email' ? $params['approver'][$decode['CN']] : $params['method'][$decode['CN']];
+
+            SanUpgrade::assertWithinLimits($params['serviceid'], $decode['CN'], array_keys($params['method']), SanUpgrade::paidQuantities($params));
 
             $san = [];
             foreach ($params['method'] as $domain_san => $method_san)
@@ -94,6 +106,13 @@ class SSLStepThree
             if(!empty($san))
             {
                 $orderParams['alternative_names'] = $san;
+            }
+
+            // chosen by the admin (settings), the client is not asked
+            $webServer = trim((string)\ModulesGarden\TSSGGSModule\App\Libs\GeneralSettings::get('defaultWebServer'));
+            if($webServer !== '')
+            {
+                $orderParams['webserver_type'] = $webServer;
             }
 
             if(in_array($configProduct['validation'], ['OV','EV']))
@@ -149,6 +168,22 @@ class SSLStepThree
                     'updated_at' => date('Y-m-d H:i:s')
                 ]);
             }
+
+            // SANs paid with this order - an upgrade of the SAN options orders only the difference (see SanUpgrade)
+            SanUpgrade::rememberPurchased($params['serviceid'], SanUpgrade::paidQuantities($params));
+
+            CertificateService::event($params['serviceid'], 'success', '[Order] SSL order placed for domain: ' . $decode['CN']
+                . ' (order #' . $newOrder['order']['id'] . ', ' . (count($san) + 1) . ' domain(s))', $params['userid']);
+
+            // Integrator hook; SSLCenter_StepThree keeps hooks written for the GoGetSSL module working after the migration
+            $hookParams = [
+                'serviceid'     => $params['serviceid'],
+                'userid'        => $params['userid'],
+                'api_ssl_order' => $newOrder,
+                'order_details' => $orderParams,
+            ];
+            run_hook('TSSGGSModule_OrderPlaced', $hookParams);
+            run_hook('SSLCenter_StepThree', $hookParams);
 
         } catch (\Exception $e) {
 

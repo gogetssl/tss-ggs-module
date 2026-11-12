@@ -12,6 +12,7 @@ use ModulesGarden\TSSGGSModule\Core\DataProviders\AbstractRecordsListDataProvide
 use ModulesGarden\TSSGGSModule\Core\DataProviders\QueryDataProvider;
 use ModulesGarden\TSSGGSModule\Core\Support\Facades\Config;
 use ModulesGarden\TSSGGSModule\Packages\Logs\Models\Logs;
+use ModulesGarden\TSSGGSModule\Packages\Logs\UI\Buttons\CleanLogButton;
 use ModulesGarden\TSSGGSModule\Packages\Logs\UI\Buttons\DeleteLogButton;
 use ModulesGarden\TSSGGSModule\Packages\Logs\UI\Buttons\EditConfiguration;
 use ModulesGarden\TSSGGSModule\Packages\Logs\UI\Buttons\ExportCsvButton;
@@ -20,6 +21,7 @@ use ModulesGarden\TSSGGSModule\Packages\Logs\UI\Buttons\MenuDeleteButton;
 use ModulesGarden\TSSGGSModule\Packages\Logs\UI\Buttons\ShowDataButton;
 use ModulesGarden\TSSGGSModule\Packages\Logs\UI\Formatters\RelatedItem;
 use ModulesGarden\TSSGGSModule\Packages\Logs\UI\Others\TypeLabel;
+use ModulesGarden\TSSGGSModule\Packages\Logs\UI\Providers\LogsQueryProvider;
 use WHMCS\Database\Capsule as DB;
 
 class LogsDataTable extends DataTable implements AdminAreaInterface, AjaxComponentInterface
@@ -62,6 +64,7 @@ class LogsDataTable extends DataTable implements AdminAreaInterface, AjaxCompone
             $this->addActionButton(new DeleteLogButton());
             $this->addMassActionButton(new MassDeleteButton());
             $burger->addItem(new MenuDeleteButton());
+            $this->addToToolbar(new CleanLogButton());
         }
 
         $this->addToToolbar($burger);
@@ -69,7 +72,7 @@ class LogsDataTable extends DataTable implements AdminAreaInterface, AjaxCompone
 
     public function loadData(): void
     {
-        $dataProv = new QueryDataProvider(
+        $dataProv = new LogsQueryProvider(
             Logs::select('id', 'type', 'date', 'data', 'message', DB::raw("(data IS NOT NULL) AND (data != '[]') as isDataEnabled"))
         );
 
@@ -95,7 +98,9 @@ class LogsDataTable extends DataTable implements AdminAreaInterface, AjaxCompone
                 }
             }
 
-            return strtr($this->translate($fieldValue), $replace);
+            $suffix = !empty($row['data']['repeats']) ? ' (x' . ((int)$row['data']['repeats'] + 1) . ', since ' . substr((string)($row['data']['since'] ?? ''), 11, 5) . ')' : '';
+
+            return strtr($this->translate($fieldValue), $replace) . $suffix;
         });
 
         if (Config::get('logs.related_item.show', true))

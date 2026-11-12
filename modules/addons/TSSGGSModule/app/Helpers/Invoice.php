@@ -223,7 +223,7 @@ class Invoice
         //modify item amount based on product commission / client commission
         $postData = array(
             'userid' => $service->userid,
-            'sendinvoice' => true,
+            'sendinvoice' => !EmailTemplates::renewalInvoiceEmailActive(),
             'date' => $dateInvoice,
             'duedate' => $dateInvoice,
             'itemdescription1' => $invoiceItemDescription,
@@ -256,6 +256,8 @@ class Invoice
         $results = localAPI('CreateInvoice', $postData, $adminUserName);
 
         $invoiceId = $results['invoiceid'];
+        EmailTemplates::sendRenewalInvoiceEmail($service->id, $invoiceId);
+        \ModulesGarden\TSSGGSModule\App\Libs\ProductCatalog::noticeIfDiscontinued($service->id);
 
         $this->saveInvoiceInfo($service->userid, $invoiceId, $service->id, $product->id);
 
@@ -682,8 +684,6 @@ class Invoice
             }
             $result = localAPI('UpdateClientProduct', $postData, $adminUsername);
         }
-        \MGModule\SSLCENTERWHMCS\eHelpers\Whmcs::savelogActivitySSLCenter(print_r($postData, true));
-        \MGModule\SSLCENTERWHMCS\eHelpers\Whmcs::savelogActivitySSLCenter(print_r($result, true));
         return $results;
     }
 

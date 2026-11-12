@@ -14,7 +14,8 @@ var component =
             'title',
             'url',
             'elements',
-            'active'
+            'active',
+            'icon'
         ],
         created: function () {
         },

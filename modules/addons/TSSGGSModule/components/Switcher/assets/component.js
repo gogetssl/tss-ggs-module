@@ -5,6 +5,8 @@ var component =
         template: '#template-name#',
         props: [
             'onOffMode',
+            'yesLabel',
+            'noLabel',
         ],
         data: function () {
             return {
@@ -25,6 +27,10 @@ var component =
                         value: this.onOffMode_ ? ( this.value_ ? "on" : "off" ) : this.value_
                     });
                 }
+            },
+            choose: function (state, event) {
+                this.value_ = state;
+                this.$nextTick(function () { this.change(event); }.bind(this));
             },
             click: function () {
                 this.value_ = !this.value_;

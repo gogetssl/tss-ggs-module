@@ -47,7 +47,8 @@ abstract class AbstractCommand extends \Symfony\Component\Console\Command\Comman
         $this
             ->setName($this->name)
             ->setDescription($this->description)
-            ->setHelp($this->help);
+            ->setHelp($this->help)
+            ->addOption('force', null, InputOption::VALUE_NONE, 'Run now, whatever the schedule of the job says');
 
         $this->setup();
     }
@@ -73,11 +74,36 @@ abstract class AbstractCommand extends \Symfony\Component\Console\Command\Comman
                 throw new CommandMustCalledViaCli();
             }
 
-            $this->beforeProcess($input, $output);
+            // --force: the schedule check of the job (AddonModuleRepository::checkCron) lets it run
+            if($input->getOption('force'))
+            {
+                \ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository::$forceRun = true;
+            }
 
-            $this->process($input, $output, new SymfonyStyle($input, $output));
+            // one run of a job at a time: a run that is still going (or a second cron entry) makes the next one skip
+            $lock = $this->name ? 'tssggs_cron_' . $this->name : null;
+            if($lock && !$this->acquireLock($lock))
+            {
+                (new SymfonyStyle($input, $output))->warning('The job ' . $this->name . ' is already running, skipped.');
 
-            $this->afterProcess($input, $output);
+                return 0;
+            }
+
+            try
+            {
+                $this->beforeProcess($input, $output);
+
+                $this->process($input, $output, new SymfonyStyle($input, $output));
+
+                $this->afterProcess($input, $output);
+            }
+            finally
+            {
+                if($lock)
+                {
+                    $this->releaseLock($lock);
+                }
+            }
         }
         catch (CommandMustCalledViaCli $ex)
         {
@@ -96,6 +122,35 @@ abstract class AbstractCommand extends \Symfony\Component\Console\Command\Comman
         }
 
         return 0;
+    }
+
+    /**
+     * MySQL named lock, held by this connection until released or the process ends; false when another run holds it
+     */
+    protected function acquireLock(string $name): bool
+    {
+        try
+        {
+            $row = \WHMCS\Database\Capsule::select('SELECT GET_LOCK(?, 0) AS l', [$name]);
+
+            return !empty($row) && (int)$row[0]->l === 1;
+        }
+        catch (\Throwable $e)
+        {
+            // no database lock available: run anyway rather than never
+            return true;
+        }
+    }
+
+    protected function releaseLock(string $name): void
+    {
+        try
+        {
+            \WHMCS\Database\Capsule::select('SELECT RELEASE_LOCK(?)', [$name]);
+        }
+        catch (\Throwable $e)
+        {
+        }
     }
 
     /**

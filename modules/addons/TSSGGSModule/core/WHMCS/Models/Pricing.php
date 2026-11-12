@@ -15,7 +15,7 @@ class Pricing extends \WHMCS\Billing\Pricing
 
     public function currencyModel()
     {
-        return $this->belongsTo("ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Currency", 'currency');
+        return $this->belongsTo('ModulesGarden\\TSSGGSModule\\Core\\WHMCS\\Models\\Currency', 'currency');
     }
 
     /**

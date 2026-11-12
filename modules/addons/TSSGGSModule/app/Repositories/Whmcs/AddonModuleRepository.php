@@ -10,7 +10,7 @@ class AddonModuleRepository
     public function getModuleConfiguration()
     {
         $settings = AddonModule::where('module', 'configuration_TSSGGSModule')
-                               ->whereIn('setting', ['vendors', 'credentials', 'test_connection', 'sslSettings', 'financeSettings', 'cronSettings', 'certificates_sync_last'])
+                               ->whereIn('setting', ['vendors', 'credentials', 'test_connection', 'sslSettings', 'financeSettings', 'cronSettings', 'generalSettings', 'certificates_sync_last'])
                                ->get()->toArray();
 
         $result = [];
@@ -26,7 +26,9 @@ class AddonModuleRepository
             }
             if($setting['setting'] == 'vendors')
             {
-                $result[$setting['setting']] = explode(',', $setting['value']);
+                // only the vendors of this edition (TheSSLStore Module: TheSSLStore only)
+                $vendors = array_values(array_intersect(explode(',', $setting['value']), \ModulesGarden\TSSGGSModule\App\Libs\Edition::vendors()));
+                $result[$setting['setting']] = $vendors ?: \ModulesGarden\TSSGGSModule\App\Libs\Edition::vendors();
             }
             if($setting['setting'] == 'sslSettings')
             {
@@ -40,6 +42,16 @@ class AddonModuleRepository
             {
                 $result[$setting['setting']] = json_decode($setting['value'], true);
             }
+            if($setting['setting'] == 'generalSettings')
+            {
+                $result[$setting['setting']] = json_decode($setting['value'], true);
+            }
+        }
+
+        // credentials of vendors outside the edition stay stored but are not used
+        if(isset($result['credentials']) && is_array($result['credentials']))
+        {
+            $result['credentials'] = array_intersect_key($result['credentials'], array_flip(\ModulesGarden\TSSGGSModule\App\Libs\Edition::vendors()));
         }
 
         return $result;
@@ -78,129 +90,65 @@ class AddonModuleRepository
             );
     }
 
+    /** set by "cron.php <Job> --force": the jobs run whatever their schedule says */
+    public static $forceRun = false;
+
+    /** job (cron setting key) => [CronCheck type, default frequency] */
+    const CRON_JOBS = [
+        'cron1' => ['ProductPricingUpdate', '1d'],
+        'cron2' => ['SSLCertificates', '1d'],
+        'cron3' => ['RenewalNotifyCertificate', '1d'],
+        'cron5' => ['SSLCertificatesProcessing', '5m'],
+    ];
+
+    /** seconds between two runs of a frequency */
+    const CRON_INTERVALS = [
+        '5m' => 300, '10m' => 600, '30m' => 1800, '1h' => 3600, '3h' => 10800, '6h' => 21600, '12h' => 43200,
+        '1d' => 86400, '1w' => 604800, '1mo' => 2592000,
+    ];
+
+    /**
+     * Whether the job is due. It is when the chosen frequency has passed since its last run (so the exact minute the
+     * cron line fires does not matter: every 5 minutes, hourly or by the WHMCS cron all work). A job that ended with an
+     * error is tried again after 30 minutes (or its frequency when that is shorter). "never" switches it off.
+     */
     public function checkCron($name)
     {
-        //debug
-        //return true;
-        //debug
-
-        $cronNames = [
-            'cron1' => 'ProductPricingUpdate',
-            'cron2' => 'SSLCertificates',
-            'cron3' => 'RenewalNotifyCertificate',
-            'cron4' => 'ReSyncProducts',
-            'cron5' => 'SSLCertificatesProcessing'
-        ];
-
-        $cronCheck = CronCheck::where('type', $cronNames[$name])->first();
-        if(!isset($cronCheck->last_error) || !empty($cronCheck->last_error))
+        if(self::$forceRun)
         {
             return true;
         }
 
-        $day = date('d');
-        $week = date('N');
-        $hour = date('H');
-        $minute = date('i');
-
-        $setting = AddonModule::where('module', 'configuration_TSSGGSModule')
-            ->whereIn('setting', ['cronSettings'])
-            ->first();
-
-        if(isset($setting->value) && !empty($setting->value))
+        // $name is the setting key (cron1 ...); an unknown name or an unset frequency uses the job's default
+        $job =isset(self::CRON_JOBS[$name]) ? self::CRON_JOBS[$name] : null;
+        if($job === null)
         {
-            $cronSettings = json_decode($setting->value, true);
-            if(isset($cronSettings[$name]) && !empty($cronSettings[$name]) && $cronSettings[$name] != 'never')
-            {
-
-                if($cronSettings[$name] == '5m')
-                {
-                    if($minute == '00' || $minute == '10' || $minute == '20' || $minute == '30' || $minute == '40' || $minute == '50' || $minute == '05' || $minute == '15' || $minute == '25' || $minute == '35' || $minute == '45' || $minute == '55')
-                    {
-                        return true;
-                    }
-                }
-
-                if($cronSettings[$name] == '10m')
-                {
-                    if($minute == '00' || $minute == '10' || $minute == '20' || $minute == '30' || $minute == '40' || $minute == '50')
-                    {
-                        return true;
-                    }
-                }
-
-                if($cronSettings[$name] == '30m')
-                {
-                    if($minute == '00' || $minute == '30')
-                    {
-                        return true;
-                    }
-                }
-
-                if($cronSettings[$name] == '1h')
-                {
-                    if($minute == '00')
-                    {
-                        return true;
-                    }
-                }
-
-                if($cronSettings[$name] == '3h')
-                {
-                    if(
-                        ($hour == '00' && $minute == '00') || ($hour == '00' && $minute == '03') || ($hour == '06' && $minute == '00') ||
-                        ($hour == '09' && $minute == '00') || ($hour == '12' && $minute == '00') || ($hour == '15' && $minute == '00') ||
-                        ($hour == '18' && $minute == '00') || ($hour == '21' && $minute == '00')
-                    )
-                    {
-                        return true;
-                    }
-                }
-
-                if($cronSettings[$name] == '6h')
-                {
-                    if(($hour == '00' && $minute == '00') || ($hour == '06' && $minute == '00') || ($hour == '12' && $minute == '00') || ($hour == '18' && $minute == '00'))
-                    {
-                        return true;
-                    }
-                }
-
-                if($cronSettings[$name] == '12h')
-                {
-                    if(($hour == '00' && $minute == '00') || ($hour == '12' && $minute == '00'))
-                    {
-                        return true;
-                    }
-                }
-
-                if($cronSettings[$name] == '1d')
-                {
-                    if($hour == '00' && $minute == '00')
-                    {
-                        return true;
-                    }
-                }
-
-                if($cronSettings[$name] == '1w')
-                {
-                    if($hour == '00' && $minute == '00' && $week == '1')
-                    {
-                        return true;
-                    }
-                }
-
-                if($cronSettings[$name] == '1mo')
-                {
-                    if($hour == '00' && $minute == '00' && $day == '01')
-                    {
-                        return true;
-                    }
-                }
-
-            }
+            return false;
         }
 
-        return false;
+        $setting = AddonModule::where('module', 'configuration_TSSGGSModule')->where('setting', 'cronSettings')->first();
+        $cronSettings = isset($setting->value) && !empty($setting->value) ? (array)json_decode($setting->value, true) : [];
+        $frequency = isset($cronSettings[$name]) && $cronSettings[$name] !== '' ? $cronSettings[$name] : $job[1];
+
+        if($frequency === 'never' || !isset(self::CRON_INTERVALS[$frequency]))
+        {
+            return false;
+        }
+
+        $cronCheck = CronCheck::where('type', $job[0])->first();
+        if(!$cronCheck || empty($cronCheck->last_run))
+        {
+            return true;
+        }
+
+        $interval = self::CRON_INTERVALS[$frequency];
+        if(!empty($cronCheck->last_error))
+        {
+            $interval = min($interval, 1800);
+        }
+
+        // a little less than the interval: a cron line that fires every 5 minutes must not skip a run by seconds
+        return time() - strtotime((string)$cronCheck->last_run) >= $interval - 60;
     }
 
     public function saveCredentials($sslStoreLivePartnerCode, $sslStoreLiveAuthToken, $goGetSslLivePartnerCode, $goGetSslLiveAuthToken,$sslStoreTestPartnerCode, $sslStoreTestAuthToken, $operationMode)
@@ -228,6 +176,17 @@ class AddonModuleRepository
             ],
         ];
 
+        // a vendor outside the edition has no fields on the settings page: keep what is stored for it
+        $stored = AddonModule::where('module', 'configuration_TSSGGSModule')->where('setting', 'credentials')->value('value');
+        $stored = $stored ? (json_decode(\decrypt($stored), true) ?: []) : [];
+        foreach(array_keys($credentials) as $vendor)
+        {
+            if(!in_array($vendor, \ModulesGarden\TSSGGSModule\App\Libs\Edition::vendors(), true) && isset($stored[$vendor]))
+            {
+                $credentials[$vendor] = $stored[$vendor];
+            }
+        }
+
         $credentialsJson = json_encode($credentials);
 
         AddonModule::updateOrInsert(
@@ -238,7 +197,10 @@ class AddonModuleRepository
 
     public function saveSslSettings($data)
     {
-        $data = json_encode($data);
+        // merged into the stored settings: the SSL and the automated SSL page each save their own part
+        $configuration = $this->getModuleConfiguration();
+        $stored        = isset($configuration['sslSettings']) && is_array($configuration['sslSettings']) ? $configuration['sslSettings'] : [];
+        $data          = json_encode(array_merge($stored, (array)$data));
 
         AddonModule::updateOrInsert(
             ['module' => 'configuration_TSSGGSModule', 'setting' => 'sslSettings'],
@@ -248,11 +210,22 @@ class AddonModuleRepository
 
     public function saveCronSettings($data)
     {
-        $data = json_encode($data);
+        // each job has its own small form: merged into the stored frequencies
+        $stored = AddonModule::where('module', 'configuration_TSSGGSModule')->where('setting', 'cronSettings')->value('value');
+        $stored = $stored ? (array)json_decode($stored, true) : [];
+        $data   = json_encode(array_merge($stored, array_intersect_key((array)$data, self::CRON_JOBS)));
 
         AddonModule::updateOrInsert(
             ['module' => 'configuration_TSSGGSModule', 'setting' => 'cronSettings'],
             ['value' => $data]
+        );
+    }
+
+    public function saveGeneralSettings($data)
+    {
+        AddonModule::updateOrInsert(
+            ['module' => 'configuration_TSSGGSModule', 'setting' => 'generalSettings'],
+            ['value' => json_encode($data)]
         );
     }
 

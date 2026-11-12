@@ -19,7 +19,7 @@ class DomainPricing extends \WHMCS\Domains\Extension
 {
     public function price()
     {
-        return $this->hasMany("ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Pricing", "relid");
+        return $this->hasMany('ModulesGarden\\TSSGGSModule\\Core\\WHMCS\\Models\\Pricing', "relid");
     }
 
     public function getExtensionNoDotAttribute()

@@ -17,7 +17,7 @@ class Step6 extends Widget implements AjaxComponentInterface
     {
         $countProducts = (new ProductRepository())->countProducts();
 
-        $this->setTitle($this->translate('step6_title'));
+        \ModulesGarden\TSSGGSModule\App\UI\Admin\Configuration\Shared\WizardLayout::prepareStep($this, 6, $this->translate('step6_title'));
 
         $text = new Text();
         $text->setCss('title_alert');

@@ -126,6 +126,15 @@ var component =
                 }, this.ajaxData_).then((data) => {
                     input && input.resolve ? input.resolve() : null;
 
+                    // lets the screen's Save bar know how the save ended (resources/assets/js/core/savebar.js)
+                    this.$el.dispatchEvent(new CustomEvent('tssggs-form-result', {
+                        bubbles: true,
+                        detail: {
+                            ok: !(typeof data.data == "undefined" || data.data.status !== "success"),
+                            custom: !!(input && input.data && input.data.customAction != null)
+                        }
+                    }));
+
                     //form validation error
                     if (typeof data.data == "undefined" || data.data.status !== "success")
                     {

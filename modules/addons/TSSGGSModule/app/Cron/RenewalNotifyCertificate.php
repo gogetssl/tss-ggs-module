@@ -78,12 +78,19 @@ class RenewalNotifyCertificate extends AbstractCommand
 
         $daysNotify = explode(',', $send_expiration_notification_reccuring);
 
+        // SSL orders stay "Configuration Submitted" when issued; an issued S/MIME order is "Completed"
         $certificatesQuery = Service::select(['tblhosting.*', 'tblsslorders.remoteid', 'tblproducts.configoption1'])
                                     ->join('tblsslorders', 'tblsslorders.serviceid', '=', 'tblhosting.id')
                                     ->join('tblproducts', 'tblhosting.packageid', '=', 'tblproducts.id')
                                     ->where('tblproducts.servertype', 'TSSGGSModule')
                                     ->where('tblhosting.domainstatus', 'Active')
-                                    ->where('tblsslorders.status', 'Configuration Submitted');
+                                    ->where(function($query) {
+                                        $query->where('tblsslorders.status', 'Configuration Submitted')
+                                              ->orWhere(function($smime) {
+                                                  $smime->whereIn('tblproducts.configoption9', \ModulesGarden\TSSGGSModule\App\Libs\GatewayOrderService::categories())
+                                                        ->where('tblsslorders.status', 'Completed');
+                                              });
+                                    });
 
 
         $output->write('Start checking certificates...') .
@@ -99,16 +106,19 @@ class RenewalNotifyCertificate extends AbstractCommand
             {
                 continue;
             }
+            // S/MIME: its own expiry e-mail, no reissue reminder (a renewal is a new order)
+            $gatewayType = \ModulesGarden\TSSGGSModule\App\Libs\GatewayOrderService::typeOfProduct($srv->packageid);
+            $isSmime     = $gatewayType !== null;
 
             $io->progressAdvance(1);
 
             try
             {
 
-                $certificate = Request::getOrder($srv->id);
+                $certificate = $isSmime ? [] : Request::getOrder($srv->id);
 
                 $daysLeft    = $this->checkOrderExpireDate($srv->nextduedate);
-                $daysReissue = $this->checkReissueDate($srv->id, $certificate);
+                $daysReissue = $isSmime ? false : $this->checkReissueDate($srv->id, $certificate);
 
                 if($srv->domainstatus == 'Active' && $daysReissue == '30' && !AutoInstallHelpers::isAutoReissueActive($srv->id))
                 {
@@ -122,7 +132,7 @@ class RenewalNotifyCertificate extends AbstractCommand
                     if($srv->billingcycle != 'One Time' && is_array($daysNotify) && in_array($daysLeft, $daysNotify))
                     {
                         $output->write('Send Email Expiration: ' . $srv->id . ' - ' . $srv->domain);
-                        EmailTemplates::sendEmail(EmailTemplates::EXPIRATION_TEMPLATE, $srv->id, ["expireDaysLeft" => $daysLeft]);
+                        EmailTemplates::sendEmail($gatewayType === \ModulesGarden\TSSGGSModule\App\Libs\CodeSigningService::class ? EmailTemplates::CS_EXPIRATION_TEMPLATE : ($isSmime ? EmailTemplates::SMIME_EXPIRATION_TEMPLATE : EmailTemplates::EXPIRATION_TEMPLATE), $srv->id, ["expireDaysLeft" => $daysLeft]);
                         Logger::info("The notification expire has been send", ['service' => $srv->id]);
                     }
                 }
@@ -142,7 +152,7 @@ class RenewalNotifyCertificate extends AbstractCommand
             {
 
                 $errorToDB = $e->getMessage();
-                Logger::error("The notification error " . $e->getMessage(), ['service' => $srv->id]);
+                Logger::error("The notification error " . $e->getMessage(), \ModulesGarden\TSSGGSModule\App\Libs\LogContext::exception($e, ['service' => $srv->id]));
 
             }
         }
@@ -172,7 +182,7 @@ class RenewalNotifyCertificate extends AbstractCommand
                 {
 
                     $errorToDB = $e->getMessage();
-                    Logger::error("The renewal invoice generate error " . $e->getMessage(), ['service' => $serviceID]);
+                    Logger::error("The renewal invoice generate error " . $e->getMessage(), \ModulesGarden\TSSGGSModule\App\Libs\LogContext::exception($e, ['service' => $serviceID]));
 
                 }
             }
@@ -223,6 +233,7 @@ class RenewalNotifyCertificate extends AbstractCommand
 
         $this->cancelOverdueAcmeSubscriptions();
         $this->cancelExpiredStoppedAutoRenewAcmeSubscriptions();
+        \ModulesGarden\TSSGGSModule\App\Libs\UnpaidTermination::run();
 
         CronCheck::updateOrCreate(
             ['type' => 'RenewalNotifyCertificate'],
@@ -301,6 +312,14 @@ class RenewalNotifyCertificate extends AbstractCommand
             }
             catch (\Exception $e)
             {
+                // the vendor still bills the subscription: keep the service open and retry on the next run, give up
+                // (and tell the admin) after 14 days
+                Logger::error('The overdue ACME subscription could not be cancelled: ' . $e->getMessage(), \ModulesGarden\TSSGGSModule\App\Libs\LogContext::exception($e, ['service' => $row->service_id]));
+                if($row->duedate >= date('Y-m-d', strtotime('-14 days')))
+                {
+                    continue;
+                }
+                \ModulesGarden\TSSGGSModule\App\Libs\GeneralSettings::activity('ACME subscription of service #' . (int)$row->service_id . ' could not be cancelled at the vendor for 14 days - cancel it manually: ' . $e->getMessage());
             }
 
             $subscription->status = 'cancelled';
@@ -346,6 +365,14 @@ class RenewalNotifyCertificate extends AbstractCommand
                 }
                 catch (\Exception $e)
                 {
+                    // keep the subscription open and retry on the next run; give up (and tell the admin) after 14 days
+                    Logger::error('The expired ACME subscription could not be cancelled: ' . $e->getMessage(), \ModulesGarden\TSSGGSModule\App\Libs\LogContext::exception($e, ['service' => $subscriptionData->service_id]));
+                    $ended = $subscriptionData->renewal_date ?: $subscriptionData->period_end;
+                    if(!$ended || date('Y-m-d', strtotime((string)$ended)) >= date('Y-m-d', strtotime('-14 days')))
+                    {
+                        continue;
+                    }
+                    \ModulesGarden\TSSGGSModule\App\Libs\GeneralSettings::activity('ACME subscription of service #' . (int)$subscriptionData->service_id . ' could not be cancelled at the vendor for 14 days - cancel it manually: ' . $e->getMessage());
                 }
             }
 

@@ -1,7 +1,9 @@
-<li :id="cid_" :class="[active ? 'is-active' : '', elements_.elements ? 'lu-has-dropdown': '']" class="lu-nav__item">
-    <a :href="url_" :target="getTarget" class="lu-nav__link">
-        <i :class="iconClass" class="lu-nav__link-icon lu-mdi mdi" v-if="iconClass"></i>
+<li :id="cid_" :class="[active ? 'is-active' : '', elements_.elements ? 'lu-has-dropdown': '', open_ ? 'tssggs-open' : '']" class="lu-nav__item">
+    <a :href="url_" :target="getTarget" class="lu-nav__link" @click="toggle">
+        <span class="lu-nav__link-icon" v-if="icon_ && icon_.indexOf('<svg') === 0" v-html="icon_"></span>
+        <i :class="iconClass" class="lu-nav__link-icon lu-mdi mdi" v-else-if="iconClass"></i>
         <span class="lu-nav__link-text" v-if="title_">{{title_}}</span>
+        <svg class="tssggs-ico tssggs-nav-chevron" v-if="elements_.elements" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" focusable="false"><path fill="currentColor" d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z"/></svg>
         <span class="lu-nav__link-drop-arrow"></span>
         <span class="drop-arrow"></span>
     </a>
@@ -10,8 +12,3 @@
         <component v-bind="element.slots" v-bind:is="element.name" v-for="(element, key) in elements_.elements" v-bind:key="element.uniq"></component>
     </ul>
 </li>
-
-
-
-
-

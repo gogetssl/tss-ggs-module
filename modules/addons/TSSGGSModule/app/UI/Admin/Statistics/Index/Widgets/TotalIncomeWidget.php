@@ -11,6 +11,7 @@ class TotalIncomeWidget extends Widget
     public function loadHtml(): void
     {
         $this->setTitle($this->translate('title'));
+        $this->setIcon('trending-up');
         $graph = new TotalIncomeGraph();
         $this->addElement($graph);
     }

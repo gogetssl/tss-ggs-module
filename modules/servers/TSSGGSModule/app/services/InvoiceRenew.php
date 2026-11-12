@@ -3,29 +3,79 @@
 namespace ModulesGarden\Servers\TSSGGSModule\app\services;
 
 
+use ModulesGarden\TSSGGSModule\App\Helpers\EmailTemplates;
 use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
 use ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Invoice;
 use ModulesGarden\TSSGGSModule\Core\WHMCS\Models\InvoiceItem;
 use ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Service;
+use WHMCS\Database\Capsule;
 
 class InvoiceRenew {
 
+    /**
+     * Renewal invoice for the cron - false when an invoice for the period already exists
+     */
     public function createAutoInvoice($serviceId)
     {
-        $invoiceId = $this->checkInvoiceAlreadyCreated($serviceId);
-        if($invoiceId === false)
-        {
-            return $this->createInvoice($serviceId);
-        }
-        return false;
+        list($invoiceId, $created) = $this->getOrCreateInvoice($serviceId);
+
+        return $created ? $invoiceId : false;
     }
 
+    /**
+     * [invoice ID, created] - the check and the creation run under a per-service lock, so the cron and a client
+     * clicking "Renew" at the same moment can not both create an invoice
+     */
+    public function getOrCreateInvoice($serviceId)
+    {
+        $lock = 'tssggs_renewal_invoice_' . (int)$serviceId;
+        $row  = Capsule::select('SELECT GET_LOCK(?, 10) AS l', [$lock]);
+        if(empty($row) || (int)$row[0]->l !== 1)
+        {
+            throw new \Exception('The renewal invoice is being created, please try again in a moment');
+        }
+
+        try
+        {
+            $invoiceId = $this->checkInvoiceAlreadyCreated($serviceId);
+            if($invoiceId !== false)
+            {
+                return [$invoiceId, false];
+            }
+
+            return [$this->createInvoice($serviceId), true];
+        }
+        finally
+        {
+            Capsule::select('SELECT RELEASE_LOCK(?)', [$lock]);
+        }
+    }
+
+    /**
+     * Invoice ID of an existing renewal invoice for the service's current period, false when there is none:
+     * any unpaid invoice of the service, or a paid one whose item covers the period starting at the next due date
+     */
     public function checkInvoiceAlreadyCreated($serviceId) {
+
+        $nextDueDate = (string)Service::where('id', (int)$serviceId)->value('nextduedate');
 
         $invoice = InvoiceItem::select('tblinvoices.*')->where('relid', $serviceId)
             ->join('tblinvoices', 'tblinvoiceitems.invoiceid', '=', 'tblinvoices.id')
             ->where('tblinvoiceitems.type', 'Hosting')
-            ->where('tblinvoices.status', 'Unpaid')
+            ->where(function($query) use ($nextDueDate) {
+                $query->whereIn('tblinvoices.status', ['Unpaid', 'Payment Pending', 'Draft']);
+                if($nextDueDate !== '' && $nextDueDate !== '0000-00-00')
+                {
+                    $query->orWhere(function($period) use ($nextDueDate) {
+                        $period->where('tblinvoices.status', 'Paid')
+                               ->where(function($match) use ($nextDueDate) {
+                                   $match->where('tblinvoiceitems.description', 'like', '%(' . $nextDueDate . ' - %')
+                                         ->orWhere('tblinvoiceitems.duedate', $nextDueDate);
+                               });
+                    });
+                }
+            })
+            ->orderBy('tblinvoices.id', 'desc')
             ->first();
 
         if(isset($invoice->id)) return $invoice->id;
@@ -67,7 +117,7 @@ class InvoiceRenew {
 
         $results = localAPI('CreateInvoice', [
             'userid' => $service['userid'],
-            'sendinvoice' => true,
+            'sendinvoice' => !EmailTemplates::renewalInvoiceEmailActive(),
             'date' => date('Y-m-d'),
             'duedate' => $invoiceDueDate,
             'itemdescription1' => $invoiceItemDescription,
@@ -76,6 +126,8 @@ class InvoiceRenew {
         ]);
 
         $invoiceId = $results['invoiceid'];
+        EmailTemplates::sendRenewalInvoiceEmail($serviceId, $invoiceId);
+        \ModulesGarden\TSSGGSModule\App\Libs\ProductCatalog::noticeIfDiscontinued($serviceId);
         InvoiceItem::where('invoiceid', $invoiceId)->update(['type' => 'Hosting', 'relid' => $serviceId]);
         $invoiceData = Invoice::where('id', $invoiceId)->first()->toArray();
 

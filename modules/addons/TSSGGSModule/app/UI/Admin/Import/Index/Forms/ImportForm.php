@@ -32,7 +32,7 @@ class ImportForm extends Form implements AdminAreaInterface, AjaxComponentInterf
 
     public function loadHtml(): void
     {
-        $this->builder = BuilderCreator::oneColumn($this);
+        $this->builder = BuilderCreator::twoColumns($this);
         $this->setId('ImportForm');
         $toolbar = new Toolbar();
 
@@ -66,16 +66,15 @@ class ImportForm extends Form implements AdminAreaInterface, AjaxComponentInterf
         );
 
         $this->builder->addField(
-            (new Dropdown())
-                ->setTitle($this->translate('payMethod'))
-                ->setName('payMethod')
-                ->required()
+            (new FormInputText())
+                ->setTitle($this->translate('serviceId'))
+                ->setName('serviceId')
         );
 
         $this->builder->addField(
             (new Dropdown())
-                ->setTitle($this->translate('vendor'))
-                ->setName('vendor')
+                ->setTitle($this->translate('payMethod'))
+                ->setName('payMethod')
                 ->required()
         );
 

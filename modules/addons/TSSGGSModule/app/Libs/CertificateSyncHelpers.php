@@ -24,7 +24,11 @@ class CertificateSyncHelpers
             ->join('tblproducts', 'tblhosting.packageid', '=', 'tblproducts.id')
             ->where('tblproducts.servertype', 'TSSGGSModule')
             ->where('tblhosting.domainstatus', 'Active')
-            ->where('tblsslorders.status', 'Configuration Submitted');
+            ->where('tblsslorders.status', 'Configuration Submitted')
+            // S/MIME and code signing orders have their own data and refresh (GatewayOrderService)
+            ->where(function($query) {
+                $query->whereNull('tblproducts.configoption9')->orWhereNotIn('tblproducts.configoption9', GatewayOrderService::categories());
+            });
     }
 
     /**
@@ -61,7 +65,7 @@ class CertificateSyncHelpers
             try {
                 $orderFiles = $api->getCertificateFiles($certificate['remoteid']);
             } catch (Exception $exception) {
-                Logger::error('Get Certificate Files Error:' . $exception->getMessage(), ['service' => $certificate['id']]);
+                Logger::error('Get Certificate Files Error:' . $exception->getMessage(), \ModulesGarden\TSSGGSModule\App\Libs\LogContext::exception($exception, ['service' => $certificate['id']]));
             }
         }
 
@@ -71,6 +75,7 @@ class CertificateSyncHelpers
 
         $request = ['orderData' => $orderData, 'orderFiles' => $orderFiles];
 
+        $previousStatus = Request::where('serviceid', $certificate['id'])->where('name', 'certificate')->value('status');
         Request::where('serviceid', $certificate['id'])->where('name', 'certificate')->delete();
         Request::insert([
             'serviceid' => $certificate['id'],
@@ -92,14 +97,32 @@ class CertificateSyncHelpers
             }
         }
 
-        if($orderData['order']['status'] == 'cancelled' || $orderData['order']['status'] == 'expired' || $orderData['order']['status'] == 'filed' || $orderData['order']['status'] == 'rejected')
+        if($orderData['order']['status'] == 'cancelled' || $orderData['order']['status'] == 'rejected')
         {
             Service::where('id', $certificate['id'])->update([
                 'domainstatus' => 'Cancelled'
             ]);
         }
+        elseif($orderData['order']['status'] == 'expired' || $orderData['order']['status'] == 'filed')
+        {
+            // an expired (or one-time, filed) certificate is terminated with a termination date, not cancelled; services
+            // that already ended (Terminated / Cancelled / Fraud) are left as they are
+            Service::where('id', $certificate['id'])->whereIn('domainstatus', ['Pending', 'Active', 'Suspended'])->update([
+                'domainstatus'     => 'Terminated',
+                'termination_date' => date('Y-m-d'),
+            ]);
+        }
 
-        Logger::info("The certificate details has been updated", ['service' => $certificate['id']]);
+        CertificateService::notifyIssued($certificate['id'], $previousStatus, $orderData['order']['status']);
+        if($orderData['order']['status'] === 'active')
+        {
+            CertificateService::forgetPreviousCertificate($certificate['id']);
+        }
+
+        if($previousStatus !== $orderData['order']['status'])
+        {
+            Logger::info('Certificate status: ' . ($previousStatus ?: 'new') . ' -> ' . $orderData['order']['status'], ['service' => $certificate['id'], 'from' => $previousStatus, 'to' => $orderData['order']['status']]);
+        }
 
         return $orderData['order']['status'];
     }

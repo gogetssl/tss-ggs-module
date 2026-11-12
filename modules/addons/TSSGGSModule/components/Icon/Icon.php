@@ -2,6 +2,7 @@
 
 namespace ModulesGarden\TSSGGSModule\Components\Icon;
 
+use ModulesGarden\TSSGGSModule\App\Libs\Icons;
 use ModulesGarden\TSSGGSModule\Core\Components\AbstractComponent;
 use ModulesGarden\TSSGGSModule\Core\Components\Traits\CssContainerTrait;
 use ModulesGarden\TSSGGSModule\Core\Components\Traits\TitleTrait;
@@ -18,7 +19,17 @@ class Icon extends AbstractComponent
 
     public function setIcon($icon):self
     {
-        $this->appendCss('mdi mdi-' . $icon);
+        // inline SVG in a 16px box; the icon class only for a name that has no SVG yet
+        $svg = Icons::svg((string)$icon);
+        if($svg !== '')
+        {
+            $this->appendCss('tssggs-icobox');
+            $this->setSlot('iconSvg', $svg);
+        }
+        else
+        {
+            $this->appendCss('mdi mdi-' . $icon);
+        }
 
         return $this;
     }

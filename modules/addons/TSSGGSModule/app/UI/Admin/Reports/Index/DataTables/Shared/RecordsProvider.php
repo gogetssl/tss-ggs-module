@@ -81,6 +81,7 @@ class RecordsProvider
                                     'tblhosting.domainstatus',
                                     'tblproducts.name',
                                     'tblproducts.id as productId',
+                                    'tblproducts.configoption1',
                                     'tblproducts.configoption2',
                                     'tblproducts.configoption3',
                                     'tblproducts.configoption4',
@@ -110,7 +111,8 @@ class RecordsProvider
             // ACME / AIS keep their state in the subscription tables, not in TSSGGSModule_Requests
             if(!isset($productTypes[$item->productId]))
             {
-                $productTypes[$item->productId] = AcmeHelpers::isAcmeWhmcsProduct($item->productId) ? 'acme' : (AisHelpers::isAisWhmcsProduct($item->productId) ? 'ais' : 'ssl');
+                $productTypes[$item->productId] = AcmeHelpers::isAcmeWhmcsProduct($item->productId) ? 'acme' : (AisHelpers::isAisWhmcsProduct($item->productId) ? 'ais'
+                    : (\ModulesGarden\TSSGGSModule\App\Libs\GatewayOrderService::typeOfProduct($item->productId) ?: 'ssl'));
             }
 
             $subscription = null;
@@ -123,7 +125,16 @@ class RecordsProvider
                 $subscription = AisSubscription::getByServiceId($serviceId);
             }
 
-            if($subscription)
+            if($productTypes[$item->productId] !== 'ssl' && is_subclass_of($productTypes[$item->productId], \ModulesGarden\TSSGGSModule\App\Libs\GatewayOrderService::class))
+            {
+                // S/MIME / code signing keep their order in their own request row (GatewayOrderService)
+                $smime          = $productTypes[$item->productId]::stored($serviceId);
+                $orderStatus    = !empty($smime['status']) ? ucfirst($smime['status']) : $orderStatus;
+                $storeId        = !empty($smime['itemId']) ? $smime['itemId'] : '-';
+                $issueDate      = !empty($smime['validFrom']) ? date('Y-m-d', strtotime($smime['validFrom'])) : '-';
+                $expirationDate = !empty($smime['validTill']) ? date('Y-m-d', strtotime($smime['validTill'])) : '-';
+            }
+            elseif($subscription)
             {
                 $orderStatus    = $subscription->status ? ucfirst($subscription->status) : $orderStatus;
                 $storeId        = $subscription->api_order_id ?: '-';
@@ -186,6 +197,9 @@ class RecordsProvider
             $profit               = ($cost > 0) ? $income - $cost : 0;
 
             $rows[] = [
+                'serviceId'      => $item->serviceId,
+                'serviceStatus'  => $item->domainstatus,
+                'vendor'         => $item->configoption1,
                 'date'           => $item->regdate,
                 'storeId'        => $storeId,
                 'clientDetails'  => "{$clientName}<br><strong>{$this->translate('country')}</strong> {$item->country}",

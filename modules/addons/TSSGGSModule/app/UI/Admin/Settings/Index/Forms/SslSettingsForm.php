@@ -3,7 +3,7 @@
 namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Forms;
 
 
-use ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Components\RevertSwitcher;
+use ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Concerns\SettingsLayout;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Providers\SslSettingsProvider;
 use ModulesGarden\TSSGGSModule\Components\Button\ButtonSuccess;
 use ModulesGarden\TSSGGSModule\Components\Container\Container;
@@ -13,6 +13,7 @@ use ModulesGarden\TSSGGSModule\Components\Form\Form;
 use ModulesGarden\TSSGGSModule\Components\FormInputText\FormInputText;
 use ModulesGarden\TSSGGSModule\Components\Grid\Grid;
 use ModulesGarden\TSSGGSModule\Components\Switcher\Switcher;
+use ModulesGarden\TSSGGSModule\Components\TextArea\TextArea;
 use ModulesGarden\TSSGGSModule\Components\Toolbar\Toolbar;
 use ModulesGarden\TSSGGSModule\Components\Widget\Widget;
 use ModulesGarden\TSSGGSModule\Core\Components\Actions\Collapse;
@@ -20,16 +21,30 @@ use ModulesGarden\TSSGGSModule\Core\Components\Actions\FormSubmit;
 use ModulesGarden\TSSGGSModule\Core\Contracts\Components\AdminAreaInterface;
 use ModulesGarden\TSSGGSModule\Core\Contracts\Components\AjaxComponentInterface;
 
-
+/**
+ * Settings of one product category. $scope:
+ *  - 'ssl'       SSL certificates (validation, CSR generator, renewals, due dates, ordering, downloads, messages)
+ *  - 'automated' automated SSL: AutoInstall (cPanel) and subscriptions (ACME / AutoInstall plans)
+ *  - 'all'       everything of both (the installation wizard)
+ * The fields of the "ssl" scope that belong to the general settings store are saved by SslSettingsProvider.
+ */
 class SslSettingsForm extends Form implements AdminAreaInterface, AjaxComponentInterface
 {
-    protected $configuration;
+    use SettingsLayout;
 
-    public function __construct($configuration = false)
+    const SCOPE_ALL       = 'all';
+    const SCOPE_SSL       = 'ssl';
+    const SCOPE_AUTOMATED = 'automated';
+
+    protected $configuration;
+    protected $scope;
+
+    public function __construct($configuration = false, $scope = self::SCOPE_ALL)
     {
         parent::__construct();
 
         $this->configuration  = $configuration;
+        $this->scope          = $scope;
         $this->provider       = SslSettingsProvider::class;
         $this->providerAction = SslSettingsProvider::ACTION_UPDATE;
     }
@@ -39,68 +54,55 @@ class SslSettingsForm extends Form implements AdminAreaInterface, AjaxComponentI
         $this->builder = BuilderCreator::oneColumn($this);
         $this->setId('SslSettingsForm');
 
-        $leftContainer  = new Container();
-        $rightContainer = new Container();
+        $ssl  = in_array($this->scope, [self::SCOPE_ALL, self::SCOPE_SSL], true);
+        $auto = in_array($this->scope, [self::SCOPE_ALL, self::SCOPE_AUTOMATED], true);
 
-        $grid = new Grid();
-        $grid->setRows([
-                           [
-                               [$leftContainer, 6], [$rightContainer, 6],
-                           ]
-                       ]);
-        $this->addElement($grid);
+        if($ssl)
+        {
+            $this->validationFields($this->section('sslValidation', 'shield-check-outline'), $this->scope === self::SCOPE_ALL);
+            $this->csrFields($this->section('csrGenerator', 'key-variant'));
+        }
 
-        $sslValidationWidget = new Widget();
-        $sslValidationWidget->setTitle($this->translate('sslValidation'));
-        $leftContainer->addElement($sslValidationWidget);
+        if($this->scope === self::SCOPE_SSL)
+        {
+            $this->orderingFields($this->section('ordering', 'web'));
+            $this->deliveryFields($this->section('delivery', 'file-document-outline'));
+            $this->messageFields($this->section('clientMessages', 'email-outline'));
+        }
 
-        $csrGeneratorWidget = new Widget();
-        $csrGeneratorWidget->setTitle($this->translate('csrGenerator'));
-        $rightContainer->addElement($csrGeneratorWidget);
+        if($this->scope === self::SCOPE_AUTOMATED)
+        {
+            $this->autoInstallFields($this->section('autoInstall', 'cog-outline'));
+        }
 
-        $renewalsWidget = new Widget();
-        $renewalsWidget->setTitle($this->translate('renewals'));
-        $rightContainer->addElement($renewalsWidget);
+        if($ssl)
+        {
+            $this->renewalFields($this->section('renewals', 'sync'), $this->scope === self::SCOPE_ALL);
+            $this->orderFields($this->section('recurringAndOneTime', 'credit-card-clock-outline'));
+        }
 
-        $renewalsSubscriptionWidget = new Widget();
-        $renewalsSubscriptionWidget->setTitle($this->translate('renewalsSubscription'));
-        $rightContainer->addElement($renewalsSubscriptionWidget);
+        // the due dates are on Settings > Finance (Billing)
 
-        //ssl validation------------------------------------------------------------------------------------------------
+        if($this->scope === self::SCOPE_ALL || $this->scope === self::SCOPE_AUTOMATED)
+        {
+            $this->subscriptionFields($this->section('renewalsSubscription', 'sync'));
+        }
 
-        $this->builder->addFieldInContainer(
-            $sslValidationWidget,
-            (new Switcher())
-                ->setName('disableEmailValidation')
-                ->addClass('switcher-revert'),
-            true
-        );
+        $this->saveBar(null, $this->scope === self::SCOPE_ALL);
+    }
 
-        $this->builder->addFieldInContainer(
-            $sslValidationWidget,
-            (new Switcher())
-                ->setName('autoDetailsForDvOrders')
-                ->addClass('switcher-revert'),
-            true
-        );
+    protected function validationFields($widget, $withAutomated)
+    {
+        $this->builder->addFieldInContainer($widget, (new Switcher())->setName('disableEmailValidation')->addClass('switcher-revert'), true);
+        $this->builder->addFieldInContainer($widget, (new Switcher())->setName('autoDetailsForDvOrders')->addClass('switcher-revert'), true);
 
-        $this->builder->addFieldInContainer(
-            $sslValidationWidget,
-            (new FormInputText())
-                ->setName('wildcardDnsTimeoutMinutes'),
-            true
-        );
-
-        $this->builder->addFieldInContainer(
-            $sslValidationWidget,
-            (new Switcher())
-                ->setName('cpanelTlsVerifyDisabled')
-                ->setDefaultValue(false),
-            true
-        );
+        if($withAutomated)
+        {
+            $this->autoInstallFields($widget, false);
+        }
 
         $useFixedTechnicalDetails = $this->builder->addFieldInContainer(
-            $sslValidationWidget,
+            $widget,
             (new Switcher())
                 ->setName('useFixedTechnicalDetails')
                 ->addClass('switcher-revert'),
@@ -108,101 +110,23 @@ class SslSettingsForm extends Form implements AdminAreaInterface, AjaxComponentI
         );
 
         $detailsContainer = new Container();
-        $sslValidationWidget->addElement($detailsContainer);
+        $widget->addElement($detailsContainer);
 
         $useFixedTechnicalDetails->onChange(
             (new Collapse($detailsContainer, !$this->provider()->getValueById('useFixedTechnicalDetails')))
         );
 
-        $this->builder->addFieldInContainer(
-            $detailsContainer,
-            (new FormInputText())
-                ->setName('firstName')
-                ->addValidator('required_if:useFixedTechnicalDetails,1')
-                ->setTranslationCustomAttributes(['useFixedTechnicalDetails'], $this)
-                ->setTranslationCustomValues(['useFixedTechnicalDetails' => ["1"]], $this)
-        );
-
-        $this->builder->addFieldInContainer(
-            $detailsContainer,
-            (new FormInputText())
-                ->setName('lastName')
-                ->addValidator('required_if:useFixedTechnicalDetails,1')
-                ->setTranslationCustomAttributes(['useFixedTechnicalDetails'], $this)
-                ->setTranslationCustomValues(['useFixedTechnicalDetails' => ["1"]], $this)
-        );
-
-        $this->builder->addFieldInContainer(
-            $detailsContainer,
-            (new FormInputText())
-                ->setName('companyName')
-                ->addValidator('required_if:useFixedTechnicalDetails,1')
-                ->setTranslationCustomAttributes(['useFixedTechnicalDetails'], $this)
-                ->setTranslationCustomValues(['useFixedTechnicalDetails' => ["1"]], $this)
-        );
-
-        $this->builder->addFieldInContainer(
-            $detailsContainer,
-            (new FormInputText())
-                ->setName('jobTitle')
-                ->addValidator('required_if:useFixedTechnicalDetails,1')
-                ->setTranslationCustomAttributes(['useFixedTechnicalDetails'], $this)
-                ->setTranslationCustomValues(['useFixedTechnicalDetails' => ["1"]], $this)
-        );
-
-        $this->builder->addFieldInContainer(
-            $detailsContainer,
-            (new FormInputText())
-                ->setName('emailAddress')
-                ->addValidator('required_if:useFixedTechnicalDetails,1')
-                ->setTranslationCustomAttributes(['useFixedTechnicalDetails'], $this)
-                ->setTranslationCustomValues(['useFixedTechnicalDetails' => ["1"]], $this)
-        );
-
-        $this->builder->addFieldInContainer(
-            $detailsContainer,
-            (new FormInputText())
-                ->setName('address')
-                ->addValidator('required_if:useFixedTechnicalDetails,1')
-                ->setTranslationCustomAttributes(['useFixedTechnicalDetails'], $this)
-                ->setTranslationCustomValues(['useFixedTechnicalDetails' => ["1"]], $this)
-        );
-
-        $this->builder->addFieldInContainer(
-            $detailsContainer,
-            (new FormInputText())
-                ->setName('city')
-                ->addValidator('required_if:useFixedTechnicalDetails,1')
-                ->setTranslationCustomAttributes(['useFixedTechnicalDetails'], $this)
-                ->setTranslationCustomValues(['useFixedTechnicalDetails' => ["1"]], $this)
-        );
-
-        $this->builder->addFieldInContainer(
-            $detailsContainer,
-            (new FormInputText())
-                ->setName('zipCode')
-                ->addValidator('required_if:useFixedTechnicalDetails,1')
-                ->setTranslationCustomAttributes(['useFixedTechnicalDetails'], $this)
-                ->setTranslationCustomValues(['useFixedTechnicalDetails' => ["1"]], $this)
-        );
-
-        $this->builder->addFieldInContainer(
-            $detailsContainer,
-            (new FormInputText())
-                ->setName('stateRegion')
-                ->addValidator('required_if:useFixedTechnicalDetails,1')
-                ->setTranslationCustomAttributes(['useFixedTechnicalDetails'], $this)
-                ->setTranslationCustomValues(['useFixedTechnicalDetails' => ["1"]], $this)
-        );
-
-        $this->builder->addFieldInContainer(
-            $detailsContainer,
-            (new FormInputText())
-                ->setName('postCode')
-                ->addValidator('required_if:useFixedTechnicalDetails,1')
-                ->setTranslationCustomAttributes(['useFixedTechnicalDetails'], $this)
-                ->setTranslationCustomValues(['useFixedTechnicalDetails' => ["1"]], $this)
-        );
+        foreach(['firstName', 'lastName', 'companyName', 'jobTitle', 'emailAddress', 'address', 'city', 'zipCode', 'stateRegion', 'postCode'] as $name)
+        {
+            $this->builder->addFieldInContainer(
+                $detailsContainer,
+                (new FormInputText())
+                    ->setName($name)
+                    ->addValidator('required_if:useFixedTechnicalDetails,1')
+                    ->setTranslationCustomAttributes(['useFixedTechnicalDetails'], $this)
+                    ->setTranslationCustomValues(['useFixedTechnicalDetails' => ["1"]], $this)
+            );
+        }
 
         $this->builder->addFieldInContainer(
             $detailsContainer,
@@ -212,22 +136,36 @@ class SslSettingsForm extends Form implements AdminAreaInterface, AjaxComponentI
                 ->setTranslationCustomAttributes(['useFixedTechnicalDetails'], $this)
                 ->setTranslationCustomValues(['useFixedTechnicalDetails' => ["1"]], $this)
         );
+    }
 
-        //csr generator-------------------------------------------------------------------------------------------------
+    /**
+     * AutoInstall (cPanel): DNS wait for wildcard names, TLS check of the cPanel servers and the automatic reissue
+     */
+    protected function autoInstallFields($widget, $withReissue = true)
+    {
+        $this->builder->addFieldInContainer($widget, (new FormInputText())->setName('wildcardDnsTimeoutMinutes'), true);
+        $this->builder->addFieldInContainer($widget, (new Switcher())->setName('cpanelTlsVerifyDisabled')->setDefaultValue(false), true);
 
+        if($withReissue)
+        {
+            $this->builder->addFieldInContainer($widget, (new Dropdown())->setName('autoReissueDaysBeforeExpire'));
+        }
+    }
+
+    protected function csrFields($widget)
+    {
         $enableCsrGenerator = $this->builder->addFieldInContainer(
-            $csrGeneratorWidget,
+            $widget,
             (new Switcher())
                 ->setName('enableCsrGenerator')
                 ->addClass('switcher-revert')
         );
 
         $csrGeneratorContainer = new Container();
-        $csrGeneratorWidget->addElement($csrGeneratorContainer);
+        $widget->addElement($csrGeneratorContainer);
         $enableCsrGenerator->onChange(
             (new Collapse($csrGeneratorContainer, !$this->provider()->getValueById('enableCsrGenerator')))
         );
-
 
         $useProfileDetailsForCsr = $this->builder->addFieldInContainer(
             $csrGeneratorContainer,
@@ -247,68 +185,45 @@ class SslSettingsForm extends Form implements AdminAreaInterface, AjaxComponentI
             (new Dropdown())
                 ->setName('defaultCsrCountry')
                 ->setDefaultValueAsFirstOption()
-                ->required()
         );
+    }
 
-        //renewals------------------------------------------------------------------------------------------------------
+    protected function renewalFields($widget, $withReissue)
+    {
+        foreach(['visibleRenewButtonBeforeExpiration', 'visibleRenewButtonAfterExpiration', 'renewOrderViaExistingOrder', 'automaticProcessingOfRenewalOrders', 'setTheUnpaidStatusForRenewalInvoices'] as $name)
+        {
+            $this->builder->addFieldInContainer($widget, (new Switcher())->setName($name)->addClass('switcher-revert'));
+        }
 
-        $this->builder->addFieldInContainer(
-            $renewalsWidget,
-            (new Switcher())
-                ->setName('visibleRenewButtonBeforeExpiration')
-                ->addClass('switcher-revert')
-        );
+        $this->builder->addFieldInContainer($widget, (new Dropdown())->setName('additionalDaysForRenewalOrder')->setDefaultValueAsFirstOption());
 
-        $this->builder->addFieldInContainer(
-            $renewalsWidget,
-            (new Switcher())
-                ->setName('visibleRenewButtonAfterExpiration')
-                ->addClass('switcher-revert')
-        );
+        if($withReissue)
+        {
+            $this->builder->addFieldInContainer($widget, (new Dropdown())->setName('autoReissueDaysBeforeExpire'));
+        }
 
-        $this->builder->addFieldInContainer(
-            $renewalsWidget,
-            (new Switcher())
-                ->setName('renewOrderViaExistingOrder')
-                ->addClass('switcher-revert')
-        );
+    }
 
-        $this->builder->addFieldInContainer(
-            $renewalsWidget,
-            (new Switcher())
-                ->setName('automaticProcessingOfRenewalOrders')
-                ->addClass('switcher-revert')
-        );
-
-        $this->builder->addFieldInContainer(
-            $renewalsWidget,
-            (new Switcher())
-                ->setName('setTheUnpaidStatusForRenewalInvoices')
-                ->addClass('switcher-revert')
-        );
-
-        $this->builder->addFieldInContainer(
-            $renewalsWidget,
-            (new Dropdown())
-                ->setName('additionalDaysForRenewalOrder')
-                ->setDefaultValueAsFirstOption()
-        );
-
-        $this->builder->addFieldInContainer(
-            $renewalsWidget,
-            (new Dropdown())
-                ->setName('autoReissueDaysBeforeExpire')
-        );
-
-        $recurringOrdersWidget = new Widget();
-        $recurringOrdersWidget->setTitle($this->translate('recurringOrders'));
-        $renewalsWidget->addElement($recurringOrdersWidget);
+    /**
+     * Renewal invoices and reminders of recurring and one-time orders (two sub-sections of one section)
+     */
+    protected function orderFields($widget)
+    {
+        $recurringOrdersWidget = $this->subSection('recurringOrders', $widget);
 
         $recurringSwitcher = $this->builder->addFieldInContainer(
             $recurringOrdersWidget,
             (new Switcher())
                 ->setName('recurringCreateAutomaticRenewalInvoice')
                 ->addClass('switcher-revert')
+        );
+
+        // reminders do not depend on the invoice switch: switch off + days = "reminder only", switch on = full automatic renewal
+        $this->builder->addFieldInContainer(
+            $recurringOrdersWidget,
+            (new FormInputText())
+                ->setName('recurringSendExpirationNotifications'),
+            true
         );
 
         $recurringContainer = new Container();
@@ -324,16 +239,7 @@ class SslSettingsForm extends Form implements AdminAreaInterface, AjaxComponentI
                 ->setDefaultValueAsFirstOption()
         );
 
-        $this->builder->addFieldInContainer(
-            $recurringContainer,
-            (new FormInputText())
-                ->setName('recurringSendExpirationNotifications'),
-            true
-        );
-
-        $oneTimeOrdersWidget = new Widget();
-        $oneTimeOrdersWidget->setTitle($this->translate('oneTimeOrders'));
-        $renewalsWidget->addElement($oneTimeOrdersWidget);
+        $oneTimeOrdersWidget = $this->subSection('oneTimeOrders', $widget);
 
         $oneTimeSwitcher = $this->builder->addFieldInContainer(
             $oneTimeOrdersWidget,
@@ -348,24 +254,16 @@ class SslSettingsForm extends Form implements AdminAreaInterface, AjaxComponentI
             (new Collapse($oneTimeContainer, !$this->provider()->getValueById('oneTimeCreateAutomaticRenewalInvoice')))
         );
 
-        $this->builder->addFieldInContainer(
-            $oneTimeContainer,
-            (new Dropdown())
-                ->setName('oneTimeDaysBeforeExpiry')
-                ->setDefaultValueAsFirstOption()
-        );
+        $this->builder->addFieldInContainer($oneTimeContainer, (new Dropdown())->setName('oneTimeDaysBeforeExpiry')->setDefaultValueAsFirstOption());
+        $this->builder->addFieldInContainer($oneTimeContainer, (new FormInputText())->setName('oneTimeSendExpirationNotifications'), true);
+    }
 
-        $this->builder->addFieldInContainer(
-            $oneTimeContainer,
-            (new FormInputText())
-                ->setName('oneTimeSendExpirationNotifications'),
-            true
-        );
-
-        //renewals subscription-----------------------------------------------------------------------------------------
-        $recurringOrdersWidget = new Widget();
-        $recurringOrdersWidget->setTitle($this->translate('recurringOrders'));
-        $renewalsSubscriptionWidget->addElement($recurringOrdersWidget);
+    /**
+     * Subscriptions (ACME / AutoInstall plans): renewal invoice and reminders
+     */
+    protected function subscriptionFields($widget)
+    {
+        $recurringOrdersWidget = $this->subSection('recurringOrders', $widget);
 
         $recurringSwitcher = $this->builder->addFieldInContainer(
             $recurringOrdersWidget,
@@ -380,30 +278,46 @@ class SslSettingsForm extends Form implements AdminAreaInterface, AjaxComponentI
             (new Collapse($recurringContainer, !$this->provider()->getValueById('recurringCreateAutomaticRenewalInvoiceSubscription')))
         );
 
-        $this->builder->addFieldInContainer(
-            $recurringContainer,
-            (new Dropdown())
-                ->setName('recurringDaysBeforeExpirySubscription')
-                ->setDefaultValueAsFirstOption()
-        );
+        $this->builder->addFieldInContainer($recurringContainer, (new Dropdown())->setName('recurringDaysBeforeExpirySubscription')->setDefaultValueAsFirstOption());
+        $this->builder->addFieldInContainer($recurringContainer, (new Switcher())->setName('recurringSendExpirationNotificationsSubscription')->addClass('switcher-revert'));
+    }
 
-        $this->builder->addFieldInContainer(
-            $recurringContainer,
-            (new Switcher())
-                ->setName('recurringSendExpirationNotificationsSubscription')
-                ->addClass('switcher-revert')
-        );
+    // ---- fields of the general settings store that belong to SSL certificates ---- //
 
-        //==============================================================================================================
+    protected function orderingFields($widget)
+    {
+        $this->builder->addFieldInContainer($widget, (new Switcher())->setName('useDefaultWebServer')->addClass('switcher-revert'), true);
+        $this->builder->addFieldInContainer($widget, (new Switcher())->setName('requireAgreement')->addClass('switcher-revert'), true);
 
-        $toolbar = new Toolbar();
-        $toolbar->addElement(
-            (new ButtonSuccess())
-                ->setId('buttonSave')
-                ->setTitle($this->translate('save'))
-                ->onClick(new FormSubmit($this))
-        );
+        // one agreement per certificate authority, picked automatically from the product's brand
+        foreach(array_keys(\ModulesGarden\TSSGGSModule\App\Libs\CertificateService::AUTHORITIES) as $authority)
+        {
+            $sub = $this->subSection('agreement_' . $authority, $widget);
+            $this->builder->addFieldInContainer($sub, (new FormInputText())->setName('agreementUrl_' . $authority), true);
+            $this->builder->addFieldInContainer($sub, (new TextArea())->setName('agreementText_' . $authority), true);
+        }
+        $other = $this->subSection('agreement_other', $widget);
+        $this->builder->addFieldInContainer($other, (new TextArea())->setName('agreementText'), true);
+    }
 
-        $this->addElement($toolbar);
+    protected function deliveryFields($widget)
+    {
+        foreach(['zip', 'crt', 'ca', 'fullchain', 'nginx', 'apache', 'pkcs7'] as $format)
+        {
+            $this->builder->addFieldInContainer($widget, (new Switcher())->setName('downloadFormat_' . $format)->addClass('switcher-revert'), true);
+        }
+    }
+
+    protected function messageFields($widget)
+    {
+        $this->builder->addFieldInContainer($widget, (new TextArea())->setName('processingGuide'), true);
+        $this->builder->addFieldInContainer($widget, (new TextArea())->setName('issuedMessage'), true);
+        $this->builder->addFieldInContainer($widget, (new Dropdown())->setName('certificateEmailTemplate'), true);
+    }
+
+    protected function dueDateFields($widget)
+    {
+        $this->builder->addFieldInContainer($widget, (new Dropdown())->setName('dueDateOffsetRegular'), true);
+        $this->builder->addFieldInContainer($widget, (new Dropdown())->setName('dueDateOffsetSubscription'), true);
     }
 }

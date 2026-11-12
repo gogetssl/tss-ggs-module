@@ -4,6 +4,11 @@ namespace ModulesGarden\TSSGGSModule\App\Cron;
 
 use Exception;
 use ModulesGarden\TSSGGSModule\App\Libs\Helpers;
+use ModulesGarden\TSSGGSModule\App\Libs\GeneralSettings;
+use ModulesGarden\TSSGGSModule\App\Libs\FinancePolicy;
+use ModulesGarden\TSSGGSModule\App\Libs\RenewalPrices;
+use ModulesGarden\TSSGGSModule\App\Libs\PricingService;
+use ModulesGarden\TSSGGSModule\App\Libs\ProductSettings;
 use ModulesGarden\TSSGGSModule\App\Libs\SSLTrustCenterApi;
 use ModulesGarden\TSSGGSModule\App\Models\CronCheck;
 use ModulesGarden\TSSGGSModule\App\Models\RemoteProduct;
@@ -69,6 +74,15 @@ class ProductPricingUpdate extends AbstractCommand
 
             RemoteProduct::synchronize();
 
+            // catalogue refresh (formerly the separate job ReSyncProducts): announcements, account manager, product configuration
+            $countryCode = \WHMCS\Config\Setting::getValue('DefaultCountry');
+            foreach(Helpers::getConfiguredApis() as $configuredApi)
+            {
+                $configuredApi->getAnnouncements(true);
+                $configuredApi->getManager($countryCode, true);
+            }
+            Helpers::reSyncProducts();
+
             //$baseCurrencyId - USD or default WHMCS currency
             $baseCurrencyId = Helpers::getCurrencyIdByCode('USD');
 
@@ -84,7 +98,7 @@ class ProductPricingUpdate extends AbstractCommand
             }
 
             $addonConfig      = (new AddonModuleRepository())->getModuleConfiguration();
-            $baseCurrencyRate = $addonConfig['financeSettings']['rate'] ?: 1;
+            $baseCurrencyRate = FinancePolicy::refreshRate(); // the daily rate when that source is chosen
             $profitMargin     = floatval($addonConfig['financeSettings']['profitMargin']);
 
             $remoteProducts = RemoteProduct::get();
@@ -112,6 +126,8 @@ class ProductPricingUpdate extends AbstractCommand
                     continue;
                 }
 
+                $margin = ProductSettings::margin($whmcsProduct->id, $profitMargin);
+
                 foreach($remoteProductData['prices'] as $remotePriceData)
                 {
                     if(isset($remotePriceData['base']['single']['selling']))
@@ -131,8 +147,7 @@ class ProductPricingUpdate extends AbstractCommand
                         continue;
                     }
 
-                    $baseCurrencyPrice = $apiPrice * $baseCurrencyRate;
-                    $baseCurrencyPrice = $baseCurrencyPrice + ($baseCurrencyPrice * $profitMargin / 100);
+                    $baseCost   = $apiPrice * $baseCurrencyRate;
                     $currencies        = Currency::get();
 
                     foreach($currencies as $currency)
@@ -145,7 +160,7 @@ class ProductPricingUpdate extends AbstractCommand
                             continue;
                         }
 
-                        $currencyPrice = \convertCurrency($baseCurrencyPrice, $baseCurrencyId, $currency->id);
+                        $currencyPrice = FinancePolicy::sell($baseCost, $margin, (int)$remotePriceData['term'], $currency->id, true);
 
                         Pricing::updateOrInsert(
                             ['type' => 'product', 'currency' => $currency->id, 'relid' => $whmcsProduct->id],
@@ -162,6 +177,12 @@ class ProductPricingUpdate extends AbstractCommand
                     }
 
                     Logger::info("Pricing for product #{$whmcsProduct->id} has been updated");
+                }
+
+                // code signing: token shipping fees of the "Certificate Delivery" option
+                if(strtolower((string)$remoteProduct->category) === \ModulesGarden\TSSGGSModule\App\Libs\CodeSigningService::CATEGORY)
+                {
+                    \ModulesGarden\TSSGGSModule\App\Libs\CodeSigningService::syncDeliveryPrices($whmcsProduct->id, (array)$remoteProductData);
                 }
 
                 $expectedOptionNames = [
@@ -207,17 +228,16 @@ class ProductPricingUpdate extends AbstractCommand
                             continue;
                         }
 
-                        $apiPrice          = $apiPrice + ($apiPrice * $profitMargin / 100);
-                        $baseCurrencyPrice = $apiPrice * $baseCurrencyRate;
+                        $baseCost          = $apiPrice * $baseCurrencyRate;
                         $currencies        = Currency::get();
 
                         foreach($currencies as $currency)
                         {
-                            $pricingArray[$currency->id][$billingPeriod] = \convertCurrency($baseCurrencyPrice, $baseCurrencyId, $currency->id);
+                            $pricingArray[$currency->id][$billingPeriod] = FinancePolicy::sell($baseCost, $margin, (int)$remotePriceData['term'], $currency->id, false);
 
                             if($whmcsProduct->paytype == 'onetime' && $billingPeriod == 'annually')
                             {
-                                $pricingArray[$currency->id]['monthly'] = \convertCurrency($baseCurrencyPrice, $baseCurrencyId, $currency->id);
+                                $pricingArray[$currency->id]['monthly'] = FinancePolicy::sell($baseCost, $margin, (int)$remotePriceData['term'], $currency->id, false);
                             }
                         }
                     }
@@ -230,10 +250,37 @@ class ProductPricingUpdate extends AbstractCommand
                     Logger::info("Configurable Options Pricing for product #{$whmcsProduct->id} has been updated");
                 }
             }
+
+            // Manual prices follow cost changes (same margin); admins hear about prices below cost
+            $pricing = new PricingService();
+            $kept    = $pricing->keepMargins(GeneralSettings::enabled('keepMarginOnSync'));
+            if($kept)
+            {
+                Logger::info("Manual prices adjusted to keep the margin: {$kept}");
+            }
+            if(FinancePolicy::raiseBelowCost())
+            {
+                $raised = $pricing->raiseBelowCost($profitMargin, GeneralSettings::enabled('belowCostEmail'));
+                if($raised)
+                {
+                    Logger::info('Prices raised to cover the reseller cost: ' . count($raised));
+                }
+            }
+            if(GeneralSettings::enabled('belowCostEmail'))
+            {
+                $pricing->notifyBelowCost();
+            }
+
+            // existing services renew at the current price (Settings > Finance > Renewal prices)
+            $renewals = RenewalPrices::sync();
+            if($renewals['updated'])
+            {
+                Logger::info('Renewal prices of existing services updated: ' . $renewals['updated'] . ' (raised ' . $renewals['raised'] . ', lowered ' . $renewals['lowered'] . ')');
+            }
         }
         catch(\Throwable $exception)
         {
-            Logger::error('ProductPricingUpdate Cron Error: ' . $exception->getMessage());
+            Logger::error('ProductPricingUpdate Cron Error: ' . $exception->getMessage(), \ModulesGarden\TSSGGSModule\App\Libs\LogContext::exception($exception));
             $errorToDB = $exception->getMessage();
         }
 

@@ -4,6 +4,7 @@ var component =
         mixins: [ActionsHandlerMixin],
         template: '#template-name#',
         props: [
+            'iconSvg',
             'type',
             'title',
             'size',
@@ -14,6 +15,7 @@ var component =
         ],
         data: function () {
             return {
+                iconSvg_: '',
                 type_: '',
                 title_: '',
                 size_: '',

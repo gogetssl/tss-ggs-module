@@ -6,6 +6,7 @@ use ModulesGarden\Servers\TSSGGSModule\app\models\whmcs\Service;
 use ModulesGarden\Servers\TSSGGSModule\app\models\whmcs\SSL;
 use ModulesGarden\TSSGGSModule\App\Libs\AcmeHelpers;
 use ModulesGarden\TSSGGSModule\App\Libs\AutoInstallHelpers;
+use ModulesGarden\TSSGGSModule\App\Libs\CertificateService;
 use ModulesGarden\TSSGGSModule\App\Libs\SSLTrustCenterApi;
 use ModulesGarden\TSSGGSModule\App\Models\Request;
 use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
@@ -14,12 +15,45 @@ use ModulesGarden\TSSGGSModule\Core\WHMCS\Models\InvoiceItem;
 
 class Renew
 {
+    /**
+     * WHMCS shows what is returned here: anything but "success" is a failed module action, so a vendor error is
+     * returned (and logged) instead of leaving the service looking renewed
+     */
     public function run($params)
+    {
+        try
+        {
+            return $this->renew($params);
+        }
+        catch(\Exception $e)
+        {
+            \logActivity('TSSGGS: Renewal of service #' . (int)$params['serviceid'] . ' failed: ' . $e->getMessage());
+
+            return 'Renewal failed: ' . $e->getMessage();
+        }
+    }
+
+    protected function renew($params)
     {
         $serviceId = $params['serviceid'];
 
         $service = Service::find($serviceId);
         if($service && AcmeHelpers::isAcmeWhmcsProduct($service->packageid)) {
+            return 'success';
+        }
+
+        // S/MIME: a renewal is a new certificate order - the service goes back to Awaiting Configuration and the client
+        // gets the configuration link (the current certificate stays valid until it expires)
+        $gatewayType = $service ? \ModulesGarden\TSSGGSModule\App\Libs\GatewayOrderService::typeOfProduct($service->packageid) : null;
+        if($gatewayType) {
+            // "ordered": placed with the previous details; "form": the client gets the order details e-mail
+            if($gatewayType::renewal($serviceId) === 'form') {
+                $sslOrder = SSL::getByServiceId($serviceId);
+                \ModulesGarden\TSSGGSModule\App\Helpers\EmailTemplates::sendEmail($gatewayType::configurationTemplate(), $serviceId, [
+                    'ssl_configuration_link' => (new \ModulesGarden\Servers\TSSGGSModule\app\repository\whmcs\Config())->getConfigureSSLUrl($sslOrder ? $sslOrder->id : 0, $serviceId),
+                ]);
+            }
+
             return 'success';
         }
 
@@ -61,8 +95,8 @@ class Renew
             $datediff = $nextduedate - $now;
             $days = round($datediff / (60 * 60 * 24));
 
-            $requestRenew['renewal']['prior_order_id'] = $sslOrder->remoteid;
-            $requestRenew['renewal']['remaining_days'] = $days > 0 ? $days+1 : 0;
+            $requestRenew['renewal']['prior_order_id'] = $requestRenew['renewal']['prior_certificate_id'] = $sslOrder->remoteid;
+            $requestRenew['renewal']['remaining_days'] = CertificateService::renewalDays($serviceId, $days > 0 ? $days + 1 : 0);
 
             $newOrder  = $api->renewOrder($serviceId, $requestRenew);
             $newItemId = SSLTrustCenterApi::getItemId($newOrder);
@@ -96,9 +130,17 @@ class Renew
 
             $request = ['orderData' => $orderData, 'orderFiles' => $orderFiles];
 
-            Request::where('serviceid', $serviceId)->where('name', 'certificate')->insert([
+            // keep the issued certificate: it stays valid (and downloadable) while the renewal waits for validation
+            \ModulesGarden\TSSGGSModule\App\Libs\CertificateService::keepPreviousCertificate($serviceId);
+
+            // (insert() ignores the where() conditions: the row needs its own serviceid and name)
+            Request::where('serviceid', $serviceId)->where('name', 'certificate')->delete();
+            Request::insert([
+                'serviceid' => $serviceId,
+                'name' => 'certificate',
                 'request' => \encrypt(json_encode($request)),
                 'status' => 'pending',
+                'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s')
             ]);
 
@@ -136,6 +178,10 @@ class Renew
                 }
                 Service::where('id', $newServiceId)->update(['domain' => $domain]);
             }
+            else
+            {
+                return 'The renewal order could not be created: ' . ($resultsOrder['message'] ?? 'unknown error');
+            }
 
             if($automaticProcessingOfRenewalOrders)
             {
@@ -148,8 +194,8 @@ class Renew
                 $nextduedate = strtotime($request['orderFiles']['validity']['end']);
                 $datediff = $nextduedate - $now;
                 $days = round($datediff / (60 * 60 * 24));
-                $requestRenew['renewal']['prior_order_id'] = $sslOrder->remoteid;
-                $requestRenew['renewal']['remaining_days'] = $days > 0 ? $days+1 : 0;
+                $requestRenew['renewal']['prior_order_id'] = $requestRenew['renewal']['prior_certificate_id'] = $sslOrder->remoteid;
+                $requestRenew['renewal']['remaining_days'] = CertificateService::renewalDays($serviceId, $days > 0 ? $days + 1 : 0);
 
                 $newOrder = $api->renewOrder($newServiceId, $requestRenew);
                 $newItemId = SSLTrustCenterApi::getItemId($newOrder);

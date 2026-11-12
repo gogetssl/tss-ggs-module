@@ -6,34 +6,59 @@ namespace ModulesGarden\TSSGGSModule\App\Libs;
 use ModulesGarden\Servers\TSSGGSModule\app\models\whmcs\SSL;
 use ModulesGarden\Servers\TSSGGSModule\core\Lang;
 use ModulesGarden\TSSGGSModule\App\Models\AcmeSubscription;
+use ModulesGarden\TSSGGSModule\App\Models\RemoteProduct;
 use ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Product;
 use ModulesGarden\TSSGGSModule\Packages\Product\Services\ConfigurableOptions;
 use WHMCS\Database\Capsule;
 
 class AcmeHelpers
 {
+    /** the GoGetSSL id of the CaaS product: a fallback, ACME products are recognised by the gateway category */
     const PRODUCT_IDS = [300];
+
+    /** category the gateway gives to ACME (CaaS) products */
+    const CATEGORY = 'caas';
+
+    protected static $remoteIds;
 
     public static function isAcmeWhmcsProduct($whmcsProductId)
     {
         $product = Product::find($whmcsProductId);
 
-        if($product && in_array($product->configoption2, self::PRODUCT_IDS))
-        {
-            return true;
-        }
-
-        return false;
+        return $product && self::isAcmeRemoteProduct($product->configoption2);
     }
 
     public static function isAcmeRemoteProduct($remoteProductId)
     {
-        return in_array($remoteProductId, self::PRODUCT_IDS);
+        return $remoteProductId !== null && $remoteProductId !== '' && in_array((string)$remoteProductId, array_map('strval', self::getProductIds()), true);
     }
 
+    /**
+     * Remote ids of the ACME products: everything the gateway lists in the CaaS category (so the TSS codes
+     * sectigo_caas_dv / positivessl_caas_dv are recognised too), plus the known GoGetSSL id
+     */
     public static function getProductIds()
     {
-        return self::PRODUCT_IDS;
+        if(self::$remoteIds === null)
+        {
+            self::$remoteIds = self::PRODUCT_IDS;
+            try
+            {
+                foreach(RemoteProduct::whereRaw('LOWER(category) = ?', [self::CATEGORY])->pluck('remoteId') as $id)
+                {
+                    if($id !== '' && !in_array($id, self::$remoteIds, false))
+                    {
+                        self::$remoteIds[] = $id;
+                    }
+                }
+            }
+            catch(\Throwable $e)
+            {
+                // products not synchronised yet: only the known id
+            }
+        }
+
+        return self::$remoteIds;
     }
 
     public static function getAcmeNextInvoiceDate($renewalDate, $daysBefore)
@@ -53,7 +78,11 @@ class AcmeHelpers
     }
 
 
-    public static function hasAcmeSubscriptionRenewalInvoice($serviceId)
+    /**
+     * Renewal invoice of the subscription period already exists: an unpaid one, or any not cancelled one
+     * due on the period's renewal date (not only one created today - a cron run on another day must not add one)
+     */
+    public static function hasAcmeSubscriptionRenewalInvoice($serviceId, $renewalDate = null)
     {
         return Capsule::table('tblinvoiceitems')
                       ->join('tblinvoices', 'tblinvoices.id', '=', 'tblinvoiceitems.invoiceid')
@@ -61,18 +90,45 @@ class AcmeHelpers
                       ->where('tblinvoiceitems.relid', (int)$serviceId)
                       ->where('tblinvoiceitems.description', 'LIKE', '%ACME Subscription Renewal')
                       ->whereNotIn('tblinvoices.status', ['Cancelled', 'Refunded'])
-                      ->where('date', date('Y-m-d'))
+                      ->where(function($query) use ($renewalDate) {
+                          $query->whereIn('tblinvoices.status', ['Unpaid', 'Payment Pending', 'Draft'])
+                                ->orWhere('tblinvoices.date', date('Y-m-d'));
+                          if($renewalDate)
+                          {
+                              $query->orWhere('tblinvoices.duedate', date('Y-m-d', strtotime((string)$renewalDate)));
+                          }
+                      })
                       ->exists();
     }
 
     public static function createAcmeSubscriptionRenewalInvoice($service, $product, $subscriptionData)
     {
-        if(self::hasAcmeSubscriptionRenewalInvoice((int)$service->id))
+        $lock = 'tssggs_renewal_invoice_' . (int)$service->id;
+        $row  = Capsule::select('SELECT GET_LOCK(?, 10) AS l', [$lock]);
+        if(empty($row) || (int)$row[0]->l !== 1)
         {
             return 0;
         }
 
-        $amount      = isset($service->firstpaymentamount) ? (float)$service->firstpaymentamount : 0.00;
+        try
+        {
+            return self::createAcmeSubscriptionRenewalInvoiceLocked($service, $product, $subscriptionData);
+        }
+        finally
+        {
+            Capsule::select('SELECT RELEASE_LOCK(?)', [$lock]);
+        }
+    }
+
+    protected static function createAcmeSubscriptionRenewalInvoiceLocked($service, $product, $subscriptionData)
+    {
+        if(self::hasAcmeSubscriptionRenewalInvoice((int)$service->id, $subscriptionData->renewal_date ?? null))
+        {
+            return 0;
+        }
+
+        // the recurring amount: the first payment can include a setup fee or a promotion that must not be renewed
+        $amount      = isset($service->amount) ? (float)$service->amount : (isset($service->firstpaymentamount) ? (float)$service->firstpaymentamount : 0.00);
         $dateInvoice = date('Y-m-d');
         $periodStart = !empty($subscriptionData->renewal_date)
             ? date('Y-m-d', strtotime((string)$subscriptionData->renewal_date))

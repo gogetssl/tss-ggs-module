@@ -67,6 +67,7 @@
                 {/foreach}
                 <option value="__manual__">{$MGLANG->T('sslConfigDomainNotListed')}</option>
             </select>
+            <small><a href="clientarea.php?action=productdetails&id={$serviceid}&configssl=1&refreshdomains=1">{$MGLANG->T('sslConfigRefreshDomains')}</a></small>
         </div>
 
         {if $isWildcard}
@@ -196,12 +197,14 @@
         <div class="form-group">
             <label>{$MGLANG->T('sslConfigValidationMethod')} <span class="text-danger">*</span></label>
             <select class="form-control dcv-select" id="dcv_method_manual">
-                {foreach $dcvMethods as $method}
+                {foreach $dcvMethodsManual as $method}
                     <option value="{$method|escape}" {if $method == 'http'}selected{/if}>
                         {if $method == 'email'}{$MGLANG->T('sslConfigValidationEmail')}
                         {elseif $method == 'http'}{$MGLANG->T('sslConfigValidationHttp')}
                         {elseif $method == 'https'}{$MGLANG->T('sslConfigValidationHttps')}
                         {elseif $method == 'dns'}{$MGLANG->T('sslConfigValidationDns')}
+                        {elseif $method == 'dns-cname'}{$MGLANG->T('sslConfigValidationDnsCname')}
+                        {elseif $method == 'dns-txt'}{$MGLANG->T('sslConfigValidationDnsTxt')}
                         {else}{$method|escape}{/if}
                     </option>
                 {/foreach}
@@ -312,6 +315,16 @@
     </div>
     {/if}
 
+    {if $agreement}
+    <div class="tssggs-agreement" style="margin-top:25px;">
+        {if $agreement.text}<div style="margin-bottom:8px;">{$agreement.text}</div>{/if}
+        <label style="font-weight:normal;">
+            <input type="checkbox" id="tssggs_agreement" value="1">
+            {$MGLANG->T('sslConfigAgreement')} {if $agreement.url}<a href="{$agreement.url|escape}" target="_blank" rel="noopener">{$agreement.name|escape}</a>{else}{$agreement.name|escape}{/if}
+        </label>
+    </div>
+    {/if}
+
     <div style="margin-top:25px; padding-top:15px; border-top:1px solid #e0e0e0;">
         <button type="button" class="btn btn-primary btn-lg" id="btn-submit-ssl-config">{$MGLANG->T('sslConfigSubmit')}</button>
     </div>
@@ -404,6 +417,10 @@
     };
 
     function parseResponse(ret) {
+        // the JSON answer comes with an application/json header, so jQuery may already have parsed it
+        if (ret && typeof ret === 'object') {
+            return ret;
+        }
         ret = String(ret).replace('<JSONRESPONSE#', '').replace('#ENDJSONRESPONSE>', '');
         return JSON.parse(ret);
     }
@@ -643,6 +660,8 @@
 
     // ---- Submit ----
     function showError(message) {
+        // only the current problem: earlier messages no longer apply after the client changed the form
+        $('#MGAlerts').alerts('clear');
         $('#MGAlerts').alerts('error', message || lang.error);
         $('html, body').animate({ scrollTop: 0 }, 300);
     }
@@ -661,6 +680,11 @@
         }
         if (dcvMethod === 'email' && !approverEmail) {
             showError(lang.approverRequired);
+            return;
+        }
+
+        if ($('#tssggs_agreement').length && !$('#tssggs_agreement').is(':checked')) {
+            showError('{$MGLANG->T('sslConfigAgreementRequired')|escape:'javascript'}');
             return;
         }
 
@@ -686,7 +710,8 @@
             'admin_city':         $('#admin_city').val(),
             'admin_region':       $('#admin_region').val(),
             'admin_postalcode':   $('#admin_postalcode').val(),
-            'admin_country':      $('#admin_country').val()
+            'admin_country':      $('#admin_country').val(),
+            'agreement':          $('#tssggs_agreement').is(':checked') ? 1 : 0
         };
 
         if (installType === 'autoinstall') {
@@ -769,7 +794,15 @@
                 $('html, body').animate({ scrollTop: 0 }, 300);
             } else if (data.private_key) {
                 $('#ssl-private-key').val(data.private_key);
-                $('#ssl-private-key-download').attr('href', data.private_key_url);
+                var keyHandle = data.private_key_handle;
+                $('#ssl-private-key-download').attr('href', '#').off('click').on('click', function (e) {
+                    e.preventDefault();
+                    var f = $('<form></form>').attr({ method: 'post', target: '_blank' }).attr('action', 'clientarea.php?action=productdetails&id={$serviceid}');
+                    f.append($('<input type="hidden" name="mg-action" value="downloadKey">'));
+                    f.append($('<input type="hidden" name="token">').val('{$csrfToken}'));
+                    f.append($('<input type="hidden" name="handle">').val(keyHandle));
+                    f.appendTo('body').submit().remove();
+                });
                 $('#ssl-config-wrap').hide();
                 $('#ssl-thankyou-manual-key').show();
                 $('html, body').animate({ scrollTop: 0 }, 300);

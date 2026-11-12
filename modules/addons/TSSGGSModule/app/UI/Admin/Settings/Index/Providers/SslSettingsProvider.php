@@ -3,8 +3,10 @@
 namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Providers;
 
 use ModulesGarden\TSSGGSModule\App\Libs\AutoInstallHelpers;
+use ModulesGarden\TSSGGSModule\App\Libs\GeneralSettings;
 use ModulesGarden\TSSGGSModule\App\Libs\Helpers;
 use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
+use ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Widgets\NextStepsWidget;
 use ModulesGarden\TSSGGSModule\Core\DataProviders\CrudProvider;
 use ModulesGarden\TSSGGSModule\Core\Support\Facades\Validator;
 
@@ -37,12 +39,36 @@ class SslSettingsProvider extends CrudProvider
         }
 
         $this->availableValues['country']                               = Helpers::getCountryOptions();
-        $this->availableValues['defaultCsrCountry']                     = Helpers::getCountryOptions();
+        // empty = each client's own country (the first country of the list used to be saved without being chosen)
+        $this->availableValues['defaultCsrCountry']                     = ['' => "The client's own country"] + Helpers::getCountryOptions();
         $this->availableValues['additionalDaysForRenewalOrder']         = Helpers::get30DaysOptions();
-        $this->availableValues['autoReissueDaysBeforeExpire']           = Helpers::get30DaysOptions();
+        $reissueDays = [1, 3, 7, 10, 21, 30];
+        $current     = (int)$this->data['autoReissueDaysBeforeExpire'];
+        if(!in_array($current, $reissueDays, true))
+        {
+            $reissueDays[] = $current; // a value saved before the shorter list stays selectable
+            sort($reissueDays);
+        }
+        $this->availableValues['autoReissueDaysBeforeExpire']           = array_combine($reissueDays, $reissueDays);
         $this->availableValues['recurringDaysBeforeExpirySubscription'] = Helpers::getDaysOptions(true);
         $this->availableValues['recurringDaysBeforeExpiry']             = Helpers::getDaysOptions();
         $this->availableValues['oneTimeDaysBeforeExpiry']               = Helpers::getDaysOptions();
+
+        // the SSL certificates page also shows settings of the general store (downloads, messages, due dates, ordering)
+        foreach(GeneralSettings::all() as $key => $value)
+        {
+            $this->data[$key] = in_array($key, GeneralSettingsProvider::SWITCHES, true) ? GeneralSettings::enabled($key) : $value;
+        }
+        $offsets = ['0' => '0', '3' => '3', '7' => '7', '15' => '15', '30' => '30'];
+        $this->availableValues['dueDateOffsetRegular']      = $offsets;
+        $this->availableValues['dueDateOffsetSubscription'] = $offsets;
+
+        $templates = ['' => $this->translate('moduleTemplate')];
+        foreach(\WHMCS\Database\Capsule::table('tblemailtemplates')->where('type', 'general')->where('language', '')->orderBy('name')->pluck('name') as $name)
+        {
+            $templates[$name] = $name;
+        }
+        $this->availableValues['certificateEmailTemplate'] = $templates;
     }
 
     public function update()
@@ -108,6 +134,16 @@ class SslSettingsProvider extends CrudProvider
         );
 
         $data = $this->formData->toArray();
-        (new AddonModuleRepository)->saveSslSettings($data);
+
+        // fields of the general store (downloads, messages, due dates ...) go there, the rest into the SSL settings; both
+        // are merged into what is stored, so a page that shows only part of the settings keeps the others
+        $general = array_intersect_key($data, GeneralSettings::DEFAULTS);
+        if($general)
+        {
+            GeneralSettingsProvider::saveGeneral($general);
+        }
+        (new AddonModuleRepository)->saveSslSettings(array_diff_key($data, GeneralSettings::DEFAULTS));
+        // the dashboard's "Check renewal settings" step
+        NextStepsWidget::markDone(NextStepsWidget::STEP_RENEWALS);
     }
 }

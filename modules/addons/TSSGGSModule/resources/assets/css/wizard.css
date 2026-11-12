@@ -1,0 +1,579 @@
+/*
+ * Installation wizard (Configuration > step1..step6).
+ * Layout: module header with progress, vertical step list, step card.
+ * Everything is scoped to .tssggs-wizard so WHMCS and the other module pages are not affected.
+ */
+
+.tssggs-wizard {
+    --tw-primary: #007136;
+    --tw-primary-hover: #00602e;
+    --tw-primary-soft: #e4f8e8;
+    --tw-ring: #359658;
+    --tw-fg: #020618;
+    --tw-fg-soft: #334155;
+    --tw-muted: #62748e;
+    --tw-surface: #ffffff;
+    --tw-surface-alt: #f8fafc;
+    --tw-border: #e2e8f0;
+    --tw-danger: #e7000b;
+    --tw-danger-soft: #fef2f2;
+    --tw-warning: #a65f00;
+    --tw-warning-soft: #fef6e7;
+    --tw-radius: 10px;
+    --tw-shadow: 0 1px 2px rgba(2, 6, 24, .06);
+
+    background: var(--tw-surface);
+    border: 1px solid var(--tw-border);
+    border-radius: calc(var(--tw-radius) + 4px);
+    box-shadow: var(--tw-shadow);
+    overflow: hidden;
+    color: var(--tw-fg);
+    font-size: 14px;
+}
+
+/*
+ * The wizard has its own header. On the wizard pages only: hide the WHMCS page title (<h1> with the module
+ * name), the module navbar and the breadcrumb, and drop the WHMCS content padding.
+ */
+.contentarea:has(.tssggs-wizard) {
+    padding: 0;
+}
+
+.contentarea:has(.tssggs-wizard) h1,
+.lu-app:has(.tssggs-wizard) > :not(.lu-app-main),
+.lu-app-main__body:has(.tssggs-wizard) > .lu-app-main__top {
+    display: none;
+}
+
+/* ---- Header ---- */
+
+.tssggs-wizard__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--tw-border);
+}
+
+.tssggs-wizard__brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+}
+
+.tssggs-wizard__logo {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    background: var(--tw-primary);
+    color: #fff;
+}
+
+.tssggs-wizard__logo svg {
+    width: 20px;
+    height: 20px;
+}
+
+.tssggs-wizard__name {
+    display: block;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.3;
+}
+
+.tssggs-wizard__sub {
+    display: block;
+    font-size: 12px;
+    color: var(--tw-muted);
+}
+
+.tssggs-wizard__progress {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 288px;
+}
+
+.tssggs-wizard__bar {
+    flex: 1;
+    height: 8px;
+    border-radius: 999px;
+    background: var(--tw-border);
+    overflow: hidden;
+}
+
+.tssggs-wizard__bar span {
+    display: block;
+    height: 100%;
+    background: var(--tw-primary);
+    transition: width .5s ease;
+}
+
+.tssggs-wizard__pct {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--tw-muted);
+    font-variant-numeric: tabular-nums;
+}
+
+/* ---- Body: step list + step card ---- */
+
+.tssggs-wizard__body {
+    display: grid;
+    grid-template-columns: 280px minmax(0, 1fr);
+    background: var(--tw-surface-alt);
+}
+
+.tssggs-wizard__nav {
+    padding: 20px;
+    border-right: 1px solid var(--tw-border);
+}
+
+.tssggs-wizard__nav-title {
+    margin: 0 0 12px;
+    padding: 0 8px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--tw-muted);
+}
+
+.tssggs-wizard__nav ol {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.tssggs-wizard__nav li {
+    position: relative;
+}
+
+/* connector line between the step dots */
+.tssggs-wizard__nav li:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    left: 23px;
+    top: 40px;
+    bottom: -4px;
+    width: 1px;
+    background: var(--tw-border);
+}
+
+.tssggs-wizard__nav li.is-done::after {
+    background: var(--tw-primary);
+}
+
+.tssggs-wizard__item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 10px 8px;
+    border-radius: 8px;
+    color: inherit;
+    text-decoration: none;
+}
+
+a.tssggs-wizard__item:hover,
+a.tssggs-wizard__item:focus-visible {
+    background: rgba(255, 255, 255, .7);
+    color: inherit;
+    text-decoration: none;
+}
+
+a.tssggs-wizard__item:focus-visible {
+    outline: 2px solid var(--tw-ring);
+    outline-offset: 1px;
+}
+
+.tssggs-wizard__nav li.is-active .tssggs-wizard__item {
+    background: var(--tw-surface);
+    box-shadow: var(--tw-shadow);
+}
+
+.tssggs-wizard__dot {
+    position: relative;
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    border: 1px solid var(--tw-border);
+    border-radius: 50%;
+    background: var(--tw-surface);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--tw-muted);
+}
+
+.tssggs-wizard__dot svg {
+    width: 14px;
+    height: 14px;
+}
+
+.is-done .tssggs-wizard__dot {
+    border-color: var(--tw-primary);
+    background: var(--tw-primary);
+    color: #fff;
+}
+
+.is-active .tssggs-wizard__dot {
+    border-color: transparent;
+    background: var(--tw-primary-soft);
+    color: var(--tw-primary);
+}
+
+.tssggs-wizard__ring {
+    position: absolute;
+    inset: 0;
+    border: 1px dashed var(--tw-primary);
+    border-radius: 50%;
+}
+
+.tssggs-wizard__step-title {
+    display: block;
+    font-weight: 500;
+    color: var(--tw-muted);
+}
+
+.is-done .tssggs-wizard__step-title {
+    color: var(--tw-fg);
+}
+
+.is-active .tssggs-wizard__step-title {
+    color: var(--tw-primary);
+}
+
+.tssggs-wizard__step-desc {
+    display: block;
+    font-size: 12px;
+    color: var(--tw-muted);
+}
+
+.tssggs-wizard__section {
+    padding: 32px;
+    min-width: 0;
+}
+
+/* ---- Step card (framework widget) ---- */
+
+.tssggs-wizard .tssggs-step.lu-widget {
+    margin: 0;
+    border: 1px solid var(--tw-border);
+    border-radius: var(--tw-radius);
+    background: var(--tw-surface);
+    box-shadow: var(--tw-shadow);
+}
+
+.tssggs-wizard .tssggs-step > .lu-widget__body > .lu-widget__content {
+    padding: 32px;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--tw-fg-soft);
+}
+
+/* #layers2 (the module root) outranks the WHMCS admin theme's heading styles */
+#layers2 .tssggs-step__eyebrow {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--tw-primary);
+}
+
+#layers2 .tssggs-step__title {
+    margin: 4px 0 20px;
+    padding: 0;
+    font-family: inherit;
+    letter-spacing: normal;
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 1.25;
+    color: var(--tw-fg);
+}
+
+/* step 1: feature cards */
+.tssggs-features {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    margin: 4px 0 20px;
+}
+
+.tssggs-feature {
+    padding: 16px;
+    border: 1px solid var(--tw-border);
+    border-radius: 8px;
+    background: var(--tw-surface-alt);
+}
+
+.tssggs-feature__title {
+    font-weight: 500;
+    color: var(--tw-fg);
+}
+
+.tssggs-feature__desc {
+    margin-top: 4px;
+    font-size: 12px;
+    color: var(--tw-muted);
+}
+
+/* step 2: compatibility checklist */
+.tssggs-checks__intro {
+    margin: 0 0 16px;
+}
+
+.tssggs-checks {
+    overflow-x: auto;
+    border: 1px solid var(--tw-border);
+    border-radius: 8px;
+}
+
+.tssggs-checks table {
+    width: 100%;
+    margin: 0;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.tssggs-checks th,
+.tssggs-checks td {
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--tw-border);
+    text-align: left;
+    vertical-align: top;
+}
+
+.tssggs-checks th {
+    background: var(--tw-surface-alt);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--tw-muted);
+}
+
+.tssggs-checks tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+/* fixed columns: Required / Found / Status get set widths, the check (name, hint, fix command) takes the rest and
+   wraps - long hints and long "found" values never push the table out of the card. The framework sizes table
+   cells and spans with !important rules, hence the !important here. */
+#layers2 .tssggs-checks {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+#layers2 .tssggs-checks table {
+    width: 100% !important;
+    table-layout: fixed;
+}
+
+#layers2 .tssggs-checks th:nth-child(2) { width: 130px !important; }
+#layers2 .tssggs-checks th:nth-child(3) { width: 220px !important; }
+#layers2 .tssggs-checks th:nth-child(4) { width: 100px !important; }
+
+#layers2 .tssggs-checks td:first-child,
+#layers2 .tssggs-checks td:nth-child(3) {
+    white-space: normal !important;
+    overflow-wrap: anywhere;
+}
+
+#layers2 .tssggs-checks__name,
+#layers2 .tssggs-checks__hint,
+#layers2 .tssggs-checks__cmd {
+    width: auto !important;
+    max-width: 100%;
+}
+
+.tssggs-checks td:nth-child(2),
+.tssggs-checks td:nth-child(3) {
+    color: var(--tw-muted);
+    font-variant-numeric: tabular-nums;
+}
+
+.tssggs-checks td:nth-child(2),
+.tssggs-checks td:nth-child(4) {
+    white-space: nowrap;
+}
+
+/* the wizard card body is a flex item that would otherwise grow to the table's natural width */
+.tssggs-step > .lu-widget__body {
+    flex: 1 1 auto;
+    min-width: 0;
+    max-width: 100%;
+}
+
+/* the command that fixes a failed check, ready to copy */
+.tssggs-checks__cmd {
+    display: block;
+    margin-top: 6px;
+    padding: 8px 10px;
+    border: 1px solid var(--tw-border);
+    border-radius: 6px;
+    background: var(--tw-surface-alt);
+    color: var(--tw-fg);
+    font-size: 12px;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    user-select: all;
+}
+
+.tssggs-checks__name {
+    display: block;
+    font-weight: 500;
+    color: var(--tw-fg);
+}
+
+.tssggs-checks__hint {
+    display: block;
+    margin-top: 2px;
+    font-size: 12px;
+    color: var(--tw-muted);
+}
+
+.tssggs-checks__status {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.is-passed .tssggs-checks__status {
+    background: var(--tw-primary-soft);
+    color: var(--tw-primary);
+}
+
+.is-failed .tssggs-checks__status {
+    background: var(--tw-danger-soft);
+    color: var(--tw-danger);
+}
+
+.is-warning .tssggs-checks__status {
+    background: var(--tw-warning-soft);
+    color: var(--tw-warning);
+}
+
+.tssggs-checks tr.is-failed td:first-child {
+    box-shadow: inset 3px 0 0 var(--tw-danger);
+}
+
+.tssggs-checks tr.is-warning td:first-child {
+    box-shadow: inset 3px 0 0 var(--tw-warning);
+}
+
+/* alerts inside step cards */
+.tssggs-wizard .tssggs-step .lu-alert {
+    margin: 0 0 8px;
+    padding: 12px 16px;
+    border: 1px solid var(--tw-border);
+    border-radius: 8px;
+    background: var(--tw-surface);
+    color: var(--tw-fg);
+    font-size: 14px;
+}
+
+.tssggs-wizard .tssggs-step .lu-alert--success {
+    border-color: rgba(0, 113, 54, .3);
+    background: var(--tw-primary-soft);
+}
+
+.tssggs-wizard .tssggs-step .lu-alert--danger {
+    border-color: rgba(231, 0, 11, .3);
+    background: var(--tw-danger-soft);
+}
+
+/* buttons */
+.tssggs-wizard .tssggs-step .lu-btn--success,
+.tssggs-wizard .tssggs-step .lu-btn--primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border: 0;
+    border-radius: 8px;
+    background: var(--tw-primary);
+    color: #fff;
+    font-weight: 600;
+    box-shadow: var(--tw-shadow);
+}
+
+.tssggs-wizard .tssggs-step .lu-btn--success:hover,
+.tssggs-wizard .tssggs-step .lu-btn--primary:hover {
+    background: var(--tw-primary-hover);
+    color: #fff;
+}
+
+.tssggs-wizard .tssggs-step .lu-btn--success:focus-visible,
+.tssggs-wizard .tssggs-step .lu-btn--primary:focus-visible {
+    outline: 2px solid var(--tw-ring);
+    outline-offset: 2px;
+}
+
+/* form fields */
+.tssggs-wizard .tssggs-step .lu-form-control:focus {
+    border-color: var(--tw-ring);
+    box-shadow: 0 0 0 3px rgba(53, 150, 88, .2);
+}
+
+/* ---- Motion ---- */
+
+@media (prefers-reduced-motion: no-preference) {
+    .is-active .tssggs-wizard__dot,
+    .is-done .tssggs-wizard__dot {
+        animation: tssggs-step-in .5s ease-out;
+    }
+
+    .tssggs-wizard__ring {
+        animation: tssggs-spin 6s linear infinite;
+    }
+}
+
+@keyframes tssggs-step-in {
+    from { transform: rotate(-180deg) scale(.6); opacity: .4; }
+    to   { transform: rotate(0) scale(1); opacity: 1; }
+}
+
+@keyframes tssggs-spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ---- Narrow screens ---- */
+
+@media (max-width: 991px) {
+    .tssggs-wizard__body {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .tssggs-wizard__nav {
+        border-right: 0;
+        border-bottom: 1px solid var(--tw-border);
+    }
+
+    .tssggs-wizard__progress {
+        display: none;
+    }
+
+    .tssggs-wizard__section,
+    .tssggs-wizard .tssggs-step > .lu-widget__body > .lu-widget__content {
+        padding: 20px;
+    }
+
+    .tssggs-features {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+/* Text components render a <span>; the wizard puts block markup inside */
+.tssggs-wizard .tssggs-html {
+    display: block;
+    min-width: 0;
+}

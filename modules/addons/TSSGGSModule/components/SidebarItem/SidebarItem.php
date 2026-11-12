@@ -2,6 +2,7 @@
 
 namespace ModulesGarden\TSSGGSModule\Components\SidebarItem;
 
+use ModulesGarden\TSSGGSModule\App\Libs\Icons;
 use ModulesGarden\TSSGGSModule\Core\Components\AbstractComponent;
 use ModulesGarden\TSSGGSModule\Core\Components\Traits\ComponentsContainerTrait;
 use ModulesGarden\TSSGGSModule\Core\Components\Traits\CssContainerTrait;
@@ -23,6 +24,18 @@ class SidebarItem extends AbstractComponent implements ComponentContainerInterfa
         parent::__construct();
         $this->setTitle($title);
         $this->setUrl($url);
+    }
+
+    /**
+     * Material Design Icons name without the prefix (e.g. "key-variant")
+     */
+    public function setIcon(string $icon): self
+    {
+        // inline SVG; the class only for a name that has no SVG yet
+        $svg = Icons::svg($icon);
+        $this->setSlot('icon', $svg !== '' ? $svg : 'mdi mdi-' . $icon);
+
+        return $this;
     }
 
     public function setActive(bool $active): self

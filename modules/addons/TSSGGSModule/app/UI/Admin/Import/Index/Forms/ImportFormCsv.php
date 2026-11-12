@@ -61,13 +61,6 @@ class ImportFormCsv extends Form implements AdminAreaInterface, AjaxComponentInt
         );
 
         $this->builder->addField(
-            (new Dropdown())
-                ->setTitle($this->translate('vendor'))
-                ->setName('vendor')
-                ->required()
-        );
-
-        $this->builder->addField(
             (new Switcher())
                 ->setName('generateInvoice')
                 ->addClass('switcher-revert')

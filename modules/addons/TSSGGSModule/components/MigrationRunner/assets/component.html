@@ -1,0 +1,16 @@
+<div :id="cid_" class="tssggs-runner" :class="'is-' + progress_.status">
+    <div class="tssggs-runner__head">
+        <span class="tssggs-runner__state">{{ stateLabel }}</span>
+        <span class="tssggs-runner__pct">{{ progress_.percent }}%</span>
+    </div>
+    <div class="tssggs-runner__bar"><span :style="{ width: progress_.percent + '%' }"></span></div>
+    <ul class="tssggs-runner__counts">
+        <li><b>{{ progress_.jobs.done }}</b> {{ labels_.done }}</li>
+        <li><b>{{ progress_.jobs.skipped }}</b> {{ labels_.skipped }}</li>
+        <li :class="{ 'is-bad': progress_.jobs.failed > 0 }"><b>{{ progress_.jobs.failed }}</b> {{ labels_.failed }}</li>
+        <li><b>{{ progress_.jobs.pending }}</b> {{ labels_.pending }}</li>
+    </ul>
+    <p class="tssggs-runner__note" v-if="running">{{ labels_.keepOpen }}</p>
+    <p class="tssggs-runner__error" v-if="error_">{{ error_ }}</p>
+    <p class="tssggs-runner__note" v-if="progress_.finished">{{ labels_.finished }} <a :href="reloadHref">{{ labels_.reload }}</a></p>
+</div>

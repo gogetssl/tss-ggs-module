@@ -17,6 +17,15 @@ class Switcher extends FormField
 
     public const COMPONENT = 'Switcher';
 
+    public function __construct()
+    {
+        parent::__construct();
+
+        // the switch is shown as a Yes / No choice
+        $this->setSlot('yesLabel', (string)$this->translate('yes', [], ['admin.switcher']));
+        $this->setSlot('noLabel', (string)$this->translate('no', [], ['admin.switcher']));
+    }
+
     public function setOnOffMode(): self
     {
         $this->setSlot('onOffMode', true);

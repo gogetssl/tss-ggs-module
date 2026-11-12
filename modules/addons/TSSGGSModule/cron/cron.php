@@ -1,5 +1,12 @@
 <?php
 
+// cron jobs are started from the command line only
+if (PHP_SAPI !== 'cli')
+{
+    http_response_code(403);
+    exit;
+}
+
 $modulePath = dirname(__DIR__);
 $whmcsPath  = dirname(dirname(dirname($modulePath)));
 

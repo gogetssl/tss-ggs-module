@@ -6,6 +6,7 @@ use Exception;
 use ModulesGarden\TSSGGSModule\App\Helpers\EmailTemplates;
 use ModulesGarden\TSSGGSModule\App\Libs\AcmeHelpers;
 use ModulesGarden\TSSGGSModule\App\Libs\AutoInstallHelpers;
+use ModulesGarden\TSSGGSModule\App\Libs\CertificateService;
 use ModulesGarden\TSSGGSModule\App\Libs\SSLTrustCenterApi;
 use ModulesGarden\TSSGGSModule\App\Libs\SslProductHelpers;
 use ModulesGarden\TSSGGSModule\App\Models\AcmeSubscription;
@@ -73,10 +74,16 @@ class SSLCertificatesProcessing extends AbstractCommand
             ->join('tblsslorders', 'tblsslorders.serviceid', '=', 'tblhosting.id')
             ->join('tblproducts', 'tblhosting.packageid', '=', 'tblproducts.id')
             ->join('TSSGGSModule_Requests', 'TSSGGSModule_Requests.serviceid', '=', 'tblhosting.id')
-            ->whereIn('TSSGGSModule_Requests.status', ['pending'])
+            // a new order is stored as "processing" until the gateway reports it (GoGetSSL adds the validation details
+            // a few seconds after the order is placed) - without it such orders were never re-read
+            ->whereIn('TSSGGSModule_Requests.status', ['pending', 'processing'])
             ->where('tblproducts.servertype', 'TSSGGSModule')
             ->where('tblhosting.domainstatus', 'Active')
             ->where('tblsslorders.status', 'Configuration Submitted')
+            // S/MIME and code signing orders keep their own request rows (also pending): GatewayOrderService refreshes them
+            ->where(function($query) {
+                $query->whereNull('tblproducts.configoption9')->orWhereNotIn('tblproducts.configoption9', \ModulesGarden\TSSGGSModule\App\Libs\GatewayOrderService::categories());
+            })
             ->groupBy('tblhosting.id');
 
         $output->write('Start checking certificates...') .
@@ -84,6 +91,8 @@ class SSLCertificatesProcessing extends AbstractCommand
         $io->title('Progress Bar!');
         $io->progressStart($certificatesQuery->count());
 
+        $failed = [];
+        $totalChecked = $certificatesQuery->get()->count();
         foreach ($certificatesQuery->get()->toArray() as $certificate) {
 
             $io->progressAdvance(1);
@@ -108,7 +117,7 @@ class SSLCertificatesProcessing extends AbstractCommand
                     try {
                         $orderFiles = $api->getCertificateFiles($certificate['remoteid']);
                     } catch (Exception $exception) {
-                        Logger::error('Get Certificate Files Error:'.$exception->getMessage(), ['service' => $certificate['id']]);
+                        Logger::error('Get Certificate Files Error:'.$exception->getMessage(), \ModulesGarden\TSSGGSModule\App\Libs\LogContext::exception($exception, ['service' => $certificate['id']]));
                     }
                 }
 
@@ -118,6 +127,7 @@ class SSLCertificatesProcessing extends AbstractCommand
 
                 $request = ['orderData' => $orderData, 'orderFiles' => $orderFiles];
 
+                $previousStatus = Request::where('serviceid', $certificate['id'])->where('name', 'certificate')->value('status');
                 Request::where('serviceid', $certificate['id'])->where('name', 'certificate')->delete();
                 Request::insert([
                     'serviceid' => $certificate['id'],
@@ -139,115 +149,41 @@ class SSLCertificatesProcessing extends AbstractCommand
                             'nextduedate' => $nextDueDate,
                         ]);
                     }
-
-                    $serviceId = $certificate['id'];
-                    $userId = $certificate['userid'];
-
-                    $certificate = Request::getOrder($certificate['id']);
-
-                    $filename = str_replace('.', '_', $certificate['orderData']['orderData']['common_name']['name']).'.crt';
-                    $cert     = AutoInstallHelpers::extractCertificate($certificate['orderFiles'], $certificate['orderData']['orderData']['common_name']['name']);
-
-                    $fileContentCrt = $cert['crt'];
-                    $fileContentCA  = $cert['ca'];
-
-                    $pathAttachemts = false;
-                    $checkSettings = Capsule::schema()->hasTable('tblfileassetsettings');
-                    if($checkSettings !== false) {
-                        $filesetting = Capsule::table('tblfileassetsettings')->where('asset_type', 'email_attachments')->first();
-                        if(isset($filesetting->storageconfiguration_id) && !empty($filesetting->storageconfiguration_id))
-                        {
-                            $checkStorage = Capsule::schema()->hasTable('tblstorageconfigurations');
-                            if($checkStorage !== false) {
-
-                                $storage = Capsule::table('tblstorageconfigurations')->where('id', $filesetting->storageconfiguration_id)->first();
-                                if(isset($storage->settings) && !empty($storage->settings))
-                                {
-                                    $storageData = json_decode($storage->settings, true);
-                                    if(isset($storageData['local_path']) && !empty($storageData['local_path']))
-                                    {
-                                        $pathAttachemts = $storageData['local_path'];
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-
-                    $attachments = [];
-                    if(!empty($fileContentCrt)) {
-                        if($pathAttachemts === false) {
-                            $tmp_ca_code = tempnam("/tmp", "FOO");
-                            $handle = fopen($tmp_ca_code, "w");
-                            fwrite($handle, $fileContentCrt);
-                            fclose($handle);
-
-                            $attachments[] = array(
-                                'displayname' => 'crt_certificate.crt',
-                                'path' => $tmp_ca_code
-                            );
-                        }
-                        else
-                        {
-                            $filetemp = $pathAttachemts.DIRECTORY_SEPARATOR.$serviceId.$userId.'_crt_certificate.crt';
-                            file_exists($filetemp) or touch($filetemp);
-                            file_put_contents($filetemp, $fileContentCrt);
-
-                            $attachments[] = array(
-                                'displayname' => $serviceId.$userId.'_crt_certificate.crt',
-                                'filename' => $serviceId.$userId.'_crt_certificate.crt'
-                            );
-                        }
-                    }
-
-                    if(!empty($fileContentCA)) {
-                        if($pathAttachemts === false) {
-                            $tmp_crt_code = tempnam("/tmp", "FOO");
-                            $handle = fopen($tmp_crt_code, "w");
-                            fwrite($handle, $fileContentCA);
-                            fclose($handle);
-
-                            $attachments[] = array(
-                                'displayname' => 'ca_certificate.crt',
-                                'path' => $tmp_crt_code
-                            );
-                        }
-                        else
-                        {
-                            $filetemp = $pathAttachemts.DIRECTORY_SEPARATOR.$serviceId.$userId.'_ca_certificate.crt';
-                            file_exists($filetemp) or touch($filetemp);
-                            file_put_contents($filetemp, $fileContentCA);
-
-                            $attachments[] = array(
-                                'displayname' => $serviceId.$userId.'_ca_certificate.crt',
-                                'filename' => $serviceId.$userId.'_ca_certificate.crt'
-                            );
-                        }
-                    }
-
-
-                    EmailTemplates::sendEmail(EmailTemplates::SEND_CERTIFICATE_TEMPLATE, $serviceId, [
-                        'domain' => $filename,
-                        'ssl_certyficate' => nl2br($fileContentCA),
-                        'crt_code' => nl2br($fileContentCrt),
-                    ], $attachments);
                 }
 
-                if($orderData['order']['status'] == 'cancelled' || $orderData['order']['status'] == 'expired' || $orderData['order']['status'] == 'filed' || $orderData['order']['status'] == 'rejected')
+                // certificate e-mail - the same rule for every sync (CertificateService::notifyIssued)
+                CertificateService::notifyIssued($certificate['id'], $previousStatus, $orderData['order']['status']);
+                if($orderData['order']['status'] === 'active')
+                {
+                    CertificateService::forgetPreviousCertificate($certificate['id']);
+                }
+
+                // same rule as the order status sync (CertificateSyncHelpers): expired / filed = Terminated with a date
+                if($orderData['order']['status'] == 'cancelled' || $orderData['order']['status'] == 'rejected')
                 {
                     Service::where('id', $certificate['id'])->update([
                         'domainstatus' => 'Cancelled'
                     ]);
                 }
+                elseif($orderData['order']['status'] == 'expired' || $orderData['order']['status'] == 'filed')
+                {
+                    Service::where('id', $certificate['id'])->whereIn('domainstatus', ['Pending', 'Active', 'Suspended'])->update([
+                        'domainstatus'     => 'Terminated',
+                        'termination_date' => date('Y-m-d'),
+                    ]);
+                }
 
-                Logger::info("The certificate details has been updated", ['service' => $certificate['id']]);
+                if($previousStatus !== $orderData['order']['status'])
+                {
+                    Logger::info('Certificate status: ' . ($previousStatus ?: 'new') . ' -> ' . $orderData['order']['status'], ['service' => $certificate['id'], 'from' => $previousStatus, 'to' => $orderData['order']['status']]);
+                }
 
             } catch (Exception $e) {
 
-                $errorToDB = $e->getMessage();
+                $failed[$certificate['id']] = $e->getMessage();
                 $io->write('Error: ' . $e->getMessage());
 
-                Logger::error($e->getMessage(), ['service' => $certificate['id']]);
+                Logger::error($e->getMessage(), \ModulesGarden\TSSGGSModule\App\Libs\LogContext::exception($e, ['service' => $certificate['id']]));
 
                 continue;
 
@@ -255,6 +191,11 @@ class SSLCertificatesProcessing extends AbstractCommand
         }
 
         $io->progressFinish();
+        // one line with the number of failed orders and which, not the message of the last one
+        if($failed)
+        {
+            $errorToDB = \ModulesGarden\TSSGGSModule\App\Libs\CronErrors::summary($failed, $totalChecked);
+        }
         $io->title('Subscriptions');
         $pendingSubscriptions = AcmeSubscription::where('status', 'pending')->get();
         $io->progressStart($pendingSubscriptions->count());
@@ -273,19 +214,16 @@ class SSLCertificatesProcessing extends AbstractCommand
         }
 
         $io->progressFinish();
-        $io->title('SSL AutoInstall (cPanel)');
+        // (the AutoInstall queue has its own job, SSLAutoInstall: it was run from here as well)
 
+        // legacy migration housekeeping: expired backup tables, log rows older than 30 days
         try
         {
-            $autoInstallError = AutoInstallHelpers::processQueue();
-            if($autoInstallError)
-            {
-                $errorToDB = $autoInstallError;
-            }
+            \ModulesGarden\TSSGGSModule\App\Migration\Engine::housekeeping();
         }
         catch(\Throwable $e)
         {
-            $errorToDB = $e->getMessage();
+            $errorToDB = $errorToDB ?: $e->getMessage();
         }
 
         CronCheck::updateOrCreate(

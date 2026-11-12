@@ -15,6 +15,8 @@ use ModulesGarden\TSSGGSModule\App\UI\Admin\Reports\Index\DataTables\Renewal\Arr
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Reports\Index\DataTables\Renewal\Widgets\FilterWidget as RenewFilterWidget;
 use ModulesGarden\TSSGGSModule\Components\Alert\Alert;
 use ModulesGarden\TSSGGSModule\Components\Container\Container;
+use ModulesGarden\TSSGGSModule\App\Libs\Icons;
+use ModulesGarden\TSSGGSModule\Components\Text\Text;
 use ModulesGarden\TSSGGSModule\Components\Tab\Tab;
 use ModulesGarden\TSSGGSModule\Components\TabsWidget\TabsWidget;
 use ModulesGarden\TSSGGSModule\Core\Contracts\Components\AdminAreaInterface;
@@ -23,7 +25,14 @@ class ImportContainer extends Container implements AdminAreaInterface
 {
     public function loadHtml(): void
     {
-        //$this->addElement(new ImportWidget());
+        $this->setCss('tssggs-import');
+        if(!\ModulesGarden\TSSGGSModule\App\Libs\GeneralSettings::enabled('hideInfoMessages'))
+        {
+            $text = new Text();
+            $text->setCss('tssggs-html');
+            $text->setText($this->explanation());
+            $this->addElement($text);
+        }
 
         $tab1 = new Tab();
         $tab1->setTitle($this->translate("single"));
@@ -31,8 +40,8 @@ class ImportContainer extends Container implements AdminAreaInterface
 
         $tab2 = new Tab();
         $tab2->setTitle($this->translate("csv"));
-        $tab2->addElement(new TemplateDownloadWidget());
         $tab2->addElement(new ImportWidgetCsv());
+        $tab2->addElement(new TemplateDownloadWidget());
 
         $tabs = new TabsWidget();
         $tabs->addTab($tab1);
@@ -41,5 +50,18 @@ class ImportContainer extends Container implements AdminAreaInterface
 
         $this->addElement($tabs);
 
+    }
+
+    /** What the page is for and how to use the two tabs */
+    protected function explanation(): string
+    {
+        $t    = function($key) { return htmlspecialchars((string)$this->translate($key, [], ['admin.import']), ENT_QUOTES); };
+        $item = function($key) use ($t) { return '<li>' . $t($key) . '</li>'; };
+
+        return '<div class="tssggs-explain"><span class="tssggs-explain__icon">' . Icons::svg('information-outline') . '</span><div>'
+            . '<h3>' . $t('about_title') . '</h3>'
+            . '<p>' . $t('about_intro') . '</p>'
+            . '<ul>' . $item('about_single') . $item('about_csv') . $item('about_service') . '</ul>'
+            . '</div></div>';
     }
 }

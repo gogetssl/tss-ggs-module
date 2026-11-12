@@ -11,7 +11,7 @@ use ModulesGarden\TSSGGSModule\App\UI\Admin\Reports\Index\DataTables\ProfitLoss\
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Reports\Index\DataTables\Renewal\ArrayDataProvider\DataTable as RenewalDataTable;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Reports\Index\DataTables\DatewiseSales\ArrayDataProvider\DataTable as DatewiseSalesDataTable;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Reports\Index\DataTables\ProfitLoss\ArrayDataProvider\DataTable as ProfitLossDataTable;
-use ModulesGarden\TSSGGSModule\Components\Alert\Alert;
+use ModulesGarden\TSSGGSModule\Components\Alert\AlertInfo;
 use ModulesGarden\TSSGGSModule\Components\Container\Container;
 use ModulesGarden\TSSGGSModule\Components\Tab\Tab;
 use ModulesGarden\TSSGGSModule\Components\TabsWidget\TabsWidget;
@@ -22,9 +22,12 @@ class ReportsContainer extends Container implements AdminAreaInterface
 {
     public function loadHtml(): void
     {
-        //$alert = new Alert();
-        //$alert->setText($this->translate("Hello Reports!"));
-        //$this->addElement($alert);
+        if(!\ModulesGarden\TSSGGSModule\App\Libs\GeneralSettings::enabled('hideInfoMessages'))
+        {
+            $alert = new AlertInfo();
+            $alert->setText($this->translate('reportsInfo'));
+            $this->addElement($alert);
+        }
 
         $tab1 = new Tab();
         $tab1->setTitle($this->translate("renewalReport"));

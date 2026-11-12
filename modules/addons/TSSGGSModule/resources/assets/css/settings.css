@@ -1,0 +1,287 @@
+/* ---- Settings screens: one card, sections with an icon and a description, label left / control right, sticky Save bar ---- */
+
+#layers2 .tssggs-settings .tssggs-page__desc {
+    margin: 0 0 14px;
+    color: var(--tw-muted);
+    font-size: 14px;
+    line-height: 20px;
+}
+
+/* a section: icon + title, description, rows; a divider line between sections */
+#layers2 .tssggs-settings form .lu-widget.tssggs-sec {
+    margin: 0;
+    padding: 32px 0 0; /* the last row ends at the divider with the same 10px as every row */
+    border: 0;
+    border-top: 1px solid var(--tw-border);
+    border-radius: 0;
+    background: transparent;
+}
+
+#layers2 .tssggs-settings form .lu-widget.tssggs-sec:first-child {
+    padding-top: 6px;
+    border-top: 0;
+}
+
+#layers2 .tssggs-settings form .lu-widget.tssggs-sec > .lu-widget__header {
+    margin: 0 0 14px !important;
+    padding: 0 !important;
+}
+
+/* section heading: icon in a soft square, the title centred on it */
+#layers2 .tssggs-settings form .lu-widget.tssggs-sec > .lu-widget__header .lu-widget__top {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+#layers2 .tssggs-settings form .lu-widget.tssggs-sec > .lu-widget__header .lu-widget__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 36px;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: var(--tw-primary-soft);
+    color: var(--tw-primary);
+}
+
+#layers2 .tssggs-settings form .lu-widget.tssggs-sec > .lu-widget__header .lu-widget__icon svg {
+    width: 20px;
+    height: 20px;
+}
+
+#layers2 .tssggs-settings form .lu-widget.tssggs-sec > .lu-widget__header .lu-top__title {
+    margin: 0;
+    color: var(--tw-fg);
+    font-size: 18px !important;
+    font-weight: 600 !important;
+    line-height: 36px !important;
+}
+
+/* the section's information message: soft background, info icon on the left */
+#layers2 .tssggs-settings .tssggs-sec__desc {
+    position: relative;
+    margin: 0 0 12px;
+    padding: 12px 16px 12px 46px;
+    border-radius: 8px;
+    background: var(--tw-surface-alt);
+    color: var(--tw-fg-soft);
+    font-size: 14px;
+    line-height: 20px;
+}
+
+#layers2 .tssggs-settings .tssggs-sec__desc::before {
+    content: '';
+    position: absolute;
+    left: 16px;
+    top: 12px;
+    width: 20px;
+    height: 20px;
+    background: var(--tw-fg-soft);
+    -webkit-mask: var(--nt-icon-info) center / 20px 20px no-repeat;
+    mask: var(--nt-icon-info) center / 20px 20px no-repeat;
+}
+
+/* the card heading (Log settings): a larger icon in a grey square, the title and a second row under it */
+#layers2 .lu-app-main .tssggs-settings .lu-widget > .lu-widget__header:has(.lu-top--sub) {
+    padding: 18px 24px !important;
+    background: transparent !important;
+}
+
+#layers2 .lu-app-main .tssggs-settings .lu-widget > .lu-widget__header > .lu-widget__top.lu-top--sub {
+    display: grid !important;
+    grid-template-columns: 48px minmax(0, 1fr);
+    grid-template-rows: auto auto;
+    row-gap: 2px;
+    column-gap: 16px;
+    align-items: center;
+}
+
+#layers2 .lu-app-main .tssggs-settings .lu-widget__top.lu-top--sub .lu-widget__icon {
+    align-self: center;
+    flex: none !important;
+    width: 48px !important;
+    height: 48px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    grid-row: 1 / span 2;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border: 1px solid var(--tw-border);
+    border-radius: 10px;
+    background: var(--tw-surface);
+    color: var(--tw-fg);
+}
+
+#layers2 .lu-app-main .tssggs-settings .lu-widget__top.lu-top--sub .lu-widget__icon svg {
+    width: 26px;
+    height: 26px;
+}
+
+#layers2 .lu-app-main .tssggs-settings .lu-widget__top.lu-top--sub .lu-top__title {
+    margin: 0 !important;
+    grid-column: 2;
+    align-self: end;
+    font-size: 22px !important;
+    font-weight: 600 !important;
+    line-height: 28px !important;
+}
+
+#layers2 .lu-app-main .tssggs-settings .lu-widget__top.lu-top--sub .lu-top__subtitle {
+    margin: 0 !important;
+    grid-column: 2;
+    align-self: start;
+    color: var(--tw-muted);
+    font-size: 14px;
+    line-height: 20px;
+}
+
+/* a heading inside a section ("Recurring Orders"): bold label, no icon, no divider */
+#layers2 .tssggs-settings form .lu-widget.tssggs-sec.tssggs-sec--sub {
+    padding: 14px 0 0;
+    border-top: 0;
+}
+
+#layers2 .tssggs-settings form .lu-widget.tssggs-sec--sub > .lu-widget__header .lu-top__title {
+    font-size: 12.5px !important;
+}
+
+/* rows: the label on the left, the control on the right, a divider between rows */
+#layers2 .tssggs-settings form .tssggs-sec .lu-form-group {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(200px, 300px);
+    column-gap: 24px;
+    align-items: center;
+    margin: 0 !important;
+    padding: 10px 0;
+    min-height: 56px;
+    box-sizing: border-box;
+    border-bottom: 1px solid var(--tw-border);
+}
+
+#layers2 .tssggs-settings form .tssggs-sec .lu-form-group:last-child {
+    border-bottom: 0;
+}
+
+#layers2 .tssggs-settings form .tssggs-sec .lu-form-group > .lu-form-label,
+#layers2 .tssggs-settings form .tssggs-sec .lu-form-group > label {
+    grid-column: 1;
+    margin: 0;
+    color: var(--tw-fg);
+    font-size: 13px;
+    font-weight: 500;
+}
+
+#layers2 .tssggs-settings form .tssggs-sec .lu-form-group > :not(label):not(.lu-preloader-container) {
+    grid-column: 2;
+}
+
+#layers2 .tssggs-settings form .tssggs-sec .lu-form-group:has(textarea) {
+    align-items: start;
+}
+
+/* Yes / No rows: the label fills the row, the choice sits at its right edge */
+#layers2 .tssggs-settings form .tssggs-sec .lu-form-group.lu-form-check {
+    display: flex;
+    align-items: center;
+    margin: 0 !important;
+}
+
+#layers2 .tssggs-settings form .tssggs-sec .lu-form-check .tssggs-yn {
+    display: flex;
+    justify-content: space-between;
+    gap: 24px;
+    width: 100%;
+}
+
+#layers2 .tssggs-settings form .tssggs-sec .lu-form-check .tssggs-yn > .lu-form-text,
+#layers2 .tssggs-settings form .tssggs-sec .lu-form-check .tssggs-yn > span {
+    flex: 1 1 auto;
+    color: var(--tw-fg);
+    font-size: 13px;
+    font-weight: 500;
+}
+
+#layers2 .tssggs-settings form .tssggs-sec .lu-form-check .tssggs-yn__segments {
+    flex: 0 0 auto;
+}
+
+/* ---- the sticky Save bar ---- */
+#layers2 .tssggs-settings form .tssggs-savebar {
+    position: sticky;
+    bottom: 0;
+    z-index: 10;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 16px;
+    min-height: 56px;
+    margin: 8px -18px -18px;
+    padding: 12px 24px;
+    box-sizing: border-box;
+    border-top: 1px solid var(--tw-border);
+    border-radius: 0 0 var(--tw-radius) var(--tw-radius);
+    background: var(--tw-surface);
+}
+
+#layers2 .tssggs-settings form .tssggs-savebar .lu-btn[disabled] {
+    opacity: .45;
+    cursor: not-allowed;
+}
+
+#layers2 .tssggs-settings .tssggs-savebar__status {
+    color: var(--tw-muted);
+    font-size: 12px;
+}
+
+#layers2 .tssggs-settings .tssggs-savebar__status.is-dirty {
+    color: var(--tw-fg);
+    font-weight: 500;
+}
+
+#layers2 .tssggs-settings .tssggs-savebar__status.is-failed {
+    color: var(--tw-danger);
+    font-weight: 500;
+}
+
+/* the page body is its own (non-clipping) scroll container in WHMCS, which stops position: sticky from reaching the window */
+body:has(.tssggs-savebar) {
+    overflow: visible !important;
+}
+
+/* Widgets in one grid row share the row height */
+#layers2 .lu-row > .lu-single-element { display: flex; flex-direction: column; }
+#layers2 .lu-row > .lu-single-element > .lu-widget { flex: 1 1 auto; }
+
+/* CSV template download block: compact, 20px around the button */
+#layers2 .tssggs-dl { align-self: start; }
+#layers2 .tssggs-dl .lu-widget__body { padding: 20px; }
+#layers2 .tssggs-dl .lu-widget__content { padding: 0 !important; margin: 0 !important; width: 100%; }
+#layers2 .tssggs-dl .lu-top__toolbar, #layers2 .tssggs-dl form, #layers2 .tssggs-dl .lu-single-element { margin: 0 !important; padding: 0 !important; }
+
+/* Logs: note under the counter cards */
+#layers2 .tssggs-cardnote { margin-top: 4px; }
+#layers2 .tssggs-cardnote small { display: block; color: var(--tw-fg-soft, #5b6673); font-size: 14px; line-height: 20px; white-space: normal; }
+
+/* section information message with a list of points (e.g. the renewal price options) */
+#layers2 .tssggs-settings .tssggs-sec__desc > p { margin: 0; }
+#layers2 .tssggs-settings .tssggs-sec__desc > ul { margin: 8px 0 0; padding-left: 18px; list-style: disc; }
+#layers2 .tssggs-settings .tssggs-sec__desc > ul > li + li { margin-top: 4px; }
+#layers2 .tssggs-settings .tssggs-sec__desc > ul b { color: var(--tw-fg); font-weight: 600; }
+
+/* every select of the settings pages is clickable as a whole */
+#layers2 .tssggs-settings .lu-selectize-control .lu-selectize-input,
+#layers2 .tssggs-settings .lu-selectize-control .lu-selectize-input > input,
+#layers2 .tssggs-settings .lu-selectize-control .lu-selectize-input > .item,
+#layers2 .tssggs-settings select { cursor: pointer !important; }
+
+/* Finance > Pricing: the other places that change prices, with links */
+#layers2 .tssggs-settings .tssggs-sec__desc--rules { margin-top: -4px; }
+#layers2 .tssggs-settings .tssggs-sec__desc a { color: var(--tw-primary); font-weight: 500; text-decoration: underline; text-underline-offset: 2px; white-space: nowrap; }
+
+/* help icon after a field label: the same gap as on the Yes / No rows */
+#layers2 .lu-form-label > span + * { margin-left: 4px; }

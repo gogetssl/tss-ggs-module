@@ -187,7 +187,11 @@
 
         function downloadPkey()
         {
-            window.open('clientarea.php?action=productdetails&id={$serviceId}&mg-page=home&mg-action=downloadKey&pkey='+$('#pkeyField').val(), '_blank').focus();
+            var f = $('<form></form>').attr({ method: 'post', target: '_blank' }).attr('action', 'clientarea.php?action=productdetails&id={$serviceId}');
+            f.append($('<input type="hidden" name="mg-action" value="downloadKey">'));
+            f.append($('<input type="hidden" name="token">').val(typeof csrfToken !== 'undefined' ? csrfToken : '{$csrfToken}'));
+            f.append($('<input type="hidden" name="handle">').val($('#pkeyField').val()));
+            f.appendTo('body').submit().remove();
         }
 
         {/if}
@@ -336,8 +340,10 @@
         $('textarea[name="fields[sans_domains]"]').addClass("form-control");
         $('textarea[name="fields[wildcard_san]"]').addClass("form-control");
         $("#inputCsr").parents(".card-body").find(".alert-info").text("{$MGLANG->T('csr_details', 'description')}");
+        {if !$ask_webserver}
         $("#inputServerType").parent(".form-group").hide();
         $("#inputServerType").val("1000");
+        {/if}
 
         {if $adminFormHidden}
 

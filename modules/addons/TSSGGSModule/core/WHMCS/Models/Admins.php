@@ -35,6 +35,6 @@ class Admins extends \WHMCS\User\Admin
 {
     public function flaggedTickets()
     {
-        return $this->hasMany("ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Ticket", "flag");
+        return $this->hasMany('ModulesGarden\\TSSGGSModule\\Core\\WHMCS\\Models\\Ticket', "flag");
     }
 }

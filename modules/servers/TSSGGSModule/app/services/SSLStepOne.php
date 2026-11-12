@@ -10,6 +10,13 @@ class SSLStepOne
 {
     public function run($params)
     {
+        // S/MIME is ordered on the service page of the module, not on the WHMCS SSL configuration page
+        if(\ModulesGarden\TSSGGSModule\App\Libs\GatewayOrderService::typeOfProduct($params['pid']))
+        {
+            header('Location: clientarea.php?action=productdetails&id=' . (int)$params['serviceid']);
+            exit;
+        }
+
         $sans = isset($params['configoptions']['sans']) ? $params['configoptions']['sans'] : 0;
         $sans_wildcard = isset($params['configoptions']['sans_wildcard']) ? $params['configoptions']['sans_wildcard'] : 0;
 
@@ -76,6 +83,7 @@ class SSLStepOne
             'default_csr_country' => isset($configuration['sslSettings']['defaultCsrCountry']) ? $configuration['sslSettings']['defaultCsrCountry'] : false,
             'adminFormHidden' => isset($configuration['sslSettings']['autoDetailsForDvOrders']) ? $configuration['sslSettings']['autoDetailsForDvOrders'] : false,
             'domain' => $domain,
+            'ask_webserver' => !\ModulesGarden\TSSGGSModule\App\Libs\GeneralSettings::enabled('useDefaultWebServer'),
             'client' => $clientData,
             'post' => $_POST
         ]);

@@ -3,8 +3,11 @@
 namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index;
 
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Widgets\ApiSettingsWidget;
+use ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Widgets\AutomatedSettingsWidget;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Widgets\CronSettingsWidget;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Widgets\FinanceSettingsWidget;
+use ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Widgets\GeneralSettingsWidget;
+use ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Widgets\LogsSettingsWidget;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Widgets\Sidebar;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Widgets\SslSettingsWidget;
 use ModulesGarden\TSSGGSModule\Components\Container\Container;
@@ -18,6 +21,9 @@ class SettingsContainer extends Container implements AdminAreaInterface
 {
     public function loadHtml(): void
     {
+        // skin of the settings pages (resources/assets/css/shell.css)
+        $this->setCss('tssggs-settings');
+
         if(Request::get('settings-page') == 'apiSettings')
         {
             $mainWidget = new ApiSettingsWidget();
@@ -26,6 +32,10 @@ class SettingsContainer extends Container implements AdminAreaInterface
         {
             $mainWidget = new SslSettingsWidget();
         }
+        elseif(Request::get('settings-page') == 'automatedSettings')
+        {
+            $mainWidget = new AutomatedSettingsWidget();
+        }
         elseif(Request::get('settings-page') == 'financeSettings')
         {
             $mainWidget = new FinanceSettingsWidget();
@@ -33,6 +43,14 @@ class SettingsContainer extends Container implements AdminAreaInterface
         elseif(Request::get('settings-page') == 'cronSettings')
         {
             $mainWidget = new CronSettingsWidget();
+        }
+        elseif(Request::get('settings-page') == 'logsSettings')
+        {
+            $mainWidget = new LogsSettingsWidget();
+        }
+        elseif(Request::get('settings-page') == 'generalSettings')
+        {
+            $mainWidget = new GeneralSettingsWidget();
         }
         else
         {

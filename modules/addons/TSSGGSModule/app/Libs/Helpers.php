@@ -486,8 +486,8 @@ class Helpers
             {
                 $remoteProductData = $remoteProduct->rawData;
 
-                $includedSan         = (int)$remoteProductData['san']['included']['single'];
-                $includedSanWildcard = (int)$remoteProductData['san']['included']['wildcard'];
+                $includedSan         = (int)($remoteProductData['san']['included']['single'] ?? 0);
+                $includedSanWildcard = (int)($remoteProductData['san']['included']['wildcard'] ?? 0);
 
                 $productRepository = new ProductRepository();
                 $productRepository->updateProductConfiguration($whmcsProduct->id, [
@@ -499,20 +499,20 @@ class Helpers
 
                 $optionNames = [];
 
-                if($remoteProductData['san']['single_allowed'])
+                if(!empty($remoteProductData['san']['single_allowed']))
                 {
                     $optionNames['single'] = [
                         'name'         => 'sans',
-                        'nameFriendly' => 'Additional Single domain SAN\'s',
+                        'nameFriendly' => ProductCatalog::optionLabel('single', $includedSan),
                         'unit'         => 'SAN'
                     ];
                 }
 
-                if($remoteProductData['san']['wildcard_allowed'])
+                if(!empty($remoteProductData['san']['wildcard_allowed']))
                 {
                     $optionNames['wildcard'] = [
                         'name'         => 'sans_wildcard',
-                        'nameFriendly' => 'Additional Wildcard domain SAN\'s',
+                        'nameFriendly' => ProductCatalog::optionLabel('wildcard', $includedSanWildcard),
                         'unit'         => 'SAN'
                     ];
                 }
@@ -608,17 +608,17 @@ class Helpers
                                 continue;
                             }
 
-                            $price             = $price + ($price * $profitMargin / 100);
-                            $baseCurrencyPrice = $price * $baseCurrencyRate;
+                            $baseCost          = $price * $baseCurrencyRate;
+                            $margin            = ProductSettings::margin($whmcsProduct->id, $profitMargin);
                             $currencies        = Currency::get();
 
                             foreach($currencies as $currency)
                             {
-                                $pricingArray[$currency->id][$billingPeriod] = \convertCurrency($baseCurrencyPrice, $baseCurrencyId, $currency->id);
+                                $pricingArray[$currency->id][$billingPeriod] = FinancePolicy::sell($baseCost, $margin, (int)$remotePriceData['term'], $currency->id, false);
 
                                 if(AcmeHelpers::isAcmeWhmcsProduct($whmcsProduct->id) && $billingPeriod == 'annually')
                                 {
-                                    $pricingArray[$currency->id]['monthly'] = \convertCurrency($baseCurrencyPrice, $baseCurrencyId, $currency->id);
+                                    $pricingArray[$currency->id]['monthly'] = FinancePolicy::sell($baseCost, $margin, (int)$remotePriceData['term'], $currency->id, false);
                                 }
                             }
                         }

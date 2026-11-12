@@ -6,6 +6,7 @@ var component =
             'css',
             'content',
             'title',
+            'subtitle',
             'elements',
             'icon',
             'customcontentclass'
@@ -15,6 +16,7 @@ var component =
                 elements_: [],
                 css_: [],
                 title_: '',
+                subtitle_: '',
                 content_: '',
                 icon_: '',
                 customcontentclass_: ''

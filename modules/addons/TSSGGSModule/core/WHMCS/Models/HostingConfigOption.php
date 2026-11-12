@@ -51,11 +51,11 @@ class HostingConfigOption extends EloquentModel
 
     public function configOption()
     {
-        return $this->belongsTo("ModulesGarden\TSSGGSModule\Core\WHMCS\Models\ProductConfigOption", 'configid');
+        return $this->belongsTo('ModulesGarden\\TSSGGSModule\\Core\\WHMCS\\Models\\ProductConfigOption', 'configid');
     }
 
     public function subOption()
     {
-        return $this->belongsTo("ModulesGarden\TSSGGSModule\Core\WHMCS\Models\ProductConfigOption", 'optionid');
+        return $this->belongsTo('ModulesGarden\\TSSGGSModule\\Core\\WHMCS\\Models\\ProductConfigOption', 'optionid');
     }
 }

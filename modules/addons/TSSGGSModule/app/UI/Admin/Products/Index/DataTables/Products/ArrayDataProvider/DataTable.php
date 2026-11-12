@@ -4,6 +4,7 @@ namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Products\Index\DataTables\Prod
 
 
 use ModulesGarden\TSSGGSModule\App\Libs\Helpers;
+use ModulesGarden\TSSGGSModule\App\Libs\ProductCatalog;
 
 use ModulesGarden\TSSGGSModule\App\Models\RemoteProduct;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Products\Index\DataTables\Products\Modals\ImportModal;
@@ -50,10 +51,19 @@ class DataTable extends \ModulesGarden\TSSGGSModule\Components\DataTable\DataTab
                              ->setTitle($this->translate('provider'))
                              ->setSortable(true)
                              ->setSearchable(true))
+             ->addColumn((new Column('billing'))
+                             ->setTitle($this->translate('billing'))
+                             ->setSortable(true)
+                             ->setSearchable(true))
              ->addColumn((new Column('status'))
                              ->setTitle($this->translate('status'))
                              ->setSortable(true)
                              ->setSearchable(true));
+
+        if(($_REQUEST['mg-page'] ?? '') != 'configuration')
+        {
+            $this->addColumn((new Column('manage'))->setTitle($this->translate('manage')));
+        }
 
         $this->setRecordsPerPageOptions([10, 25]);
 
@@ -97,13 +107,21 @@ class DataTable extends \ModulesGarden\TSSGGSModule\Components\DataTable\DataTab
             'Sectigo'  => 99,
         ];
 
-        $remoteProducts = RemoteProduct::get()->sortBy(function($product) use ($brandWeights) {
+        // only the edition's own vendor (a catalogue copied from the other edition is not offered)
+        $vendors        = array_map('strtoupper', \ModulesGarden\TSSGGSModule\App\Libs\Edition::vendors());
+        $remoteProducts = RemoteProduct::whereIn('vendor', $vendors)->get()->sortBy(function($product) use ($brandWeights) {
             return ($brandWeights[$product->brand] ?? 50) . $product->name;
         });
 
         foreach($remoteProducts as $remoteProduct)
         {
             $whmcsProduct = $remoteProduct->getWhmcsProduct();
+
+            // products the module can not sell yet are not offered for import (one imported earlier stays listed)
+            if(!$whmcsProduct && !\ModulesGarden\TSSGGSModule\App\Libs\ProductCatalog::importable($remoteProduct))
+            {
+                continue;
+            }
 
             $rows[] = [
                 'id'             => $remoteProduct->id,
@@ -112,7 +130,9 @@ class DataTable extends \ModulesGarden\TSSGGSModule\Components\DataTable\DataTab
                 'brand'          => $remoteProduct->brand,
                 'validation'     => $remoteProduct->validation,
                 'provider'       => Helpers::vendorToDisplay($remoteProduct->vendor),
-                'status'         => $whmcsProduct ? $this->translate('imported') : '',
+                'billing'        => $whmcsProduct ? $this->translate('billing_' . ($whmcsProduct->paytype ?: 'recurring')) : '-',
+                'status'         => $this->badges(ProductCatalog::badges((array)$remoteProduct->rawData, $whmcsProduct)),
+                'manage'         => $whmcsProduct ? $this->manageLinks($whmcsProduct, (bool)ProductCatalog::optionProblems((int)$whmcsProduct->id, (array)$remoteProduct->rawData)) : '',
                 'hidePricing'    => !$whmcsProduct,
                 'hideImport'     => (bool)$whmcsProduct,
             ];
@@ -126,15 +146,52 @@ class DataTable extends \ModulesGarden\TSSGGSModule\Components\DataTable\DataTab
 
     protected function parseDataSetRecords(): void
     {
-        $this->dataSet->setFieldModifier('status', function($fieldName, $row, $fieldValue) {
-            if($fieldValue)
-            {
-                $label = new LabelSuccess();
-                $label->setText($fieldValue);
-            }
-            return $label;
-        });
-
         $this->dataSet->modifyRecords();
+    }
+
+    const BADGE_CLASSES = [
+        'imported' => 'lu-label--success', 'not_imported' => 'lu-label--default', 'hidden' => 'lu-label--warning',
+        'retired'  => 'lu-label--danger', 'removed' => 'lu-label--danger', 'options' => 'lu-label--warning',
+    ];
+
+    protected function badges(array $badges)
+    {
+        $html = '';
+        foreach($badges as $badge)
+        {
+            $html .= '<span class="lu-label lu-label--sm ' . (self::BADGE_CLASSES[$badge] ?? 'lu-label--default') . '" style="margin:0 3px 3px 0">'
+                . htmlspecialchars($this->translate('badge_' . $badge)) . '</span>';
+        }
+
+        return $html;
+    }
+
+    /**
+     * Hide / show, retire / un-retire, fix configurable options, cancel all renewals (App\Http\Admin\Products)
+     */
+    protected function manageLinks($whmcsProduct, $optionsNeedFix = false)
+    {
+        $base    = 'addonmodules.php?module=TSSGGSModule&mg-page=products&pid=' . (int)$whmcsProduct->id . '&token=' . urlencode(function_exists('generate_token') ? \generate_token('plain') : '') . '&mg-action=';
+        $actions = [];
+        if(!$whmcsProduct->retired)
+        {
+            $actions[$whmcsProduct->hidden ? 'show' : 'hide'] = '';
+        }
+        $actions[$whmcsProduct->retired ? 'unretire' : 'retire'] = $whmcsProduct->retired ? '' : 'confirm_retire';
+        if($optionsNeedFix)
+        {
+            // the "Check options" badge: only then is there something to fix
+            $actions['fixOptions'] = '';
+        }
+        $actions['cancelRenewals'] = 'confirm_cancel_renewals';
+
+        $links = [];
+        foreach($actions as $action => $confirm)
+        {
+            $links[] = '<a href="' . htmlspecialchars($base . $action) . '"' . ($confirm ? ' onclick="return confirm(' . htmlspecialchars(json_encode($this->translate($confirm))) . ')"' : '') . '>'
+                . htmlspecialchars($this->translate('action_' . $action)) . '</a>';
+        }
+
+        return '<span style="white-space:nowrap;font-size:12px">' . implode(' · ', $links) . '</span>';
     }
 }

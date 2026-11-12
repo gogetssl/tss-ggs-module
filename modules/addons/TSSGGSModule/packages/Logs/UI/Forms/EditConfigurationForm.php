@@ -4,6 +4,7 @@ namespace ModulesGarden\TSSGGSModule\Packages\Logs\UI\Forms;
 
 use ModulesGarden\TSSGGSModule\Components\Dropdown\Dropdown;
 use ModulesGarden\TSSGGSModule\Components\Form\Form;
+use ModulesGarden\TSSGGSModule\Components\FormInputText\FormInputText;
 use ModulesGarden\TSSGGSModule\Components\Number\Number;
 use ModulesGarden\TSSGGSModule\Components\Switcher\Switcher;
 use ModulesGarden\TSSGGSModule\Core\Components\Actions\Reload;
@@ -19,6 +20,12 @@ class EditConfigurationForm extends Form implements AjaxComponentInterface, Admi
 
     public function loadHtml(): void
     {
+        $this->builder->addField((new Switcher())->setName('logging'), true);
+        $this->builder->addField((new Dropdown())->setName('api_mode'), true);
+        $this->builder->addField((new Switcher())->setName('events'), true);
+        $this->builder->addField((new FormInputText())->setName('debug_services'), true);
+        $this->builder->addField((new Dropdown())->setName('debug_hours'), true);
+
         $this->builder->addField((new Dropdown())
             ->setMultiple()
             ->setName('types'),

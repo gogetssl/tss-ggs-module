@@ -54,7 +54,7 @@ if(!class_exists(__NAMESPACE__.'\Loader')){
 
         static function loader($className){
 
-            if (strpos($className, "ModulesGarden\TSSGGSModule\App\\") !== false) {
+            if (strpos($className, 'ModulesGarden\\TSSGGSModule\\App\\\\') !== false) {
                 $addonFile = dirname(dirname(__DIR__)).DS.'addons'.DS.'TSSGGSModule'.DS.'app'.DS.'Configuration'.DS.'Addon'.DS.'base.php';
                 if ($addonFile) {
                     require_once $addonFile;
