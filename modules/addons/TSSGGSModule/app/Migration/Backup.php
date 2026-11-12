@@ -75,6 +75,33 @@ class Backup
     }
 
     /**
+     * Adds rows to an existing row backup (rows that appeared after the backup was taken). Rows that are in it stay.
+     */
+    public function appendRows(string $table, array $ids, string $primaryKey = 'id'): int
+    {
+        $target = $this->nameFor($table);
+        $ids    = array_values(array_filter(array_map('intval', $ids)));
+        if(!$ids || !Schema::tableExists($target) || !Schema::tableExists($table))
+        {
+            return 0;
+        }
+        $t    = Schema::quoteIdentifier($table);
+        $b    = Schema::quoteIdentifier($target);
+        $k    = Schema::quoteIdentifier($primaryKey);
+        $list = implode(',', $ids);
+
+        return (int)Capsule::affectingStatement("INSERT INTO $b SELECT * FROM $t WHERE $k IN ($list) AND $k NOT IN (SELECT $k FROM (SELECT $k FROM $b) AS kept)");
+    }
+
+    /** true when the row with this primary key is in the backup of the table */
+    public function hasRow(string $table, int $id, string $primaryKey = 'id'): bool
+    {
+        $source = $this->nameFor($table);
+
+        return Schema::tableExists($source) && Capsule::table($source)->where($primaryKey, $id)->exists();
+    }
+
+    /**
      * Restores rows of a WHMCS table from its backup: deletes the live rows with the same primary key, inserts the copies.
      */
     public function restoreRows(string $table, string $primaryKey = 'id'): int

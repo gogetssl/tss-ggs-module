@@ -133,6 +133,11 @@ class MigrateLegacy extends AbstractCommand
         do
         {
             $status = $engine->runBatch($id);
+            if(!empty($status['busy']))
+            {
+                // another runner (the admin page) is processing this migration
+                sleep(5);
+            }
             $io->writeln(sprintf('%s  %d%%  done %d  failed %d  skipped %d  pending %d', $status['run']['status'], $status['percent'],
                 $status['jobs']['done'], $status['jobs']['failed'], $status['jobs']['skipped'], $status['jobs']['pending']));
         }

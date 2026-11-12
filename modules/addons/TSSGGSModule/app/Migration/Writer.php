@@ -364,6 +364,51 @@ class Writer
     // ---- Undo ---- //
 
     /**
+     * Removes the configurable options this run created for the given products (the code signing delivery option of a
+     * product that had none): the option, its choices and their prices, and a group that was created with it.
+     * Options that existed before the run are in the backup and are restored from it. Returns the removed option ids.
+     */
+    public function removeCreatedOptions(array $pids, Backup $backup): array
+    {
+        if(!$pids)
+        {
+            return [];
+        }
+        $prefix  = \ModulesGarden\TSSGGSModule\App\Libs\CodeSigningService::OPTION_PROVISIONING . '|';
+        $options = Capsule::table('tblproductconfiglinks')
+            ->join('tblproductconfigoptions', 'tblproductconfigoptions.gid', '=', 'tblproductconfiglinks.gid')
+            ->whereIn('tblproductconfiglinks.pid', $pids)
+            ->where('tblproductconfigoptions.optionname', 'like', str_replace(['%', '_'], ['\\%', '\\_'], $prefix) . '%')
+            ->get(['tblproductconfigoptions.id', 'tblproductconfigoptions.gid']);
+
+        $removed = [];
+        foreach($options as $option)
+        {
+            if($backup->hasRow('tblproductconfigoptions', (int)$option->id))
+            {
+                continue;
+            }
+            $subIds = array_map('intval', Capsule::table('tblproductconfigoptionssub')->where('configid', (int)$option->id)->pluck('id')->all());
+            if($subIds)
+            {
+                Capsule::table('tblpricing')->where('type', 'configoptions')->whereIn('relid', $subIds)->delete();
+                Capsule::table('tblproductconfigoptionssub')->whereIn('id', $subIds)->delete();
+            }
+            Capsule::table('tblproductconfigoptions')->where('id', (int)$option->id)->delete();
+            $removed[] = (int)$option->id;
+
+            // a group that was created for this option only
+            if(!$backup->hasRow('tblproductconfiggroups', (int)$option->gid) && !Capsule::table('tblproductconfigoptions')->where('gid', (int)$option->gid)->exists())
+            {
+                Capsule::table('tblproductconfiglinks')->where('gid', (int)$option->gid)->delete();
+                Capsule::table('tblproductconfiggroups')->where('id', (int)$option->gid)->delete();
+            }
+        }
+
+        return $removed;
+    }
+
+    /**
      * Removes the unified rows a service write created (tblsslorders itself is restored from the backup)
      */
     public function undoService(array $written): void

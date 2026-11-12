@@ -177,6 +177,28 @@ class Engine
         {
             throw new \RuntimeException('Another migration is still running. Resume or roll it back first.');
         }
+        // a run that stopped with an error left its changes behind: a new run would take a backup of changed data
+        $stopped = Capsule::table(Store::TABLE_RUNS)->where('status', Store::RUN_FAILED)->whereNotNull('backup_prefix')->orderBy('id', 'desc')->first();
+        if($stopped && (new Backup((int)$stopped->id, $stopped->backup_prefix))->tables())
+        {
+            throw new \RuntimeException('Migration #' . (int)$stopped->id . ' stopped with an error. Roll it back before starting a new one.');
+        }
+        if(!self::lock())
+        {
+            throw new \RuntimeException('Another migration is being started. Please wait a moment.');
+        }
+        try
+        {
+            return $this->prepare($startedBy, $options);
+        }
+        finally
+        {
+            self::unlock();
+        }
+    }
+
+    protected function prepare(string $startedBy, array $options): int
+    {
         $support = $this->reader->versionSupport();
         if(!$support['supported'])
         {
@@ -217,6 +239,9 @@ class Engine
             $tables[]   = $backup->copyRows('tblproductconfigoptions', function($q) use ($gids) { $q->whereIn('gid', $gids ?: [0]); });
             $optionIds  = $gids ? array_map('intval', Capsule::table('tblproductconfigoptions')->whereIn('gid', $gids)->pluck('id')->all()) : [];
             $tables[]   = $backup->copyRows('tblproductconfigoptionssub', function($q) use ($optionIds) { $q->whereIn('configid', $optionIds ?: [0]); });
+            // the prices of those options (code signing: the legacy delivery choices get the gateway fees)
+            $subIds     = $optionIds ? array_map('intval', Capsule::table('tblproductconfigoptionssub')->whereIn('configid', $optionIds)->pluck('id')->all()) : [];
+            $tables[]   = $backup->copyRows('tblpricing', function($q) use ($subIds) { $q->where('type', 'configoptions')->whereIn('relid', $subIds ?: [0]); });
             $tables[]   = $backup->copyRows('tbladdonmodules', function($q) { $q->whereIn('module', ['configuration_' . Writer::MODULE, $this->reader->addonName()]); });
             $tables[]   = $backup->copyRows('tblconfiguration', function($q) { $q->where('setting', 'ActiveAddonModules'); });
             if(!empty($options['copy_templates']))
@@ -236,6 +261,14 @@ class Engine
                 'summary'           => ['backups' => $backup->tables(), 'snapshot_max_order_id' => $maxOrderId, 'products' => [], 'settings_filled' => []],
             ]);
             $this->log($runId, 'info', self::PHASE_PREPARE, 'Backups written', ['tables' => $tables]);
+
+            // the legacy module's own automation stops now (not only at the switch): while the services are processed
+            // it must not act on products and orders that are half way to the new module. Its tables are in the backup.
+            $frozen = $this->reader->freeze();
+            if($frozen)
+            {
+                $this->log($runId, 'info', self::PHASE_PREPARE, 'Legacy automation frozen', ['changes' => $frozen]);
+            }
 
             // 2. settings
             $writer = new Writer($runId, $this->source);
@@ -338,7 +371,23 @@ class Engine
         {
             return $this->status($runId);
         }
+        // another runner is working on this migration: only report the progress
+        if(!self::lock())
+        {
+            return $this->status($runId) + ['busy' => true];
+        }
+        try
+        {
+            return $this->processBatch($runId, $run);
+        }
+        finally
+        {
+            self::unlock();
+        }
+    }
 
+    protected function processBatch(int $runId, array $run): array
+    {
         Store::updateRun($runId, ['heartbeat_at' => date('Y-m-d H:i:s')]);
         $writer   = new Writer($runId, $this->source);
         $products = array_map('intval', $run['summary']['products'] ?? []);
@@ -352,8 +401,21 @@ class Engine
             }
             if(!Store::pendingJobs($runId, Store::KIND_SERVICE, 1))
             {
+                $counts = Store::jobCounts($runId);
+                $this->log($runId, 'info', self::PHASE_SERVICES, 'All services processed', $counts);
+
+                // many failures point to one cause (a missing table, the gateway product list): nothing is switched,
+                // the run stops here and can be rolled back
+                $written = (int)$counts[Store::JOB_DONE] + (int)$counts[Store::JOB_FAILED];
+                if($counts[Store::JOB_FAILED] > 0 && $written > 0 && $counts[Store::JOB_FAILED] / $written > self::MAX_FAILED_SHARE)
+                {
+                    $error = $counts[Store::JOB_FAILED] . ' of ' . $written . ' services could not be migrated. Nothing was switched: see the log for the reason, roll the migration back and start it again.';
+                    Store::updateRun($runId, ['status' => Store::RUN_FAILED, 'last_error' => $error, 'finished_at' => date('Y-m-d H:i:s')]);
+                    $this->log($runId, 'error', self::PHASE_SERVICES, $error, $counts);
+
+                    return $this->status($runId);
+                }
                 Store::updateRun($runId, ['status' => Store::RUN_SWITCHING]);
-                $this->log($runId, 'info', self::PHASE_SERVICES, 'All services processed', Store::jobCounts($runId));
             }
 
             return $this->status($runId);
@@ -370,6 +432,31 @@ class Engine
 
     /** @var int run whose legacy product values were handed to the reader */
     protected $legacyProductsOfRun = 0;
+
+    /** share of failed services above which the run stops before the switch */
+    const MAX_FAILED_SHARE = 0.2;
+
+    /**
+     * One runner at a time (two admin tabs, or a tab and the command line, must not write the same services twice).
+     * The lock belongs to the database connection: it ends with the request even when PHP stops unexpectedly.
+     */
+    protected static function lock(): bool
+    {
+        $row = Capsule::select('SELECT GET_LOCK(?, 0) AS l', [self::lockName()]);
+
+        return !empty($row) && (int)$row[0]->l === 1;
+    }
+
+    protected static function unlock(): void
+    {
+        Capsule::select('SELECT RELEASE_LOCK(?)', [self::lockName()]);
+    }
+
+    protected static function lockName(): string
+    {
+        // lock names are shared by all databases of the server
+        return 'tssggs_migration_' . substr(md5((string)Capsule::connection()->getDatabaseName()), 0, 12);
+    }
 
     protected function migrateService(int $runId, int $jobId, int $serviceId, Writer $writer, array $migratedProducts, bool $fetchKeys): void
     {
@@ -494,6 +581,8 @@ class Engine
             {
                 if(!Store::hasJob($runId, Store::KIND_SERVICE, (int)$row->serviceid))
                 {
+                    // not in the backup yet (created after it): a rollback must be able to put the row back
+                    (new Backup($runId, $run['backup_prefix']))->appendRows('tblsslorders', [(int)$row->id]);
                     $jobId = Store::addJob($runId, Store::KIND_SERVICE, (int)$row->serviceid);
                     $this->migrateService($runId, $jobId, (int)$row->serviceid, $writer, $products, (bool)$run['options']['fetch_cpanel_keys']);
                     $rescan++;
@@ -645,6 +734,22 @@ class Engine
         {
             throw new \RuntimeException('Backup tables of migration #' . $runId . ' no longer exist');
         }
+        if(!self::lock())
+        {
+            throw new \RuntimeException('Migration #' . $runId . ' is being processed. Try again in a moment.');
+        }
+        try
+        {
+            return self::restore($runId, $run, $backup, $by);
+        }
+        finally
+        {
+            self::unlock();
+        }
+    }
+
+    protected static function restore(int $runId, array $run, Backup $backup, string $by): array
+    {
         $source = $run['source'];
         $reader = Detector::reader($source);
         $writer = new Writer($runId, $source);
@@ -656,7 +761,7 @@ class Engine
             $backup->createMissing($table);
         }
 
-        Capsule::connection()->transaction(function() use ($runId, $backup, $reader, $writer) {
+        Capsule::connection()->transaction(function() use ($runId, $run, $backup, $reader, $writer) {
             foreach(Store::jobsByStatus($runId, Store::KIND_SERVICE, Store::JOB_DONE) as $job)
             {
                 $writer->undoService($job['data']);
@@ -681,7 +786,14 @@ class Engine
             {
                 Capsule::table('tblemailtemplates')->whereIn('id', $templateIds)->delete();
             }
+            // configurable options the run created (code signing "Certificate Delivery"): they are not in the backup
+            $removed = $writer->removeCreatedOptions(array_map('intval', $run['summary']['products'] ?? []), $backup);
+            if($removed)
+            {
+                Store::log($runId, 'info', self::PHASE_ROLLBACK, 'Configurable options created by the migration removed', ['options' => $removed]);
+            }
             // unified rows written for products are reverted through the row backups below
+            $backup->restoreRows('tblpricing');
             $backup->restoreRows('tblsslorders');
             $backup->restoreRows('tblproducts');
             $backup->restoreRows('tblproductconfiggroups');
