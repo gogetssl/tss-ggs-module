@@ -93,6 +93,24 @@ class Backup
         return (int)Capsule::affectingStatement("INSERT INTO $b SELECT * FROM $t WHERE $k IN ($list) AND $k NOT IN (SELECT $k FROM (SELECT $k FROM $b) AS kept)");
     }
 
+    /**
+     * Deletes the configurable option prices that were added after the backup for the options in it (a currency the
+     * legacy option had no price row for): the option goes back to having no price there. Returns the rows deleted.
+     */
+    public function removeAddedPricing(): int
+    {
+        $pricing = $this->nameFor('tblpricing');
+        $subs    = $this->nameFor('tblproductconfigoptionssub');
+        if(!Schema::tableExists($pricing) || !Schema::tableExists($subs))
+        {
+            return 0;
+        }
+        $p = Schema::quoteIdentifier($pricing);
+        $s = Schema::quoteIdentifier($subs);
+
+        return (int)Capsule::affectingStatement("DELETE FROM `tblpricing` WHERE `type` = 'configoptions' AND `relid` IN (SELECT `id` FROM $s) AND `id` NOT IN (SELECT `id` FROM $p)");
+    }
+
     /** true when the row with this primary key is in the backup of the table */
     public function hasRow(string $table, int $id, string $primaryKey = 'id'): bool
     {

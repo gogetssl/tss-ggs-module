@@ -173,22 +173,23 @@ class Engine
      */
     public function start(string $startedBy, array $options = []): int
     {
-        if(Store::activeRun())
-        {
-            throw new \RuntimeException('Another migration is still running. Resume or roll it back first.');
-        }
-        // a run that stopped with an error left its changes behind: a new run would take a backup of changed data
-        $stopped = Capsule::table(Store::TABLE_RUNS)->where('status', Store::RUN_FAILED)->whereNotNull('backup_prefix')->orderBy('id', 'desc')->first();
-        if($stopped && (new Backup((int)$stopped->id, $stopped->backup_prefix))->tables())
-        {
-            throw new \RuntimeException('Migration #' . (int)$stopped->id . ' stopped with an error. Roll it back before starting a new one.');
-        }
         if(!self::lock())
         {
-            throw new \RuntimeException('Another migration is being started. Please wait a moment.');
+            throw new \RuntimeException('Another migration is being started or processed. Please wait a moment.');
         }
         try
         {
+            if(Store::activeRun())
+            {
+                throw new \RuntimeException('Another migration is still running. Resume or roll it back first.');
+            }
+            // the latest run stopped with an error and left its changes behind: a new run would take a backup of changed data
+            $latest = Capsule::table(Store::TABLE_RUNS)->where('status', '<>', Store::RUN_DRY_RUN)->orderBy('id', 'desc')->first();
+            if($latest && $latest->status === Store::RUN_FAILED && $latest->backup_prefix && (new Backup((int)$latest->id, $latest->backup_prefix))->tables())
+            {
+                throw new \RuntimeException('Migration #' . (int)$latest->id . ' stopped with an error. Roll it back before starting a new one.');
+            }
+
             return $this->prepare($startedBy, $options);
         }
         finally
@@ -378,6 +379,13 @@ class Engine
         }
         try
         {
+            // the other runner may have finished the run while this one waited
+            $run = Store::getRun($runId);
+            if(!$run || !in_array($run['status'], [Store::RUN_RUNNING, Store::RUN_SWITCHING], true))
+            {
+                return $this->status($runId);
+            }
+
             return $this->processBatch($runId, $run);
         }
         finally
@@ -407,7 +415,7 @@ class Engine
                 // many failures point to one cause (a missing table, the gateway product list): nothing is switched,
                 // the run stops here and can be rolled back
                 $written = (int)$counts[Store::JOB_DONE] + (int)$counts[Store::JOB_FAILED];
-                if($counts[Store::JOB_FAILED] > 0 && $written > 0 && $counts[Store::JOB_FAILED] / $written > self::MAX_FAILED_SHARE)
+                if($counts[Store::JOB_FAILED] >= self::MIN_FAILED_TO_STOP && $written > 0 && $counts[Store::JOB_FAILED] / $written > self::MAX_FAILED_SHARE)
                 {
                     $error = $counts[Store::JOB_FAILED] . ' of ' . $written . ' services could not be migrated. Nothing was switched: see the log for the reason, roll the migration back and start it again.';
                     Store::updateRun($runId, ['status' => Store::RUN_FAILED, 'last_error' => $error, 'finished_at' => date('Y-m-d H:i:s')]);
@@ -435,6 +443,8 @@ class Engine
 
     /** share of failed services above which the run stops before the switch */
     const MAX_FAILED_SHARE = 0.2;
+    /** ... and only when at least this many services failed */
+    const MIN_FAILED_TO_STOP = 5;
 
     /**
      * One runner at a time (two admin tabs, or a tab and the command line, must not write the same services twice).
@@ -793,6 +803,7 @@ class Engine
                 Store::log($runId, 'info', self::PHASE_ROLLBACK, 'Configurable options created by the migration removed', ['options' => $removed]);
             }
             // unified rows written for products are reverted through the row backups below
+            $backup->removeAddedPricing();
             $backup->restoreRows('tblpricing');
             $backup->restoreRows('tblsslorders');
             $backup->restoreRows('tblproducts');

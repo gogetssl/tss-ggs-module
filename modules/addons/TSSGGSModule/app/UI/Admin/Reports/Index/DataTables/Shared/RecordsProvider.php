@@ -65,6 +65,11 @@ class RecordsProvider
             $query->where('tblinvoices.status', 'Paid');
         }
 
+        // the CSV forms pass their data as a container object
+        if($filters instanceof \ModulesGarden\TSSGGSModule\Core\Data\Container)
+        {
+            $filters = $filters->toArray();
+        }
         $filters = (array)$filters + ['fromDate' => '', 'toDate' => '', 'productId' => '', 'brand' => '', 'sslStatus' => '', 'vendorOrderId' => '', 'renewalPeriod' => ''];
 
         if($filters['fromDate'])

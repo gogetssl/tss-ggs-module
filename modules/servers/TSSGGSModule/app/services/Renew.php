@@ -158,6 +158,11 @@ class Renew
 
         try
         {
+            if($sameService)
+            {
+                // keep the issued certificate: it stays valid (and downloadable) while the renewal waits for validation
+                CertificateService::keepPreviousCertificate($serviceId);
+            }
             $item     = InvoiceItem::where('relid', $targetServiceId)->where('type', 'Hosting')->orderBy('id', 'desc')->first();
             $apiPrice = $newOrder['order']['total_amount'] ?? 0;
 
@@ -182,11 +187,6 @@ class Renew
                 // not issued yet
             }
 
-            if($sameService)
-            {
-                // keep the issued certificate: it stays valid (and downloadable) while the renewal waits for validation
-                CertificateService::keepPreviousCertificate($serviceId);
-            }
             // (insert() ignores the where() conditions: the row needs its own serviceid and name)
             Request::where('serviceid', $targetServiceId)->where('name', 'certificate')->delete();
             Request::insert([
