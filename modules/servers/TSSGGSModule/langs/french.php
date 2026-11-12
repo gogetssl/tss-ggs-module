@@ -246,6 +246,7 @@ $_LANG['renew_exists']                                                          
 $_LANG['renew_not_recurring'] = 'Ce service est facturé une seule fois et ne peut pas être renouvelé ici. Veuillez passer une nouvelle commande.';
 $_LANG['sslConfigOrderFailedCancel'] = 'L\'abonnement n\'a pas pu être annulé auprès du fournisseur. Veuillez réessayer ou contacter le support.';
 $_LANG['requestInProgress'] = 'Une autre demande est en cours de traitement pour ce service. Veuillez patienter un instant et réessayer.';
+$_LANG['invalidValidationMethod'] = 'La méthode de validation sélectionnée n\'est pas disponible pour ce certificat.';
 $_LANG['renew_invoice_generated']                                                                                                = 'La facture de renouvellement a été générée avec succès.';
 $_LANG['Click here to view the invoice']                                                                                         = 'Cliquez ici pour consulter la facture';
 

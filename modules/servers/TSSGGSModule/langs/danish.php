@@ -246,6 +246,7 @@ $_LANG['renew_exists']                                                          
 $_LANG['renew_not_recurring'] = 'Denne tjeneste faktureres én gang og kan ikke fornyes her. Afgiv venligst en ny ordre.';
 $_LANG['sslConfigOrderFailedCancel'] = 'Abonnementet kunne ikke opsiges hos leverandøren. Prøv igen, eller kontakt support.';
 $_LANG['requestInProgress'] = 'En anden anmodning for denne tjeneste behandles. Vent et øjeblik, og prøv igen.';
+$_LANG['invalidValidationMethod'] = 'Den valgte valideringsmetode er ikke tilgængelig for dette certifikat.';
 $_LANG['renew_invoice_generated']                                                                                                = 'Fakturaen for fornyelsen er blevet oprettet.';
 $_LANG['Click here to view the invoice']                                                                                         = 'Klik her for at se fakturaen';
 

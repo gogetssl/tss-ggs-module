@@ -246,6 +246,7 @@ $_LANG['renew_exists'] = 'Faktura za obnovení již existuje.';
 $_LANG['renew_not_recurring'] = 'Tato služba se účtuje jednorázově a nelze ji zde obnovit. Vytvořte prosím novou objednávku.';
 $_LANG['sslConfigOrderFailedCancel'] = 'Předplatné se u dodavatele nepodařilo zrušit. Zkuste to prosím znovu nebo kontaktujte podporu.';
 $_LANG['requestInProgress'] = 'Pro tuto službu se právě zpracovává jiný požadavek. Chvíli počkejte a zkuste to znovu.';
+$_LANG['invalidValidationMethod'] = 'Vybraná metoda ověření není pro tento certifikát dostupná.';
 $_LANG['renew_invoice_generated'] = 'Faktura za obnovení byla úspěšně vygenerována.';
 $_LANG['Click here to view the invoice'] = 'Kliknutím sem zobrazíte fakturu';
 
