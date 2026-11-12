@@ -142,6 +142,10 @@ class AdminServicesTabFields
             . (!empty($stored['refreshedAt']) ? ' &nbsp;<small class="text-muted">last refresh ' . htmlspecialchars($stored['refreshedAt']) . '</small>' : '');
         $fields['Organization']         = htmlspecialchars((string)($stored['organization'] ?? '-'));
         $fields['Delivery']             = htmlspecialchars($delivery);
+        if(!empty($stored['tokenInitCode']))
+        {
+            $fields['Token Initialization Code'] = '<code>' . htmlspecialchars($stored['tokenInitCode']) . '</code> <small class="text-muted">also shown to the client</small>';
+        }
         $fields['Validity']             = (!empty($stored['validFrom']) ? htmlspecialchars(substr($stored['validFrom'], 0, 10)) : '-') . ' &rarr; '
             . (!empty($stored['validTill']) ? htmlspecialchars(substr($stored['validTill'], 0, 10)) : '-');
 
