@@ -32,6 +32,12 @@
                 {else}{$MGLANG->T('smimeInfoContactSupport')}{/if}
             </p>
             <div class="tssggs-actions">
+                {if $renewOpen}
+                    <button type="button" class="tssggs-btn tssggs-btn--primary" data-toggle="modal" data-target="#tssggsRenewModal">
+                        <svg class="tssggs-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>
+                        {$MGLANG->T('renewButton')}
+                    </button>
+                {/if}
                 <button id="tssggs-cs-refresh" type="button" class="tssggs-btn{if $csTone == 'wait'} tssggs-btn--primary{/if}">
                     <svg class="tssggs-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>
                     <span>{$MGLANG->T('smimeRefreshDetails')}</span>
@@ -70,9 +76,65 @@
             </dl>
         </section>
     </div>
+    {if $renewOpen}
+    <div class="modal fade" id="tssggsRenewModal" tabindex="-1" role="dialog" aria-labelledby="tssggsRenewLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form method="post" action="clientarea.php?action=productdetails&id={$serviceid}">
+                    <input type="hidden" name="mg-action" value="renewOrder">
+                    <input type="hidden" name="token" value="{$csrfToken}">
+                    <div class="modal-header" style="display:block;">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="tssggsRenewLabel" style="text-align:left;">{$MGLANG->T('renewTitle')}</h4>
+                    </div>
+                    <div class="modal-body tssggs-cert" style="text-align:left;">
+                        <p>{$MGLANG->T('renewIntro')}</p>
+                        {if $renewSame}
+                            <label class="tssggs-check">
+                                <input type="radio" name="renew_same" value="1" checked data-tssggs-renew>
+                                <span><strong>{$MGLANG->T('renewSame')}</strong><br><small>{if $renewIsCs}{$MGLANG->T('renewSameHintCs')}{else}{$MGLANG->T('renewSameHintSmime')}{/if}</small></span>
+                            </label>
+                            {if $renewNeedsModel}
+                                <div class="tssggs-field" data-tssggs-renew-same style="margin:8px 0 0 24px;">
+                                    <label for="tssggs-renew-model">{$MGLANG->T('renewModelLabel')} <span class="tssggs-req">*</span></label>
+                                    <select id="tssggs-renew-model" name="renew_model" class="form-control">
+                                        <option value="">-</option>
+                                        {foreach from=$renewModels key=code item=name}<option value="{$code|escape:'htmlall'}">{$name|escape}</option>{/foreach}
+                                    </select>
+                                </div>
+                            {/if}
+                            {if $renewAgreement}
+                                <label class="tssggs-check" data-tssggs-renew-same style="margin:8px 0 0 24px;">
+                                    <input type="checkbox" name="agreement" value="1">
+                                    <span>{$MGLANG->T('sslConfigAgreement')} {if $renewAgreement.url}<a href="{$renewAgreement.url|escape}" target="_blank" rel="noopener">{$renewAgreement.name|escape}</a>{else}{$renewAgreement.name|escape}{/if}</span>
+                                </label>
+                            {/if}
+                            <label class="tssggs-check" style="margin-top:12px;">
+                                <input type="radio" name="renew_same" value="0" data-tssggs-renew>
+                                <span><strong>{$MGLANG->T('renewNew')}</strong><br><small>{$MGLANG->T('renewNewHint')}</small></span>
+                            </label>
+                        {else}
+                            <input type="hidden" name="renew_same" value="0">
+                            <p class="tssggs-note tssggs-note--plain">{if $renewIsCs}{$MGLANG->T('renewNoSameCs')}{else}{$MGLANG->T('renewNewHint')}{/if}</p>
+                        {/if}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">{$MGLANG->T('validation_page', 'Close')}</button>
+                        <button type="submit" class="btn btn-success">{$MGLANG->T('renewCreateInvoice')}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {/if}
 </div>
 
 <script type="text/javascript">
+    // Renew dialog: the token model and agreement belong to "same details"
+    $(document).on('change', '[data-tssggs-renew]', function () {
+        var same = $(this).closest('form').find('[data-tssggs-renew]:checked').val() === '1';
+        $(this).closest('form').find('[data-tssggs-renew-same]').toggle(same);
+    });
     $(document).ready(function () {
         var clone = $('.validate-ssl-unified').clone();
         $('.product-details').html(clone);

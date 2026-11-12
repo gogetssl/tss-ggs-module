@@ -48,6 +48,7 @@ class GeneralSettings
         'debugUntil'               => 0,
         // Lifecycle
         'terminateCancelsOrder'    => true,
+        'renewReuseOrderDetails'   => true,   // S/MIME / code signing: a paid renewal orders with the previous details
         'terminateUnpaidOnExpiry'  => true,
         // Interface
         'hideInfoMessages'         => false,

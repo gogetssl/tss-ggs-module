@@ -524,8 +524,12 @@ class CodeSigningService extends GatewayOrderService
 
         $provisioning = $order['provisioning'];
         $organization = (string)$order['contacts']['organization']['name'];
+        // the order details without the CSR, for "renew with the same details"
+        $request = $payload;
+        unset($request['provisioning']['csr']);
 
         return static::saveCreated($serviceId, $ssl, [
+            'request'      => $request,
             'term'         => $term,
             'method'       => $provisioning['method'],
             'tokenModel'   => $provisioning['model'] ?? '',
@@ -533,6 +537,48 @@ class CodeSigningService extends GatewayOrderService
             'csrProvided'  => isset($provisioning['csr']),
             'organization' => $organization,
         ], $response, $organization, 'Code signing certificate ordered for ' . $organization . ' (' . static::describeDelivery($provisioning) . ')');
+    }
+
+    /**
+     * "Same details" works for a token (a renewal ships no new one: an order with a new token renews for that token,
+     * its model is asked in the Renew dialog); an HSM needs a new key pair, so a new CSR
+     */
+    public static function canRenewWithSameDetails(array $stored)
+    {
+        $method = (string)($stored['request']['provisioning']['method'] ?? '');
+
+        return !empty($stored['request']) && in_array($method, [self::METHOD_EXISTING_TOKEN, self::METHOD_SHIP_TOKEN], true);
+    }
+
+    /** The Renew dialog asks for the token model (the first order shipped a new token) */
+    public static function renewalNeedsTokenModel(array $stored)
+    {
+        return (string)($stored['request']['provisioning']['method'] ?? '') === self::METHOD_SHIP_TOKEN;
+    }
+
+    protected static function renewWithSameDetails($serviceId, array $before)
+    {
+        if(!static::canRenewWithSameDetails($before))
+        {
+            return false;
+        }
+        $request = (array)$before['request'];
+        $model   = (string)($request['provisioning']['model'] ?? '');
+        if(static::renewalNeedsTokenModel($before))
+        {
+            $model = strtoupper((string)($before['renewExtra']['model'] ?? ''));
+        }
+        if(!isset(self::TOKEN_MODELS[$model]))
+        {
+            return false;
+        }
+
+        static::create($serviceId, [
+            'provisioning' => ['method' => self::METHOD_EXISTING_TOKEN, 'model' => $model],
+            'contacts'     => (array)$request['contacts'],
+        ]);
+
+        return true;
     }
 
     public static function describeDelivery(array $provisioning)

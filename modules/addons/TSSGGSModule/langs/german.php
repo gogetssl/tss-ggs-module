@@ -769,6 +769,8 @@ $_LANG['admin.settings.index.forms.general_settings_form.certificatesByDomain_de
 $_LANG['admin.settings.index.forms.general_settings_form.lifecycle'] = 'Service-Lebenszyklus';
 $_LANG['admin.settings.index.forms.general_settings_form.terminateCancelsOrder'] = 'Anbieterbestellung beim Kündigen stornieren';
 $_LANG['admin.settings.index.forms.general_settings_form.terminateCancelsOrder_description'] = 'Das Kündigen des Services in WHMCS storniert auch die Zertifikatsbestellung bzw. das Abonnement beim Anbieter';
+$_LANG['admin.settings.index.forms.general_settings_form.renewReuseOrderDetails'] = 'S/MIME und Code Signing mit denselben Angaben verlängern';
+$_LANG['admin.settings.index.forms.general_settings_form.renewReuseOrderDetails_description'] = 'Eine bezahlte S/MIME- oder Code-Signing-Verlängerung bestellt das nächste Zertifikat mit den Angaben der vorherigen Bestellung (E-Mail-Adressen, Organisation, Administrator, Hardware-Token), außer der Kunde hat im Verlängerungsdialog neue Angaben gewählt. Aus: Der Kunde füllt nach der Zahlung immer das Bestellformular aus.';
 $_LANG['admin.settings.index.forms.general_settings_form.messages'] = 'Kundenmitteilungen';
 $_LANG['admin.settings.index.forms.general_settings_form.processingGuide'] = 'Bearbeitungshinweis';
 $_LANG['admin.settings.index.forms.general_settings_form.processingGuide_description'] = 'Wird dem Kunden angezeigt, während das Zertifikat validiert wird (HTML erlaubt). Kann pro Produkt überschrieben werden';

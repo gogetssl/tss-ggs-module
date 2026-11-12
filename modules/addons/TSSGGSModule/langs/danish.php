@@ -771,6 +771,8 @@ $_LANG['admin.settings.index.forms.general_settings_form.certificatesByDomain_de
 $_LANG['admin.settings.index.forms.general_settings_form.lifecycle']                         = 'Tjenestens livscyklus';
 $_LANG['admin.settings.index.forms.general_settings_form.terminateCancelsOrder']             = 'Annuller leverandørordre ved opsigelse';
 $_LANG['admin.settings.index.forms.general_settings_form.terminateCancelsOrder_description'] = 'Når tjenesten opsiges i WHMCS, annulleres også certifikatordren/abonnementet hos leverandøren';
+$_LANG['admin.settings.index.forms.general_settings_form.renewReuseOrderDetails'] = 'Forny S/MIME og kodesignering med de samme oplysninger';
+$_LANG['admin.settings.index.forms.general_settings_form.renewReuseOrderDetails_description'] = 'En betalt fornyelse af S/MIME eller kodesignering bestiller det næste certifikat med oplysningerne fra den forrige ordre (e-mailadresser, organisation, administrator, hardware-token), medmindre kunden har valgt nye oplysninger i fornyelsesdialogen. Fra: kunden udfylder altid bestillingsformularen efter betaling.';
 $_LANG['admin.settings.index.forms.general_settings_form.messages']                          = 'Kundemeddelelser';
 $_LANG['admin.settings.index.forms.general_settings_form.processingGuide']                   = 'Behandlingsvejledning';
 $_LANG['admin.settings.index.forms.general_settings_form.processingGuide_description']       = 'Vises for kunden, mens certifikatet valideres (HTML tilladt). Kan tilsidesættes pr. produkt';

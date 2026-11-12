@@ -46,7 +46,8 @@ class Renew
         // gets the configuration link (the current certificate stays valid until it expires)
         $gatewayType = $service ? \ModulesGarden\TSSGGSModule\App\Libs\GatewayOrderService::typeOfProduct($service->packageid) : null;
         if($gatewayType) {
-            if($gatewayType::resetForRenewal($serviceId)) {
+            // "ordered": placed with the previous details; "form": the client gets the order details e-mail
+            if($gatewayType::renewal($serviceId) === 'form') {
                 $sslOrder = SSL::getByServiceId($serviceId);
                 \ModulesGarden\TSSGGSModule\App\Helpers\EmailTemplates::sendEmail($gatewayType::configurationTemplate(), $serviceId, [
                     'ssl_configuration_link' => (new \ModulesGarden\Servers\TSSGGSModule\app\repository\whmcs\Config())->getConfigureSSLUrl($sslOrder ? $sslOrder->id : 0, $serviceId),

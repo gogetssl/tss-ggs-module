@@ -2319,6 +2319,7 @@ class home extends AbstractController
         $vars['csValidFrom']     = $this->smimeDate($stored['validFrom'] ?? '');
         $vars['csValidTill']     = $this->smimeDate($stored['validTill'] ?? '');
         $vars['csOrderedAt']     = $this->smimeDate($stored['orderedAt'] ?? '');
+        $vars                    = $this->gatewayRenewalVars(CodeSigningService::class, $serviceId, $stored, $input, $vars);
 
         return ['tpl' => 'home_codesigning', 'vars' => $vars];
     }
@@ -2483,6 +2484,70 @@ class home extends AbstractController
         return $text;
     }
 
+    /* ---------------- Renewal of S/MIME / code signing ---------------- */
+
+    /**
+     * Renew button and dialog of an S/MIME / code signing service page
+     */
+    private function gatewayRenewalVars($type, $serviceId, array $stored, $input, array $vars)
+    {
+        $vars['renewOpen']       = $type::renewalOpen($serviceId);
+        $vars['renewSame']       = $type::canRenewWithSameDetails($stored);
+        $vars['renewNeedsModel'] = $type === CodeSigningService::class && CodeSigningService::renewalNeedsTokenModel($stored);
+        $vars['renewIsCs']       = $type === CodeSigningService::class;
+        $vars['renewModels']     = CodeSigningService::TOKEN_MODELS;
+        $vars['renewAgreement']  = CertificateService::agreement((int)$input['params']['pid']);
+        $vars['csrfToken']       = $vars['csrfToken'] ?? \generate_token('plain');
+
+        return $vars;
+    }
+
+    /**
+     * Renew dialog: keeps the client's choice (same details / new details) and creates the renewal invoice; the order
+     * is placed when the invoice is paid (WHMCS Renew)
+     */
+    public function renewOrderHTML($input, $vars = [])
+    {
+        global $CONFIG;
+
+        $serviceId = (int)$input['params']['serviceid'];
+        try
+        {
+            $this->requireCsrfToken();
+            $type = \ModulesGarden\TSSGGSModule\App\Libs\GatewayOrderService::typeOfService($serviceId);
+            if(!$type || !$type::renewalOpen($serviceId))
+            {
+                throw new \Exception(Lang::absoluteT('renewNotAvailable'));
+            }
+
+            $stored = $type::stored($serviceId);
+            $same   = !empty($input['renew_same']) && $type::canRenewWithSameDetails($stored);
+            $extra  = [];
+            if($same && $type === CodeSigningService::class && CodeSigningService::renewalNeedsTokenModel($stored))
+            {
+                $model = strtoupper(trim((string)($input['renew_model'] ?? '')));
+                if(!isset(CodeSigningService::TOKEN_MODELS[$model]))
+                {
+                    throw new \Exception(Lang::absoluteT('csTokenModelRequired'));
+                }
+                $extra['model'] = $model;
+            }
+            if($same && CertificateService::agreement((int)$input['params']['pid']) && empty($input['agreement']))
+            {
+                throw new \Exception(Lang::absoluteT('serverCA', 'home', 'sslConfigAgreementRequired'));
+            }
+            $type::setRenewChoice($serviceId, $same, $extra);
+
+            list($invoiceId, $created) = (new InvoiceRenew())->getOrCreateInvoice($serviceId);
+            $_SESSION['mg-success'] = Lang::absoluteT($created ? 'renew_invoice_generated' : 'renew_exists') . ' <a target="_blank" href="' . $CONFIG['SystemURL'] . '/viewinvoice.php?id=' . (int)$invoiceId . '">' . Lang::absoluteT('Click here to view the invoice') . '</a>';
+        }
+        catch(\Exception $e)
+        {
+            $_SESSION['mg-error'] = $e->getMessage();
+        }
+        redir('action=productdetails&id=' . $serviceId, 'clientarea.php');
+    }
+
     /* ---------------- S/MIME (GoGetSSL, /certificates/smime) ---------------- */
 
     /**
@@ -2537,6 +2602,7 @@ class home extends AbstractController
         $vars['smimeValidTill']     = $this->smimeDate($stored['validTill'] ?? '');
         $vars['smimeOrderedAt']     = $this->smimeDate($stored['orderedAt'] ?? '');
         $vars['smimeCsrProvided']   = !empty($stored['csrProvided']);
+        $vars                       = $this->gatewayRenewalVars(SmimeService::class, $serviceId, $stored, $input, $vars);
         // migrated TheSSLStore invite order: the client enrols on the certificate authority's page
         $vars['smimeEnrollmentLink'] = !$emails && !empty($stored['enrollmentLink']) && $vars['smimeTone'] === 'wait' ? (string)$stored['enrollmentLink'] : '';
 

@@ -8,7 +8,7 @@ use WHMCS\Database\Capsule;
 
 class GeneralSettingsProvider extends CrudProvider
 {
-    const SWITCHES = ['downloadFormat_zip', 'downloadFormat_crt', 'downloadFormat_ca', 'downloadFormat_fullchain', 'downloadFormat_nginx', 'downloadFormat_apache', 'downloadFormat_pkcs7', 'clientSummary', 'certificatesByDomain', 'sslTools', 'whmcsActivityLog', 'moduleLog', 'certificateLog', 'internalLog', 'eventLog', 'terminateCancelsOrder', 'terminateUnpaidOnExpiry', 'requireAgreement', 'useDefaultWebServer', 'keepMarginOnSync', 'belowCostEmail', 'hideInfoMessages'];
+    const SWITCHES = ['renewReuseOrderDetails', 'downloadFormat_zip', 'downloadFormat_crt', 'downloadFormat_ca', 'downloadFormat_fullchain', 'downloadFormat_nginx', 'downloadFormat_apache', 'downloadFormat_pkcs7', 'clientSummary', 'certificatesByDomain', 'sslTools', 'whmcsActivityLog', 'moduleLog', 'certificateLog', 'internalLog', 'eventLog', 'terminateCancelsOrder', 'terminateUnpaidOnExpiry', 'requireAgreement', 'useDefaultWebServer', 'keepMarginOnSync', 'belowCostEmail', 'hideInfoMessages'];
 
     /** WHMCS client area templates offered in "Show the SSL menu on" (any other template name can be typed in) */
     const SIDEBAR_PAGES = ['clientareahome', 'clientareaproducts', 'clientareaproductdetails', 'clientareadomains', 'clientareadomaindetails', 'clientareainvoices',

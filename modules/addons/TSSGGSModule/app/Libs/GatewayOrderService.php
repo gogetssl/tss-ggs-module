@@ -478,6 +478,108 @@ abstract class GatewayOrderService
         return static::applyItem($stored, $item);
     }
 
+    // ------------------------------------------------------------------ renewal
+
+    /**
+     * A paid renewal (WHMCS Renew): the service gets the next certificate order. With "renew with the same details"
+     * (the client's choice in the Renew dialog, else the admin setting) the order is placed at once from the details
+     * of the previous order; otherwise - or when they can not be reused - the client fills in the order form.
+     *
+     * @return string 'kept' (the current order is still in validation), 'ordered', 'form' or '' (nothing ordered yet)
+     */
+    public static function renewal($serviceId)
+    {
+        $before = static::stored($serviceId);
+        if(empty($before['itemId']))
+        {
+            return '';
+        }
+        if(!static::resetForRenewal($serviceId))
+        {
+            return 'kept';
+        }
+
+        $choice = (string)($before['renewChoice'] ?? '');
+        $reuse  = $choice !== '' ? $choice === 'same' : GeneralSettings::enabled('renewReuseOrderDetails');
+        if($reuse)
+        {
+            try
+            {
+                if(static::renewWithSameDetails($serviceId, $before))
+                {
+                    CertificateService::event($serviceId, 'info', static::LABEL . ' renewal ordered with the details of order #' . ($before['orderId'] ?? '-'));
+
+                    return 'ordered';
+                }
+                CertificateService::event($serviceId, 'info', static::LABEL . ' renewal: the previous details can not be reused, the client fills in the order form');
+            }
+            catch(\Throwable $e)
+            {
+                CertificateService::event($serviceId, 'error', static::LABEL . ' renewal with the same details failed, the client fills in the order form: ' . $e->getMessage());
+            }
+        }
+
+        return 'form';
+    }
+
+    /**
+     * The client's choice in the Renew dialog, kept until the renewal is paid
+     *
+     * @param array $extra product type's data of the choice (code signing: token model)
+     */
+    public static function setRenewChoice($serviceId, $sameDetails, array $extra = [])
+    {
+        $stored = static::stored($serviceId);
+        if(empty($stored['itemId']))
+        {
+            return;
+        }
+        $stored['renewChoice'] = $sameDetails ? 'same' : 'new';
+        $stored['renewExtra']  = $extra;
+        static::save($serviceId, $stored);
+    }
+
+    /**
+     * The Renew button: an issued (or expired) certificate within the renewal window before the next due date
+     */
+    public static function renewalOpen($serviceId)
+    {
+        $stored = static::stored($serviceId);
+        if(!in_array($stored['status'] ?? '', ['active', 'expired'], true))
+        {
+            return false;
+        }
+        $due = (string)Capsule::table('tblhosting')->where('id', (int)$serviceId)->value('nextduedate');
+        if($due === '' || strpos($due, '0000') === 0)
+        {
+            return false;
+        }
+
+        return strtotime($due) - static::renewalWindowDays() * 86400 <= time();
+    }
+
+    /** Days before the due date the client can renew: the renewal invoice days or the "expires soon" days */
+    public static function renewalWindowDays()
+    {
+        $ssl = (array)((new \ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository())->getModuleConfiguration()['sslSettings'] ?? []);
+
+        return max(30, (int)($ssl['recurringDaysBeforeExpiry'] ?? 0), (int)GeneralSettings::get('expiresSoonDays'));
+    }
+
+    /**
+     * Whether the previous order's details can be reused as they are (the Renew dialog offers "same details")
+     */
+    public static function canRenewWithSameDetails(array $stored)
+    {
+        return !empty($stored['request']);
+    }
+
+    /** Places the renewal order from the previous order's details; false when they can not be reused */
+    protected static function renewWithSameDetails($serviceId, array $before)
+    {
+        return false;
+    }
+
     /** E-mail template key of the "order details required" e-mail (new service, renewal) */
     public static function configurationTemplate()
     {

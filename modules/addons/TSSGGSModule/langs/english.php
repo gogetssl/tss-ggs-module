@@ -807,6 +807,8 @@ $_LANG['admin.settings.index.forms.general_settings_form.certificatesByDomain_de
 $_LANG['admin.settings.index.forms.general_settings_form.lifecycle']                         = 'Service Lifecycle';
 $_LANG['admin.settings.index.forms.general_settings_form.terminateCancelsOrder']             = 'Cancel Vendor Order On Terminate';
 $_LANG['admin.settings.index.forms.general_settings_form.terminateCancelsOrder_description'] = 'Terminating the service in WHMCS also cancels the certificate order / subscription at the vendor';
+$_LANG['admin.settings.index.forms.general_settings_form.renewReuseOrderDetails'] = 'Renew S/MIME And Code Signing With The Same Details';
+$_LANG['admin.settings.index.forms.general_settings_form.renewReuseOrderDetails_description'] = 'A paid S/MIME or code signing renewal orders the next certificate with the details of the previous order (email addresses, organization, administrator, hardware token), unless the client chose to enter new details in the Renew dialog. Off: the client always fills in the order form after paying.';
 $_LANG['admin.settings.index.forms.general_settings_form.messages']                          = 'Client Messages';
 $_LANG['admin.settings.index.forms.general_settings_form.processingGuide']                   = 'Processing Guide';
 $_LANG['admin.settings.index.forms.general_settings_form.processingGuide_description']       = 'Shown to the client while the certificate is being validated (HTML allowed). Can be overridden per product';

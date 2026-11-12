@@ -115,11 +115,38 @@ class SmimeService extends GatewayOrderService
 
         $response = CertificateService::api($serviceId)->createSmime($payload);
 
+        // the order details without the CSR, for "renew with the same details"
+        $request = $payload;
+        unset($request['csr']);
+
         return static::saveCreated($serviceId, $ssl, [
+            'request'     => $request,
             'term'        => $term,
             'csrProvided' => !empty($payload['csr']),
             'emails'      => array_map(function($email) { return ['email' => $email, 'approved' => false]; }, $emails),
         ], $response, $emails[0], 'S/MIME certificate ordered for ' . implode(', ', $emails));
+    }
+
+    /**
+     * Same addresses and contacts; no CSR (the certificate authority emails the collection link), every address is
+     * confirmed again
+     */
+    protected static function renewWithSameDetails($serviceId, array $before)
+    {
+        $request = (array)($before['request'] ?? []);
+        if(empty($request['emails']))
+        {
+            return false;
+        }
+        $input = ['emails' => array_values((array)$request['emails']), 'csr' => ''];
+        if(!empty($request['contacts']))
+        {
+            $input['organization']  = (array)($request['contacts']['organization'] ?? []);
+            $input['administrator'] = (array)($request['contacts']['administrator'] ?? []);
+        }
+        static::create($serviceId, $input);
+
+        return true;
     }
 
     protected static function applyItem(array $stored, array $item)
