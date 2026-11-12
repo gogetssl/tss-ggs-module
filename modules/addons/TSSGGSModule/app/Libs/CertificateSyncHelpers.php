@@ -39,16 +39,7 @@ class CertificateSyncHelpers
      */
     public static function syncCertificate(array $certificate, array $addonConfig)
     {
-        $provider    = strtolower($certificate['configoption1']);
-        $credentials = $addonConfig['credentials'][$provider];
-
-        if($provider == 'tss' && $credentials['OperationMode'] == 'sandbox')
-        {
-            $credentials['PartnerCode'] = $credentials['TestPartnerCode'];
-            $credentials['AuthToken']   = $credentials['TestAuthToken'];
-        }
-
-        $api       = new SSLTrustCenterApi($certificate['configoption1'], $credentials['PartnerCode'], $credentials['AuthToken'], $certificate['configoption9']);
+        $api       = SSLTrustCenterApi::forVendor($certificate['configoption1'], $certificate['configoption9']);
         $orderData = $api->getOrder($certificate['remoteid'], $certificate['id']);
         // an empty answer must never replace what is stored
         if(empty($orderData['order']['status']))

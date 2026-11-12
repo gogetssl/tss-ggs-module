@@ -550,16 +550,7 @@ class home extends AbstractController
             }
             $vars['available_method_validation'] = json_encode($available_method_validation);
 
-            $provider    = strtolower($configProduct['provider']);
-            $credentials = $addonConfig['credentials'][$provider];
-
-            if($provider == 'tss' && $credentials['OperationMode'] == 'sandbox')
-            {
-                $credentials['PartnerCode'] = $credentials['TestPartnerCode'];
-                $credentials['AuthToken']   = $credentials['TestAuthToken'];
-            }
-
-            $api               = new SSLTrustCenterApi($configProduct['provider'], $credentials['PartnerCode'], $credentials['AuthToken'], $configProduct['category']);
+            $api               = SSLTrustCenterApi::forVendor($configProduct['provider'], $configProduct['category']);
             $approvers         = $api->getDomainEmails($domains);
             $vars['approvers'] = $this->approversToOptions($approvers);
 
@@ -1275,15 +1266,6 @@ class home extends AbstractController
         $configProduct = (new ProductRepository())->getProductConfiguration($service->packageid);
         $addonConfig   = (new AddonModuleRepository())->getModuleConfiguration();
 
-        $provider    = strtolower($configProduct['provider']);
-        $credentials = $addonConfig['credentials'][$provider];
-
-        if($provider == 'tss' && $credentials['OperationMode'] == 'sandbox')
-        {
-            $credentials['PartnerCode'] = $credentials['TestPartnerCode'];
-            $credentials['AuthToken']   = $credentials['TestAuthToken'];
-        }
-
         $available_method_validation = explode(',', $configProduct['dcv']);
         if(isset($addonConfig['sslSettings']['disableEmailValidation']) && !empty($addonConfig['sslSettings']['disableEmailValidation']))
         {
@@ -1299,7 +1281,7 @@ class home extends AbstractController
         }
         $vars['available_method_validation'] = $available_method_validation;
 
-        $api = new SSLTrustCenterApi($configProduct['provider'], $credentials['PartnerCode'], $credentials['AuthToken'], $configProduct['category']);
+        $api = SSLTrustCenterApi::forVendor($configProduct['provider'], $configProduct['category']);
 
         if($_POST)
         {
@@ -3058,16 +3040,7 @@ class home extends AbstractController
         $configProduct = (new ProductRepository())->getProductConfiguration($packageId);
         $addonConfig   = (new AddonModuleRepository())->getModuleConfiguration();
 
-        $provider    = strtolower($configProduct['provider']);
-        $credentials = $addonConfig['credentials'][$provider];
-
-        if($provider == 'tss' && $credentials['OperationMode'] == 'sandbox')
-        {
-            $credentials['PartnerCode'] = $credentials['TestPartnerCode'];
-            $credentials['AuthToken']   = $credentials['TestAuthToken'];
-        }
-
-        return new SSLTrustCenterApi($configProduct['provider'], $credentials['PartnerCode'], $credentials['AuthToken'], $configProduct['category']);
+        return SSLTrustCenterApi::forVendor($configProduct['provider'], $configProduct['category']);
     }
 
     private function getSslConfigurationSettings($params)

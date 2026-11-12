@@ -31,6 +31,35 @@ class SSLTrustCenterApi
         $this->category = $category;
     }
 
+    /**
+     * [partner code, auth token] of a vendor as stored in the module settings (TheSSLStore: the sandbox pair while the
+     * sandbox mode is on); null when the vendor has no credentials
+     */
+    public static function credentialsOf($vendor)
+    {
+        $vendor      = strtolower((string)$vendor);
+        $credentials = (new \ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository())->getModuleConfiguration()['credentials'][$vendor] ?? [];
+        $sandbox     = $vendor === 'tss' && ($credentials['OperationMode'] ?? '') === 'sandbox';
+        $code        = trim((string)($credentials[$sandbox ? 'TestPartnerCode' : 'PartnerCode'] ?? ''));
+        $token       = (string)($credentials[$sandbox ? 'TestAuthToken' : 'AuthToken'] ?? '');
+
+        return $code !== '' ? [$code, $token] : null;
+    }
+
+    /**
+     * Gateway client of a vendor for a product category
+     */
+    public static function forVendor($vendor, $category = 'tls')
+    {
+        $credentials = self::credentialsOf($vendor);
+        if($credentials === null)
+        {
+            throw new \Exception('No gateway credentials configured for ' . Helpers::vendorToDisplay($vendor));
+        }
+
+        return new self($vendor, $credentials[0], $credentials[1], $category ?: 'tls');
+    }
+
     public function getProducts()
     {
         return $this->call('/products');

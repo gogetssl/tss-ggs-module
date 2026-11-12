@@ -72,83 +72,11 @@ class Renew
         $automaticProcessingOfRenewalOrders = $sslSettings['automaticProcessingOfRenewalOrders'];
         $configProduct = (new ProductRepository())->getProductConfiguration($pid);
 
-        $provider = strtolower($configProduct['provider']);
-        $credentials = $addonConfig['credentials'][$provider];
-
-        if($provider == 'tss' && $credentials['OperationMode'] == 'sandbox')
-        {
-            $credentials['PartnerCode'] = $credentials['TestPartnerCode'];
-            $credentials['AuthToken'] =  $credentials['TestAuthToken'];
-        }
-
-        $api = new SSLTrustCenterApi($configProduct['provider'], $credentials['PartnerCode'], $credentials['AuthToken'], $configProduct['category']);
+        $api = SSLTrustCenterApi::forVendor($configProduct['provider'], $configProduct['category']);
 
         if($renewOrderViaExistingOrder)
         {
-            $sslOrder = SSL::getByServiceId($serviceId);
-            $request = $api->getOrder($sslOrder->remoteid, $serviceId);
-
-            $requestRenew = $request['orderData'];
-
-            $now = time();
-            $nextduedate = strtotime((string)(CertificateService::stored($serviceId)['orderFiles']['validity']['end'] ?? '')) ?: $now; // the end date is in the stored certificate, the gateway order answer has none
-            $datediff = $nextduedate - $now;
-            $days = round($datediff / (60 * 60 * 24));
-
-            $requestRenew['renewal']['prior_order_id'] = $requestRenew['renewal']['prior_certificate_id'] = $sslOrder->remoteid;
-            $requestRenew['renewal']['remaining_days'] = CertificateService::renewalDays($serviceId, $days > 0 ? $days + 1 : 0);
-
-            $newOrder  = $api->renewOrder($serviceId, $requestRenew);
-            $newItemId = SSLTrustCenterApi::getItemId($newOrder);
-
-            SSL::where('serviceid', $serviceId)->update(['remoteid' => $newItemId]);
-
-            $invoiceId = 0;
-            $item = InvoiceItem::where('relid', $serviceId)->where('type', 'Hosting')->orderBy('id','desc')->first();
-            if(isset($item->invoiceid) && !empty($item->invoiceid))
-            {
-                $invoiceId = $item->invoiceid;
-            }
-
-            $apiPrice = $newOrder['order']['total_amount'];
-
-            // this renewal's row only: the rows of earlier renewals keep their own invoice and prices
-            Request::where('id', (int)Request::where('serviceid', $serviceId)->where('name', 'renewOrder')->max('id'))->update([
-                'invoiceid' => $invoiceId,
-                'api_price' => $apiPrice,
-                'whmcs_price' => $params['model']->amount,
-                'rate' => $rate,
-                'diff_price' => $params['model']->amount - $apiPrice,
-                'status' => 'pending'
-            ]);
-
-            $orderData = $api->getOrder($newItemId, $serviceId);
-
-            $orderFiles = [];
-            try {
-                $orderFiles = $api->getCertificateFiles($newItemId);
-            } catch (\Exception $exception) {}
-
-            $request = ['orderData' => $orderData, 'orderFiles' => $orderFiles];
-
-            // keep the issued certificate: it stays valid (and downloadable) while the renewal waits for validation
-            \ModulesGarden\TSSGGSModule\App\Libs\CertificateService::keepPreviousCertificate($serviceId);
-
-            // (insert() ignores the where() conditions: the row needs its own serviceid and name)
-            Request::where('serviceid', $serviceId)->where('name', 'certificate')->delete();
-            Request::insert([
-                'serviceid' => $serviceId,
-                'name' => 'certificate',
-                'request' => \encrypt(json_encode($request)),
-                'status' => 'pending',
-                'created_at' => date('Y-m-d H:i:s'),
-                'updated_at' => date('Y-m-d H:i:s')
-            ]);
-
-            // AutoInstall: install the renewed certificate (same CSR / private key) + "Renewal Started"; otherwise "Autorenewed" email
-            try {
-                AutoInstallHelpers::afterRenewal($serviceId, $serviceId, $newItemId);
-            } catch (\Exception $exception) {}
+            $this->orderRenewal($api, (int)$serviceId, (int)$serviceId, (float)$params['model']->amount, $rate);
         }
 
         if(!$renewOrderViaExistingOrder)
@@ -186,70 +114,106 @@ class Renew
 
             if($automaticProcessingOfRenewalOrders)
             {
-                $sslOrder = SSL::getByServiceId($serviceId);
-                $request = $api->getOrder($sslOrder->remoteid, $serviceId);
-
-                $requestRenew = $request['orderData'];
-
-                $now = time();
-                $nextduedate = strtotime((string)(CertificateService::stored($serviceId)['orderFiles']['validity']['end'] ?? '')) ?: $now; // the end date is in the stored certificate, the gateway order answer has none
-                $datediff = $nextduedate - $now;
-                $days = round($datediff / (60 * 60 * 24));
-                $requestRenew['renewal']['prior_order_id'] = $requestRenew['renewal']['prior_certificate_id'] = $sslOrder->remoteid;
-                $requestRenew['renewal']['remaining_days'] = CertificateService::renewalDays($serviceId, $days > 0 ? $days + 1 : 0);
-
-                $newOrder = $api->renewOrder($newServiceId, $requestRenew);
-                $newItemId = SSLTrustCenterApi::getItemId($newOrder);
                 $newService = Service::where('id', $newServiceId)->first();
-
-                $invoiceId = 0;
-                $item = InvoiceItem::where('relid', $newServiceId)->where('type', 'Hosting')->orderBy('id','desc')->first();
-                if(isset($item->invoiceid) && !empty($item->invoiceid))
-                {
-                    $invoiceId = $item->invoiceid;
-                }
-
-                $apiPrice = $newOrder['order']['total_amount'];
-
-                Request::where('id', (int)Request::where('serviceid', $newServiceId)->where('name', 'renewOrder')->max('id'))->update([
-                    'invoiceid' => $invoiceId,
-                    'api_price' => $apiPrice,
-                    'whmcs_price' => $newService->amount,
-                    'rate' => $rate,
-                    'diff_price' => $newService->amount - $apiPrice,
-                    'status' => 'pending'
-                ]);
-
-                $orderData = $api->getOrder($newItemId, $newServiceId);
-
-                $orderFiles = [];
-                try {
-                    $orderFiles = $api->getCertificateFiles($newItemId);
-                } catch (\Exception $exception) {}
-
-                $request = ['orderData' => $orderData, 'orderFiles' => $orderFiles];
-                Request::insert([
-                    'serviceid' => $newServiceId,
-                    'name' => 'certificate',
-                    'request' => \encrypt(json_encode($request)),
-                    'status' => 'pending',
-                    'created_at' => date('Y-m-d H:i:s'),
-                    'updated_at' => date('Y-m-d H:i:s')
-                ]);
-                SSL::where('serviceid', $newServiceId)->update([
-                    'remoteid' => $newItemId,
-                    'completiondate' => date('Y-m-d H:i:s'),
-                    'status' => 'Configuration Submitted'
-                ]);
-
-                // AutoInstall: install the renewed certificate (same CSR / private key) + "Renewal Started"; otherwise "Autorenewed" email
-                try {
-                    AutoInstallHelpers::afterRenewal($serviceId, $newServiceId, $newItemId);
-                } catch (\Exception $exception) {}
+                $this->orderRenewal($api, (int)$serviceId, (int)$newServiceId, (float)$newService->amount, $rate);
             }
         }
 
         return 'success';
+    }
+
+    /**
+     * Orders the renewal of $serviceId's certificate at the vendor for $targetServiceId (the same service, or the new
+     * service of a "renew via a new order" renewal) and stores it. Returns the new certificate (item) ID.
+     */
+    protected function orderRenewal($api, $serviceId, $targetServiceId, $amount, $rate)
+    {
+        $sslOrder = SSL::getByServiceId($serviceId);
+        if(!$sslOrder || !$sslOrder->remoteid)
+        {
+            throw new \Exception('The service has no certificate order to renew');
+        }
+        $request      = $api->getOrder($sslOrder->remoteid, $serviceId);
+        $requestRenew = $request['orderData'];
+
+        // days left on the current certificate (its end date is in the stored certificate, the gateway order answer has none)
+        $now  = time();
+        $end  = strtotime((string)(CertificateService::stored($serviceId)['orderFiles']['validity']['end'] ?? '')) ?: $now;
+        $days = round(($end - $now) / (60 * 60 * 24));
+
+        $requestRenew['renewal']['prior_order_id'] = $requestRenew['renewal']['prior_certificate_id'] = $sslOrder->remoteid;
+        $requestRenew['renewal']['remaining_days'] = CertificateService::renewalDays($serviceId, $days > 0 ? $days + 1 : 0);
+
+        $newOrder  = $api->renewOrder($targetServiceId, $requestRenew);
+        $newItemId = SSLTrustCenterApi::getItemId($newOrder);
+
+        // from here the order exists at the vendor: what follows is stored on a best effort, a failure never reports the
+        // renewal as failed (a second attempt would order a second certificate) - the certificates sync fills in the rest
+        $sameService = (int)$serviceId === (int)$targetServiceId;
+        SSL::where('serviceid', $targetServiceId)->update($sameService ? ['remoteid' => $newItemId] : [
+            'remoteid'       => $newItemId,
+            'completiondate' => date('Y-m-d H:i:s'),
+            'status'         => 'Configuration Submitted',
+        ]);
+
+        try
+        {
+            $item     = InvoiceItem::where('relid', $targetServiceId)->where('type', 'Hosting')->orderBy('id', 'desc')->first();
+            $apiPrice = $newOrder['order']['total_amount'] ?? 0;
+
+            // this renewal's row only: the rows of earlier renewals keep their own invoice and prices
+            Request::where('id', (int)Request::where('serviceid', $targetServiceId)->where('name', 'renewOrder')->max('id'))->update([
+                'invoiceid'   => !empty($item->invoiceid) ? $item->invoiceid : 0,
+                'api_price'   => $apiPrice,
+                'whmcs_price' => $amount,
+                'rate'        => $rate,
+                'diff_price'  => $amount - $apiPrice,
+                'status'      => 'pending',
+            ]);
+
+            $orderData  = $api->getOrder($newItemId, $targetServiceId);
+            $orderFiles = [];
+            try
+            {
+                $orderFiles = $api->getCertificateFiles($newItemId);
+            }
+            catch(\Throwable $exception)
+            {
+                // not issued yet
+            }
+
+            if($sameService)
+            {
+                // keep the issued certificate: it stays valid (and downloadable) while the renewal waits for validation
+                CertificateService::keepPreviousCertificate($serviceId);
+            }
+            // (insert() ignores the where() conditions: the row needs its own serviceid and name)
+            Request::where('serviceid', $targetServiceId)->where('name', 'certificate')->delete();
+            Request::insert([
+                'serviceid'  => $targetServiceId,
+                'name'       => 'certificate',
+                'request'    => \encrypt(json_encode(['orderData' => $orderData, 'orderFiles' => $orderFiles])),
+                'status'     => 'pending',
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
+            ]);
+        }
+        catch(\Throwable $exception)
+        {
+            \logActivity('TSSGGS: Renewal of service #' . (int)$serviceId . ' was ordered (certificate ' . $newItemId . '), its details will be read by the next certificates sync: ' . $exception->getMessage());
+        }
+
+        // AutoInstall: install the renewed certificate (same CSR / private key) + "Renewal Started"; otherwise "Autorenewed" email
+        try
+        {
+            AutoInstallHelpers::afterRenewal($serviceId, $targetServiceId, $newItemId);
+        }
+        catch(\Throwable $exception)
+        {
+            // the renewal itself is done
+        }
+
+        return $newItemId;
     }
 
 }

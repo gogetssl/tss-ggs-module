@@ -54,24 +54,13 @@ class Helpers
 
     public static function getConfiguredApis()
     {
-        $moduleRepository    = new AddonModuleRepository();
-        $moduleConfiguration = $moduleRepository->getModuleConfiguration();
-        $apis                = [];
-
-        if($moduleConfiguration['credentials']['ggs']['PartnerCode'])
+        // the vendors that have credentials (TheSSLStore: of the mode that is switched on)
+        $apis = [];
+        foreach(['GGS', 'TSS'] as $vendor)
         {
-            $apis['GGS'] = new SSLTrustCenterApi('GGS', $moduleConfiguration['credentials']['ggs']['PartnerCode'], $moduleConfiguration['credentials']['ggs']['AuthToken']);
-        }
-
-        if($moduleConfiguration['credentials']['tss']['PartnerCode'] || $moduleConfiguration['credentials']['tss']['TestPartnerCode'])
-        {
-            if($moduleConfiguration['credentials']['tss']['OperationMode'] == 'sandbox')
+            if(SSLTrustCenterApi::credentialsOf($vendor) !== null)
             {
-                $apis['TSS'] = new SSLTrustCenterApi('TSS', $moduleConfiguration['credentials']['tss']['TestPartnerCode'], $moduleConfiguration['credentials']['tss']['TestAuthToken']);
-            }
-            else
-            {
-                $apis['TSS'] = new SSLTrustCenterApi('TSS', $moduleConfiguration['credentials']['tss']['PartnerCode'], $moduleConfiguration['credentials']['tss']['AuthToken']);
+                $apis[$vendor] = SSLTrustCenterApi::forVendor($vendor);
             }
         }
 

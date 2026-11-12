@@ -37,16 +37,7 @@ class SSLStepTwo
             }
             $vars['available_method_validation'] = json_encode($available_method_validation);
 
-            $provider = strtolower($configProduct['provider']);
-            $credentials = $addonConfig['credentials'][$provider];
-
-            if($provider == 'tss' && $credentials['OperationMode'] == 'sandbox')
-            {
-                $credentials['PartnerCode'] = $credentials['TestPartnerCode'];
-                $credentials['AuthToken'] =  $credentials['TestAuthToken'];
-            }
-
-            $api = new SSLTrustCenterApi($configProduct['provider'], $credentials['PartnerCode'], $credentials['AuthToken'], $configProduct['category']);
+            $api = SSLTrustCenterApi::forVendor($configProduct['provider'], $configProduct['category']);
             $approvers = $api->getDomainEmails($domains);
             $vars['approvers'] = $this->approversToOptions($approvers);
 

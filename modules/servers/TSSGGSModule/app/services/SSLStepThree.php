@@ -64,16 +64,7 @@ class SSLStepThree
 
             $rate = $addonConfig['financeSettings']['rate'] ?: 1;
 
-            $provider = strtolower($configProduct['provider']);
-            $credentials = $addonConfig['credentials'][$provider];
-
-            if($provider == 'tss' && $credentials['OperationMode'] == 'sandbox')
-            {
-                $credentials['PartnerCode'] = $credentials['TestPartnerCode'];
-                $credentials['AuthToken'] =  $credentials['TestAuthToken'];
-            }
-
-            $api = new SSLTrustCenterApi($configProduct['provider'], $credentials['PartnerCode'], $credentials['AuthToken'], $configProduct['category']);
+            $api = SSLTrustCenterApi::forVendor($configProduct['provider'], $configProduct['category']);
             $decode = openssl_csr_get_subject($params['csr']);
             $mainMethod = $params['method'][$decode['CN']] == 'email' ? $params['approver'][$decode['CN']] : $params['method'][$decode['CN']];
 

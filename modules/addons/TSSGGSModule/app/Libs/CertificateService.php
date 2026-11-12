@@ -33,21 +33,9 @@ class CertificateService
             throw new \Exception('Service #' . (int)$serviceId . ' not found');
         }
 
-        $product     = (new ProductRepository())->getProductConfiguration($packageId);
-        $credentials = (new AddonModuleRepository())->getModuleConfiguration()['credentials'][strtolower($product['provider'])] ?? [];
+        $product = (new ProductRepository())->getProductConfiguration($packageId);
 
-        if(strtolower($product['provider']) === 'tss' && ($credentials['OperationMode'] ?? '') === 'sandbox')
-        {
-            $credentials['PartnerCode'] = $credentials['TestPartnerCode'] ?? '';
-            $credentials['AuthToken']   = $credentials['TestAuthToken'] ?? '';
-        }
-
-        if(empty($credentials['PartnerCode']))
-        {
-            throw new \Exception('No gateway credentials configured for ' . Helpers::vendorToDisplay($product['provider']));
-        }
-
-        return new SSLTrustCenterApi($product['provider'], $credentials['PartnerCode'], $credentials['AuthToken'], $product['category'] ?: self::CATEGORY_TLS);
+        return SSLTrustCenterApi::forVendor($product['provider'], $product['category'] ?: self::CATEGORY_TLS);
     }
 
     public static function category($serviceId)
