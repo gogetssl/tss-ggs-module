@@ -125,10 +125,10 @@ class DataTable extends \ModulesGarden\TSSGGSModule\Components\DataTable\DataTab
 
             $rows[] = [
                 'id'             => $remoteProduct->id,
-                'whmcsProductId' => $whmcsProduct->id,
-                'productName'    => $remoteProduct->name,
-                'brand'          => $remoteProduct->brand,
-                'validation'     => $remoteProduct->validation,
+                'whmcsProductId' => $whmcsProduct ? $whmcsProduct->id : null,
+                'productName'    => htmlspecialchars((string)$remoteProduct->name, ENT_QUOTES, 'UTF-8', false),
+                'brand'          => htmlspecialchars((string)$remoteProduct->brand, ENT_QUOTES, 'UTF-8', false),
+                'validation'     => htmlspecialchars((string)$remoteProduct->validation, ENT_QUOTES, 'UTF-8', false),
                 'provider'       => Helpers::vendorToDisplay($remoteProduct->vendor),
                 'billing'        => $whmcsProduct ? $this->translate('billing_' . ($whmcsProduct->paytype ?: 'recurring')) : '-',
                 'status'         => $this->badges(ProductCatalog::badges((array)$remoteProduct->rawData, $whmcsProduct)),

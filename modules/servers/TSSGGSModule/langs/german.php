@@ -244,6 +244,8 @@ $_LANG['resend_dcv_error'] = 'Die Validierungs-E-Mail konnte nicht gesendet werd
 $_LANG['revalidate_error'] = 'Die Validierungsprüfung konnte nicht angefordert werden:';
 $_LANG['renew_exists'] = 'Die Rechnung für die Verlängerung existiert bereits.';
 $_LANG['renew_not_recurring'] = 'Dieser Dienst wird einmalig abgerechnet und kann hier nicht verlängert werden. Bitte geben Sie eine neue Bestellung auf.';
+$_LANG['sslConfigOrderFailedCancel'] = 'Das Abonnement konnte beim Anbieter nicht gekündigt werden. Bitte versuchen Sie es erneut oder wenden Sie sich an den Support.';
+$_LANG['requestInProgress'] = 'Für diesen Dienst wird gerade eine andere Anfrage verarbeitet. Bitte warten Sie einen Moment und versuchen Sie es erneut.';
 $_LANG['renew_invoice_generated'] = 'Die Rechnung für die Verlängerung wurde erfolgreich erstellt.';
 $_LANG['Click here to view the invoice'] = 'Klicken Sie hier, um die Rechnung anzuzeigen';
 

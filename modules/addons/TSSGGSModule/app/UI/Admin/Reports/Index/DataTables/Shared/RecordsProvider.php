@@ -16,6 +16,11 @@ class RecordsProvider
 {
     use TranslatorTrait;
 
+    protected static function e($value): string
+    {
+        return htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8', false);
+    }
+
     public function getRecords($filters = [], $onlyPaid = false)
     {
         $query = Capsule::table('tblinvoiceitems')
@@ -202,8 +207,9 @@ class RecordsProvider
                 'vendor'         => $item->configoption1,
                 'date'           => $item->regdate,
                 'storeId'        => $storeId,
-                'clientDetails'  => "{$clientName}<br><strong>{$this->translate('country')}</strong> {$item->country}",
-                'productDetails' => "{$item->name}<br><strong>{$this->translate('domain')}</strong> {$item->domain}",
+                // shown as HTML: the values are escaped (WHMCS stores some of them encoded already - not encoded twice)
+                'clientDetails'  => self::e($clientName) . "<br><strong>{$this->translate('country')}</strong> " . self::e($item->country),
+                'productDetails' => self::e($item->name) . "<br><strong>{$this->translate('domain')}</strong> " . self::e($item->domain),
                 'productId'      => $item->productId,
                 'productName'    => $item->name,
                 'type'           => $item->configoption4,

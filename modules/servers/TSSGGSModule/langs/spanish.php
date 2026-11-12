@@ -244,6 +244,8 @@ $_LANG['resend_dcv_error'] = 'No se pudo enviar el correo de validación:';
 $_LANG['revalidate_error'] = 'No se pudo solicitar la comprobación de la validación:';
 $_LANG['renew_exists'] = 'La factura de renovación ya existe.';
 $_LANG['renew_not_recurring'] = 'Este servicio se factura una sola vez y no se puede renovar aquí. Realice un nuevo pedido.';
+$_LANG['sslConfigOrderFailedCancel'] = 'La suscripción no se pudo cancelar en el proveedor. Inténtelo de nuevo o póngase en contacto con soporte.';
+$_LANG['requestInProgress'] = 'Se está procesando otra solicitud para este servicio. Espere un momento e inténtelo de nuevo.';
 $_LANG['renew_invoice_generated'] = 'La factura de renovación se ha generado correctamente.';
 $_LANG['Click here to view the invoice'] = 'Haga clic aquí para ver la factura';
 

@@ -244,6 +244,8 @@ $_LANG['resend_dcv_error']                                                      
 $_LANG['revalidate_error']                                                                                                       = 'The validation check could not be requested:';
 $_LANG['renew_exists']                                                                                                           = 'The invoice for renewal already exists.';
 $_LANG['renew_not_recurring'] = 'This service is billed once and cannot be renewed here. Please place a new order.';
+$_LANG['sslConfigOrderFailedCancel'] = 'The subscription could not be cancelled at the vendor. Please try again or contact support.';
+$_LANG['requestInProgress'] = 'Another request for this service is being processed. Please wait a moment and try again.';
 $_LANG['renew_invoice_generated']                                                                                                = 'The invoice for renewal has been generated successfully.';
 $_LANG['Click here to view the invoice']                                                                                         = 'Click here to view the invoice';
 

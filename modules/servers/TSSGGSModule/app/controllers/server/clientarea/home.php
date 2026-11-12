@@ -1597,6 +1597,7 @@ class home extends AbstractController
     public function createSubscriptionJSON($input, $vars = array())
     {
         $this->requireCsrfToken();
+        $this->requireOrderableService($input, AcmeHelpers::isAcmeWhmcsProduct((int)$input['params']['packageid']));
         $whmcsProductId  = (int)$input['params']['packageid'];
         $serviceId       = (int)$input['id'];
         $singleDomains   = $this->extractDomainsFromInput(isset($input['single_domains']) ? $input['single_domains'] : '');
@@ -1773,6 +1774,7 @@ class home extends AbstractController
     public function buyMoreDomainsJSON($input, $vars = array())
     {
         $this->requireCsrfToken();
+        $this->requireOrderableService($input, AcmeHelpers::isAcmeWhmcsProduct((int)$input['params']['packageid']));
         $serviceId       = (int)$input['id'];
         $singleDomains   = $this->extractDomainsFromInput(isset($input['single_domains']) ? $input['single_domains'] : '');
         $wildcardDomains = $this->extractDomainsFromInput(isset($input['wildcard_domains']) ? $input['wildcard_domains'] : '');
@@ -2884,6 +2886,7 @@ class home extends AbstractController
     public function createAisJSON($input, $vars = array())
     {
         $this->requireCsrfToken();
+        $this->requireOrderableService($input, AisHelpers::isAisWhmcsProduct((int)$input['params']['packageid']));
         $serviceId = (int)$input['id'];
         $domain    = isset($input['domain']) ? strtolower(trim($input['domain'])) : '';
 
@@ -3017,11 +3020,14 @@ class home extends AbstractController
             throw new \Exception(Lang::absoluteT('aisSubscriptionNotCreatedYet'));
         }
 
+        // without the vendor's item ID nothing can be cancelled there: never report a cancellation
+        // that did not happen (the vendor would keep billing the subscription)
         $api = Helpers::getApiByServiceId($serviceId);
-        if((int)$subscription->ais_item_id > 0)
+        if(!$api || (int)$subscription->ais_item_id <= 0)
         {
-            $api->cancelAisSubscription((int)$subscription->ais_item_id, 'Cancelled by client');
+            throw new \Exception(Lang::absoluteT('sslConfigOrderFailedCancel'));
         }
+        $api->cancelAisSubscription((int)$subscription->ais_item_id, 'Cancelled by client');
 
         $subscription->status       = 'cancelled';
         $subscription->auto_renew   = 0;
@@ -3658,6 +3664,22 @@ class home extends AbstractController
      * State-changing client actions must be POSTed with the WHMCS CSRF token - WHMCS itself verifies the token
      * only on its own forms, so module actions reachable via GET would otherwise be open to CSRF.
      */
+    /**
+     * Actions that order at the vendor: only for the product type they belong to, an active (paid) service, and one
+     * request at a time (a double click must not order twice)
+     */
+    private function requireOrderableService($input, $rightProduct)
+    {
+        if(!$rightProduct || ($input['params']['status'] ?? '') !== 'Active')
+        {
+            throw new \Exception(Lang::absoluteT('smimeServiceNotActive'));
+        }
+        if(!$this->acquireServiceLock((int)$input['id']))
+        {
+            throw new \Exception(Lang::absoluteT('requestInProgress'));
+        }
+    }
+
     private function requireCsrfToken()
     {
         if($_SERVER['REQUEST_METHOD'] !== 'POST' || !\ModulesGarden\TSSGGSModule\App\Libs\CsrfToken::valid($_POST['token'] ?? ''))

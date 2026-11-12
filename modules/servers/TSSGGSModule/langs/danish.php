@@ -244,6 +244,8 @@ $_LANG['resend_dcv_error']                                                      
 $_LANG['revalidate_error']                                                                                                       = 'Valideringskontrollen kunne ikke anmodes:';
 $_LANG['renew_exists']                                                                                                           = 'Fakturaen for fornyelsen findes allerede.';
 $_LANG['renew_not_recurring'] = 'Denne tjeneste faktureres én gang og kan ikke fornyes her. Afgiv venligst en ny ordre.';
+$_LANG['sslConfigOrderFailedCancel'] = 'Abonnementet kunne ikke opsiges hos leverandøren. Prøv igen, eller kontakt support.';
+$_LANG['requestInProgress'] = 'En anden anmodning for denne tjeneste behandles. Vent et øjeblik, og prøv igen.';
 $_LANG['renew_invoice_generated']                                                                                                = 'Fakturaen for fornyelsen er blevet oprettet.';
 $_LANG['Click here to view the invoice']                                                                                         = 'Klik her for at se fakturaen';
 

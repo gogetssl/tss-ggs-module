@@ -92,7 +92,8 @@ class SslPages
             'active'    => '',
         ];
 
-        if($_SERVER['REQUEST_METHOD'] === 'POST')
+        // the tools work for a signed-in client only: a visitor must not make the server generate keys or open connections
+        if($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_SESSION['uid']))
         {
             $action           = isset($_POST['action']) ? (string)$_POST['action'] : '';
             $vars['active']   = $action;

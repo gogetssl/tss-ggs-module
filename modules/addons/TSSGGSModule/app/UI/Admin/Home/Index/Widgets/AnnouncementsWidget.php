@@ -47,10 +47,24 @@ class AnnouncementsWidget extends Card
             [$icon, $tone] = self::TONES[$a['category']] ?? ['bullhorn-outline', 'info'];
             $html .= '<article class="tssggs-alertrow">' . Card::tile($icon, $tone)
                 . '<div><h4>' . Card::e($a['title']) . ($a['vendor'] !== '' ? ' <small>' . Card::e($a['vendor']) . '</small>' : '') . '</h4>'
-                . '<div class="tssggs-alertrow__text">' . strip_tags($a['body'], self::ALLOWED_TAGS) . '</div></div>'
+                . '<div class="tssggs-alertrow__text">' . self::safeHtml($a['body']) . '</div></div>'
                 . '<time>' . Card::e($a['date'] !== '' ? date('j M Y', strtotime($a['date'])) : '') . '</time></article>';
         }
         $this->body('<div class="tssggs-alerts">' . $html . '</div>');
+    }
+
+    /** The allowed tags without their attributes; a link keeps its http(s) address only */
+    protected static function safeHtml($body): string
+    {
+        return (string)preg_replace_callback('/<([a-z0-9]+)\b[^>]*>/i', function($tag) {
+            $name = strtolower($tag[1]);
+            if($name === 'a' && preg_match('/href\s*=\s*(["\'])(https?:\/\/[^"\'<>\s]+)\1/i', $tag[0], $href))
+            {
+                return '<a href="' . htmlspecialchars($href[2], ENT_QUOTES) . '" target="_blank" rel="noopener">';
+            }
+
+            return '<' . $name . '>';
+        }, strip_tags((string)$body, self::ALLOWED_TAGS));
     }
 
     /** Announcements of the configured vendors; every gateway returns all of them, so one call is enough */

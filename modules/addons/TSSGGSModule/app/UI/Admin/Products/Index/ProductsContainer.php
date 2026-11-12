@@ -21,12 +21,12 @@ class ProductsContainer extends Container implements AdminAreaInterface
         unset($_SESSION[ProductsController::SESSION]);
         if(!empty($session['error']))
         {
-            $this->addElement((new AlertDanger())->setText($session['error']));
+            $this->addElement((new AlertDanger())->setText(htmlspecialchars((string)$session['error'], ENT_QUOTES, 'UTF-8', false)));
         }
         if(!empty($session['notice']))
         {
             $notice = $session['notice'];
-            $this->addElement((new AlertSuccess())->setText($this->translate('notice_' . $notice['key'], ['product' => $notice['product'], 'detail' => $notice['detail'] !== '' ? $notice['detail'] : '-'])));
+            $this->addElement((new AlertSuccess())->setText($this->translate('notice_' . $notice['key'], ['product' => htmlspecialchars((string)$notice['product'], ENT_QUOTES, 'UTF-8', false), 'detail' => $notice['detail'] !== '' ? htmlspecialchars((string)$notice['detail'], ENT_QUOTES, 'UTF-8', false) : '-'])));
         }
 
         if(!\ModulesGarden\TSSGGSModule\App\Libs\GeneralSettings::enabled('hideInfoMessages'))
