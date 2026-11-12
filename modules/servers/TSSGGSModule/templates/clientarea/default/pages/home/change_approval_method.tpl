@@ -1,6 +1,5 @@
 <div class="change-approver-ssl-unified">
     <form method="post">
-        <input type="hidden" name="token" value="{$csrfToken}">
         <h2 class="card-title">{$MGLANG->T('change_approval', 'Change a Validation Method')}</h2>
 
         <div class="tab-content pt-3">
