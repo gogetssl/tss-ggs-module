@@ -509,6 +509,15 @@ $_LANG['csInvalidEmail'] = 'Ugyldig e-mailadresse: %s';
 $_LANG['csInvalidCountry'] = 'Ugyldig landekode: %s. Brug koden med 2 bogstaver, f.eks. LV.';
 $_LANG['csFieldRequired'] = '%s skal udfyldes.';
 $_LANG['csProvisioningInvalid'] = 'Leveringsmuligheden for denne tjeneste er ugyldig. Kontakt vores support.';
+$_LANG['csHsmModelRequired'] = 'Vælg modellen af din HSM.';
+$_LANG['csInvalidAttestation'] = 'Nøgleattesteringen er ikke gyldig. Indsæt den Base64-kodede attestering, som din HSM har oprettet for denne nøgle.';
+$_LANG['csShippingUsOnly'] = 'Den forsendelse, der blev valgt med din ordre, er kun tilgængelig for organisationer i USA. Kontakt vores support for at ændre den til international forsendelse.';
+$_LANG['csTermNeedsHsm'] = 'Et hardware-token kan højst rumme et kodesigneringscertifikat i 1 år. Et certifikat for 2 eller 3 år kan kun installeres på din egen HSM. Kontakt vores support.';
+$_LANG['serverCA']['home']['csHsmModelLabel'] = 'HSM-model';
+$_LANG['serverCA']['home']['csAttestationLabel'] = 'Nøgleattestering';
+$_LANG['serverCA']['home']['csAttestationHint'] = 'Den Base64-kodede attestering, som din HSM har oprettet for nøglen til denne CSR. Den beviser, at den private nøgle er genereret på HSM\'en.';
+$_LANG['serverCA']['home']['csTokenInitCode'] = 'Initialiseringskode til token';
+$_LANG['serverCA']['home']['csTokenInitCodeHint'] = 'Du skal bruge denne kode til at klargøre hardware-tokenet, når det ankommer. Opbevar den sikkert.';
 // Renewal of S/MIME / code signing
 $_LANG['serverCA']['home']['renewButton'] = 'Forny';
 $_LANG['serverCA']['home']['renewTitle'] = 'Forny certifikat';

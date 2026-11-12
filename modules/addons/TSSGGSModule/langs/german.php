@@ -741,6 +741,7 @@ $_LANG['admin.pricing.index.data_tables.pricing.forms.pricing_form.oneTime'] = '
 $_LANG['admin.pricing.index.data_tables.pricing.forms.pricing_form.info'] = 'Informationen zur automatischen Aktualisierung';
 
 $_LANG['acme_order_requires_at_least_one_san'] = 'Um dieses Produkt zu bestellen, müssen Sie mindestens 1 zusätzliche Einzeldomain-SAN oder zusätzliche Wildcard-SAN auswählen.';
+$_LANG['csCartTermNeedsHsm'] = 'Code-Signing-Zertifikate für 2 oder 3 Jahre können nur auf Ihrem eigenen HSM installiert werden. Wählen Sie "Mein eigenes HSM" als Zertifikatszustellung oder einen Abrechnungszeitraum von 1 Jahr.';
 
 
 

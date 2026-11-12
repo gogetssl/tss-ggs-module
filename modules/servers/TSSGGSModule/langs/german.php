@@ -509,6 +509,15 @@ $_LANG['csInvalidEmail'] = 'Ungültige E-Mail-Adresse: %s';
 $_LANG['csInvalidCountry'] = 'Ungültiger Ländercode: %s. Verwenden Sie den 2-stelligen Code, z. B. LV.';
 $_LANG['csFieldRequired'] = '%s ist erforderlich.';
 $_LANG['csProvisioningInvalid'] = 'Die Zustelloption dieses Dienstes ist ungültig. Bitte kontaktieren Sie unseren Support.';
+$_LANG['csHsmModelRequired'] = 'Bitte wählen Sie das Modell Ihres HSM.';
+$_LANG['csInvalidAttestation'] = 'Die Schlüsselattestierung ist ungültig. Fügen Sie die Base64-kodierte Attestierung ein, die Ihr HSM für diesen Schlüssel erstellt hat.';
+$_LANG['csShippingUsOnly'] = 'Der mit Ihrer Bestellung gewählte Versand ist nur für Organisationen in den USA verfügbar. Bitte wenden Sie sich an unseren Support, um ihn auf internationalen Versand zu ändern.';
+$_LANG['csTermNeedsHsm'] = 'Ein Hardware-Token kann ein Code-Signing-Zertifikat höchstens 1 Jahr lang aufnehmen. Ein Zertifikat für 2 oder 3 Jahre kann nur auf Ihrem eigenen HSM installiert werden. Bitte wenden Sie sich an unseren Support.';
+$_LANG['serverCA']['home']['csHsmModelLabel'] = 'HSM-Modell';
+$_LANG['serverCA']['home']['csAttestationLabel'] = 'Schlüsselattestierung';
+$_LANG['serverCA']['home']['csAttestationHint'] = 'Die Base64-kodierte Attestierung, die Ihr HSM für den Schlüssel dieser CSR erstellt hat. Sie belegt, dass der private Schlüssel auf dem HSM erzeugt wurde.';
+$_LANG['serverCA']['home']['csTokenInitCode'] = 'Initialisierungscode des Tokens';
+$_LANG['serverCA']['home']['csTokenInitCodeHint'] = 'Sie benötigen diesen Code, um das Hardware-Token nach dem Eintreffen einzurichten. Bewahren Sie ihn sicher auf.';
 // Renewal of S/MIME / code signing
 $_LANG['serverCA']['home']['renewButton'] = 'Verlängern';
 $_LANG['serverCA']['home']['renewTitle'] = 'Zertifikat verlängern';

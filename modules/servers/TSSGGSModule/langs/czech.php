@@ -509,6 +509,15 @@ $_LANG['csInvalidEmail'] = 'Neplatná e-mailová adresa: %s';
 $_LANG['csInvalidCountry'] = 'Neplatný kód země: %s. Použijte 2písmenný kód, např. LV.';
 $_LANG['csFieldRequired'] = 'Pole %s je povinné.';
 $_LANG['csProvisioningInvalid'] = 'Možnost doručení této služby není platná. Kontaktujte prosím naši podporu.';
+$_LANG['csHsmModelRequired'] = 'Vyberte prosím model svého HSM.';
+$_LANG['csInvalidAttestation'] = 'Atestace klíče není platná. Vložte atestaci v kódování Base64, kterou váš HSM vytvořil pro tento klíč.';
+$_LANG['csShippingUsOnly'] = 'Doprava zvolená s vaší objednávkou je dostupná pouze pro organizace v USA. Kontaktujte prosím naši podporu a změňte ji na mezinárodní dopravu.';
+$_LANG['csTermNeedsHsm'] = 'Hardwarový token pojme certifikát pro podpis kódu nejvýše na 1 rok. Certifikát na 2 nebo 3 roky lze nainstalovat pouze do vlastního HSM. Kontaktujte prosím naši podporu.';
+$_LANG['serverCA']['home']['csHsmModelLabel'] = 'Model HSM';
+$_LANG['serverCA']['home']['csAttestationLabel'] = 'Atestace klíče';
+$_LANG['serverCA']['home']['csAttestationHint'] = 'Atestace v kódování Base64, kterou váš HSM vytvořil pro klíč tohoto CSR. Dokládá, že soukromý klíč byl vygenerován v HSM.';
+$_LANG['serverCA']['home']['csTokenInitCode'] = 'Inicializační kód tokenu';
+$_LANG['serverCA']['home']['csTokenInitCodeHint'] = 'Tento kód budete potřebovat k nastavení hardwarového tokenu po jeho doručení. Uschovejte jej v bezpečí.';
 // Renewal of S/MIME / code signing
 $_LANG['serverCA']['home']['renewButton'] = 'Prodloužit';
 $_LANG['serverCA']['home']['renewTitle'] = 'Prodloužit certifikát';

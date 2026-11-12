@@ -8,12 +8,16 @@ use ModulesGarden\TSSGGSModule\Packages\Product\Services\ConfigurableOptionsGrou
 use WHMCS\Database\Capsule;
 
 /**
- * Hardware code signing certificates of GoGetSSL, ordered through the gateway (/certificates/cs).
+ * Hardware code signing certificates of GoGetSSL and TheSSLStore, ordered through the gateway (/certificates/cs).
  *
  * Delivery ("provisioning"): a new hardware token shipped by the CA, the client's existing token or the client's own
  * HSM (CSR). The token shipping is charged to the reseller, so it is sold as the "Certificate Delivery" configurable
  * option of the product (one-time fee per shipping option); a renewal reuses the token (no shipping on the invoice).
  * Cloud code signing ("keylocker") is not supported.
+ *
+ * TheSSLStore Sectigo/Comodo products: no existing token; the own HSM needs its model and key attestation; a token
+ * is valid for 12 months at most (2 / 3 years only on an HSM); standard / expedited shipping only for an organization
+ * in the US, international shipping otherwise.
  *
  * Stored order (see GatewayOrderService) plus: method, tokenModel, shipping, csrProvided, organization.
  * tblhosting.domain = the organization name.
@@ -24,8 +28,28 @@ class CodeSigningService extends GatewayOrderService
     const REQUEST_NAME = 'codesigning';
     const LABEL        = 'Code Signing';
 
-    // GoGetSSL products the module sells (the Sectigo ones and cloud code signing are not supported)
-    const SUPPORTED_PRODUCTS = ['GGS' => ['39', '89', '137', '138']];
+    // gateway products the module sells (GoGetSSL: not the Sectigo ones and cloud code signing)
+    const SUPPORTED_PRODUCTS = [
+        'GGS' => ['39', '89', '137', '138'],
+        'TSS' => ['sectigocsc', 'sectigoevcsc', 'comodocsc', 'comodoevcsc', 'digi_csc', 'digi_csc_ev'],
+    ];
+
+    // TheSSLStore Sectigo/Comodo products (rules in the class description)
+    const TSS_SECTIGO_PRODUCTS = ['sectigocsc', 'sectigoevcsc', 'comodocsc', 'comodoevcsc'];
+
+    // HSM models of TheSSLStore Sectigo/Comodo orders (the key attestation comes from that HSM)
+    const HSM_MODELS = [
+        'LUNA'           => 'Thales Luna HSM',
+        'YUBIKEY'        => 'YubiKey / YubiHSM',
+        'MARVELL_GOOGLE' => 'Google Cloud HSM (Marvell)',
+        'FORTANIX'       => 'Fortanix DSM',
+    ];
+
+    // longest term (months) on a hardware token; longer terms only on an own HSM
+    const MAX_TOKEN_TERM = 12;
+
+    // TheSSLStore Sectigo/Comodo: shipping options for an organization in the US
+    const US_SHIPPING = ['STANDARD', 'EXPEDITED'];
 
     const METHOD_SHIP_TOKEN     = 'ship-token';
     const METHOD_EXISTING_TOKEN = 'existing-token';
@@ -79,14 +103,46 @@ class CodeSigningService extends GatewayOrderService
 
     // ------------------------------------------------------------------ product data
 
+    /** A TheSSLStore Sectigo/Comodo product (gateway product ID) */
+    public static function isTssSectigo($remoteId)
+    {
+        return in_array(strtolower((string)$remoteId), self::TSS_SECTIGO_PRODUCTS, true);
+    }
+
+    /** Gateway product ID of the WHMCS product */
+    public static function remoteIdOfProduct($whmcsProductId)
+    {
+        return (string)Capsule::table('tblproducts')->where('id', (int)$whmcsProductId)->value('configoption2');
+    }
+
     /**
-     * Hardware delivery methods of the gateway product
+     * Hardware delivery methods of the gateway product (TheSSLStore Sectigo/Comodo: no existing token, which the
+     * gateway lists but TheSSLStore refuses)
      */
     public static function methods(array $rawData)
     {
         $methods = isset($rawData['provisioning']['methods']) && is_array($rawData['provisioning']['methods']) ? $rawData['provisioning']['methods'] : self::METHODS;
+        $methods = array_values(array_intersect(self::METHODS, array_map('strval', $methods)));
+        if(static::isTssSectigo($rawData['id'] ?? ''))
+        {
+            $methods = array_values(array_diff($methods, [self::METHOD_EXISTING_TOKEN]));
+        }
 
-        return array_values(array_intersect(self::METHODS, array_map('strval', $methods)));
+        return $methods;
+    }
+
+    /** Price of the hardware token itself (TheSSLStore charges it with a new token, GoGetSSL includes it) */
+    public static function tokenPrice(array $rawData)
+    {
+        foreach((array)($rawData['tokens'] ?? []) as $token)
+        {
+            if(is_numeric($token['selling'] ?? null))
+            {
+                return (float)$token['selling'];
+            }
+        }
+
+        return 0.0;
     }
 
     /**
@@ -105,9 +161,14 @@ class CodeSigningService extends GatewayOrderService
                     continue;
                 }
                 $id = strtoupper((string)$option['id']);
+                $label = !empty($option['label']) ? (string)$option['label'] : ucfirst(strtolower($id)) . ' Shipping';
+                if(static::isTssSectigo($rawData['id'] ?? ''))
+                {
+                    $label .= in_array($id, self::US_SHIPPING, true) ? ' (US)' : ' (non-US)';
+                }
                 $options[$id] = [
                     'id'      => $id,
-                    'label'   => !empty($option['label']) ? (string)$option['label'] : ucfirst(strtolower($id)) . ' Shipping',
+                    'label'   => $label,
                     'selling' => is_numeric($option['selling'] ?? null) ? (float)$option['selling'] : 0.0,
                 ];
             }
@@ -171,10 +232,9 @@ class CodeSigningService extends GatewayOrderService
         $subs    = [];
         if(in_array(self::METHOD_SHIP_TOKEN, $methods, true))
         {
-            // no shipping price from the gateway = nothing to charge: no "new token" choice
-            foreach(static::shippingOptions($rawData) as $shipping)
+            foreach(static::newTokenChoices($rawData) as $value => list($label, $fee))
             {
-                $subs[] = ['ship-token:' . $shipping['id'], 'New hardware token - ' . $shipping['label'], $shipping['selling']];
+                $subs[] = [$value, $label, $fee];
             }
         }
         if(in_array(self::METHOD_EXISTING_TOKEN, $methods, true))
@@ -216,6 +276,26 @@ class CodeSigningService extends GatewayOrderService
     }
 
     /**
+     * "New token" choices of the delivery option: value => [label, one-time fee = token + shipping]. Without shipping
+     * options but with a token price (TheSSLStore DigiCert) one choice with the default shipping.
+     */
+    public static function newTokenChoices(array $rawData)
+    {
+        $token   = static::tokenPrice($rawData);
+        $choices = [];
+        foreach(static::shippingOptions($rawData) as $shipping)
+        {
+            $choices['ship-token:' . $shipping['id']] = ['New hardware token - ' . $shipping['label'], $token + $shipping['selling']];
+        }
+        if(!$choices && $token > 0)
+        {
+            $choices['ship-token:' . self::DEFAULT_SHIPPING] = ['New hardware token', $token];
+        }
+
+        return $choices;
+    }
+
+    /**
      * Shipping fees of the delivery option from the gateway prices (price update cron)
      */
     public static function syncDeliveryPrices($whmcsProductId, array $rawData)
@@ -227,9 +307,9 @@ class CodeSigningService extends GatewayOrderService
         }
 
         $prices = [];
-        foreach(static::shippingOptions($rawData) as $shipping)
+        foreach(static::newTokenChoices($rawData) as $value => list(, $fee))
         {
-            $prices['ship-token:' . strtolower($shipping['id'])] = $shipping['selling'];
+            $prices[strtolower($value)] = $fee;
         }
         foreach(Capsule::table('tblproductconfigoptionssub')->where('configid', $option->id)->get(['id', 'optionname']) as $sub)
         {
@@ -291,7 +371,10 @@ class CodeSigningService extends GatewayOrderService
      *   only when its shipping was paid; the gateway charges the shipping to the reseller).
      * A paid option the gateway product no longer offers stops the order (error key "csProvisioningInvalid").
      *
-     * @return array ['methods' => string[], 'fixed' => ['method' => .., 'shipping' => ..] | null, 'shipping_options' => array, 'renewal' => bool]
+     * A token holds a certificate for 12 months at most: a longer billing cycle allows only the own HSM.
+     *
+     * @return array ['methods' => string[], 'fixed' => ['method' => .., 'shipping' => ..] | null, 'shipping_options' => array,
+     *                'renewal' => bool, 'remote_id' => string, 'term' => int, 'hsm_attestation' => bool]
      */
     public static function availableDelivery($serviceId)
     {
@@ -300,25 +383,67 @@ class CodeSigningService extends GatewayOrderService
         $rawData   = $remote && is_array($remote->rawData) ? $remote->rawData : [];
         $methods   = static::methods($rawData);
         $renewal   = !empty(static::stored($serviceId)['previous']);
+        $remoteId  = static::remoteIdOfProduct($packageId);
+        $term      = static::termForBillingCycle((string)Capsule::table('tblhosting')->where('id', (int)$serviceId)->value('billingcycle'), static::availableTerms($packageId));
+        // longer than a token allows: only an own HSM
+        if($term > self::MAX_TOKEN_TERM)
+        {
+            $methods = array_values(array_intersect($methods, [self::METHOD_HSM]));
+        }
+        $extra = ['remote_id' => $remoteId, 'term' => $term, 'hsm_attestation' => static::isTssSectigo($remoteId)];
 
         $paid  = static::paidDelivery($serviceId);
         $fixed = $paid !== null && $paid !== '' ? static::parseProvisioningValue($paid) : null;
         if($paid !== null && $paid !== '' && ($fixed === null || !in_array($fixed['method'], $methods, true)))
         {
-            throw new \Exception('csProvisioningInvalid');
+            throw new \Exception($term > self::MAX_TOKEN_TERM && $fixed !== null && $fixed['method'] !== self::METHOD_HSM ? 'csTermNeedsHsm' : 'csProvisioningInvalid');
         }
 
         if($fixed !== null && !$renewal)
         {
-            return ['methods' => [$fixed['method']], 'fixed' => $fixed, 'shipping_options' => static::shippingOptions($rawData), 'renewal' => false];
+            return ['methods' => [$fixed['method']], 'fixed' => $fixed, 'shipping_options' => static::shippingOptions($rawData), 'renewal' => false] + $extra;
+        }
+
+        $methods = array_values(array_diff($methods, [self::METHOD_SHIP_TOKEN]));
+        if(!$methods)
+        {
+            throw new \Exception($term > self::MAX_TOKEN_TERM ? 'csTermNeedsHsm' : 'csProvisioningInvalid');
         }
 
         return [
-            'methods'          => array_values(array_diff($methods, [self::METHOD_SHIP_TOKEN])),
+            'methods'          => $methods,
             'fixed'            => null,
             'shipping_options' => static::shippingOptions($rawData),
             'renewal'          => $renewal,
-        ];
+        ] + $extra;
+    }
+
+    /**
+     * Cart check: a token holds a certificate for 12 months at most, so a longer billing cycle needs the own HSM.
+     *
+     * @param array $configOptions configurable options of the cart item (option ID => sub-option ID)
+     * @return string|null language key of the error
+     */
+    public static function cartError($whmcsProductId, $billingCycle, array $configOptions)
+    {
+        if(!static::isWhmcsProduct($whmcsProductId))
+        {
+            return null;
+        }
+        $term = static::termForBillingCycle(ucfirst(strtolower((string)$billingCycle)), static::availableTerms($whmcsProductId));
+        if($term <= self::MAX_TOKEN_TERM)
+        {
+            return null;
+        }
+        $option = static::deliveryOption($whmcsProductId);
+        if(!$option || empty($configOptions[$option->id]))
+        {
+            return null;
+        }
+        $value  = Capsule::table('tblproductconfigoptionssub')->where('id', (int)$configOptions[$option->id])->where('configid', $option->id)->value('optionname');
+        $chosen = $value === null ? null : static::parseProvisioningValue(explode('|', (string)$value, 2)[0]);
+
+        return $chosen !== null && $chosen['method'] !== self::METHOD_HSM ? 'csCartTermNeedsHsm' : null;
     }
 
     // ------------------------------------------------------------------ order
@@ -326,7 +451,8 @@ class CodeSigningService extends GatewayOrderService
     /**
      * Checks the client's input and builds the order data.
      *
-     * @param array $input method, model, csr, organization, administrator (same_address), shipping (same_address)
+     * @param array $input method, model, csr, hsm_model, attestation, organization, administrator (same_address),
+     *                     shipping (same_address)
      * @return array ['provisioning' => .., 'contacts' => ..]
      * @throws CodeSigningInputException with a language key (and an argument) the client area translates
      */
@@ -374,6 +500,21 @@ class CodeSigningService extends GatewayOrderService
                 throw new CodeSigningInputException('csInvalidCsr');
             }
             $provisioning['csr'] = $csr;
+            if($available['hsm_attestation'])
+            {
+                $model = strtoupper(trim((string)($input['hsm_model'] ?? '')));
+                if(!isset(self::HSM_MODELS[$model]))
+                {
+                    throw new CodeSigningInputException('csHsmModelRequired');
+                }
+                $attestation = preg_replace('/-----[^-]+-----|\s+/', '', (string)($input['attestation'] ?? ''));
+                if($attestation === '' || base64_decode($attestation, true) === false)
+                {
+                    throw new CodeSigningInputException('csInvalidAttestation');
+                }
+                $provisioning['model']           = $model;
+                $provisioning['key_attestation'] = $attestation;
+            }
         }
         else
         {
@@ -386,6 +527,12 @@ class CodeSigningService extends GatewayOrderService
         }
 
         $contacts = static::contacts((array)($input['organization'] ?? []), (array)($input['administrator'] ?? []));
+        // TheSSLStore Sectigo/Comodo: the organization's country decides the shipping
+        if($method === self::METHOD_SHIP_TOKEN && static::isTssSectigo($available['remote_id'])
+            && in_array($shipping, self::US_SHIPPING, true) && $contacts['organization']['country'] !== 'US')
+        {
+            throw new CodeSigningInputException('csShippingUsOnly');
+        }
         if($method === self::METHOD_SHIP_TOKEN)
         {
             $provisioning['shipping']['contact'] = static::shippingContact((array)($input['shipping'] ?? []), $contacts);
@@ -526,7 +673,7 @@ class CodeSigningService extends GatewayOrderService
         $organization = (string)$order['contacts']['organization']['name'];
         // the order details without the CSR, for "renew with the same details"
         $request = $payload;
-        unset($request['provisioning']['csr']);
+        unset($request['provisioning']['csr'], $request['provisioning']['key_attestation']);
 
         return static::saveCreated($serviceId, $ssl, [
             'request'      => $request,
@@ -547,7 +694,9 @@ class CodeSigningService extends GatewayOrderService
     {
         $method = (string)($stored['request']['provisioning']['method'] ?? '');
 
-        return !empty($stored['request']) && in_array($method, [self::METHOD_EXISTING_TOKEN, self::METHOD_SHIP_TOKEN], true);
+        // TheSSLStore Sectigo/Comodo: no order for an existing token
+        return !empty($stored['request']) && in_array($method, [self::METHOD_EXISTING_TOKEN, self::METHOD_SHIP_TOKEN], true)
+            && !static::isTssSectigo($stored['request']['product']['id'] ?? '');
     }
 
     /** The Renew dialog asks for the token model (the first order shipped a new token) */
@@ -590,7 +739,7 @@ class CodeSigningService extends GatewayOrderService
             case self::METHOD_EXISTING_TOKEN:
                 return 'existing token ' . ($provisioning['model'] ?? '');
             case self::METHOD_HSM:
-                return 'own HSM (CSR)';
+                return 'own HSM' . (!empty($provisioning['model']) ? ' ' . $provisioning['model'] : '') . ' (CSR)';
         }
 
         return (string)($provisioning['method'] ?? '');
@@ -601,6 +750,11 @@ class CodeSigningService extends GatewayOrderService
         if(!empty($item['vendor']['status']))
         {
             $stored['vendorStatus'] = (string)$item['vendor']['status'];
+        }
+        // the code that unlocks the shipped token (shown to the client)
+        if(!empty($item['provisioning']['token_init_code']))
+        {
+            $stored['tokenInitCode'] = (string)$item['provisioning']['token_init_code'];
         }
 
         return $stored;

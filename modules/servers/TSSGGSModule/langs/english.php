@@ -509,6 +509,15 @@ $_LANG['csInvalidEmail'] = 'Invalid email address: %s';
 $_LANG['csInvalidCountry'] = 'Invalid country code: %s. Use the 2-letter code, for example LV.';
 $_LANG['csFieldRequired'] = '%s is required.';
 $_LANG['csProvisioningInvalid'] = 'The certificate delivery option of this service is not valid. Please contact our support team.';
+$_LANG['csHsmModelRequired'] = 'Please choose the model of your HSM.';
+$_LANG['csInvalidAttestation'] = 'The key attestation is not valid. Paste the Base64-encoded attestation that your HSM created for this key.';
+$_LANG['csShippingUsOnly'] = 'The shipping chosen with your order is available only for organizations in the US. Please contact our support team to change it to international shipping.';
+$_LANG['csTermNeedsHsm'] = 'A hardware token holds a code signing certificate for 1 year at most. A certificate for 2 or 3 years can be installed only on your own HSM. Please contact our support team.';
+$_LANG['serverCA']['home']['csHsmModelLabel'] = 'HSM model';
+$_LANG['serverCA']['home']['csAttestationLabel'] = 'Key attestation';
+$_LANG['serverCA']['home']['csAttestationHint'] = 'The Base64-encoded attestation your HSM created for the key of this CSR. It proves that the private key was generated on the HSM.';
+$_LANG['serverCA']['home']['csTokenInitCode'] = 'Token initialization code';
+$_LANG['serverCA']['home']['csTokenInitCodeHint'] = 'You need this code to set up the hardware token when it arrives. Keep it safe.';
 // Renewal of S/MIME / code signing
 $_LANG['serverCA']['home']['renewButton'] = 'Renew';
 $_LANG['serverCA']['home']['renewTitle'] = 'Renew certificate';

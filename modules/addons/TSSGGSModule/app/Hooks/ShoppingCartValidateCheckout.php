@@ -12,6 +12,14 @@ $hookManager->register(
         {
             $pid = isset($product['pid']) ? (int)$product['pid'] : 0;
 
+            // code signing: 2 / 3 years only on an own HSM
+            $csError = $pid ? \ModulesGarden\TSSGGSModule\App\Libs\CodeSigningService::cartError($pid, $product['billingcycle'] ?? '', (array)($product['configoptions'] ?? [])) : null;
+            if ($csError)
+            {
+                $errors[] = \ModulesGarden\TSSGGSModule\Core\translate($csError);
+                continue;
+            }
+
             if (!$pid || !AcmeHelpers::isAcmeWhmcsProduct($pid))
             {
                 continue;

@@ -779,6 +779,7 @@ $_LANG['admin.pricing.index.data_tables.pricing.forms.pricing_form.oneTime']    
 $_LANG['admin.pricing.index.data_tables.pricing.forms.pricing_form.info'] = 'Auto Update Information';
 
 $_LANG['acme_order_requires_at_least_one_san'] = 'To order this product you must select at least 1 Additional Single domain SAN or Additional Wildcard SAN.';
+$_LANG['csCartTermNeedsHsm'] = 'Code signing certificates for 2 or 3 years can be installed only on your own HSM. Choose "My own HSM" as the certificate delivery or a 1-year billing cycle.';
 
 
 

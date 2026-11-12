@@ -743,6 +743,7 @@ $_LANG['admin.pricing.index.data_tables.pricing.forms.pricing_form.oneTime']    
 $_LANG['admin.pricing.index.data_tables.pricing.forms.pricing_form.info'] = 'Oplysninger om automatisk opdatering';
 
 $_LANG['acme_order_requires_at_least_one_san'] = 'For at bestille dette produkt skal du vælge mindst 1 ekstra enkelt domæne-SAN eller ekstra wildcard-SAN.';
+$_LANG['csCartTermNeedsHsm'] = 'Kodesigneringscertifikater for 2 eller 3 år kan kun installeres på din egen HSM. Vælg "Min egen HSM" som certifikatlevering eller en betalingsperiode på 1 år.';
 
 
 

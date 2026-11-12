@@ -61,6 +61,7 @@
             <dl class="tssggs-dl">
                 <dt>{$MGLANG->T('csOrganization')}</dt><dd>{if $csOrganization}{$csOrganization|escape}{else}{$MGLANG->T('validation_page', 'NA')}{/if}</dd>
                 <dt>{$MGLANG->T('csDelivery')}</dt><dd>{if $csDelivery}{$csDelivery|escape}{else}{$MGLANG->T('validation_page', 'NA')}{/if}</dd>
+                {if $csTokenInitCode}<dt>{$MGLANG->T('csTokenInitCode')}</dt><dd><span class="tssggs-mono">{$csTokenInitCode|escape}</span><br><small>{$MGLANG->T('csTokenInitCodeHint')}</small></dd>{/if}
                 <dt>{$MGLANG->T('validation_page', 'ValidFrom')}</dt><dd>{if $csValidFrom}{$csValidFrom}{else}{$MGLANG->T('validation_page', 'NA')}{/if}</dd>
                 <dt>{$MGLANG->T('validation_page', 'ValidTill')}</dt><dd>{if $csValidTill}{$csValidTill}{else}{$MGLANG->T('validation_page', 'NA')}{/if}</dd>
                 <dt>{$MGLANG->T('smimeOrderedAt')}</dt><dd>{if $csOrderedAt}{$csOrderedAt}{else}{$MGLANG->T('validation_page', 'NA')}{/if}</dd>

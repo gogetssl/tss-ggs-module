@@ -2319,6 +2319,7 @@ class home extends AbstractController
         $vars['csValidFrom']     = $this->smimeDate($stored['validFrom'] ?? '');
         $vars['csValidTill']     = $this->smimeDate($stored['validTill'] ?? '');
         $vars['csOrderedAt']     = $this->smimeDate($stored['orderedAt'] ?? '');
+        $vars['csTokenInitCode'] = (string)($stored['tokenInitCode'] ?? '');
         $vars                    = $this->gatewayRenewalVars(CodeSigningService::class, $serviceId, $stored, $input, $vars);
 
         return ['tpl' => 'home_codesigning', 'vars' => $vars];
@@ -2336,7 +2337,7 @@ class home extends AbstractController
         }
         catch(\Exception $e)
         {
-            $available       = ['methods' => [], 'fixed' => null, 'shipping_options' => [], 'renewal' => false];
+            $available       = ['methods' => [], 'fixed' => null, 'shipping_options' => [], 'renewal' => false, 'hsm_attestation' => false];
             $vars['csError'] = Lang::absoluteT($e->getMessage());
         }
 
@@ -2377,6 +2378,8 @@ class home extends AbstractController
         $vars['csRenewal']             = $available['renewal'];
         $vars['csCurrentValidTill']    = $lastTill && $lastTill > time() && ($last['status'] ?? '') === 'active' ? date('F j, Y', $lastTill) : '';
         $vars['csTokenModels']         = CodeSigningService::TOKEN_MODELS;
+        // TheSSLStore Sectigo/Comodo: the HSM model and the key attestation with the CSR
+        $vars['csHsmModels']           = !empty($available['hsm_attestation']) ? CodeSigningService::HSM_MODELS : [];
         $vars['agreement']             = CertificateService::agreement((int)$input['params']['pid']);
         $vars['csClient']              = [
             'email'       => $client ? $client->email : '',
@@ -2426,6 +2429,8 @@ class home extends AbstractController
                 'method'        => (string)($input['cs_method'] ?? ''),
                 'model'         => (string)($input['cs_model'] ?? ''),
                 'csr'           => (string)($input['cs_csr'] ?? ''),
+                'hsm_model'     => (string)($input['cs_hsm_model'] ?? ''),
+                'attestation'   => (string)($input['cs_attestation'] ?? ''),
                 'organization'  => is_array($input['org'] ?? null) ? $input['org'] : [],
                 'administrator' => is_array($input['admin'] ?? null) ? $input['admin'] : [],
                 'shipping'      => is_array($input['ship'] ?? null) ? $input['ship'] : [],
@@ -2479,6 +2484,10 @@ class home extends AbstractController
         elseif($method === CodeSigningService::METHOD_EXISTING_TOKEN && !empty($stored['tokenModel']))
         {
             $text .= ' (' . (CodeSigningService::TOKEN_MODELS[$stored['tokenModel']] ?? $stored['tokenModel']) . ')';
+        }
+        elseif($method === CodeSigningService::METHOD_HSM && !empty($stored['tokenModel']))
+        {
+            $text .= ' (' . (CodeSigningService::HSM_MODELS[$stored['tokenModel']] ?? $stored['tokenModel']) . ')';
         }
 
         return $text;

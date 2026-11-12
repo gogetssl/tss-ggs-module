@@ -509,6 +509,15 @@ $_LANG['csInvalidEmail'] = 'Adresse e-mail non valide : %s';
 $_LANG['csInvalidCountry'] = 'Code pays non valide : %s. Utilisez le code à 2 lettres, par exemple LV.';
 $_LANG['csFieldRequired'] = '%s est obligatoire.';
 $_LANG['csProvisioningInvalid'] = 'L\'option de livraison de ce service n\'est pas valide. Veuillez contacter notre support.';
+$_LANG['csHsmModelRequired'] = 'Veuillez choisir le modèle de votre HSM.';
+$_LANG['csInvalidAttestation'] = 'L\'attestation de clé n\'est pas valide. Collez l\'attestation encodée en Base64 que votre HSM a créée pour cette clé.';
+$_LANG['csShippingUsOnly'] = 'La livraison choisie avec votre commande est réservée aux organisations situées aux États-Unis. Veuillez contacter notre support pour passer à la livraison internationale.';
+$_LANG['csTermNeedsHsm'] = 'Un jeton matériel conserve un certificat de signature de code pendant 1 an au maximum. Un certificat de 2 ou 3 ans ne peut être installé que sur votre propre HSM. Veuillez contacter notre support.';
+$_LANG['serverCA']['home']['csHsmModelLabel'] = 'Modèle de HSM';
+$_LANG['serverCA']['home']['csAttestationLabel'] = 'Attestation de clé';
+$_LANG['serverCA']['home']['csAttestationHint'] = 'L\'attestation encodée en Base64 que votre HSM a créée pour la clé de ce CSR. Elle prouve que la clé privée a été générée sur le HSM.';
+$_LANG['serverCA']['home']['csTokenInitCode'] = 'Code d\'initialisation du jeton';
+$_LANG['serverCA']['home']['csTokenInitCodeHint'] = 'Ce code vous servira à configurer le jeton matériel à sa réception. Conservez-le en lieu sûr.';
 // Renewal of S/MIME / code signing
 $_LANG['serverCA']['home']['renewButton'] = 'Renouveler';
 $_LANG['serverCA']['home']['renewTitle'] = 'Renouveler le certificat';

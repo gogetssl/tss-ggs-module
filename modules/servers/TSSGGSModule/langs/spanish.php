@@ -509,6 +509,15 @@ $_LANG['csInvalidEmail'] = 'Dirección de correo no válida: %s';
 $_LANG['csInvalidCountry'] = 'Código de país no válido: %s. Use el código de 2 letras, por ejemplo LV.';
 $_LANG['csFieldRequired'] = '%s es obligatorio.';
 $_LANG['csProvisioningInvalid'] = 'La opción de entrega de este servicio no es válida. Póngase en contacto con nuestro soporte.';
+$_LANG['csHsmModelRequired'] = 'Elija el modelo de su HSM.';
+$_LANG['csInvalidAttestation'] = 'La atestación de la clave no es válida. Pegue la atestación codificada en Base64 que su HSM creó para esta clave.';
+$_LANG['csShippingUsOnly'] = 'El envío elegido con su pedido solo está disponible para organizaciones en EE. UU. Contacte con nuestro soporte para cambiarlo a envío internacional.';
+$_LANG['csTermNeedsHsm'] = 'Un token de hardware admite un certificado de firma de código durante 1 año como máximo. Un certificado de 2 o 3 años solo puede instalarse en su propio HSM. Contacte con nuestro soporte.';
+$_LANG['serverCA']['home']['csHsmModelLabel'] = 'Modelo de HSM';
+$_LANG['serverCA']['home']['csAttestationLabel'] = 'Atestación de la clave';
+$_LANG['serverCA']['home']['csAttestationHint'] = 'La atestación codificada en Base64 que su HSM creó para la clave de este CSR. Demuestra que la clave privada se generó en el HSM.';
+$_LANG['serverCA']['home']['csTokenInitCode'] = 'Código de inicialización del token';
+$_LANG['serverCA']['home']['csTokenInitCodeHint'] = 'Necesitará este código para configurar el token de hardware cuando llegue. Guárdelo en un lugar seguro.';
 // Renewal of S/MIME / code signing
 $_LANG['serverCA']['home']['renewButton'] = 'Renovar';
 $_LANG['serverCA']['home']['renewTitle'] = 'Renovar certificado';

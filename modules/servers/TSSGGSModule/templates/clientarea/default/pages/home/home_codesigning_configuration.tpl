@@ -61,6 +61,20 @@
                     <textarea id="tssggs-cs-csr" name="cs_csr" class="form-control tssggs-mono" rows="6" placeholder="-----BEGIN CERTIFICATE REQUEST-----"></textarea>
                     <small>{$MGLANG->T('csCsrHint')}</small>
                 </div>
+                {if $csHsmModels}
+                    <div class="tssggs-field" data-tssggs-cs-for="hsm">
+                        <label for="tssggs-cs-hsm-model">{$MGLANG->T('csHsmModelLabel')} <span class="tssggs-req">*</span></label>
+                        <select id="tssggs-cs-hsm-model" name="cs_hsm_model" class="form-control" required>
+                            <option value="">-</option>
+                            {foreach from=$csHsmModels key=code item=name}<option value="{$code|escape:'htmlall'}">{$name|escape}</option>{/foreach}
+                        </select>
+                    </div>
+                    <div class="tssggs-field" data-tssggs-cs-for="hsm">
+                        <label for="tssggs-cs-attestation">{$MGLANG->T('csAttestationLabel')} <span class="tssggs-req">*</span></label>
+                        <textarea id="tssggs-cs-attestation" name="cs_attestation" class="form-control tssggs-mono" rows="4" required></textarea>
+                        <small>{$MGLANG->T('csAttestationHint')}</small>
+                    </div>
+                {/if}
             </div>
         </section>
 
@@ -184,7 +198,8 @@
         var form = $('#tssggs-cs-form');
         var method = form.find('[name="cs_method"]:checked').val() || form.find('input[type="hidden"][name="cs_method"]').val() || '';
         form.find('[data-tssggs-cs-for]').each(function () {
-            $(this).prop('hidden', $(this).attr('data-tssggs-cs-for') !== method);
+            var off = $(this).attr('data-tssggs-cs-for') !== method;
+            $(this).prop('hidden', off).find('[required]').prop('disabled', off);
         });
         form.find('[data-tssggs-cs-toggle]').each(function () {
             form.find('[data-tssggs-cs-address="' + $(this).attr('data-tssggs-cs-toggle') + '"]').prop('hidden', $(this).is(':checked'));
