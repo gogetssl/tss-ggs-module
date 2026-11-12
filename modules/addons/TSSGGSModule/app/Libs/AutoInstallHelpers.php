@@ -45,7 +45,7 @@ class AutoInstallHelpers
     const MAX_DNS_SWITCH_ATTEMPTS         = 5;
     const SAME_CERT_MAX_CHECKS            = 288;
 
-    const FINAL_ORDER_STATUSES = ['cancelled', 'expired', 'rejected', 'filed', 'revoked', 'refunded'];
+    const FINAL_ORDER_STATUSES = ['cancelled', 'expired', 'rejected', 'failed', 'revoked', 'refunded'];
 
     // ------------------------------------------------------------------ //
     // Per-service configuration

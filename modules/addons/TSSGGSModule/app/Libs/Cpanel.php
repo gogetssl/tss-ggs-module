@@ -244,10 +244,19 @@ class Cpanel
         return ['Authorization: WHM ' . $this->service['username'] . ':' . $clean];
     }
 
+    /** WHM address of the server: its hostname (the IP address when no hostname is set) and its own port when one is set */
+    protected function whmUrl()
+    {
+        $ssl  = !empty($this->service['ssl']);
+        $host = trim((string)$this->service['hostname']) !== '' ? trim((string)$this->service['hostname']) : trim((string)$this->service['ipaddress']);
+        $port = (int)$this->service['port'] > 0 ? (int)$this->service['port'] : ($ssl ? 2087 : 2086);
+
+        return ($ssl ? 'https://' : 'http://') . $host . ':' . $port;
+    }
+
     protected function getSessionDetails($username)
     {
-        $query    = ($this->service['ssl'] ? 'https://' . $this->service['hostname'] . ':2087' : 'http://' . $this->service['hostname'] . ':2086') .
-            "/json-api/create_user_session?api.version=1&user=" . $username . "&service=cpaneld";
+        $query    = $this->whmUrl() . '/json-api/create_user_session?api.version=1&user=' . rawurlencode((string)$username) . '&service=cpaneld';
         $this->closeConnection();
         $this->ch = curl_init();
         curl_setopt($this->ch, CURLOPT_SSL_VERIFYPEER, $this->verifyTls());
@@ -322,6 +331,11 @@ class Cpanel
         {
             curl_setopt($this->ch, CURLOPT_POST, 1);
             curl_setopt($this->ch, CURLOPT_POSTFIELDS, $params);
+        }
+        else
+        {
+            // the handle is reused: without this the body of the previous call would be sent again
+            curl_setopt($this->ch, CURLOPT_HTTPGET, true);
         }
         $resultorg = curl_exec($this->ch);
         $curl_info = curl_getinfo($this->ch);
@@ -419,7 +433,8 @@ class Cpanel
 
     protected static function cacheFile($service, $username)
     {
-        $host = is_object($service) ? (isset($service->hostname) ? $service->hostname : '') . (isset($service->port) ? $service->port : '') : '';
+        $service = (array)$service;
+        $host    = (isset($service['hostname']) ? $service['hostname'] : '') . (isset($service['ipaddress']) ? $service['ipaddress'] : '') . (isset($service['port']) ? $service['port'] : '');
 
         return ModuleConstants::getFullPath('storage', 'cpanel_domains', md5(strtolower($host . '|' . $username)) . '.json');
     }
@@ -836,7 +851,7 @@ class Cpanel
 
     private function get($params = array())
     {
-        $url = ($this->service['ssl'] ? 'https://' . $this->service['hostname'] . ':2087' : 'http://' . $this->service['hostname'] . ':2086') . '/json-api/cpanel';
+        $url = $this->whmUrl() . '/json-api/cpanel';
         $ch  = curl_init();
         if(is_array($params))
         {

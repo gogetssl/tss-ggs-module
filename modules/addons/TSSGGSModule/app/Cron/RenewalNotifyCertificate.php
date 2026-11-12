@@ -45,6 +45,9 @@ class RenewalNotifyCertificate extends AbstractCommand
      */
     protected $help = '';
 
+    /** CronsCheck row that remembers the day the reminder e-mails were sent */
+    const REMINDERS_MARKER = 'RenewalNotifyReminders';
+
     /**
      * Configure command
      */
@@ -100,6 +103,10 @@ class RenewalNotifyCertificate extends AbstractCommand
         $packageLists = [];
         $serviceIDs   = [];
 
+        // a run that ended with an error is repeated the same day: the reminders of that day are sent once only
+        $remindersDone  = CronCheck::where('type', self::REMINDERS_MARKER)->first();
+        $remindersToday = $remindersDone && substr((string)$remindersDone->last_run, 0, 10) === date('Y-m-d');
+
         foreach($certificatesQuery->get() as $srv)
         {
             if(AcmeHelpers::isAcmeWhmcsProduct($srv->packageid))
@@ -120,14 +127,14 @@ class RenewalNotifyCertificate extends AbstractCommand
                 $daysLeft    = $this->checkOrderExpireDate($srv->nextduedate);
                 $daysReissue = $isSmime ? false : $this->checkReissueDate($srv->id, $certificate);
 
-                if($srv->domainstatus == 'Active' && $daysReissue == '30' && !AutoInstallHelpers::isAutoReissueActive($srv->id))
+                if(!$remindersToday && $srv->domainstatus == 'Active' && $daysReissue == '30' && !AutoInstallHelpers::isAutoReissueActive($srv->id))
                 {
                     $output->write('Send Email Reissue: ' . $srv->id . ' - ' . $srv->domain);
                     EmailTemplates::sendEmail(EmailTemplates::REISSUE_TEMPLATE, $srv->id);
                     Logger::info("The notification reissue has been send", ['service' => $srv->id]);
                 }
 
-                if($daysLeft >= 0)
+                if($daysLeft >= 0 && !$remindersToday)
                 {
                     if($srv->billingcycle != 'One Time' && is_array($daysNotify) && in_array($daysLeft, $daysNotify))
                     {
@@ -148,7 +155,7 @@ class RenewalNotifyCertificate extends AbstractCommand
                 }
 
             }
-            catch(\Exception $e)
+            catch(\Throwable $e)
             {
 
                 $errorToDB = $e->getMessage();
@@ -156,6 +163,8 @@ class RenewalNotifyCertificate extends AbstractCommand
 
             }
         }
+
+        CronCheck::updateOrCreate(['type' => self::REMINDERS_MARKER], ['last_run' => date('Y-m-d H:i:s'), 'last_error' => '']);
 
         if(!$renew_new_order)
         {
@@ -178,7 +187,7 @@ class RenewalNotifyCertificate extends AbstractCommand
                     Logger::info("The renewal invoice has been issued for service (#$serviceID)", ['invoice' => $invoiceId]);
 
                 }
-                catch(\Exception $e)
+                catch(\Throwable $e)
                 {
 
                     $errorToDB = $e->getMessage();
@@ -199,20 +208,19 @@ class RenewalNotifyCertificate extends AbstractCommand
         {
             $io->progressAdvance(1);
 
-            if(!$acmeSubscription->auto_renew)
+            if(!$acmeSubscription->auto_renew || empty($sslSettings['recurringCreateAutomaticRenewalInvoiceSubscription']))
             {
                 continue;
             }
 
-            $service = Service::find($acmeSubscription->service_id);
-
-            if(!$service)
+            try
             {
-                continue;
-            }
+                $service = Service::find($acmeSubscription->service_id);
+                if(!$service)
+                {
+                    continue;
+                }
 
-            if($sslSettings['recurringCreateAutomaticRenewalInvoiceSubscription'])
-            {
                 $acmeDaysBefore  = $sslSettings['recurringDaysBeforeExpirySubscription'];
                 $nextInvoiceDate = AcmeHelpers::getAcmeNextInvoiceDate($acmeSubscription->renewal_date, $acmeDaysBefore);
 
@@ -224,16 +232,31 @@ class RenewalNotifyCertificate extends AbstractCommand
                     {
                         EmailTemplates::sendEmail(EmailTemplates::SUBSCRIPTION_EXPIRATION_TEMPLATE, $service->id, []);
                     }
-
                 }
+            }
+            catch(\Throwable $e)
+            {
+                // one subscription must not stop the others
+                $errorToDB = $e->getMessage();
+                Logger::error('The ACME subscription renewal invoice error ' . $e->getMessage(), \ModulesGarden\TSSGGSModule\App\Libs\LogContext::exception($e, ['service' => $acmeSubscription->service_id]));
             }
         }
 
         $io->progressFinish();
 
-        $this->cancelOverdueAcmeSubscriptions();
-        $this->cancelExpiredStoppedAutoRenewAcmeSubscriptions();
-        \ModulesGarden\TSSGGSModule\App\Libs\UnpaidTermination::run();
+        // each step on its own: the time of this run is always saved, or the job would start again every 5 minutes
+        foreach(['cancelOverdueAcmeSubscriptions', 'cancelExpiredStoppedAutoRenewAcmeSubscriptions', 'terminateUnpaid'] as $step)
+        {
+            try
+            {
+                $this->$step();
+            }
+            catch(\Throwable $e)
+            {
+                $errorToDB = $e->getMessage();
+                Logger::error('RenewalNotifyCertificate ' . $step . ' error ' . $e->getMessage(), \ModulesGarden\TSSGGSModule\App\Libs\LogContext::exception($e));
+            }
+        }
 
         CronCheck::updateOrCreate(
             ['type' => 'RenewalNotifyCertificate'],
@@ -242,10 +265,13 @@ class RenewalNotifyCertificate extends AbstractCommand
 
     }
 
+    private function terminateUnpaid()
+    {
+        \ModulesGarden\TSSGGSModule\App\Libs\UnpaidTermination::run();
+    }
+
     public function checkOrderExpireDate($expireDate)
     {
-        $expireDaysNotify = array_flip(['90', '60', '30', '15', '10', '7', '3', '1', '0']);
-
         if(stripos($expireDate, ':') === false)
         {
             $expireDate .= ' 23:59:59';
@@ -259,7 +285,8 @@ class RenewalNotifyCertificate extends AbstractCommand
             return -1;
         }
 
-        return isset($expireDaysNotify[$diff->days]) ? $diff->days : -1;
+        // the real number of days: the callers match it against their own settings (e.g. an invoice 14 or 21 days before)
+        return (int)$diff->days;
     }
 
     public function checkReissueDate($serviceid, $certificate)
@@ -308,9 +335,13 @@ class RenewalNotifyCertificate extends AbstractCommand
             try
             {
                 $api = Helpers::getApiByServiceId($row->service_id);
+                if(!$api)
+                {
+                    throw new \Exception('No gateway credentials for this service');
+                }
                 $api->cancelItem((int) $subscription->acme_id, 'Overdue renewal invoice', 'caas');
             }
-            catch (\Exception $e)
+            catch(\Throwable $e)
             {
                 // the vendor still bills the subscription: keep the service open and retry on the next run, give up
                 // (and tell the admin) after 14 days
@@ -361,9 +392,13 @@ class RenewalNotifyCertificate extends AbstractCommand
                 try
                 {
                     $api = Helpers::getApiByServiceId($subscriptionData->service_id);
+                    if(!$api)
+                    {
+                        throw new \Exception('No gateway credentials for this service');
+                    }
                     $api->cancelItem((int) $subscriptionData->acme_id, 'Auto-renew disabled and subscription expired', 'caas');
                 }
-                catch (\Exception $e)
+                catch(\Throwable $e)
                 {
                     // keep the subscription open and retry on the next run; give up (and tell the admin) after 14 days
                     Logger::error('The expired ACME subscription could not be cancelled: ' . $e->getMessage(), \ModulesGarden\TSSGGSModule\App\Libs\LogContext::exception($e, ['service' => $subscriptionData->service_id]));

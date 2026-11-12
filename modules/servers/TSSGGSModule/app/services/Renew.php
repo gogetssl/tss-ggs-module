@@ -91,7 +91,7 @@ class Renew
             $requestRenew = $request['orderData'];
 
             $now = time();
-            $nextduedate = strtotime($request['orderFiles']['validity']['end']);
+            $nextduedate = strtotime((string)(CertificateService::stored($serviceId)['orderFiles']['validity']['end'] ?? '')) ?: $now; // the end date is in the stored certificate, the gateway order answer has none
             $datediff = $nextduedate - $now;
             $days = round($datediff / (60 * 60 * 24));
 
@@ -191,7 +191,7 @@ class Renew
                 $requestRenew = $request['orderData'];
 
                 $now = time();
-                $nextduedate = strtotime($request['orderFiles']['validity']['end']);
+                $nextduedate = strtotime((string)(CertificateService::stored($serviceId)['orderFiles']['validity']['end'] ?? '')) ?: $now; // the end date is in the stored certificate, the gateway order answer has none
                 $datediff = $nextduedate - $now;
                 $days = round($datediff / (60 * 60 * 24));
                 $requestRenew['renewal']['prior_order_id'] = $requestRenew['renewal']['prior_certificate_id'] = $sslOrder->remoteid;

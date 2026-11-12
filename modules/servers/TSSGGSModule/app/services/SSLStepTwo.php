@@ -127,11 +127,15 @@ class SSLStepTwo
 
         foreach ($domains as $key => $domain)
         {
-            if(empty($domain)) unset($domains[$key]);
+            if(trim((string)$domain) === '')
+            {
+                unset($domains[$key]);
+                continue;
+            }
             $domains[$key] = trim($domain);
         }
 
-        return $domains;
+        return array_values($domains);
     }
 
     public function approversToOptions($approvers)
@@ -140,7 +144,7 @@ class SSLStepTwo
         foreach ($approvers as $approver) {
             $options = '';
             foreach ($approver['emails'] as $option) {
-                $options .= '<option value="' . $option . '">' . $option . '</option>';
+                $options .= '<option value="' . htmlspecialchars((string)$option, ENT_QUOTES) . '">' . htmlspecialchars((string)$option, ENT_QUOTES) . '</option>';
             }
             $results[$approver['domain']] = $options;
         }

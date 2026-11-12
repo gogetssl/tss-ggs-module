@@ -288,11 +288,11 @@ class EmailTemplates
             return false;
         }
 
-        \getCurrency($invoice->userid);
+        $currency = \getCurrency($invoice->userid);
         $systemUrl = rtrim((string)\WHMCS\Database\Capsule::table('tblconfiguration')->where('setting', 'SystemURL')->value('value'), '/');
         self::sendEmail(self::RENEWAL_INVOICE_TEMPLATE, (int)$serviceId, [
             'invoice_id'       => (int)$invoice->id,
-            'invoice_total'    => (string)\formatCurrency($invoice->total),
+            'invoice_total'    => (string)\formatCurrency($invoice->total, isset($currency['id']) ? $currency['id'] : false),
             'invoice_due_date' => (string)$invoice->duedate,
             'invoice_url'      => $systemUrl . '/viewinvoice.php?id=' . (int)$invoice->id,
         ]);

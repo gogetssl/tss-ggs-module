@@ -64,6 +64,7 @@ class ProductPricingUpdate extends AbstractCommand
      */
     protected function process(InputInterface $input, OutputInterface $output, SymfonyStyle $io)
     {
+        $errorToDB = '';
         try
         {
             $checkCron = (new AddonModuleRepository())->checkCron('cron1');

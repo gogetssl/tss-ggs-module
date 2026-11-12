@@ -172,7 +172,9 @@ class SslTools
                 $options = [];
                 if(trim((string)$chain) !== '')
                 {
-                    $options['extracerts'] = trim($chain);
+                    // a string would add the first certificate of the chain only
+                    preg_match_all('/-----BEGIN CERTIFICATE-----.*?-----END CERTIFICATE-----/s', (string)$chain, $blocks);
+                    $options['extracerts'] = $blocks[0] ?: trim($chain);
                 }
                 if(!openssl_pkcs12_export($cert, $pfx, $key, (string)$password, $options))
                 {
