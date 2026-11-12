@@ -105,7 +105,7 @@ class Server extends AbstractMainDriver {
                 $vars['success'] = $success;
                 $vars['error'] = $error;
                 
-            } catch (\Exception $ex) {                
+            } catch(\Throwable $ex) {                
                 self::dump($ex);
                 $vars['error'] = Lang::absoluteT('generalError');
                 if(method_exists($ex, 'getToken'))
@@ -117,7 +117,7 @@ class Server extends AbstractMainDriver {
             $output['vars'] = $vars;
             return $output;
 
-        } catch (\Exception $ex) {
+        } catch(\Throwable $ex) {
 
             self::dump($ex);
             return $ex->getMessage();
@@ -167,7 +167,7 @@ class Server extends AbstractMainDriver {
 
                 $content['data']    = $result;
 
-            } catch (\Exception $ex) {
+            } catch(\Throwable $ex) {
 
                 self::dump($ex);
                 $content['result'] = 'error';
@@ -185,7 +185,7 @@ class Server extends AbstractMainDriver {
 
             return json_encode($content, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
 
-        } catch (\Exception $ex) {
+        } catch(\Throwable $ex) {
 
             self::dump($ex);
             return json_encode([
@@ -207,7 +207,7 @@ class Server extends AbstractMainDriver {
                 self::I()->runControler('actions',$action,['params' => $input],'Action');
                 return 'success';
             } 
-            catch (\Exception $ex)
+            catch(\Throwable $ex)
             {
                 if(self::I()->isDebug())
                 {
@@ -223,7 +223,7 @@ class Server extends AbstractMainDriver {
                 return $message;
             }
 
-        } catch (\Exception $ex) {
+        } catch(\Throwable $ex) {
 
             self::dump($ex);
             return $ex->getMessage();
@@ -275,7 +275,7 @@ class Server extends AbstractMainDriver {
                 $vars['success'] = $success;
                 $vars['error'] = $error;
 
-            } catch (\Exception $ex) {
+            } catch(\Throwable $ex) {
 
                 self::dump($ex);
                 $vars['error'] = $ex->getMessage();
@@ -307,7 +307,7 @@ class Server extends AbstractMainDriver {
             
             return $content;
             
-        } catch (\Exception $ex) {
+        } catch(\Throwable $ex) {
 
             self::dump($ex);
             return $ex->getMessage();
@@ -356,7 +356,7 @@ class Server extends AbstractMainDriver {
                 }
             
                 $content['data']    = $result;
-            } catch (\Exception $ex) {
+            } catch(\Throwable $ex) {
 
                 self::dump($ex);
                 $content['result'] = 'error';
@@ -370,7 +370,7 @@ class Server extends AbstractMainDriver {
 
             return '<JSONRESPONSE#'.json_encode($content).'#ENDJSONRESPONSE>';
 
-        } catch (\Exception $ex) {
+        } catch(\Throwable $ex) {
 
             self::dump($ex);
             return $ex->getMessage();

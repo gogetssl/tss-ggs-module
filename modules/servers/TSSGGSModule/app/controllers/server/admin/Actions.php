@@ -39,7 +39,7 @@ class Actions {
 
             return (new CreateAccount())->run($params);
 
-        } catch (\Exception $e) {
+        } catch(\Throwable $e) {
 
             return $e->getMessage();
 
@@ -214,7 +214,7 @@ class Actions {
 
             CertificateBundle::output(CertificateService::bundle($serviceId)->get('zip'));
         }
-        catch(\Exception $e)
+        catch(\Throwable $e)
         {
             header('Content-Type: text/plain; charset=utf-8', true, 404);
             echo $e->getMessage();
@@ -286,7 +286,7 @@ class Actions {
 
             return (new Renew())->run($params);
 
-        } catch (\Exception $e) {
+        } catch(\Throwable $e) {
 
             return $e->getMessage();
 
@@ -299,7 +299,7 @@ class Actions {
 
             return (new SSLStepOne())->run($params);
 
-        } catch (\Exception $e) {
+        } catch(\Throwable $e) {
 
             return $e->getMessage();
 
@@ -312,7 +312,7 @@ class Actions {
 
             return (new SSLStepTwo())->run($params);
 
-        } catch (\Exception $e) {
+        } catch(\Throwable $e) {
 
             return $e->getMessage();
 
@@ -326,7 +326,7 @@ class Actions {
             $params = array_merge($_POST, $params);
             return (new SSLStepThree())->run($params);
 
-        } catch (\Exception $e) {
+        } catch(\Throwable $e) {
 
             return $e->getMessage();
 
@@ -379,7 +379,7 @@ class Actions {
 
             return (new SyncCertificate())->run($params);
 
-        } catch (\Exception $e) {
+        } catch(\Throwable $e) {
 
             return $e->getMessage();
 
@@ -392,7 +392,7 @@ class Actions {
 
             return (new AdminServicesTabFields())->run($params);
 
-        } catch (\Exception $e) {
+        } catch(\Throwable $e) {
 
             return $e->getMessage();
 
