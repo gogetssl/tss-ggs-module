@@ -38,7 +38,7 @@
                         <label>{$MGLANG->T('csDeliveryLabel')} <span class="tssggs-req">*</span></label>
                         {foreach from=$csMethods key=method item=label name=methods}
                             <label class="tssggs-check">
-                                <input type="radio" name="cs_method" value="{$method|escape:'htmlall'}" required{if $smarty.foreach.methods.first} checked{/if}>
+                                <input type="radio" name="cs_method" value="{$method|escape:'htmlall'}" required{if ($csPreviousMethod && $method == $csPreviousMethod) || (!$csPreviousMethod && $smarty.foreach.methods.first)} checked{/if}>
                                 <span>{$label}</span>
                             </label>
                         {/foreach}

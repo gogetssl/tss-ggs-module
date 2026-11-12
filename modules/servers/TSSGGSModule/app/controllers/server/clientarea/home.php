@@ -2339,6 +2339,10 @@ class home extends AbstractController
             $vars['csError'] = Lang::absoluteT($e->getMessage());
         }
 
+        $previous = (array)(CodeSigningService::stored($serviceId)['previous'] ?? []);
+        $last     = $previous ? (array)end($previous) : [];
+        $lastTill = !empty($last['validTill']) ? strtotime($last['validTill']) : false;
+
         $methods = [];
         foreach($available['methods'] as $method)
         {
@@ -2363,12 +2367,10 @@ class home extends AbstractController
             $phone = '+' . ltrim((string)$client->phonecc, '+') . '.' . $phone;
         }
 
-        $previous = (array)(CodeSigningService::stored($serviceId)['previous'] ?? []);
-        $last     = $previous ? (array)end($previous) : [];
-        $lastTill = !empty($last['validTill']) ? strtotime($last['validTill']) : false;
-
         $vars['csMethods']             = $methods;
         $vars['csFixedMethod']         = $available['fixed'] ? $available['fixed']['method'] : '';
+        // renewal: the delivery used for the previous certificate is preselected when it is still offered
+        $vars['csPreviousMethod']      = isset($methods[$last['method'] ?? '']) ? $last['method'] : '';
         $vars['csFixedLabel']          = $available['fixed'] ? Lang::absoluteT('serverCA', 'home', 'csMethod_' . str_replace('-', '_', $available['fixed']['method'])) : '';
         $vars['csShippingLabel']       = $shippingLabel;
         $vars['csRenewal']             = $available['renewal'];

@@ -393,6 +393,15 @@ abstract class GatewayOrderService
         {
             return false;
         }
+        // the order is still being validated: a second order would duplicate it (and leave this one billed) -
+        // the renewal keeps the current order
+        if(!in_array($stored['status'] ?? '', ['active', 'expired', 'cancelled', 'revoked', 'refunded', 'rejected', 'failed'], true))
+        {
+            CertificateService::event($serviceId, 'info', static::LABEL . ' renewal paid while order #' . ($stored['orderId'] ?? '-')
+                . ' is still ' . ($stored['status'] ?? 'open') . ': the order is kept, no new order is needed');
+
+            return false;
+        }
 
         $previous   = (array)($stored['previous'] ?? []);
         $previous[] = static::previousEntry($stored) + [
