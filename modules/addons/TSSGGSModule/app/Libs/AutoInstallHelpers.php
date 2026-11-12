@@ -1273,25 +1273,8 @@ class AutoInstallHelpers
 
     public static function getApi($serviceId)
     {
-        $packageId = Capsule::table('tblhosting')->where('id', $serviceId)->value('packageid');
-        if(!$packageId)
-        {
-            throw new \Exception('Service #' . $serviceId . ' not found');
-        }
-
-        $configProduct = (new ProductRepository())->getProductConfiguration($packageId);
-        $addonConfig   = (new AddonModuleRepository())->getModuleConfiguration();
-
-        $provider    = strtolower($configProduct['provider']);
-        $credentials = $addonConfig['credentials'][$provider];
-
-        if($provider == 'tss' && $credentials['OperationMode'] == 'sandbox')
-        {
-            $credentials['PartnerCode'] = $credentials['TestPartnerCode'];
-            $credentials['AuthToken']   = $credentials['TestAuthToken'];
-        }
-
-        return new SSLTrustCenterApi($configProduct['provider'], $credentials['PartnerCode'], $credentials['AuthToken'], $configProduct['category']);
+        // one place builds the gateway client (and reports missing credentials)
+        return CertificateService::api($serviceId);
     }
 
     /**

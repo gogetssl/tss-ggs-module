@@ -23,9 +23,19 @@ class RemoteProduct extends ExtendedEloquentModel
     {
         $configuredApis = Helpers::getConfiguredApis();
 
+        $failure = null;
         foreach($configuredApis as $vendor => $api)
         {
-            $remoteProducts = $api->getProducts();
+            // one vendor being down must not stop the product list of the other
+            try
+            {
+                $remoteProducts = $api->getProducts();
+            }
+            catch(\Throwable $e)
+            {
+                $failure = $e;
+                continue;
+            }
             $returnedIds    = [];
 
             foreach($remoteProducts as $remoteProductData)
@@ -55,6 +65,12 @@ class RemoteProduct extends ExtendedEloquentModel
             {
                 ProductCatalog::markMissing($vendor, $returnedIds);
             }
+        }
+
+        // reported after the other vendors were handled
+        if($failure)
+        {
+            throw $failure;
         }
     }
 

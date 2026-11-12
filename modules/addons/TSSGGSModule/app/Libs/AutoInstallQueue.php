@@ -87,7 +87,9 @@ class AutoInstallQueue
             ->where('status', 'pending')
             ->where('type', $type)
             ->where('attempts', '<', self::MAX_ATTEMPTS)
-            ->orderBy('created_at', 'asc')
+            // least recently handled first: tasks that wait (e.g. for the client's validation) must not block newer ones
+            ->orderBy('updated_at', 'asc')
+            ->orderBy('id', 'asc')
             ->limit($limit)
             ->get();
     }

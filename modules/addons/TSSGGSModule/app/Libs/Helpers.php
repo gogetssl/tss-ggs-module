@@ -23,11 +23,6 @@ use WHMCS\Database\Capsule;
 
 class Helpers
 {
-    static public function debugLog($action, $request = [], $response = [])
-    {
-        logmodulecall("TSSGGSModule Debug Log", $action, $request, $response, $response);
-    }
-
     public static function isWildcardEnabled($whmcsProductId)
     {
         $whmcsProduct = Product::find($whmcsProductId);
@@ -101,20 +96,6 @@ class Helpers
     }
 
 
-    public static function getConfigurableOptionsData($productId, $currencyId)
-    {
-        return Capsule::table('tblproductconfiglinks')
-                      ->join('tblproductconfigoptions', 'tblproductconfiglinks.gid', '=', 'tblproductconfigoptions.gid')
-                      ->join('tblproductconfigoptionssub', 'tblproductconfigoptions.id', '=', 'tblproductconfigoptionssub.configid')
-                      ->leftJoin('tblpricing', 'tblproductconfigoptionssub.id', '=', 'tblpricing.relid')
-                      ->where('tblproductconfiglinks.pid', $productId)
-                      ->where('tblpricing.type', 'configoptions')
-                      ->where('tblpricing.currency', $currencyId)
-                      ->where('tblproductconfigoptions.optiontype', '4')
-                      ->select(['tblproductconfigoptions.optionname', 'tblproductconfigoptionssub.id as subId', 'tblpricing.monthly', 'tblpricing.annually', 'tblpricing.biennially', 'tblpricing.triennially'])
-                      ->get();
-    }
-
 
     public static function monthsToBillingPeriod($months)
     {
@@ -158,15 +139,6 @@ class Helpers
         $clientCurrency = Client::findOrFail($clientId)->currency;
 
         return \convertCurrency($amount, $clientCurrency->id, $defaultCurrency->id);
-    }
-
-    public static function apiCurrencyToSelectedCurrency($amount)
-    {
-        $amount              = floatval($amount);
-        $moduleConfiguration = (new AddonModuleRepository())->getModuleConfiguration();
-        $currencyRate        = $moduleConfiguration['financeSettings']['rate'] ?: 1;
-
-        return $amount * $currencyRate;
     }
 
     public static function formatDefaultCurrency($amount)

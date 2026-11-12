@@ -775,6 +775,12 @@ class CodeSigningService extends GatewayOrderService
         {
             return false;
         }
+        // a term longer than a token allows is never ordered for a token: the client chooses the delivery in the order form
+        $service = Capsule::table('tblhosting')->where('id', (int)$serviceId)->first(['packageid', 'billingcycle']);
+        if($service && static::termForBillingCycle((string)$service->billingcycle, static::availableTerms((int)$service->packageid)) > self::MAX_TOKEN_TERM)
+        {
+            return false;
+        }
         $request = (array)$before['request'];
         $model   = (string)($request['provisioning']['model'] ?? '');
         if(static::renewalNeedsTokenModel($before))

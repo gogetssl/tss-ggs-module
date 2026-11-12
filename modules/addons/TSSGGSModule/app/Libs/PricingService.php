@@ -439,6 +439,8 @@ class PricingService
      */
     public function previewCsv($csv)
     {
+        // a file saved by Excel as "CSV UTF-8" starts with a byte order mark
+        $csv        = preg_replace('/^\xEF\xBB\xBF/', '', (string)$csv);
         $lines      = array_values(array_filter(preg_split('/\r\n|\r|\n/', (string)$csv), 'strlen'));
         $header     = array_map('trim', str_getcsv(array_shift($lines) ?: ''));
         $products   = $this->products();
