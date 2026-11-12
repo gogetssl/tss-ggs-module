@@ -66,10 +66,6 @@ class TssReader extends AbstractReader
         {
             return ['supported' => false, 'band' => 'unsupported', 'reason' => 'Versions before 3.3 store product codes and orders differently.'];
         }
-        if(version_compare($version, '3.8', '<'))
-        {
-            return ['supported' => true, 'band' => 'partial', 'reason' => 'Orders and products migrate; credentials of this version are not read (the unified module uses its own).'];
-        }
 
         return ['supported' => true, 'band' => 'full', 'reason' => ''];
     }
@@ -121,12 +117,44 @@ class TssReader extends AbstractReader
         $c      = $this->config();
         $secret = function($key) use ($c) { $v = trim((string)($c[$key] ?? '')); return $v !== '' && function_exists('decrypt') ? trim((string)decrypt($v)) : $v; };
 
-        return [
+        $out = [
             'PartnerCode'     => trim((string)($c['live_partner_code'] ?? '')),
             'AuthToken'       => $secret('live_auth_token'),
             'TestPartnerCode' => trim((string)($c['test_partner_code'] ?? '')),
             'TestAuthToken'   => $secret('test_auth_token'),
             'OperationMode'   => strtoupper((string)($c['api_mode'] ?? '')) === 'LIVE' ? 'live' : 'sandbox',
+        ];
+        if($out['AuthToken'] !== '' || $out['TestAuthToken'] !== '')
+        {
+            return $out;
+        }
+
+        // 3.3 - 3.7: the credentials are plain columns of mod_sslstore_settings_v2
+        $old = $this->oldCredentials();
+
+        return $old ?: $out;
+    }
+
+    /** Credentials as versions 3.3 - 3.7 store them (null when that layout is not there or holds nothing) */
+    protected function oldCredentials(): ?array
+    {
+        if(!Schema::tableExists('mod_sslstore_settings_v2') || !Schema::columnExists('mod_sslstore_settings_v2', 'live_authtoken'))
+        {
+            return null;
+        }
+        $v2  = (array)Capsule::table('mod_sslstore_settings_v2')->first();
+        $get = function($key) use ($v2) { return trim((string)($v2[$key] ?? '')); };
+        if($get('live_authtoken') === '' && $get('test_authtoken') === '')
+        {
+            return null;
+        }
+
+        return [
+            'PartnerCode'     => $get('live_partnercode'),
+            'AuthToken'       => $get('live_authtoken'),
+            'TestPartnerCode' => $get('test_partnercode'),
+            'TestAuthToken'   => $get('test_authtoken'),
+            'OperationMode'   => strtoupper($get('operationmode')) === 'LIVE' ? 'live' : 'sandbox',
         ];
     }
 
