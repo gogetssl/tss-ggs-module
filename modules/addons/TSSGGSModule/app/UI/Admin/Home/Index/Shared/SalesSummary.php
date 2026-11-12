@@ -53,12 +53,17 @@ class SalesSummary
             }
             $data['issued'] = count($issued);
 
-            // the next due date follows the end of the certificate (or subscription)
+            // issued certificates only; the next due date of their service follows the end of the certificate
             $data['expiring'] = (int)\WHMCS\Database\Capsule::table('tblhosting')
                 ->join('tblproducts', 'tblproducts.id', '=', 'tblhosting.packageid')
                 ->where('tblproducts.servertype', 'TSSGGSModule')
                 ->where('tblhosting.domainstatus', 'Active')
                 ->whereBetween('tblhosting.nextduedate', [date('Y-m-d'), date('Y-m-d', strtotime('+90 days'))])
+                ->whereExists(function($issued) {
+                    $issued->select(\WHMCS\Database\Capsule::raw(1))->from('TSSGGSModule_Requests')
+                        ->whereColumn('TSSGGSModule_Requests.serviceid', 'tblhosting.id')
+                        ->where('TSSGGSModule_Requests.status', 'active');
+                })
                 ->count();
             self::$data       = $data;
         }
