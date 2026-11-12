@@ -309,8 +309,9 @@ class CodeSigningService extends GatewayOrderService
 
     /**
      * Migration: the legacy "Certificate Delivery Method" option of a TheSSLStore product becomes the module's
-     * "Certificate Delivery" option in place (the services keep the choice they paid for, the prices stay). Choices
-     * the product does not offer through the gateway are hidden.
+     * "Certificate Delivery" option in place (the services keep the choice they paid for). The new token choices get
+     * the token + shipping fee from the gateway prices; choices the product does not offer through the gateway are
+     * hidden.
      *
      * @return bool false when the product already has the module's option
      */
@@ -332,6 +333,8 @@ class CodeSigningService extends GatewayOrderService
             }
             Capsule::table('tblproductconfigoptionssub')->where('id', $sub->id)->update(['optionname' => $value . '|' . $choices[$value][0]]);
         }
+        // the legacy module charged nothing for the token: token + shipping fees from the gateway prices
+        static::syncDeliveryPrices($whmcsProductId, $rawData);
 
         return true;
     }
@@ -381,8 +384,8 @@ class CodeSigningService extends GatewayOrderService
             }
             foreach(Capsule::table('tblcurrencies')->pluck('id') as $currencyId)
             {
-                Capsule::table('tblpricing')->where('type', 'configoptions')->where('relid', $sub->id)->where('currency', (int)$currencyId)
-                    ->update(static::oneTimeFee($prices[$value], (int)$currencyId));
+                Capsule::table('tblpricing')->updateOrInsert(['type' => 'configoptions', 'relid' => $sub->id, 'currency' => (int)$currencyId],
+                    static::oneTimeFee($prices[$value], (int)$currencyId));
             }
         }
     }
