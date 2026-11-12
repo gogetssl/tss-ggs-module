@@ -53,7 +53,6 @@ $_LANG['csr_details']['city']                                             = 'Cit
 $_LANG['csr_details']['error']                                            = 'CSR is invalid. Please check your CSR and try again.';
 $_LANG['csr_details']['description']                                      = 'You must have a valid CSR (Certificate Signing Request) to generate your SSL Certificate. The CSR is an encrypted text the web server generates where the SSL Certificate will be installed. Please ensure you entered the correct information, as it cannot be changed after issuing the SSL Certificate. When pasting your CSR, make sure it begins with: -----BEGIN CERTIFICATE REQUEST----- and ends with: -----END CERTIFICATE REQUEST-----';
 $_LANG['validaion_page']['description']                                   = 'The Certificate Authority can validate by emailing instructions to the address you choose below. You may also use HTTP/DNS validation methods.';
-$_LANG['validaion_page']['email']                                         = 'EMAIL:';
 $_LANG['validaion_page']['dns']                                           = 'DNS:';
 $_LANG['validaion_page']['http']                                          = 'HTTP FILE:';
 $_LANG['validaion_page']['email_desc']                                    = 'The email to send the validation to is generated from a default list of addresses.';
@@ -67,7 +66,6 @@ $_LANG['validaion_page']['domain']                                        = 'Dom
 $_LANG['validaion_page']['dcv_method']                                    = 'DCV Method';
 $_LANG['validaion_page']['email']                                         = 'Email Address';
 $_LANG['csr_error']                                                       = 'CSR is invalid. Please check your CSR and try again.';
-$_LANG['invalid_domain']                                                  = 'Invalid domain name (Additional SAN)';
 $_LANG['invalid_wildcard_domain']                                         = 'Invalid wildcard domain name';
 
 $_LANG['serverCA']['home']['validation_page']['StoreAPIOrder']      = 'Store/API Order';

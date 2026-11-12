@@ -53,7 +53,6 @@ $_LANG['csr_details']['city']                                             = 'By:
 $_LANG['csr_details']['error']                                            = 'CSR er ugyldig. Kontroller din CSR, og prøv igen.';
 $_LANG['csr_details']['description']                                      = 'Du skal have en gyldig CSR (Certificate Signing Request) for at generere dit SSL-certifikat. CSR er en krypteret tekst, som genereres af den webserver, hvor SSL-certifikatet skal installeres. Sørg for at angive de korrekte oplysninger, da de ikke kan ændres, efter SSL-certifikatet er udstedt. Når du indsætter din CSR, skal du sikre dig, at den begynder med: -----BEGIN CERTIFICATE REQUEST----- og slutter med: -----END CERTIFICATE REQUEST-----';
 $_LANG['validaion_page']['description']                                   = 'Certifikatudstederen (CA) kan validere ved at sende instruktioner via e-mail til den adresse, du vælger nedenfor. Du kan også bruge HTTP/DNS-valideringsmetoder.';
-$_LANG['validaion_page']['email']                                         = 'E-MAIL:';
 $_LANG['validaion_page']['dns']                                           = 'DNS:';
 $_LANG['validaion_page']['http']                                          = 'HTTP-FIL:';
 $_LANG['validaion_page']['email_desc']                                    = 'Den e-mailadresse, valideringen sendes til, genereres ud fra en standardliste over adresser.';
@@ -67,7 +66,6 @@ $_LANG['validaion_page']['domain']                                        = 'Dom
 $_LANG['validaion_page']['dcv_method']                                    = 'DCV-metode';
 $_LANG['validaion_page']['email']                                         = 'E-mailadresse';
 $_LANG['csr_error']                                                       = 'CSR er ugyldig. Kontroller din CSR, og prøv igen.';
-$_LANG['invalid_domain']                                                  = 'Ugyldigt domænenavn (yderligere SAN)';
 $_LANG['invalid_wildcard_domain']                                         = 'Ugyldigt wildcard-domænenavn';
 
 $_LANG['serverCA']['home']['validation_page']['StoreAPIOrder']      = 'Butiks-/API-ordre';

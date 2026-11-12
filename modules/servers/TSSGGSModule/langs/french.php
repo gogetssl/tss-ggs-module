@@ -53,7 +53,6 @@ $_LANG['csr_details']['city']                                             = 'Vil
 $_LANG['csr_details']['error']                                            = 'La CSR n\'est pas valide. Veuillez vérifier votre CSR et réessayer.';
 $_LANG['csr_details']['description']                                      = 'Vous devez disposer d\'une CSR (demande de signature de certificat) valide pour générer votre certificat SSL. La CSR est un texte chiffré généré par le serveur web sur lequel le certificat SSL sera installé. Veuillez vous assurer que les informations saisies sont correctes, car elles ne peuvent plus être modifiées après l\'émission du certificat SSL. Lorsque vous collez votre CSR, assurez-vous qu\'elle commence par : -----BEGIN CERTIFICATE REQUEST----- et se termine par : -----END CERTIFICATE REQUEST-----';
 $_LANG['validaion_page']['description']                                   = 'L\'autorité de certification peut effectuer la validation en envoyant des instructions par e-mail à l\'adresse que vous choisissez ci-dessous. Vous pouvez également utiliser les méthodes de validation HTTP/DNS.';
-$_LANG['validaion_page']['email']                                         = 'E-MAIL :';
 $_LANG['validaion_page']['dns']                                           = 'DNS :';
 $_LANG['validaion_page']['http']                                          = 'FICHIER HTTP :';
 $_LANG['validaion_page']['email_desc']                                    = 'L\'adresse e-mail à laquelle la validation est envoyée est générée à partir d\'une liste d\'adresses par défaut.';
@@ -67,7 +66,6 @@ $_LANG['validaion_page']['domain']                                        = 'Dom
 $_LANG['validaion_page']['dcv_method']                                    = 'Méthode DCV';
 $_LANG['validaion_page']['email']                                         = 'Adresse e-mail';
 $_LANG['csr_error']                                                       = 'La CSR n\'est pas valide. Veuillez vérifier votre CSR et réessayer.';
-$_LANG['invalid_domain']                                                  = 'Nom de domaine non valide (SAN supplémentaire)';
 $_LANG['invalid_wildcard_domain']                                         = 'Nom de domaine wildcard non valide';
 
 $_LANG['serverCA']['home']['validation_page']['StoreAPIOrder']      = 'Commande Boutique/API';

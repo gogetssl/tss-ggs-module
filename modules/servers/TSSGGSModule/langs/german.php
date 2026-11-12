@@ -53,7 +53,6 @@ $_LANG['csr_details']['city'] = 'Stadt:';
 $_LANG['csr_details']['error'] = 'Die CSR ist ungültig. Bitte überprüfen Sie Ihre CSR und versuchen Sie es erneut.';
 $_LANG['csr_details']['description'] = 'Sie benötigen eine gültige CSR (Certificate Signing Request, Zertifikatsanforderung), um Ihr SSL-Zertifikat zu erzeugen. Die CSR ist ein verschlüsselter Text, den der Webserver erzeugt, auf dem das SSL-Zertifikat installiert wird. Bitte stellen Sie sicher, dass Sie die richtigen Angaben eingegeben haben, da diese nach der Ausstellung des SSL-Zertifikats nicht mehr geändert werden können. Stellen Sie beim Einfügen Ihrer CSR sicher, dass sie mit -----BEGIN CERTIFICATE REQUEST----- beginnt und mit -----END CERTIFICATE REQUEST----- endet';
 $_LANG['validaion_page']['description'] = 'Die Zertifizierungsstelle kann die Validierung per E-Mail durchführen, indem sie Anweisungen an die unten gewählte Adresse sendet. Sie können auch die Validierungsmethoden HTTP/DNS verwenden.';
-$_LANG['validaion_page']['email'] = 'E-MAIL:';
 $_LANG['validaion_page']['dns'] = 'DNS:';
 $_LANG['validaion_page']['http'] = 'HTTP-DATEI:';
 $_LANG['validaion_page']['email_desc'] = 'Die E-Mail-Adresse für die Validierung wird aus einer Standardliste von Adressen erzeugt.';
@@ -67,7 +66,6 @@ $_LANG['validaion_page']['domain'] = 'Domain';
 $_LANG['validaion_page']['dcv_method'] = 'DCV-Methode';
 $_LANG['validaion_page']['email'] = 'E-Mail-Adresse';
 $_LANG['csr_error'] = 'Die CSR ist ungültig. Bitte überprüfen Sie Ihre CSR und versuchen Sie es erneut.';
-$_LANG['invalid_domain'] = 'Ungültiger Domainname (zusätzliche SAN)';
 $_LANG['invalid_wildcard_domain'] = 'Ungültiger Wildcard-Domainname';
 
 $_LANG['serverCA']['home']['validation_page']['StoreAPIOrder'] = 'Shop-/API-Bestellung';

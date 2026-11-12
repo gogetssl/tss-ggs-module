@@ -53,7 +53,6 @@ $_LANG['csr_details']['city'] = 'Ciudad:';
 $_LANG['csr_details']['error'] = 'La CSR no es válida. Revise su CSR e inténtelo de nuevo.';
 $_LANG['csr_details']['description'] = 'Debe disponer de una CSR (solicitud de firma de certificado) válida para generar su certificado SSL. La CSR es un texto cifrado que genera el servidor web en el que se instalará el certificado SSL. Asegúrese de haber introducido la información correcta, ya que no se puede modificar una vez emitido el certificado SSL. Al pegar su CSR, asegúrese de que comience con: -----BEGIN CERTIFICATE REQUEST----- y termine con: -----END CERTIFICATE REQUEST-----';
 $_LANG['validaion_page']['description'] = 'La autoridad de certificación puede validar el dominio enviando instrucciones por correo electrónico a la dirección que elija a continuación. También puede utilizar los métodos de validación HTTP/DNS.';
-$_LANG['validaion_page']['email'] = 'CORREO ELECTRÓNICO:';
 $_LANG['validaion_page']['dns'] = 'DNS:';
 $_LANG['validaion_page']['http'] = 'ARCHIVO HTTP:';
 $_LANG['validaion_page']['email_desc'] = 'La dirección de correo electrónico a la que se envía la validación se genera a partir de una lista predeterminada de direcciones.';
@@ -67,7 +66,6 @@ $_LANG['validaion_page']['domain'] = 'Dominio';
 $_LANG['validaion_page']['dcv_method'] = 'Método DCV';
 $_LANG['validaion_page']['email'] = 'Dirección de correo electrónico';
 $_LANG['csr_error'] = 'La CSR no es válida. Revise su CSR e inténtelo de nuevo.';
-$_LANG['invalid_domain'] = 'Nombre de dominio no válido (SAN adicional)';
 $_LANG['invalid_wildcard_domain'] = 'Nombre de dominio comodín no válido';
 
 $_LANG['serverCA']['home']['validation_page']['StoreAPIOrder'] = 'Pedido de tienda/API';

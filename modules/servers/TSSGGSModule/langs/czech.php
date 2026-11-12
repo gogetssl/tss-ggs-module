@@ -53,7 +53,6 @@ $_LANG['csr_details']['city'] = 'Město:';
 $_LANG['csr_details']['error'] = 'CSR je neplatné. Zkontrolujte prosím své CSR a zkuste to znovu.';
 $_LANG['csr_details']['description'] = 'Pro vygenerování SSL certifikátu musíte mít platné CSR (žádost o podpis certifikátu). CSR je zašifrovaný text, který generuje webový server, na němž bude SSL certifikát nainstalován. Ujistěte se prosím, že jste zadali správné údaje, protože po vydání SSL certifikátu je již nelze změnit. Při vkládání CSR dbejte na to, aby začínalo řádkem: -----BEGIN CERTIFICATE REQUEST----- a končilo řádkem: -----END CERTIFICATE REQUEST-----';
 $_LANG['validaion_page']['description'] = 'Certifikační autorita může provést validaci zasláním pokynů e-mailem na adresu, kterou zvolíte níže. Můžete také použít metody validace HTTP/DNS.';
-$_LANG['validaion_page']['email'] = 'E-MAIL:';
 $_LANG['validaion_page']['dns'] = 'DNS:';
 $_LANG['validaion_page']['http'] = 'HTTP SOUBOR:';
 $_LANG['validaion_page']['email_desc'] = 'E-mailová adresa, na kterou bude validace odeslána, se vybírá z výchozího seznamu adres.';
@@ -67,7 +66,6 @@ $_LANG['validaion_page']['domain'] = 'Doména';
 $_LANG['validaion_page']['dcv_method'] = 'Metoda DCV';
 $_LANG['validaion_page']['email'] = 'E-mailová adresa';
 $_LANG['csr_error'] = 'CSR je neplatné. Zkontrolujte prosím své CSR a zkuste to znovu.';
-$_LANG['invalid_domain'] = 'Neplatný název domény (další SAN)';
 $_LANG['invalid_wildcard_domain'] = 'Neplatný název wildcard domény';
 
 $_LANG['serverCA']['home']['validation_page']['StoreAPIOrder'] = 'Objednávka z obchodu/API';
