@@ -228,22 +228,10 @@ class CodeSigningService extends GatewayOrderService
             return;
         }
 
-        $methods = static::methods($rawData);
-        $subs    = [];
-        if(in_array(self::METHOD_SHIP_TOKEN, $methods, true))
+        $subs = [];
+        foreach(static::deliveryChoices($rawData) as $value => list($label, $fee))
         {
-            foreach(static::newTokenChoices($rawData) as $value => list($label, $fee))
-            {
-                $subs[] = [$value, $label, $fee];
-            }
-        }
-        if(in_array(self::METHOD_EXISTING_TOKEN, $methods, true))
-        {
-            $subs[] = ['existing-token', 'I already have a compatible hardware token', 0.0];
-        }
-        if(in_array(self::METHOD_HSM, $methods, true))
-        {
-            $subs[] = ['hsm', 'My own HSM (I will provide a CSR)', 0.0];
+            $subs[] = [$value, $label, $fee];
         }
         if(!$subs)
         {
@@ -273,6 +261,79 @@ class CodeSigningService extends GatewayOrderService
                 Capsule::table('tblpricing')->insert(['type' => 'configoptions', 'currency' => (int)$currencyId, 'relid' => $subId] + static::oneTimeFee($cost, (int)$currencyId));
             }
         }
+    }
+
+    /**
+     * Choices of the "Certificate Delivery" option: value => [label, one-time fee]
+     */
+    public static function deliveryChoices(array $rawData)
+    {
+        $methods = static::methods($rawData);
+        $choices = [];
+        if(in_array(self::METHOD_SHIP_TOKEN, $methods, true))
+        {
+            $choices = static::newTokenChoices($rawData);
+        }
+        if(in_array(self::METHOD_EXISTING_TOKEN, $methods, true))
+        {
+            $choices['existing-token'] = ['I already have a compatible hardware token', 0.0];
+        }
+        if(in_array(self::METHOD_HSM, $methods, true))
+        {
+            // TheSSLStore Sectigo/Comodo: an existing token is installed like an own HSM (CSR)
+            $choices['hsm'] = [static::isTssSectigo($rawData['id'] ?? '') ? 'Install on my existing token or HSM (I will provide a CSR)' : 'My own HSM (I will provide a CSR)', 0.0];
+        }
+
+        return $choices;
+    }
+
+    /**
+     * Legacy TheSSLStore module: delivery of a code signing order (CSTokenDeliveryMethod or the name of the
+     * "Certificate Delivery Method" sub-option) -> "ship-token:INTERNATIONAL", "existing-token", "hsm"; null unknown
+     */
+    public static function legacyDelivery($value)
+    {
+        $codes = ['1' => 'ship-token:STANDARD', '2' => 'ship-token:EXPEDITED', '3' => 'ship-token:INTERNATIONAL', '-1' => 'existing-token', '-2' => 'hsm'];
+        $names = [
+            'token + shipping (us)'                   => 'ship-token:STANDARD',
+            'token + shipping'                        => 'ship-token:STANDARD',
+            'token + expedited shipping (us)'         => 'ship-token:EXPEDITED',
+            'token + international shipping (non-us)' => 'ship-token:INTERNATIONAL',
+            'install on existing hsm'                 => 'hsm',
+            'use existing token'                      => 'existing-token',
+        ];
+        $value = strtolower(trim((string)$value));
+
+        return $codes[$value] ?? $names[$value] ?? null;
+    }
+
+    /**
+     * Migration: the legacy "Certificate Delivery Method" option of a TheSSLStore product becomes the module's
+     * "Certificate Delivery" option in place (the services keep the choice they paid for, the prices stay). Choices
+     * the product does not offer through the gateway are hidden.
+     *
+     * @return bool false when the product already has the module's option
+     */
+    public static function adoptLegacyDeliveryOption($whmcsProductId, $optionId, array $rawData)
+    {
+        if(static::deliveryOption($whmcsProductId))
+        {
+            return false;
+        }
+        $choices = static::deliveryChoices($rawData);
+        Capsule::table('tblproductconfigoptions')->where('id', (int)$optionId)->update(['optionname' => self::OPTION_PROVISIONING . '|' . self::OPTION_LABEL, 'hidden' => 0]);
+        foreach(Capsule::table('tblproductconfigoptionssub')->where('configid', (int)$optionId)->get(['id', 'optionname']) as $sub)
+        {
+            $value = static::legacyDelivery(explode('|', (string)$sub->optionname, 2)[0]);
+            if($value === null || !isset($choices[$value]))
+            {
+                Capsule::table('tblproductconfigoptionssub')->where('id', $sub->id)->update(['hidden' => 1]);
+                continue;
+            }
+            Capsule::table('tblproductconfigoptionssub')->where('id', $sub->id)->update(['optionname' => $value . '|' . $choices[$value][0]]);
+        }
+
+        return true;
     }
 
     /**
@@ -783,6 +844,12 @@ class CodeSigningService extends GatewayOrderService
         {
             CertificateService::event($serviceId, 'error', 'Code signing issued e-mail not sent: ' . $e->getMessage());
         }
+    }
+
+    /** A migrated invite order the client has not enrolled yet: the gateway can not read it */
+    protected static function quietFailure(array $stored)
+    {
+        return ($stored['status'] ?? '') === 'invited';
     }
 
     protected static function previousEntry(array $stored)

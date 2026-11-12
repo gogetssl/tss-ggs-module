@@ -518,6 +518,12 @@ $_LANG['serverCA']['home']['csAttestationLabel'] = 'Atestace klíče';
 $_LANG['serverCA']['home']['csAttestationHint'] = 'Atestace v kódování Base64, kterou váš HSM vytvořil pro klíč tohoto CSR. Dokládá, že soukromý klíč byl vygenerován v HSM.';
 $_LANG['serverCA']['home']['csTokenInitCode'] = 'Inicializační kód tokenu';
 $_LANG['serverCA']['home']['csTokenInitCodeHint'] = 'Tento kód budete potřebovat k nastavení hardwarového tokenu po jeho doručení. Uschovejte jej v bezpečí.';
+$_LANG['serverCA']['home']['csStatus_invited'] = 'Čeká na vaši registraci';
+$_LANG['serverCA']['home']['csInfoEnroll'] = 'Dokončete objednávku na registrační stránce certifikační autority. Stav se zde poté aktualizuje.';
+$_LANG['serverCA']['home']['csInfoEnrollEmail'] = 'Dokončete objednávku pomocí registračního odkazu z e-mailu, který jste obdrželi při objednávce. Pokud jej nemůžete najít, kontaktujte prosím naši podporu.';
+$_LANG['serverCA']['home']['csInfoTokenSetup'] = 'Váš certifikát pro podpis kódu je vystaven. Nastavte hardwarový token na stránce certifikační autority a nainstalujte jej.';
+$_LANG['serverCA']['home']['csTokenSetupButton'] = 'Nastavit token';
+$_LANG['serverCA']['home']['csMethod_hsm_token'] = 'Nainstalovat do mého stávajícího tokenu nebo HSM (dodám CSR)';
 // Renewal of S/MIME / code signing
 $_LANG['serverCA']['home']['renewButton'] = 'Prodloužit';
 $_LANG['serverCA']['home']['renewTitle'] = 'Prodloužit certifikát';

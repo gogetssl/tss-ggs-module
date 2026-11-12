@@ -2299,12 +2299,13 @@ class home extends AbstractController
             }
             catch(\Exception $e)
             {
-                $vars['refreshError'] = $e->getMessage();
+                // a migrated invite order can not be read before the client enrols
+                $vars['refreshError'] = ($stored['status'] ?? '') === 'invited' ? '' : $e->getMessage();
             }
         }
 
         $status = strtolower((string)($stored['status'] ?? 'processing'));
-        $tones  = ['active' => 'ok', 'processing' => 'wait', 'pending' => 'wait', 'unpaid' => 'warn', 'incomplete' => 'warn',
+        $tones  = ['active' => 'ok', 'invited' => 'wait', 'processing' => 'wait', 'pending' => 'wait', 'unpaid' => 'warn', 'incomplete' => 'warn',
                    'failed' => 'bad', 'rejected' => 'bad', 'cancelled' => 'off', 'revoked' => 'off', 'refunded' => 'off', 'expired' => 'off'];
 
         $vars['csStatus']        = $status;
@@ -2312,7 +2313,7 @@ class home extends AbstractController
         $vars['csStatusText']    = is_string($csText) && $csText !== '' && strpos($csText, 'csStatus_') === false ? $csText : $this->smimeStatusText($status);
         $vars['csTone']          = $tones[$status] ?? 'wait';
         $vars['csMethod']        = (string)($stored['method'] ?? '');
-        $vars['csDelivery']      = $this->codeSigningDeliveryText($stored);
+        $vars['csDelivery']      = $this->codeSigningDeliveryText($stored, CodeSigningService::isTssSectigo(CodeSigningService::remoteIdOfProduct((int)$input['params']['pid'])));
         $vars['csOrganization']  = (string)($stored['organization'] ?? Capsule::table('tblhosting')->where('id', $serviceId)->value('domain'));
         $vars['csItemId']        = (int)($stored['itemId'] ?? 0);
         $vars['csVendorOrderId'] = (string)($stored['vendorOrderId'] ?? '');
@@ -2320,6 +2321,9 @@ class home extends AbstractController
         $vars['csValidTill']     = $this->smimeDate($stored['validTill'] ?? '');
         $vars['csOrderedAt']     = $this->smimeDate($stored['orderedAt'] ?? '');
         $vars['csTokenInitCode'] = (string)($stored['tokenInitCode'] ?? '');
+        // migrated from the legacy TheSSLStore module: enrolment page (invite order) and DigiCert token set-up page
+        $vars['csEnrollmentLink'] = $status === 'invited' ? (string)($stored['enrollmentLink'] ?? '') : '';
+        $vars['csTokenSetupLink'] = $status === 'active' ? (string)($stored['tokenSetupLink'] ?? '') : '';
         $vars                    = $this->gatewayRenewalVars(CodeSigningService::class, $serviceId, $stored, $input, $vars);
 
         return ['tpl' => 'home_codesigning', 'vars' => $vars];
@@ -2348,7 +2352,7 @@ class home extends AbstractController
         $methods = [];
         foreach($available['methods'] as $method)
         {
-            $methods[$method] = Lang::absoluteT('serverCA', 'home', 'csMethod_' . str_replace('-', '_', $method));
+            $methods[$method] = Lang::absoluteT('serverCA', 'home', $this->codeSigningMethodKey($method, !empty($available['hsm_attestation'])));
         }
         $shippingLabel = '';
         if($available['fixed'] && $available['fixed']['method'] === CodeSigningService::METHOD_SHIP_TOKEN)
@@ -2373,7 +2377,7 @@ class home extends AbstractController
         $vars['csFixedMethod']         = $available['fixed'] ? $available['fixed']['method'] : '';
         // renewal: the delivery used for the previous certificate is preselected when it is still offered
         $vars['csPreviousMethod']      = isset($methods[$last['method'] ?? '']) ? $last['method'] : '';
-        $vars['csFixedLabel']          = $available['fixed'] ? Lang::absoluteT('serverCA', 'home', 'csMethod_' . str_replace('-', '_', $available['fixed']['method'])) : '';
+        $vars['csFixedLabel']          = $available['fixed'] ? Lang::absoluteT('serverCA', 'home', $this->codeSigningMethodKey($available['fixed']['method'], !empty($available['hsm_attestation']))) : '';
         $vars['csShippingLabel']       = $shippingLabel;
         $vars['csRenewal']             = $available['renewal'];
         $vars['csCurrentValidTill']    = $lastTill && $lastTill > time() && ($last['status'] ?? '') === 'active' ? date('F j, Y', $lastTill) : '';
@@ -2473,10 +2477,18 @@ class home extends AbstractController
         return ['success' => true, 'message' => Lang::absoluteT('csDetailsRefreshed')];
     }
 
-    private function codeSigningDeliveryText(array $stored)
+    /**
+     * Language key of a delivery method (TheSSLStore Sectigo/Comodo: an existing token is installed like an own HSM)
+     */
+    private function codeSigningMethodKey($method, $tssSectigo)
+    {
+        return $method === CodeSigningService::METHOD_HSM && $tssSectigo ? 'csMethod_hsm_token' : 'csMethod_' . str_replace('-', '_', (string)$method);
+    }
+
+    private function codeSigningDeliveryText(array $stored, $tssSectigo = false)
     {
         $method = (string)($stored['method'] ?? '');
-        $text   = $method !== '' ? Lang::absoluteT('serverCA', 'home', 'csMethod_' . str_replace('-', '_', $method)) : '';
+        $text   = $method !== '' ? Lang::absoluteT('serverCA', 'home', $this->codeSigningMethodKey($method, $tssSectigo)) : '';
         if($method === CodeSigningService::METHOD_SHIP_TOKEN && !empty($stored['shipping']))
         {
             $text .= ' (' . ucfirst(strtolower((string)$stored['shipping'])) . ')';

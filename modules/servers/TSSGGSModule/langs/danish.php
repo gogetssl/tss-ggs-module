@@ -518,6 +518,12 @@ $_LANG['serverCA']['home']['csAttestationLabel'] = 'Nøgleattestering';
 $_LANG['serverCA']['home']['csAttestationHint'] = 'Den Base64-kodede attestering, som din HSM har oprettet for nøglen til denne CSR. Den beviser, at den private nøgle er genereret på HSM\'en.';
 $_LANG['serverCA']['home']['csTokenInitCode'] = 'Initialiseringskode til token';
 $_LANG['serverCA']['home']['csTokenInitCodeHint'] = 'Du skal bruge denne kode til at klargøre hardware-tokenet, når det ankommer. Opbevar den sikkert.';
+$_LANG['serverCA']['home']['csStatus_invited'] = 'Venter på din tilmelding';
+$_LANG['serverCA']['home']['csInfoEnroll'] = 'Gennemfør din ordre på certifikatudstederens tilmeldingsside. Status opdateres her bagefter.';
+$_LANG['serverCA']['home']['csInfoEnrollEmail'] = 'Gennemfør din ordre med tilmeldingslinket fra den e-mail, du modtog, da du bestilte. Kontakt vores support, hvis du ikke kan finde den.';
+$_LANG['serverCA']['home']['csInfoTokenSetup'] = 'Dit kodesigneringscertifikat er udstedt. Klargør dit hardware-token på certifikatudstederens side for at installere det.';
+$_LANG['serverCA']['home']['csTokenSetupButton'] = 'Klargør token';
+$_LANG['serverCA']['home']['csMethod_hsm_token'] = 'Installer på mit eksisterende token eller HSM (jeg leverer en CSR)';
 // Renewal of S/MIME / code signing
 $_LANG['serverCA']['home']['renewButton'] = 'Forny';
 $_LANG['serverCA']['home']['renewTitle'] = 'Forny certifikat';

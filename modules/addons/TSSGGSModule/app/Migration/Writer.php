@@ -140,6 +140,19 @@ class Writer
         {
             Capsule::table('tblproductconfigoptions')->where('id', $option['id'])->update(['hidden' => 1]);
         }
+        // code signing: the legacy delivery option becomes the module's "Certificate Delivery" option, else a new one
+        if(strtolower((string)$remote->category) === \ModulesGarden\TSSGGSModule\App\Libs\CodeSigningService::CATEGORY)
+        {
+            $rawData = is_array($remote->rawData) ? $remote->rawData : [];
+            if(!empty($product['cs_delivery_option']['id']))
+            {
+                \ModulesGarden\TSSGGSModule\App\Libs\CodeSigningService::adoptLegacyDeliveryOption((int)$product['pid'], (int)$product['cs_delivery_option']['id'], $rawData);
+            }
+            else
+            {
+                \ModulesGarden\TSSGGSModule\App\Libs\CodeSigningService::createDeliveryOption((int)$product['pid'], $rawData);
+            }
+        }
 
         // Products page settings (messages); the legacy product commission becomes an "all clients" commission rule
         if(!empty($product['product_settings']))

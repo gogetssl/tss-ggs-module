@@ -518,6 +518,12 @@ $_LANG['serverCA']['home']['csAttestationLabel'] = 'Key attestation';
 $_LANG['serverCA']['home']['csAttestationHint'] = 'The Base64-encoded attestation your HSM created for the key of this CSR. It proves that the private key was generated on the HSM.';
 $_LANG['serverCA']['home']['csTokenInitCode'] = 'Token initialization code';
 $_LANG['serverCA']['home']['csTokenInitCodeHint'] = 'You need this code to set up the hardware token when it arrives. Keep it safe.';
+$_LANG['serverCA']['home']['csStatus_invited'] = 'Waiting for your enrolment';
+$_LANG['serverCA']['home']['csInfoEnroll'] = 'Complete your order on the certificate authority\'s enrolment page. The status updates here after that.';
+$_LANG['serverCA']['home']['csInfoEnrollEmail'] = 'Complete your order with the enrolment link from the email you received when you ordered. If you can not find it, please contact our support team.';
+$_LANG['serverCA']['home']['csInfoTokenSetup'] = 'Your code signing certificate is issued. Set up your hardware token on the certificate authority\'s page to install it.';
+$_LANG['serverCA']['home']['csTokenSetupButton'] = 'Set up token';
+$_LANG['serverCA']['home']['csMethod_hsm_token'] = 'Install on my existing token or HSM (I provide a CSR)';
 // Renewal of S/MIME / code signing
 $_LANG['serverCA']['home']['renewButton'] = 'Renew';
 $_LANG['serverCA']['home']['renewTitle'] = 'Renew certificate';

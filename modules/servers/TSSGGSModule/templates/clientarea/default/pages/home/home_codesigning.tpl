@@ -31,20 +31,29 @@
         </div>
         <div class="tssggs-hero__foot">
             <p>
-                {if $csStatus == 'active'}
+                {if $csEnrollmentLink}{$MGLANG->T('csInfoEnroll')}
+                {elseif $csStatus == 'invited'}{$MGLANG->T('csInfoEnrollEmail')}
+                {elseif $csTokenSetupLink}{$MGLANG->T('csInfoTokenSetup')}
+                {elseif $csStatus == 'active'}
                     {if $csMethod == 'ship-token'}{$MGLANG->T('csInfoActiveShipToken')}{elseif $csMethod == 'existing-token'}{$MGLANG->T('csInfoActiveExistingToken')}{else}{$MGLANG->T('csInfoActiveHsm')}{/if}
                 {elseif $csTone == 'wait'}{$MGLANG->T('csInfoPending')}
                 {elseif $csTone == 'off'}{$MGLANG->T('smimeInfoClosed')}
                 {else}{$MGLANG->T('smimeInfoContactSupport')}{/if}
             </p>
             <div class="tssggs-actions">
+                {if $csEnrollmentLink || $csTokenSetupLink}
+                    <a class="tssggs-btn tssggs-btn--primary" href="{if $csEnrollmentLink}{$csEnrollmentLink|escape}{else}{$csTokenSetupLink|escape}{/if}" target="_blank" rel="noopener">
+                        <svg class="tssggs-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
+                        {if $csEnrollmentLink}{$MGLANG->T('smimeEnrollButton')}{else}{$MGLANG->T('csTokenSetupButton')}{/if}
+                    </a>
+                {/if}
                 {if $renewOpen}
                     <button type="button" class="tssggs-btn tssggs-btn--primary" data-toggle="modal" data-target="#tssggsRenewModal">
                         <svg class="tssggs-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>
                         {$MGLANG->T('renewButton')}
                     </button>
                 {/if}
-                <button id="tssggs-cs-refresh" type="button" class="tssggs-btn{if $csTone == 'wait'} tssggs-btn--primary{/if}">
+                <button id="tssggs-cs-refresh" type="button" class="tssggs-btn{if $csTone == 'wait' && !$csEnrollmentLink} tssggs-btn--primary{/if}">
                     <svg class="tssggs-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>
                     <span>{$MGLANG->T('smimeRefreshDetails')}</span>
                 </button>

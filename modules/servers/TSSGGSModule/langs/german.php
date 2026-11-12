@@ -518,6 +518,12 @@ $_LANG['serverCA']['home']['csAttestationLabel'] = 'Schlüsselattestierung';
 $_LANG['serverCA']['home']['csAttestationHint'] = 'Die Base64-kodierte Attestierung, die Ihr HSM für den Schlüssel dieser CSR erstellt hat. Sie belegt, dass der private Schlüssel auf dem HSM erzeugt wurde.';
 $_LANG['serverCA']['home']['csTokenInitCode'] = 'Initialisierungscode des Tokens';
 $_LANG['serverCA']['home']['csTokenInitCodeHint'] = 'Sie benötigen diesen Code, um das Hardware-Token nach dem Eintreffen einzurichten. Bewahren Sie ihn sicher auf.';
+$_LANG['serverCA']['home']['csStatus_invited'] = 'Wartet auf Ihre Registrierung';
+$_LANG['serverCA']['home']['csInfoEnroll'] = 'Schließen Sie Ihre Bestellung auf der Registrierungsseite der Zertifizierungsstelle ab. Der Status wird danach hier aktualisiert.';
+$_LANG['serverCA']['home']['csInfoEnrollEmail'] = 'Schließen Sie Ihre Bestellung über den Registrierungslink aus der E-Mail ab, die Sie bei der Bestellung erhalten haben. Wenn Sie ihn nicht finden, wenden Sie sich bitte an unseren Support.';
+$_LANG['serverCA']['home']['csInfoTokenSetup'] = 'Ihr Code-Signing-Zertifikat ist ausgestellt. Richten Sie Ihr Hardware-Token auf der Seite der Zertifizierungsstelle ein, um es zu installieren.';
+$_LANG['serverCA']['home']['csTokenSetupButton'] = 'Token einrichten';
+$_LANG['serverCA']['home']['csMethod_hsm_token'] = 'Auf meinem vorhandenen Token oder HSM installieren (ich stelle eine CSR bereit)';
 // Renewal of S/MIME / code signing
 $_LANG['serverCA']['home']['renewButton'] = 'Verlängern';
 $_LANG['serverCA']['home']['renewTitle'] = 'Zertifikat verlängern';

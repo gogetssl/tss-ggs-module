@@ -235,9 +235,15 @@ class TssReader extends AbstractReader
         return $remote && strtolower((string)$remote->category) === 'smime';
     }
 
+    /** Hardware code signing products the unified module sells through the gateway */
+    public function isCodeSigningCode(string $code): bool
+    {
+        return in_array($code, \ModulesGarden\TSSGGSModule\App\Libs\CodeSigningService::SUPPORTED_PRODUCTS['TSS'], true);
+    }
+
     public function isUnsupportedCode(string $code): bool
     {
-        if($this->isSmimeCode($code))
+        if($this->isSmimeCode($code) || $this->isCodeSigningCode($code))
         {
             return false;
         }
@@ -260,6 +266,7 @@ class TssReader extends AbstractReader
 
         $included = 0;
         $others   = [];
+        $csOption = null;
         foreach($this->configOptionGroupIds($pid) as $gid)
         {
             $group = Capsule::table('tblproductconfiggroups')->where('id', $gid)->first();
@@ -268,6 +275,12 @@ class TssReader extends AbstractReader
                 if(preg_match('/\((\d+) domains? (?:are|is) included/i', (string)$option->optionname, $m))
                 {
                     $included = (int)$m[1];
+                }
+                // code signing: the delivery option becomes the unified module's "Certificate Delivery" option
+                if($this->isCodeSigningCode($code) && preg_match('/^Certificate Delivery Method/i', (string)$option->optionname))
+                {
+                    $csOption = ['id' => (int)$option->id, 'gid' => (int)$gid, 'optionname' => (string)$option->optionname];
+                    continue;
                 }
                 if(preg_match('/^(Additional Servers|CSR Domain|Site Seal|Certificate Delivery Method)/i', (string)$option->optionname))
                 {
@@ -297,6 +310,7 @@ class TssReader extends AbstractReader
             'price_auto'            => !empty($cfg['update_prices_on_sync']) && strtolower($cfg['update_prices_on_sync']) !== 'no',
             'san_options'           => $this->sanOptions($pid, ['sans' => '/^Additional SAN(\s*\||\s*\(|$)/i', 'sans_wildcard' => '/^Additional WildCard SAN/i']),
             'other_options'         => $others,
+            'cs_delivery_option'    => $csOption,
             'unsupported'           => $this->isUnsupportedCode($code),
             'warnings'              => $warnings,
         ];
@@ -357,6 +371,10 @@ class TssReader extends AbstractReader
         if($this->isSmimeCode($code))
         {
             return $this->readSmime($rec, $svc, $order, $code);
+        }
+        if($this->isCodeSigningCode($code))
+        {
+            return $this->readCodeSigning($rec, $svc, $order, $code);
         }
 
         return $this->readSsl($rec, $svc, $order, $cd, $code);
@@ -448,6 +466,120 @@ class TssReader extends AbstractReader
             : (in_array($smime['status'], ['cancelled', 'rejected', 'revoked', 'refunded'], true) ? 'Cancelled' : ($smime['status'] === 'expired' ? 'Expired' : self::STATUS_SUBMITTED));
         $rec['smime']  = $smime;
         $rec['prices'] = [
+            'api_price'   => (float)($od['purchase_amt'] ?? 0),
+            'whmcs_price' => (float)$svc['amount'],
+            'invoiceid'   => (int)($od['invoice_id'] ?? 0),
+        ];
+
+        return $rec;
+    }
+
+    /**
+     * Code signing: like S/MIME an "invite" order placed when the service is created; the client enrols on the
+     * certificate authority's page (TinyOrderLink). The delivery comes from CSTokenDeliveryMethod (else from the
+     * service's "Certificate Delivery Method" option). Written as the unified module's "codesigning" request row
+     * (CodeSigningService). Renewals are new orders in the unified module.
+     */
+    protected function readCodeSigning(array $rec, array $svc, array $order, string $code): array
+    {
+        $cs          = \ModulesGarden\TSSGGSModule\App\Libs\CodeSigningService::class;
+        $rec['kind'] = 'codesigning';
+        $remote      = $this->mapper ? $this->mapper->forTss($code) : null;
+        $rec['remote_product_id'] = $remote ? (string)$remote->remoteId : $code;
+        if(!$remote)
+        {
+            $rec['warnings'][] = 'Gateway product not found for TheSSLStore product code "' . $code . '"';
+        }
+
+        $remoteId = trim((string)$order['remoteid']);
+        if($remoteId === '' || $remoteId === '0')
+        {
+            $rec['target_status']  = self::STATUS_AWAITING;
+            $rec['remote_id']      = '';
+            $rec['request_status'] = 'pending';
+
+            return $rec;
+        }
+
+        $od = Schema::tableExists('mod_sslstore_orders_data') ? Capsule::table('mod_sslstore_orders_data')->where('service_id', $rec['service_id'])->orderBy('id', 'desc')->first() : null;
+        $od = $od ? (array)$od : [];
+
+        // the delivery the client chose with the order (legacy option name)
+        $optionValue = Capsule::table('tblhostingconfigoptions')
+            ->join('tblproductconfigoptions', 'tblproductconfigoptions.id', '=', 'tblhostingconfigoptions.configid')
+            ->join('tblproductconfigoptionssub', 'tblproductconfigoptionssub.id', '=', 'tblhostingconfigoptions.optionid')
+            ->where('tblhostingconfigoptions.relid', $rec['service_id'])
+            ->where('tblproductconfigoptions.optionname', 'like', 'Certificate Delivery Method%')
+            ->value('tblproductconfigoptionssub.optionname');
+        $delivery = $cs::legacyDelivery(explode('|', (string)$optionValue, 2)[0]);
+
+        $data = [
+            'orderId' => (int)$remoteId, 'itemId' => (int)$remoteId, 'status' => '', 'vendorOrderId' => (string)($od['vendor_order_id'] ?? ''),
+            'validFrom' => '', 'validTill' => '', 'term' => (int)($od['no_of_months'] ?? 12) ?: 12, 'method' => '', 'tokenModel' => '', 'shipping' => '',
+            'csrProvided' => false, 'organization' => (string)$svc['domain'], 'orderedAt' => (string)($od['order_placed_date'] ?? ''), 'previous' => [], 'migrated' => true,
+        ];
+
+        $tss = $this->tssOrderStatus($remoteId);
+        if($tss !== null)
+        {
+            $major = strtolower(trim((string)($tss['OrderStatus']['MajorStatus'] ?? '')));
+            $map   = ['initial' => 'invited', 'pending' => 'pending', 'active' => 'active', 'cancelled' => 'cancelled', 'canceled' => 'cancelled',
+                      'rejected' => 'rejected', 'expired' => 'expired', 'revoked' => 'revoked', 'refunded' => 'refunded'];
+            $data['status'] = $map[$major] ?? 'processing';
+            if($data['status'] === 'invited' && !empty($tss['TinyOrderLink']))
+            {
+                // the client has not enrolled yet: the enrolment link stays valid after the migration
+                $data['enrollmentLink'] = (string)$tss['TinyOrderLink'];
+            }
+            if(isset($tss['CSTokenDeliveryMethod']) && $tss['CSTokenDeliveryMethod'] !== null && $cs::legacyDelivery($tss['CSTokenDeliveryMethod']) !== null)
+            {
+                $delivery = $cs::legacyDelivery($tss['CSTokenDeliveryMethod']);
+            }
+            // DigiCert: the page to set up the shipped token
+            if(!empty($tss['CSTokenSetUpLink']) && empty($tss['IsCSTokenSet']))
+            {
+                $data['tokenSetupLink'] = (string)$tss['CSTokenSetUpLink'];
+            }
+            if(!empty($tss['OrganizationInfo']['OrganizationName']))
+            {
+                $data['organization'] = (string)$tss['OrganizationInfo']['OrganizationName'];
+            }
+            if(!empty($tss['VendorOrderID']))
+            {
+                $data['vendorOrderId'] = (string)$tss['VendorOrderID'];
+            }
+            if($data['status'] === 'active')
+            {
+                $data['validFrom'] = $this->tssDate($tss['CertificateStartDate'] ?? '');
+                $data['validTill'] = $this->tssDate($tss['CertificateEndDate'] ?? '');
+            }
+        }
+        else
+        {
+            $rec['warnings'][] = 'TheSSLStore order status could not be read; the state comes from the legacy tables (the first refresh corrects it)';
+            $data['status'] = $order['status'] === self::STATUS_AWAITING ? 'invited' : $this->normalizeStatus((string)($od['ssl_status'] ?? ''), (string)$order['status']);
+        }
+
+        if($delivery !== null)
+        {
+            $parsed           = $cs::parseProvisioningValue($delivery);
+            $data['method']   = $parsed['method'];
+            $data['shipping'] = (string)$parsed['shipping'];
+        }
+        if($data['status'] === 'invited')
+        {
+            $rec['preordered'] = true;
+            $rec['warnings'][] = empty($data['enrollmentLink'])
+                ? 'Code signing order ' . $remoteId . ' waits for the client\'s enrolment; the enrolment link is in the e-mail the client received'
+                : 'Code signing order ' . $remoteId . ' waits for the client\'s enrolment; the client area shows the enrolment link';
+        }
+
+        $rec['remote_id']      = $remoteId;
+        $rec['request_status'] = $data['status'];
+        $rec['target_status']  = $data['status'] === 'active' ? 'Completed'
+            : (in_array($data['status'], ['cancelled', 'rejected', 'revoked', 'refunded'], true) ? 'Cancelled' : ($data['status'] === 'expired' ? 'Expired' : self::STATUS_SUBMITTED));
+        $rec['codesigning'] = $data;
+        $rec['prices']      = [
             'api_price'   => (float)($od['purchase_amt'] ?? 0),
             'whmcs_price' => (float)$svc['amount'],
             'invoiceid'   => (int)($od['invoice_id'] ?? 0),

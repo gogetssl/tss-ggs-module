@@ -518,6 +518,12 @@ $_LANG['serverCA']['home']['csAttestationLabel'] = 'Attestation de clé';
 $_LANG['serverCA']['home']['csAttestationHint'] = 'L\'attestation encodée en Base64 que votre HSM a créée pour la clé de ce CSR. Elle prouve que la clé privée a été générée sur le HSM.';
 $_LANG['serverCA']['home']['csTokenInitCode'] = 'Code d\'initialisation du jeton';
 $_LANG['serverCA']['home']['csTokenInitCodeHint'] = 'Ce code vous servira à configurer le jeton matériel à sa réception. Conservez-le en lieu sûr.';
+$_LANG['serverCA']['home']['csStatus_invited'] = 'En attente de votre inscription';
+$_LANG['serverCA']['home']['csInfoEnroll'] = 'Finalisez votre commande sur la page d\'inscription de l\'autorité de certification. Le statut sera ensuite mis à jour ici.';
+$_LANG['serverCA']['home']['csInfoEnrollEmail'] = 'Finalisez votre commande avec le lien d\'inscription de l\'e-mail reçu lors de la commande. Si vous ne le trouvez pas, veuillez contacter notre support.';
+$_LANG['serverCA']['home']['csInfoTokenSetup'] = 'Votre certificat de signature de code est émis. Configurez votre jeton matériel sur la page de l\'autorité de certification pour l\'installer.';
+$_LANG['serverCA']['home']['csTokenSetupButton'] = 'Configurer le jeton';
+$_LANG['serverCA']['home']['csMethod_hsm_token'] = 'Installer sur mon jeton ou HSM existant (je fournis un CSR)';
 // Renewal of S/MIME / code signing
 $_LANG['serverCA']['home']['renewButton'] = 'Renouveler';
 $_LANG['serverCA']['home']['renewTitle'] = 'Renouveler le certificat';
