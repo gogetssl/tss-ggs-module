@@ -243,6 +243,7 @@ $_LANG['resend_dcv_not_available']                                              
 $_LANG['resend_dcv_error']                                                                                                       = 'Valideringens e-mail kunne ikke sendes:';
 $_LANG['revalidate_error']                                                                                                       = 'Valideringskontrollen kunne ikke anmodes:';
 $_LANG['renew_exists']                                                                                                           = 'Fakturaen for fornyelsen findes allerede.';
+$_LANG['renew_not_recurring'] = 'Denne tjeneste faktureres én gang og kan ikke fornyes her. Afgiv venligst en ny ordre.';
 $_LANG['renew_invoice_generated']                                                                                                = 'Fakturaen for fornyelsen er blevet oprettet.';
 $_LANG['Click here to view the invoice']                                                                                         = 'Klik her for at se fakturaen';
 

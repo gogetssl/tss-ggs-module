@@ -139,8 +139,10 @@ class SSLCertificates extends AbstractCommand
 
                 CertificateSyncHelpers::syncCertificate($certificate, $addonConfig);
 
-            } catch (Exception $e) {
+            } catch (\Throwable $e) {
 
+                // counted as handled: an order that keeps failing must not hold a place among the oldest ones for ever
+                \WHMCS\Database\Capsule::table('tblsslorders')->where('serviceid', (int)$certificate['id'])->update(['updated_at' => date('Y-m-d H:i:s')]);
                 $failed[$certificate['id']] = $e->getMessage();
                 $io->write('Error: ' . $e->getMessage());
 

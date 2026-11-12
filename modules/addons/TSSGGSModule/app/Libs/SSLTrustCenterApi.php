@@ -182,13 +182,7 @@ class SSLTrustCenterApi
         if($serviceId !== false)
         {
             $this->serviceHint = $serviceId;
-            $request      = Request::where('serviceid', $serviceId)->where('name', 'addOrder')->first();
-            $requestRenew = Request::where('serviceid', $serviceId)->where('name', 'renewOrder')->first();
-
-            if(isset($requestRenew->request) && !empty($requestRenew->request))
-            {
-                $request = $requestRenew;
-            }
+            $request = Request::currentOrder($serviceId) ?: new \stdClass();
         }
 
         $response = $this->call('/certificates/' . $this->category . '/' . $order_id);
@@ -797,6 +791,11 @@ class SSLTrustCenterApi
         $response = json_decode($result, true);
         if($response === null)
         {
+            // an error page of a proxy (502 / 504) is reported with its HTTP code, not as an unreadable answer
+            if(!$isSuccess)
+            {
+                throw new \Exception(self::readableError('', $httpCode), $httpCode);
+            }
             throw new \Exception('Invalid response from API');
         }
 

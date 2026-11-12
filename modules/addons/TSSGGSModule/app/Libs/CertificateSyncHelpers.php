@@ -50,6 +50,11 @@ class CertificateSyncHelpers
 
         $api       = new SSLTrustCenterApi($certificate['configoption1'], $credentials['PartnerCode'], $credentials['AuthToken'], $certificate['configoption9']);
         $orderData = $api->getOrder($certificate['remoteid'], $certificate['id']);
+        // an empty answer must never replace what is stored
+        if(empty($orderData['order']['status']))
+        {
+            throw new Exception('The gateway returned no status for order ' . $certificate['remoteid']);
+        }
 
         // Services configured before 1.2.4 store the API order ID in tblsslorders.remoteid; since 1.2.4 it is the
         // certificate (item) ID. The API accepts both, so migrate the stored value whenever the order is fetched.
@@ -72,6 +77,16 @@ class CertificateSyncHelpers
         Request::where('serviceid', $certificate['id'])->where('name', 'addOrder')->update([
             'status' => $orderData['order']['status']
         ]);
+
+        // the files could not be read this time: an issued certificate keeps the files it already has
+        if($orderData['order']['status'] == 'active' && !$orderFiles)
+        {
+            $kept = CertificateService::stored($certificate['id']);
+            if(!empty($kept['orderFiles']) && ($kept['orderData']['order']['status'] ?? '') === 'active')
+            {
+                $orderFiles = $kept['orderFiles'];
+            }
+        }
 
         $request = ['orderData' => $orderData, 'orderFiles' => $orderFiles];
 

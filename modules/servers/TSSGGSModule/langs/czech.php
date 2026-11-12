@@ -243,6 +243,7 @@ $_LANG['resend_dcv_not_available'] = 'Opětovné odeslání validačního e-mail
 $_LANG['resend_dcv_error'] = 'Validační e-mail se nepodařilo odeslat:';
 $_LANG['revalidate_error'] = 'Kontrolu validace se nepodařilo vyžádat:';
 $_LANG['renew_exists'] = 'Faktura za obnovení již existuje.';
+$_LANG['renew_not_recurring'] = 'Tato služba se účtuje jednorázově a nelze ji zde obnovit. Vytvořte prosím novou objednávku.';
 $_LANG['renew_invoice_generated'] = 'Faktura za obnovení byla úspěšně vygenerována.';
 $_LANG['Click here to view the invoice'] = 'Kliknutím sem zobrazíte fakturu';
 

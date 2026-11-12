@@ -243,6 +243,7 @@ $_LANG['resend_dcv_not_available']                                              
 $_LANG['resend_dcv_error']                                                                                                       = 'L\'e-mail de validation n\'a pas pu être envoyé :';
 $_LANG['revalidate_error']                                                                                                       = 'La vérification de la validation n\'a pas pu être demandée :';
 $_LANG['renew_exists']                                                                                                           = 'La facture de renouvellement existe déjà.';
+$_LANG['renew_not_recurring'] = 'Ce service est facturé une seule fois et ne peut pas être renouvelé ici. Veuillez passer une nouvelle commande.';
 $_LANG['renew_invoice_generated']                                                                                                = 'La facture de renouvellement a été générée avec succès.';
 $_LANG['Click here to view the invoice']                                                                                         = 'Cliquez ici pour consulter la facture';
 

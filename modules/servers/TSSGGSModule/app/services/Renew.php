@@ -25,7 +25,7 @@ class Renew
         {
             return $this->renew($params);
         }
-        catch(\Exception $e)
+        catch(\Throwable $e)
         {
             \logActivity('TSSGGS: Renewal of service #' . (int)$params['serviceid'] . ' failed: ' . $e->getMessage());
 
@@ -112,7 +112,8 @@ class Renew
 
             $apiPrice = $newOrder['order']['total_amount'];
 
-            Request::where('serviceid', $serviceId)->where('name', 'renewOrder')->update([
+            // this renewal's row only: the rows of earlier renewals keep their own invoice and prices
+            Request::where('id', (int)Request::where('serviceid', $serviceId)->where('name', 'renewOrder')->max('id'))->update([
                 'invoiceid' => $invoiceId,
                 'api_price' => $apiPrice,
                 'whmcs_price' => $params['model']->amount,
@@ -210,7 +211,7 @@ class Renew
 
                 $apiPrice = $newOrder['order']['total_amount'];
 
-                Request::where('serviceid', $newServiceId)->where('name', 'renewOrder')->update([
+                Request::where('id', (int)Request::where('serviceid', $newServiceId)->where('name', 'renewOrder')->max('id'))->update([
                     'invoiceid' => $invoiceId,
                     'api_price' => $apiPrice,
                     'whmcs_price' => $newService->amount,

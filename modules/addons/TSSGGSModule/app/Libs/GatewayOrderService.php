@@ -346,9 +346,15 @@ abstract class GatewayOrderService
                     static::refresh($serviceId);
                     static::afterCronRefresh($serviceId);
                 }
+                else
+                {
+                    // nothing to refresh (not ordered yet, or failed / rejected): it goes to the end of the queue
+                    Capsule::table('tblsslorders')->where('serviceid', (int)$serviceId)->update(['updated_at' => date('Y-m-d H:i:s')]);
+                }
             }
             catch(\Throwable $e)
             {
+                Capsule::table('tblsslorders')->where('serviceid', (int)$serviceId)->update(['updated_at' => date('Y-m-d H:i:s')]);
                 if(!static::quietFailure(static::stored($serviceId)))
                 {
                     $failed[(int)$serviceId] = $e->getMessage();

@@ -692,7 +692,8 @@ class CertificateService
         // the names come from posted form keys: never trust them beyond the SANs that were paid for
         SanUpgrade::assertWithinLimits($serviceId, $commonName, array_keys($methods));
 
-        $request      = Request::where('serviceid', (int)$serviceId)->where('name', 'addOrder')->first();
+        // the request of the current certificate (after a renewal: the renewal's, not the first order's)
+        $request      = Request::currentOrder((int)$serviceId);
         $requestOrder = $request && $request->request ? (json_decode(\decrypt($request->request), true) ?: []) : [];
 
         $sans = [];
@@ -716,11 +717,14 @@ class CertificateService
         $requestOrder['csr']               = trim($csr);
         $requestOrder['common_name']       = ['name' => $commonName, 'validation_method' => $methods[$commonName]];
         $requestOrder['alternative_names'] = $sans;
-        Request::where('serviceid', (int)$serviceId)->where('name', 'addOrder')->update([
-            'request'    => \encrypt(json_encode($requestOrder)),
-            'status'     => 'pending',
-            'updated_at' => date('Y-m-d H:i:s'),
-        ]);
+        if($request)
+        {
+            Request::where('id', (int)$request->id)->update([
+                'request'    => \encrypt(json_encode($requestOrder)),
+                'status'     => 'pending',
+                'updated_at' => date('Y-m-d H:i:s'),
+            ]);
+        }
 
         $orderData  = $api->getOrder($itemId, $serviceId);
         $orderFiles = [];

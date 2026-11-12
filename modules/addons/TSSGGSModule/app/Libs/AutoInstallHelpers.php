@@ -211,7 +211,7 @@ class AutoInstallHelpers
         }
 
         $commonName = $domain;
-        $request    = Request::where('serviceid', $targetServiceId)->where('name', 'renewOrder')->first();
+        $request    = Request::where('serviceid', $targetServiceId)->where('name', 'renewOrder')->orderBy('id', 'desc')->first();
         if($request && $request->request)
         {
             $requestData = json_decode(\decrypt($request->request), true);

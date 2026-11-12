@@ -243,6 +243,7 @@ $_LANG['resend_dcv_not_available'] = 'Das erneute Senden der Validierungs-E-Mail
 $_LANG['resend_dcv_error'] = 'Die Validierungs-E-Mail konnte nicht gesendet werden:';
 $_LANG['revalidate_error'] = 'Die Validierungsprüfung konnte nicht angefordert werden:';
 $_LANG['renew_exists'] = 'Die Rechnung für die Verlängerung existiert bereits.';
+$_LANG['renew_not_recurring'] = 'Dieser Dienst wird einmalig abgerechnet und kann hier nicht verlängert werden. Bitte geben Sie eine neue Bestellung auf.';
 $_LANG['renew_invoice_generated'] = 'Die Rechnung für die Verlängerung wurde erfolgreich erstellt.';
 $_LANG['Click here to view the invoice'] = 'Klicken Sie hier, um die Rechnung anzuzeigen';
 

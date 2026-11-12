@@ -104,6 +104,21 @@ class InvoiceRenew {
             'Triennially' => 36
         ];
         $daysBefore = 0;
+        // a service that is billed once (or free) has no renewal price: no empty invoice, which would be paid at once
+        if(!isset($cycles[$billingCycle]))
+        {
+            $message = 'This service is billed once and cannot be renewed here. Please place a new order.';
+            try
+            {
+                $translated = (string)\ModulesGarden\Servers\TSSGGSModule\core\Lang::absoluteT('renew_not_recurring');
+                $message    = $translated !== '' && $translated !== 'renew_not_recurring' ? $translated : $message;
+            }
+            catch(\Throwable $e)
+            {
+                // no language context (cron): the English text is used
+            }
+            throw new \Exception($message);
+        }
         if($billingCycle != 'One Time' && $billingCycle != 'Free Account')
         {
             $endDate = date('Y-m-d', strtotime("+{$cycles[$billingCycle]} months", strtotime($service['nextduedate'])));
@@ -125,6 +140,10 @@ class InvoiceRenew {
             'itemtaxed1' => $service['tax']
         ]);
 
+        if(empty($results['invoiceid']))
+        {
+            throw new \Exception('The renewal invoice could not be created' . (!empty($results['message']) ? ': ' . $results['message'] : ''));
+        }
         $invoiceId = $results['invoiceid'];
         EmailTemplates::sendRenewalInvoiceEmail($serviceId, $invoiceId);
         \ModulesGarden\TSSGGSModule\App\Libs\ProductCatalog::noticeIfDiscontinued($serviceId);
