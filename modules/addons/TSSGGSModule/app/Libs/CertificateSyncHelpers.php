@@ -25,9 +25,9 @@ class CertificateSyncHelpers
             ->where('tblproducts.servertype', 'TSSGGSModule')
             ->where('tblhosting.domainstatus', 'Active')
             ->where('tblsslorders.status', 'Configuration Submitted')
-            // S/MIME orders have their own data and refresh (SmimeService)
+            // S/MIME and code signing orders have their own data and refresh (GatewayOrderService)
             ->where(function($query) {
-                $query->whereNull('tblproducts.configoption9')->orWhere('tblproducts.configoption9', '!=', SmimeService::CATEGORY);
+                $query->whereNull('tblproducts.configoption9')->orWhereNotIn('tblproducts.configoption9', GatewayOrderService::categories());
             });
     }
 

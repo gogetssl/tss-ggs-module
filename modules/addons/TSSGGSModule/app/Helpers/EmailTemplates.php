@@ -81,6 +81,48 @@ class EmailTemplates
                                  <p>{$order_url}</p>
                                  <p>{$signature}</p>';
 
+    const CS_CONFIGURATION_TEMPLATE = 'Code Signing Configuration Required';
+    const CS_CONFIGURATION_SUBJECT  = 'Code Signing Certificate - order details required';
+    const CS_CONFIGURATION_MESSAGE  = '<p>Dear {$client_name},</p>
+                                 <p>
+                                    Your code signing certificate ({$service_product_name}) is ready to be ordered.
+                                    Enter your organization, the administrator contact and how you want to receive the
+                                    certificate at the URL below.
+                                 </p>
+                                 <p>{$ssl_configuration_link}</p>
+                                 <p>
+                                    After you submit the order, the certificate authority validates your organization and
+                                    contacts the administrator by email and phone. If you have any questions, please open a
+                                    ticket for assistance.
+                                 </p>
+                                 <p>{$signature}</p>';
+
+    const CS_ISSUED_TEMPLATE = 'Code Signing Certificate Issued';
+    const CS_ISSUED_SUBJECT  = 'Your code signing certificate is issued - {$cs_organization}';
+    const CS_ISSUED_MESSAGE  = '<p>Dear {$client_name},</p>
+                                 <p>Your code signing certificate for {$cs_organization} is issued. It is valid until {$cs_valid_till}.</p>
+                                 <p>
+                                    {if $cs_method == \'ship-token\'}The certificate authority ships the hardware token with the
+                                    certificate to the shipping address of your order.{elseif $cs_method == \'existing-token\'}The
+                                    certificate authority emails the administrator instructions to install the certificate on your
+                                    hardware token.{else}The certificate authority emails the administrator instructions to download
+                                    the certificate for your HSM.{/if}
+                                 </p>
+                                 <p>Order details: {$order_url}</p>
+                                 <p>{$signature}</p>';
+
+    const CS_EXPIRATION_TEMPLATE = 'Code Signing Expiration';
+    const CS_EXPIRATION_SUBJECT  = 'Your code signing certificate expires in {$expireDaysLeft} days - {$domain}';
+    const CS_EXPIRATION_MESSAGE  = '<p>Dear {$client_name},</p>
+                                 <p>Your code signing certificate for {$domain} expires in {$expireDaysLeft} days ({$cert_expiry_date}).</p>
+                                 <p>
+                                    To keep signing your software, renew the service. After the renewal is paid you order the next
+                                    certificate in the client area for your existing hardware token or HSM, and the certificate
+                                    authority validates the organization again. Your current certificate stays valid until it expires.
+                                 </p>
+                                 <p>{$order_url}</p>
+                                 <p>{$signature}</p>';
+
     const EXPIRATION_TEMPLATE = 'Service Expiration';
     const EXPIRATION_SUBJECT  = 'Service Expiration Notification - {$service_domain}';
     const EXPIRATION_MESSAGE  = '<p>Dear {$client_name},</p>
@@ -166,10 +208,13 @@ class EmailTemplates
                              </p>
                              <p>{$signature}</p>';
 
-    const TEMPLATE_NAMES = ['CONFIGURATION', 'SMIME_CONFIGURATION', 'SMIME_REMINDER', 'SMIME_ISSUED', 'SMIME_EXPIRATION', 'EXPIRATION', 'SEND_CERTIFICATE', 'RENEWAL', 'REISSUE', 'SUBSCRIPTION', 'SUBSCRIPTION_EXPIRATION', 'SUBSCRIPTION_RENEWAL', 'RENEWAL_INVOICE', 'DISCONTINUED'];
+    const TEMPLATE_NAMES = ['CONFIGURATION', 'SMIME_CONFIGURATION', 'SMIME_REMINDER', 'SMIME_ISSUED', 'SMIME_EXPIRATION', 'CS_CONFIGURATION', 'CS_ISSUED', 'CS_EXPIRATION', 'EXPIRATION', 'SEND_CERTIFICATE', 'RENEWAL', 'REISSUE', 'SUBSCRIPTION', 'SUBSCRIPTION_EXPIRATION', 'SUBSCRIPTION_RENEWAL', 'RENEWAL_INVOICE', 'DISCONTINUED'];
 
     /** S/MIME e-mails */
     const SMIME_TEMPLATES = [self::SMIME_CONFIGURATION_TEMPLATE, self::SMIME_REMINDER_TEMPLATE, self::SMIME_ISSUED_TEMPLATE, self::SMIME_EXPIRATION_TEMPLATE];
+
+    /** Code signing e-mails (GoGetSSL edition only) */
+    const CS_TEMPLATES = [self::CS_CONFIGURATION_TEMPLATE, self::CS_ISSUED_TEMPLATE, self::CS_EXPIRATION_TEMPLATE];
 
     /** keys of the templates that are created disabled */
     const OPT_IN = [self::RENEWAL_INVOICE_TEMPLATE];

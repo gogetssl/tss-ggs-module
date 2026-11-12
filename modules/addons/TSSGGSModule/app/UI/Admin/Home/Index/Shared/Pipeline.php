@@ -35,7 +35,7 @@ class Pipeline
                 ->join('tblproducts', 'tblproducts.id', '=', 'tblhosting.packageid')
                 ->leftJoin('TSSGGSModule_Requests', function($join) {
                     // SSL orders keep their state in "certificate", S/MIME orders in "smime"
-                    $join->on('TSSGGSModule_Requests.serviceid', '=', 'tblhosting.id')->whereIn('TSSGGSModule_Requests.name', ['certificate', 'smime']);
+                    $join->on('TSSGGSModule_Requests.serviceid', '=', 'tblhosting.id')->whereIn('TSSGGSModule_Requests.name', ['certificate', 'smime', 'codesigning']);
                 })
                 ->where('tblproducts.servertype', 'TSSGGSModule')
                 ->whereNotIn('tblhosting.id', $subscriptions ?: [0])

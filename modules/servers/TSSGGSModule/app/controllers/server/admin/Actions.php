@@ -336,11 +336,12 @@ class Actions {
     public function AdminCustomButtonArray($params = [])
     {
         $serviceId = isset($params['serviceid']) ? (int)$params['serviceid'] : 0;
-        if($serviceId && CertificateService::category($serviceId) === CertificateService::CATEGORY_SMIME)
+        $gatewayType = $serviceId ? \ModulesGarden\TSSGGSModule\App\Libs\GatewayOrderService::typeOfService($serviceId) : null;
+        if($gatewayType)
         {
             // nothing to refresh or cancel before the client orders the certificate
-            return \ModulesGarden\TSSGGSModule\App\Libs\SmimeService::isOrdered($serviceId)
-                ? ['Refresh S/MIME Status' => 'SyncCertificate', 'Cancel Order' => 'CancelOrder']
+            return $gatewayType::isOrdered($serviceId)
+                ? ['Refresh ' . $gatewayType::LABEL . ' Status' => 'SyncCertificate', 'Cancel Order' => 'CancelOrder']
                 : [];
         }
         if($serviceId && CertificateService::category($serviceId) !== CertificateService::CATEGORY_TLS)

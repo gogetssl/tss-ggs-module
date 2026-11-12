@@ -32,9 +32,10 @@ class AdminServicesTabFields
             {
                 $fields = ['Configuration Status' => '<span class="label label-warning">Awaiting Configuration</span>'];
                 // S/MIME after a renewal: the orders placed before
-                if(CertificateService::category($params['serviceid']) === CertificateService::CATEGORY_SMIME)
+                $gatewayType = \ModulesGarden\TSSGGSModule\App\Libs\GatewayOrderService::typeOfService((int)$params['serviceid']);
+                if($gatewayType)
                 {
-                    $fields += $this->getSmimePreviousOrders(\ModulesGarden\TSSGGSModule\App\Libs\SmimeService::stored((int)$params['serviceid']));
+                    $fields += $this->getSmimePreviousOrders($gatewayType::stored((int)$params['serviceid']));
                 }
 
                 return $fields;
@@ -48,6 +49,10 @@ class AdminServicesTabFields
             if(CertificateService::category($params['serviceid']) === CertificateService::CATEGORY_SMIME)
             {
                 return $this->getSmimeDetails((int)$params['serviceid'], $sslService);
+            }
+            if(CertificateService::category($params['serviceid']) === CertificateService::CATEGORY_CS)
+            {
+                return $this->getCodeSigningDetails((int)$params['serviceid'], $sslService);
             }
             if(CertificateService::category($params['serviceid']) !== CertificateService::CATEGORY_TLS)
             {
@@ -111,7 +116,40 @@ class AdminServicesTabFields
     }
 
     /**
-     * S/MIME orders placed before the last renewal
+     * Code signing order on the module tab: status, gateway / CA order, organization, delivery, validity
+     */
+    private function getCodeSigningDetails($serviceId, $sslService)
+    {
+        $cs     = \ModulesGarden\TSSGGSModule\App\Libs\CodeSigningService::class;
+        $stored = $cs::stored($serviceId);
+        $status = (string)($stored['status'] ?? '');
+        $labels = ['active' => 'label-success', 'processing' => 'label-info', 'pending' => 'label-info', 'cancelled' => 'label-danger',
+                   'rejected' => 'label-danger', 'failed' => 'label-danger', 'revoked' => 'label-danger', 'expired' => 'label-default'];
+
+        $delivery = $cs::describeDelivery([
+            'method'   => $stored['method'] ?? '',
+            'model'    => $stored['tokenModel'] ?? '',
+            'shipping' => ['id' => $stored['shipping'] ?? ''],
+        ]);
+
+        $fields = [];
+        $fields['Configuration Status'] = htmlspecialchars($sslService->status);
+        $fields['Gateway Order']        = 'Order #' . (int)($stored['orderId'] ?? 0) . ' | Item #' . (int)($stored['itemId'] ?? 0)
+            . (!empty($stored['vendorOrderId']) ? ' | Vendor (CA) order #' . htmlspecialchars($stored['vendorOrderId']) : '');
+        $fields['Vendor Status']        = '<span class="label ' . ($labels[$status] ?? 'label-default') . '">' . htmlspecialchars(ucfirst($status ?: 'unknown')) . '</span>'
+            . (!empty($stored['vendorStatus']) ? ' &nbsp;CA: ' . htmlspecialchars($stored['vendorStatus']) : '')
+            . (!empty($stored['orderedAt']) ? ' &nbsp;ordered ' . htmlspecialchars($stored['orderedAt']) : '')
+            . (!empty($stored['refreshedAt']) ? ' &nbsp;<small class="text-muted">last refresh ' . htmlspecialchars($stored['refreshedAt']) . '</small>' : '');
+        $fields['Organization']         = htmlspecialchars((string)($stored['organization'] ?? '-'));
+        $fields['Delivery']             = htmlspecialchars($delivery);
+        $fields['Validity']             = (!empty($stored['validFrom']) ? htmlspecialchars(substr($stored['validFrom'], 0, 10)) : '-') . ' &rarr; '
+            . (!empty($stored['validTill']) ? htmlspecialchars(substr($stored['validTill'], 0, 10)) : '-');
+
+        return $fields + $this->getSmimePreviousOrders($stored);
+    }
+
+    /**
+     * S/MIME / code signing orders placed before the last renewal
      */
     private function getSmimePreviousOrders(array $stored)
     {
@@ -125,7 +163,8 @@ class AdminServicesTabFields
         {
             $previous[] = 'Order #' . (int)($order['orderId'] ?? 0) . ' (' . htmlspecialchars((string)($order['status'] ?? ''))
                 . (!empty($order['validTill']) ? ', valid till ' . htmlspecialchars(substr($order['validTill'], 0, 10)) : '')
-                . (!empty($order['emails']) ? ', ' . htmlspecialchars(implode(', ', (array)$order['emails'])) : '') . ')';
+                . (!empty($order['emails']) ? ', ' . htmlspecialchars(implode(', ', (array)$order['emails'])) : '')
+                . (!empty($order['organization']) ? ', ' . htmlspecialchars((string)$order['organization']) : '') . ')';
         }
 
         return ['Previous Orders' => implode('<br>', $previous)];

@@ -54,8 +54,8 @@ class CreateAccount {
             return 'success';
         }
 
-        $template = \ModulesGarden\TSSGGSModule\App\Libs\SmimeService::isSmimeWhmcsProduct($whmcsProductId)
-            ? EmailTemplates::SMIME_CONFIGURATION_TEMPLATE : EmailTemplates::CONFIGURATION_TEMPLATE;
+        $gatewayType = \ModulesGarden\TSSGGSModule\App\Libs\GatewayOrderService::typeOfProduct($whmcsProductId);
+        $template    = $gatewayType ? $gatewayType::configurationTemplate() : EmailTemplates::CONFIGURATION_TEMPLATE;
         EmailTemplates::sendEmail($template, $serviceId, [
             'ssl_configuration_link' => (new Config())->getConfigureSSLUrl($sslId, $serviceId),
         ]);

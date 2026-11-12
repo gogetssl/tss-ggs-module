@@ -87,7 +87,7 @@ class RenewalNotifyCertificate extends AbstractCommand
                                     ->where(function($query) {
                                         $query->where('tblsslorders.status', 'Configuration Submitted')
                                               ->orWhere(function($smime) {
-                                                  $smime->where('tblproducts.configoption9', \ModulesGarden\TSSGGSModule\App\Libs\SmimeService::CATEGORY)
+                                                  $smime->whereIn('tblproducts.configoption9', \ModulesGarden\TSSGGSModule\App\Libs\GatewayOrderService::categories())
                                                         ->where('tblsslorders.status', 'Completed');
                                               });
                                     });
@@ -107,7 +107,8 @@ class RenewalNotifyCertificate extends AbstractCommand
                 continue;
             }
             // S/MIME: its own expiry e-mail, no reissue reminder (a renewal is a new order)
-            $isSmime = \ModulesGarden\TSSGGSModule\App\Libs\SmimeService::isSmimeWhmcsProduct($srv->packageid);
+            $gatewayType = \ModulesGarden\TSSGGSModule\App\Libs\GatewayOrderService::typeOfProduct($srv->packageid);
+            $isSmime     = $gatewayType !== null;
 
             $io->progressAdvance(1);
 
@@ -131,7 +132,7 @@ class RenewalNotifyCertificate extends AbstractCommand
                     if($srv->billingcycle != 'One Time' && is_array($daysNotify) && in_array($daysLeft, $daysNotify))
                     {
                         $output->write('Send Email Expiration: ' . $srv->id . ' - ' . $srv->domain);
-                        EmailTemplates::sendEmail($isSmime ? EmailTemplates::SMIME_EXPIRATION_TEMPLATE : EmailTemplates::EXPIRATION_TEMPLATE, $srv->id, ["expireDaysLeft" => $daysLeft]);
+                        EmailTemplates::sendEmail($gatewayType === \ModulesGarden\TSSGGSModule\App\Libs\CodeSigningService::class ? EmailTemplates::CS_EXPIRATION_TEMPLATE : ($isSmime ? EmailTemplates::SMIME_EXPIRATION_TEMPLATE : EmailTemplates::EXPIRATION_TEMPLATE), $srv->id, ["expireDaysLeft" => $daysLeft]);
                         Logger::info("The notification expire has been send", ['service' => $srv->id]);
                     }
                 }

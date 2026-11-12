@@ -112,7 +112,7 @@ class RecordsProvider
             if(!isset($productTypes[$item->productId]))
             {
                 $productTypes[$item->productId] = AcmeHelpers::isAcmeWhmcsProduct($item->productId) ? 'acme' : (AisHelpers::isAisWhmcsProduct($item->productId) ? 'ais'
-                    : (\ModulesGarden\TSSGGSModule\App\Libs\SmimeService::isSmimeWhmcsProduct($item->productId) ? 'smime' : 'ssl'));
+                    : (\ModulesGarden\TSSGGSModule\App\Libs\GatewayOrderService::typeOfProduct($item->productId) ?: 'ssl'));
             }
 
             $subscription = null;
@@ -125,10 +125,10 @@ class RecordsProvider
                 $subscription = AisSubscription::getByServiceId($serviceId);
             }
 
-            if($productTypes[$item->productId] === 'smime')
+            if($productTypes[$item->productId] !== 'ssl' && is_subclass_of($productTypes[$item->productId], \ModulesGarden\TSSGGSModule\App\Libs\GatewayOrderService::class))
             {
-                // S/MIME keeps its order in the "smime" request row (SmimeService)
-                $smime          = \ModulesGarden\TSSGGSModule\App\Libs\SmimeService::stored($serviceId);
+                // S/MIME / code signing keep their order in their own request row (GatewayOrderService)
+                $smime          = $productTypes[$item->productId]::stored($serviceId);
                 $orderStatus    = !empty($smime['status']) ? ucfirst($smime['status']) : $orderStatus;
                 $storeId        = !empty($smime['itemId']) ? $smime['itemId'] : '-';
                 $issueDate      = !empty($smime['validFrom']) ? date('Y-m-d', strtotime($smime['validFrom'])) : '-';

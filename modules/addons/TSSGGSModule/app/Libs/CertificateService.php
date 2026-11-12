@@ -20,6 +20,7 @@ class CertificateService
     const CATEGORY_ACME = 'caas';
     const CATEGORY_AIS  = 'ais';
     const CATEGORY_SMIME = 'smime';
+    const CATEGORY_CS    = 'cs';
 
     /**
      * Gateway client for the service's vendor and product category
@@ -63,6 +64,10 @@ class CertificateService
         if(SmimeService::isSmimeWhmcsProduct($packageId))
         {
             return self::CATEGORY_SMIME;
+        }
+        if(CodeSigningService::isCodeSigningWhmcsProduct($packageId))
+        {
+            return self::CATEGORY_CS;
         }
 
         return self::CATEGORY_TLS;
@@ -577,6 +582,13 @@ class CertificateService
                 self::api($serviceId)->cancelAisSubscription((int)$subscription->ais_item_id, $reason);
                 $subscription->status = 'cancelled';
                 $subscription->save();
+                break;
+
+            case self::CATEGORY_CS:
+                if(!CodeSigningService::cancel($serviceId, $reason))
+                {
+                    return false;
+                }
                 break;
 
             case self::CATEGORY_SMIME:

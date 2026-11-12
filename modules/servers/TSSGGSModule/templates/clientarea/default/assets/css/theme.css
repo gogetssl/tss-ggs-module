@@ -309,3 +309,7 @@ table.table-validation-details td.break-all {
 .tssggs-check { display: flex; align-items: flex-start; gap: 8px; margin: 0; font-weight: 400; cursor: pointer; }
 .tssggs-check input { margin-top: 3px; flex: none; }
 .tssggs-hero__domain + .tssggs-hero__domain { margin-top: 4px; }
+.tssggs-note--block { margin: 0 0 16px; }
+.tssggs-check + .tssggs-check { margin-top: 6px; }
+.tssggs-form > .tssggs-check { margin-top: 4px; }
+.tssggs-form > .tssggs-fields[data-tssggs-cs-address] { margin-top: 14px; }

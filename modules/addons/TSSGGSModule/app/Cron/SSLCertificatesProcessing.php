@@ -80,9 +80,9 @@ class SSLCertificatesProcessing extends AbstractCommand
             ->where('tblproducts.servertype', 'TSSGGSModule')
             ->where('tblhosting.domainstatus', 'Active')
             ->where('tblsslorders.status', 'Configuration Submitted')
-            // S/MIME orders keep their own request row ("smime", also pending): SmimeService refreshes them
+            // S/MIME and code signing orders keep their own request rows (also pending): GatewayOrderService refreshes them
             ->where(function($query) {
-                $query->whereNull('tblproducts.configoption9')->orWhere('tblproducts.configoption9', '!=', \ModulesGarden\TSSGGSModule\App\Libs\SmimeService::CATEGORY);
+                $query->whereNull('tblproducts.configoption9')->orWhereNotIn('tblproducts.configoption9', \ModulesGarden\TSSGGSModule\App\Libs\GatewayOrderService::categories());
             })
             ->groupBy('tblhosting.id');
 

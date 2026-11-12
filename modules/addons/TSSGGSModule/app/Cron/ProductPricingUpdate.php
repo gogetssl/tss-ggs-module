@@ -179,6 +179,12 @@ class ProductPricingUpdate extends AbstractCommand
                     Logger::info("Pricing for product #{$whmcsProduct->id} has been updated");
                 }
 
+                // code signing: token shipping fees of the "Certificate Delivery" option
+                if(strtolower((string)$remoteProduct->category) === \ModulesGarden\TSSGGSModule\App\Libs\CodeSigningService::CATEGORY)
+                {
+                    \ModulesGarden\TSSGGSModule\App\Libs\CodeSigningService::syncDeliveryPrices($whmcsProduct->id, (array)$remoteProductData);
+                }
+
                 $expectedOptionNames = [
                     'single'   => 'sans',
                     'wildcard' => 'sans_wildcard',

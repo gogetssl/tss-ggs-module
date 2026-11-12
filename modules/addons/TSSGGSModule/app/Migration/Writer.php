@@ -206,7 +206,7 @@ class Writer
             Capsule::table('tblsslorders')->where('id', $rec['ssl_order_id'])->update($update);
 
             // remove any unified rows a previous attempt left behind
-            Capsule::table(self::T_REQUESTS)->where('serviceid', $rec['service_id'])->whereIn('name', ['addOrder', 'certificate', 'autoinstall', 'renewOrder', 'smime'])->delete();
+            Capsule::table(self::T_REQUESTS)->where('serviceid', $rec['service_id'])->whereIn('name', ['addOrder', 'certificate', 'autoinstall', 'renewOrder', 'smime', 'codesigning'])->delete();
 
             $prices = (array)($rec['prices'] ?? []);
             $api    = (float)($prices['api_price'] ?? 0);
@@ -219,6 +219,11 @@ class Writer
             if(!empty($rec['certificate']))
             {
                 $written['requests'][] = $this->insertRequest($rec['service_id'], 'certificate', $rec['certificate'], (string)$rec['request_status'], $api, $whmcs, (int)($prices['invoiceid'] ?? 0));
+            }
+            if(!empty($rec['codesigning']))
+            {
+                // code signing order (CodeSigningService::stored())
+                $written['requests'][] = $this->insertRequest($rec['service_id'], 'codesigning', $rec['codesigning'], (string)$rec['request_status'], $api, $whmcs, (int)($prices['invoiceid'] ?? 0));
             }
             if(!empty($rec['smime']))
             {

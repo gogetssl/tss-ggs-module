@@ -185,6 +185,12 @@ class ImportProvider extends CrudProvider
                 throw new \Exception('productCreationFailed');
             }
 
+            // code signing: the "Certificate Delivery" option (token shipping as a one-time fee)
+            if(strtolower((string)$remoteProduct->category) === \ModulesGarden\TSSGGSModule\App\Libs\CodeSigningService::CATEGORY)
+            {
+                \ModulesGarden\TSSGGSModule\App\Libs\CodeSigningService::createDeliveryOption($productId, (array)$remoteProductData);
+            }
+
             //create configOptions
 
             $product = Product::find($productId);

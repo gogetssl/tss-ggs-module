@@ -13,9 +13,10 @@ class SyncCertificate
 {
     public function run($params)
     {
-        if(\ModulesGarden\TSSGGSModule\App\Libs\SmimeService::isSmimeService($params['serviceid']))
+        $gatewayType = \ModulesGarden\TSSGGSModule\App\Libs\GatewayOrderService::typeOfService($params['serviceid']);
+        if($gatewayType)
         {
-            \ModulesGarden\TSSGGSModule\App\Libs\SmimeService::refresh($params['serviceid']);
+            $gatewayType::refresh($params['serviceid']);
 
             return 'success';
         }

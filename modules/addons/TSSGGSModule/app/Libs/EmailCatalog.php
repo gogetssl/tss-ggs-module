@@ -17,6 +17,7 @@ class EmailCatalog
     const META = [
         'Configuration Required'            => ['order', ['ssl_configuration_link'], true],
         'S/MIME Configuration Required'     => ['order', ['ssl_configuration_link'], true],
+        'Code Signing Configuration Required' => ['order', ['ssl_configuration_link'], true],
         'ACME Subscription Configuration'   => ['order', ['ssl_configuration_link'], true],
         'DNS Validation Switched to Email'  => ['validation', ['domain', 'dcv_email', 'order_url'], true],
         'S/MIME Mailbox Not Confirmed'      => ['validation', ['smime_pending_emails', 'smime_ordered_date', 'order_url'], true],
@@ -24,8 +25,10 @@ class EmailCatalog
         'Send Certificate'                  => ['issued', ['domain', 'ssl_certyficate', 'crt_code'], true],
         'Certificate Installed'             => ['issued', ['domain', 'order_url'], true],
         'S/MIME Certificate Issued'         => ['issued', ['smime_emails', 'smime_valid_till', 'smime_csr_provided', 'order_url'], true],
+        'Code Signing Certificate Issued'   => ['issued', ['cs_organization', 'cs_valid_till', 'cs_method', 'order_url'], true],
         'Service Expiration'                => ['renewals', ['expireDaysLeft'], true],
         'S/MIME Expiration'                 => ['renewals', ['expireDaysLeft'], true],
+        'Code Signing Expiration'           => ['renewals', ['expireDaysLeft'], true],
         'Reissue'                           => ['renewals', [], true],
         'Renewal Started'                   => ['renewals', ['domain', 'cert_expiry', 'days_left', 'order_url'], true],
         'Renewal Invoice Created'           => ['renewals', ['invoice_id', 'invoice_total', 'invoice_due_date', 'invoice_url'], true],
@@ -72,6 +75,11 @@ class EmailCatalog
         foreach(self::META as $key => list($group, $fields, $sent))
         {
             if(!isset($defaults[$key]))
+            {
+                continue;
+            }
+            // code signing is sold through GoGetSSL only
+            if(in_array($key, EmailTemplates::CS_TEMPLATES, true) && !in_array('ggs', Edition::vendors(), true))
             {
                 continue;
             }

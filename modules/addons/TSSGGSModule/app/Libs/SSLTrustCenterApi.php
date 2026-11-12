@@ -574,6 +574,14 @@ class SSLTrustCenterApi
         return $this->call('/certificates/smime', $data);
     }
 
+    /**
+     * Code signing order: product {id, term}, provisioning {method, model | csr | shipping {id, contact}}, contacts
+     */
+    public function createCodeSigning(array $data)
+    {
+        return $this->call('/certificates/cs', $data);
+    }
+
     public function createAis(array $data)
     {
         return $this->call('/certificates/ais', $data);

@@ -153,19 +153,21 @@ class SSLCertificates extends AbstractCommand
 
         }
 
-        // S/MIME orders (own order data, not in /services/updates handling above)
-        try
+        // S/MIME and code signing orders (own order data, not in the /services/updates handling above)
+        foreach(\ModulesGarden\TSSGGSModule\App\Libs\GatewayOrderService::TYPES as $type)
         {
-            $smimeFailed = \ModulesGarden\TSSGGSModule\App\Libs\SmimeService::refreshOpen();
-            foreach($smimeFailed as $serviceId => $message)
+            try
             {
-                $failed[$serviceId] = $message;
-                $io->write('Error (S/MIME): ' . $message);
+                foreach($type::refreshOpen() as $serviceId => $message)
+                {
+                    $failed[$serviceId] = $message;
+                    $io->write('Error (' . $type::LABEL . '): ' . $message);
+                }
             }
-        }
-        catch(Exception $e)
-        {
-            $io->write('Error (S/MIME): ' . $e->getMessage());
+            catch(Exception $e)
+            {
+                $io->write('Error (' . $type::LABEL . '): ' . $e->getMessage());
+            }
         }
 
         // one line that says how many orders failed and which, instead of the message of the last one

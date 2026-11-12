@@ -274,6 +274,10 @@ class GgsReader extends AbstractReader
         {
             return $this->readSmime($rec, $svc, $order, $cd, $remote);
         }
+        if(!empty($cd['cs_item_id']) || ($remote && strtolower((string)$remote->category) === 'cs'))
+        {
+            return $this->readCodeSigning($rec, $svc, $order, $cd, $remote);
+        }
 
         return $this->readSsl($rec, $svc, $order, $cd);
     }
@@ -580,6 +584,72 @@ class GgsReader extends AbstractReader
         {
             $rec['warnings'][] = 'S/MIME email addresses missing in legacy data; they are read from the gateway by the first refresh';
         }
+
+        return $rec;
+    }
+
+    /**
+     * Hardware code signing (SSLCENTERWHMCS 3.5+, ordered through GoGetSSL API v2): configdata cs_item_id, cs_order_id,
+     * ssl_status, cs_term, cs_method, cs_token_model, cs_shipping, cs_csr_provided, cs_organization, partner_order_id,
+     * valid_from, valid_till, ordered_at, cs_renewal. Written as the unified module's "codesigning" request row.
+     * A DigiCert code signing order placed through API v1 before 3.5 has no gateway item: it is left for manual handling.
+     */
+    protected function readCodeSigning(array $rec, array $svc, array $order, array $cd, $remote): array
+    {
+        $rec['kind']              = 'codesigning';
+        $rec['remote_product_id'] = $remote ? (string)$remote->remoteId : (string)(int)Configdata::get($cd, 'product_id', $svc['configoption1']);
+        if(!$remote)
+        {
+            $rec['warnings'][] = 'Gateway product not found for GoGetSSL product id ' . $rec['remote_product_id'] . ' (sync products in step 4)';
+        }
+
+        $itemId = (int)Configdata::get($cd, 'cs_item_id', 0);
+        if($order['status'] === self::STATUS_AWAITING && $itemId <= 0)
+        {
+            $rec['target_status']  = self::STATUS_AWAITING;
+            $rec['remote_id']      = '';
+            $rec['request_status'] = 'pending';
+            if(!empty($cd['cs_renewal']))
+            {
+                // renewal waiting for its order: no new token was paid with the renewal
+                $rec['codesigning'] = ['status' => 'renewal', 'previous' => [['orderId' => (int)$order['remoteid'], 'status' => 'renewed']], 'migrated' => true];
+            }
+
+            return $rec;
+        }
+        if($itemId <= 0)
+        {
+            $rec['skip_reason'] = 'Code signing ordered through GoGetSSL API v1 (order ' . $order['remoteid'] . '): not available through the gateway, handle it manually';
+
+            return $rec;
+        }
+
+        $status = strtolower((string)Configdata::get($cd, 'ssl_status', '')) ?: 'processing';
+        $rec['remote_id']      = (string)$itemId;
+        $rec['request_status'] = $status;
+        $rec['target_status']  = $status === 'active' ? 'Completed' : (in_array($status, ['cancelled', 'revoked', 'refunded'], true) ? 'Cancelled' : self::STATUS_SUBMITTED);
+        $rec['codesigning'] = [
+            'orderId'       => (int)Configdata::get($cd, 'cs_order_id', $order['remoteid']),
+            'itemId'        => $itemId,
+            'status'        => $status,
+            'vendorOrderId' => (string)Configdata::get($cd, 'partner_order_id', ''),
+            'validFrom'     => (string)Configdata::get($cd, 'valid_from', ''),
+            'validTill'     => (string)Configdata::get($cd, 'valid_till', ''),
+            'term'          => (int)Configdata::get($cd, 'cs_term', 12),
+            'method'        => (string)Configdata::get($cd, 'cs_method', ''),
+            'tokenModel'    => (string)Configdata::get($cd, 'cs_token_model', ''),
+            'shipping'      => (string)Configdata::get($cd, 'cs_shipping', ''),
+            'csrProvided'   => (bool)Configdata::get($cd, 'cs_csr_provided', false),
+            'organization'  => (string)Configdata::get($cd, 'cs_organization', Configdata::get($cd, 'domain', $svc['domain'])),
+            'orderedAt'     => (string)Configdata::get($cd, 'ordered_at', ''),
+            'previous'      => [],
+            'migrated'      => true,
+        ];
+        $rec['prices'] = [
+            'api_price'   => $this->apiPrice((int)$rec['remote_product_id'], (int)Configdata::get($cd, 'cs_term', 12)),
+            'whmcs_price' => (float)$svc['amount'],
+            'invoiceid'   => $this->lastInvoiceId($rec['service_id']),
+        ];
 
         return $rec;
     }
