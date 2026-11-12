@@ -18,6 +18,10 @@ class PricingService
 
     protected $rate;
     protected $baseCurrencyId;
+    /** @var array|null products() of this request */
+    protected $products = null;
+    /** @var array|null tblpricing rows of the module's products and SAN options: "type|relid|currency" => row */
+    protected $prices = null;
 
     public function __construct()
     {
@@ -37,13 +41,25 @@ class PricingService
      */
     public function products()
     {
+        if($this->products !== null)
+        {
+            return $this->products;
+        }
         $products = Capsule::table('tblproducts')->where('servertype', 'TSSGGSModule')->orderBy('name')
             ->get(['id', 'name', 'paytype', 'hidden', 'retired', 'configoption1', 'configoption2', 'configoption6']);
+
+        // the gateway products and the SAN options of all products: one query each
+        $remotes = [];
+        foreach(Capsule::table('TSSGGSModule_RemoteProducts')->get(['vendor', 'remoteId', 'rawData']) as $row)
+        {
+            $remotes[strtolower((string)$row->vendor) . '|' . $row->remoteId] = $row;
+        }
+        $options = $this->allSanOptions();
 
         $result = [];
         foreach($products as $product)
         {
-            $remote = Capsule::table('TSSGGSModule_RemoteProducts')->where('vendor', $product->configoption1)->where('remoteId', $product->configoption2)->first();
+            $remote = $remotes[strtolower((string)$product->configoption1) . '|' . $product->configoption2] ?? null;
             $result[(int)$product->id] = [
                 'id'      => (int)$product->id,
                 'name'    => (string)$product->name,
@@ -51,11 +67,71 @@ class PricingService
                 'paytype' => (string)$product->paytype,
                 'auto'    => strtolower((string)$product->configoption6) === 'on',
                 'remote'  => $remote ? (json_decode($remote->rawData, true) ?: []) : null,
-                'options' => $this->sanOptions((int)$product->id),
+                'options' => $options[(int)$product->id] ?? [],
             ];
         }
 
-        return $result;
+        return $this->products = $result;
+    }
+
+    /** sanOptions() of every product: [product id => ['sans' => sub-option id, 'sans_wildcard' => sub-option id]] */
+    protected function allSanOptions()
+    {
+        $rows = Capsule::table('tblproductconfiglinks')
+            ->join('tblproducts', 'tblproducts.id', '=', 'tblproductconfiglinks.pid')
+            ->join('tblproductconfigoptions', 'tblproductconfigoptions.gid', '=', 'tblproductconfiglinks.gid')
+            ->join('tblproductconfigoptionssub', 'tblproductconfigoptionssub.configid', '=', 'tblproductconfigoptions.id')
+            ->where('tblproducts.servertype', 'TSSGGSModule')
+            ->get(['tblproductconfiglinks.pid', 'tblproductconfigoptions.optionname', 'tblproductconfigoptionssub.id as subId']);
+
+        $options = [];
+        foreach($rows as $row)
+        {
+            $name = explode('|', (string)$row->optionname)[0];
+            if(isset(self::REMOTE[$name]) && !isset($options[(int)$row->pid][$name]))
+            {
+                $options[(int)$row->pid][$name] = (int)$row->subId;
+            }
+        }
+
+        return $options;
+    }
+
+    /** The tblpricing row of a product / SAN sub-option in a currency (null when there is none) */
+    protected function priceRow($type, $relid, $currencyId)
+    {
+        if($this->prices === null)
+        {
+            $this->prices = [];
+            $relids       = ['product' => [], 'configoptions' => []];
+            foreach($this->products() as $product)
+            {
+                $relids['product'][] = (int)$product['id'];
+                foreach($product['options'] as $subId)
+                {
+                    $relids['configoptions'][] = (int)$subId;
+                }
+            }
+            foreach($relids as $rowType => $ids)
+            {
+                foreach(array_chunk(array_values(array_unique($ids)), 1000) as $chunk)
+                {
+                    foreach(Capsule::table('tblpricing')->where('type', $rowType)->whereIn('relid', $chunk)->get() as $row)
+                    {
+                        $this->prices[$rowType . '|' . (int)$row->relid . '|' . (int)$row->currency] = (array)$row;
+                    }
+                }
+            }
+        }
+        $key = $type . '|' . (int)$relid . '|' . (int)$currencyId;
+        if(!array_key_exists($key, $this->prices))
+        {
+            // not one of the preloaded rows (e.g. an option created during this request)
+            $row                = Capsule::table('tblpricing')->where('type', $type)->where('relid', (int)$relid)->where('currency', (int)$currencyId)->first();
+            $this->prices[$key] = $row ? (array)$row : null;
+        }
+
+        return $this->prices[$key];
     }
 
     /**
@@ -135,7 +211,8 @@ class PricingService
         {
             return null;
         }
-        $value = Capsule::table('tblpricing')->where('type', $type)->where('relid', $relid)->where('currency', (int)$currencyId)->value($column);
+        $row   = $this->priceRow($type, $relid, $currencyId);
+        $value = $row[$column] ?? null;
 
         return $value === null || (float)$value < 0 ? null : (float)$value;
     }
@@ -155,6 +232,11 @@ class PricingService
             $columns['monthly'] = $value;
         }
         Capsule::table('tblpricing')->updateOrInsert(['type' => $type, 'relid' => $relid, 'currency' => (int)$currencyId], $columns);
+        // the changed row is read again when it is needed
+        if($this->prices !== null)
+        {
+            unset($this->prices[$type . '|' . (int)$relid . '|' . (int)$currencyId]);
+        }
 
         return true;
     }
