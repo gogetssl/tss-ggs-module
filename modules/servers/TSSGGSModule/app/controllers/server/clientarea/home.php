@@ -2498,6 +2498,10 @@ class home extends AbstractController
         $vars['renewModels']     = CodeSigningService::TOKEN_MODELS;
         $vars['renewAgreement']  = CertificateService::agreement((int)$input['params']['pid']);
         $vars['csrfToken']       = $vars['csrfToken'] ?? \generate_token('plain');
+        // Result of the Renew dialog (renewOrderHTML redirects back here)
+        $vars['flashSuccess']    = $_SESSION['mg-success'] ?? '';
+        $vars['flashError']      = $_SESSION['mg-error'] ?? '';
+        unset($_SESSION['mg-success'], $_SESSION['mg-error']);
 
         return $vars;
     }

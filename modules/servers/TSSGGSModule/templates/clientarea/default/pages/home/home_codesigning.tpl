@@ -2,6 +2,12 @@
 <div class="validate-ssl-unified tssggs-cert tssggs-smime">
 
     <div id="tssggs-cs-alerts">
+        {if $flashSuccess}
+            <div class="alert alert-success" role="alert">{$flashSuccess}</div>
+        {/if}
+        {if $flashError}
+            <div class="alert alert-danger" role="alert">{$flashError|escape}</div>
+        {/if}
         {if $refreshError}
             <div class="alert alert-warning" role="alert">{$MGLANG->T('smimeRefreshFailed')} {$refreshError|escape}</div>
         {/if}
@@ -97,7 +103,7 @@
                             {if $renewNeedsModel}
                                 <div class="tssggs-field" data-tssggs-renew-same style="margin:8px 0 0 24px;">
                                     <label for="tssggs-renew-model">{$MGLANG->T('renewModelLabel')} <span class="tssggs-req">*</span></label>
-                                    <select id="tssggs-renew-model" name="renew_model" class="form-control">
+                                    <select id="tssggs-renew-model" name="renew_model" class="form-control" required>
                                         <option value="">-</option>
                                         {foreach from=$renewModels key=code item=name}<option value="{$code|escape:'htmlall'}">{$name|escape}</option>{/foreach}
                                     </select>
@@ -105,7 +111,7 @@
                             {/if}
                             {if $renewAgreement}
                                 <label class="tssggs-check" data-tssggs-renew-same style="margin:8px 0 0 24px;">
-                                    <input type="checkbox" name="agreement" value="1">
+                                    <input type="checkbox" name="agreement" value="1" required>
                                     <span>{$MGLANG->T('sslConfigAgreement')} {if $renewAgreement.url}<a href="{$renewAgreement.url|escape}" target="_blank" rel="noopener">{$renewAgreement.name|escape}</a>{else}{$renewAgreement.name|escape}{/if}</span>
                                 </label>
                             {/if}
@@ -133,7 +139,7 @@
     // Renew dialog: the token model and agreement belong to "same details"
     $(document).on('change', '[data-tssggs-renew]', function () {
         var same = $(this).closest('form').find('[data-tssggs-renew]:checked').val() === '1';
-        $(this).closest('form').find('[data-tssggs-renew-same]').toggle(same);
+        $(this).closest('form').find('[data-tssggs-renew-same]').toggle(same).find(':input').prop('disabled', !same);
     });
     $(document).ready(function () {
         var clone = $('.validate-ssl-unified').clone();
