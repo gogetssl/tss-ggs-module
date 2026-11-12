@@ -84,7 +84,8 @@ class ReportingProvider extends CrudProvider
             global $CONFIG;
 
             $logProvider = new LogProvider();
-            $to          = 'apisupport@thesslstore.com';
+            // each edition reports to its own vendor
+            $to          = \ModulesGarden\TSSGGSModule\App\Libs\Edition::get() === \ModulesGarden\TSSGGSModule\App\Libs\Edition::GGS ? 'support@gogetssl.com' : 'apisupport@thesslstore.com';
             $message     = new \WHMCS\Mail\Message();
             $subject     = 'NEW WHMCS ' . \ModulesGarden\TSSGGSModule\App\Libs\Edition::name() . ' issue reported';
             $body        = <<<BODY

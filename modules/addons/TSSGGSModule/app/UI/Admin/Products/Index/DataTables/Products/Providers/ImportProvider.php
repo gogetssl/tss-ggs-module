@@ -108,7 +108,8 @@ class ImportProvider extends CrudProvider
         {
             $remoteProduct = RemoteProduct::find($localId);
 
-            if(!$remoteProduct || !\ModulesGarden\TSSGGSModule\App\Libs\ProductCatalog::importable($remoteProduct))
+            // an imported product is never created a second time (ticked again, or the form sent twice)
+            if(!$remoteProduct || !\ModulesGarden\TSSGGSModule\App\Libs\ProductCatalog::importable($remoteProduct) || $remoteProduct->getWhmcsProduct())
             {
                 continue;
             }

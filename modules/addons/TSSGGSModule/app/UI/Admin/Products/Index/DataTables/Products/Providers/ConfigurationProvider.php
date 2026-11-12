@@ -91,7 +91,7 @@ class ConfigurationProvider extends CrudProvider
         $whmcsProduct->name        = $this->formData['productName'];
         $whmcsProduct->description = $this->formData['description'];
         $whmcsProduct->autosetup   = ($this->formData['autoSetup'] == 'off') ? '' : $this->formData['autoSetup'];
-        $whmcsProduct->hidden      = $this->formData['hidden'] ? 'on' : '';
+        $whmcsProduct->hidden      = $this->formData['hidden'] ? 1 : 0;
         if(in_array($this->formData['payType'], ['recurring', 'onetime', 'free'], true))
         {
             $whmcsProduct->paytype = $this->formData['payType'];
@@ -105,10 +105,16 @@ class ConfigurationProvider extends CrudProvider
             'issuedMessage'   => $this->formData['issuedMessage'],
         ]);
 
-        $data = [
-            'included_san'          => (int)$this->formData['includedSan'],
-            'included_san_wildcard' => (int)$this->formData['includedWildcard'],
-        ];
+        // the fields are shown only for products with the SAN options: a value that was not sent stays as it is
+        $data = [];
+        if(isset($this->formData['includedSan']))
+        {
+            $data['included_san'] = (int)$this->formData['includedSan'];
+        }
+        if(isset($this->formData['includedWildcard']))
+        {
+            $data['included_san_wildcard'] = (int)$this->formData['includedWildcard'];
+        }
 
         $productRepository->updateProductConfiguration($whmcsProduct->id, $data);
 

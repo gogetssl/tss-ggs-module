@@ -8,7 +8,6 @@ use ModulesGarden\TSSGGSModule\App\UI\Admin\Configuration\Pages\ConfigurationSte
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Configuration\Pages\ConfigurationStep4;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Configuration\Pages\ConfigurationStep5;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Configuration\Pages\ConfigurationStep6;
-use ModulesGarden\TSSGGSModule\App\UI\Admin\Configuration\Pages\ConfigurationStep7;
 use ModulesGarden\TSSGGSModule\App\Libs\Edition;
 use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Configuration\Shared\WizardLayout;
@@ -67,12 +66,6 @@ class Configuration extends AbstractController implements AdminAreaInterface
     {
         return Helper\view()
             ->addElement(ConfigurationStep6::class);
-    }
-
-    public function step7()
-    {
-        return Helper\view()
-            ->addElement(ConfigurationStep7::class);
     }
 
 

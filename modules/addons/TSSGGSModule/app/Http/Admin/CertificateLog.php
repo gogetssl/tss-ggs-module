@@ -27,11 +27,15 @@ class CertificateLog extends AbstractController implements AdminAreaInterface
             AutoInstallQueue::createTables();
             $query = Capsule::table(AutoInstallQueue::LOGS_TABLE);
             $older = (string)($_REQUEST['older'] ?? '');
-            if($older !== 'all')
+            // only "all" or a number of days: anything else deletes nothing
+            if($older === 'all' || (ctype_digit($older) && (int)$older > 0))
             {
-                $query->where('created_at', '<', date('Y-m-d H:i:s', strtotime('-' . max(1, (int)$older) . ' days')));
+                if($older !== 'all')
+                {
+                    $query->where('created_at', '<', date('Y-m-d H:i:s', strtotime('-' . (int)$older . ' days')));
+                }
+                $_SESSION['tssggs_log_notice'] = $query->delete();
             }
-            $_SESSION['tssggs_log_notice'] = $query->delete();
         }
 
         return Helper\redirect('certificateLog', 'index');

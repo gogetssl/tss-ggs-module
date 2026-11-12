@@ -295,6 +295,14 @@ class GgsReader extends AbstractReader
             $rec['warnings'][] = 'Gateway product not found for GoGetSSL product id ' . $rec['remote_product_id'] . ' (sync products in step 4)';
         }
 
+        // a closed order without a gateway order must not become configurable again
+        if($remoteId === '' && in_array((string)$order['status'], ['Cancelled', 'Expired', 'Completed'], true))
+        {
+            $rec['skip_reason'] = 'SSL order has no gateway order ID (status ' . $order['status'] . ')';
+
+            return $rec;
+        }
+
         if($order['status'] === self::STATUS_AWAITING || $remoteId === '')
         {
             $rec['target_status']  = self::STATUS_AWAITING;
@@ -359,7 +367,8 @@ class GgsReader extends AbstractReader
             'postalcode' => Configdata::get($f, 'org_postalcode', Configdata::get($cd, 'postcode', '')), 'phone' => Configdata::get($f, 'org_phone', ''),
         ];
 
-        $payload = $this->buildOrderPayload($rec['remote_product_id'], (int)$svc['configoption2'], $csr, $commonName, $dcvMethod,
+        $term    = $this->termOf($svc);
+        $payload = $this->buildOrderPayload($rec['remote_product_id'], $term, $csr, $commonName, $dcvMethod,
             array_map(function($s) { return ['name' => $s['name'], 'validation_method' => $s['validation_method']]; }, $sans),
             $this->buildContacts($admin, $tech, $org));
         $rec['order_payload'] = $payload;
@@ -391,7 +400,7 @@ class GgsReader extends AbstractReader
             'subscription_end'   => (string)Configdata::get($cd, 'end_date', Configdata::get($cd, 'valid_till', '')),
             'order_date'         => (string)$order['completiondate'],
             'order_payload'      => $payload,
-            'api_price'          => $this->apiPrice($rec['remote_product_id'], (int)$svc['configoption2']),
+            'api_price'          => $this->apiPrice((int)$rec['remote_product_id'], $term),
         ]);
         if($gatewayStatus === 'active' && $crt === '')
         {
@@ -399,7 +408,7 @@ class GgsReader extends AbstractReader
         }
 
         $rec['prices'] = [
-            'api_price'   => $this->apiPrice($rec['remote_product_id'], (int)$svc['configoption2']),
+            'api_price'   => $this->apiPrice((int)$rec['remote_product_id'], $term),
             'whmcs_price' => (float)$svc['amount'],
             'invoiceid'   => $this->lastInvoiceId($rec['service_id']),
         ];
@@ -655,6 +664,22 @@ class GgsReader extends AbstractReader
     }
 
     // ---- helpers ---- //
+
+    /**
+     * Term (months) the legacy module ordered: by the billing cycle of the service; a one time / free service uses the
+     * product's own months (configoption7 "one time months", else configoption2)
+     */
+    protected function termOf(array $svc): int
+    {
+        $byCycle = ['Monthly' => 12, 'Quarterly' => 3, 'Semi-Annually' => 6, 'Annually' => 12, 'Biennially' => 24, 'Triennially' => 36];
+        $cycle   = (string)($svc['billingcycle'] ?? '');
+        if(isset($byCycle[$cycle]))
+        {
+            return $byCycle[$cycle];
+        }
+
+        return (int)($svc['configoption7'] ?? 0) ?: ((int)($svc['configoption2'] ?? 0) ?: 12);
+    }
 
     protected function apiPrice(int $apiProductId, int $months): float
     {

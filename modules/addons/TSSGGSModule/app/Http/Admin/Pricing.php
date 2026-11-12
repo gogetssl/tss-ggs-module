@@ -48,6 +48,11 @@ class Pricing extends AbstractController implements AdminAreaInterface
                         {
                             continue;
                         }
+                        // anything that is not a plain amount is left as it is - it must never turn into a price of 0.00
+                        if($value !== '' && !preg_match('/^\d+([.,]\d{1,2})?$/', $value))
+                        {
+                            continue;
+                        }
                         $new = $value === '' ? ($item === 'base' ? -1 : 0) : round((float)str_replace(',', '.', $value), 2);
                         $old = $service->price($products[(int)$pid], $item, (int)$term, $currencyId);
                         if(($old === null && $new < 0) || ($old !== null && $new >= 0 && abs($old - $new) < 0.005))

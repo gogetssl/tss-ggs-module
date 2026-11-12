@@ -136,7 +136,8 @@ class MigrateLegacy extends AbstractCommand
             $io->writeln(sprintf('%s  %d%%  done %d  failed %d  skipped %d  pending %d', $status['run']['status'], $status['percent'],
                 $status['jobs']['done'], $status['jobs']['failed'], $status['jobs']['skipped'], $status['jobs']['pending']));
         }
-        while(!$status['finished']);
+        // a run that is neither processing nor finished (e.g. stopped while preparing) is not waited for
+        while(!$status['finished'] && in_array($status['run']['status'], [Store::RUN_RUNNING, Store::RUN_SWITCHING], true));
 
         if($status['run']['status'] === Store::RUN_FAILED)
         {

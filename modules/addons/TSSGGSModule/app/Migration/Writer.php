@@ -192,9 +192,27 @@ class Writer
         return $ids;
     }
 
+    /** JSON of legacy data: bytes that are not UTF-8 (old Latin-1 rows) are replaced, a value that can not be encoded stops the service */
+    protected static function json($value): string
+    {
+        $json = json_encode($value, defined('JSON_INVALID_UTF8_SUBSTITUTE') ? JSON_INVALID_UTF8_SUBSTITUTE : 0);
+        if($json === false)
+        {
+            throw new \RuntimeException('Legacy data could not be encoded: ' . json_last_error_msg());
+        }
+
+        return $json;
+    }
+
     public function switchProducts(array $pids): int
     {
-        return $pids ? (int)Capsule::table('tblproducts')->whereIn('id', $pids)->update(['servertype' => self::MODULE]) : 0;
+        $count = 0;
+        foreach(array_chunk($pids, 1000) as $chunk)
+        {
+            $count += (int)Capsule::table('tblproducts')->whereIn('id', $chunk)->update(['servertype' => self::MODULE]);
+        }
+
+        return $count;
     }
 
     // ---- Services ---- //
@@ -214,7 +232,7 @@ class Writer
             $update = ['remoteid' => (string)($rec['remote_id'] ?? ''), 'status' => (string)$rec['target_status']];
             if(!empty($rec['configdata']))
             {
-                $update['configdata'] = json_encode($rec['configdata']);
+                $update['configdata'] = self::json($rec['configdata']);
             }
             Capsule::table('tblsslorders')->where('id', $rec['ssl_order_id'])->update($update);
 
@@ -313,7 +331,7 @@ class Writer
             'whmcs_price'=> $whmcsPrice,
             'diff_price' => $whmcsPrice - $apiPrice,
             'status'     => $status,
-            'request'    => \encrypt(json_encode($payload)),
+            'request'    => \encrypt(self::json($payload)),
             'created_at' => date('Y-m-d H:i:s'),
             'updated_at' => date('Y-m-d H:i:s'),
         ]);
@@ -334,7 +352,13 @@ class Writer
             $update['updated_at'] = self::REFRESH_FIRST;
         }
 
-        return (int)Capsule::table('tblsslorders')->whereIn('id', $sslOrderIds)->update($update);
+        $count = 0;
+        foreach(array_chunk($sslOrderIds, 1000) as $chunk)
+        {
+            $count += (int)Capsule::table('tblsslorders')->whereIn('id', $chunk)->update($update);
+        }
+
+        return $count;
     }
 
     // ---- Undo ---- //

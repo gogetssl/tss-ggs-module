@@ -24,6 +24,12 @@ const SOURCE_NAME  = 'TSSGGSModule';
 const SHORT_NAME   = 'tssggs';
 const PACKAGE_PATHS = ['modules', 'feeds'];
 const EDITION_FILE = 'modules/addons/TSSGGSModule/app/Config/edition.php';
+// development tools: never in a package for clients (KEEP_DEV=1 keeps them, for the test box)
+const DEV_ONLY = [
+    'modules/addons/TSSGGSModule/app/Cron/TestEnvironment.php',
+    'modules/addons/TSSGGSModule/app/Cron/TestCommand.php',
+    'modules/addons/TSSGGSModule/app/Migration/TestEnvironment.php',
+];
 const VERSION_FILE = 'modules/addons/TSSGGSModule/app/Config/configuration.yml';
 const TEXT_EXT = new Set(['.php', '.js', '.css', '.html', '.tpl', '.yml', '.yaml', '.json', '.sql', '.md', '.txt', '.lock', '.xml', '.svg', '.htaccess', '.ini', '.dist', '']);
 
@@ -52,6 +58,7 @@ const tarFile = path.join(work, 'source.tar');
 execFileSync('git', ['-C', root, 'archive', '--format=tar', '-o', tarFile, ref, '--', ...PACKAGE_PATHS]);
 execFileSync(TAR, ['-xf', tarFile, '-C', src]);
 
+if (!process.env.KEEP_DEV) DEV_ONLY.forEach((file) => fs.rmSync(path.join(src, file), { force: true }));
 if (!fs.existsSync(path.join(src, EDITION_FILE))) fail(EDITION_FILE + ' not found in ' + ref);
 const versionMatch = fs.readFileSync(path.join(src, VERSION_FILE), 'utf8').match(/^version:\s*'([^']+)'/m);
 if (!versionMatch) fail('version not found in ' + VERSION_FILE);

@@ -33,6 +33,9 @@ class Engine
     const PHASE_ROLLBACK    = 'rollback';
 
     /** @var LegacyReaderInterface */
+    /** exceptions (skipped / failed services) kept in the run summary */
+    const SUMMARY_EXCEPTIONS = 150;
+
     protected $reader;
     protected $source;
     protected $mapper;
@@ -365,10 +368,23 @@ class Engine
         return $this->status($runId);
     }
 
+    /** @var int run whose legacy product values were handed to the reader */
+    protected $legacyProductsOfRun = 0;
+
     protected function migrateService(int $runId, int $jobId, int $serviceId, Writer $writer, array $migratedProducts, bool $fetchKeys): void
     {
         try
         {
+            if($this->legacyProductsOfRun !== $runId)
+            {
+                $legacy = [];
+                foreach(Store::jobsByStatus($runId, Store::KIND_PRODUCT, Store::JOB_DONE) as $productJob)
+                {
+                    $legacy[(int)$productJob['object_id']] = (array)($productJob['data']['old_configoptions'] ?? []);
+                }
+                $this->reader->setLegacyProductOptions($legacy);
+                $this->legacyProductsOfRun = $runId;
+            }
             $rec = $this->reader->readService($serviceId);
 
             if(!empty($rec['skip_reason']) || ($rec['kind'] ?? '') === 'unsupported')
@@ -526,7 +542,7 @@ class Engine
                 'cron_lines'         => $this->reader->cronLines(),
                 'exceptions'         => $this->exceptions($runId),
             ]);
-            Store::updateRun($runId, ['status' => $verify['ok'] ? Store::RUN_COMPLETED : Store::RUN_COMPLETED, 'finished_at' => date('Y-m-d H:i:s'), 'last_error' => $verify['ok'] ? null : implode('; ', $verify['problems'])]);
+            Store::updateRun($runId, ['status' => Store::RUN_COMPLETED, 'finished_at' => date('Y-m-d H:i:s'), 'last_error' => $verify['ok'] ? null : implode('; ', $verify['problems'])]);
             $this->log($runId, $verify['ok'] ? 'info' : 'warning', self::PHASE_SWITCH, 'Migration completed' . ($verify['ok'] ? '' : ' with verification warnings'), $verify);
         }
         catch(\Throwable $e)
@@ -587,7 +603,8 @@ class Engine
             $list[] = ['product_id' => (int)$job['object_id'], 'status' => Store::JOB_SKIPPED, 'reason' => $job['reason']];
         }
 
-        return $list;
+        // the summary is one text column: the full list stays in the jobs table and the log
+        return array_slice($list, 0, self::SUMMARY_EXCEPTIONS);
     }
 
     // =================================================================== status / rollback / cleanup
@@ -617,6 +634,11 @@ class Engine
         if(!$run || !$run['backup_prefix'])
         {
             throw new \RuntimeException('No backups for migration #' . $runId);
+        }
+        if($run['status'] === Store::RUN_ROLLED_BACK)
+        {
+            // a second rollback would put the old copy over the data the legacy module changed since
+            throw new \RuntimeException('Migration #' . $runId . ' is already rolled back');
         }
         $backup = new Backup($runId, $run['backup_prefix']);
         if(!$backup->tables())
@@ -662,9 +684,15 @@ class Engine
             $backup->restoreRows('tbladdonmodules');
             $backup->restoreRows('tblconfiguration');
             $backup->restoreRows('tblemailtemplates');
-            foreach($reader->tables() as $table)
+            // every legacy table this run copied - also one that was dropped since (it is created again)
+            $restored = [];
+            foreach(array_merge((array)constant(get_class($reader) . '::TABLES'), $reader->tables()) as $table)
             {
-                $backup->restoreTable($table);
+                if(!isset($restored[$table]))
+                {
+                    $backup->restoreTable($table);
+                    $restored[$table] = true;
+                }
             }
         });
 
@@ -705,7 +733,9 @@ class Engine
     {
         Store::createTables();
         $dropped = 0;
-        foreach(Capsule::table(Store::TABLE_RUNS)->whereNotNull('backup_prefix')->where('backup_expires_at', '<', date('Y-m-d H:i:s'))->get() as $run)
+        foreach(Capsule::table(Store::TABLE_RUNS)->whereNotNull('backup_prefix')->where('backup_expires_at', '<', date('Y-m-d H:i:s'))
+            // the backups of a run that failed or stopped are the only copy of the original data: never dropped automatically
+            ->whereIn('status', [Store::RUN_COMPLETED, Store::RUN_ROLLED_BACK])->get() as $run)
         {
             $dropped += self::deleteBackups((int)$run->id, 'cron');
         }

@@ -18,6 +18,18 @@ abstract class AbstractReader implements LegacyReaderInterface
 
     protected $versionCache = false;
 
+    /** @var array product id => configoption values the legacy module had (set once the products are rewritten) */
+    protected $legacyProductOptions = [];
+
+    /**
+     * The products are rewritten to the unified layout before their services are read: the services must still be
+     * read with the legacy values (product id / code, term), exactly as the dry run reads them.
+     */
+    public function setLegacyProductOptions(array $byProductId): void
+    {
+        $this->legacyProductOptions = $byProductId;
+    }
+
     // ---- WHMCS lookups ---- //
 
     public function version(): ?string
@@ -67,8 +79,20 @@ abstract class AbstractReader implements LegacyReaderInterface
                 'tblproducts.configoption13', 'tblproducts.configoption23', 'tblproducts.configoption24')
             ->join('tblproducts', 'tblproducts.id', '=', 'tblhosting.packageid')
             ->where('tblhosting.id', $serviceId)->first();
+        if(!$row)
+        {
+            return null;
+        }
+        $row = (array)$row;
+        foreach($this->legacyProductOptions[(int)$row['packageid']] ?? [] as $column => $value)
+        {
+            if(array_key_exists($column, $row))
+            {
+                $row[$column] = $value;
+            }
+        }
 
-        return $row ? (array)$row : null;
+        return $row;
     }
 
     protected function sslOrder(int $serviceId): ?array
