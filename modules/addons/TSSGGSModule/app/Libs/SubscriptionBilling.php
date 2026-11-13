@@ -507,4 +507,57 @@ class SubscriptionBilling
         return false;
     }
 
+    /** credit description of the next-year part of domain purchases of a renewal that was not paid */
+    const NEXT_YEAR_CREDIT_PREFIX = 'Subscription refund (next year domains) for invoice #';
+
+    /**
+     * The subscription ends unrenewed (its renewal invoice was not paid): the "next year" lines of paid domain purchases
+     * for the period starting on $renewalDate are credited back to the client. Each invoice once. Returns the amount.
+     */
+    public static function refundNextYearSlots($serviceId, $renewalDate)
+    {
+        $items = Capsule::table('tblinvoiceitems')
+            ->join('tblinvoices', 'tblinvoices.id', '=', 'tblinvoiceitems.invoiceid')
+            ->where('tblinvoiceitems.type', self::SLOT_PURCHASE)
+            ->where('tblinvoiceitems.relid', (int)$serviceId)
+            ->where('tblinvoiceitems.description', 'LIKE', '%(' . $renewalDate . ' - %next year)')
+            ->where('tblinvoices.status', 'Paid')
+            ->get(['tblinvoiceitems.*', 'tblinvoices.userid', 'tblinvoices.taxrate', 'tblinvoices.taxrate2']);
+
+        $byInvoice = [];
+        foreach($items as $item)
+        {
+            $byInvoice[(int)$item->invoiceid][] = $item;
+        }
+        $credited = 0.0;
+        foreach($byInvoice as $invoiceId => $invoiceItems)
+        {
+            $clientId = (int)$invoiceItems[0]->userid;
+            $exists   = Capsule::table('tblcredit')->where('clientid', $clientId)->where('description', self::NEXT_YEAR_CREDIT_PREFIX . $invoiceId)->exists();
+            if($exists)
+            {
+                continue;
+            }
+            $amount = 0.0;
+            foreach($invoiceItems as $item)
+            {
+                $amount += self::amountWithTax($item, $item);
+            }
+            $amount = round($amount, 2);
+            if($amount <= 0)
+            {
+                continue;
+            }
+            $result = localAPI('AddCredit', ['clientid' => $clientId, 'description' => self::NEXT_YEAR_CREDIT_PREFIX . $invoiceId, 'amount' => number_format($amount, 2, '.', '')]);
+            if(($result['result'] ?? '') !== 'success')
+            {
+                CertificateService::event($serviceId, 'error', '[Subscription] The next-year domains of invoice #' . $invoiceId . ' could not be credited: ' . ($result['message'] ?? 'unknown error'));
+                continue;
+            }
+            CertificateService::event($serviceId, 'info', '[Subscription] Renewal not paid: next-year domains of invoice #' . $invoiceId . ' credited (' . number_format($amount, 2, '.', '') . ')');
+            $credited += $amount;
+        }
+
+        return round($credited, 2);
+    }
 }

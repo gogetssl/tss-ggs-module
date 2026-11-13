@@ -173,6 +173,12 @@ class SubscriptionRenewals
         $subscription->save();
         Capsule::table('tblhosting')->where('id', $serviceId)->update(['domainstatus' => $serviceStatus] + ($serviceStatus === 'Terminated' ? ['termination_date' => date('Y-m-d')] : []));
         CertificateService::event($serviceId, 'info', '[Subscription] ' . $reason . ': cancelled at the vendor, service ' . strtolower($serviceStatus));
+
+        // the renewal was not paid: domains already paid for the year that does not come are credited back
+        if($serviceStatus === 'Terminated' && $subscription->renewal_date)
+        {
+            SubscriptionBilling::refundNextYearSlots($serviceId, date('Y-m-d', strtotime((string)$subscription->renewal_date)));
+        }
     }
 
     protected static function settingOff(array $settings, $key)
