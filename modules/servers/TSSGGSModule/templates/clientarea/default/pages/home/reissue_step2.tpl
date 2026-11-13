@@ -113,8 +113,6 @@
         let clone_element = $('.mg-module').clone();
         $('.product-details').html(clone_element);
 
-        $('.tab-pane .tab-content').remove();
-        $('.tab-pane .nav-tabs').remove();
 
         $('#Primary_Sidebar-Service_Details_Overview-Information').removeClass('active');
         $('#Primary_Sidebar-Service_Details_Actions-ReissueSSL').addClass('active');

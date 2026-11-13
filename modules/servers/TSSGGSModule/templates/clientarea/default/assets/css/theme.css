@@ -153,6 +153,12 @@ table.table-validation-details td.break-all {
     --c-red: #b42318;
     --c-surface: #ffffff;
     --c-subtle: #f7f9f8;
+    /* the waiting / warning / failed tones: every page that shows a state needs them, not only S/MIME */
+    --c-amber: #b54708;
+    --c-amber-tint: #fef6e7;
+    --c-amber-soft: #fbe3b8;
+    --c-red-tint: #fdf0ef;
+    --c-red-soft: #f6cfcb;
     container-type: inline-size;
     color: var(--c-text);
     text-align: left;

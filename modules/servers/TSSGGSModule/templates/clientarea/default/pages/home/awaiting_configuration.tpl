@@ -72,7 +72,5 @@
         var clone = $('.validate-ssl-unified').clone();
         $('.product-details').html(clone);
         $('.mg-module .validate-ssl-unified').remove();
-        $('.tab-pane .tab-content').remove();
-        $('.tab-pane .nav-tabs').remove();
     });
 </script>
