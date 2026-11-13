@@ -61,14 +61,24 @@ class CreateAccount {
         // the service waiting, and the client page offers to order again.
         if($gatewayType === \ModulesGarden\TSSGGSModule\App\Libs\CodeGuardService::class)
         {
+            $ordered = true;
             try
             {
-                \ModulesGarden\TSSGGSModule\App\Libs\CodeGuardService::create($serviceId);
+                // WHMCS sets the service to Active only after this function returns, hence the setup flag
+                \ModulesGarden\TSSGGSModule\App\Libs\CodeGuardService::create($serviceId, [], true);
             }
             catch(\Throwable $e)
             {
+                $ordered = false;
                 \ModulesGarden\TSSGGSModule\App\Libs\CertificateService::event($serviceId, 'error', 'CodeGuard licence could not be ordered: ' . $e->getMessage());
             }
+
+            // "your licence is ready" only when it is; otherwise the client is pointed at the page, which offers to order
+            EmailTemplates::sendEmail($ordered ? $gatewayType::configurationTemplate() : EmailTemplates::CONFIGURATION_TEMPLATE, $serviceId, [
+                'ssl_configuration_link' => (new Config())->getConfigureSSLUrl($sslId, $serviceId),
+            ]);
+
+            return 'success';
         }
 
         $template = $gatewayType ? $gatewayType::configurationTemplate() : EmailTemplates::CONFIGURATION_TEMPLATE;

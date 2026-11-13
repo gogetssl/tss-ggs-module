@@ -147,7 +147,18 @@ class RenewalNotifyCertificate extends AbstractCommand
                     if($srv->billingcycle != 'One Time' && is_array($daysNotify) && in_array($daysLeft, $daysNotify))
                     {
                         $output->write('Send Email Expiration: ' . $srv->id . ' - ' . $srv->domain);
-                        EmailTemplates::sendEmail($gatewayType === \ModulesGarden\TSSGGSModule\App\Libs\CodeSigningService::class ? EmailTemplates::CS_EXPIRATION_TEMPLATE : ($isSmime ? EmailTemplates::SMIME_EXPIRATION_TEMPLATE : EmailTemplates::EXPIRATION_TEMPLATE), $srv->id, ["expireDaysLeft" => $daysLeft]);
+                        // code signing and S/MIME have their own expiry text; a CodeGuard licence is not a certificate,
+                        // so it gets the general service expiry e-mail
+                        $expiryTemplate = EmailTemplates::EXPIRATION_TEMPLATE;
+                        if($gatewayType === \ModulesGarden\TSSGGSModule\App\Libs\CodeSigningService::class)
+                        {
+                            $expiryTemplate = EmailTemplates::CS_EXPIRATION_TEMPLATE;
+                        }
+                        elseif($gatewayType === \ModulesGarden\TSSGGSModule\App\Libs\SmimeService::class)
+                        {
+                            $expiryTemplate = EmailTemplates::SMIME_EXPIRATION_TEMPLATE;
+                        }
+                        EmailTemplates::sendEmail($expiryTemplate, $srv->id, ["expireDaysLeft" => $daysLeft]);
                         $reminded = true;
                         Logger::info("The notification expire has been send", ['service' => $srv->id]);
                     }

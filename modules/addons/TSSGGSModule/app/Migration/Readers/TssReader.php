@@ -278,7 +278,9 @@ class TssReader extends AbstractReader
             return strtolower((string)$remote->category) === \ModulesGarden\TSSGGSModule\App\Libs\CodeGuardService::CATEGORY;
         }
 
-        return strpos($code, 'cg_') === 0;
+        // without a mapped gateway product the code itself decides: TheSSLStore sells them as cg_basic, cg_professional,
+        // cg_team, cg_business and cg_premium, and older installs may carry the vendor name in the code
+        return strpos($code, 'cg_') === 0 || strpos($code, 'codeguard') !== false;
     }
 
     public function isUnsupportedCode(string $code): bool

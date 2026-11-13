@@ -64,11 +64,12 @@ class CodeGuardService extends GatewayOrderService
      * Places the licence order. The contact defaults to the client's own name and e-mail address; the admin and the
      * client can change it afterwards (editContact).
      *
-     * @param array $input optional first_name, last_name, email
+     * @param array $input       optional first_name, last_name, email
+     * @param bool  $duringSetup called from the module's CreateAccount, where WHMCS has not set the service to Active yet
      */
-    public static function create($serviceId, array $input = [])
+    public static function create($serviceId, array $input = [], $duringSetup = false)
     {
-        [$service, $ssl] = static::requireOrderable($serviceId);
+        [$service, $ssl] = $duringSetup ? static::requireSetupOrderable($serviceId) : static::requireOrderable($serviceId);
 
         $productId = (string)Capsule::table('tblproducts')->where('id', (int)$service->packageid)->value('configoption2');
         $term      = static::termForBillingCycle($service->billingcycle, static::availableTerms($service->packageid));
@@ -86,6 +87,33 @@ class CodeGuardService extends GatewayOrderService
             'term'    => $term,
             'contact' => $contact,
         ], $response, $contact['email'], 'CodeGuard licence ordered for ' . $contact['email']);
+    }
+
+    /**
+     * The checks of requireOrderable() without the "service is active" one: WHMCS sets the service to Active only
+     * after the module's CreateAccount has returned, so during provisioning it is still Pending.
+     *
+     * @return array [service row, tblsslorders row]
+     */
+    protected static function requireSetupOrderable($serviceId)
+    {
+        $service = Capsule::table('tblhosting')->where('id', (int)$serviceId)->first(['id', 'userid', 'packageid', 'billingcycle', 'domainstatus', 'amount']);
+        if(!$service || !static::isWhmcsProduct($service->packageid))
+        {
+            throw new \Exception('This service is not a ' . static::LABEL . ' licence');
+        }
+
+        $ssl = CertificateService::sslOrder($serviceId);
+        if(!$ssl)
+        {
+            throw new \Exception('The create action has not been initialized');
+        }
+        if(static::isOrdered($serviceId) || $ssl->status !== 'Awaiting Configuration')
+        {
+            throw new \Exception('The ' . static::LABEL . ' licence has already been ordered');
+        }
+
+        return [$service, $ssl];
     }
 
     /**
@@ -119,12 +147,30 @@ class CodeGuardService extends GatewayOrderService
         return $contact;
     }
 
-    /** the renewal orders the next licence with the same contact */
-    protected static function renewWithSameDetails($serviceId, array $before)
+    /**
+     * A paid renewal does NOT order a second licence: the licence runs on at the vendor, so only the period the
+     * client is shown moves on by the term that was paid for. (The gateway has no renewal call for CodeGuard; if one
+     * is added, it belongs here.)
+     *
+     * @return string 'kept' (nothing to order) or '' (nothing ordered yet)
+     */
+    public static function renewal($serviceId)
     {
-        static::create($serviceId, (array)($before['contact'] ?? []));
+        $stored = static::stored($serviceId);
+        if(empty($stored['itemId']))
+        {
+            return '';
+        }
 
-        return true;
+        $period = static::period($serviceId);
+        $from   = ($period && $period['end'] > date('Y-m-d')) ? $period['end'] : date('Y-m-d');
+        $term   = (int)($stored['term'] ?? 12) ?: 12;
+
+        $stored['periodEnd'] = date('Y-m-d', strtotime('+' . $term . ' months', strtotime($from)));
+        static::save($serviceId, $stored);
+        CertificateService::event($serviceId, 'info', 'CodeGuard renewal paid: the licence continues until ' . $stored['periodEnd']);
+
+        return 'kept';
     }
 
     // ------------------------------------------------------------------ details
@@ -154,10 +200,49 @@ class CodeGuardService extends GatewayOrderService
             $stored['orderedAt'] = date('Y-m-d H:i:s', strtotime((string)$response['order_date']));
         }
 
+        // the gateway reports the whole block as null (defect 2026-11-13): an empty answer must not erase what an
+        // earlier refresh found
         $license = isset($response['license']) ? array_filter((array)$response['license'], function($value) { return $value !== null && $value !== ''; }) : [];
-        $stored['license'] = $license;
+        if($license)
+        {
+            $stored['license'] = $license;
+        }
 
         return static::applyItem($stored, (array)($response['items'][0] ?? []));
+    }
+
+    /**
+     * The order answer carries the gateway's subscription dates, which are wrong for CodeGuard (both a year ahead and
+     * equal to each other, reported 2026-11-13). They are dropped so nothing downstream shows them; the period comes
+     * from the order date and the term instead (period()).
+     */
+    protected static function applyItem(array $stored, array $item)
+    {
+        unset($stored['validFrom'], $stored['validTill']);
+
+        return $stored;
+    }
+
+    /**
+     * A licence changes while it runs (websites, storage, last backup), unlike a certificate: the client page reads it
+     * again from time to time even once it is active.
+     */
+    public static function refreshDue(array $stored, $seconds = 60)
+    {
+        if(empty($stored['itemId']))
+        {
+            return false;
+        }
+        if(($stored['status'] ?? '') === self::STATUS_ACTIVE)
+        {
+            $seconds = max((int)$seconds, 900);
+        }
+        elseif(in_array($stored['status'] ?? '', static::FINAL_STATUSES, true))
+        {
+            return false;
+        }
+
+        return empty($stored['refreshedAt']) || strtotime($stored['refreshedAt']) < time() - (int)$seconds;
     }
 
     /**
@@ -176,8 +261,10 @@ class CodeGuardService extends GatewayOrderService
             return [];
         }
         $start = date('Y-m-d', strtotime($start));
+        // a paid renewal moves the end on without touching the licence (renewal())
+        $end   = !empty($stored['periodEnd']) ? (string)$stored['periodEnd'] : date('Y-m-d', strtotime('+' . $term . ' months', strtotime($start)));
 
-        return ['start' => $start, 'end' => date('Y-m-d', strtotime('+' . $term . ' months', strtotime($start)))];
+        return ['start' => $start, 'end' => $end];
     }
 
     /**
@@ -313,10 +400,10 @@ class CodeGuardService extends GatewayOrderService
         $previous   = (array)($stored['previous'] ?? []);
         $previous[] = ['orderId' => $stored['orderId'] ?? null, 'itemId' => $stored['itemId'], 'status' => $stored['status'] ?? ''];
 
-        $stored['previous']  = array_slice($previous, -10);
-        $stored['orderId']   = $orderId;
-        $stored['itemId']    = $itemId;
-        $stored['orderedAt'] = date('Y-m-d H:i:s');
+        // the licence carries on: the period keeps running from the original order, the plan change does not restart it
+        $stored['previous'] = array_slice($previous, -10);
+        $stored['orderId']  = $orderId;
+        $stored['itemId']   = $itemId;
         $stored = static::applyDetails($stored, $response);
         static::save($serviceId, $stored);
 

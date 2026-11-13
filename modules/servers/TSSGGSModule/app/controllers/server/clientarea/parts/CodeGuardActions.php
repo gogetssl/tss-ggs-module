@@ -121,7 +121,8 @@ trait CodeGuardActions
     public function createCodeGuardJSON($input, $vars = array())
     {
         $this->requireCsrfToken();
-        $serviceId = (int)$input['params']['serviceid'];
+        // requireOrderableService takes the per-service lock on $input['id'], so it is released on the same value
+        $serviceId = (int)$input['id'];
         $this->requireOrderableService($input, CodeGuardService::isCodeGuardWhmcsProduct((int)$input['params']['pid']));
         try
         {

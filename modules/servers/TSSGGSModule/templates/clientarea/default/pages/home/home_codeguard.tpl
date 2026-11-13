@@ -1,8 +1,6 @@
 <script type="text/javascript" src="{$assetsURL}/js/mgLibs.js"></script>
 
 {if $allOk === true}
-<div id="codeguard-alerts"></div>
-
 {if $refreshError}
     <div class="alert alert-warning">{$refreshError|escape}</div>
 {/if}
@@ -54,7 +52,8 @@
 
             {foreach from=$codeGuardLicense item=row}
             <tr>
-                <td class="text-left">{$row.label|escape}</td>
+                {* the label comes from the language file, which Lang has escaped already *}
+                <td class="text-left">{$row.label}</td>
                 <td class="text-left">{$row.value|escape}</td>
             </tr>
             {/foreach}
@@ -98,15 +97,15 @@
                 <p>{$MGLANG->T('codeGuardContactHint')}</p>
                 <div class="form-group">
                     <label for="cg_first_name">{$MGLANG->T('codeGuardFirstName')}</label>
-                    <input type="text" class="form-control" id="cg_first_name" value="{$codeGuardContact.first_name|escape}">
+                    <input type="text" class="form-control" id="cg_first_name" value="{if $codeGuardContact}{$codeGuardContact.first_name|escape}{/if}">
                 </div>
                 <div class="form-group">
                     <label for="cg_last_name">{$MGLANG->T('codeGuardLastName')}</label>
-                    <input type="text" class="form-control" id="cg_last_name" value="{$codeGuardContact.last_name|escape}">
+                    <input type="text" class="form-control" id="cg_last_name" value="{if $codeGuardContact}{$codeGuardContact.last_name|escape}{/if}">
                 </div>
                 <div class="form-group">
                     <label for="cg_email">{$MGLANG->T('codeGuardEmail')}</label>
-                    <input type="email" class="form-control" id="cg_email" value="{$codeGuardContact.email|escape}">
+                    <input type="email" class="form-control" id="cg_email" value="{if $codeGuardContact}{$codeGuardContact.email|escape}{/if}">
                 </div>
             </div>
             <div class="modal-footer">
