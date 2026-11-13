@@ -26,6 +26,12 @@ class AisHelpers
     const METHOD_AUTOINSTALL = 'autoinstall';
     const METHOD_ACME        = 'acme';
 
+    /**
+     * The gateway does not switch the install method yet (requested from the gateway team, 2026-11-13): it ignores the
+     * method on a new order and has no switch call. While false the client sees neither the choice nor the switch.
+     */
+    const METHOD_SWITCH_AVAILABLE = false;
+
     protected static $columnsChecked = false;
 
     /**
@@ -83,11 +89,9 @@ class AisHelpers
         $subscription->period_start       = isset($subData['begin'])        ? ($subData['begin'] ?: null)        : $subscription->period_start;
         $subscription->period_end         = isset($subData['next_renewal']) ? ($subData['next_renewal'] ?: null) : $subscription->period_end;
         $subscription->renewal_date       = isset($subData['next_renewal']) ? ($subData['next_renewal'] ?: null) : $subscription->renewal_date;
+        // the method the vendor reports (none reported: AutoInstall SSL, the default)
         $method = strtolower((string)($firstItem['install_method'] ?? ($autoinstall['installation_method'] ?? '')));
-        if($method !== '')
-        {
-            $subscription->install_method = strpos($method, 'acme') !== false ? self::METHOD_ACME : self::METHOD_AUTOINSTALL;
-        }
+        $subscription->install_method = strpos($method, 'acme') !== false ? self::METHOD_ACME : self::METHOD_AUTOINSTALL;
         // switched to ACME: the ACME account the client's ACME client registers with
         $account = isset($firstItem['account']) ? (array)$firstItem['account'] : [];
         if($account)

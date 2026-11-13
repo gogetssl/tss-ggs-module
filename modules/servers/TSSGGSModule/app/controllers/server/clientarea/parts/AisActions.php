@@ -79,6 +79,7 @@ trait AisActions
         $vars['subscription']       = $subscription;
         $vars['aisAutoRenew']       = $subscription && isset($subscription->auto_renew) ? (int)$subscription->auto_renew : 1;
         $vars['aisInstallMethod']   = $subscription && $subscription->install_method === AisHelpers::METHOD_ACME ? AisHelpers::METHOD_ACME : AisHelpers::METHOD_AUTOINSTALL;
+        $vars['aisCanSwitch']       = AisHelpers::METHOD_SWITCH_AVAILABLE;
         $vars['configurationStatus'] = $sslService ? $sslService->status : null;
         $vars['configurationURL']   = 'clientarea.php?action=productdetails&id=' . $serviceId . '&aisconfig=1';
 
@@ -104,6 +105,7 @@ trait AisActions
         $vars['isAisSubscription'] = true;
         $vars['productName']       = isset($product->name) ? $product->name : '';
         $vars['serviceDomain']     = $service ? $service->domain : '';
+        $vars['aisCanSwitch']      = AisHelpers::METHOD_SWITCH_AVAILABLE;
 
         return ['tpl' => 'home_ais_configuration', 'vars' => $vars];
     }
@@ -135,13 +137,17 @@ trait AisActions
             throw new \Exception(Lang::absoluteT('aisMissingProductId'));
         }
 
-        $method = isset($input['install_method']) && $input['install_method'] === AisHelpers::METHOD_ACME ? AisHelpers::METHOD_ACME : AisHelpers::METHOD_AUTOINSTALL;
-        $response = $api->createAis([
-            'product'        => ['id' => $apiProductId],
-            'domains'        => [$domain],
-            'install_method' => $method,
-            'contacts'       => $this->aisContacts($input['params'], (string)$input['params']['configoption1']),
-        ]);
+        $order = [
+            'product'  => ['id' => $apiProductId],
+            'domains'  => [$domain],
+            'contacts' => $this->aisContacts($input['params'], (string)$input['params']['configoption1']),
+        ];
+        // the method is sent once the gateway takes it (see AisHelpers::METHOD_SWITCH_AVAILABLE)
+        if(AisHelpers::METHOD_SWITCH_AVAILABLE && isset($input['install_method']) && $input['install_method'] === AisHelpers::METHOD_ACME)
+        {
+            $order['install_method'] = AisHelpers::METHOD_ACME;
+        }
+        $response = $api->createAis($order);
 
         $apiOrderId  = isset($response['order']['id'])     ? (int)$response['order']['id']     : 0;
         $orderStatus = isset($response['order']['status']) ? $response['order']['status']       : 'pending';
@@ -164,8 +170,6 @@ trait AisActions
         $subscription->api_order_id = $apiOrderId;
         $subscription->ais_item_id  = $aisItemId > 0 ? $aisItemId : null;
         $subscription->status       = $orderStatus;
-        AisHelpers::ensureColumns();
-        $subscription->install_method = $method;
         $subscription->save();
 
         Capsule::table('tblhosting')->where('id', $serviceId)->update(['domain' => $domain]);
@@ -277,7 +281,7 @@ trait AisActions
         $method       = (string)($input['install_method'] ?? '');
         $subscription = AisSubscription::getByServiceId($serviceId);
 
-        if(!in_array($method, [AisHelpers::METHOD_AUTOINSTALL, AisHelpers::METHOD_ACME], true))
+        if(!AisHelpers::METHOD_SWITCH_AVAILABLE || !in_array($method, [AisHelpers::METHOD_AUTOINSTALL, AisHelpers::METHOD_ACME], true))
         {
             throw new \Exception(Lang::absoluteT('aisInvalidInstallMethod'));
         }
