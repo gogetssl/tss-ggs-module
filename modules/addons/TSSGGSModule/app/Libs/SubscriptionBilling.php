@@ -176,13 +176,14 @@ class SubscriptionBilling
         $service = Capsule::table('tblhosting')
             ->join('tblclients', 'tblclients.id', '=', 'tblhosting.userid')
             ->where('tblhosting.id', (int)$serviceId)
-            ->first(['tblhosting.packageid', 'tblhosting.amount', 'tblclients.currency']);
+            ->first(['tblhosting.packageid', 'tblhosting.amount', 'tblhosting.billingcycle', 'tblclients.currency']);
         if(!$service)
         {
             return 0.0;
         }
-        // a service on a recurring cycle keeps its own recurring amount
-        if((float)$service->amount > 0)
+        // a service on a recurring cycle keeps its own recurring amount; a one-time one has none (WHMCS puts the price
+        // of the last slot upgrade there)
+        if($service->billingcycle !== 'One Time')
         {
             return (float)$service->amount;
         }
