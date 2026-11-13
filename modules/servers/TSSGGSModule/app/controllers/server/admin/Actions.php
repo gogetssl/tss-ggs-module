@@ -46,14 +46,50 @@ class Actions {
         }
     }
 
+    /**
+     * Only CodeGuard can be suspended at the vendor (the licence stops backing up, the data is kept); a certificate
+     * has nothing to suspend, so the service is only marked suspended in WHMCS.
+     */
     public function SuspendAccount($params)
     {
-        return 'success';
+        return $this->codeGuardState($params, true);
     }
 
     public function UnsuspendAccount($params)
     {
-        return 'success';
+        return $this->codeGuardState($params, false);
+    }
+
+    private function codeGuardState($params, $suspend)
+    {
+        $serviceId = (int)$params['serviceid'];
+        if(!\ModulesGarden\TSSGGSModule\App\Libs\CodeGuardService::isCodeGuardService($serviceId))
+        {
+            return 'success';
+        }
+
+        return $this->run(function() use ($serviceId, $suspend) {
+            $suspend
+                ? \ModulesGarden\TSSGGSModule\App\Libs\CodeGuardService::suspend($serviceId)
+                : \ModulesGarden\TSSGGSModule\App\Libs\CodeGuardService::activate($serviceId);
+        });
+    }
+
+    /**
+     * Product change: CodeGuard moves the licence to the other plan at the vendor. The other product types have no
+     * plan change at the vendor - another certificate product means a new order - so the change is refused.
+     */
+    public function ChangePackage($params)
+    {
+        $serviceId = (int)$params['serviceid'];
+        if(!\ModulesGarden\TSSGGSModule\App\Libs\CodeGuardService::isCodeGuardService($serviceId))
+        {
+            return 'Changing the product is not supported for this service';
+        }
+
+        return $this->run(function() use ($serviceId, $params) {
+            \ModulesGarden\TSSGGSModule\App\Libs\CodeGuardService::changePlan($serviceId, (int)$params['pid']);
+        });
     }
 
     /**

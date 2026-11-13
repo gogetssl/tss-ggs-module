@@ -45,6 +45,10 @@ function TSSGGSModule_UnsuspendAccount($params) {
     return (new Actions())->UnsuspendAccount($params);
 }
 
+function TSSGGSModule_ChangePackage($params) {
+    return (new Actions())->ChangePackage($params);
+}
+
 function TSSGGSModule_SSLStepOne($params) {
     return (new Actions())->SSLStepOne($params);
 }

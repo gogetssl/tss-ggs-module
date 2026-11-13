@@ -55,7 +55,23 @@ class CreateAccount {
         }
 
         $gatewayType = \ModulesGarden\TSSGGSModule\App\Libs\GatewayOrderService::typeOfProduct($whmcsProductId);
-        $template    = $gatewayType ? $gatewayType::configurationTemplate() : EmailTemplates::CONFIGURATION_TEMPLATE;
+
+        // CodeGuard has nothing for the client to fill in: the licence is ordered straight away from the client's own
+        // name and e-mail address, and everything after that happens in the CodeGuard dashboard. A failed order leaves
+        // the service waiting, and the client page offers to order again.
+        if($gatewayType === \ModulesGarden\TSSGGSModule\App\Libs\CodeGuardService::class)
+        {
+            try
+            {
+                \ModulesGarden\TSSGGSModule\App\Libs\CodeGuardService::create($serviceId);
+            }
+            catch(\Throwable $e)
+            {
+                \ModulesGarden\TSSGGSModule\App\Libs\CertificateService::event($serviceId, 'error', 'CodeGuard licence could not be ordered: ' . $e->getMessage());
+            }
+        }
+
+        $template = $gatewayType ? $gatewayType::configurationTemplate() : EmailTemplates::CONFIGURATION_TEMPLATE;
         EmailTemplates::sendEmail($template, $serviceId, [
             'ssl_configuration_link' => (new Config())->getConfigureSSLUrl($sslId, $serviceId),
         ]);

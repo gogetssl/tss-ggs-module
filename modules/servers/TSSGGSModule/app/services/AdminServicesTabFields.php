@@ -54,6 +54,10 @@ class AdminServicesTabFields
             {
                 return $this->getCodeSigningDetails((int)$params['serviceid'], $sslService);
             }
+            if(CertificateService::category($params['serviceid']) === CertificateService::CATEGORY_CODE_GUARD)
+            {
+                return $this->getCodeGuardDetails((int)$params['serviceid'], $sslService);
+            }
             if(CertificateService::category($params['serviceid']) !== CertificateService::CATEGORY_TLS)
             {
                 return ['Gateway Item ID' => (int)$sslService->remoteid];
@@ -110,6 +114,46 @@ class AdminServicesTabFields
         if(!empty($stored['migrated']))
         {
             $fields['Migrated'] = 'Yes, from the legacy module';
+        }
+
+        return $fields + $this->getSmimePreviousOrders($stored);
+    }
+
+    /**
+     * CodeGuard licence on the module tab: status, gateway / vendor licence, contact, period and the figures the
+     * gateway reports (quotas, backups - empty while the gateway answers them as null)
+     */
+    private function getCodeGuardDetails($serviceId, $sslService)
+    {
+        $cg      = \ModulesGarden\TSSGGSModule\App\Libs\CodeGuardService::class;
+        $stored  = $cg::stored($serviceId);
+        $status  = (string)($stored['status'] ?? '');
+        $labels  = ['active' => 'label-success', 'suspended' => 'label-warning', 'cancelled' => 'label-danger', 'refunded' => 'label-default'];
+        $contact = (array)($stored['contact'] ?? []);
+        $period  = $cg::period($serviceId);
+
+        $fields = [];
+        $fields['Configuration Status'] = htmlspecialchars($sslService->status);
+        $fields['Gateway Order']        = 'Order #' . (int)($stored['orderId'] ?? 0) . ' | Licence #' . (int)($stored['itemId'] ?? 0)
+            . (!empty($stored['vendorOrderId']) ? ' | Vendor licence ' . htmlspecialchars($stored['vendorOrderId']) : '');
+        $fields['Vendor Status']        = '<span class="label ' . ($labels[$status] ?? 'label-default') . '">' . htmlspecialchars(ucfirst($status ?: 'unknown')) . '</span>'
+            . (!empty($stored['orderedAt']) ? ' &nbsp;ordered ' . htmlspecialchars($stored['orderedAt']) : '')
+            . (!empty($stored['refreshedAt']) ? ' &nbsp;<small class="text-muted">last refresh ' . htmlspecialchars($stored['refreshedAt']) . '</small>' : '');
+        $fields['Contact']              = $contact
+            ? htmlspecialchars(trim(($contact['first_name'] ?? '') . ' ' . ($contact['last_name'] ?? ''))) . ' &lt;' . htmlspecialchars($contact['email'] ?? '') . '&gt;'
+            : '-';
+        $fields['Period']               = $period ? htmlspecialchars($period['start']) . ' &rarr; ' . htmlspecialchars($period['end'])
+            . ' <small class="text-muted">(' . (int)($stored['term'] ?? 0) . ' months from the order date)</small>' : '-';
+
+        $license = $cg::licenseInfo($serviceId);
+        if($license)
+        {
+            $rows = [];
+            foreach($license as $key => $value)
+            {
+                $rows[] = htmlspecialchars(ucfirst(str_replace('_', ' ', (string)$key))) . ': ' . htmlspecialchars(is_scalar($value) ? (string)$value : json_encode($value));
+            }
+            $fields['Licence'] = implode('<br>', $rows);
         }
 
         return $fields + $this->getSmimePreviousOrders($stored);

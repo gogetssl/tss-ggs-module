@@ -21,6 +21,7 @@ class CertificateService
     const CATEGORY_AIS  = 'ais';
     const CATEGORY_SMIME = 'smime';
     const CATEGORY_CS    = 'cs';
+    const CATEGORY_CODE_GUARD = CodeGuardService::CATEGORY;
 
     /**
      * Gateway client for the service's vendor and product category
@@ -56,6 +57,10 @@ class CertificateService
         if(CodeSigningService::isCodeSigningWhmcsProduct($packageId))
         {
             return self::CATEGORY_CS;
+        }
+        if(CodeGuardService::isCodeGuardWhmcsProduct($packageId))
+        {
+            return self::CATEGORY_CODE_GUARD;
         }
 
         return self::CATEGORY_TLS;
@@ -581,6 +586,13 @@ class CertificateService
 
             case self::CATEGORY_SMIME:
                 if(!SmimeService::cancel($serviceId, $reason))
+                {
+                    return false;
+                }
+                break;
+
+            case self::CATEGORY_CODE_GUARD:
+                if(!CodeGuardService::cancel($serviceId, $reason))
                 {
                     return false;
                 }

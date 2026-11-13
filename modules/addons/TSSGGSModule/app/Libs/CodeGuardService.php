@@ -33,6 +33,12 @@ class CodeGuardService extends GatewayOrderService
     const STATUS_ACTIVE    = 'active';
     const STATUS_SUSPENDED = 'suspended';
 
+    /** nothing has to be configured: the e-mail only points the client at the dashboard */
+    public static function configurationTemplate()
+    {
+        return \ModulesGarden\TSSGGSModule\App\Helpers\EmailTemplates::CODE_GUARD_READY_TEMPLATE;
+    }
+
     /**
      * Gateway products the module can sell: the CodeGuard products of TheSSLStore. GoGetSSL does not resell them -
      * the gateway answers "Unsupported action" for a GoGetSSL reseller.

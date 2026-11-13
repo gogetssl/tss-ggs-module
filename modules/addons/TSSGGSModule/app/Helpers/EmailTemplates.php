@@ -208,7 +208,21 @@ class EmailTemplates
                              </p>
                              <p>{$signature}</p>';
 
-    const TEMPLATE_NAMES = ['CONFIGURATION', 'SMIME_CONFIGURATION', 'SMIME_REMINDER', 'SMIME_ISSUED', 'SMIME_EXPIRATION', 'CS_CONFIGURATION', 'CS_ISSUED', 'CS_EXPIRATION', 'EXPIRATION', 'SEND_CERTIFICATE', 'RENEWAL', 'REISSUE', 'SUBSCRIPTION', 'SUBSCRIPTION_EXPIRATION', 'SUBSCRIPTION_RENEWAL', 'RENEWAL_INVOICE', 'DISCONTINUED'];
+    /**
+     * Sent when a CodeGuard licence is set up. Nothing has to be configured - the client only needs the way in.
+     */
+    const CODE_GUARD_READY_TEMPLATE = 'CodeGuard Licence Ready';
+    const CODE_GUARD_READY_SUBJECT  = 'Your CodeGuard licence is ready';
+    const CODE_GUARD_READY_MESSAGE  = '<p>Dear {$client_name},</p>
+                             <p>
+                                Your CodeGuard licence ({$service_product_name}) is active. Open your service in the client
+                                area and use the button there to go to the CodeGuard dashboard, where you add the websites
+                                and databases you want backed up.
+                             </p>
+                             <p>{$ssl_configuration_link}</p>
+                             <p>{$signature}</p>';
+
+    const TEMPLATE_NAMES = ['CONFIGURATION', 'SMIME_CONFIGURATION', 'SMIME_REMINDER', 'SMIME_ISSUED', 'SMIME_EXPIRATION', 'CS_CONFIGURATION', 'CS_ISSUED', 'CS_EXPIRATION', 'EXPIRATION', 'SEND_CERTIFICATE', 'RENEWAL', 'REISSUE', 'SUBSCRIPTION', 'SUBSCRIPTION_EXPIRATION', 'SUBSCRIPTION_RENEWAL', 'RENEWAL_INVOICE', 'DISCONTINUED', 'CODE_GUARD_READY'];
 
     /** S/MIME e-mails */
     const SMIME_TEMPLATES = [self::SMIME_CONFIGURATION_TEMPLATE, self::SMIME_REMINDER_TEMPLATE, self::SMIME_ISSUED_TEMPLATE, self::SMIME_EXPIRATION_TEMPLATE];
