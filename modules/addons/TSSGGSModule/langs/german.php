@@ -1469,7 +1469,7 @@ $_LANG['admin.configuration.content.step2.command_hint'] = 'Führen Sie dies auf
 
 $_LANG['admin.settings.index.forms.ssl_settings_form.terminateUnpaidSubscriptions'] = 'Unbezahlte Abonnements beenden';
 $_LANG['admin.settings.index.forms.ssl_settings_form.terminateUnpaidSubscriptions_description'] = 'Ist die Verlängerungsrechnung nach ihrem Fälligkeitsdatum noch unbezahlt, wird das Abonnement beim Anbieter vor der Verlängerung gekündigt und der Dienst beendet. Die Verlängerungsrechnung ist am Tag vor der Verlängerung des Abonnements fällig.';
-$_LANG['admin.settings.index.forms.ssl_settings_form.subscriptionSlotPricing'] = 'Preis zusätzlicher Domains';
+$_LANG['admin.settings.index.forms.ssl_settings_form.subscriptionSlotPricing'] = 'Preis für „Weitere Domains kaufen“';
 $_LANG['admin.settings.index.forms.ssl_settings_form.subscriptionSlotPricing_description'] = 'Preis der Domains (Plätze), die ein Kunde während der Abonnementlaufzeit kauft. Anteilig: der Jahrespreis für die Tage bis zur nächsten Verlängerung. Voller Preis: der Jahrespreis, unabhängig vom Kaufzeitpunkt. Die Verlängerung berechnet immer den vollen Jahrespreis für alle Domains.';
 $_LANG['admin.settings.index.providers.ssl_settings_provider.subscriptionSlotPricing_prorated'] = 'Anteilig bis zur nächsten Verlängerung';
 $_LANG['admin.settings.index.providers.ssl_settings_provider.subscriptionSlotPricing_full'] = 'Voller Jahrespreis';

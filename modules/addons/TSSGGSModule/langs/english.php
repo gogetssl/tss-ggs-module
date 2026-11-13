@@ -1478,7 +1478,7 @@ $_LANG['admin.configuration.content.step2.command_hint'] = 'Run this on the serv
 
 $_LANG['admin.settings.index.forms.ssl_settings_form.terminateUnpaidSubscriptions'] = 'Terminate Unpaid Subscriptions';
 $_LANG['admin.settings.index.forms.ssl_settings_form.terminateUnpaidSubscriptions_description'] = 'When the renewal invoice is still unpaid after its due date, the subscription is cancelled at the vendor before it renews and the service is terminated. The renewal invoice is due the day before the subscription renews.';
-$_LANG['admin.settings.index.forms.ssl_settings_form.subscriptionSlotPricing'] = 'Additional Domains Price';
+$_LANG['admin.settings.index.forms.ssl_settings_form.subscriptionSlotPricing'] = '"Buy More Domains" Price';
 $_LANG['admin.settings.index.forms.ssl_settings_form.subscriptionSlotPricing_description'] = 'Price of domains (slots) a client buys during the subscription period. Prorated: the yearly price for the days left until the next renewal. Full price: the yearly price, whenever they are bought. The renewal always charges the full yearly price for all domains.';
 $_LANG['admin.settings.index.providers.ssl_settings_provider.subscriptionSlotPricing_prorated'] = 'Prorated to the next renewal';
 $_LANG['admin.settings.index.providers.ssl_settings_provider.subscriptionSlotPricing_full'] = 'Full yearly price';
