@@ -116,6 +116,7 @@
                             {$MGLANG->T('aisStopAutoRenewal')}
                         </button>
                     {/if}
+                    {if $subscription->status|lower != 'cancelled'}
                     <button id="ais-switch-method" style="margin-bottom: 10px;" class="btn btn-default btn-sm"
                             data-method="{if $aisInstallMethod == 'acme'}autoinstall{else}acme{/if}">
                         {if $aisInstallMethod == 'acme'}{$MGLANG->T('aisSwitchToAutoinstall')}{else}{$MGLANG->T('aisSwitchToAcme')}{/if}
@@ -123,6 +124,7 @@
                     <button id="ais-cancel-subscription" style="margin-bottom: 10px;" class="btn btn-danger btn-sm">
                         {$MGLANG->T('aisCancelSubscription')}
                     </button>
+                    {/if}
                 {/if}
             </td>
         </tr>
