@@ -99,6 +99,12 @@ class SubscriptionRenewals
             return;
         }
 
+        // the service's due date is the renewal date (WHMCS clears it on a one-time service when an invoice is paid)
+        if($renewalDate !== '' && (string)$service->nextduedate !== $renewalDate)
+        {
+            Capsule::table('tblhosting')->where('id', $serviceId)->update(['nextduedate' => $renewalDate, 'nextinvoicedate' => $renewalDate]);
+        }
+
         // an unpaid renewal invoice past its due date
         if(!self::settingOff($settings, 'terminateUnpaidSubscriptions') && self::overdueRenewalInvoice($serviceId))
         {
