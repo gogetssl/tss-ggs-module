@@ -293,6 +293,7 @@ class SubscriptionBilling
         }
         $currency = (int)Capsule::table('tblclients')->where('id', (int)$invoice->userid)->value('currency');
         $changed  = 0;
+        $found    = 0;
         foreach(Capsule::table('tblinvoiceitems')->where('invoiceid', (int)$invoiceId)->where('type', 'Upgrade')->get() as $item)
         {
             $upgrade = Capsule::table('tblupgrades')->where('id', (int)$item->relid)->first();
@@ -311,6 +312,7 @@ class SubscriptionBilling
             {
                 continue;
             }
+            $found++;
             $amount = $added * self::slotPrice((int)$parts[0], $currency);
             if(self::slotPricing() === self::SLOT_PRICING_PRORATED)
             {
@@ -327,9 +329,13 @@ class SubscriptionBilling
             Capsule::table('tblupgrades')->where('id', (int)$upgrade->id)->update(['amount' => $amount]);
             $changed++;
         }
-        if($changed)
+        // the total also when nothing changed: WHMCS may write its own total after an earlier hook repriced the items
+        if($found)
         {
             self::updateInvoiceTotal((int)$invoiceId);
+        }
+        if($changed)
+        {
             \logActivity('TSSGGS: domain slots of upgrade invoice #' . (int)$invoiceId . ' priced ' . self::slotPricing() . '.');
         }
 
