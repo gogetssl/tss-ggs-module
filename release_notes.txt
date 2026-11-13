@@ -1,3 +1,13 @@
+1.1.0 (2026-11-13)
+Document signing certificates of TheSSLStore (DigiCert Individual 500 / 2000 and
+Organization 2000 / 5000). The client chooses on the service page whether the
+certificate authority ships a hardware token or the certificate goes onto a token
+they already have, fills in the organization and the administrator, and follows the
+order from there; the service page shows the state, the vendor order and the token
+set-up link. The certificate lives on the token, so no CSR is asked for and nothing
+is downloaded. Includes the admin service tab, the order and issued e-mails, and
+texts in all six languages.
+
 1.0.0 (2026-11-13)
 First release of the unified module, shipped as two packages from one code base:
 GoGetSSL Module (GoGetSSL) and TheSSLStore Plugin (TheSSLStore). Each package
