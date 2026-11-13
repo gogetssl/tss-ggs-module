@@ -1,68 +1,94 @@
 <script type="text/javascript" src="{$assetsURL}/js/mgLibs.js"></script>
 
 {if $allOk === true}
-    <table id="mainTable" class="table table-bordered">
-        <colgroup>
-            <col style="width: 25%"/>
-            <col style="width: 75%"/>
-        </colgroup>
-        <tbody>
-            <tr>
-                <td class="text-left">{$MGLANG->T('acmeOrderStatus')}</td>
-                <td class="text-left">
-                    {if $subscription && $subscription->status}
-                        {assign var=acmeStatus value=$subscription->status|lower}
-                    {else}
-                        {assign var=acmeStatus value='pending'}
+<div class="validate-ssl-unified tssggs-cert">
+
+    {if $subscription && $subscription->status}
+        {assign var=acmeStatus value=$subscription->status|lower}
+    {else}
+        {assign var=acmeStatus value='pending'}
+    {/if}
+    {if $acmeStatus == 'active'}{assign var=acmeTone value='ok'}
+    {elseif $acmeStatus == 'cancelled' || $acmeStatus == 'terminated'}{assign var=acmeTone value='off'}
+    {else}{assign var=acmeTone value='wait'}{/if}
+
+    {* ---------- Hero: subscription state and what the client can do ---------- *}
+    <section class="tssggs-card tssggs-hero tssggs-hero--{$acmeTone}">
+        <div class="tssggs-hero__head">
+            <span class="tssggs-hero__icon">
+                <svg class="tssggs-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>
+            </span>
+            <div class="tssggs-hero__title">
+                <span class="tssggs-badge tssggs-badge--{$acmeTone}">{$acmeStatus|capitalize|escape}</span>
+                <h3>{$productName|escape}</h3>
+                <p class="tssggs-hero__domain">
+                    <svg class="tssggs-ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/><path d="M2 12h20"/></svg>
+                    {$MGLANG->T('acmeSingleDomainsLabel')}: {$singleSansCurrent|intval} / {$singleSansPurchased|intval}{if $wildcardSansPurchased} &middot; {$MGLANG->T('acmeWildcardDomainsLabel')}: {$wildcardSansCurrent|intval} / {$wildcardSansPurchased|intval}{/if}
+                </p>
+            </div>
+        </div>
+        <div class="tssggs-hero__foot">
+            <div class="tssggs-actions">
+                {if !$subscription || !$subscription->api_order_id}
+                    <button class="tssggs-btn tssggs-btn--primary acme-action" data-action="createSubscription">{$MGLANG->T('acmeCreateSubscription')}</button>
+                {else}
+                    {if $canAddDomains}
+                        <button class="tssggs-btn tssggs-btn--primary acme-action" data-action="addDomain">{$MGLANG->T('acmeAddDomainButton')}</button>
                     {/if}
-                    {if $acmeStatus == 'active'}
-                        <span class="label label-success">{$acmeStatus|capitalize|escape}</span>
-                    {elseif $acmeStatus == 'pending'}
-                        <span class="label label-warning">{$acmeStatus|capitalize|escape}</span>
-                    {else}
-                        {$acmeStatus|capitalize|escape}
+                    <button class="tssggs-btn acme-action" data-action="openUpgradeDomains">{$MGLANG->T('acmeBuyMoreDomains')}</button>
+                    {if !$subscription->status || $subscription->status|lower != 'active'}
+                        <button class="tssggs-btn acme-action" data-action="checkCertificateDetails">{$MGLANG->T('acmeCheckCertificateDetails')}</button>
                     {/if}
-                </td>
-            </tr>
-            <tr>
-                <td class="text-left">{$MGLANG->T('acmeProductName')}</td>
-                <td class="text-left">{$productName|escape}</td>
-            </tr>
-            {if $subscription}
-                <tr>
-                    <td class="text-left">{$MGLANG->T('acmeAccountId')}</td>
-                    <td class="text-left">{$subscription->acme_account_id|escape}</td>
-                </tr>
-                <tr>
-                    <td class="text-left">{$MGLANG->T('acmeEabKid')}</td>
-                    <td class="text-left">{$subscription->eab_kid|escape}</td>
-                </tr>
-                <tr>
-                    <td class="text-left">{$MGLANG->T('acmeEabHmacKey')}</td>
-                    <td class="text-left"><code>{$subscription->eab_hmac_key|escape}</code></td>
-                </tr>
-                <tr>
-                    <td class="text-left">{$MGLANG->T('acmeServerUrl')}</td>
-                    <td class="text-left">{$subscription->server_url|escape}</td>
-                </tr>
-                <tr>
-                    <td class="text-left">{$MGLANG->T('acmeRenewalDate')}</td>
-                    <td class="text-left">{$subscription->renewal_date|escape}</td>
-                </tr>
-                <tr>
-                    <td class="text-left">{$MGLANG->T('acmeAutoRenew')}</td>
-                    <td class="text-left">
-                        {if $subscription->auto_renew}
-                            <span class="label label-success">Enabled</span>
-                        {else}
-                            <span class="label label-default">Disabled</span>
-                        {/if}
-                    </td>
-                </tr>
-            {/if}
-            <tr>
-                <td class="text-left">{$MGLANG->T('acmeDomains')}</td>
-                <td class="text-left">
+                    <button class="tssggs-btn acme-action" data-action="stopAutoRenewal">{$MGLANG->T('acmeStopAutoRenewal')}</button>
+                    <button class="tssggs-btn tssggs-btn--danger acme-action" data-action="cancelSubscription">{$MGLANG->T('acmeCancelSubscription')}</button>
+                {/if}
+            </div>
+        </div>
+    </section>
+
+    <div class="tssggs-grid">
+        <section class="tssggs-card">
+            <h4 class="tssggs-card__title">
+                <svg class="tssggs-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8M16 13H8M16 17H8"/></svg>
+                {$MGLANG->T('acmeOrderStatus')}
+            </h4>
+            <dl class="tssggs-dl">
+                <dt>{$MGLANG->T('acmeProductName')}</dt><dd>{$productName|escape}</dd>
+                {if $subscription}
+                    <dt>{$MGLANG->T('acmeRenewalDate')}</dt><dd>{if $subscription->renewal_date}{$subscription->renewal_date|escape}{else}-{/if}</dd>
+                    <dt>{$MGLANG->T('acmeAutoRenew')}</dt>
+                    <dd>{if $subscription->auto_renew}<span class="tssggs-badge">{$MGLANG->T('acmeStatusActive')}</span>{else}<span class="tssggs-badge tssggs-badge--off">{$MGLANG->T('acmeStatusRemoved')}</span>{/if}</dd>
+                {/if}
+                <dt>{$MGLANG->T('acmeTotalSans')}</dt>
+                <dd>
+                    {$MGLANG->T('acmeSingleDomainsLabel')}: {$singleSansCurrent|intval} / {$singleSansPurchased|intval}
+                    {if $wildcardSansPurchased}<br>{$MGLANG->T('acmeWildcardDomainsLabel')}: {$wildcardSansCurrent|intval} / {$wildcardSansPurchased|intval}
+                    <br>{$MGLANG->T('acmeBothTypesLabel')}: {$totalSansCurrent|intval} / {$totalSansPurchased|intval}{/if}
+                </dd>
+            </dl>
+        </section>
+
+        {if $subscription}
+        <section class="tssggs-card">
+            <h4 class="tssggs-card__title">
+                <svg class="tssggs-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 18v3h3l11-11-3-3L2 18z"/><path d="m15 5 4 4"/><circle cx="18" cy="6" r="3"/></svg>
+                {$MGLANG->T('acmeAccountSection')}
+            </h4>
+            <dl class="tssggs-dl">
+                <dt>{$MGLANG->T('acmeAccountId')}</dt><dd class="tssggs-mono">{$subscription->acme_account_id|escape}</dd>
+                <dt>{$MGLANG->T('acmeEabKid')}</dt><dd class="tssggs-mono">{$subscription->eab_kid|escape}</dd>
+                <dt>{$MGLANG->T('acmeEabHmacKey')}</dt><dd class="tssggs-mono" style="word-break:break-all;">{$subscription->eab_hmac_key|escape}</dd>
+                <dt>{$MGLANG->T('acmeServerUrl')}</dt><dd class="tssggs-mono" style="word-break:break-all;">{$subscription->server_url|escape}</dd>
+            </dl>
+        </section>
+        {/if}
+    </div>
+
+    <section class="tssggs-card">
+        <h4 class="tssggs-card__title">
+            <svg class="tssggs-ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/><path d="M2 12h20"/></svg>
+            {$MGLANG->T('acmeDomains')}
+        </h4>
                     <table class="table table-condensed">
                         <thead>
                         <tr>
@@ -139,8 +165,7 @@
                     {/if}
                 </td>
             </tr>
-        </tbody>
-    </table>
+    </section>
 
     <div class="modal fade" id="acmeUpgradeDomainsModal" tabindex="-1" role="dialog" aria-labelledby="acmeUpgradeDomainsModalLabel">
         <div class="modal-dialog" role="document">
@@ -233,7 +258,15 @@
         </div>
     </div>
 
-    <script type="text/javascript">
+    </div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        var clone = $('.validate-ssl-unified').clone();
+        $('.product-details').html(clone);
+        $('.mg-module .validate-ssl-unified').remove();
+    });
+
         $(document).ready(function () {
             var serviceUrl = 'clientarea.php?action=productdetails&id={$serviceid}&json=1';
             var selectedDomainToRemove = null;

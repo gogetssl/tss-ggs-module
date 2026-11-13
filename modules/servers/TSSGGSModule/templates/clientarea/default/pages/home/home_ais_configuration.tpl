@@ -1,42 +1,61 @@
 <script type="text/javascript" src="{$assetsURL}/js/mgLibs.js"></script>
 
 {if $allOk === true}
-<div class="row">
-    <div class="col-sm-12">
-        <h3>{$MGLANG->T('aisConfigurationTitle')}</h3>
+<div class="validate-ssl-unified tssggs-cert tssggs-smime">
 
-        <div id="ais-alerts"></div>
+    <section class="tssggs-card tssggs-hero tssggs-hero--wait">
+        <div class="tssggs-hero__head">
+            <span class="tssggs-hero__icon">
+                <svg class="tssggs-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+            </span>
+            <div class="tssggs-hero__title">
+                <span class="tssggs-badge tssggs-badge--wait">{$MGLANG->T('Awaiting Configuration')}</span>
+                <h3>{$MGLANG->T('aisConfigurationTitle')}</h3>
+            </div>
+        </div>
+    </section>
 
-        <div class="panel panel-default">
-            <div class="panel-body">
-                <div class="form-group">
-                    <label for="ais-domain">{$MGLANG->T('aisDomainLabel')}</label>
-                    <input type="text"
-                           id="ais-domain"
-                           class="form-control"
-                           placeholder="example.com"
-                           value="{$serviceDomain|escape:'htmlall'}">
-                    <span class="help-block">{$MGLANG->T('aisDomainHint')}</span>
-                </div>
+    <div id="ais-alerts"></div>
 
-                {if $aisCanSwitch}
-                <div class="form-group">
+    <section class="tssggs-card">
+        <h4 class="tssggs-card__title">
+            <svg class="tssggs-ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/><path d="M2 12h20"/></svg>
+            {$MGLANG->T('aisDomainLabel')}
+        </h4>
+        <div class="tssggs-form">
+            <div class="tssggs-field">
+                <label for="ais-domain">{$MGLANG->T('aisDomainLabel')} <span class="tssggs-req">*</span></label>
+                <input type="text" id="ais-domain" class="form-control" placeholder="example.com" value="{$serviceDomain|escape:'htmlall'}">
+                <small>{$MGLANG->T('aisDomainHint')}</small>
+            </div>
+            {if $aisCanSwitch}
+                <div class="tssggs-field">
                     <label for="ais-install-method">{$MGLANG->T('aisInstallMethod')}</label>
                     <select id="ais-install-method" class="form-control">
                         <option value="autoinstall">{$MGLANG->T('aisMethod_autoinstall')}</option>
                         <option value="acme">{$MGLANG->T('aisMethod_acme')}</option>
                     </select>
-                    <span class="help-block">{$MGLANG->T('aisInstallMethodHint')}</span>
+                    <small>{$MGLANG->T('aisInstallMethodHint')}</small>
                 </div>
-                {/if}
-
-                <button id="ais-submit" class="btn btn-primary">
-                    {$MGLANG->T('aisSubmitConfiguration')}
-                </button>
-            </div>
+            {/if}
         </div>
+    </section>
+
+    <div class="tssggs-actions tssggs-actions--end">
+        <button id="ais-submit" type="button" class="tssggs-btn tssggs-btn--primary">
+            <svg class="tssggs-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>
+            {$MGLANG->T('aisSubmitConfiguration')}
+        </button>
     </div>
 </div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        var clone = $('.validate-ssl-unified').clone();
+        $('.product-details').html(clone);
+        $('.mg-module .validate-ssl-unified').remove();
+    });
+</script>
 
 <script type="text/javascript">
     $(document).ready(function () {

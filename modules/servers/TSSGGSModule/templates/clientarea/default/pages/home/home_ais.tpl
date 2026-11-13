@@ -1,137 +1,98 @@
 <script type="text/javascript" src="{$assetsURL}/js/mgLibs.js"></script>
 
 {if $allOk === true}
-<div id="ais-alerts"></div>
+<div class="validate-ssl-unified tssggs-cert">
 
-<table id="mainTable" class="table table-bordered">
-    <colgroup>
-        <col style="width: 25%"/>
-        <col style="width: 75%"/>
-    </colgroup>
-    <tbody>
-        <tr>
-            <td class="text-left">{$MGLANG->T('aisOrderStatus')}</td>
-            <td class="text-left">
-                {if $subscription && $subscription->status}
-                    {assign var=aisStatus value=$subscription->status|lower}
-                {else}
-                    {assign var=aisStatus value='pending'}
+    {if $subscription && $subscription->status}
+        {assign var=aisStatus value=$subscription->status|lower}
+    {else}
+        {assign var=aisStatus value='pending'}
+    {/if}
+    {if $aisStatus == 'active'}{assign var=aisTone value='ok'}
+    {elseif $aisStatus == 'cancelled' || $aisStatus == 'terminated'}{assign var=aisTone value='off'}
+    {else}{assign var=aisTone value='wait'}{/if}
+
+    {* ---------- Hero: subscription state, the way in, and the actions ---------- *}
+    <section class="tssggs-card tssggs-hero tssggs-hero--{$aisTone}">
+        <div class="tssggs-hero__head">
+            <span class="tssggs-hero__icon">
+                <svg class="tssggs-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+            </span>
+            <div class="tssggs-hero__title">
+                <span class="tssggs-badge tssggs-badge--{$aisTone}">{$aisStatus|capitalize|escape}</span>
+                <h3>{$productName|escape}</h3>
+                {if $subscription && $subscription->autoinstall_status}
+                    <p class="tssggs-hero__domain">{$MGLANG->T('aisAutoinstallStatus')}: {$subscription->autoinstall_status|capitalize|escape}</p>
                 {/if}
-                {if $aisStatus == 'active'}
-                    <span class="label label-success">{$aisStatus|capitalize|escape}</span>
-                {elseif $aisStatus == 'pending'}
-                    <span class="label label-warning">{$aisStatus|capitalize|escape}</span>
-                {else}
-                    {$aisStatus|capitalize|escape}
-                {/if}
-            </td>
-        </tr>
-        <tr>
-            <td class="text-left">{$MGLANG->T('aisProductName')}</td>
-            <td class="text-left">{$productName|escape}</td>
-        </tr>
-
-        {if $subscription}
-            {if $subscription->autoinstall_status}
-            <tr>
-                <td class="text-left">{$MGLANG->T('aisAutoinstallStatus')}</td>
-                <td class="text-left">{$subscription->autoinstall_status|capitalize|escape}</td>
-            </tr>
-            {/if}
-
-            {if $subscription->renewal_date}
-            <tr>
-                <td class="text-left">{$MGLANG->T('aisRenewalDate')}</td>
-                <td class="text-left">{$subscription->renewal_date|escape}</td>
-            </tr>
-            {/if}
-
-            <tr>
-                <td class="text-left">{$MGLANG->T('acmeAutoRenew')}</td>
-                <td class="text-left">
-                    {if $aisAutoRenew}
-                        <span class="label label-success">Enabled</span>
-                    {else}
-                        <span class="label label-default">Disabled</span>
-                    {/if}
-                </td>
-            </tr>
-
-            <tr>
-                <td class="text-left">{$MGLANG->T('aisInstallMethod')}</td>
-                <td class="text-left">{$MGLANG->T('aisMethod_'|cat:$aisInstallMethod)}</td>
-            </tr>
-
-            {if $aisInstallMethod == 'acme'}
-                <tr>
-                    <td class="text-left">{$MGLANG->T('acmeAccountId')}</td>
-                    <td class="text-left">{$subscription->acme_account_id|escape}</td>
-                </tr>
-                <tr>
-                    <td class="text-left">{$MGLANG->T('acmeEabKid')}</td>
-                    <td class="text-left">{$subscription->eab_kid|escape}</td>
-                </tr>
-                <tr>
-                    <td class="text-left">{$MGLANG->T('acmeEabHmacKey')}</td>
-                    <td class="text-left"><code>{$subscription->eab_hmac_key|escape}</code></td>
-                </tr>
-                <tr>
-                    <td class="text-left">{$MGLANG->T('acmeServerUrl')}</td>
-                    <td class="text-left">{$subscription->server_url|escape}</td>
-                </tr>
-            {/if}
-
-            {if $aisInstallMethod != 'acme' && $subscription->login_sso_link}
-            <tr>
-                <td class="text-left">{$MGLANG->T('aisLoginLink')}</td>
-                <td class="text-left">
-                    <a href="{$subscription->login_sso_link|escape:'htmlall'}" target="_blank" class="btn btn-primary btn-sm">
+            </div>
+        </div>
+        <div class="tssggs-hero__foot">
+            <div class="tssggs-actions">
+                {if $subscription && $aisInstallMethod != 'acme' && $subscription->login_sso_link}
+                    <a class="tssggs-btn tssggs-btn--primary" href="{$subscription->login_sso_link|escape:'htmlall'}" target="_blank" rel="noopener">
+                        <svg class="tssggs-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
                         {$MGLANG->T('aisLoginLink')}
                     </a>
-                </td>
-            </tr>
-            {/if}
-
-            {if $aisInstallMethod != 'acme' && $subscription->manage_sso_link}
-            <tr>
-                <td class="text-left">{$MGLANG->T('aisManageLink')}</td>
-                <td class="text-left">
-                    <a href="{$subscription->manage_sso_link|escape:'htmlall'}" target="_blank" class="btn btn-default btn-sm">
+                {/if}
+                {if $subscription && $aisInstallMethod != 'acme' && $subscription->manage_sso_link}
+                    <a class="tssggs-btn" href="{$subscription->manage_sso_link|escape:'htmlall'}" target="_blank" rel="noopener">
+                        <svg class="tssggs-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
                         {$MGLANG->T('aisManageLink')}
                     </a>
-                </td>
-            </tr>
-            {/if}
-        {/if}
-
-        <tr>
-            <td class="text-left">{$MGLANG->T('Actions')}</td>
-            <td class="text-left">
-                <button id="ais-refresh" style="margin-bottom: 10px;" class="btn btn-default btn-sm">
+                {/if}
+                <button id="ais-refresh" type="button" class="tssggs-btn">
+                    <svg class="tssggs-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>
                     {$MGLANG->T('aisRefreshDetails')}
                 </button>
                 {if $subscription && $subscription->api_order_id}
                     {if $aisAutoRenew}
-                        <button id="ais-stop-auto-renewal" style="margin-bottom: 10px;" class="btn btn-default btn-sm">
-                            {$MGLANG->T('aisStopAutoRenewal')}
-                        </button>
+                        <button id="ais-stop-auto-renewal" type="button" class="tssggs-btn">{$MGLANG->T('aisStopAutoRenewal')}</button>
                     {/if}
                     {if $subscription->status|lower != 'cancelled'}
-                    {if $aisCanSwitch}
-                    <button id="ais-switch-method" style="margin-bottom: 10px;" class="btn btn-default btn-sm"
-                            data-method="{if $aisInstallMethod == 'acme'}autoinstall{else}acme{/if}">
-                        {if $aisInstallMethod == 'acme'}{$MGLANG->T('aisSwitchToAutoinstall')}{else}{$MGLANG->T('aisSwitchToAcme')}{/if}
-                    </button>
-                    {/if}
-                    <button id="ais-cancel-subscription" style="margin-bottom: 10px;" class="btn btn-danger btn-sm">
-                        {$MGLANG->T('aisCancelSubscription')}
-                    </button>
+                        {if $aisCanSwitch}
+                            <button id="ais-switch-method" type="button" class="tssggs-btn" data-method="{if $aisInstallMethod == 'acme'}autoinstall{else}acme{/if}">
+                                {if $aisInstallMethod == 'acme'}{$MGLANG->T('aisSwitchToAutoinstall')}{else}{$MGLANG->T('aisSwitchToAcme')}{/if}
+                            </button>
+                        {/if}
+                        <button id="ais-cancel-subscription" type="button" class="tssggs-btn tssggs-btn--danger">{$MGLANG->T('aisCancelSubscription')}</button>
                     {/if}
                 {/if}
-            </td>
-        </tr>
-    </tbody>
-</table>
+            </div>
+        </div>
+    </section>
+
+    <div class="tssggs-grid">
+        <section class="tssggs-card">
+            <h4 class="tssggs-card__title">
+                <svg class="tssggs-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8M16 13H8M16 17H8"/></svg>
+                {$MGLANG->T('aisOrderStatus')}
+            </h4>
+            <dl class="tssggs-dl">
+                <dt>{$MGLANG->T('aisProductName')}</dt><dd>{$productName|escape}</dd>
+                {if $subscription}
+                    {if $subscription->renewal_date}<dt>{$MGLANG->T('aisRenewalDate')}</dt><dd>{$subscription->renewal_date|escape}</dd>{/if}
+                    <dt>{$MGLANG->T('acmeAutoRenew')}</dt>
+                    <dd>{if $aisAutoRenew}<span class="tssggs-badge">{$MGLANG->T('acmeStatusActive')}</span>{else}<span class="tssggs-badge tssggs-badge--off">{$MGLANG->T('acmeStatusRemoved')}</span>{/if}</dd>
+                    <dt>{$MGLANG->T('aisInstallMethod')}</dt><dd>{$MGLANG->T('aisMethod_'|cat:$aisInstallMethod)}</dd>
+                {/if}
+            </dl>
+        </section>
+
+        {if $subscription && $aisInstallMethod == 'acme'}
+        <section class="tssggs-card">
+            <h4 class="tssggs-card__title">
+                <svg class="tssggs-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 18v3h3l11-11-3-3L2 18z"/><path d="m15 5 4 4"/><circle cx="18" cy="6" r="3"/></svg>
+                {$MGLANG->T('acmeAccountSection')}
+            </h4>
+            <dl class="tssggs-dl">
+                <dt>{$MGLANG->T('acmeAccountId')}</dt><dd class="tssggs-mono">{$subscription->acme_account_id|escape}</dd>
+                <dt>{$MGLANG->T('acmeEabKid')}</dt><dd class="tssggs-mono">{$subscription->eab_kid|escape}</dd>
+                <dt>{$MGLANG->T('acmeEabHmacKey')}</dt><dd class="tssggs-mono" style="word-break:break-all;">{$subscription->eab_hmac_key|escape}</dd>
+                <dt>{$MGLANG->T('acmeServerUrl')}</dt><dd class="tssggs-mono" style="word-break:break-all;">{$subscription->server_url|escape}</dd>
+            </dl>
+        </section>
+        {/if}
+    </div>
 
 <div class="modal fade" id="aisStopAutoRenewalModal" tabindex="-1" role="dialog" aria-labelledby="aisStopAutoRenewalModalLabel">
     <div class="modal-dialog" role="document">
@@ -169,7 +130,15 @@
     </div>
 </div>
 
+</div>
+
 <script type="text/javascript">
+    $(document).ready(function () {
+        var clone = $('.validate-ssl-unified').clone();
+        $('.product-details').html(clone);
+        $('.mg-module .validate-ssl-unified').remove();
+    });
+
     $(document).ready(function () {
         var serviceUrl = 'clientarea.php?action=productdetails&id={$serviceid}&json=1';
 
