@@ -97,22 +97,12 @@ class SanUpgrade
         {
             return;
         }
-        // ACME: the slots are domains of the subscription, not SANs of a certificate
+        // ACME: the slots are domains of the subscription, not SANs of a certificate. Nothing is ordered at the vendor
+        // for a slot - it charges per domain when the client adds one to the subscription - so a paid upgrade only
+        // raises the quota the client area allows.
         $packageId = (int)Capsule::table('tblhosting')->where('id', (int)$upgrade->relid)->value('packageid');
         if(AcmeHelpers::isAcmeWhmcsProduct($packageId))
         {
-            try
-            {
-                // what this upgrade added (giving slots back is handled in WHMCS: no purchase)
-                $current = self::currentQuantities((int)$upgrade->relid);
-                $before  = self::quantitiesBeforeUpgrade((int)$upgrade->relid, $upgrade, $current);
-                SubscriptionBilling::buyAcmeSlots((int)$upgrade->relid, $current['single'] - $before['single'], $current['wildcard'] - $before['wildcard']);
-            }
-            catch(\Throwable $e)
-            {
-                CertificateService::event((int)$upgrade->relid, 'error', '[Subscription] Domain slots could not be sent to the vendor: ' . $e->getMessage());
-            }
-
             return;
         }
         if(!self::isOrderedCertificate($upgrade->relid))

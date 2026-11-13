@@ -236,23 +236,14 @@ class SubscriptionBilling
     }
 
     /**
-     * ACME: the client bought more domain slots (configurable option upgrade, paid) - the same number is bought at the
-     * vendor (gateway "add-san" of the subscription)
+     * Nothing is bought at the vendor when the client pays for more domain slots: the vendor charges per domain the
+     * moment it is added to the subscription (POST /certificates/caas/{id}/domains), and the client area lets the
+     * client add only as many as the paid configurable options allow. The slots are the client-facing quota, the
+     * vendor charge follows the domain.
+     *
+     * (An earlier version called the gateway's "add-san" here, which exists for TLS certificates only - a subscription
+     * answers 404 - so the call never did anything but log an error.)
      */
-    public static function buyAcmeSlots($serviceId, $single, $wildcard)
-    {
-        $single       = max(0, (int)$single);
-        $wildcard     = max(0, (int)$wildcard);
-        $subscription = AcmeSubscription::getByServiceId($serviceId);
-        if((!$single && !$wildcard) || !$subscription || (int)$subscription->acme_id <= 0 || in_array($subscription->status, ['cancelled', 'terminated'], true))
-        {
-            return false;
-        }
-        CertificateService::api($serviceId)->addSan((int)$subscription->acme_id, ['single_san' => $single, 'wildcard_san' => $wildcard]);
-        CertificateService::event($serviceId, 'success', '[Subscription] Additional domains bought: ' . $single . ' single, ' . $wildcard . ' wildcard');
-
-        return true;
-    }
 
     /** Settings > SSL > Subscriptions: domain slots bought during the period are charged for the days left ("prorated") or at the yearly price ("full") */
     const SLOT_PRICING_PRORATED = 'prorated';
@@ -442,8 +433,8 @@ class SubscriptionBilling
     }
 
     /**
-     * Adds bought domain slots to the service (configurable option quantity), buys them at the vendor, and brings an
-     * unpaid renewal invoice up to date
+     * Adds bought domain slots to the service (configurable option quantity). Nothing is ordered at the vendor here:
+     * it charges per domain when the client adds one to the subscription.
      */
     protected static function addSlots($serviceId, array $bought)
     {
@@ -463,15 +454,7 @@ class SubscriptionBilling
             $type = explode('|', (string)Capsule::table('tblproductconfigoptions')->where('id', (int)$configId)->value('optionname'))[0];
             $added[$type === 'sans_wildcard' ? 'wildcard' : 'single'] += (int)$count;
         }
-        CertificateService::event($serviceId, 'success', '[Subscription] Domains added: ' . $added['single'] . ' single, ' . $added['wildcard'] . ' wildcard');
-        try
-        {
-            self::buyAcmeSlots($serviceId, $added['single'], $added['wildcard']);
-        }
-        catch(\Throwable $e)
-        {
-            CertificateService::event($serviceId, 'error', '[Subscription] The domains could not be bought at the vendor: ' . $e->getMessage());
-        }
+        CertificateService::event($serviceId, 'success', '[Subscription] Domain slots added: ' . $added['single'] . ' single, ' . $added['wildcard'] . ' wildcard (the vendor charges when a domain is added to the subscription)');
     }
 
     /**
