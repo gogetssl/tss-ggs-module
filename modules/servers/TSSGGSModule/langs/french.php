@@ -297,7 +297,7 @@ $_LANG['serverCA']['home']['acmeConfirmUpgrade']                 = 'Confirmer';
 $_LANG['acme_subscription_cancelled']                      = 'Abonnement annulé.';
 $_LANG['acme_subscription_cancelled_and_credits_refunded'] = 'Abonnement annulé. Crédits restitués sur votre compte : %s.';
 $_LANG['acme_domain_removed_successfully']                 = 'Domaine supprimé avec succès.';
-$_LANG['acme_domain_removed_and_refunded']                 = 'Domaine supprimé avec succès. La limite d\'emplacements de domaine a été réduite.';
+$_LANG['acme_domain_removed_and_refunded']                 = 'Domaine supprimé. Il a été ajouté il y a moins de 30 jours, son emplacement est donc de nouveau libre pour un autre domaine.';
 $_LANG['acme_auto_renewal_disabled']                       = 'Renouvellement automatique désactivé. L\'abonnement sera annulé à la date d\'expiration.';
 $_LANG['certificate_details_refreshed']                    = 'Les détails du certificat ont été actualisés.';
 
@@ -764,3 +764,4 @@ $_LANG['aisSwitchToAutoinstall'] = 'Passer à AutoInstall SSL';
 $_LANG['aisSwitchConfirm'] = 'Changer la méthode d’installation ? Les certificats déjà installés restent valides.';
 $_LANG['aisInstallMethodChanged'] = 'La méthode d’installation a été modifiée.';
 $_LANG['aisInvalidInstallMethod'] = 'Choisissez AutoInstall SSL ou ACME.';
+$_LANG['subscriptionAlreadyCancelled'] = 'L\'abonnement est déjà annulé.';

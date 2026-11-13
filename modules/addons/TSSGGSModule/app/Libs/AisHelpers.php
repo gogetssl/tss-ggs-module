@@ -83,9 +83,10 @@ class AisHelpers
         $subscription->period_start       = isset($subData['begin'])        ? ($subData['begin'] ?: null)        : $subscription->period_start;
         $subscription->period_end         = isset($subData['next_renewal']) ? ($subData['next_renewal'] ?: null) : $subscription->period_end;
         $subscription->renewal_date       = isset($subData['next_renewal']) ? ($subData['next_renewal'] ?: null) : $subscription->renewal_date;
-        if(isset($firstItem['install_method']) && in_array($firstItem['install_method'], [self::METHOD_AUTOINSTALL, self::METHOD_ACME], true))
+        $method = strtolower((string)($firstItem['install_method'] ?? ($autoinstall['installation_method'] ?? '')));
+        if($method !== '')
         {
-            $subscription->install_method = $firstItem['install_method'];
+            $subscription->install_method = strpos($method, 'acme') !== false ? self::METHOD_ACME : self::METHOD_AUTOINSTALL;
         }
         // switched to ACME: the ACME account the client's ACME client registers with
         $account = isset($firstItem['account']) ? (array)$firstItem['account'] : [];

@@ -235,6 +235,10 @@ trait AisActions
         {
             throw new \Exception(Lang::absoluteT('aisSubscriptionNotCreatedYet'));
         }
+        if(in_array(strtolower((string)$subscription->status), ['cancelled', 'terminated'], true))
+        {
+            throw new \Exception(Lang::absoluteT('subscriptionAlreadyCancelled'));
+        }
 
         // without the vendor's item ID nothing can be cancelled there: never report a cancellation
         // that did not happen (the vendor would keep billing the subscription)

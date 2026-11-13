@@ -297,7 +297,7 @@ $_LANG['serverCA']['home']['acmeConfirmUpgrade'] = 'Potvrdit';
 $_LANG['acme_subscription_cancelled'] = 'Předplatné bylo zrušeno.';
 $_LANG['acme_subscription_cancelled_and_credits_refunded'] = 'Předplatné bylo zrušeno. Kredity vrácené na Váš účet: %s.';
 $_LANG['acme_domain_removed_successfully'] = 'Doména byla úspěšně odebrána.';
-$_LANG['acme_domain_removed_and_refunded'] = 'Doména byla úspěšně odebrána. Limit domén byl snížen.';
+$_LANG['acme_domain_removed_and_refunded'] = 'Doména byla odebrána. Byla přidána před méně než 30 dny, proto je její slot opět volný pro jinou doménu.';
 $_LANG['acme_auto_renewal_disabled'] = 'Automatické obnovení bylo vypnuto. Předplatné bude zrušeno v den vypršení platnosti.';
 $_LANG['certificate_details_refreshed'] = 'Údaje o certifikátu byly aktualizovány.';
 
@@ -764,3 +764,4 @@ $_LANG['aisSwitchToAutoinstall'] = 'Přepnout na AutoInstall SSL';
 $_LANG['aisSwitchConfirm'] = 'Změnit způsob instalace? Již nainstalované certifikáty zůstanou platné.';
 $_LANG['aisInstallMethodChanged'] = 'Způsob instalace byl změněn.';
 $_LANG['aisInvalidInstallMethod'] = 'Zvolte AutoInstall SSL nebo ACME.';
+$_LANG['subscriptionAlreadyCancelled'] = 'Předplatné je již zrušeno.';

@@ -719,7 +719,10 @@ trait AcmeActions
         {
             throw new \Exception(Lang::absoluteT('subscription_was_not_created_yet'));
         }
-
+        if(in_array(strtolower((string)$subscription->status), ['cancelled', 'terminated'], true))
+        {
+            throw new \Exception(Lang::absoluteT('subscriptionAlreadyCancelled'));
+        }
 
         // acme_id is the CaaS item ID (items[0].id), not the order ID; within the refund window the vendor refunds the order
         $refundable = \ModulesGarden\TSSGGSModule\App\Libs\SubscriptionBilling::orderRefundable($serviceId);

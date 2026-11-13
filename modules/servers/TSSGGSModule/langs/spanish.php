@@ -297,7 +297,7 @@ $_LANG['serverCA']['home']['acmeConfirmUpgrade'] = 'Confirmar';
 $_LANG['acme_subscription_cancelled'] = 'Suscripción cancelada.';
 $_LANG['acme_subscription_cancelled_and_credits_refunded'] = 'Suscripción cancelada. Créditos devueltos a su cuenta: %s.';
 $_LANG['acme_domain_removed_successfully'] = 'Dominio eliminado correctamente.';
-$_LANG['acme_domain_removed_and_refunded'] = 'Dominio eliminado correctamente. Se ha reducido el límite de dominios.';
+$_LANG['acme_domain_removed_and_refunded'] = 'Dominio eliminado. Se añadió hace menos de 30 días, por lo que su espacio vuelve a estar libre para otro dominio.';
 $_LANG['acme_auto_renewal_disabled'] = 'Renovación automática desactivada. La suscripción se cancelará en la fecha de vencimiento.';
 $_LANG['certificate_details_refreshed'] = 'Los detalles del certificado se han actualizado.';
 
@@ -764,3 +764,4 @@ $_LANG['aisSwitchToAutoinstall'] = 'Cambiar a AutoInstall SSL';
 $_LANG['aisSwitchConfirm'] = '¿Cambiar el método de instalación? Los certificados ya instalados siguen siendo válidos.';
 $_LANG['aisInstallMethodChanged'] = 'Se ha cambiado el método de instalación.';
 $_LANG['aisInvalidInstallMethod'] = 'Elija AutoInstall SSL o ACME.';
+$_LANG['subscriptionAlreadyCancelled'] = 'La suscripción ya está cancelada.';

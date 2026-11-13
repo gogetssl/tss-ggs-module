@@ -297,7 +297,7 @@ $_LANG['serverCA']['home']['acmeConfirmUpgrade']                 = 'Bekræft';
 $_LANG['acme_subscription_cancelled']                      = 'Abonnementet er opsagt.';
 $_LANG['acme_subscription_cancelled_and_credits_refunded'] = 'Abonnementet er opsagt. Kreditter returneret til din konto: %s.';
 $_LANG['acme_domain_removed_successfully']                 = 'Domænet er fjernet.';
-$_LANG['acme_domain_removed_and_refunded']                 = 'Domænet er fjernet. Grænsen for antal domæner er blevet reduceret.';
+$_LANG['acme_domain_removed_and_refunded']                 = 'Domænet er fjernet. Det blev tilføjet for under 30 dage siden, så dets plads er igen ledig til et andet domæne.';
 $_LANG['acme_auto_renewal_disabled']                       = 'Automatisk fornyelse er deaktiveret. Abonnementet opsiges på udløbsdatoen.';
 $_LANG['certificate_details_refreshed']                    = 'Certifikatoplysningerne er blevet opdateret.';
 
@@ -764,3 +764,4 @@ $_LANG['aisSwitchToAutoinstall'] = 'Skift til AutoInstall SSL';
 $_LANG['aisSwitchConfirm'] = 'Skift installationsmetode? Certifikater, der allerede er installeret, forbliver gyldige.';
 $_LANG['aisInstallMethodChanged'] = 'Installationsmetoden blev ændret.';
 $_LANG['aisInvalidInstallMethod'] = 'Vælg AutoInstall SSL eller ACME.';
+$_LANG['subscriptionAlreadyCancelled'] = 'Abonnementet er allerede opsagt.';
