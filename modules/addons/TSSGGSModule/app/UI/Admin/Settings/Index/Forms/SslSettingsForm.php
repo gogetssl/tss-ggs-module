@@ -280,6 +280,7 @@ class SslSettingsForm extends Form implements AdminAreaInterface, AjaxComponentI
 
         $this->builder->addFieldInContainer($recurringContainer, (new Dropdown())->setName('recurringDaysBeforeExpirySubscription')->setDefaultValueAsFirstOption());
         $this->builder->addFieldInContainer($recurringContainer, (new Switcher())->setName('recurringSendExpirationNotificationsSubscription')->addClass('switcher-revert'));
+        $this->builder->addFieldInContainer($recurringContainer, (new Switcher())->setName('terminateUnpaidSubscriptions')->addClass('switcher-revert'));
     }
 
     // ---- fields of the general settings store that belong to SSL certificates ---- //

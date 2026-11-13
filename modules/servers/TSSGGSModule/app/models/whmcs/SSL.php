@@ -26,15 +26,28 @@ class SSL extends EloquentModel
 
     public function setConfigdataKey($key, $value)
     {
-        $c                = (array) $this->configdata;
+        $c                = $this->configdataArray();
         $c[$key]          = $value;
-        $this->configdata = $c;
+        $this->configdata = json_encode($c);
     }
 
     public function getConfigdataKey($key)
     {
-        $c = (array) $this->configdata;
-        return $c[$key];
+        $c = $this->configdataArray();
+
+        return isset($c[$key]) ? $c[$key] : null;
+    }
+
+    protected function configdataArray()
+    {
+        $value = $this->configdata;
+        if(is_array($value))
+        {
+            return $value;
+        }
+        $decoded = json_decode((string)$value, true);
+
+        return is_array($decoded) ? $decoded : [];
     }
 
 }

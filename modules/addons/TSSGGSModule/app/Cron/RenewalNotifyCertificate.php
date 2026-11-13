@@ -234,10 +234,13 @@ class RenewalNotifyCertificate extends AbstractCommand
                     continue;
                 }
 
-                $acmeDaysBefore  = $sslSettings['recurringDaysBeforeExpirySubscription'];
+                $acmeDaysBefore  = max(1, (int)$sslSettings['recurringDaysBeforeExpirySubscription']);
                 $nextInvoiceDate = AcmeHelpers::getAcmeNextInvoiceDate($acmeSubscription->renewal_date, $acmeDaysBefore);
 
-                if($nextInvoiceDate !== null && $nextInvoiceDate === date('Y-m-d'))
+                // from the invoice day until the renewal: a day without a cron run does not lose the invoice (the
+                // invoice is created once, see hasAcmeSubscriptionRenewalInvoice)
+                $today = date('Y-m-d');
+                if($nextInvoiceDate !== null && $nextInvoiceDate <= $today && date('Y-m-d', strtotime((string)$acmeSubscription->renewal_date)) > $today)
                 {
                     $invoiceCreated = AcmeHelpers::createAcmeSubscriptionRenewalInvoice($service, $service->product, $acmeSubscription);
 
@@ -317,6 +320,12 @@ class RenewalNotifyCertificate extends AbstractCommand
 
     private function cancelOverdueAcmeSubscriptions()
     {
+        // Settings > SSL > Renewals (Subscription Billing): the admin may handle unpaid renewals by hand
+        $settings = (new AddonModuleRepository())->getModuleConfiguration()['sslSettings'] ?? [];
+        if(isset($settings['terminateUnpaidSubscriptions']) && in_array(strtolower((string)$settings['terminateUnpaidSubscriptions']), ['', '0', 'off', 'false'], true))
+        {
+            return;
+        }
         $today = date('Y-m-d');
 
         $overdueItems = Capsule::table('tblinvoiceitems')
@@ -352,7 +361,8 @@ class RenewalNotifyCertificate extends AbstractCommand
                 {
                     throw new \Exception('No gateway credentials for this service');
                 }
-                $api->cancelItem((int) $subscription->acme_id, 'Overdue renewal invoice', 'caas');
+                // an unpaid renewal is never refunded
+                $api->cancelItem((int) $subscription->acme_id, 'Overdue renewal invoice', 'caas', false);
             }
             catch(\Throwable $e)
             {

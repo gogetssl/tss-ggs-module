@@ -330,10 +330,18 @@ trait AcmeActions
         // remote product ids can be codes (TSS: sectigo_caas_dv), not only numbers
         $acmeProductId = !empty($input['params']['configoption2']) ? $input['params']['configoption2'] : AcmeHelpers::getProductIds()[0];
         $acmeProductId = is_numeric($acmeProductId) ? (int)$acmeProductId : $acmeProductId;
-        $response      = $api->createAcmeSubscription([
-                                                          'product_id' => $acmeProductId,
-                                                          'domains'    => implode(',', $domains),
-                                                      ]);
+        $order = [
+            'product_id' => $acmeProductId,
+            'domains'    => implode(',', $domains),
+        ];
+        if(strtoupper((string)$vendor) === 'TSS')
+        {
+            // TheSSLStore: a contact for the vendor's notices, and the domains the subscription is paid for
+            $slots              = $this->getAcmeDomainLimits($input['params']);
+            $order['contacts']  = $this->subscriptionContacts($input['params']);
+            $order['reserved']  = ['single' => max(1, (int)$slots['single']), 'wildcard' => (int)$slots['wildcard']];
+        }
+        $response = $api->createAcmeSubscription($order);
 
         $apiOrderId   = isset($response['order_id']) ? (int)$response['order_id'] : (isset($response['id']) ? (int)$response['id'] : 0);
         $apiItems     = isset($response['items']) && is_array($response['items']) ? $response['items'] : array();
@@ -557,6 +565,13 @@ trait AcmeActions
             throw new \Exception(Lang::absoluteT('acme_upgrade_no_change_provided'));
         }
 
+        // giving bought slots back is a refund: possible only within the refund window of the last slot purchase
+        $reduces = ($hasSingle && $newSingle < $domainLimits['singleFromOption']) || ($hasWildcard && $newWildcard < $domainLimits['wildcardFromOption']);
+        if($reduces && !\ModulesGarden\TSSGGSModule\App\Libs\SubscriptionBilling::canReduceSlots($serviceId))
+        {
+            throw new \Exception(sprintf(Lang::absoluteT('acme_downgrade_refund_window_passed'), \ModulesGarden\TSSGGSModule\App\Libs\SubscriptionBilling::REFUND_DAYS));
+        }
+
 
         // Block upgrade if any unpaid invoice exists for this service
         $unpaidInvoice = Capsule::table('tblinvoices')
@@ -706,9 +721,9 @@ trait AcmeActions
         }
 
 
-        // acme_id is the CaaS item ID (items[0].id), not the order ID
-        $api = Helpers::getApiByServiceId($serviceId);
-        $api->cancelItem((int)$subscription->acme_id, 'Cancelled by client', 'caas');
+        // acme_id is the CaaS item ID (items[0].id), not the order ID; within the refund window the vendor refunds the order
+        $refundable = \ModulesGarden\TSSGGSModule\App\Libs\SubscriptionBilling::orderRefundable($serviceId);
+        CertificateService::api($serviceId)->cancelItem((int)$subscription->acme_id, 'Cancelled by client', 'caas', $refundable);
 
         $subscription->status       = 'cancelled';
         $subscription->cancelled_at = date('Y-m-d H:i:s');
@@ -719,7 +734,7 @@ trait AcmeActions
                                                                           'domainstatus' => 'Cancelled'
                                                                       ]);
 
-        $refundedCreditsAmount = $this->refundLatestPaidServiceInvoice($serviceId, 'ACME subscription cancelled within refund window');
+        $refundedCreditsAmount = \ModulesGarden\TSSGGSModule\App\Libs\SubscriptionBilling::refundOnCancel($serviceId, 'Subscription cancelled by the client');
         $message               = Lang::absoluteT('acme_subscription_cancelled');
         if($refundedCreditsAmount > 0)
         {
@@ -757,165 +772,20 @@ trait AcmeActions
         ];
     }
 
-    private function refundLatestPaidServiceInvoice($serviceId, $reason = '')
+    /**
+     * Contacts sent with a subscription order: the client (the vendor sends its notices there)
+     */
+    private function subscriptionContacts(array $params)
     {
-        $invoice = $this->getLatestPaidServiceInvoiceForRefund($serviceId);
+        $c       = isset($params['clientsdetails']) && is_array($params['clientsdetails']) ? $params['clientsdetails'] : [];
+        $contact = [
+            'first_name' => (string)($c['firstname'] ?? ''),
+            'last_name'  => (string)($c['lastname'] ?? ''),
+            'email'      => (string)($c['email'] ?? ''),
+            'phone'      => (string)($c['phonenumberformatted'] ?? ($c['phonenumber'] ?? '')),
+        ];
 
-        if(!$invoice || empty($invoice->invoiceid))
-        {
-            return 0.00;
-        }
-
-        $creditPrefix          = 'ACME refund for invoice #' . (int)$invoice->invoiceid;
-        // the prefix match must not catch the credit of another invoice (#12 vs #120): the number is followed by the end
-        // of the text or by ". Reason: ..."
-        $alreadyCreditedAmount = Capsule::table('tblcredit')
-                                        ->where('clientid', (int)$invoice->userid)
-                                        ->where(function($query) use ($creditPrefix) {
-                                            $query->where('description', $creditPrefix)
-                                                  ->orWhere('description', 'LIKE', $creditPrefix . '. %');
-                                        })
-                                        ->sum('amount');
-
-        if((float)$alreadyCreditedAmount > 0)
-        {
-            return round((float)$alreadyCreditedAmount, 2);
-        }
-
-        $creditAmount = $this->getRefundableAcmeInvoiceAmount((int)$invoice->invoiceid, (int)$serviceId);
-        if($creditAmount <= 0)
-        {
-            \logActivity(
-                'TSSGGS: Skipped ACME refund credit for invoice #' . (int)$invoice->invoiceid
-                . ' (service #' . (int)$serviceId . ') because refundable ACME items amount is 0.'
-            );
-
-            return 0.00;
-        }
-
-        $creditDescription = $creditPrefix;
-        if(!empty($reason))
-        {
-            $creditDescription .= '. Reason: ' . $reason;
-        }
-
-        $result = localAPI('AddCredit', [
-            'clientid'    => (int)$invoice->userid,
-            'description' => $creditDescription,
-            'amount'      => number_format($creditAmount, 2, '.', ''),
-        ]);
-
-        if(!isset($result['result']) || $result['result'] !== 'success')
-        {
-            \logActivity(
-                'TSSGGS: Unable to add refund credit for invoice #' . (int)$invoice->invoiceid . ' (service #' . (int)$serviceId . ').'
-            );
-            return 0.00;
-        }
-
-        \logActivity(
-            'TSSGGS: Credit refund added for invoice #' . (int)$invoice->invoiceid
-            . ' (service #' . (int)$serviceId . ', amount: ' . number_format($creditAmount, 2, '.', '') . ').'
-            . (!empty($reason) ? ' Reason: ' . $reason : '')
-        );
-
-        return round((float)$creditAmount, 2);
-    }
-
-    private function getLatestPaidServiceInvoiceForRefund($serviceId)
-    {
-        $baseQuery = Capsule::table('tblinvoiceitems')
-                            ->select([
-                                         'tblinvoiceitems.invoiceid',
-                                         'tblinvoiceitems.description',
-                                         'tblinvoices.userid',
-                                         'tblinvoices.total',
-                                         'tblinvoices.datepaid',
-                                     ])
-                            ->join('tblinvoices', 'tblinvoices.id', '=', 'tblinvoiceitems.invoiceid')
-                            ->where('tblinvoices.datepaid', '>', date('Y-m-d H:i:s', strtotime('-30 days')))
-                            ->where('tblinvoiceitems.relid', (int)$serviceId)
-                            ->where('tblinvoiceitems.type', 'Hosting')
-                            ->where('tblinvoices.status', 'Paid');
-
-        $renewalInvoice = (clone $baseQuery)
-            ->where(function($query) {
-                $query->where('tblinvoiceitems.description', 'LIKE', '%ACME Subscription Renewal%');
-            })
-            ->orderBy('tblinvoices.datepaid', 'DESC')
-            ->first();
-
-        if($renewalInvoice)
-        {
-            return $renewalInvoice;
-        }
-
-        return (clone $baseQuery)
-            ->orderBy('tblinvoices.datepaid', 'DESC')
-            ->first();
-    }
-
-    private function getRefundableAcmeInvoiceAmount($invoiceId, $serviceId)
-    {
-        $acmeProductIds = AcmeHelpers::getProductIds();
-
-        if(empty($acmeProductIds))
-        {
-            return 0.00;
-        }
-
-        $invoice     = Invoice::find($invoiceId);
-        $invoiceItem = $invoice->items()
-                               ->join('tblhosting', 'tblhosting.id', '=', 'tblinvoiceitems.relid')
-                               ->join('tblproducts', 'tblproducts.id', '=', 'tblhosting.packageid')
-                               ->where('tblinvoiceitems.invoiceid', (int)$invoiceId)
-                               ->where('tblinvoiceitems.type', 'Hosting')
-                               ->where('tblinvoiceitems.relid', (int)$serviceId)
-                               ->where('tblproducts.servertype', 'TSSGGSModule')
-                               ->whereIn('tblproducts.configoption2', $acmeProductIds)
-                               ->select(['tblinvoiceitems.*'])
-                               ->first();
-
-        $itemAmount     = $invoiceItem ? $invoiceItem->amount : 0.00;
-        $clientsDetails = getClientsDetails($invoice->userid);
-        $taxEnabled     = \WHMCS\Config\Setting::getValue("TaxEnabled");
-
-        if($invoiceItem->taxed && $taxEnabled && !$clientsDetails["taxexempt"])
-        {
-            $taxRate  = $invoice->taxRate1;
-            $taxRate2 = $invoice->taxRate2;
-
-            if(round($taxRate, 2) == $taxRate)
-            {
-                $taxRate = \format_as_currency($taxRate);
-            }
-            if(round($taxRate2, 2) == $taxRate2)
-            {
-                $taxRate2 = \format_as_currency($taxRate2);
-            }
-
-            $taxCalculator = new Tax();
-            $taxCalculator->setIsInclusive(\WHMCS\Config\Setting::getValue("TaxType") == "Inclusive")->setIsCompound(\WHMCS\Config\Setting::getValue("TaxL2Compound"));
-
-            if(is_numeric($taxRate))
-            {
-                $taxCalculator->setLevel1Percentage($taxRate);
-            }
-            if(is_numeric($taxRate2))
-            {
-                $taxCalculator->setLevel2Percentage($taxRate2);
-            }
-
-            $tax = $tax2 = 0;
-
-            $taxCalculator->setTaxBase($invoiceItem->amount);
-            $tax          += $taxCalculator->getLevel1TaxTotal();
-            $tax2         += $taxCalculator->getLevel2TaxTotal();
-            $itemSubtotal = $taxCalculator->getTotalBeforeTaxes();
-            $itemAmount   = $itemSubtotal + $tax + $tax2;
-        }
-
-        return round((float)$itemAmount, 2);
+        return ['primary' => $contact, 'technical' => $contact];
     }
 
     public function checkCertificateDetailsJSON($input, $vars = array())

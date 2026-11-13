@@ -54,6 +54,7 @@ trait AisActions
         $userId       = (int)$input['params']['userid'];
         $sslService   = SSL::getByServiceId($serviceId);
         $product      = Product::find((int)$input['params']['pid']);
+        AisHelpers::ensureColumns();
         $subscription = AisSubscription::getByServiceId($serviceId);
 
         if($subscription && (int)$subscription->api_order_id > 0 && strtolower((string)$subscription->status) !== 'active')
@@ -77,6 +78,7 @@ trait AisActions
         $vars['productName']        = isset($product->name) ? $product->name : '';
         $vars['subscription']       = $subscription;
         $vars['aisAutoRenew']       = $subscription && isset($subscription->auto_renew) ? (int)$subscription->auto_renew : 1;
+        $vars['aisInstallMethod']   = $subscription && $subscription->install_method === AisHelpers::METHOD_ACME ? AisHelpers::METHOD_ACME : AisHelpers::METHOD_AUTOINSTALL;
         $vars['configurationStatus'] = $sslService ? $sslService->status : null;
         $vars['configurationURL']   = 'clientarea.php?action=productdetails&id=' . $serviceId . '&aisconfig=1';
 
@@ -124,32 +126,21 @@ trait AisActions
             throw new \Exception(Lang::absoluteT('aisAlreadyCreated'));
         }
 
-        $apis   = Helpers::getConfiguredApis();
-        $vendor = $input['params']['configoption1'];
-        $api    = $apis[$vendor];
+        $api = CertificateService::api($serviceId);
 
-        $client = \WHMCS\Service\Service::find($serviceId);
-
-        $whmcsClient = Capsule::table('tblclients')
-                              ->select(['email'])
-                              ->where('id', (int)$input['params']['userid'])
-                              ->first();
-
-        $clientEmail  = $whmcsClient ? $whmcsClient->email : '';
-        $apiProductId = isset($input['params']['configoption2']) ? (int)$input['params']['configoption2'] : 0;
-
-        if($apiProductId <= 0)
+        // TheSSLStore product ids are codes (rapidssl_automate), GoGetSSL ids are numbers
+        $apiProductId = isset($input['params']['configoption2']) ? \ModulesGarden\TSSGGSModule\App\Libs\SSLTrustCenterApi::productId($input['params']['configoption2']) : '';
+        if($apiProductId === '' || $apiProductId === 0)
         {
             throw new \Exception(Lang::absoluteT('aisMissingProductId'));
         }
 
+        $method = isset($input['install_method']) && $input['install_method'] === AisHelpers::METHOD_ACME ? AisHelpers::METHOD_ACME : AisHelpers::METHOD_AUTOINSTALL;
         $response = $api->createAis([
-            'product'  => ['id' => $apiProductId],
-            'domains'  => [$domain],
-            'contacts' => [
-                'primary'   => ['email' => $clientEmail],
-                'technical' => ['email' => $clientEmail],
-            ],
+            'product'        => ['id' => $apiProductId],
+            'domains'        => [$domain],
+            'install_method' => $method,
+            'contacts'       => $this->aisContacts($input['params']),
         ]);
 
         $apiOrderId  = isset($response['order']['id'])     ? (int)$response['order']['id']     : 0;
@@ -173,6 +164,8 @@ trait AisActions
         $subscription->api_order_id = $apiOrderId;
         $subscription->ais_item_id  = $aisItemId > 0 ? $aisItemId : null;
         $subscription->status       = $orderStatus;
+        AisHelpers::ensureColumns();
+        $subscription->install_method = $method;
         $subscription->save();
 
         Capsule::table('tblhosting')->where('id', $serviceId)->update(['domain' => $domain]);
@@ -245,12 +238,13 @@ trait AisActions
 
         // without the vendor's item ID nothing can be cancelled there: never report a cancellation
         // that did not happen (the vendor would keep billing the subscription)
-        $api = Helpers::getApiByServiceId($serviceId);
-        if(!$api || (int)$subscription->ais_item_id <= 0)
+        if((int)$subscription->ais_item_id <= 0)
         {
             throw new \Exception(Lang::absoluteT('sslConfigOrderFailedCancel'));
         }
-        $api->cancelAisSubscription((int)$subscription->ais_item_id, 'Cancelled by client');
+        // within the refund window the vendor refunds the order and the client is credited
+        $refundable = \ModulesGarden\TSSGGSModule\App\Libs\SubscriptionBilling::orderRefundable($serviceId);
+        CertificateService::api($serviceId)->cancelItem((int)$subscription->ais_item_id, 'Cancelled by client', 'ais', $refundable);
 
         $subscription->status       = 'cancelled';
         $subscription->auto_renew   = 0;
@@ -259,6 +253,69 @@ trait AisActions
 
         Capsule::table('tblhosting')->where('id', $serviceId)->update(['domainstatus' => 'Cancelled']);
 
-        return ['success' => true, 'message' => Lang::absoluteT('aisSubscriptionCancelled')];
+        $credited = \ModulesGarden\TSSGGSModule\App\Libs\SubscriptionBilling::refundOnCancel($serviceId, 'Subscription cancelled by the client');
+        $message  = Lang::absoluteT('aisSubscriptionCancelled');
+        if($credited > 0)
+        {
+            $message = sprintf(Lang::absoluteT('acme_subscription_cancelled_and_credits_refunded'), number_format($credited, 2, '.', ''));
+        }
+
+        return ['success' => true, 'message' => $message];
+    }
+
+    /**
+     * Switches between the AutoInstall SSL agent and the client's own ACME client
+     */
+    public function changeAisInstallMethodJSON($input, $vars = array())
+    {
+        $this->requireCsrfToken();
+        $serviceId    = (int)$input['id'];
+        $method       = (string)($input['install_method'] ?? '');
+        $subscription = AisSubscription::getByServiceId($serviceId);
+
+        if(!in_array($method, [AisHelpers::METHOD_AUTOINSTALL, AisHelpers::METHOD_ACME], true))
+        {
+            throw new \Exception(Lang::absoluteT('aisInvalidInstallMethod'));
+        }
+        if(!$subscription || (int)$subscription->ais_item_id <= 0 || in_array(strtolower((string)$subscription->status), ['cancelled', 'terminated', 'expired'], true))
+        {
+            throw new \Exception(Lang::absoluteT('aisSubscriptionNotCreatedYet'));
+        }
+        if(!$this->acquireServiceLock($serviceId))
+        {
+            throw new \Exception(Lang::absoluteT('requestInProgress'));
+        }
+
+        CertificateService::api($serviceId)->changeAisInstallMethod((int)$subscription->ais_item_id, $method);
+        AisHelpers::ensureColumns();
+        $subscription->install_method = $method;
+        $subscription->save();
+        CertificateService::event($serviceId, 'info', '[Subscription] Install method changed by the client: ' . $method);
+
+        try
+        {
+            // the ACME account (switched to ACME) or the AutoInstall SSL links (switched back)
+            AisHelpers::refreshAisDetails($serviceId);
+        }
+        catch(\Exception $e)
+        {
+            // read again on the next page load
+        }
+
+        return ['success' => true, 'message' => Lang::absoluteT('aisInstallMethodChanged')];
+    }
+
+    /** contacts of a subscription order: the client */
+    private function aisContacts(array $params)
+    {
+        $c       = isset($params['clientsdetails']) && is_array($params['clientsdetails']) ? $params['clientsdetails'] : [];
+        $contact = [
+            'first_name' => (string)($c['firstname'] ?? ''),
+            'last_name'  => (string)($c['lastname'] ?? ''),
+            'email'      => (string)($c['email'] ?? ''),
+            'phone'      => (string)($c['phonenumberformatted'] ?? ($c['phonenumber'] ?? '')),
+        ];
+
+        return ['primary' => $contact, 'technical' => $contact];
     }
 }

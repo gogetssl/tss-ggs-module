@@ -95,7 +95,8 @@ class AcmeHelpers
                                 ->orWhere('tblinvoices.date', date('Y-m-d'));
                           if($renewalDate)
                           {
-                              $query->orWhere('tblinvoices.duedate', date('Y-m-d', strtotime((string)$renewalDate)));
+                              // due on the renewal date (before 1.4) or the day before it
+                              $query->orWhereIn('tblinvoices.duedate', [date('Y-m-d', strtotime((string)$renewalDate)), date('Y-m-d', strtotime('-1 day', strtotime((string)$renewalDate)))]);
                           }
                       })
                       ->exists();
@@ -146,7 +147,9 @@ class AcmeHelpers
             'userid'           => $service->userid,
             'sendinvoice'      => true,
             'date'             => $dateInvoice,
-            'duedate'          => (new \DateTime($subscriptionData->renewal_date))->format('Y-m-d'),
+            // due the day before the subscription renews: an unpaid renewal is cancelled at the vendor before the
+            // vendor renews it (and charges for it)
+            'duedate'          => max($dateInvoice, date('Y-m-d', strtotime('-1 day', strtotime((string)$subscriptionData->renewal_date)))),
             'itemdescription1' => $description,
             'itemamount1'      => $amount,
             'itemtaxed1'       => isset($product->tax) ? $product->tax : 0,

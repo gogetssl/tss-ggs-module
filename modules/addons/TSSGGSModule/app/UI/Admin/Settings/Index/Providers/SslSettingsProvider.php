@@ -23,9 +23,14 @@ class SslSettingsProvider extends CrudProvider
             $this->data[$key] = $value;
         }
 
-        if(!isset($this->data['recurringDaysBeforeExpirySubscription']))
+        // 0 (on the end date) is no longer offered: an invoice due the day it is created can not be paid in time
+        if(!isset($this->data['recurringDaysBeforeExpirySubscription']) || (int)$this->data['recurringDaysBeforeExpirySubscription'] < 1)
         {
-            $this->data['recurringDaysBeforeExpirySubscription'] = 30;
+            $this->data['recurringDaysBeforeExpirySubscription'] = isset($this->data['recurringDaysBeforeExpirySubscription']) ? 1 : 30;
+        }
+        if(!isset($this->data['terminateUnpaidSubscriptions']))
+        {
+            $this->data['terminateUnpaidSubscriptions'] = 'on';
         }
 
         if(!isset($this->data['wildcardDnsTimeoutMinutes']) || $this->data['wildcardDnsTimeoutMinutes'] === '')

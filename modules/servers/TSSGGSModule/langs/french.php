@@ -752,3 +752,15 @@ $_LANG['serverCA']['home']['validation_page']['linkSendCertificate'] = 'Envoyer 
 $_LANG['serverCA']['home']['validation_page']['tabContacts'] = 'Contacts';
 $_LANG['serverCA']['home']['validation_page']['tabOptions'] = 'Options configurables';
 $_LANG['serverCA']['home']['validation_page']['pbExpires'] = 'Expire dans <b>%s</b>';
+
+// subscriptions (1.4)
+$_LANG['acme_downgrade_refund_window_passed'] = 'Les emplacements de domaine ne peuvent être rendus que dans les %s jours suivant leur achat. Supprimez plutôt les domaines dont vous n’avez plus besoin ; les emplacements restent payés jusqu’au renouvellement de l’abonnement.';
+$_LANG['aisInstallMethod'] = 'Méthode d’installation';
+$_LANG['aisMethod_autoinstall'] = 'AutoInstall SSL (l’agent installe et renouvelle le certificat sur votre serveur)';
+$_LANG['aisMethod_acme'] = 'ACME (votre propre client ACME, par ex. Certbot, obtient le certificat)';
+$_LANG['aisInstallMethodHint'] = 'Vous pourrez changer de méthode plus tard sur la page du service.';
+$_LANG['aisSwitchToAcme'] = 'Passer à ACME';
+$_LANG['aisSwitchToAutoinstall'] = 'Passer à AutoInstall SSL';
+$_LANG['aisSwitchConfirm'] = 'Changer la méthode d’installation ? Les certificats déjà installés restent valides.';
+$_LANG['aisInstallMethodChanged'] = 'La méthode d’installation a été modifiée.';
+$_LANG['aisInvalidInstallMethod'] = 'Choisissez AutoInstall SSL ou ACME.';

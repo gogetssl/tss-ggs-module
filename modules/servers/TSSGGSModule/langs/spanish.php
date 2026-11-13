@@ -752,3 +752,15 @@ $_LANG['serverCA']['home']['validation_page']['linkSendCertificate'] = 'Enviar e
 $_LANG['serverCA']['home']['validation_page']['tabContacts'] = 'Contactos';
 $_LANG['serverCA']['home']['validation_page']['tabOptions'] = 'Opciones configurables';
 $_LANG['serverCA']['home']['validation_page']['pbExpires'] = 'Caduca en <b>%s</b>';
+
+// subscriptions (1.4)
+$_LANG['acme_downgrade_refund_window_passed'] = 'Los espacios de dominio solo se pueden devolver dentro de los %s días posteriores a su compra. Elimine en su lugar los dominios que ya no necesite; los espacios siguen pagados hasta que se renueve la suscripción.';
+$_LANG['aisInstallMethod'] = 'Método de instalación';
+$_LANG['aisMethod_autoinstall'] = 'AutoInstall SSL (el agente instala y renueva el certificado en su servidor)';
+$_LANG['aisMethod_acme'] = 'ACME (su propio cliente ACME, p. ej. Certbot, obtiene el certificado)';
+$_LANG['aisInstallMethodHint'] = 'Puede cambiar el método más tarde en la página del servicio.';
+$_LANG['aisSwitchToAcme'] = 'Cambiar a ACME';
+$_LANG['aisSwitchToAutoinstall'] = 'Cambiar a AutoInstall SSL';
+$_LANG['aisSwitchConfirm'] = '¿Cambiar el método de instalación? Los certificados ya instalados siguen siendo válidos.';
+$_LANG['aisInstallMethodChanged'] = 'Se ha cambiado el método de instalación.';
+$_LANG['aisInvalidInstallMethod'] = 'Elija AutoInstall SSL o ACME.';

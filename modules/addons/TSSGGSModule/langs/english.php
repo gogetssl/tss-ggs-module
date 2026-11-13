@@ -1475,3 +1475,6 @@ $_LANG['admin.settings.index.providers.general_settings_provider.page_knowledgeb
 $_LANG['admin.settings.index.providers.general_settings_provider.page_announcements'] = 'Announcements';
 $_LANG['admin.configuration.content.step2.hint_storage'] = 'PHP must be able to write to the module\'s storage folder (:subject) and its subfolders app, crons and logs. Usually the files were unpacked or uploaded with permissions that only let their owner write, while PHP runs as another user.';
 $_LANG['admin.configuration.content.step2.command_hint'] = 'Run this on the server (SSH, as the file owner or root), then reload this page:';
+
+$_LANG['admin.settings.index.forms.ssl_settings_form.terminateUnpaidSubscriptions'] = 'Terminate Unpaid Subscriptions';
+$_LANG['admin.settings.index.forms.ssl_settings_form.terminateUnpaidSubscriptions_description'] = 'When the renewal invoice is still unpaid after its due date, the subscription is cancelled at the vendor before it renews and the service is terminated. The renewal invoice is due the day before the subscription renews.';

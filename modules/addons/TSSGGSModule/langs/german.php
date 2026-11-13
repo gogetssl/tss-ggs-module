@@ -1466,3 +1466,6 @@ $_LANG['admin.settings.index.providers.general_settings_provider.page_clientarea
 $_LANG['admin.settings.index.providers.general_settings_provider.page_knowledgebase'] = 'Wissensdatenbank';
 $_LANG['admin.settings.index.providers.general_settings_provider.page_announcements'] = 'Ankündigungen';
 $_LANG['admin.configuration.content.step2.command_hint'] = 'Führen Sie dies auf dem Server aus (SSH, als Dateibesitzer oder root) und laden Sie dann diese Seite neu:';
+
+$_LANG['admin.settings.index.forms.ssl_settings_form.terminateUnpaidSubscriptions'] = 'Unbezahlte Abonnements beenden';
+$_LANG['admin.settings.index.forms.ssl_settings_form.terminateUnpaidSubscriptions_description'] = 'Ist die Verlängerungsrechnung nach ihrem Fälligkeitsdatum noch unbezahlt, wird das Abonnement beim Anbieter vor der Verlängerung gekündigt und der Dienst beendet. Die Verlängerungsrechnung ist am Tag vor der Verlängerung des Abonnements fällig.';

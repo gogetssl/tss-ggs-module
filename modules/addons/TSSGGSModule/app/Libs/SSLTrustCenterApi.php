@@ -471,7 +471,8 @@ class SSLTrustCenterApi
     {
         if(isset($data['product_id']) && !isset($data['product']))
         {
-            $data['product'] = ['id' => (int)$data['product_id']];
+            // TheSSLStore product ids are codes (sectigo_caas_dv), GoGetSSL ids are numbers
+            $data['product'] = ['id' => self::productId($data['product_id'])];
             unset($data['product_id']);
         }
 
@@ -562,18 +563,57 @@ class SSLTrustCenterApi
      * Cancels a certificate / service by its item ID and category (tls, cs, smime, ais).
      * TSS has no item cancellation - the order ID equals the item ID there, so /orders/{id}/cancel is used.
      */
-    public function cancelItem($itemId, $reason = '', $category = null)
+    /**
+     * Cancels a certificate or subscription by its item ID. $refund (subscriptions): ask the vendor for the refund of a
+     * cancellation within its refund window; null leaves the decision to the gateway.
+     */
+    public function cancelItem($itemId, $reason = '', $category = null, $refund = null)
     {
-        $reason = !empty($reason) ? $reason : 'Cancelled by API client';
+        $reason   = !empty($reason) ? $reason : 'Cancelled by API client';
+        $category = $category ?: $this->category;
 
-        if(strtoupper($this->type) === 'TSS')
+        // TheSSLStore certificates are cancelled as orders; its subscriptions (ACME / Plan + Automate) have their own call
+        if(strtoupper($this->type) === 'TSS' && !in_array($category, self::SUBSCRIPTION_CATEGORIES, true))
         {
             return $this->cancelOrder($itemId, $reason);
         }
 
-        $category = $category ?: $this->category;
+        $data = ['reason' => $reason];
+        if($refund !== null)
+        {
+            $data['refund'] = (bool)$refund;
+        }
 
-        return $this->call('/certificates/' . rawurlencode((string)$category) . '/' . (int)$itemId . '/cancel', ['reason' => $reason], 'POST');
+        return $this->call('/certificates/' . rawurlencode((string)$category) . '/' . (int)$itemId . '/cancel', $data, 'POST');
+    }
+
+    /** categories of the subscription products */
+    const SUBSCRIPTION_CATEGORIES = ['caas', 'ais'];
+
+    /** a product id as the gateway expects it: a number (GoGetSSL) or a product code (TheSSLStore) */
+    public static function productId($id)
+    {
+        $id = trim((string)$id);
+
+        return ctype_digit($id) ? (int)$id : $id;
+    }
+
+    /**
+     * Plan + Automate: switches how the certificate is installed - AutoInstall SSL agent or the client's own ACME client
+     * ($method 'autoinstall' | 'acme'); the answer of the details call then carries the ACME account for 'acme'
+     */
+    public function changeAisInstallMethod($itemId, $method)
+    {
+        return $this->call('/certificates/ais/' . (int)$itemId, ['install_method' => (string)$method], 'PATCH');
+    }
+
+    /**
+     * ACME: the number of single / wildcard domains the subscription is paid for (after the client bought or gave back
+     * domain slots)
+     */
+    public function updateAcmeReservedDomains($itemId, $single, $wildcard)
+    {
+        return $this->call('/certificates/caas/' . (int)$itemId, ['reserved' => ['single' => (int)$single, 'wildcard' => (int)$wildcard]], 'PATCH');
     }
 
     /**

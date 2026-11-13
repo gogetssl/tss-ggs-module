@@ -57,7 +57,31 @@
                 </td>
             </tr>
 
-            {if $subscription->login_sso_link}
+            <tr>
+                <td class="text-left">{$MGLANG->T('aisInstallMethod')}</td>
+                <td class="text-left">{$MGLANG->T('aisMethod_'|cat:$aisInstallMethod)}</td>
+            </tr>
+
+            {if $aisInstallMethod == 'acme'}
+                <tr>
+                    <td class="text-left">{$MGLANG->T('acmeAccountId')}</td>
+                    <td class="text-left">{$subscription->acme_account_id|escape}</td>
+                </tr>
+                <tr>
+                    <td class="text-left">{$MGLANG->T('acmeEabKid')}</td>
+                    <td class="text-left">{$subscription->eab_kid|escape}</td>
+                </tr>
+                <tr>
+                    <td class="text-left">{$MGLANG->T('acmeEabHmacKey')}</td>
+                    <td class="text-left"><code>{$subscription->eab_hmac_key|escape}</code></td>
+                </tr>
+                <tr>
+                    <td class="text-left">{$MGLANG->T('acmeServerUrl')}</td>
+                    <td class="text-left">{$subscription->server_url|escape}</td>
+                </tr>
+            {/if}
+
+            {if $aisInstallMethod != 'acme' && $subscription->login_sso_link}
             <tr>
                 <td class="text-left">{$MGLANG->T('aisLoginLink')}</td>
                 <td class="text-left">
@@ -68,7 +92,7 @@
             </tr>
             {/if}
 
-            {if $subscription->manage_sso_link}
+            {if $aisInstallMethod != 'acme' && $subscription->manage_sso_link}
             <tr>
                 <td class="text-left">{$MGLANG->T('aisManageLink')}</td>
                 <td class="text-left">
@@ -92,6 +116,10 @@
                             {$MGLANG->T('aisStopAutoRenewal')}
                         </button>
                     {/if}
+                    <button id="ais-switch-method" style="margin-bottom: 10px;" class="btn btn-default btn-sm"
+                            data-method="{if $aisInstallMethod == 'acme'}autoinstall{else}acme{/if}">
+                        {if $aisInstallMethod == 'acme'}{$MGLANG->T('aisSwitchToAutoinstall')}{else}{$MGLANG->T('aisSwitchToAcme')}{/if}
+                    </button>
                     <button id="ais-cancel-subscription" style="margin-bottom: 10px;" class="btn btn-danger btn-sm">
                         {$MGLANG->T('aisCancelSubscription')}
                     </button>
@@ -169,6 +197,13 @@
 
         $('body').on('click', '#ais-refresh', function () {
             runAction('refreshAisDetails', {});
+        });
+
+        $('body').on('click', '#ais-switch-method', function () {
+            if (!window.confirm('{$MGLANG->T('aisSwitchConfirm')|escape:'javascript'}')) {
+                return;
+            }
+            runAction('changeAisInstallMethod', {ldelim}install_method: $(this).data('method'){rdelim});
         });
 
         $('body').on('click', '#ais-stop-auto-renewal', function () {

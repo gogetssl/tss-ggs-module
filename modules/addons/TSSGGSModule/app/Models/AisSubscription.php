@@ -24,7 +24,12 @@ class AisSubscription extends ExtendedEloquentModel
         'period_end',
         'renewal_date',
         'auto_renew',
-        'cancelled_at'
+        'cancelled_at',
+        'install_method',
+        'acme_account_id',
+        'eab_kid',
+        'eab_hmac_key',
+        'server_url',
     ];
 
     protected $casts = [
@@ -63,6 +68,17 @@ class AisSubscription extends ExtendedEloquentModel
     }
 
     public function getManageSsoLinkAttribute($value)
+    {
+        return SecretValue::open($value);
+    }
+
+    // the EAB key gives access to the ACME account: stored encrypted (see SecretValue)
+    public function setEabHmacKeyAttribute($value)
+    {
+        $this->attributes['eab_hmac_key'] = SecretValue::seal($value);
+    }
+
+    public function getEabHmacKeyAttribute($value)
     {
         return SecretValue::open($value);
     }

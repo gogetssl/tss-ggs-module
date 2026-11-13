@@ -1468,3 +1468,6 @@ $_LANG['admin.settings.index.providers.general_settings_provider.page_clientarea
 $_LANG['admin.settings.index.providers.general_settings_provider.page_knowledgebase'] = 'Vidensbase';
 $_LANG['admin.settings.index.providers.general_settings_provider.page_announcements'] = 'Meddelelser';
 $_LANG['admin.configuration.content.step2.command_hint'] = 'Kør dette på serveren (SSH, som filens ejer eller root), og genindlæs derefter denne side:';
+
+$_LANG['admin.settings.index.forms.ssl_settings_form.terminateUnpaidSubscriptions'] = 'Afslut ubetalte abonnementer';
+$_LANG['admin.settings.index.forms.ssl_settings_form.terminateUnpaidSubscriptions_description'] = 'Er fornyelsesfakturaen stadig ubetalt efter forfaldsdatoen, opsiges abonnementet hos leverandøren, før det fornyes, og tjenesten afsluttes. Fornyelsesfakturaen forfalder dagen før abonnementet fornyes.';

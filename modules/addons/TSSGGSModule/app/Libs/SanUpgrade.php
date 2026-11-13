@@ -93,7 +93,26 @@ class SanUpgrade
     public static function afterUpgrade($upgradeId)
     {
         $upgrade = Capsule::table('tblupgrades')->where('id', (int)$upgradeId)->first();
-        if(!$upgrade || $upgrade->type !== 'configoptions' || !self::isOrderedCertificate($upgrade->relid))
+        if(!$upgrade || $upgrade->type !== 'configoptions')
+        {
+            return;
+        }
+        // ACME: the slots are domains of the subscription, not SANs of a certificate
+        $packageId = (int)Capsule::table('tblhosting')->where('id', (int)$upgrade->relid)->value('packageid');
+        if(AcmeHelpers::isAcmeWhmcsProduct($packageId))
+        {
+            try
+            {
+                SubscriptionBilling::syncReservedDomains((int)$upgrade->relid);
+            }
+            catch(\Throwable $e)
+            {
+                CertificateService::event((int)$upgrade->relid, 'error', '[Subscription] Domain slots could not be sent to the vendor: ' . $e->getMessage());
+            }
+
+            return;
+        }
+        if(!self::isOrderedCertificate($upgrade->relid))
         {
             return;
         }

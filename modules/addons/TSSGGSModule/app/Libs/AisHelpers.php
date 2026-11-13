@@ -22,8 +22,44 @@ class AisHelpers
         return $remoteProduct && strtolower((string)$remoteProduct->category) === 'ais';
     }
 
+    /** install methods of a Plan + Automate subscription */
+    const METHOD_AUTOINSTALL = 'autoinstall';
+    const METHOD_ACME        = 'acme';
+
+    protected static $columnsChecked = false;
+
+    /**
+     * Columns added in 1.4 (install method, ACME account of a subscription switched to ACME). The schema file only
+     * creates missing tables, so an existing table gets them here.
+     */
+    public static function ensureColumns()
+    {
+        if(self::$columnsChecked)
+        {
+            return;
+        }
+        self::$columnsChecked = true;
+        $table  = (new AisSubscription())->getTable();
+        $schema = \WHMCS\Database\Capsule::schema();
+        if(!$schema->hasTable($table))
+        {
+            return;
+        }
+        $columns = ['install_method' => 'string', 'acme_account_id' => 'string', 'eab_kid' => 'string', 'eab_hmac_key' => 'text', 'server_url' => 'text'];
+        foreach($columns as $column => $type)
+        {
+            if(!$schema->hasColumn($table, $column))
+            {
+                $schema->table($table, function($t) use ($column, $type) {
+                    $type === 'text' ? $t->text($column)->nullable() : $t->string($column, $column === 'install_method' ? 32 : 255)->nullable();
+                });
+            }
+        }
+    }
+
     public static function refreshAisDetails($serviceId)
     {
+        self::ensureColumns();
         $subscription = AisSubscription::getByServiceId($serviceId);
 
         if(!$subscription || (int)$subscription->ais_item_id <= 0)
@@ -47,6 +83,19 @@ class AisHelpers
         $subscription->period_start       = isset($subData['begin'])        ? ($subData['begin'] ?: null)        : $subscription->period_start;
         $subscription->period_end         = isset($subData['next_renewal']) ? ($subData['next_renewal'] ?: null) : $subscription->period_end;
         $subscription->renewal_date       = isset($subData['next_renewal']) ? ($subData['next_renewal'] ?: null) : $subscription->renewal_date;
+        if(isset($firstItem['install_method']) && in_array($firstItem['install_method'], [self::METHOD_AUTOINSTALL, self::METHOD_ACME], true))
+        {
+            $subscription->install_method = $firstItem['install_method'];
+        }
+        // switched to ACME: the ACME account the client's ACME client registers with
+        $account = isset($firstItem['account']) ? (array)$firstItem['account'] : [];
+        if($account)
+        {
+            $subscription->acme_account_id = isset($account['id']) ? (string)$account['id'] : $subscription->acme_account_id;
+            $subscription->eab_kid         = isset($account['eab_mac_id']) ? (string)$account['eab_mac_id'] : $subscription->eab_kid;
+            $subscription->eab_hmac_key    = isset($account['eab_mac_key']) ? (string)$account['eab_mac_key'] : $subscription->eab_hmac_key;
+            $subscription->server_url      = isset($account['server_url']) ? (string)$account['server_url'] : $subscription->server_url;
+        }
         $subscription->save();
 
         $sslOrder = SSL::getByServiceId($serviceId);

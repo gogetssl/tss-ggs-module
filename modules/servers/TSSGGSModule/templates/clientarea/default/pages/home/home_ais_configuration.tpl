@@ -19,6 +19,15 @@
                     <span class="help-block">{$MGLANG->T('aisDomainHint')}</span>
                 </div>
 
+                <div class="form-group">
+                    <label for="ais-install-method">{$MGLANG->T('aisInstallMethod')}</label>
+                    <select id="ais-install-method" class="form-control">
+                        <option value="autoinstall">{$MGLANG->T('aisMethod_autoinstall')}</option>
+                        <option value="acme">{$MGLANG->T('aisMethod_acme')}</option>
+                    </select>
+                    <span class="help-block">{$MGLANG->T('aisInstallMethodHint')}</span>
+                </div>
+
                 <button id="ais-submit" class="btn btn-primary">
                     {$MGLANG->T('aisSubmitConfiguration')}
                 </button>
@@ -44,7 +53,7 @@
 
             btn.prop('disabled', true).text('...');
 
-            $.post(serviceUrl, {ldelim}'mg-action': 'createAis', token: '{$csrfToken}', domain: domain{rdelim}, function (ret) {
+            $.post(serviceUrl, {ldelim}'mg-action': 'createAis', token: '{$csrfToken}', domain: domain, install_method: $('#ais-install-method').val(){rdelim}, function (ret) {
                 // the JSON answer comes with an application/json header, so jQuery may already have parsed it
                 var payload = typeof ret === 'object' ? ret : JSON.parse(String(ret).replace('<JSONRESPONSE#', '').replace('#ENDJSONRESPONSE>', ''));
                 if (payload.result === 'error') {
