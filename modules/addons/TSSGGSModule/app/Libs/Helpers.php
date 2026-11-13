@@ -577,7 +577,7 @@ class Helpers
                             {
                                 $pricingArray[$currency->id][$billingPeriod] = FinancePolicy::sell($baseCost, $margin, (int)$remotePriceData['term'], $currency->id, false);
 
-                                if(AcmeHelpers::isAcmeWhmcsProduct($whmcsProduct->id) && $billingPeriod == 'annually')
+                                if(SubscriptionBilling::isSubscriptionProduct($whmcsProduct->id) && $billingPeriod == 'annually')
                                 {
                                     $pricingArray[$currency->id]['monthly'] = FinancePolicy::sell($baseCost, $margin, (int)$remotePriceData['term'], $currency->id, false);
                                 }

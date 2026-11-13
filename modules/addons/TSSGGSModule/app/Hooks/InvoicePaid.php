@@ -14,14 +14,14 @@ $hookManager->register(
             $items = \WHMCS\Database\Capsule::table('tblinvoiceitems')
                 ->where('invoiceid', (int)($args['invoiceid'] ?? 0))
                 ->where('type', 'Hosting')
-                ->where('description', 'like', '%ACME Subscription Renewal%')
+                ->where('description', 'like', '%' . AcmeHelpers::RENEWAL_LABEL . '%')
                 ->get(['relid']);
 
             foreach($items as $item)
             {
                 $service = Service::find((int)$item->relid);
 
-                if($service && AcmeHelpers::isAcmeWhmcsProduct($service->packageid))
+                if($service && \ModulesGarden\TSSGGSModule\App\Libs\SubscriptionBilling::isSubscriptionProduct($service->packageid))
                 {
                     EmailTemplates::sendEmail(EmailTemplates::SUBSCRIPTION_RENEWAL_TEMPLATE, $service->id, []);
                 }

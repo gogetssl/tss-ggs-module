@@ -173,12 +173,12 @@ class EmailTemplates
 
     const SUBSCRIPTION_EXPIRATION_TEMPLATE = 'ACME Subscription Expiration';
     const SUBSCRIPTION_EXPIRATION_SUBJECT  = 'ACME Subscription Expiration - {$service_domain}';
-    const SUBSCRIPTION_EXPIRATION_MESSAGE  = '<p>Dear {$client_name},</p><p>A renewal invoice was generated for your ACME subscription service #{$service_id}. Please pay invoice to avoid automatic subscription cancellation.</p><p>{$signature}</p>';
+    const SUBSCRIPTION_EXPIRATION_MESSAGE  = '<p>Dear {$client_name},</p><p>A renewal invoice was generated for your subscription service #{$service_id}. Please pay the invoice before its due date to avoid automatic subscription cancellation.</p><p>{$signature}</p>';
 
 
     const SUBSCRIPTION_RENEWAL_TEMPLATE = 'ACME Subscription Renewal';
     const SUBSCRIPTION_RENEWAL_SUBJECT  = 'ACME Subscription Renewal';
-    const SUBSCRIPTION_RENEWAL_MESSAGE  = '<p>Dear {$client_name},</p><p>We have received your payment for the renewal invoice of your ACME subscription service #{$service_id}. Your subscription has been successfully renewed and remains active.</p><p>{$signature}</p>';
+    const SUBSCRIPTION_RENEWAL_MESSAGE  = '<p>Dear {$client_name},</p><p>We have received your payment for the renewal invoice of your subscription service #{$service_id}. Your subscription has been successfully renewed and remains active.</p><p>{$signature}</p>';
 
 
     /**

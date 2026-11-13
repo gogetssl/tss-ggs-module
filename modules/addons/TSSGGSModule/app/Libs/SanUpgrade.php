@@ -103,7 +103,10 @@ class SanUpgrade
         {
             try
             {
-                SubscriptionBilling::syncReservedDomains((int)$upgrade->relid);
+                // what this upgrade added (giving slots back is handled in WHMCS: no purchase)
+                $current = self::currentQuantities((int)$upgrade->relid);
+                $before  = self::quantitiesBeforeUpgrade((int)$upgrade->relid, $upgrade, $current);
+                SubscriptionBilling::buyAcmeSlots((int)$upgrade->relid, $current['single'] - $before['single'], $current['wildcard'] - $before['wildcard']);
             }
             catch(\Throwable $e)
             {

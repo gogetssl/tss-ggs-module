@@ -113,7 +113,8 @@ class RenewalNotifyCertificate extends AbstractCommand
 
         foreach($certificatesQuery->get() as $srv)
         {
-            if(AcmeHelpers::isAcmeWhmcsProduct($srv->packageid))
+            // subscriptions have their own renewal (SubscriptionRenewals)
+            if(\ModulesGarden\TSSGGSModule\App\Libs\SubscriptionBilling::isSubscriptionProduct($srv->packageid))
             {
                 continue;
             }
@@ -210,58 +211,24 @@ class RenewalNotifyCertificate extends AbstractCommand
             }
         }
 
-        //create acme invoices
+        // subscriptions (ACME and Plan + Automate): renewal invoices, unpaid renewals, auto-renewal turned off
         $io->progressFinish();
-        $acmeSubscriptions = AcmeSubscription::whereIn('status', ['active', 'pending'])->get();
-
-        $io->title('Subscriptions');
-        $io->progressStart($acmeSubscriptions->count());
-
-        foreach($acmeSubscriptions as $acmeSubscription)
+        try
         {
-            $io->progressAdvance(1);
-
-            if(!$acmeSubscription->auto_renew || empty($sslSettings['recurringCreateAutomaticRenewalInvoiceSubscription']))
+            foreach(\ModulesGarden\TSSGGSModule\App\Libs\SubscriptionRenewals::run($sslSettings) as $serviceId => $error)
             {
-                continue;
-            }
-
-            try
-            {
-                $service = Service::find($acmeSubscription->service_id);
-                if(!$service)
-                {
-                    continue;
-                }
-
-                $acmeDaysBefore  = max(1, (int)$sslSettings['recurringDaysBeforeExpirySubscription']);
-                $nextInvoiceDate = AcmeHelpers::getAcmeNextInvoiceDate($acmeSubscription->renewal_date, $acmeDaysBefore);
-
-                // from the invoice day until the renewal: a day without a cron run does not lose the invoice (the
-                // invoice is created once, see hasAcmeSubscriptionRenewalInvoice)
-                $today = date('Y-m-d');
-                if($nextInvoiceDate !== null && $nextInvoiceDate <= $today && date('Y-m-d', strtotime((string)$acmeSubscription->renewal_date)) > $today)
-                {
-                    $invoiceCreated = AcmeHelpers::createAcmeSubscriptionRenewalInvoice($service, $service->product, $acmeSubscription);
-
-                    if($invoiceCreated && $sslSettings['recurringSendExpirationNotificationsSubscription'])
-                    {
-                        EmailTemplates::sendEmail(EmailTemplates::SUBSCRIPTION_EXPIRATION_TEMPLATE, $service->id, []);
-                    }
-                }
-            }
-            catch(\Throwable $e)
-            {
-                // one subscription must not stop the others
-                $errorToDB = $e->getMessage();
-                Logger::error('The ACME subscription renewal invoice error ' . $e->getMessage(), \ModulesGarden\TSSGGSModule\App\Libs\LogContext::exception($e, ['service' => $acmeSubscription->service_id]));
+                $errorToDB = $error;
+                Logger::error('Subscription renewal error ' . $error, ['service' => $serviceId]);
             }
         }
-
-        $io->progressFinish();
+        catch(\Throwable $e)
+        {
+            $errorToDB = $e->getMessage();
+            Logger::error('Subscription renewal error ' . $e->getMessage(), \ModulesGarden\TSSGGSModule\App\Libs\LogContext::exception($e));
+        }
 
         // each step on its own: the time of this run is always saved, or the job would start again every 5 minutes
-        foreach(['cancelOverdueAcmeSubscriptions', 'cancelExpiredStoppedAutoRenewAcmeSubscriptions', 'terminateUnpaid'] as $step)
+        foreach(['terminateUnpaid'] as $step)
         {
             try
             {
@@ -316,136 +283,5 @@ class RenewalNotifyCertificate extends AbstractCommand
             return $nextReissue;
         }
         return false;
-    }
-
-    private function cancelOverdueAcmeSubscriptions()
-    {
-        // Settings > SSL > Renewals (Subscription Billing): the admin may handle unpaid renewals by hand
-        $settings = (new AddonModuleRepository())->getModuleConfiguration()['sslSettings'] ?? [];
-        if(isset($settings['terminateUnpaidSubscriptions']) && in_array(strtolower((string)$settings['terminateUnpaidSubscriptions']), ['', '0', 'off', 'false'], true))
-        {
-            return;
-        }
-        $today = date('Y-m-d');
-
-        $overdueItems = Capsule::table('tblinvoiceitems')
-                               ->select(['tblinvoiceitems.relid as service_id', 'tblinvoices.id as invoice_id', 'tblinvoices.duedate'])
-                               ->join('tblinvoices', 'tblinvoices.id', '=', 'tblinvoiceitems.invoiceid')
-                               ->join('tblhosting', 'tblhosting.id', '=', 'tblinvoiceitems.relid')
-                               ->join('tblproducts', 'tblproducts.id', '=', 'tblhosting.packageid')
-                               ->whereIn('tblproducts.configoption2', AcmeHelpers::getProductIds())
-                               ->whereIn('tblinvoices.status', ['Unpaid', 'Payment Pending'])
-                               ->where('tblproducts.servertype', 'TSSGGSModule')
-                               ->where('tblinvoiceitems.description', 'LIKE', '%ACME Subscription Renewal')
-                               ->where('tblinvoices.duedate', '<', $today)
-                               ->get();
-
-        foreach ($overdueItems as $row)
-        {
-            $subscription = AcmeSubscription::getByServiceId($row->service_id);
-
-            if (!$subscription || (int)$subscription->acme_id <= 0)
-            {
-                continue;
-            }
-
-            if (in_array($subscription->status, ['cancelled', 'terminated'], true))
-            {
-                continue;
-            }
-
-            try
-            {
-                $api = Helpers::getApiByServiceId($row->service_id);
-                if(!$api)
-                {
-                    throw new \Exception('No gateway credentials for this service');
-                }
-                // an unpaid renewal is never refunded
-                $api->cancelItem((int) $subscription->acme_id, 'Overdue renewal invoice', 'caas', false);
-            }
-            catch(\Throwable $e)
-            {
-                // the vendor still bills the subscription: keep the service open and retry on the next run, give up
-                // (and tell the admin) after 14 days
-                Logger::error('The overdue ACME subscription could not be cancelled: ' . $e->getMessage(), \ModulesGarden\TSSGGSModule\App\Libs\LogContext::exception($e, ['service' => $row->service_id]));
-                if($row->duedate >= date('Y-m-d', strtotime('-14 days')))
-                {
-                    continue;
-                }
-                \ModulesGarden\TSSGGSModule\App\Libs\GeneralSettings::activity('ACME subscription of service #' . (int)$row->service_id . ' could not be cancelled at the vendor for 14 days - cancel it manually: ' . $e->getMessage());
-            }
-
-            $subscription->status = 'cancelled';
-            $subscription->cancelled_at = date('Y-m-d H:i:s');
-            $subscription->save();
-
-            Capsule::table('tblhosting')->where('id', $row->service_id)->update([
-                                                                                    'domainstatus' => 'Terminated'
-                                                                                ]);
-        }
-    }
-
-    private function cancelExpiredStoppedAutoRenewAcmeSubscriptions()
-    {
-        $today = date('Y-m-d');
-
-        $subscriptions = Capsule::table('TSSGGSModule_AcmeSubscriptions')
-                                ->join('tblhosting', 'tblhosting.id', '=', 'TSSGGSModule_AcmeSubscriptions.service_id')
-                                ->join('tblproducts', 'tblproducts.id', '=', 'tblhosting.packageid')
-                                ->whereIn('tblproducts.configoption2', AcmeHelpers::getProductIds())
-                                ->where('TSSGGSModule_AcmeSubscriptions.auto_renew', '=', 0)
-                                ->whereNotIn('TSSGGSModule_AcmeSubscriptions.status', ['cancelled', 'terminated'])
-                                ->where('tblproducts.servertype', 'TSSGGSModule')
-                                ->where(function($query) use ($today) {
-                                    $query->whereNotNull('TSSGGSModule_AcmeSubscriptions.renewal_date')
-                                          ->where('TSSGGSModule_AcmeSubscriptions.renewal_date', '<=', $today)
-                                          ->orWhere(function($q) use ($today) {
-                                              $q->whereNull('TSSGGSModule_AcmeSubscriptions.renewal_date')
-                                                ->whereNotNull('TSSGGSModule_AcmeSubscriptions.period_end')
-                                                ->where('TSSGGSModule_AcmeSubscriptions.period_end', '<=', $today);
-                                          });
-                                })
-                                ->get(['TSSGGSModule_AcmeSubscriptions.*']);
-
-        foreach ($subscriptions as $subscriptionData)
-        {
-            if ((int) $subscriptionData->acme_id > 0)
-            {
-                try
-                {
-                    $api = Helpers::getApiByServiceId($subscriptionData->service_id);
-                    if(!$api)
-                    {
-                        throw new \Exception('No gateway credentials for this service');
-                    }
-                    $api->cancelItem((int) $subscriptionData->acme_id, 'Auto-renew disabled and subscription expired', 'caas');
-                }
-                catch(\Throwable $e)
-                {
-                    // keep the subscription open and retry on the next run; give up (and tell the admin) after 14 days
-                    Logger::error('The expired ACME subscription could not be cancelled: ' . $e->getMessage(), \ModulesGarden\TSSGGSModule\App\Libs\LogContext::exception($e, ['service' => $subscriptionData->service_id]));
-                    $ended = $subscriptionData->renewal_date ?: $subscriptionData->period_end;
-                    if(!$ended || date('Y-m-d', strtotime((string)$ended)) >= date('Y-m-d', strtotime('-14 days')))
-                    {
-                        continue;
-                    }
-                    \ModulesGarden\TSSGGSModule\App\Libs\GeneralSettings::activity('ACME subscription of service #' . (int)$subscriptionData->service_id . ' could not be cancelled at the vendor for 14 days - cancel it manually: ' . $e->getMessage());
-                }
-            }
-
-            $subscription = AcmeSubscription::find($subscriptionData->id);
-
-            if($subscription)
-            {
-                $subscription->status = 'cancelled';
-                $subscription->cancelled_at = date('Y-m-d H:i:s');
-                $subscription->save();
-            }
-
-            Capsule::table('tblhosting')->where('id', (int) $subscriptionData->service_id)->update([
-                                                                                                   'domainstatus' => 'Cancelled'
-                                                                                               ]);
-        }
     }
 }

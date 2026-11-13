@@ -19,6 +19,9 @@ class AcmeHelpers
     /** category the gateway gives to ACME (CaaS) products */
     const CATEGORY = 'caas';
 
+    /** end of the item description of a subscription renewal invoice (ACME and Plan + Automate; before 1.4 "ACME Subscription Renewal") */
+    const RENEWAL_LABEL = 'Subscription Renewal';
+
     protected static $remoteIds;
 
     public static function isAcmeWhmcsProduct($whmcsProductId)
@@ -88,7 +91,7 @@ class AcmeHelpers
                       ->join('tblinvoices', 'tblinvoices.id', '=', 'tblinvoiceitems.invoiceid')
                       ->where('tblinvoiceitems.type', 'Hosting')
                       ->where('tblinvoiceitems.relid', (int)$serviceId)
-                      ->where('tblinvoiceitems.description', 'LIKE', '%ACME Subscription Renewal')
+                      ->where('tblinvoiceitems.description', 'LIKE', '%' . self::RENEWAL_LABEL)
                       ->whereNotIn('tblinvoices.status', ['Cancelled', 'Refunded'])
                       ->where(function($query) use ($renewalDate) {
                           $query->whereIn('tblinvoices.status', ['Unpaid', 'Payment Pending', 'Draft'])
@@ -141,7 +144,7 @@ class AcmeHelpers
 
         $description = $product->name
             . ($service->domain ? ' - ' . $service->domain : '')
-            . ' (1 Year) - ACME Subscription Renewal';
+            . ' (1 Year) - ' . self::RENEWAL_LABEL;
 
         $postData = [
             'userid'           => $service->userid,
@@ -159,7 +162,7 @@ class AcmeHelpers
 
         if(!isset($results['result']) || $results['result'] !== 'success' || empty($results['invoiceid']))
         {
-            \logActivity('TSSGGS: Failed to create ACME subscription renewal invoice for service #' . (int)$service->id . '.');
+            \logActivity('TSSGGS: Failed to create the subscription renewal invoice for service #' . (int)$service->id . '.');
             return 0;
         }
 
@@ -172,7 +175,7 @@ class AcmeHelpers
                             'relid' => $service->id,
                         ]);
 
-        \logActivity('TSSGGS: ACME subscription renewal invoice #' . $invoiceId . ' created for service #' . (int)$service->id . '.');
+        \logActivity('TSSGGS: Subscription renewal invoice #' . $invoiceId . ' created for service #' . (int)$service->id . '.');
 
         return 1;
     }

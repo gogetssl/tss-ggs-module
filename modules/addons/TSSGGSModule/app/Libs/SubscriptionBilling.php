@@ -167,24 +167,33 @@ class SubscriptionBilling
         return $amount + $tax1 + $tax2;
     }
 
-    /**
-     * ACME at TheSSLStore: the subscription is paid for a number of single and wildcard domains, which follows the
-     * slots of the service (included + bought). GoGetSSL counts the domains itself.
-     */
-    public static function syncReservedDomains($serviceId)
+    /** ACME or Plan + Automate product (billed as a one-time product with the module's own renewal invoice) */
+    public static function isSubscriptionProduct($whmcsProductId)
     {
-        $vendor = strtoupper((string)Capsule::table('tblhosting')
-            ->join('tblproducts', 'tblproducts.id', '=', 'tblhosting.packageid')
-            ->where('tblhosting.id', (int)$serviceId)
-            ->value('tblproducts.configoption1'));
+        return AcmeHelpers::isAcmeWhmcsProduct($whmcsProductId) || AisHelpers::isAisWhmcsProduct($whmcsProductId);
+    }
+
+    /** the gateway product of a subscription product */
+    public static function isSubscriptionRemote($remoteProduct)
+    {
+        return $remoteProduct && in_array(strtolower((string)$remoteProduct->category), SSLTrustCenterApi::SUBSCRIPTION_CATEGORIES, true);
+    }
+
+    /**
+     * ACME: the client bought more domain slots (configurable option upgrade, paid) - the same number is bought at the
+     * vendor (gateway "add-san" of the subscription)
+     */
+    public static function buyAcmeSlots($serviceId, $single, $wildcard)
+    {
+        $single       = max(0, (int)$single);
+        $wildcard     = max(0, (int)$wildcard);
         $subscription = AcmeSubscription::getByServiceId($serviceId);
-        if($vendor !== 'TSS' || !$subscription || (int)$subscription->acme_id <= 0 || in_array($subscription->status, ['cancelled', 'terminated'], true))
+        if((!$single && !$wildcard) || !$subscription || (int)$subscription->acme_id <= 0 || in_array($subscription->status, ['cancelled', 'terminated'], true))
         {
             return false;
         }
-        $slots = SanUpgrade::currentQuantities($serviceId);
-        CertificateService::api($serviceId)->updateAcmeReservedDomains((int)$subscription->acme_id, max(1, (int)$slots['single']), (int)$slots['wildcard']);
-        CertificateService::event($serviceId, 'info', '[Subscription] Domain slots sent to the vendor: ' . (int)$slots['single'] . ' single, ' . (int)$slots['wildcard'] . ' wildcard');
+        CertificateService::api($serviceId)->addSan((int)$subscription->acme_id, ['single_san' => $single, 'wildcard_san' => $wildcard]);
+        CertificateService::event($serviceId, 'success', '[Subscription] Additional domains bought: ' . $single . ' single, ' . $wildcard . ' wildcard');
 
         return true;
     }

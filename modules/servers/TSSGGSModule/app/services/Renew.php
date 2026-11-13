@@ -38,7 +38,8 @@ class Renew
         $serviceId = $params['serviceid'];
 
         $service = Service::find($serviceId);
-        if($service && AcmeHelpers::isAcmeWhmcsProduct($service->packageid)) {
+        // subscriptions are renewed by the vendor (SubscriptionRenewals bills them): nothing to order
+        if($service && \ModulesGarden\TSSGGSModule\App\Libs\SubscriptionBilling::isSubscriptionProduct($service->packageid)) {
             return 'success';
         }
 

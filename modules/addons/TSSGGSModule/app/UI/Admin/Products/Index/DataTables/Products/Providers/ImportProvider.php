@@ -152,7 +152,7 @@ class ImportProvider extends CrudProvider
                 {
                     $pricing[$currency->id][$billingPeriod] = FinancePolicy::sell($baseCost, $importMargin, (int)$remotePriceData['term'], $currency->id, true);
 
-                    if(AcmeHelpers::isAcmeRemoteProduct($remoteProduct->remoteId) && $billingPeriod == 'annually')
+                    if(\ModulesGarden\TSSGGSModule\App\Libs\SubscriptionBilling::isSubscriptionRemote($remoteProduct) && $billingPeriod == 'annually')
                     {
                         $pricing[$currency->id]['monthly'] = FinancePolicy::sell($baseCost, $importMargin, (int)$remotePriceData['term'], $currency->id, true);
                     }
@@ -196,10 +196,11 @@ class ImportProvider extends CrudProvider
 
             $product = Product::find($productId);
 
-            if(AcmeHelpers::isAcmeWhmcsProduct($productId))
+            // subscriptions: one-time products, the module bills the yearly renewal (SubscriptionRenewals)
+            if(\ModulesGarden\TSSGGSModule\App\Libs\SubscriptionBilling::isSubscriptionProduct($productId))
             {
                 $product->paytype = 'onetime';
-                $product->configoptionsupgrade = 1;
+                $product->configoptionsupgrade = AcmeHelpers::isAcmeWhmcsProduct($productId) ? 1 : $product->configoptionsupgrade;
                 $product->save();
             }
 
@@ -299,7 +300,7 @@ class ImportProvider extends CrudProvider
                         {
                             $pricingArray[$currency->id][$billingPeriod] = FinancePolicy::sell($baseCost, $importMargin, (int)$remotePriceData['term'], $currency->id, false);
 
-                            if(AcmeHelpers::isAcmeRemoteProduct($remoteProduct->remoteId) && $billingPeriod == 'annually')
+                            if(\ModulesGarden\TSSGGSModule\App\Libs\SubscriptionBilling::isSubscriptionRemote($remoteProduct) && $billingPeriod == 'annually')
                             {
                                 $pricingArray[$currency->id]['monthly'] = FinancePolicy::sell($baseCost, $importMargin, (int)$remotePriceData['term'], $currency->id, false);
                             }

@@ -608,15 +608,6 @@ class SSLTrustCenterApi
     }
 
     /**
-     * ACME: the number of single / wildcard domains the subscription is paid for (after the client bought or gave back
-     * domain slots)
-     */
-    public function updateAcmeReservedDomains($itemId, $single, $wildcard)
-    {
-        return $this->call('/certificates/caas/' . (int)$itemId, ['reserved' => ['single' => (int)$single, 'wildcard' => (int)$wildcard]], 'PATCH');
-    }
-
-    /**
      * Turns subscription auto renewal on / off (AIS)
      */
     public function changeSubscriptionAutoRenewal($category, $itemId, $autoRenew)
