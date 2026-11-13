@@ -306,22 +306,55 @@ class SubscriptionBilling
     }
 
     /**
-     * Price of domain slots bought now: the yearly slot price x number, for the days left until the next renewal
-     * ("prorated", Settings > SSL) or the whole year ("full"). After the renewal was paid the renewal date has moved a
-     * year on, so a prorated purchase then also covers the coming year.
+     * Price of domain slots for the rest of the current period: the yearly slot price x number, for the days left until
+     * $periodEnd ("prorated", Settings > SSL) or the whole year ("full")
      */
-    public static function slotPurchaseAmount($serviceId, $configId, $count)
+    public static function slotPurchaseAmount($serviceId, $configId, $count, $periodEnd = '')
     {
-        $currency = (int)Capsule::table('tblhosting')->join('tblclients', 'tblclients.id', '=', 'tblhosting.userid')->where('tblhosting.id', (int)$serviceId)->value('tblclients.currency');
-        $amount   = max(0, (int)$count) * self::slotPrice((int)$configId, $currency);
+        $amount = max(0, (int)$count) * self::slotPrice((int)$configId, self::clientCurrency($serviceId));
         if(self::slotPricing() === self::SLOT_PRICING_PRORATED)
         {
-            $renewal = self::renewalDate((int)$serviceId);
-            $days    = $renewal !== '' ? (int)ceil((strtotime($renewal) - strtotime(date('Y-m-d'))) / 86400) : 365;
-            $amount  = $amount / 365 * max(1, $days);
+            $days   = $periodEnd !== '' ? (int)ceil((strtotime($periodEnd) - strtotime(date('Y-m-d'))) / 86400) : 365;
+            $amount = $amount / 365 * max(1, $days);
         }
 
         return round($amount, 2);
+    }
+
+    protected static function clientCurrency($serviceId)
+    {
+        return (int)Capsule::table('tblhosting')->join('tblclients', 'tblclients.id', '=', 'tblhosting.userid')->where('tblhosting.id', (int)$serviceId)->value('tblclients.currency');
+    }
+
+    /**
+     * The current period of the subscription: ['end' => its last day (the renewal date), 'nextInvoiced' => the coming
+     * period is already invoiced]. The coming period is invoiced from the moment the renewal invoice is issued (paid or
+     * not); once it is paid the subscription's renewal date has moved a year on, so the current period ends a year earlier.
+     */
+    public static function currentPeriod($serviceId)
+    {
+        $renewal = self::renewalDate((int)$serviceId);
+        if($renewal === '')
+        {
+            return ['end' => '', 'nextInvoiced' => false];
+        }
+        $today        = date('Y-m-d');
+        $previousEnd  = date('Y-m-d', strtotime('-12 months', strtotime($renewal)));
+        if($previousEnd > $today)
+        {
+            // the renewal invoice was paid (renewalPaid): the current period still runs until the old renewal date
+            return ['end' => $previousEnd, 'nextInvoiced' => true];
+        }
+        $issued = Capsule::table('tblinvoiceitems')
+            ->join('tblinvoices', 'tblinvoices.id', '=', 'tblinvoiceitems.invoiceid')
+            ->where('tblinvoiceitems.type', 'Hosting')
+            ->where('tblinvoiceitems.relid', (int)$serviceId)
+            ->where('tblinvoiceitems.description', 'LIKE', '%' . AcmeHelpers::RENEWAL_LABEL)
+            ->whereIn('tblinvoices.status', ['Unpaid', 'Payment Pending', 'Paid'])
+            ->where('tblinvoices.duedate', '>=', date('Y-m-d', strtotime('-1 day', strtotime($renewal))))
+            ->exists();
+
+        return ['end' => $renewal, 'nextInvoiced' => $issued];
     }
 
     /**
@@ -332,20 +365,34 @@ class SubscriptionBilling
     {
         $service = Capsule::table('tblhosting')->join('tblproducts', 'tblproducts.id', '=', 'tblhosting.packageid')
             ->where('tblhosting.id', (int)$serviceId)->first(['tblhosting.userid', 'tblhosting.domain', 'tblhosting.paymentmethod', 'tblproducts.name', 'tblproducts.tax']);
-        $renewal = self::renewalDate((int)$serviceId);
-        $post    = ['userid' => (int)$service->userid, 'sendinvoice' => true, 'date' => date('Y-m-d'), 'duedate' => date('Y-m-d'), 'paymentmethod' => (string)$service->paymentmethod];
-        $total   = 0.0;
-        $n       = 0;
+        // the rest of the current period, and - when the renewal invoice of the coming period is already issued (paid or
+        // not) - the coming year too, as it does not include these domains
+        $period   = self::currentPeriod((int)$serviceId);
+        $post     = ['userid' => (int)$service->userid, 'sendinvoice' => true, 'date' => date('Y-m-d'), 'duedate' => date('Y-m-d'), 'paymentmethod' => (string)$service->paymentmethod];
+        $total    = 0.0;
+        $n        = 0;
+        $currency = self::clientCurrency($serviceId);
+        $prefix   = $service->name . ($service->domain ? ' - ' . $service->domain : '') . ': ';
         foreach($bought as $configId => $count)
         {
             $name   = explode('|', (string)Capsule::table('tblproductconfigoptions')->where('id', (int)$configId)->value('optionname'));
-            $amount = self::slotPurchaseAmount($serviceId, $configId, $count);
+            $label  = (int)$count . ' x ' . trim(end($name));
+            $amount = self::slotPurchaseAmount($serviceId, $configId, $count, $period['end']);
             $n++;
-            $post['itemdescription' . $n] = $service->name . ($service->domain ? ' - ' . $service->domain : '') . ': ' . (int)$count . ' x ' . trim(end($name))
-                . ($renewal !== '' ? ' (until ' . $renewal . ')' : '');
-            $post['itemamount' . $n] = $amount;
-            $post['itemtaxed' . $n]  = (int)$service->tax;
+            $post['itemdescription' . $n] = $prefix . $label . ($period['end'] !== '' ? ' (until ' . $period['end'] . ')' : '');
+            $post['itemamount' . $n]      = $amount;
+            $post['itemtaxed' . $n]       = (int)$service->tax;
             $total += $amount;
+
+            if($period['nextInvoiced'])
+            {
+                $year = round((int)$count * self::slotPrice((int)$configId, $currency), 2);
+                $n++;
+                $post['itemdescription' . $n] = $prefix . $label . ' (' . $period['end'] . ' - ' . date('Y-m-d', strtotime('+12 months', strtotime($period['end']))) . ', next year)';
+                $post['itemamount' . $n]      = $year;
+                $post['itemtaxed' . $n]       = (int)$service->tax;
+                $total += $year;
+            }
         }
 
         if($total <= 0)
@@ -417,7 +464,6 @@ class SubscriptionBilling
             $added[$type === 'sans_wildcard' ? 'wildcard' : 'single'] += (int)$count;
         }
         CertificateService::event($serviceId, 'success', '[Subscription] Domains added: ' . $added['single'] . ' single, ' . $added['wildcard'] . ' wildcard');
-        self::addRenewalSupplement($serviceId, $bought);
         try
         {
             self::buyAcmeSlots($serviceId, $added['single'], $added['wildcard']);
@@ -426,57 +472,6 @@ class SubscriptionBilling
         {
             CertificateService::event($serviceId, 'error', '[Subscription] The domains could not be bought at the vendor: ' . $e->getMessage());
         }
-    }
-
-    /**
-     * Domains bought while the renewal invoice is open (issued, unpaid): WHMCS does not let an issued invoice change, so
-     * the coming year of these domains is billed on a second renewal invoice, due on the same day. Together the renewal
-     * invoices cover the domains the subscription has on the last day before the renewal; an unpaid one ends it.
-     */
-    public static function addRenewalSupplement($serviceId, array $bought)
-    {
-        $open = Capsule::table('tblinvoiceitems')
-            ->join('tblinvoices', 'tblinvoices.id', '=', 'tblinvoiceitems.invoiceid')
-            ->where('tblinvoiceitems.type', 'Hosting')
-            ->where('tblinvoiceitems.relid', (int)$serviceId)
-            ->where('tblinvoiceitems.description', 'LIKE', '%' . AcmeHelpers::RENEWAL_LABEL)
-            ->whereIn('tblinvoices.status', ['Unpaid', 'Payment Pending'])
-            ->orderBy('tblinvoices.id', 'desc')
-            ->first(['tblinvoices.id', 'tblinvoices.duedate', 'tblinvoices.userid']);
-        if(!$open)
-        {
-            return 0;
-        }
-        $service  = Capsule::table('tblhosting')->join('tblproducts', 'tblproducts.id', '=', 'tblhosting.packageid')->join('tblclients', 'tblclients.id', '=', 'tblhosting.userid')
-            ->where('tblhosting.id', (int)$serviceId)->first(['tblhosting.domain', 'tblhosting.paymentmethod', 'tblproducts.name', 'tblproducts.tax', 'tblclients.currency']);
-        $post     = ['userid' => (int)$open->userid, 'sendinvoice' => true, 'date' => date('Y-m-d'), 'duedate' => (string)$open->duedate, 'paymentmethod' => (string)$service->paymentmethod];
-        $n        = 0;
-        foreach($bought as $configId => $count)
-        {
-            $amount = round((int)$count * self::slotPrice((int)$configId, (int)$service->currency), 2);
-            if($amount <= 0)
-            {
-                continue;
-            }
-            $name = explode('|', (string)Capsule::table('tblproductconfigoptions')->where('id', (int)$configId)->value('optionname'));
-            $n++;
-            $post['itemdescription' . $n] = $service->name . ($service->domain ? ' - ' . $service->domain : '') . ': ' . (int)$count . ' x ' . trim(end($name)) . ' (1 Year) - ' . AcmeHelpers::RENEWAL_LABEL;
-            $post['itemamount' . $n]      = $amount;
-            $post['itemtaxed' . $n]       = (int)$service->tax;
-        }
-        if(!$n)
-        {
-            return 0;
-        }
-        $result = localAPI('CreateInvoice', $post);
-        if(($result['result'] ?? '') !== 'success' || empty($result['invoiceid']))
-        {
-            throw new \Exception('The renewal invoice for the added domains could not be created: ' . ($result['message'] ?? 'unknown error'));
-        }
-        Capsule::table('tblinvoiceitems')->where('invoiceid', (int)$result['invoiceid'])->update(['type' => 'Hosting', 'relid' => (int)$serviceId]);
-        CertificateService::event($serviceId, 'info', '[Subscription] Renewal invoice #' . (int)$result['invoiceid'] . ' for the added domains (renewal invoice #' . (int)$open->id . ' was already issued)');
-
-        return (int)$result['invoiceid'];
     }
 
     /**
