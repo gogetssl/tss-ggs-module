@@ -1471,3 +1471,7 @@ $_LANG['admin.configuration.content.step2.command_hint'] = 'Kør dette på serve
 
 $_LANG['admin.settings.index.forms.ssl_settings_form.terminateUnpaidSubscriptions'] = 'Afslut ubetalte abonnementer';
 $_LANG['admin.settings.index.forms.ssl_settings_form.terminateUnpaidSubscriptions_description'] = 'Er fornyelsesfakturaen stadig ubetalt efter forfaldsdatoen, opsiges abonnementet hos leverandøren, før det fornyes, og tjenesten afsluttes. Fornyelsesfakturaen forfalder dagen før abonnementet fornyes.';
+$_LANG['admin.settings.index.forms.ssl_settings_form.subscriptionSlotPricing'] = 'Pris for ekstra domæner';
+$_LANG['admin.settings.index.forms.ssl_settings_form.subscriptionSlotPricing_description'] = 'Pris for domæner (pladser), som en kunde køber i abonnementsperioden. Forholdsmæssig: årsprisen for de dage, der er tilbage til næste fornyelse. Fuld pris: årsprisen, uanset hvornår de købes. Fornyelsen opkræver altid den fulde årspris for alle domæner.';
+$_LANG['admin.settings.index.providers.ssl_settings_provider.subscriptionSlotPricing_prorated'] = 'Forholdsmæssigt til næste fornyelse';
+$_LANG['admin.settings.index.providers.ssl_settings_provider.subscriptionSlotPricing_full'] = 'Fuld årspris';

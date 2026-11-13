@@ -3,6 +3,7 @@
 namespace ModulesGarden\TSSGGSModule\App\Libs;
 
 use ModulesGarden\TSSGGSModule\App\Models\AcmeSubscription;
+use ModulesGarden\TSSGGSModule\App\Models\AisSubscription;
 use WHMCS\Database\Capsule;
 
 /**
@@ -242,5 +243,168 @@ class SubscriptionBilling
         CertificateService::event($serviceId, 'success', '[Subscription] Additional domains bought: ' . $single . ' single, ' . $wildcard . ' wildcard');
 
         return true;
+    }
+
+    /** Settings > SSL > Subscriptions: domain slots bought during the period are charged for the days left ("prorated") or at the yearly price ("full") */
+    const SLOT_PRICING_PRORATED = 'prorated';
+    const SLOT_PRICING_FULL     = 'full';
+
+    public static function slotPricing()
+    {
+        $settings = (new \ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository())->getModuleConfiguration()['sslSettings'] ?? [];
+
+        return ($settings['subscriptionSlotPricing'] ?? self::SLOT_PRICING_PRORATED) === self::SLOT_PRICING_FULL ? self::SLOT_PRICING_FULL : self::SLOT_PRICING_PRORATED;
+    }
+
+    /** yearly price of one slot of a quantity option (one-time products keep it in "monthly") in a currency */
+    protected static function slotPrice($configId, $currencyId)
+    {
+        $sub = (int)Capsule::table('tblproductconfigoptionssub')->where('configid', (int)$configId)->orderBy('sortorder')->value('id');
+        $row = $sub ? Capsule::table('tblpricing')->where('type', 'configoptions')->where('relid', $sub)->where('currency', (int)$currencyId)->first(['monthly', 'annually']) : null;
+        if(!$row)
+        {
+            return 0.0;
+        }
+
+        return (float)$row->monthly > 0 ? (float)$row->monthly : max(0.0, (float)$row->annually);
+    }
+
+    /** the subscription's next renewal date (ACME or Plan + Automate), '' when it is not known */
+    protected static function renewalDate($serviceId)
+    {
+        $row = AcmeSubscription::getByServiceId($serviceId) ?: AisSubscription::getByServiceId($serviceId);
+
+        return $row && $row->renewal_date ? date('Y-m-d', strtotime((string)$row->renewal_date)) : '';
+    }
+
+    /**
+     * Prices the domain slots of an upgrade invoice (WHMCS charges a one-time product's option at its full price):
+     *  - "prorated": slot price / 365 x days left until the next renewal (paid in advance for the next period when the
+     *    renewal invoice was already paid, since the renewal date has then moved a year on);
+     *  - "full": the yearly slot price.
+     * Only the slots added by the upgrade are charged; giving slots back is not charged. Returns the items changed.
+     */
+    public static function priceSlotUpgradeInvoice($invoiceId)
+    {
+        $invoice = Capsule::table('tblinvoices')->where('id', (int)$invoiceId)->first(['id', 'userid', 'status']);
+        if(!$invoice || $invoice->status !== 'Unpaid')
+        {
+            return 0;
+        }
+        $currency = (int)Capsule::table('tblclients')->where('id', (int)$invoice->userid)->value('currency');
+        $changed  = 0;
+        foreach(Capsule::table('tblinvoiceitems')->where('invoiceid', (int)$invoiceId)->where('type', 'Upgrade')->get() as $item)
+        {
+            $upgrade = Capsule::table('tblupgrades')->where('id', (int)$item->relid)->first();
+            if(!$upgrade || $upgrade->type !== 'configoptions')
+            {
+                continue;
+            }
+            $packageId = (int)Capsule::table('tblhosting')->where('id', (int)$upgrade->relid)->value('packageid');
+            if(!AcmeHelpers::isAcmeWhmcsProduct($packageId))
+            {
+                continue;
+            }
+            $parts = explode('=>', (string)$upgrade->originalvalue);
+            $added = count($parts) === 2 ? (int)$upgrade->newvalue - (int)$parts[1] : 0;
+            if($added <= 0)
+            {
+                continue;
+            }
+            $amount = $added * self::slotPrice((int)$parts[0], $currency);
+            if(self::slotPricing() === self::SLOT_PRICING_PRORATED)
+            {
+                $renewal = self::renewalDate((int)$upgrade->relid);
+                $days    = $renewal !== '' ? (int)ceil((strtotime($renewal) - strtotime(date('Y-m-d'))) / 86400) : 365;
+                $amount  = $amount / 365 * max(1, $days);
+            }
+            $amount = round($amount, 2);
+            if(abs($amount - (float)$item->amount) < 0.005)
+            {
+                continue;
+            }
+            Capsule::table('tblinvoiceitems')->where('id', (int)$item->id)->update(['amount' => $amount]);
+            Capsule::table('tblupgrades')->where('id', (int)$upgrade->id)->update(['amount' => $amount]);
+            $changed++;
+        }
+        if($changed)
+        {
+            self::updateInvoiceTotal((int)$invoiceId);
+            \logActivity('TSSGGS: domain slots of upgrade invoice #' . (int)$invoiceId . ' priced ' . self::slotPricing() . '.');
+        }
+
+        return $changed;
+    }
+
+    /**
+     * The unpaid renewal invoice follows the domain slots of the service until it is paid: the client pays for the
+     * slots the subscription has on the last day before the renewal
+     */
+    public static function refreshRenewalInvoice($serviceId)
+    {
+        $item = Capsule::table('tblinvoiceitems')
+            ->join('tblinvoices', 'tblinvoices.id', '=', 'tblinvoiceitems.invoiceid')
+            ->where('tblinvoiceitems.type', 'Hosting')
+            ->where('tblinvoiceitems.relid', (int)$serviceId)
+            ->where('tblinvoiceitems.description', 'LIKE', '%' . AcmeHelpers::RENEWAL_LABEL)
+            ->where('tblinvoices.status', 'Unpaid')
+            ->orderBy('tblinvoices.id', 'desc')
+            ->first(['tblinvoiceitems.id', 'tblinvoiceitems.amount', 'tblinvoiceitems.invoiceid']);
+        if(!$item)
+        {
+            return false;
+        }
+        $amount = self::renewalAmount($serviceId);
+        if(abs($amount - (float)$item->amount) < 0.005)
+        {
+            return false;
+        }
+        Capsule::table('tblinvoiceitems')->where('id', (int)$item->id)->update(['amount' => $amount]);
+        self::updateInvoiceTotal((int)$item->invoiceid);
+        CertificateService::event($serviceId, 'info', '[Subscription] Renewal invoice #' . (int)$item->invoiceid . ' updated to the current domain slots: ' . number_format($amount, 2, '.', ''));
+
+        return true;
+    }
+
+    /**
+     * A renewal invoice was paid: the service carries on with the same subscription (nothing is ordered again); its
+     * renewal and due date move one year on. Done once per renewal (the invoice must belong to the coming renewal).
+     */
+    public static function renewalPaid($serviceId, $invoiceId)
+    {
+        $invoice = Capsule::table('tblinvoices')->where('id', (int)$invoiceId)->first(['duedate']);
+        foreach([AcmeSubscription::class, AisSubscription::class] as $model)
+        {
+            $subscription = $model::getByServiceId($serviceId);
+            if(!$subscription || !$subscription->renewal_date || !$invoice)
+            {
+                continue;
+            }
+            $renewal = date('Y-m-d', strtotime((string)$subscription->renewal_date));
+            // the invoice of this renewal is due the day before it (or on it, invoices before 1.4)
+            if((string)$invoice->duedate < date('Y-m-d', strtotime('-1 day', strtotime($renewal))))
+            {
+                return false;
+            }
+            $next = date('Y-m-d', strtotime('+12 months', strtotime($renewal)));
+            $subscription->renewal_date = $next;
+            $subscription->period_end   = $next;
+            $subscription->save();
+            Capsule::table('tblhosting')->where('id', (int)$serviceId)->update(['nextduedate' => $next, 'nextinvoicedate' => $next]);
+            CertificateService::event($serviceId, 'success', '[Subscription] Renewal invoice #' . (int)$invoiceId . ' paid: renewed until ' . $next);
+
+            return true;
+        }
+
+        return false;
+    }
+
+    protected static function updateInvoiceTotal($invoiceId)
+    {
+        if(!function_exists('updateInvoiceTotal'))
+        {
+            require_once ROOTDIR . '/includes/invoicefunctions.php';
+        }
+        \updateInvoiceTotal((int)$invoiceId);
     }
 }

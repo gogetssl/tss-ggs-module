@@ -82,7 +82,7 @@ class SSLCertificatesProcessing extends AbstractCommand
             ->where('tblsslorders.status', 'Configuration Submitted')
             // S/MIME and code signing orders keep their own request rows (also pending): GatewayOrderService refreshes them
             ->where(function($query) {
-                $query->whereNull('tblproducts.configoption9')->orWhereNotIn('tblproducts.configoption9', \ModulesGarden\TSSGGSModule\App\Libs\GatewayOrderService::categories());
+                $query->whereNull('tblproducts.configoption9')->orWhereNotIn('tblproducts.configoption9', array_merge(\ModulesGarden\TSSGGSModule\App\Libs\GatewayOrderService::categories(), \ModulesGarden\TSSGGSModule\App\Libs\SSLTrustCenterApi::SUBSCRIPTION_CATEGORIES));
             })
             ->groupBy('tblhosting.id');
 

@@ -106,6 +106,7 @@ class SanUpgrade
                 // what this upgrade added (giving slots back is handled in WHMCS: no purchase)
                 $current = self::currentQuantities((int)$upgrade->relid);
                 $before  = self::quantitiesBeforeUpgrade((int)$upgrade->relid, $upgrade, $current);
+                SubscriptionBilling::refreshRenewalInvoice((int)$upgrade->relid);
                 SubscriptionBilling::buyAcmeSlots((int)$upgrade->relid, $current['single'] - $before['single'], $current['wildcard'] - $before['wildcard']);
             }
             catch(\Throwable $e)

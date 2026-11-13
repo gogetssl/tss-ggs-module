@@ -28,9 +28,17 @@ class SslSettingsProvider extends CrudProvider
         {
             $this->data['recurringDaysBeforeExpirySubscription'] = isset($this->data['recurringDaysBeforeExpirySubscription']) ? 1 : 30;
         }
-        if(!isset($this->data['terminateUnpaidSubscriptions']))
+        // subscriptions: the renewal invoice and the termination of unpaid renewals are on unless turned off
+        foreach(['recurringCreateAutomaticRenewalInvoiceSubscription', 'terminateUnpaidSubscriptions'] as $key)
         {
-            $this->data['terminateUnpaidSubscriptions'] = 'on';
+            if(!isset($this->data[$key]))
+            {
+                $this->data[$key] = 'on';
+            }
+        }
+        if(empty($this->data['subscriptionSlotPricing']))
+        {
+            $this->data['subscriptionSlotPricing'] = \ModulesGarden\TSSGGSModule\App\Libs\SubscriptionBilling::SLOT_PRICING_PRORATED;
         }
 
         if(!isset($this->data['wildcardDnsTimeoutMinutes']) || $this->data['wildcardDnsTimeoutMinutes'] === '')
@@ -56,6 +64,10 @@ class SslSettingsProvider extends CrudProvider
         }
         $this->availableValues['autoReissueDaysBeforeExpire']           = array_combine($reissueDays, $reissueDays);
         $this->availableValues['recurringDaysBeforeExpirySubscription'] = Helpers::getDaysOptions(true);
+        $this->availableValues['subscriptionSlotPricing']               = [
+            \ModulesGarden\TSSGGSModule\App\Libs\SubscriptionBilling::SLOT_PRICING_PRORATED => $this->translate('subscriptionSlotPricing_prorated'),
+            \ModulesGarden\TSSGGSModule\App\Libs\SubscriptionBilling::SLOT_PRICING_FULL     => $this->translate('subscriptionSlotPricing_full'),
+        ];
         $this->availableValues['recurringDaysBeforeExpiry']             = Helpers::getDaysOptions();
         $this->availableValues['oneTimeDaysBeforeExpiry']               = Helpers::getDaysOptions();
 

@@ -19,6 +19,8 @@ $hookManager->register(
 
             foreach($items as $item)
             {
+                // the same subscription carries on: its renewal and due date move one year on
+                \ModulesGarden\TSSGGSModule\App\Libs\SubscriptionBilling::renewalPaid((int)$item->relid, (int)($args['invoiceid'] ?? 0));
                 $service = Service::find((int)$item->relid);
 
                 if($service && \ModulesGarden\TSSGGSModule\App\Libs\SubscriptionBilling::isSubscriptionProduct($service->packageid))
