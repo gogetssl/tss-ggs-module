@@ -172,6 +172,10 @@
         var clone = $('.validate-ssl-unified').clone();
         $('.product-details').html(clone);
         $('.mg-module .validate-ssl-unified').remove();
+        // the module's stylesheet lives in the block below and has to survive it
+        $('head').append($('link[href*="theme.css"]').first());
+        // WHMCS's own tab strip under the page: the module shows everything above it
+        $('.product-details').closest('.tab-pane').find('> .nav-tabs, > .tab-content').remove();
     });
 
     $(document).on('click', '#tssggs-smime-refresh', function () {
