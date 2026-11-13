@@ -417,7 +417,7 @@ class SubscriptionBilling
             $added[$type === 'sans_wildcard' ? 'wildcard' : 'single'] += (int)$count;
         }
         CertificateService::event($serviceId, 'success', '[Subscription] Domains added: ' . $added['single'] . ' single, ' . $added['wildcard'] . ' wildcard');
-        self::refreshRenewalInvoice($serviceId);
+        self::addRenewalSupplement($serviceId, $bought);
         try
         {
             self::buyAcmeSlots($serviceId, $added['single'], $added['wildcard']);
@@ -429,44 +429,54 @@ class SubscriptionBilling
     }
 
     /**
-     * The unpaid renewal invoice follows the domain slots of the service until it is paid: the client pays for the
-     * slots the subscription has on the last day before the renewal
+     * Domains bought while the renewal invoice is open (issued, unpaid): WHMCS does not let an issued invoice change, so
+     * the coming year of these domains is billed on a second renewal invoice, due on the same day. Together the renewal
+     * invoices cover the domains the subscription has on the last day before the renewal; an unpaid one ends it.
      */
-    public static function refreshRenewalInvoice($serviceId)
+    public static function addRenewalSupplement($serviceId, array $bought)
     {
-        $item = Capsule::table('tblinvoiceitems')
+        $open = Capsule::table('tblinvoiceitems')
             ->join('tblinvoices', 'tblinvoices.id', '=', 'tblinvoiceitems.invoiceid')
             ->where('tblinvoiceitems.type', 'Hosting')
             ->where('tblinvoiceitems.relid', (int)$serviceId)
             ->where('tblinvoiceitems.description', 'LIKE', '%' . AcmeHelpers::RENEWAL_LABEL)
-            ->where('tblinvoices.status', 'Unpaid')
+            ->whereIn('tblinvoices.status', ['Unpaid', 'Payment Pending'])
             ->orderBy('tblinvoices.id', 'desc')
-            ->first(['tblinvoiceitems.id', 'tblinvoiceitems.amount', 'tblinvoiceitems.invoiceid']);
-        if(!$item)
+            ->first(['tblinvoices.id', 'tblinvoices.duedate', 'tblinvoices.userid']);
+        if(!$open)
         {
-            return false;
+            return 0;
         }
-        $amount = self::renewalAmount($serviceId);
-        if(abs($amount - (float)$item->amount) < 0.005)
+        $service  = Capsule::table('tblhosting')->join('tblproducts', 'tblproducts.id', '=', 'tblhosting.packageid')->join('tblclients', 'tblclients.id', '=', 'tblhosting.userid')
+            ->where('tblhosting.id', (int)$serviceId)->first(['tblhosting.domain', 'tblhosting.paymentmethod', 'tblproducts.name', 'tblproducts.tax', 'tblclients.currency']);
+        $post     = ['userid' => (int)$open->userid, 'sendinvoice' => true, 'date' => date('Y-m-d'), 'duedate' => (string)$open->duedate, 'paymentmethod' => (string)$service->paymentmethod];
+        $n        = 0;
+        foreach($bought as $configId => $count)
         {
-            return false;
+            $amount = round((int)$count * self::slotPrice((int)$configId, (int)$service->currency), 2);
+            if($amount <= 0)
+            {
+                continue;
+            }
+            $name = explode('|', (string)Capsule::table('tblproductconfigoptions')->where('id', (int)$configId)->value('optionname'));
+            $n++;
+            $post['itemdescription' . $n] = $service->name . ($service->domain ? ' - ' . $service->domain : '') . ': ' . (int)$count . ' x ' . trim(end($name)) . ' (1 Year) - ' . AcmeHelpers::RENEWAL_LABEL;
+            $post['itemamount' . $n]      = $amount;
+            $post['itemtaxed' . $n]       = (int)$service->tax;
         }
-        // WHMCS does not let an unpaid invoice change: it is cancelled and a new one is issued for the current slots
-        $service      = \ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Service::find((int)$serviceId);
-        $subscription = AcmeSubscription::getByServiceId($serviceId) ?: AisSubscription::getByServiceId($serviceId);
-        if(!$service || !$subscription)
+        if(!$n)
         {
-            return false;
+            return 0;
         }
-        $cancel = localAPI('UpdateInvoice', ['invoiceid' => (int)$item->invoiceid, 'status' => 'Cancelled']);
-        if(($cancel['result'] ?? '') !== 'success')
+        $result = localAPI('CreateInvoice', $post);
+        if(($result['result'] ?? '') !== 'success' || empty($result['invoiceid']))
         {
-            throw new \Exception('Renewal invoice #' . (int)$item->invoiceid . ' could not be replaced: ' . ($cancel['message'] ?? 'unknown error'));
+            throw new \Exception('The renewal invoice for the added domains could not be created: ' . ($result['message'] ?? 'unknown error'));
         }
-        AcmeHelpers::createAcmeSubscriptionRenewalInvoice($service, $service->product, $subscription);
-        CertificateService::event($serviceId, 'info', '[Subscription] Renewal invoice #' . (int)$item->invoiceid . ' replaced for the current domain slots: ' . number_format($amount, 2, '.', ''));
+        Capsule::table('tblinvoiceitems')->where('invoiceid', (int)$result['invoiceid'])->update(['type' => 'Hosting', 'relid' => (int)$serviceId]);
+        CertificateService::event($serviceId, 'info', '[Subscription] Renewal invoice #' . (int)$result['invoiceid'] . ' for the added domains (renewal invoice #' . (int)$open->id . ' was already issued)');
 
-        return true;
+        return (int)$result['invoiceid'];
     }
 
     /**
@@ -502,12 +512,4 @@ class SubscriptionBilling
         return false;
     }
 
-    protected static function updateInvoiceTotal($invoiceId)
-    {
-        if(!function_exists('updateInvoiceTotal'))
-        {
-            require_once ROOTDIR . '/includes/invoicefunctions.php';
-        }
-        \updateInvoiceTotal((int)$invoiceId);
-    }
 }

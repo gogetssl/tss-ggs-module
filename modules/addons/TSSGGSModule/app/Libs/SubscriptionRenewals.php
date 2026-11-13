@@ -107,9 +107,6 @@ class SubscriptionRenewals
             return;
         }
 
-        // an unpaid renewal invoice follows the domain slots until it is paid
-        SubscriptionBilling::refreshRenewalInvoice($serviceId);
-
         // the renewal invoice, from "Days Before Expiry" until the renewal date (a day without a cron run loses nothing);
         // on unless the administrator turned it off
         if(!self::settingOff($settings, 'recurringCreateAutomaticRenewalInvoiceSubscription') && $renewalDate !== '' && $renewalDate > $today)
