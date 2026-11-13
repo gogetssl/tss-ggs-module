@@ -1,4 +1,8 @@
 1.1.1 (2026-11-13)
+Security: the saved API Auth Token is no longer loaded into the settings form.
+It was hidden on screen but still travelled in the page. The field now starts
+empty and an empty field keeps the saved token.
+
 Subscription domain slots now follow what the vendor actually charges for.
 A slot is only paid for at the vendor when a domain goes into it, so:
 - a renewal is charged for the domains in use, not for slots that were bought
