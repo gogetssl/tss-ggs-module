@@ -16,7 +16,7 @@ class ProductCatalog
     const OLD_LABELS = ["Additional Single domain SAN's", "Additional Wildcard domain SAN's"];
 
     /** Gateway product categories the module can sell */
-    const SUPPORTED_CATEGORIES = ['tls', 'caas', 'ais', 'smime', 'cs', 'code-guard'];
+    const SUPPORTED_CATEGORIES = ['tls', 'caas', 'ais', 'smime', 'cs', 'code-guard', 'ds'];
 
     /**
      * Products GoGetSSL lists in the "tls" category that are not SSL certificates (document signing, mark certificates)
@@ -46,6 +46,10 @@ class ProductCatalog
         if($category === CodeGuardService::CATEGORY)
         {
             return CodeGuardService::isSupportedRemoteProduct($remoteProduct->vendor, $category);
+        }
+        if($category === DocumentSigningService::CATEGORY)
+        {
+            return DocumentSigningService::isSupportedRemoteProduct($remoteProduct->vendor, $category, $remoteProduct->remoteId);
         }
         if($category === 'tls' && preg_match(self::NOT_SSL_NAMES, (string)$remoteProduct->name))
         {

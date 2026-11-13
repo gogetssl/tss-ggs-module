@@ -27,7 +27,7 @@ abstract class GatewayOrderService
     const FINAL_STATUSES = ['active', 'expired', 'cancelled', 'failed', 'rejected', 'revoked', 'refunded'];
 
     /** product types: gateway category => class */
-    const TYPES = ['smime' => SmimeService::class, 'cs' => CodeSigningService::class, 'code-guard' => CodeGuardService::class];
+    const TYPES = ['smime' => SmimeService::class, 'cs' => CodeSigningService::class, 'code-guard' => CodeGuardService::class, 'ds' => DocumentSigningService::class];
 
     /** @var array "category:product ID" => bool */
     protected static $products = [];

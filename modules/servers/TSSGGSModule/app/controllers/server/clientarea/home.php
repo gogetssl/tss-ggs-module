@@ -49,6 +49,7 @@ class home extends AbstractController
     use parts\AcmeActions;
     use parts\CodeSigningActions;
     use parts\CodeGuardActions;
+    use parts\DocumentSigningActions;
     use parts\GatewayRenewalActions;
     use parts\SmimeActions;
     use parts\AisActions;
@@ -79,6 +80,11 @@ class home extends AbstractController
             if(\ModulesGarden\TSSGGSModule\App\Libs\CodeGuardService::isCodeGuardWhmcsProduct($service->packageid))
             {
                 return $this->indexCodeGuardHTML($input, $vars);
+            }
+
+            if(\ModulesGarden\TSSGGSModule\App\Libs\DocumentSigningService::isDocumentSigningWhmcsProduct($service->packageid))
+            {
+                return $this->indexDocumentSigningHTML($input, $vars);
             }
 
             if(AisHelpers::isAisWhmcsProduct($service->packageid))

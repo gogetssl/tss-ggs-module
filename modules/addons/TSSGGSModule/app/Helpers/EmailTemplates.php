@@ -208,6 +208,34 @@ class EmailTemplates
                              </p>
                              <p>{$signature}</p>';
 
+    const DS_CONFIGURATION_TEMPLATE = 'Document Signing Configuration Required';
+    const DS_CONFIGURATION_SUBJECT  = 'Document Signing Certificate - order details required';
+    const DS_CONFIGURATION_MESSAGE  = '<p>Dear {$client_name},</p>
+                             <p>
+                                Your document signing certificate ({$service_product_name}) is ready to be ordered.
+                                Enter your organization, the administrator contact and whether the certificate authority
+                                should ship a token or you already have one, at the URL below.
+                             </p>
+                             <p>{$ssl_configuration_link}</p>
+                             <p>
+                                After you submit the order, the certificate authority validates your organization and
+                                contacts the administrator by email and phone. If you have any questions, please open a
+                                ticket for assistance.
+                             </p>
+                             <p>{$signature}</p>';
+
+    const DS_ISSUED_TEMPLATE = 'Document Signing Certificate Issued';
+    const DS_ISSUED_SUBJECT  = 'Your document signing certificate is issued - {$ds_organization}';
+    const DS_ISSUED_MESSAGE  = '<p>Dear {$client_name},</p>
+                             <p>Your document signing certificate for {$ds_organization} is issued. It is valid until {$ds_valid_till}.</p>
+                             <p>
+                                {if $ds_method == \'ship-token\'}The certificate authority ships the hardware token with the
+                                certificate to the shipping address of your order.{else}The certificate authority emails the
+                                administrator instructions to install the certificate on your token.{/if}
+                             </p>
+                             <p>Order details: {$order_url}</p>
+                             <p>{$signature}</p>';
+
     /**
      * Sent when a CodeGuard licence is set up. Nothing has to be configured - the client only needs the way in.
      */
@@ -222,7 +250,7 @@ class EmailTemplates
                              <p>{$ssl_configuration_link}</p>
                              <p>{$signature}</p>';
 
-    const TEMPLATE_NAMES = ['CONFIGURATION', 'SMIME_CONFIGURATION', 'SMIME_REMINDER', 'SMIME_ISSUED', 'SMIME_EXPIRATION', 'CS_CONFIGURATION', 'CS_ISSUED', 'CS_EXPIRATION', 'EXPIRATION', 'SEND_CERTIFICATE', 'RENEWAL', 'REISSUE', 'SUBSCRIPTION', 'SUBSCRIPTION_EXPIRATION', 'SUBSCRIPTION_RENEWAL', 'RENEWAL_INVOICE', 'DISCONTINUED', 'CODE_GUARD_READY'];
+    const TEMPLATE_NAMES = ['CONFIGURATION', 'SMIME_CONFIGURATION', 'SMIME_REMINDER', 'SMIME_ISSUED', 'SMIME_EXPIRATION', 'CS_CONFIGURATION', 'CS_ISSUED', 'CS_EXPIRATION', 'EXPIRATION', 'SEND_CERTIFICATE', 'RENEWAL', 'REISSUE', 'SUBSCRIPTION', 'SUBSCRIPTION_EXPIRATION', 'SUBSCRIPTION_RENEWAL', 'RENEWAL_INVOICE', 'DISCONTINUED', 'CODE_GUARD_READY', 'DS_CONFIGURATION', 'DS_ISSUED'];
 
     /** S/MIME e-mails */
     const SMIME_TEMPLATES = [self::SMIME_CONFIGURATION_TEMPLATE, self::SMIME_REMINDER_TEMPLATE, self::SMIME_ISSUED_TEMPLATE, self::SMIME_EXPIRATION_TEMPLATE];

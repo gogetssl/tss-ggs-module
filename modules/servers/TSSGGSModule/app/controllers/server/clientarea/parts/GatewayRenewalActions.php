@@ -59,6 +59,8 @@ trait GatewayRenewalActions
         $vars['renewSame']       = $type::canRenewWithSameDetails($stored);
         $vars['renewNeedsModel'] = $type === CodeSigningService::class && CodeSigningService::renewalNeedsTokenModel($stored);
         $vars['renewIsCs']       = $type === CodeSigningService::class;
+        // document signing renews onto the token the client already has, so "same details" asks no model
+        $vars['renewIsDs']       = $type === \ModulesGarden\TSSGGSModule\App\Libs\DocumentSigningService::class;
         $vars['renewModels']     = CodeSigningService::TOKEN_MODELS;
         $vars['renewAgreement']  = CertificateService::agreement((int)$input['params']['pid']);
         $vars['csrfToken']       = $vars['csrfToken'] ?? \generate_token('plain');

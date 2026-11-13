@@ -58,6 +58,10 @@ class AdminServicesTabFields
             {
                 return $this->getCodeGuardDetails((int)$params['serviceid'], $sslService);
             }
+            if(CertificateService::category($params['serviceid']) === CertificateService::CATEGORY_DS)
+            {
+                return $this->getDocumentSigningDetails((int)$params['serviceid'], $sslService);
+            }
             if(CertificateService::category($params['serviceid']) !== CertificateService::CATEGORY_TLS)
             {
                 return ['Gateway Item ID' => (int)$sslService->remoteid];
@@ -114,6 +118,39 @@ class AdminServicesTabFields
         if(!empty($stored['migrated']))
         {
             $fields['Migrated'] = 'Yes, from the legacy module';
+        }
+
+        return $fields + $this->getSmimePreviousOrders($stored);
+    }
+
+    /**
+     * Document signing order on the module tab: status, gateway / CA order, organization, delivery, validity
+     */
+    private function getDocumentSigningDetails($serviceId, $sslService)
+    {
+        $ds     = \ModulesGarden\TSSGGSModule\App\Libs\DocumentSigningService::class;
+        $stored = $ds::stored($serviceId);
+        $status = (string)($stored['status'] ?? '');
+        $labels = ['active' => 'label-success', 'processing' => 'label-info', 'pending' => 'label-info', 'invited' => 'label-warning',
+                   'cancelled' => 'label-danger', 'rejected' => 'label-danger', 'failed' => 'label-danger', 'revoked' => 'label-danger', 'expired' => 'label-default'];
+        $model  = strtoupper((string)($stored['tokenModel'] ?? ''));
+
+        $fields = [];
+        $fields['Configuration Status'] = htmlspecialchars($sslService->status);
+        $fields['Gateway Order']        = 'Order #' . (int)($stored['orderId'] ?? 0) . ' | Item #' . (int)($stored['itemId'] ?? 0)
+            . (!empty($stored['vendorOrderId']) ? ' | Vendor (CA) order #' . htmlspecialchars($stored['vendorOrderId']) : '');
+        $fields['Vendor Status']        = '<span class="label ' . ($labels[$status] ?? 'label-default') . '">' . htmlspecialchars(ucfirst($status ?: 'unknown')) . '</span>'
+            . (!empty($stored['orderedAt']) ? ' &nbsp;ordered ' . htmlspecialchars($stored['orderedAt']) : '')
+            . (!empty($stored['refreshedAt']) ? ' &nbsp;<small class="text-muted">last refresh ' . htmlspecialchars($stored['refreshedAt']) . '</small>' : '');
+        $fields['Organization']         = htmlspecialchars((string)($stored['organization'] ?? '-'));
+        $fields['Delivery']             = htmlspecialchars((string)($stored['method'] ?? '-'))
+            . (!empty($stored['shipping']) ? ' (' . htmlspecialchars($stored['shipping']) . ')' : '')
+            . (isset($ds::TOKEN_MODELS[$model]) ? ' (' . htmlspecialchars($ds::TOKEN_MODELS[$model]) . ')' : '');
+        $fields['Validity']             = (!empty($stored['validFrom']) ? htmlspecialchars(substr($stored['validFrom'], 0, 10)) : '-') . ' &rarr; '
+            . (!empty($stored['validTill']) ? htmlspecialchars(substr($stored['validTill'], 0, 10)) : '-');
+        if(!empty($stored['tokenSetupLink']))
+        {
+            $fields['Token set-up'] = '<a href="' . htmlspecialchars($stored['tokenSetupLink']) . '" target="_blank" rel="noopener">Token set-up page</a>';
         }
 
         return $fields + $this->getSmimePreviousOrders($stored);

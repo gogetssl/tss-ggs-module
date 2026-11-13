@@ -647,6 +647,14 @@ class SSLTrustCenterApi
         return $this->call('/certificates/ais', $data);
     }
 
+    /**
+     * Document signing order: product {id, term}, provisioning {method, model | shipping {id, contact}}, contacts
+     */
+    public function createDocumentSigning(array $data)
+    {
+        return $this->call('/certificates/' . DocumentSigningService::CATEGORY, $data);
+    }
+
     // ------------------------------------------------------------------ CodeGuard (website backup, TheSSLStore only)
 
     /** gateway category of the CodeGuard products, and the base path of their own endpoints */
