@@ -451,9 +451,20 @@ class SubscriptionBilling
         {
             return false;
         }
-        Capsule::table('tblinvoiceitems')->where('id', (int)$item->id)->update(['amount' => $amount]);
-        self::updateInvoiceTotal((int)$item->invoiceid);
-        CertificateService::event($serviceId, 'info', '[Subscription] Renewal invoice #' . (int)$item->invoiceid . ' updated to the current domain slots: ' . number_format($amount, 2, '.', ''));
+        // WHMCS does not let an unpaid invoice change: it is cancelled and a new one is issued for the current slots
+        $service      = \ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Service::find((int)$serviceId);
+        $subscription = AcmeSubscription::getByServiceId($serviceId) ?: AisSubscription::getByServiceId($serviceId);
+        if(!$service || !$subscription)
+        {
+            return false;
+        }
+        $cancel = localAPI('UpdateInvoice', ['invoiceid' => (int)$item->invoiceid, 'status' => 'Cancelled']);
+        if(($cancel['result'] ?? '') !== 'success')
+        {
+            throw new \Exception('Renewal invoice #' . (int)$item->invoiceid . ' could not be replaced: ' . ($cancel['message'] ?? 'unknown error'));
+        }
+        AcmeHelpers::createAcmeSubscriptionRenewalInvoice($service, $service->product, $subscription);
+        CertificateService::event($serviceId, 'info', '[Subscription] Renewal invoice #' . (int)$item->invoiceid . ' replaced for the current domain slots: ' . number_format($amount, 2, '.', ''));
 
         return true;
     }
