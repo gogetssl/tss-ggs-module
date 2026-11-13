@@ -266,6 +266,7 @@ $_LANG['serverCA']['home']['acmeTotalSans'] = 'Celkem SAN';
 $_LANG['serverCA']['home']['acmeDomainType'] = 'Typ';
 $_LANG['serverCA']['home']['acmeDomainStatus'] = 'Stav';
 $_LANG['serverCA']['home']['acmeDateAdded'] = 'Datum přidání';
+$_LANG['serverCA']['home']['acmeRefundableTill'] = 'Vratitelné do %s';
 $_LANG['serverCA']['home']['acmeStatusActive'] = 'Aktivní';
 $_LANG['serverCA']['home']['acmeStatusRemoved'] = 'Odebráno';
 $_LANG['serverCA']['home']['acmeCreateSubscription'] = 'Vytvořit předplatné';

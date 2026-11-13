@@ -148,6 +148,19 @@ trait AcmeActions
 
         $domains = AcmeSubscriptionDomain::where('service_id', $serviceId)->get();
 
+        // when each domain was added, and - while it is still inside the refund window of its own addition - until
+        // when removing it gives the money back (the slot is then free to be given back as well)
+        $refundDays = \ModulesGarden\TSSGGSModule\App\Libs\SubscriptionBilling::REFUND_DAYS;
+        foreach($domains as $domainRow)
+        {
+            $added = (string)($domainRow->added_at ?: $domainRow->created_at);
+            $time  = $added !== '' && strpos($added, '0000-00-00') !== 0 ? strtotime($added) : false;
+            $until = $time ? strtotime('+' . $refundDays . ' days', $time) : false;
+
+            $domainRow->addedOn        = $time ? date('F j, Y', $time) : '';
+            $domainRow->refundableTill = ($until && $until >= time() && $domainRow->status === 'added') ? date('F j, Y', $until) : '';
+        }
+
         $wildcardEnabled = Helpers::isWildcardEnabled($product->id);
         $limits          = $this->getAcmeDomainLimits($input['params']);
         //$singleBoughtSans       = isset($input['params']['configoptions']['sans']) ? (int)$input['params']['configoptions']['sans'] : 0;
@@ -565,11 +578,19 @@ trait AcmeActions
             throw new \Exception(Lang::absoluteT('acme_upgrade_no_change_provided'));
         }
 
-        // giving bought slots back is a refund: possible only within the refund window of the last slot purchase
-        $reduces = ($hasSingle && $newSingle < $domainLimits['singleFromOption']) || ($hasWildcard && $newWildcard < $domainLimits['wildcardFromOption']);
-        if($reduces && !\ModulesGarden\TSSGGSModule\App\Libs\SubscriptionBilling::canReduceSlots($serviceId))
+        // Giving bought slots back is a refund. An empty slot costs nothing at the vendor and can be given back at any
+        // time, however long ago it was paid for; a slot holding a domain only while the vendor would still refund that
+        // domain (within the refund window of the day THAT domain was added). So the check is how many slots are
+        // refundable right now, per type.
+        $refundable = \ModulesGarden\TSSGGSModule\App\Libs\SubscriptionBilling::refundableSlots($serviceId);
+        foreach([['single', $hasSingle, $newSingle, $domainLimits['singleFromOption']], ['wildcard', $hasWildcard, $newWildcard, $domainLimits['wildcardFromOption']]] as $check)
         {
-            throw new \Exception(sprintf(Lang::absoluteT('acme_downgrade_refund_window_passed'), \ModulesGarden\TSSGGSModule\App\Libs\SubscriptionBilling::REFUND_DAYS));
+            list($type, $sent, $wanted, $current) = $check;
+            $given = $sent ? (int)$current - (int)$wanted : 0;
+            if($given > 0 && $given > $refundable[$type])
+            {
+                throw new \Exception(sprintf(Lang::absoluteT('acme_downgrade_refund_window_passed'), \ModulesGarden\TSSGGSModule\App\Libs\SubscriptionBilling::REFUND_DAYS));
+            }
         }
 
 

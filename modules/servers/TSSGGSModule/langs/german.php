@@ -266,6 +266,7 @@ $_LANG['serverCA']['home']['acmeTotalSans'] = 'SANs insgesamt';
 $_LANG['serverCA']['home']['acmeDomainType'] = 'Typ';
 $_LANG['serverCA']['home']['acmeDomainStatus'] = 'Status';
 $_LANG['serverCA']['home']['acmeDateAdded'] = 'Hinzugefügt am';
+$_LANG['serverCA']['home']['acmeRefundableTill'] = 'Erstattbar bis %s';
 $_LANG['serverCA']['home']['acmeStatusActive'] = 'Aktiv';
 $_LANG['serverCA']['home']['acmeStatusRemoved'] = 'Entfernt';
 $_LANG['serverCA']['home']['acmeCreateSubscription'] = 'Abonnement erstellen';

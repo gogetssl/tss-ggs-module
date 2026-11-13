@@ -3,6 +3,7 @@
 namespace ModulesGarden\TSSGGSModule\App\Libs;
 
 use ModulesGarden\TSSGGSModule\App\Models\AcmeSubscription;
+use ModulesGarden\TSSGGSModule\App\Models\AcmeSubscriptionDomain;
 use ModulesGarden\TSSGGSModule\App\Models\AisSubscription;
 use WHMCS\Database\Capsule;
 
@@ -43,12 +44,63 @@ class SubscriptionBilling
         return $date ?: (string)Capsule::table('tblhosting')->where('id', (int)$serviceId)->value('regdate');
     }
 
-    /** bought domain slots can be given back only within REFUND_DAYS of their purchase */
-    public static function canReduceSlots($serviceId)
+    /**
+     * How many bought domain slots can be given back right now, per type ['single' => n, 'wildcard' => n].
+     *
+     * A slot costs nothing at the vendor until a domain is put in it, so an empty slot can be given back at any time,
+     * however long ago it was paid for. A slot that holds a domain can only be given back while the vendor would still
+     * refund that domain - it refunds a removal within REFUND_DAYS of the domain's own addition date, not of the day
+     * the slot was paid for.
+     */
+    public static function refundableSlots($serviceId)
     {
-        $date = self::lastSlotPurchase($serviceId);
+        $bought = self::boughtSlots($serviceId);
+        $since  = date('Y-m-d H:i:s', strtotime('-' . self::REFUND_DAYS . ' days'));
+        $result = ['single' => 0, 'wildcard' => 0];
 
-        return $date !== '' && $date !== '0000-00-00' && strtotime($date) >= strtotime('-' . self::REFUND_DAYS . ' days', strtotime(date('Y-m-d')));
+        foreach(['single', 'wildcard'] as $type)
+        {
+            $domains = AcmeSubscriptionDomain::where('service_id', (int)$serviceId)
+                ->where('status', 'added')
+                ->where('domain_type', $type === 'wildcard' ? 'wildcard' : 'single')
+                ->get(['added_at', 'created_at']);
+
+            $used   = count($domains);
+            $recent = 0;
+            foreach($domains as $domain)
+            {
+                $added = (string)($domain->added_at ?: $domain->created_at);
+                if($added !== '' && strpos($added, '0000-00-00') !== 0 && $added >= $since)
+                {
+                    $recent++;
+                }
+            }
+            // the empty slots, plus the ones whose domain the vendor would still refund
+            $result[$type] = max(0, $bought[$type] - $used) + $recent;
+        }
+
+        return $result;
+    }
+
+    /** domain slots the client has paid for, per type (the configurable options of the service) */
+    public static function boughtSlots($serviceId)
+    {
+        $slots = ['single' => 0, 'wildcard' => 0];
+        $rows  = Capsule::table('tblhostingconfigoptions')
+            ->join('tblproductconfigoptions', 'tblproductconfigoptions.id', '=', 'tblhostingconfigoptions.configid')
+            ->where('tblhostingconfigoptions.relid', (int)$serviceId)
+            ->get(['tblproductconfigoptions.optionname', 'tblhostingconfigoptions.qty']);
+
+        foreach($rows as $row)
+        {
+            $name = explode('|', (string)$row->optionname)[0];
+            if($name === 'sans' || $name === 'sans_wildcard')
+            {
+                $slots[$name === 'sans_wildcard' ? 'wildcard' : 'single'] += (int)$row->qty;
+            }
+        }
+
+        return $slots;
     }
 
     /**

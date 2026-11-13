@@ -89,7 +89,12 @@
                                             <span class="label label-info">{$acmeDomainStatus|capitalize|escape}</span>
                                         {/if}
                                     </td>
-                                    <td>{$domainRow->added_at|escape}</td>
+                                    <td>
+                                        {if $domainRow->addedOn}{$domainRow->addedOn|escape}{else}{$domainRow->added_at|escape}{/if}
+                                        {if $domainRow->refundableTill}
+                                            <br><small class="text-muted">{$MGLANG->T('acmeRefundableTill')|sprintf:$domainRow->refundableTill}</small>
+                                        {/if}
+                                    </td>
                                     <td>
                                         {if $domainRow->status == 'added' && $subscription}
                                             <button class="btn btn-xs btn-default acme-action" data-action="removeDomain" data-domain="{$domainRow->domain|escape:'htmlall'}">{$MGLANG->T('acmeRemoveDomain')}</button>
