@@ -1131,7 +1131,7 @@ class CertificateService
 
     /** Certificate authorities with their own subscriber agreement, and the brands that belong to each */
     const AUTHORITIES = [
-        'sectigo'  => ['name' => 'Sectigo',  'brands' => ['sectigo', 'comodo', 'positivessl', 'instantssl', 'essentialssl', 'enterprisessl', 'trustedsite']],
+        'sectigo'  => ['name' => 'Sectigo',  'brands' => ['sectigo', 'comodo', 'positivessl', 'instantssl', 'essentialssl', 'enterprisessl']],
         'digicert' => ['name' => 'DigiCert', 'brands' => ['digicert', 'geotrust', 'rapidssl', 'thawte', 'symantec', 'encryption everywhere']],
         'gogetssl' => ['name' => 'GoGetSSL', 'brands' => ['gogetssl']],
     ];
