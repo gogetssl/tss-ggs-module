@@ -755,13 +755,13 @@ $_LANG['serverCA']['home']['validation_page']['pbExpires'] = 'Expires in <b>%s</
 
 // subscriptions (1.4)
 $_LANG['acme_downgrade_refund_window_passed'] = 'Domain slots can be given back only within %s days of buying them. Remove the domains you no longer need instead; the slots stay paid until the subscription renews.';
-$_LANG['aisInstallMethod'] = 'Installation method';
-$_LANG['aisMethod_autoinstall'] = 'AutoInstall SSL (the agent installs and renews the certificate on your server)';
-$_LANG['aisMethod_acme'] = 'ACME (your own ACME client, e.g. Certbot, gets the certificate)';
-$_LANG['aisInstallMethodHint'] = 'You can switch the method later on the service page.';
-$_LANG['aisSwitchToAcme'] = 'Switch to ACME';
-$_LANG['aisSwitchToAutoinstall'] = 'Switch to AutoInstall SSL';
-$_LANG['aisSwitchConfirm'] = 'Switch the installation method? Certificates already installed stay valid.';
+$_LANG['serverCA']['home']['aisInstallMethod'] = 'Installation method';
+$_LANG['serverCA']['home']['aisMethod_autoinstall'] = 'AutoInstall SSL (the agent installs and renews the certificate on your server)';
+$_LANG['serverCA']['home']['aisMethod_acme'] = 'ACME (your own ACME client, e.g. Certbot, gets the certificate)';
+$_LANG['serverCA']['home']['aisInstallMethodHint'] = 'You can switch the method later on the service page.';
+$_LANG['serverCA']['home']['aisSwitchToAcme'] = 'Switch to ACME';
+$_LANG['serverCA']['home']['aisSwitchToAutoinstall'] = 'Switch to AutoInstall SSL';
+$_LANG['serverCA']['home']['aisSwitchConfirm'] = 'Switch the installation method? Certificates already installed stay valid.';
 $_LANG['aisInstallMethodChanged'] = 'The installation method was changed.';
 $_LANG['aisInvalidInstallMethod'] = 'Choose AutoInstall SSL or ACME.';
 $_LANG['subscriptionAlreadyCancelled'] = 'The subscription is already cancelled.';

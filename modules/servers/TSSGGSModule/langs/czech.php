@@ -755,13 +755,13 @@ $_LANG['serverCA']['home']['validation_page']['pbExpires'] = 'Vyprší za <b>%s<
 
 // subscriptions (1.4)
 $_LANG['acme_downgrade_refund_window_passed'] = 'Doménové sloty lze vrátit jen do %s dnů od jejich nákupu. Místo toho odeberte domény, které už nepotřebujete; sloty zůstávají zaplacené až do obnovení předplatného.';
-$_LANG['aisInstallMethod'] = 'Způsob instalace';
-$_LANG['aisMethod_autoinstall'] = 'AutoInstall SSL (agent certifikát nainstaluje a obnovuje na vašem serveru)';
-$_LANG['aisMethod_acme'] = 'ACME (certifikát získá váš vlastní ACME klient, např. Certbot)';
-$_LANG['aisInstallMethodHint'] = 'Způsob můžete později změnit na stránce služby.';
-$_LANG['aisSwitchToAcme'] = 'Přepnout na ACME';
-$_LANG['aisSwitchToAutoinstall'] = 'Přepnout na AutoInstall SSL';
-$_LANG['aisSwitchConfirm'] = 'Změnit způsob instalace? Již nainstalované certifikáty zůstanou platné.';
+$_LANG['serverCA']['home']['aisInstallMethod'] = 'Způsob instalace';
+$_LANG['serverCA']['home']['aisMethod_autoinstall'] = 'AutoInstall SSL (agent certifikát nainstaluje a obnovuje na vašem serveru)';
+$_LANG['serverCA']['home']['aisMethod_acme'] = 'ACME (certifikát získá váš vlastní ACME klient, např. Certbot)';
+$_LANG['serverCA']['home']['aisInstallMethodHint'] = 'Způsob můžete později změnit na stránce služby.';
+$_LANG['serverCA']['home']['aisSwitchToAcme'] = 'Přepnout na ACME';
+$_LANG['serverCA']['home']['aisSwitchToAutoinstall'] = 'Přepnout na AutoInstall SSL';
+$_LANG['serverCA']['home']['aisSwitchConfirm'] = 'Změnit způsob instalace? Již nainstalované certifikáty zůstanou platné.';
 $_LANG['aisInstallMethodChanged'] = 'Způsob instalace byl změněn.';
 $_LANG['aisInvalidInstallMethod'] = 'Zvolte AutoInstall SSL nebo ACME.';
 $_LANG['subscriptionAlreadyCancelled'] = 'Předplatné je již zrušeno.';
