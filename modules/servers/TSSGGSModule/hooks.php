@@ -289,7 +289,7 @@ add_hook('ClientAreaHomepagePanels', 1, function($homePagePanels) {
     }
 });
 
-// Both editions (GoGetSSL Module, TheSSLStore Module) can run on one WHMCS and each adds its own "SSL Certificates"
+// Both editions (GoGetSSL Module, TheSSLStore Plugin) can run on one WHMCS and each adds its own "SSL Certificates"
 // block: once a second block appears, every block shows its brand so the client can tell them apart. Shared by
 // the editions (same function name in both packages), hence the function_exists guard and the $GLOBALS list.
 if(!function_exists('unifiedSslLabelBlock'))

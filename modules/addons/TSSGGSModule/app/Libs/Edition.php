@@ -3,7 +3,7 @@
 namespace ModulesGarden\TSSGGSModule\App\Libs;
 
 /**
- * Distribution edition (GoGetSSL Module / TheSSLStore Module) - see app/Config/edition.php.
+ * Distribution edition (GoGetSSL Module / TheSSLStore Plugin) - see app/Config/edition.php.
  * Self-contained on purpose: it is also used by the server module before the addon framework is booted.
  */
 class Edition
@@ -17,7 +17,7 @@ class Edition
     const LEGACY_NAME = 'The SSL Store & GoGetSSL Module';
 
     /** Names editions used before (email templates created under them are renamed too) */
-    const OLD_NAMES = ['TheSSLStore Plugin'];
+    const OLD_NAMES = ['TheSSLStore Module'];
 
     protected static $editions = [
         self::GGS => [
@@ -26,7 +26,7 @@ class Edition
             'description' => 'GoGetSSL module for WHMCS: sell and manage SSL/TLS certificates, ACME and AutoInstall SSL subscriptions and other security products.',
         ],
         self::TSS => [
-            'name'        => 'TheSSLStore Module',
+            'name'        => 'TheSSLStore Plugin',
             'brand'       => 'TheSSLStore',
             'description' => 'TheSSLStore module for WHMCS: sell and manage SSL/TLS certificates, ACME and AutoInstall SSL subscriptions and other security products.',
         ],
@@ -78,7 +78,7 @@ class Edition
 
     /**
      * Certificate vendor (API credentials) of the edition: each edition works with its own account only -
-     * TheSSLStore Module with TheSSLStore, the GoGetSSL Module with GoGetSSL
+     * TheSSLStore Plugin with TheSSLStore, the GoGetSSL Module with GoGetSSL
      */
     public static function vendors()
     {

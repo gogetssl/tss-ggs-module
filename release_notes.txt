@@ -1,0 +1,35 @@
+1.0.0 (2026-11-13)
+First release of the unified module, shipped as two packages from one code base:
+GoGetSSL Module (GoGetSSL) and TheSSLStore Plugin (TheSSLStore). Each package
+works with its own vendor account and can be installed beside the other.
+
+Certificates
+- SSL/TLS: order, reissue, renew, revoke; CSR generation and private key handling;
+  DCV by e-mail, HTTP and DNS, with the approver address changeable afterwards.
+- AutoInstall SSL and cPanel installation, including the queue that retries.
+- ACME (Certificate-as-a-Service) and Plan + Automate subscriptions.
+- S/MIME certificates, including TheSSLStore invite orders.
+- Code signing on a hardware token or an own HSM, with the token and shipping sold
+  as a product option; TheSSLStore Sectigo/Comodo and DigiCert products.
+- CodeGuard website backup: the licence is created with the service, the client
+  opens the CodeGuard dashboard from the service page, changes the contact, and the
+  plan change, suspension and termination are carried out at the vendor.
+
+Billing and subscriptions
+- Renewal invoices, renewal reminders and automatic termination of unpaid services.
+- Subscription products: renewal invoices for the whole period, prorated or full
+  price when buying more domains, refunds inside the refund window, and credits for
+  a period that is paid for but not started.
+
+Administration
+- Product import from the vendor catalogue, with prices, terms and SAN options.
+- Dashboard with the order pipeline, certificate health and scheduled task state.
+- Reports: sales, costs and profit per product, exportable as CSV.
+- Module log of every gateway call, with secrets masked.
+- Client area in English, German, French, Spanish, Czech and Danish.
+
+Migration
+- Takes over services from the legacy GoGetSSL (SSLCENTERWHMCS) and TheSSLStore
+  (thesslstorefullv2) modules: products, settings, orders, subscriptions,
+  AutoInstall state, S/MIME, code signing and CodeGuard, with a dry run first and a
+  rollback if a run is stopped.

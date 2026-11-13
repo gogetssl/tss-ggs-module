@@ -26,7 +26,7 @@ class AddonModuleRepository
             }
             if($setting['setting'] == 'vendors')
             {
-                // only the vendors of this edition (TheSSLStore Module: TheSSLStore only)
+                // only the vendors of this edition (TheSSLStore Plugin: TheSSLStore only)
                 $vendors = array_values(array_intersect(explode(',', $setting['value']), \ModulesGarden\TSSGGSModule\App\Libs\Edition::vendors()));
                 $result[$setting['setting']] = $vendors ?: \ModulesGarden\TSSGGSModule\App\Libs\Edition::vendors();
             }
