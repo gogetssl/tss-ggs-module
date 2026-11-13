@@ -34,8 +34,9 @@ class Pipeline
             $services = Capsule::table('tblhosting')
                 ->join('tblproducts', 'tblproducts.id', '=', 'tblhosting.packageid')
                 ->leftJoin('TSSGGSModule_Requests', function($join) {
-                    // SSL orders keep their state in "certificate", S/MIME orders in "smime"
-                    $join->on('TSSGGSModule_Requests.serviceid', '=', 'tblhosting.id')->whereIn('TSSGGSModule_Requests.name', ['certificate', 'smime', 'codesigning']);
+                    // SSL orders keep their state in "certificate", every other product type in its own row
+                    $join->on('TSSGGSModule_Requests.serviceid', '=', 'tblhosting.id')
+                        ->whereIn('TSSGGSModule_Requests.name', array_merge(['certificate'], \ModulesGarden\TSSGGSModule\App\Libs\GatewayOrderService::requestNames()));
                 })
                 ->where('tblproducts.servertype', 'TSSGGSModule')
                 ->whereNotIn('tblhosting.id', $subscriptions ?: [0])

@@ -39,6 +39,23 @@ abstract class GatewayOrderService
     }
 
     /**
+     * Request row names of every product type, so a new type is picked up everywhere the orders are counted
+     * (dashboard pipeline, migration clean-up) without another hard-coded list.
+     *
+     * @return string[]
+     */
+    public static function requestNames()
+    {
+        $names = [];
+        foreach(self::TYPES as $class)
+        {
+            $names[] = $class::REQUEST_NAME;
+        }
+
+        return $names;
+    }
+
+    /**
      * Product type class of the WHMCS product (null: an SSL / ACME / AutoInstall product)
      *
      * @return string|null class name
