@@ -89,6 +89,12 @@ class AisHelpers
         $subscription->period_start       = isset($subData['begin'])        ? ($subData['begin'] ?: null)        : $subscription->period_start;
         $subscription->period_end         = isset($subData['next_renewal']) ? ($subData['next_renewal'] ?: null) : $subscription->period_end;
         $subscription->renewal_date       = isset($subData['next_renewal']) ? ($subData['next_renewal'] ?: null) : $subscription->renewal_date;
+        // auto-renewal off (here or at the vendor): the gateway gives the end of the period instead of a renewal date
+        if(empty($subData['next_renewal']) && !empty($subData['end']))
+        {
+            $subscription->period_end = $subData['end'];
+            $subscription->auto_renew = 0;
+        }
         // the method the vendor reports (none reported: AutoInstall SSL, the default)
         $method = strtolower((string)($firstItem['install_method'] ?? ($autoinstall['installation_method'] ?? '')));
         $subscription->install_method = strpos($method, 'acme') !== false ? self::METHOD_ACME : self::METHOD_AUTOINSTALL;
