@@ -59,6 +59,15 @@ trait SslCertificatePages
         $vars['product_name']  = $product->name;
         $vars['order_number']  = isset($order->ordernum) && !empty($order->ordernum) ? $order->ordernum : $order->id;
         $vars['url']           = (new Config())->getConfigureSSLUrl($ssl->id, $serviceId);
+        // the page shows the same order and billing cards as the other product types
+        $currency              = \getCurrency((int)$service->userid);
+        $vars['billing']       = [
+            'registration' => $this->smimeDate($service->regdate),
+            'nextDue'      => $this->smimeDate($service->nextduedate),
+            'amount'       => \formatCurrency($service->amount, $currency ? $currency['id'] : null),
+            'cycle'        => $service->billingcycle,
+        ];
+
         return ['tpl' => 'awaiting_configuration', 'vars' => $vars];
     }
 

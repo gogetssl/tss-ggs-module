@@ -1,4 +1,4 @@
-<div class="validate-ssl-unified">
+<div class="validate-ssl-unified tssggs-cert">
     {if $processing_guide}
         <div class="alert alert-info tssggs-processing-guide" role="alert">{$processing_guide}</div>
     {/if}
@@ -20,91 +20,70 @@
             {/if}
         </div>
     {/if}
-    <div class="table-unified-information">
-        <p class="desc">{$product_title}</p>
-        <div class="row">
-            <div class="col-sm-6 col-xs-12">
-                <div class="row-unified" style="border-right:2px solid #498295">
-                    <h4>{$product_name}</h4>
-                    <table>
-                        <tbody>
-                        <tr>
-                            <td>{$MGLANG->T('validation_page', 'StoreAPIOrder')}</td>
-                            <td>{$api_order_id}</td>
-                        </tr>
-                        <tr>
-                            <td>{$MGLANG->T('validation_page', 'VendorOrderID')}</td>
-                            <td>{$vendor_order_id}</td>
-                        </tr>
-                        <tr>
-                            <td>{$MGLANG->T('validation_page', 'DomainName')}</td>
-                            <td>{$domain}</td>
-                        </tr>
-                        <tr>
-                            <td>{$MGLANG->T('validation_page', 'Status')}</td>
-                            <td class="blue-bold">{if $status == 'pending' || $status == 'processing'}<i class="fa fa-cog" aria-hidden="true"></i> {$MGLANG->T('validation_page', 'Validating')}{else}{$status|escape|capitalize}{/if}</td>
-                        </tr>
-                        <tr>
-                            <td>{$MGLANG->T('validation_page', 'ValidFrom')}</td>
-                            <td>{if $valid_from}{$valid_from}{else}{$MGLANG->T('validation_page', 'NA')}{/if}</td>
-                        </tr>
-                        <tr>
-                            <td>{$MGLANG->T('validation_page', 'ValidTill')}</td>
-                            <td>{if $valid_till}{$valid_till}{else}{$MGLANG->T('validation_page', 'NA')}{/if}</td>
-                        </tr>
-                        <tr>
-                            <td>{$MGLANG->T('validation_page', 'SubscribtionStarts')}</td>
-                            <td>{if $subscribtion_starts}{$subscribtion_starts}{else}{$MGLANG->T('validation_page', 'NA')}{/if}</td>
-                        </tr>
-                        <tr>
-                            <td>{$MGLANG->T('validation_page', 'SubscribtionsEnds')}</td>
-                            <td>{if $subscribtion_ends}{$subscribtion_ends}{else}{$MGLANG->T('validation_page', 'NA')}{/if}</td>
-                        </tr>
-                        <tr>
-                            <td>{$MGLANG->T('validation_page', 'NextReissue')}</td>
-                            <td>{if $next_reissue}{$next_reissue}{else}{$MGLANG->T('validation_page', 'NA')}{/if}</td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div class="col-sm-6 col-xs-12">
-                <div class="row-unified">
-                    <h4>{$MGLANG->T('validation_page', 'OrderDetails')}</h4>
-                    <table>
-                        <tbody>
-                        <tr>
-                            <td>{$MGLANG->T('validation_page', 'RegistrationDate')}</td>
-                            <td>{$order_details.registration_date}</td>
-                        </tr>
-                        <tr>
-                            <td>{$MGLANG->T('validation_page', 'OrderExpires')}</td>
-                            <td>{$order_details.expiration_date}</td>
-                        </tr>
-                        <tr>
-                            <td>{$MGLANG->T('validation_page', 'ReccuringAmount')}</td>
-                            <td>{$order_details.reccuring_amount}</td>
-                        </tr>
-                        <tr>
-                            <td>{$MGLANG->T('validation_page', 'BillingCycle')}</td>
-                            <td>{$order_details.billing_cycle}</td>
-                        </tr>
-                        <tr>
-                            <td>{$MGLANG->T('validation_page', 'PaymentMethod')}</td>
-                            <td>{$order_details.payment_method}</td>
-                        </tr>
-                        </tbody>
-                    </table>
-                    {if $serviceOpen}
-                    <h4 style="margin-top:30px;">{$MGLANG->T('validation_page', 'Actions')}</h4>
-                    <button type="button" data-toggle="modal" data-target="#myModalCancel" class="btn btn-default">{$MGLANG->T('validation_page', 'CancelCertificate')}</button>
-                    {else}
-                    <div class="alert alert-warning" style="margin-top:30px;">{$MGLANG->T('validation_page', 'Certificate not available')}</div>
-                    {/if}
-                </div>
+    {* ---------- Hero: the certificate authority is validating the order ---------- *}
+    <section class="tssggs-card tssggs-hero tssggs-hero--wait">
+        <div class="tssggs-hero__head">
+            <span class="tssggs-hero__icon">
+                <svg class="tssggs-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="M12 8v4M12 16h.01"/></svg>
+            </span>
+            <div class="tssggs-hero__title">
+                <span class="tssggs-badge tssggs-badge--wait">{if $status == 'pending' || $status == 'processing'}{$MGLANG->T('validation_page', 'Validating')}{else}{$status|escape|capitalize}{/if}</span>
+                <h3>{$product_name|escape}</h3>
+                {if $domain}
+                    <p class="tssggs-hero__domain">
+                        <svg class="tssggs-ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/><path d="M2 12h20"/></svg>
+                        {$domain|escape}
+                    </p>
+                {/if}
             </div>
         </div>
+        <div class="tssggs-hero__foot">
+            <p>{$product_title}</p>
+            <div class="tssggs-actions">
+                {if $serviceOpen}
+                    <button type="button" data-toggle="modal" data-target="#myModalCancel" class="tssggs-btn">
+                        <svg class="tssggs-ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6M9 9l6 6"/></svg>
+                        {$MGLANG->T('validation_page', 'CancelCertificate')}
+                    </button>
+                {/if}
+            </div>
+            {if !$serviceOpen}
+                <p class="tssggs-note tssggs-note--plain">{$MGLANG->T('validation_page', 'Certificate not available')}</p>
+            {/if}
+        </div>
+    </section>
+
+    <div class="tssggs-grid">
+        <section class="tssggs-card">
+            <h4 class="tssggs-card__title">
+                <svg class="tssggs-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8M16 13H8M16 17H8"/></svg>
+                {$MGLANG->T('validation_page', 'cardCertificate')}
+            </h4>
+            <dl class="tssggs-dl">
+                <dt>{$MGLANG->T('validation_page', 'DomainName')}</dt><dd>{if $domain}{$domain|escape}{else}{$MGLANG->T('validation_page', 'NA')}{/if}</dd>
+                <dt>{$MGLANG->T('validation_page', 'ValidFrom')}</dt><dd>{if $valid_from}{$valid_from}{else}{$MGLANG->T('validation_page', 'NA')}{/if}</dd>
+                <dt>{$MGLANG->T('validation_page', 'ValidTill')}</dt><dd>{if $valid_till}{$valid_till}{else}{$MGLANG->T('validation_page', 'NA')}{/if}</dd>
+                <dt>{$MGLANG->T('validation_page', 'SubscribtionStarts')}</dt><dd>{if $subscribtion_starts}{$subscribtion_starts}{else}{$MGLANG->T('validation_page', 'NA')}{/if}</dd>
+                <dt>{$MGLANG->T('validation_page', 'SubscribtionsEnds')}</dt><dd>{if $subscribtion_ends}{$subscribtion_ends}{else}{$MGLANG->T('validation_page', 'NA')}{/if}</dd>
+                <dt>{$MGLANG->T('validation_page', 'NextReissue')}</dt><dd>{if $next_reissue}{$next_reissue}{else}{$MGLANG->T('validation_page', 'NA')}{/if}</dd>
+                <dt>{$MGLANG->T('validation_page', 'StoreAPIOrder')}</dt><dd class="tssggs-mono">{$api_order_id}</dd>
+                <dt>{$MGLANG->T('validation_page', 'VendorOrderID')}</dt><dd class="tssggs-mono">{$vendor_order_id}</dd>
+            </dl>
+        </section>
+
+        <section class="tssggs-card">
+            <h4 class="tssggs-card__title">
+                <svg class="tssggs-ic" viewBox="0 0 24 24" aria-hidden="true"><rect width="20" height="14" x="2" y="5" rx="2"/><path d="M2 10h20"/></svg>
+                {$MGLANG->T('validation_page', 'cardBilling')}
+            </h4>
+            <dl class="tssggs-dl">
+                <dt>{$MGLANG->T('validation_page', 'RegistrationDate')}</dt><dd>{$order_details.registration_date}</dd>
+                <dt>{$MGLANG->T('validation_page', 'OrderExpires')}</dt><dd>{$order_details.expiration_date}</dd>
+                <dt>{$MGLANG->T('validation_page', 'ReccuringAmount')}</dt><dd>{$order_details.reccuring_amount}</dd>
+                <dt>{$MGLANG->T('validation_page', 'BillingCycle')}</dt><dd>{$order_details.billing_cycle}</dd>
+                <dt>{$MGLANG->T('validation_page', 'PaymentMethod')}</dt><dd>{$order_details.payment_method}</dd>
+            </dl>
+        </section>
     </div>
 </div>
 
