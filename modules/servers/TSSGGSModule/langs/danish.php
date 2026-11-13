@@ -765,3 +765,4 @@ $_LANG['serverCA']['home']['aisSwitchConfirm'] = 'Skift installationsmetode? Cer
 $_LANG['aisInstallMethodChanged'] = 'Installationsmetoden blev ændret.';
 $_LANG['aisInvalidInstallMethod'] = 'Vælg AutoInstall SSL eller ACME.';
 $_LANG['subscriptionAlreadyCancelled'] = 'Abonnementet er allerede opsagt.';
+$_LANG['acme_slots_invoice_created'] = 'Der er oprettet en faktura for de ekstra domæner. Domænerne tilføjes, så snart den er betalt.';

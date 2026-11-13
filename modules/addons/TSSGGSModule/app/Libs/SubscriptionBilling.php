@@ -85,6 +85,15 @@ class SubscriptionBilling
                 ->get(['tblinvoiceitems.*'])
                 ->all());
         }
+        // domains bought on the module's invoice ("Buy more domains")
+        $items = array_merge($items, Capsule::table('tblinvoiceitems')
+            ->join('tblinvoices', 'tblinvoices.id', '=', 'tblinvoiceitems.invoiceid')
+            ->where('tblinvoiceitems.type', self::SLOT_PURCHASE)
+            ->where('tblinvoiceitems.relid', (int)$serviceId)
+            ->where('tblinvoices.status', 'Paid')
+            ->where('tblinvoices.datepaid', '>', $since)
+            ->get(['tblinvoiceitems.*'])
+            ->all());
 
         $byInvoice = [];
         foreach($items as $item)
@@ -277,69 +286,146 @@ class SubscriptionBilling
         return $row && $row->renewal_date ? date('Y-m-d', strtotime((string)$row->renewal_date)) : '';
     }
 
-    /**
-     * Prices the domain slots of an upgrade invoice (WHMCS charges a one-time product's option at its full price):
-     *  - "prorated": slot price / 365 x days left until the next renewal (paid in advance for the next period when the
-     *    renewal invoice was already paid, since the renewal date has then moved a year on);
-     *  - "full": the yearly slot price.
-     * Only the slots added by the upgrade are charged; giving slots back is not charged. Returns the items changed.
-     */
-    public static function priceSlotUpgradeInvoice($invoiceId)
+    /** name of the Requests row that keeps a purchase of domains until its invoice is paid */
+    const SLOT_PURCHASE = 'slotPurchase';
+
+    /** a purchase of domains of the service waits for its payment */
+    public static function pendingSlotPurchase($serviceId)
     {
-        $invoice = Capsule::table('tblinvoices')->where('id', (int)$invoiceId)->first(['id', 'userid', 'status']);
-        if(!$invoice || $invoice->status !== 'Unpaid')
+        foreach(\ModulesGarden\TSSGGSModule\App\Models\Request::where('serviceid', (int)$serviceId)->where('name', self::SLOT_PURCHASE)->where('status', 'pending')->get() as $row)
         {
-            return 0;
-        }
-        $currency = (int)Capsule::table('tblclients')->where('id', (int)$invoice->userid)->value('currency');
-        $changed  = 0;
-        $found    = 0;
-        foreach(Capsule::table('tblinvoiceitems')->where('invoiceid', (int)$invoiceId)->where('type', 'Upgrade')->get() as $item)
-        {
-            $upgrade = Capsule::table('tblupgrades')->where('id', (int)$item->relid)->first();
-            if(!$upgrade || $upgrade->type !== 'configoptions')
+            $data   = json_decode((string)$row->request, true) ?: [];
+            $status = (string)Capsule::table('tblinvoices')->where('id', (int)($data['invoice'] ?? 0))->value('status');
+            if(in_array($status, ['Unpaid', 'Payment Pending', 'Draft'], true))
             {
-                continue;
+                return true;
             }
-            $packageId = (int)Capsule::table('tblhosting')->where('id', (int)$upgrade->relid)->value('packageid');
-            if(!AcmeHelpers::isAcmeWhmcsProduct($packageId))
-            {
-                continue;
-            }
-            $parts = explode('=>', (string)$upgrade->originalvalue);
-            $added = count($parts) === 2 ? (int)$upgrade->newvalue - (int)$parts[1] : 0;
-            if($added <= 0)
-            {
-                continue;
-            }
-            $found++;
-            $amount = $added * self::slotPrice((int)$parts[0], $currency);
-            if(self::slotPricing() === self::SLOT_PRICING_PRORATED)
-            {
-                $renewal = self::renewalDate((int)$upgrade->relid);
-                $days    = $renewal !== '' ? (int)ceil((strtotime($renewal) - strtotime(date('Y-m-d'))) / 86400) : 365;
-                $amount  = $amount / 365 * max(1, $days);
-            }
-            $amount = round($amount, 2);
-            if(abs($amount - (float)$item->amount) < 0.005)
-            {
-                continue;
-            }
-            Capsule::table('tblinvoiceitems')->where('id', (int)$item->id)->update(['amount' => $amount]);
-            Capsule::table('tblupgrades')->where('id', (int)$upgrade->id)->update(['amount' => $amount]);
-            $changed++;
-        }
-        // the total also when nothing changed: WHMCS may write its own total after an earlier hook repriced the items
-        if($found)
-        {
-            self::updateInvoiceTotal((int)$invoiceId);
-        }
-        if($changed)
-        {
-            \logActivity('TSSGGS: domain slots of upgrade invoice #' . (int)$invoiceId . ' priced ' . self::slotPricing() . '.');
         }
 
-        return $changed;
+        return false;
+    }
+
+    /**
+     * Price of domain slots bought now: the yearly slot price x number, for the days left until the next renewal
+     * ("prorated", Settings > SSL) or the whole year ("full"). After the renewal was paid the renewal date has moved a
+     * year on, so a prorated purchase then also covers the coming year.
+     */
+    public static function slotPurchaseAmount($serviceId, $configId, $count)
+    {
+        $currency = (int)Capsule::table('tblhosting')->join('tblclients', 'tblclients.id', '=', 'tblhosting.userid')->where('tblhosting.id', (int)$serviceId)->value('tblclients.currency');
+        $amount   = max(0, (int)$count) * self::slotPrice((int)$configId, $currency);
+        if(self::slotPricing() === self::SLOT_PRICING_PRORATED)
+        {
+            $renewal = self::renewalDate((int)$serviceId);
+            $days    = $renewal !== '' ? (int)ceil((strtotime($renewal) - strtotime(date('Y-m-d'))) / 86400) : 365;
+            $amount  = $amount / 365 * max(1, $days);
+        }
+
+        return round($amount, 2);
+    }
+
+    /**
+     * Invoice for domain slots the client buys ([config option id => number]); the slots are added when it is paid
+     * (applySlotPurchase). A purchase that costs nothing is added at once. Returns the invoice ID (0: added at once).
+     */
+    public static function createSlotPurchaseInvoice($serviceId, array $bought)
+    {
+        $service = Capsule::table('tblhosting')->join('tblproducts', 'tblproducts.id', '=', 'tblhosting.packageid')
+            ->where('tblhosting.id', (int)$serviceId)->first(['tblhosting.userid', 'tblhosting.domain', 'tblhosting.paymentmethod', 'tblproducts.name', 'tblproducts.tax']);
+        $renewal = self::renewalDate((int)$serviceId);
+        $post    = ['userid' => (int)$service->userid, 'sendinvoice' => true, 'date' => date('Y-m-d'), 'duedate' => date('Y-m-d'), 'paymentmethod' => (string)$service->paymentmethod];
+        $total   = 0.0;
+        $n       = 0;
+        foreach($bought as $configId => $count)
+        {
+            $name   = explode('|', (string)Capsule::table('tblproductconfigoptions')->where('id', (int)$configId)->value('optionname'));
+            $amount = self::slotPurchaseAmount($serviceId, $configId, $count);
+            $n++;
+            $post['itemdescription' . $n] = $service->name . ($service->domain ? ' - ' . $service->domain : '') . ': ' . (int)$count . ' x ' . trim(end($name))
+                . ($renewal !== '' ? ' (until ' . $renewal . ')' : '');
+            $post['itemamount' . $n] = $amount;
+            $post['itemtaxed' . $n]  = (int)$service->tax;
+            $total += $amount;
+        }
+
+        if($total <= 0)
+        {
+            self::addSlots($serviceId, $bought);
+
+            return 0;
+        }
+        $result = localAPI('CreateInvoice', $post);
+        if(($result['result'] ?? '') !== 'success' || empty($result['invoiceid']))
+        {
+            throw new \Exception('The invoice could not be created: ' . ($result['message'] ?? 'unknown error'));
+        }
+        $invoiceId = (int)$result['invoiceid'];
+        // the lines belong to the service (reports, refunds), not to a WHMCS upgrade order
+        Capsule::table('tblinvoiceitems')->where('invoiceid', $invoiceId)->update(['type' => self::SLOT_PURCHASE, 'relid' => (int)$serviceId]);
+        \ModulesGarden\TSSGGSModule\App\Models\Request::insert([
+            'serviceid'  => (int)$serviceId,
+            'name'       => self::SLOT_PURCHASE,
+            'request'    => json_encode(['invoice' => $invoiceId, 'bought' => $bought, 'pricing' => self::slotPricing()]),
+            'status'     => 'pending',
+            'created_at' => date('Y-m-d H:i:s'),
+            'updated_at' => date('Y-m-d H:i:s'),
+        ]);
+        CertificateService::event($serviceId, 'info', '[Subscription] Invoice #' . $invoiceId . ' for additional domains: ' . number_format($total, 2, '.', '') . ' (' . self::slotPricing() . ')');
+
+        return $invoiceId;
+    }
+
+    /** InvoicePaid: the domain slots of a paid purchase are added (once) */
+    public static function applySlotPurchase($invoiceId)
+    {
+        $applied = 0;
+        foreach(\ModulesGarden\TSSGGSModule\App\Models\Request::where('name', self::SLOT_PURCHASE)->where('status', 'pending')->get() as $row)
+        {
+            $data = json_decode((string)$row->request, true) ?: [];
+            if((int)($data['invoice'] ?? 0) !== (int)$invoiceId)
+            {
+                continue;
+            }
+            \ModulesGarden\TSSGGSModule\App\Models\Request::where('id', (int)$row->id)->update(['status' => 'paid', 'updated_at' => date('Y-m-d H:i:s')]);
+            self::addSlots((int)$row->serviceid, (array)($data['bought'] ?? []));
+            $applied++;
+        }
+
+        return $applied;
+    }
+
+    /**
+     * Adds bought domain slots to the service (configurable option quantity), buys them at the vendor, and brings an
+     * unpaid renewal invoice up to date
+     */
+    protected static function addSlots($serviceId, array $bought)
+    {
+        $added = ['single' => 0, 'wildcard' => 0];
+        foreach($bought as $configId => $count)
+        {
+            $exists = Capsule::table('tblhostingconfigoptions')->where('relid', (int)$serviceId)->where('configid', (int)$configId)->exists();
+            if($exists)
+            {
+                Capsule::table('tblhostingconfigoptions')->where('relid', (int)$serviceId)->where('configid', (int)$configId)->increment('qty', (int)$count);
+            }
+            else
+            {
+                $sub = (int)Capsule::table('tblproductconfigoptionssub')->where('configid', (int)$configId)->orderBy('sortorder')->value('id');
+                Capsule::table('tblhostingconfigoptions')->insert(['relid' => (int)$serviceId, 'configid' => (int)$configId, 'optionid' => $sub, 'qty' => (int)$count]);
+            }
+            $type = explode('|', (string)Capsule::table('tblproductconfigoptions')->where('id', (int)$configId)->value('optionname'))[0];
+            $added[$type === 'sans_wildcard' ? 'wildcard' : 'single'] += (int)$count;
+        }
+        CertificateService::event($serviceId, 'success', '[Subscription] Domains added: ' . $added['single'] . ' single, ' . $added['wildcard'] . ' wildcard');
+        self::refreshRenewalInvoice($serviceId);
+        try
+        {
+            self::buyAcmeSlots($serviceId, $added['single'], $added['wildcard']);
+        }
+        catch(\Throwable $e)
+        {
+            CertificateService::event($serviceId, 'error', '[Subscription] The domains could not be bought at the vendor: ' . $e->getMessage());
+        }
     }
 
     /**

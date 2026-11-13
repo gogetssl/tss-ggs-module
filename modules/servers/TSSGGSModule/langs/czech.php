@@ -765,3 +765,4 @@ $_LANG['serverCA']['home']['aisSwitchConfirm'] = 'Změnit způsob instalace? Ji�
 $_LANG['aisInstallMethodChanged'] = 'Způsob instalace byl změněn.';
 $_LANG['aisInvalidInstallMethod'] = 'Zvolte AutoInstall SSL nebo ACME.';
 $_LANG['subscriptionAlreadyCancelled'] = 'Předplatné je již zrušeno.';
+$_LANG['acme_slots_invoice_created'] = 'Byla vytvořena faktura za další domény. Domény budou přidány, jakmile bude zaplacena.';

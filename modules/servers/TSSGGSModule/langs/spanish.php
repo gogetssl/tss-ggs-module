@@ -765,3 +765,4 @@ $_LANG['serverCA']['home']['aisSwitchConfirm'] = '¿Cambiar el método de instal
 $_LANG['aisInstallMethodChanged'] = 'Se ha cambiado el método de instalación.';
 $_LANG['aisInvalidInstallMethod'] = 'Elija AutoInstall SSL o ACME.';
 $_LANG['subscriptionAlreadyCancelled'] = 'La suscripción ya está cancelada.';
+$_LANG['acme_slots_invoice_created'] = 'Se ha creado una factura por los dominios adicionales. Los dominios se añaden en cuanto se pague.';

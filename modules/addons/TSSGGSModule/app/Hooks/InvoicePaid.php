@@ -11,6 +11,9 @@ $hookManager->register(
         // WHMCS passes the invoice ID only; a failure here must never break the payment
         try
         {
+            // domains bought on the module's invoice ("Buy more domains")
+            \ModulesGarden\TSSGGSModule\App\Libs\SubscriptionBilling::applySlotPurchase((int)($args['invoiceid'] ?? 0));
+
             $items = \WHMCS\Database\Capsule::table('tblinvoiceitems')
                 ->where('invoiceid', (int)($args['invoiceid'] ?? 0))
                 ->where('type', 'Hosting')

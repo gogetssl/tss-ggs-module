@@ -573,15 +573,17 @@ trait AcmeActions
         }
 
 
-        // Block upgrade if any unpaid invoice exists for this service
+        // Block upgrade if any unpaid invoice exists for this service (the renewal invoice does not block: it follows the
+        // slots until it is paid) or a purchase of domains waits for its payment
         $unpaidInvoice = Capsule::table('tblinvoices')
                                 ->join('tblinvoiceitems', 'tblinvoiceitems.invoiceid', '=', 'tblinvoices.id')
                                 ->where('tblinvoiceitems.type', 'Hosting')
                                 ->where('tblinvoiceitems.relid', $serviceId)
+                                ->where('tblinvoiceitems.description', 'NOT LIKE', '%' . AcmeHelpers::RENEWAL_LABEL)
                                 ->whereIn('tblinvoices.status', ['Unpaid', 'Overdue'])
                                 ->first();
 
-        if($unpaidInvoice)
+        if($unpaidInvoice || \ModulesGarden\TSSGGSModule\App\Libs\SubscriptionBilling::pendingSlotPurchase($serviceId))
         {
             throw new \Exception(Lang::absoluteT('acme_upgrade_unpaid_invoice_exists'));
         }
@@ -639,24 +641,60 @@ trait AcmeActions
                                  ));
         }
 
-        $apiParams = [
-            'serviceid'     => $serviceId,
-            'paymentmethod' => $service->paymentmethod,
-            'type'          => 'configoptions',
-            'configoptions' => $configOptionsPayload,
-        ];
-
-        $result = localAPI('UpgradeProduct', $apiParams);
-
-        if(!isset($result['result']) || $result['result'] !== 'success')
+        // more slots: bought on the module's invoice (prorated to the renewal or at the yearly price, Settings > SSL);
+        // fewer slots (within the refund window): given back through WHMCS
+        $bought    = [];
+        $current   = [];
+        foreach(['single' => [$singleConfigId ?? 0, $domainLimits['singleFromOption']], 'wildcard' => [$wildcardConfigId ?? 0, $domainLimits['wildcardFromOption']]] as [$configId, $from])
         {
-            $errorMsg = isset($result['message']) ? $result['message'] : 'UpgradeProduct API failed';
-            throw new \Exception($errorMsg);
+            if($configId)
+            {
+                $current[$configId] = (int)$from;
+            }
+        }
+        $reduce = [];
+        foreach($configOptionsPayload as $configId => $qty)
+        {
+            $from = $current[$configId] ?? 0;
+            if($qty > $from)
+            {
+                $bought[$configId] = $qty - $from;
+            }
+            elseif($qty < $from)
+            {
+                $reduce[$configId] = $qty;
+            }
+        }
+
+        if($reduce)
+        {
+            $result = localAPI('UpgradeProduct', [
+                'serviceid'     => $serviceId,
+                'paymentmethod' => $service->paymentmethod,
+                'type'          => 'configoptions',
+                'configoptions' => $reduce,
+            ]);
+            if(!isset($result['result']) || $result['result'] !== 'success')
+            {
+                throw new \Exception(isset($result['message']) ? $result['message'] : 'UpgradeProduct API failed');
+            }
+        }
+
+        $message = Lang::absoluteT('acme_upgrade_success');
+        if($bought)
+        {
+            $invoiceId = \ModulesGarden\TSSGGSModule\App\Libs\SubscriptionBilling::createSlotPurchaseInvoice($serviceId, $bought);
+            if($invoiceId > 0)
+            {
+                global $CONFIG;
+                $message = Lang::absoluteT('acme_slots_invoice_created') . ' <a target="_blank" href="' . $CONFIG['SystemURL'] . '/viewinvoice.php?id=' . (int)$invoiceId . '">'
+                    . Lang::absoluteT('Click here to view the invoice') . '</a>';
+            }
         }
 
         return [
             'success' => true,
-            'message' => Lang::absoluteT('acme_upgrade_success'),
+            'message' => $message,
         ];
     }
 
