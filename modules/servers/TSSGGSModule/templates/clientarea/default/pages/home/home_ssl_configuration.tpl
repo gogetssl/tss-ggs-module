@@ -914,6 +914,8 @@
         if (!block.length || !target.length) {
             return;
         }
+        // the module's stylesheet sits outside the block and has to survive the clean-up below
+        $('head').append($('link[href*="theme.css"]').first());
         // the whole block is moved, not copied, so every handler bound above stays on its node
         target.empty().append(block);
         // WHMCS's own tab strip under the page: the module shows everything above it
