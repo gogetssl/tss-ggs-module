@@ -1,3 +1,19 @@
+1.1.1 (2026-11-13)
+Subscription domain slots now follow what the vendor actually charges for.
+A slot is only paid for at the vendor when a domain goes into it, so:
+- a renewal is charged for the domains in use, not for slots that were bought
+  and never used, and those unused slots are not carried into the new period;
+- an empty slot can be given back at any time, a slot holding a domain only
+  while the vendor still refunds that domain (within 30 days of the day THAT
+  domain was added, not of the day the slot was paid for);
+- the domain list on the service page shows when each domain was added and,
+  while it is still inside that window, until when removing it is refunded.
+Buying more domains no longer sends a separate purchase to the vendor, which
+that call never accepted for a subscription.
+
+The admin dashboard counts every product type again: CodeGuard and document
+signing orders were missing from the order pipeline.
+
 1.1.0 (2026-11-13)
 Document signing certificates of TheSSLStore (DigiCert Individual 500 / 2000 and
 Organization 2000 / 5000). The client chooses on the service page whether the
