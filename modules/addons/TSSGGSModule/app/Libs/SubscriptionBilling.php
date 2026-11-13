@@ -167,6 +167,51 @@ class SubscriptionBilling
         return $amount + $tax1 + $tax2;
     }
 
+    /**
+     * Price of one more year of the subscription in the client's currency: the product's one-time (yearly) price and,
+     * for ACME, the domain slots the service has (configurable option quantity x price of a slot)
+     */
+    public static function renewalAmount($serviceId)
+    {
+        $service = Capsule::table('tblhosting')
+            ->join('tblclients', 'tblclients.id', '=', 'tblhosting.userid')
+            ->where('tblhosting.id', (int)$serviceId)
+            ->first(['tblhosting.packageid', 'tblhosting.amount', 'tblclients.currency']);
+        if(!$service)
+        {
+            return 0.0;
+        }
+        // a service on a recurring cycle keeps its own recurring amount
+        if((float)$service->amount > 0)
+        {
+            return (float)$service->amount;
+        }
+        $currency = (int)$service->currency;
+        $price    = function($type, $relid) use ($currency) {
+            $row = Capsule::table('tblpricing')->where('type', $type)->where('relid', (int)$relid)->where('currency', $currency)->first(['monthly', 'annually']);
+            // one-time products keep their price in "monthly"; -1 = not offered
+            $value = $row ? (float)$row->monthly : 0.0;
+
+            return $value > 0 ? $value : ($row && (float)$row->annually > 0 ? (float)$row->annually : 0.0);
+        };
+
+        $amount = $price('product', $service->packageid);
+        foreach(Capsule::table('tblhostingconfigoptions')
+            ->join('tblproductconfigoptions', 'tblproductconfigoptions.id', '=', 'tblhostingconfigoptions.configid')
+            ->where('tblhostingconfigoptions.relid', (int)$serviceId)
+            ->where('tblproductconfigoptions.optiontype', 4)
+            ->get(['tblhostingconfigoptions.configid', 'tblhostingconfigoptions.qty']) as $option)
+        {
+            $sub = (int)Capsule::table('tblproductconfigoptionssub')->where('configid', (int)$option->configid)->orderBy('sortorder')->value('id');
+            if($sub && (int)$option->qty > 0)
+            {
+                $amount += (int)$option->qty * $price('configoptions', $sub);
+            }
+        }
+
+        return round($amount, 2);
+    }
+
     /** ACME or Plan + Automate product (billed as a one-time product with the module's own renewal invoice) */
     public static function isSubscriptionProduct($whmcsProductId)
     {
