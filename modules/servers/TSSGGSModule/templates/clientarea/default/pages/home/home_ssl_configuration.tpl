@@ -3,6 +3,7 @@
 {if $allOk === true}
 <style>
 #ssl-config-wrap { max-width: 700px; margin: 0 auto; text-align: left; }
+
 #ssl-config-wrap h2 { font-size: 22px; font-weight: 400; text-align: center; margin-bottom: 20px; }
 #ssl-config-wrap .ssl-install-toggle { text-align: center; margin-bottom: 25px; }
 #ssl-config-wrap .ssl-install-toggle .btn { min-width: 160px; }
@@ -28,10 +29,32 @@
 #ssl-config-wrap #manual_own_csr { font-family: monospace; font-size: 12px; resize: vertical; }
 #ssl-result-wrap { max-width: 700px; margin: 0 auto; text-align: left; }
 #ssl-result-wrap #ssl-private-key { font-family: monospace; font-size: 12px; }
+/* the form keeps its fields; its sections get the card look of the other product pages */
+#ssl-config-wrap { max-width: 860px; }
+#ssl-config-wrap #section-autoinstall, #ssl-config-wrap #section-manual, #ssl-config-wrap .ssl-csr-section,
+#ssl-config-wrap .ssl-contact-section, #ssl-config-wrap .ssl-agreement-section {
+    background: #fff; border: 1px solid #e6e8eb; border-radius: 10px; padding: 18px 20px; margin-bottom: 16px;
+    box-shadow: 0 1px 2px rgba(16,24,40,.04);
+}
+#ssl-config-wrap .ssl-section-title, #ssl-config-wrap .ssl-contact-section h3, #ssl-config-wrap .ssl-csr-section h3 {
+    font-size: 15px; font-weight: 600; letter-spacing: .01em; margin: 0 0 10px; padding-bottom: 10px;
+    border-bottom: 1px solid #eef0f2;
+}
 </style>
 
-<div id="ssl-config-wrap">
-    <h2>{$MGLANG->T('sslConfigGenerateCertTitle')} {$productName|escape}</h2>
+<div id="ssl-config-wrap" class="validate-ssl-unified tssggs-cert tssggs-smime">
+    <section class="tssggs-card tssggs-hero tssggs-hero--wait">
+        <div class="tssggs-hero__head">
+            <span class="tssggs-hero__icon">
+                <svg class="tssggs-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="M12 8v4M12 16h.01"/></svg>
+            </span>
+            <div class="tssggs-hero__title">
+                <span class="tssggs-badge tssggs-badge--wait">{$MGLANG->T('smimeAwaitingOrder')}</span>
+                <h3>{$productName|escape}</h3>
+                <p class="tssggs-hero__domain">{$MGLANG->T('sslConfigGenerateCertTitle')}</p>
+            </div>
+        </div>
+    </section>
 
     {* Install type toggle - only when the client has a reachable cPanel account *}
     {if $hasCpanel}

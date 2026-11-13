@@ -1,6 +1,16 @@
-<div class="change-approver-ssl-unified">
+<div class="validate-ssl-unified tssggs-cert tssggs-smime">
+    <section class="tssggs-card tssggs-hero tssggs-hero--wait">
+        <div class="tssggs-hero__head">
+            <span class="tssggs-hero__icon">
+                <svg class="tssggs-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>
+            </span>
+            <div class="tssggs-hero__title">
+                <h3>{$MGLANG->T('change_approval', 'Change a Validation Method')}</h3>
+            </div>
+        </div>
+    </section>
+    <div class="change-approver-ssl-unified">
     <form method="post">
-        <h2 class="card-title">{$MGLANG->T('change_approval', 'Change a Validation Method')}</h2>
 
         <div class="tab-content pt-3">
             <div class="step2-validation-certificate">
@@ -178,3 +188,15 @@
     });
 
 </script>
+</div>
+
+<style>
+/* the pages keep their fields; the blocks get the card look of the other product pages */
+.validate-ssl-unified .card-body, .validate-ssl-unified .step2-validation-certificate,
+.validate-ssl-unified .tab-content {
+    background: #fff; border: 1px solid #e6e8eb; border-radius: 10px; padding: 18px 20px; margin-bottom: 16px;
+    box-shadow: 0 1px 2px rgba(16,24,40,.04); text-align: left;
+}
+.validate-ssl-unified .card-title { font-size: 15px; font-weight: 600; margin: 0 0 12px; padding-bottom: 10px; border-bottom: 1px solid #eef0f2; }
+.validate-ssl-unified form .form-group label { font-weight: 600; }
+</style>
