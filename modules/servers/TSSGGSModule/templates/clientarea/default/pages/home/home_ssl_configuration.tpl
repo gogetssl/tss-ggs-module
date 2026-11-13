@@ -906,4 +906,18 @@
 
 }(jQuery));
 </script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        var block  = $('#mg-wrapper');
+        var target = $('.product-details');
+        if (!block.length || !target.length) {
+            return;
+        }
+        // the whole block is moved, not copied, so every handler bound above stays on its node
+        target.empty().append(block);
+        // WHMCS's own tab strip under the page: the module shows everything above it
+        target.closest('.tab-pane').find('> .nav-tabs, > .tab-content').remove();
+    });
+</script>
 {/if}
