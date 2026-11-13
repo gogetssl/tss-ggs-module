@@ -237,7 +237,7 @@ class Writer
             Capsule::table('tblsslorders')->where('id', $rec['ssl_order_id'])->update($update);
 
             // remove any unified rows a previous attempt left behind
-            Capsule::table(self::T_REQUESTS)->where('serviceid', $rec['service_id'])->whereIn('name', ['addOrder', 'certificate', 'autoinstall', 'renewOrder', 'smime', 'codesigning'])->delete();
+            Capsule::table(self::T_REQUESTS)->where('serviceid', $rec['service_id'])->whereIn('name', ['addOrder', 'certificate', 'autoinstall', 'renewOrder', 'smime', 'codesigning', 'codeguard'])->delete();
 
             $prices = (array)($rec['prices'] ?? []);
             $api    = (float)($prices['api_price'] ?? 0);
@@ -260,6 +260,11 @@ class Writer
             {
                 // S/MIME order (SmimeService::stored())
                 $written['requests'][] = $this->insertRequest($rec['service_id'], 'smime', $rec['smime'], (string)$rec['request_status'], $api, $whmcs, (int)($prices['invoiceid'] ?? 0));
+            }
+            if(!empty($rec['codeguard']))
+            {
+                // CodeGuard licence (CodeGuardService::stored())
+                $written['requests'][] = $this->insertRequest($rec['service_id'], 'codeguard', $rec['codeguard'], (string)$rec['request_status'], $api, $whmcs, (int)($prices['invoiceid'] ?? 0));
             }
             if(!empty($rec['autoinstall']))
             {

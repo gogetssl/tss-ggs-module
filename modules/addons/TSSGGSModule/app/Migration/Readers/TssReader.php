@@ -269,9 +269,21 @@ class TssReader extends AbstractReader
         return in_array($code, \ModulesGarden\TSSGGSModule\App\Libs\CodeSigningService::SUPPORTED_PRODUCTS['TSS'], true);
     }
 
+    /** CodeGuard products (website backup): the gateway category decides, the code prefix is the fallback */
+    public function isCodeGuardCode(string $code): bool
+    {
+        $remote = $this->mapper && $code !== '' ? $this->mapper->forTss($code) : null;
+        if($remote)
+        {
+            return strtolower((string)$remote->category) === \ModulesGarden\TSSGGSModule\App\Libs\CodeGuardService::CATEGORY;
+        }
+
+        return strpos($code, 'cg_') === 0;
+    }
+
     public function isUnsupportedCode(string $code): bool
     {
-        if($this->isSmimeCode($code) || $this->isCodeSigningCode($code))
+        if($this->isSmimeCode($code) || $this->isCodeSigningCode($code) || $this->isCodeGuardCode($code))
         {
             return false;
         }
@@ -404,6 +416,10 @@ class TssReader extends AbstractReader
         {
             return $this->readCodeSigning($rec, $svc, $order, $code);
         }
+        if($this->isCodeGuardCode($code))
+        {
+            return $this->readCodeGuard($rec, $svc, $order, $code);
+        }
 
         return $this->readSsl($rec, $svc, $order, $cd, $code);
     }
@@ -498,6 +514,91 @@ class TssReader extends AbstractReader
             'whmcs_price' => (float)$svc['amount'],
             'invoiceid'   => (int)($od['invoice_id'] ?? 0),
         ];
+
+        return $rec;
+    }
+
+    /**
+     * CodeGuard: the legacy module creates the licence with the service (codeguard/createuser) and keeps the
+     * TheSSLStore order ID in tblsslorders.remoteid, which is the licence ID the gateway uses as well - so the
+     * licence carries over unchanged and only its data is copied (as decided for the code signing migration).
+     *
+     * The vendor is not asked during the migration: the unified module's first refresh reads the licence through
+     * GET /code-guard/{id} and corrects the status by itself. Written as the "codeguard" request row
+     * (CodeGuardService::stored()).
+     */
+    protected function readCodeGuard(array $rec, array $svc, array $order, string $code): array
+    {
+        $rec['kind'] = 'codeguard';
+        $remote      = $this->mapper ? $this->mapper->forTss($code) : null;
+        $rec['remote_product_id'] = $remote ? (string)$remote->remoteId : $code;
+        if(!$remote)
+        {
+            $rec['warnings'][] = 'Gateway product not found for TheSSLStore product code "' . $code . '"';
+        }
+
+        $remoteId = trim((string)$order['remoteid']);
+        if($remoteId === '' || $remoteId === '0')
+        {
+            // the licence was never created (an unpaid or failed order): the unified module orders it on setup
+            $rec['target_status']  = self::STATUS_AWAITING;
+            $rec['remote_id']      = '';
+            $rec['request_status'] = 'pending';
+            $rec['warnings'][]     = 'No CodeGuard licence at TheSSLStore yet; the client area offers to order it';
+
+            return $rec;
+        }
+
+        $od = Schema::tableExists('mod_sslstore_orders_data') ? Capsule::table('mod_sslstore_orders_data')->where('service_id', $rec['service_id'])->orderBy('id', 'desc')->first() : null;
+        $od = $od ? (array)$od : [];
+
+        $client  = (array)Capsule::table('tblclients')->where('id', (int)$svc['userid'])->first(['firstname', 'lastname', 'email']);
+        $status  = $this->normalizeStatus((string)($od['ssl_status'] ?? ''), (string)$order['status']);
+        // the licence states of the gateway: a certificate's "processing" has no meaning for a licence
+        $status  = in_array($status, ['active', 'cancelled', 'expired'], true) ? $status : 'active';
+        // the legacy columns keep zero dates, so the first usable one wins and the service's own start date is the last resort
+        $ordered = '';
+        foreach([$od['order_placed_date'] ?? '', $od['start_date'] ?? '', $order['completiondate'] ?? '', $svc['regdate']] as $candidate)
+        {
+            $time = $candidate !== '' && strpos((string)$candidate, '0000-00-00') !== 0 ? strtotime((string)$candidate) : false;
+            if($time)
+            {
+                $ordered = date('Y-m-d H:i:s', $time);
+                break;
+            }
+        }
+
+        $data = [
+            'orderId'       => (int)$remoteId,
+            'itemId'        => (int)$remoteId,
+            'status'        => $status,
+            'vendorOrderId' => (string)($od['vendor_order_id'] ?? ''),
+            'term'          => (int)($od['no_of_months'] ?? 12) ?: 12,
+            'orderedAt'     => $ordered,
+            'contact'       => [
+                'first_name' => (string)($client['firstname'] ?? ''),
+                'last_name'  => (string)($client['lastname'] ?? ''),
+                'email'      => (string)($client['email'] ?? ''),
+            ],
+            'license'  => [],
+            'previous' => [],
+            'migrated' => true,
+        ];
+
+        $rec['remote_id']      = $remoteId;
+        $rec['request_status'] = $status;
+        $rec['target_status']  = $status === 'active' ? 'Completed' : ($status === 'expired' ? 'Expired' : 'Cancelled');
+        $rec['codeguard']      = $data;
+        $rec['prices']         = [
+            'api_price'   => (float)($od['purchase_amt'] ?? 0),
+            'whmcs_price' => (float)$svc['amount'],
+            'invoiceid'   => (int)($od['invoice_id'] ?? 0),
+        ];
+        // the period is computed from the order date and the term; the first refresh replaces this date with the one
+        // the gateway reports for the licence itself, which is the more reliable of the two
+        $rec['warnings'][]     = 'CodeGuard licence ' . $remoteId . ' is taken over unchanged; until the first refresh its period is counted from ' . substr($data['orderedAt'], 0, 10) . ' (' . $data['term'] . ' months)';
+        // the legacy module does not keep the contact it created the licence with, and the gateway reports it as null
+        $rec['warnings'][]     = 'The contact shown for the licence is the WHMCS client (' . $data['contact']['email'] . '); the licence itself keeps the address it was created with until the client changes it';
 
         return $rec;
     }
