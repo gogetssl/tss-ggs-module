@@ -869,3 +869,14 @@ $_LANG['serverCA']['home']['dsNotDocumentSigningProduct'] = 'This service is not
 $_LANG['serverCA']['home']['dsNotOrderedYet'] = 'The document signing certificate has not been ordered yet';
 $_LANG['serverCA']['home']['dsAlreadyOrdered'] = 'The document signing certificate has already been ordered';
 $_LANG['serverCA']['home']['dsShippingLabel'] = 'Shipping';
+
+// Enrolment page: the four steps and the install choice
+$_LANG['serverCA']['home']['sslStepPaid'] = 'Pedido pagado';
+$_LANG['serverCA']['home']['sslStepDetails'] = 'Introducir datos';
+$_LANG['serverCA']['home']['sslStepValidate'] = 'Validar el dominio';
+$_LANG['serverCA']['home']['sslStepIssued'] = 'Certificado emitido';
+$_LANG['serverCA']['home']['sslConfigIntro'] = 'Complete el formulario para generar su certificado.';
+$_LANG['serverCA']['home']['sslConfigInstallQuestion'] = '¿Cómo desea instalar el certificado?';
+$_LANG['serverCA']['home']['sslConfigAutoinstallHint'] = 'Generamos el CSR, validamos e instalamos automáticamente. Solo servidores WHM/cPanel.';
+$_LANG['serverCA']['home']['sslConfigManualHint'] = 'Funciona con cualquier servidor. Usted aporta el CSR e instala el certificado.';
+$_LANG['serverCA']['home']['sslConfigRequiredNote'] = 'Los campos marcados con * son obligatorios.';

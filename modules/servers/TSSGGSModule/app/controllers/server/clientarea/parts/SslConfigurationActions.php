@@ -237,6 +237,23 @@ trait SslConfigurationActions
         $vars['csrfToken']          = \generate_token('plain');
         $vars['agreement']          = CertificateService::agreement($params['packageid']);
 
+        // the order and billing card, and the line under the product name
+        $service  = \WHMCS\Database\Capsule::table('tblhosting')->where('id', (int)$serviceId)->first();
+        $currency = $service ? \getCurrency((int)$service->userid) : null;
+
+        $vars['productGroup'] = $service ? (string)\WHMCS\Database\Capsule::table('tblproducts')
+            ->join('tblproductgroups', 'tblproductgroups.id', '=', 'tblproducts.gid')
+            ->where('tblproducts.id', (int)$service->packageid)->value('tblproductgroups.name') : '';
+        $vars['serviceState'] = $service ? (string)$service->domainstatus : '';
+        $vars['billing']      = $service ? [
+            'registration'  => $this->smimeDate($service->regdate),
+            'nextDue'       => $this->smimeDate($service->nextduedate),
+            'amount'        => \formatCurrency($service->amount, $currency ? $currency['id'] : null),
+            'cycle'         => (string)$service->billingcycle,
+            'paymentMethod' => (string)(\WHMCS\Database\Capsule::table('tblpaymentgateways')
+                ->where('gateway', $service->paymentmethod)->where('setting', 'name')->value('value') ?: $service->paymentmethod),
+        ] : [];
+
         return [
             'tpl'  => 'home_ssl_configuration',
             'vars' => $vars,

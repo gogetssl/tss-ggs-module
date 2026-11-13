@@ -46,35 +46,89 @@
     <section class="tssggs-card tssggs-hero tssggs-hero--wait">
         <div class="tssggs-hero__head">
             <span class="tssggs-hero__icon">
-                <svg class="tssggs-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="M12 8v4M12 16h.01"/></svg>
+                <svg class="tssggs-ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
             </span>
             <div class="tssggs-hero__title">
-                <span class="tssggs-badge tssggs-badge--wait">{$MGLANG->T('smimeAwaitingOrder')}</span>
+                <span class="tssggs-badge tssggs-badge--wait">
+                    <svg class="tssggs-ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+                    {$MGLANG->T('smimeAwaitingOrder')}
+                </span>
                 <h3>{$productName|escape}</h3>
-                <p class="tssggs-hero__domain">{$MGLANG->T('sslConfigGenerateCertTitle')}</p>
+                {if $productGroup || $serviceState}
+                    <p class="tssggs-hero__domain">{if $productGroup}{$productGroup|escape}{/if}{if $productGroup && $serviceState} &middot; {/if}{if $serviceState}{$serviceState|escape}{/if}</p>
+                {/if}
             </div>
+        </div>
+        {* where the order stands: paid, the client's details, then the certificate authority's part *}
+        <div class="tssggs-steps">
+            <span class="tssggs-step tssggs-step--done">
+                <span class="tssggs-step__n"><svg class="tssggs-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="m20 6-11 11-5-5"/></svg></span>
+                {$MGLANG->T('sslStepPaid')}
+            </span>
+            <span class="tssggs-step tssggs-step--current"><span class="tssggs-step__n">2</span> {$MGLANG->T('sslStepDetails')}</span>
+            <span class="tssggs-step"><span class="tssggs-step__n">3</span> {$MGLANG->T('sslStepValidate')}</span>
+            <span class="tssggs-step"><span class="tssggs-step__n">4</span> {$MGLANG->T('sslStepIssued')}</span>
+        </div>
+        <div class="tssggs-hero__foot">
+            <p>{$MGLANG->T('sslConfigIntro')}</p>
         </div>
     </section>
 
-    {* Install type toggle - only when the client has a reachable cPanel account *}
-    {if $hasCpanel}
-    <div class="ssl-install-toggle">
-        <div class="btn-group" role="group">
-            <button type="button" class="btn btn-success" id="btn-autoinstall">
-                <span class="glyphicon glyphicon-ok"></span> {$MGLANG->T('sslConfigAutoinstall')}
-            </button>
-            <button type="button" class="btn btn-default" id="btn-manual">
-                {$MGLANG->T('sslConfigManual')}
-            </button>
+    {if $billing}
+    <section class="tssggs-card">
+        <h4 class="tssggs-card__title">
+            <svg class="tssggs-ic" viewBox="0 0 24 24" aria-hidden="true"><rect width="20" height="14" x="2" y="5" rx="2"/><path d="M2 10h20"/></svg>
+            {$MGLANG->T('validation_page', 'cardBilling')}
+        </h4>
+        <div class="tssggs-grid tssggs-grid--flush">
+            <dl class="tssggs-dl">
+                <dt>{$MGLANG->T('validation_page', 'RegistrationDate')}</dt><dd>{if $billing.registration}{$billing.registration}{else}-{/if}</dd>
+                <dt>{$MGLANG->T('validation_page', 'ReccuringAmount')}</dt><dd>{$billing.amount}</dd>
+                <dt>{$MGLANG->T('validation_page', 'PaymentMethod')}</dt><dd>{$billing.paymentMethod|escape}</dd>
+            </dl>
+            <dl class="tssggs-dl">
+                <dt>{$MGLANG->T('smimeNextDue')}</dt><dd>{if $billing.nextDue}{$billing.nextDue}{else}-{/if}</dd>
+                <dt>{$MGLANG->T('validation_page', 'BillingCycle')}</dt><dd>{$billing.cycle|escape}</dd>
+            </dl>
         </div>
-    </div>
+    </section>
+    {/if}
+
+    {* How the certificate is installed - only when the client has a reachable cPanel account *}
+    {if $hasCpanel}
+    <section class="tssggs-card">
+        <h4 class="tssggs-card__title">
+            <svg class="tssggs-ic" viewBox="0 0 24 24" aria-hidden="true"><rect width="20" height="8" x="2" y="2" rx="2"/><rect width="20" height="8" x="2" y="14" rx="2"/><path d="M6 6h.01M6 18h.01"/></svg>
+            {$MGLANG->T('sslConfigInstallQuestion')}
+        </h4>
+        <div class="tssggs-form">
+            <div class="tssggs-choice">
+                <button type="button" id="btn-autoinstall" class="tssggs-choice__item is-selected">
+                    <svg class="tssggs-ic" viewBox="0 0 24 24" aria-hidden="true"><rect width="20" height="8" x="2" y="2" rx="2"/><rect width="20" height="8" x="2" y="14" rx="2"/><path d="M6 6h.01M6 18h.01"/></svg>
+                    <span class="tssggs-choice__body">
+                        <strong>{$MGLANG->T('sslConfigAutoinstall')}</strong>
+                        <span>{$MGLANG->T('sslConfigAutoinstallHint')}</span>
+                    </span>
+                    <span class="tssggs-choice__mark"><svg class="tssggs-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="m20 6-11 11-5-5"/></svg></span>
+                </button>
+                <button type="button" id="btn-manual" class="tssggs-choice__item">
+                    <svg class="tssggs-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+                    <span class="tssggs-choice__body">
+                        <strong>{$MGLANG->T('sslConfigManual')}</strong>
+                        <span>{$MGLANG->T('sslConfigManualHint')}</span>
+                    </span>
+                    <span class="tssggs-choice__mark"><svg class="tssggs-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="m20 6-11 11-5-5"/></svg></span>
+                </button>
+            </div>
+        </div>
+    </section>
     {/if}
     <input type="hidden" id="install_type" value="{if $hasCpanel}autoinstall{else}manual{/if}">
 
     {* ===== AUTOINSTALL SECTION ===== *}
     {if $hasCpanel}
     <div id="section-autoinstall">
-        <h3 class="ssl-section-title">{$MGLANG->T('sslConfigServerInfoTitle')}</h3>
+        <h3 class="ssl-section-title"><span class="tssggs-step__n">1</span> {$MGLANG->T('sslConfigServerInfoTitle')}</h3>
         <p class="ssl-section-sub">{$MGLANG->T('sslConfigServerInfoText')}</p>
 
         <div class="form-group">
@@ -248,7 +302,7 @@
 
     {* ===== CSR DETAILS (only when the CSR is generated by the module) ===== *}
     <div class="ssl-csr-section" id="ssl-csr-section" {if !$hasCpanel}style="display:none;"{/if}>
-        <h3>{$MGLANG->T('sslConfigCsrSection')}</h3>
+        <h3><span class="tssggs-step__n">2</span> {$MGLANG->T('sslConfigCsrSection')}</h3>
         <p class="csr-sub">{$MGLANG->T('sslConfigCsrSubtext')}</p>
 
         <div class="form-group">
@@ -284,7 +338,7 @@
     {* ===== ADMIN CONTACT ===== *}
     {if !$adminFormHidden}
     <div class="ssl-contact-section">
-        <h3 style="margin-bottom:15px;">{$MGLANG->T('sslConfigAdminContact')}</h3>
+        <h3 style="margin-bottom:15px;"><span class="tssggs-step__n">3</span> {$MGLANG->T('sslConfigAdminContact')}</h3>
         <div class="row">
             <div class="col-md-6">
                 <div class="form-group">
@@ -349,7 +403,11 @@
     {/if}
 
     <div style="margin-top:25px; padding-top:15px; border-top:1px solid #e0e0e0;">
-        <button type="button" class="btn btn-primary btn-lg" id="btn-submit-ssl-config">{$MGLANG->T('sslConfigSubmit')}</button>
+        <button type="button" class="tssggs-btn tssggs-btn--primary" id="btn-submit-ssl-config">{$MGLANG->T('sslConfigSubmit')}</button>
+        <span class="tssggs-required">
+            <svg class="tssggs-ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+            {$MGLANG->T('sslConfigRequiredNote')}
+        </span>
     </div>
 </div>
 
@@ -459,8 +517,9 @@
 
     function switchToAutoinstall() {
         $('#install_type').val('autoinstall');
-        $('#btn-autoinstall').addClass('btn-success').removeClass('btn-default');
-        $('#btn-manual').addClass('btn-default').removeClass('btn-success');
+        // the two choices are cards now: the selected one is marked
+        $('#btn-autoinstall').addClass('is-selected');
+        $('#btn-manual').removeClass('is-selected');
         $('#section-autoinstall').show();
         $('#section-manual').hide();
         $('#ssl-csr-section').show();
@@ -468,8 +527,8 @@
 
     function switchToManual() {
         $('#install_type').val('manual');
-        $('#btn-manual').addClass('btn-success').removeClass('btn-default');
-        $('#btn-autoinstall').addClass('btn-default').removeClass('btn-success');
+        $('#btn-manual').addClass('is-selected');
+        $('#btn-autoinstall').removeClass('is-selected');
         $('#section-autoinstall').hide();
         $('#section-manual').show();
         if ($('#main_domain').val() === '__manual__') {

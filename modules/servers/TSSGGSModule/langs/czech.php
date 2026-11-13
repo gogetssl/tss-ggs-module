@@ -869,3 +869,14 @@ $_LANG['serverCA']['home']['dsNotDocumentSigningProduct'] = 'This service is not
 $_LANG['serverCA']['home']['dsNotOrderedYet'] = 'The document signing certificate has not been ordered yet';
 $_LANG['serverCA']['home']['dsAlreadyOrdered'] = 'The document signing certificate has already been ordered';
 $_LANG['serverCA']['home']['dsShippingLabel'] = 'Shipping';
+
+// Enrolment page: the four steps and the install choice
+$_LANG['serverCA']['home']['sslStepPaid'] = 'Objednávka zaplacena';
+$_LANG['serverCA']['home']['sslStepDetails'] = 'Zadat údaje';
+$_LANG['serverCA']['home']['sslStepValidate'] = 'Ověřit doménu';
+$_LANG['serverCA']['home']['sslStepIssued'] = 'Certifikát vydán';
+$_LANG['serverCA']['home']['sslConfigIntro'] = 'Vyplňte formulář níže a vygenerujte certifikát.';
+$_LANG['serverCA']['home']['sslConfigInstallQuestion'] = 'Jak chcete certifikát nainstalovat?';
+$_LANG['serverCA']['home']['sslConfigAutoinstallHint'] = 'Vygenerujeme CSR, ověříme a nainstalujeme automaticky. Pouze servery WHM/cPanel.';
+$_LANG['serverCA']['home']['sslConfigManualHint'] = 'Funguje na libovolném serveru. CSR dodáte a certifikát nainstalujete sami.';
+$_LANG['serverCA']['home']['sslConfigRequiredNote'] = 'Pole označená * jsou povinná.';
