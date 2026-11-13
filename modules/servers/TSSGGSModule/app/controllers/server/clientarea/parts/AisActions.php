@@ -140,7 +140,7 @@ trait AisActions
             'product'        => ['id' => $apiProductId],
             'domains'        => [$domain],
             'install_method' => $method,
-            'contacts'       => $this->aisContacts($input['params']),
+            'contacts'       => $this->aisContacts($input['params'], (string)$input['params']['configoption1']),
         ]);
 
         $apiOrderId  = isset($response['order']['id'])     ? (int)$response['order']['id']     : 0;
@@ -305,16 +305,20 @@ trait AisActions
         return ['success' => true, 'message' => Lang::absoluteT('aisInstallMethodChanged')];
     }
 
-    /** contacts of a subscription order: the client */
-    private function aisContacts(array $params)
+    /** contacts of a subscription order: the client (GoGetSSL takes the e-mail only, TheSSLStore the full contact) */
+    private function aisContacts(array $params, $vendor)
     {
         $c       = isset($params['clientsdetails']) && is_array($params['clientsdetails']) ? $params['clientsdetails'] : [];
-        $contact = [
-            'first_name' => (string)($c['firstname'] ?? ''),
-            'last_name'  => (string)($c['lastname'] ?? ''),
-            'email'      => (string)($c['email'] ?? ''),
-            'phone'      => (string)($c['phonenumberformatted'] ?? ($c['phonenumber'] ?? '')),
-        ];
+        $contact = ['email' => (string)($c['email'] ?? '')];
+        if(strtoupper($vendor) === 'TSS')
+        {
+            $contact = [
+                'first_name' => (string)($c['firstname'] ?? ''),
+                'last_name'  => (string)($c['lastname'] ?? ''),
+                'email'      => (string)($c['email'] ?? ''),
+                'phone'      => (string)($c['phonenumberformatted'] ?? ($c['phonenumber'] ?? '')),
+            ];
+        }
 
         return ['primary' => $contact, 'technical' => $contact];
     }
