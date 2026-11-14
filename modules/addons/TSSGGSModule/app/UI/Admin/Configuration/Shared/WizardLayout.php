@@ -3,6 +3,7 @@
 namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Configuration\Shared;
 
 use ModulesGarden\TSSGGSModule\App\Libs\Edition;
+use ModulesGarden\TSSGGSModule\App\Migration\Choice;
 use ModulesGarden\TSSGGSModule\App\Migration\Detector;
 use ModulesGarden\TSSGGSModule\Components\Container\Container;
 use ModulesGarden\TSSGGSModule\Components\Text\Text;
@@ -29,6 +30,7 @@ class WizardLayout
         4 => ['step4_name', 'step4_desc'],
         5 => ['step5_name', 'step5_desc'],
         6 => ['step6_name', 'step6_desc'],
+        7 => ['step7_name', 'step7_desc'], // the migration, between products and finalization
     ];
 
     protected static $hasLegacy = null;
@@ -55,7 +57,30 @@ class WizardLayout
      */
     public static function pages(): array
     {
-        return self::hasLegacy() ? [1, 2, 3, 4, 5, 6] : [1, 2, 4, 5, 6];
+        if(!self::hasLegacy())
+        {
+            return [1, 2, 4, 5, 6];
+        }
+
+        // "migrate" chosen in step 3: the migration itself is the step before finalization (page 7)
+        return self::migrationPlanned() ? [1, 2, 3, 4, 5, 7, 6] : [1, 2, 3, 4, 5, 6];
+    }
+
+    public static function migrationPlanned(): bool
+    {
+        try
+        {
+            return Choice::get(Edition::get()) === Choice::MIGRATE;
+        }
+        catch(\Throwable $e)
+        {
+            return false;
+        }
+    }
+
+    public static function pageUrl(int $page): string
+    {
+        return 'addonmodules.php?module=TSSGGSModule&mg-page=configuration&mg-action=step' . $page;
     }
 
     public static function nextPage(int $page): int

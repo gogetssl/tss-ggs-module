@@ -23,6 +23,16 @@ class MigrationContainer extends Container implements AdminAreaInterface
 {
     use TranslatorTrait;
 
+    /** @var bool shown as the wizard's migration step: this edition's legacy module, its latest run, the way on */
+    protected $wizardMode = false;
+
+    public function setWizardMode(bool $wizard): self
+    {
+        $this->wizardMode = $wizard;
+
+        return $this;
+    }
+
     public function loadHtml(): void
     {
         $this->setCss('tssggs-migration');
@@ -31,6 +41,13 @@ class MigrationContainer extends Container implements AdminAreaInterface
         {
             $this->addElement($this->html('<div class="tssggs-note is-bad">' . htmlspecialchars($_SESSION['tssggs_migration_error']) . '</div>'));
             unset($_SESSION['tssggs_migration_error']);
+        }
+
+        if($this->wizardMode)
+        {
+            $this->loadWizard();
+
+            return;
         }
 
         $active = Store::activeRun();
@@ -66,6 +83,46 @@ class MigrationContainer extends Container implements AdminAreaInterface
             }
             $this->addElement($this->runWidget($run, false));
         }
+    }
+
+    /**
+     * Wizard step: the run in progress, or a completed run and the way on, or the legacy module to start with
+     * (after a run that was rolled back too, with its report). "Later" goes on without migrating.
+     */
+    protected function loadWizard(): void
+    {
+        $source = \ModulesGarden\TSSGGSModule\App\Libs\Edition::get();
+        $active = Store::activeRun();
+        if($active)
+        {
+            $this->addElement($this->runWidget($active, true));
+
+            return;
+        }
+
+        Store::createTables();
+        $row    = \WHMCS\Database\Capsule::table(Store::runsTable())->where('source', $source)->where('status', '<>', Store::RUN_DRY_RUN)->orderBy('id', 'desc')->first();
+        $latest = $row ? Store::getRun((int)$row->id) : null;
+        $next   = \ModulesGarden\TSSGGSModule\App\UI\Admin\Configuration\Shared\WizardLayout::pageUrl(6);
+        if($latest && $latest['status'] === Store::RUN_COMPLETED)
+        {
+            $this->addElement($this->runWidget($latest, false));
+            $this->addElement($this->html('<div class="tssggs-note is-ok">' . htmlspecialchars($this->t('wizard_done')) . '</div>'
+                . '<div class="tssggs-actions"><a class="lu-btn lu-btn--success" href="' . htmlspecialchars($next) . '">' . htmlspecialchars($this->t('wizard_continue')) . '</a></div>'));
+
+            return;
+        }
+        if($latest)
+        {
+            $this->addElement($this->runWidget($latest, false));
+        }
+        $found = Detector::detect();
+        if(isset($found[$source]))
+        {
+            $this->addElement($this->sourceWidget($source, $found[$source]));
+        }
+        $this->addElement($this->html('<p class="tssggs-muted">' . htmlspecialchars($this->t('wizard_later_hint')) . ' '
+            . '<a href="' . htmlspecialchars($next) . '">' . htmlspecialchars($this->t('wizard_later')) . '</a></p>'));
     }
 
     // ---- one legacy module ---- //
@@ -119,7 +176,8 @@ class MigrationContainer extends Container implements AdminAreaInterface
             $engine    = new Engine($source);
             $unmatched = $engine->unmatched();
             $html     .= '<form method="post" action="' . htmlspecialchars($base . '&mg-action=start') . '" onsubmit="return confirm(' . htmlspecialchars(json_encode($this->t('confirm_start')), ENT_QUOTES) . ');">'
-                . '<input type="hidden" name="token" value="' . htmlspecialchars($token) . '">';
+                . '<input type="hidden" name="token" value="' . htmlspecialchars($token) . '">'
+                . ($this->wizardMode ? '<input type="hidden" name="return" value="wizard">' : '');
             $toChoose = array_values(array_filter($unmatched, [Engine::class, 'needsChoice']));
             $quiet    = array_values(array_filter($unmatched, function($item) { return !Engine::needsChoice($item); }));
             if($toChoose)
@@ -136,8 +194,8 @@ class MigrationContainer extends Container implements AdminAreaInterface
                 . '<a class="lu-btn lu-btn--default" href="' . $report . '">' . htmlspecialchars($this->t('btn_report')) . '</a>'
                 . '<button type="submit" class="lu-btn lu-btn--success" name="variant" value="default">' . htmlspecialchars($this->t('btn_start')) . '</button>'
                 . '<button type="submit" class="lu-btn lu-btn--default" name="variant" value="nokeys">' . htmlspecialchars($this->t('btn_start_nokeys')) . '</button>'
-                . '<button type="submit" class="lu-btn lu-btn--default" name="variant" value="keeplegacy">' . htmlspecialchars($this->t('btn_start_keeplegacy')) . '</button>'
-                . $this->link($base . '&mg-action=skip', $this->t('btn_skip'), 'lu-btn lu-btn--default')
+                . ($this->wizardMode ? '' : '<button type="submit" class="lu-btn lu-btn--default" name="variant" value="keeplegacy">' . htmlspecialchars($this->t('btn_start_keeplegacy')) . '</button>'
+                    . $this->link($base . '&mg-action=skip', $this->t('btn_skip'), 'lu-btn lu-btn--default'))
                 . '</div></form>';
         }
         else

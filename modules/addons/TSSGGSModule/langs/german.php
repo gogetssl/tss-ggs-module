@@ -1530,3 +1530,13 @@ $_LANG['admin.migration.map_record_hint'] = 'Nur Aufzeichnung: das Zertifikat un
 $_LANG['admin.migration.auto_rollback'] = 'Diese Migration wurde angehalten und automatisch zurückgesetzt: :reason. Das Altmodul arbeitet wie zuvor. Laden Sie den Fehlerbericht herunter und senden Sie ihn an den Support.';
 $_LANG['admin.migration.btn_error_report'] = 'Fehlerbericht herunterladen';
 $_LANG['admin.migration.map_quiet'] = ':n weitere Altprodukte ohne Entsprechung haben keine aktiven oder unkonfigurierten Zertifikate: sie werden als eingestellte Aufzeichnungen behalten (keine Auswahl nötig)';
+
+// setup wizard: migration step (1.7.0)
+$_LANG['instalation.wizard.step7_name'] = 'Migration';
+$_LANG['instalation.wizard.step7_desc'] = 'Altmodul übernehmen';
+$_LANG['admin.configuration.content.step7.step7_title'] = 'Migration';
+$_LANG['admin.migration.wizard_done'] = 'Die Migration ist abgeschlossen: die Zertifikate des Altmoduls werden jetzt hier verwaltet, und das Altmodul ist abgeschaltet.';
+$_LANG['admin.migration.wizard_continue'] = 'Weiter';
+$_LANG['admin.migration.wizard_later_hint'] = 'Sie können die Migration auch später unter Addons > Migration ausführen; bis dahin arbeitet das Altmodul weiter.';
+$_LANG['admin.migration.wizard_later'] = 'Später migrieren';
+$_LANG['admin.configuration.content.step6.migration_pending'] = 'Die Migration des Altmoduls wurde noch nicht ausgeführt: beide Module sind aktiv, bis Sie sie unter <b>Addons > Migration</b> ausführen.';

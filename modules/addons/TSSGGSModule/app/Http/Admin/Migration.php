@@ -52,6 +52,12 @@ class Migration extends AbstractController implements AdminAreaInterface
             $_SESSION['tssggs_migration_error'] = $e->getMessage();
         }
 
+        // started from the setup wizard: its migration step shows the progress
+        if(($_POST['return'] ?? '') === 'wizard')
+        {
+            return Helper\redirect('configuration', 'step7');
+        }
+
         return Helper\redirect('migration', 'index');
     }
 

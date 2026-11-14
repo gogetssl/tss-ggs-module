@@ -1532,3 +1532,13 @@ $_LANG['admin.migration.map_record_hint'] = 'Kun registrering: certifikatet og o
 $_LANG['admin.migration.auto_rollback'] = 'Denne migrering stoppede og blev rullet tilbage automatisk: :reason. Det gamle modul virker som før. Download fejlrapporten og send den til support.';
 $_LANG['admin.migration.btn_error_report'] = 'Download fejlrapport';
 $_LANG['admin.migration.map_quiet'] = ':n flere ældre produkter uden tilsvarende har ingen aktive eller ukonfigurerede certifikater: de beholdes som udgåede registreringer (intet at vælge)';
+
+// setup wizard: migration step (1.7.0)
+$_LANG['instalation.wizard.step7_name'] = 'Migrering';
+$_LANG['instalation.wizard.step7_desc'] = 'Flyt det gamle modul';
+$_LANG['admin.configuration.content.step7.step7_title'] = 'Migrering';
+$_LANG['admin.migration.wizard_done'] = 'Migreringen er gennemført: certifikaterne fra det gamle modul styres nu her, og det gamle modul er slået fra.';
+$_LANG['admin.migration.wizard_continue'] = 'Fortsæt';
+$_LANG['admin.migration.wizard_later_hint'] = 'Du kan også køre migreringen senere under Addons > Migrering; indtil da virker det gamle modul fortsat.';
+$_LANG['admin.migration.wizard_later'] = 'Migrer senere';
+$_LANG['admin.configuration.content.step6.migration_pending'] = 'Migreringen af det gamle modul er ikke kørt endnu: begge moduler er aktive, indtil du kører den under <b>Addons > Migrering</b>.';

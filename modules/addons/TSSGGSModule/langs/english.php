@@ -1539,3 +1539,13 @@ $_LANG['admin.migration.map_record_hint'] = 'Record only: the certificate and it
 $_LANG['admin.migration.auto_rollback'] = 'This migration stopped and was rolled back automatically: :reason. The legacy module works as before. Download the error report and send it to support.';
 $_LANG['admin.migration.btn_error_report'] = 'Download error report';
 $_LANG['admin.migration.map_quiet'] = ':n more legacy products without an equivalent have no active or unconfigured certificates: they are kept as retired records (nothing to choose)';
+
+// setup wizard: migration step (1.7.0)
+$_LANG['instalation.wizard.step7_name'] = 'Migration';
+$_LANG['instalation.wizard.step7_desc'] = 'Move the legacy module';
+$_LANG['admin.configuration.content.step7.step7_title'] = 'Migration';
+$_LANG['admin.migration.wizard_done'] = 'The migration is complete: the certificates of the legacy module are now managed here, and the legacy module is switched off.';
+$_LANG['admin.migration.wizard_continue'] = 'Continue';
+$_LANG['admin.migration.wizard_later_hint'] = 'You can also run the migration later from Addons > Migration; until then the legacy module keeps working.';
+$_LANG['admin.migration.wizard_later'] = 'Migrate later';
+$_LANG['admin.configuration.content.step6.migration_pending'] = 'The migration of the legacy module has not been run yet: both modules are active until you run it from <b>Addons > Migration</b>.';

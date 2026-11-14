@@ -68,5 +68,17 @@ class Configuration extends AbstractController implements AdminAreaInterface
             ->addElement(ConfigurationStep6::class);
     }
 
+    /** The migration of the legacy module (only when it was chosen in step 3) */
+    public function step7()
+    {
+        if(!WizardLayout::migrationPlanned())
+        {
+            return Helper\redirect('configuration', 'step6');
+        }
+
+        return Helper\view()
+            ->addElement(\ModulesGarden\TSSGGSModule\App\UI\Admin\Configuration\Pages\ConfigurationStep7::class);
+    }
+
 
 }

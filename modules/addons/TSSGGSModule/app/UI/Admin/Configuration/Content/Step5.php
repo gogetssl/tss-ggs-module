@@ -26,7 +26,9 @@ class Step5 extends Widget implements AjaxComponentInterface
 
         $nextStep = new ButtonSuccess();
         $nextStep->setCss('lu-btn lu-btn--success mt30_custom');
-        $nextStep->onClick(Action::redirect('addonmodules.php?module=TSSGGSModule&mg-page=configuration&mg-action=step6'));
+        // the migration step comes next when "migrate" was chosen in step 3, otherwise the finalization
+        $layout = \ModulesGarden\TSSGGSModule\App\UI\Admin\Configuration\Shared\WizardLayout::class;
+        $nextStep->onClick(Action::redirect($layout::pageUrl($layout::nextPage(5))));
         $nextStep->setTitle($this->translate('next_step_btn'));
         $this->addElement($nextStep);
     }
