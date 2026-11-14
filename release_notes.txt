@@ -1,5 +1,11 @@
 1.7.0 (2026-11-14)
 Migration from the legacy module
+- The migration is a step of the setup wizard: when "migrate" is chosen for the
+  legacy module, the wizard shows the product choices, starts the migration
+  and its progress before the finalization, and goes on once it has
+  completed. "Migrate later" is possible; the finalization then reminds that
+  both modules stay active until it is run from Addons > Migration. After a
+  completed run the Migration page says there is nothing left to migrate.
 - Every legacy product moves to the new module; the legacy module is no longer
   kept for products the certificate provider has no equivalent for. Before the
   start, the migration page lists those products with their services and the
