@@ -2,6 +2,14 @@
 
 namespace ModulesGarden\Servers\TSSGGSModule;
 
+// only through WHMCS: a direct request gets nothing (no output, no error with the server path)
+if(!defined('WHMCS'))
+{
+    http_response_code(403);
+    exit;
+}
+
+
 if(!defined('DS'))define('DS',DIRECTORY_SEPARATOR);
 
 if(!class_exists(__NAMESPACE__.'\Loader')){

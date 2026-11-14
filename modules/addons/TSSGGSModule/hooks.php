@@ -1,5 +1,13 @@
 <?php
 
+// only through WHMCS: a direct request gets nothing (no output, no error with the server path)
+if(!defined('WHMCS'))
+{
+    http_response_code(403);
+    exit;
+}
+
+
 require_once __DIR__ . DIRECTORY_SEPARATOR . 'core' . DIRECTORY_SEPARATOR . 'Bootstrap.php';
 
 \ModulesGarden\TSSGGSModule\Core\Hook\HookManager::create(__DIR__);
