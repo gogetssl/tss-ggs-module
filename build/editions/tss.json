@@ -1,6 +1,6 @@
 {
   "edition": "tss",
-  "folder": "tssmodule",
+  "folder": "TSSPlugin",
   "package": "TheSSLStore_Plugin",
   "short": "tss"
 }

@@ -1,6 +1,6 @@
 {
   "edition": "ggs",
-  "folder": "ggsmodule",
+  "folder": "GGSModule",
   "package": "GoGetSSL_Module",
   "short": "ggs"
 }
