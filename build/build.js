@@ -22,7 +22,7 @@ const { execFileSync } = require('child_process');
 
 const SOURCE_NAME  = 'TSSGGSModule';
 const SHORT_NAME   = 'tssggs';
-const PACKAGE_PATHS = ['modules', 'feeds'];
+const PACKAGE_PATHS = ['modules'];
 const EDITION_FILE = 'modules/addons/TSSGGSModule/app/Config/edition.php';
 // development tools: never in a package for clients (KEEP_DEV=1 keeps them, for the test box)
 const DEV_ONLY = [
