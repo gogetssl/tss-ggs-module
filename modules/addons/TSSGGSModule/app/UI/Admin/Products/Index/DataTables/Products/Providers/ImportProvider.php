@@ -314,5 +314,8 @@ class ImportProvider extends CrudProvider
                 }
             }
         }
+
+        // CodeGuard plans can be upgraded to the dearer ones (the only product type that switches plans at the vendor)
+        \ModulesGarden\TSSGGSModule\App\Libs\CodeGuardService::linkUpgradePaths();
     }
 }
