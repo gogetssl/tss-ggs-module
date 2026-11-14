@@ -1,3 +1,31 @@
+1.7.0 (2026-11-14)
+Migration from the legacy module
+- Every legacy product moves to the new module; the legacy module is no longer
+  kept for products the certificate provider has no equivalent for. Before the
+  start, the migration page lists those products with their services and the
+  administrator chooses for each:
+  - an alternative product: existing certificates keep working and are renewed
+    as the new product, or
+  - keep as a record: the certificate and its order details stay visible to the
+    client and the administrator, but it cannot be renewed, reissued or
+    configured, it is never invoiced for a renewal, and the product is hidden
+    and retired. Products without active or unconfigured certificates are kept
+    as records without asking.
+- A run either completes or is undone. Services that fail are tried once more;
+  if any still fail - or the preparation or the switch fails - the run rolls
+  itself back at once and the legacy module carries on as before. The 20% rule
+  is gone: a switch can no longer leave a failed service between two modules.
+- "Download error report" on a stopped run: versions, the services that failed
+  with the reason, and the full log, with e-mail addresses masked - ready to
+  send to support.
+- A service whose own product code is unknown to the provider follows its
+  product's mapping.
+- A rollback also removes the settings the run added.
+
+Other
+- WHMCS lists TheSSLStore / GoGetSSL as the module's author; leftover vendor
+  links and logos of the framework supplier are removed.
+
 1.6.0 (2026-11-14)
 Migration from the legacy module
 - While a migration runs, the legacy module is paused for the services being

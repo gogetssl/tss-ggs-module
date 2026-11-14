@@ -27,11 +27,6 @@
                         {$mainName}
                     </div>
                 </a>
-                <a class="lu-navbar__brand lu-brand lu-is-right" href="https://www.modulesgarden.com" target="_blank">
-                    <div class="lu-brand__logo">
-                        <img src="{$assetsURL}/img/modules-garden-logo.svg" alt="ModulesGarden" width="150">
-                    </div>
-                </a>
             </div>
             <div class="lu-navbar__nav">
                 <ul class="lu-nav lu-nav--h lu-is-left">

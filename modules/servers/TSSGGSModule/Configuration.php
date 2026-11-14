@@ -12,8 +12,8 @@ class Configuration extends AbstractConfiguration
     public $description = '';
     public $clientareaName = 'GoGetSSL Module';
     public $encryptHash = 'uUc1Y8cWxDOGaby11lBwelqzo6PGMTA0dbHaKQ109olufoJgIFBOgmReKCZbpCYpASnrtfjmCIUyplaBJaUh40auDALprOHtj1g92ZRBS6S94IbZWaeZRYkG1f81h6qLMYEOr016RurCnmodFCWdMkTqrlVBvH249gzXPduKQVXpN9hooComaRPY5jZD6s8GdfR5E_BNP3v8Ui8RrdqMPST_8quMW48LhHY88xCvSWwDNjkC2tCAaK67Id2NjzIdoNTHUMISRg81nHX8ZGcbP74mxixo_ASd8YoWnDCAs8yiT4t0PwKRO_y3C1kDo69Nxz1YYt4tY1VzOD_DFBulAA5NCJLfogroo';
-    public $version = '1.6.0';
-    public $author = 'ModulesGarden';
+    public $version = '1.7.0';
+    public $author = 'GoGetSSL';
 
     /** Tables are named by the edition - see App\Libs\Edition::table() */
     public $tablePrefix = false;

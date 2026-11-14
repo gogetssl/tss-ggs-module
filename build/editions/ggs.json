@@ -2,5 +2,6 @@
   "edition": "ggs",
   "folder": "GGSModule",
   "package": "GoGetSSL_Module",
-  "short": "ggs"
+  "short": "ggs",
+  "author": "GoGetSSL"
 }

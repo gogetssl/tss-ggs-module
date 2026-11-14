@@ -114,6 +114,20 @@ function build(edition) {
     if (!/'edition'\s*=>\s*'[a-z]+'/.test(template)) fail("'edition' line not found in " + EDITION_FILE);
     fs.writeFileSync(editionFile, template.replace(/'edition'\s*=>\s*'[a-z]+'/, "'edition' => '" + edition.edition + "'"));
 
+    // author WHMCS shows in its module lists: the edition's own company
+    if (edition.author) {
+        const authorFiles = [
+            [path.join('modules', 'addons', name, 'app', 'Config', 'configuration.yml'), /^author:.*$/m, "author: '" + edition.author + "'"],
+            [path.join('modules', 'servers', name, 'Configuration.php'), /public \$author = '[^']*';/, "public $author = '" + edition.author + "';"],
+        ];
+        for (const [rel, pattern, replacement] of authorFiles) {
+            const file = path.join(dir, rel);
+            const content = fs.readFileSync(file, 'utf8');
+            if (!pattern.test(content)) fail('author line not found in ' + rel);
+            fs.writeFileSync(file, content.replace(pattern, replacement));
+        }
+    }
+
     // inside a double-quoted PHP string a namespace right after a backslash can turn into an escape sequence
     // (\t = tab, \n = newline), which only happens when the folder name starts with one of those letters
     if (/^[nrtvefxu0-7]/.test(name)) {

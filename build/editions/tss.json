@@ -2,5 +2,6 @@
   "edition": "tss",
   "folder": "TSSPlugin",
   "package": "TheSSLStore_Plugin",
-  "short": "tss"
+  "short": "tss",
+  "author": "TheSSLStore"
 }

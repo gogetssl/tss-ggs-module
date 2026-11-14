@@ -1,11 +1,11 @@
-version: '1.6.0'
+version: '1.7.0'
 # systemName and description are replaced at runtime by the edition (app/Config/edition.php, App\Libs\Edition)
 systemName: 'GoGetSSL Module'
 description: 'GoGetSSL Module for WHMCS: sell and manage SSL/TLS certificates, ACME and AutoInstall SSL subscriptions and other security products.'
 clientAreaName: 'TSSGGSModule'
 clientAreaController: Home
 adminAreaController: Home
-author: '<a href="https://www.modulesgarden.com" target="_blank">ModulesGarden</a>'
+author: 'GoGetSSL'
 moduleIcon: 'tts-ggs-logo'
 debug: false
 #fields: https://developers.whmcs.com/addon-modules/configuration/

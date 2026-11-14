@@ -1,26 +1,3 @@
-#openapi: 3.0.3
-#info:
-#  title: Swagger ModulesGarden - OpenAPI 3.0
-#  description: |-
-#    This is a sample ModulesGarden FW Server based on the OpenAPI 3.0 specification.  You can find out more about
-#    Swagger at [https://swagger.io](https://swagger.io). In the third iteration of the ModulesGarden, we've switched to the design first approach!
-#    You can now help us improve the API whether it's by making changes to the definition itself or to the code.
-#    That way, with time, we can improve the API in general, and expose some of the new features in OAS3.
-#  license:
-#    name: Apache 2.0
-#    url: http://www.apache.org/licenses/LICENSE-2.0.html
-#  version: 1.0.11
-#externalDocs:
-#  description: Find out more about Swagger
-#  url: http://swagger.io
-#servers:
-#  - url: https://dev22.modulesgarden-demo.com/dev/modules/addons/TSSGGSModule/packages/api/endpoint/index.php
-#tags:
-#  - name: Modules Garden
-#    description: Everything about ModulesGarden FW API
-#    externalDocs:
-#      description: Find out more
-#      url: http://swagger.io
 #paths:
 #  /service/{serviceId}:
 #    get:
