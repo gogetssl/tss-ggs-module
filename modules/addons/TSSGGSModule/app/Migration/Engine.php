@@ -929,6 +929,8 @@ class Engine
             $backup->restoreRows('tblproductconfiggroups');
             $backup->restoreRows('tblproductconfigoptions');
             $backup->restoreRows('tblproductconfigoptionssub');
+            // settings the run added (the merge of the legacy settings into a fresh install) go, the rest comes back
+            $backup->removeAddedRows('tbladdonmodules', 'module', ['configuration_' . Writer::MODULE, $reader->addonName()]);
             $backup->restoreRows('tbladdonmodules');
             $backup->restoreRows('tblconfiguration');
             $backup->restoreRows('tblemailtemplates');
