@@ -43,7 +43,11 @@ class ModuleRename
                 $done,
                 self::products($old, $new),
                 self::addonSettings($old, $new, $sameToTheDatabase),
-                self::servers($old, $new)
+                self::servers($old, $new),
+                self::orders($old, $new),
+                self::productAddons($old, $new),
+                self::moduleLists($old, $new),
+                self::addonPermissions($old, $new)
             );
         }
 
@@ -113,6 +117,125 @@ class ModuleRename
         }
 
         return $done;
+    }
+
+    /**
+     * SSL orders: WHMCS calls the module named in tblsslorders.module for the configuration pages (configuressl.php),
+     * so an order still carrying the old name could not be configured. Only the spelling changes when the names are
+     * equal to the database.
+     */
+    protected static function orders($old, $new): array
+    {
+        try
+        {
+            $count = Capsule::table('tblsslorders')->where('module', $old)->whereRaw('BINARY module <> ?', [$new])->update(['module' => $new]);
+
+            return $count ? ['tblsslorders.module: ' . $count] : [];
+        }
+        catch(\Throwable $e)
+        {
+            return [];
+        }
+    }
+
+    /** Product addons provisioned by the module */
+    protected static function productAddons($old, $new): array
+    {
+        try
+        {
+            if(!Capsule::schema()->hasColumn('tbladdons', 'module'))
+            {
+                return [];
+            }
+            $count = Capsule::table('tbladdons')->where('module', $old)->whereRaw('BINARY module <> ?', [$new])->update(['module' => $new]);
+
+            return $count ? ['tbladdons.module: ' . $count] : [];
+        }
+        catch(\Throwable $e)
+        {
+            return [];
+        }
+    }
+
+    /**
+     * WHMCS's own lists of module names: active addons and the modules whose hooks.php it loads. An old name left
+     * there points at a folder that is gone (the new one is added when WHMCS sees the module, so no duplicate stays).
+     */
+    protected static function moduleLists($old, $new): array
+    {
+        $done = [];
+        foreach(['ActiveAddonModules', 'AddonModulesHooks', 'ModuleHooks'] as $setting)
+        {
+            try
+            {
+                $value = Capsule::table('tblconfiguration')->where('setting', $setting)->value('value');
+                if($value === null)
+                {
+                    continue;
+                }
+                $list = array_values(array_filter(array_map('trim', explode(',', (string)$value)), 'strlen'));
+                if(!in_array($old, $list, true))
+                {
+                    continue;
+                }
+                $out = [];
+                foreach($list as $name)
+                {
+                    $name = $name === $old ? $new : $name;
+                    if(!in_array($name, $out, true))
+                    {
+                        $out[] = $name;
+                    }
+                }
+                Capsule::table('tblconfiguration')->where('setting', $setting)->update(['value' => implode(',', $out)]);
+                $done[] = 'tblconfiguration.' . $setting . ': ' . $old . ' -> ' . $new;
+            }
+            catch(\Throwable $e)
+            {
+                // the next run tries again
+            }
+        }
+
+        return $done;
+    }
+
+    /** Admin role access to the addon (AddonModulesPerms: role id => [module => name]) */
+    protected static function addonPermissions($old, $new): array
+    {
+        try
+        {
+            $raw   = (string)Capsule::table('tblconfiguration')->where('setting', 'AddonModulesPerms')->value('value');
+            $perms = $raw !== '' ? @unserialize($raw, ['allowed_classes' => false]) : false;
+            if(!is_array($perms))
+            {
+                return [];
+            }
+            $changed = false;
+            foreach($perms as $role => $modules)
+            {
+                if(is_array($modules) && array_key_exists($old, $modules))
+                {
+                    if(!array_key_exists($new, $modules))
+                    {
+                        $modules[$new] = $modules[$old];
+                    }
+                    unset($modules[$old]);
+                    $perms[$role] = $modules;
+                    $changed      = true;
+                }
+            }
+            if(!$changed)
+            {
+                return [];
+            }
+            Capsule::table('tblconfiguration')->where('setting', 'AddonModulesPerms')->update(['value' => serialize($perms)]);
+
+            return ['tblconfiguration.AddonModulesPerms: ' . $old . ' -> ' . $new];
+        }
+        catch(\Throwable $e)
+        {
+            return [];
+        }
     }
 
     /**
