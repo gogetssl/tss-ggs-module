@@ -166,7 +166,12 @@ class MigrationContainer extends Container implements AdminAreaInterface
         $html .= '<p class="tssggs-muted">' . htmlspecialchars($this->t('credentials_' . Credentials::state($source))) . '</p>';
         $html .= '<p class="tssggs-muted">' . htmlspecialchars($this->t('choice_current')) . ' <b>' . htmlspecialchars($choice ? $this->t('choice_' . $choice) : $this->t('choice_none')) . '</b></p>';
 
-        if($info['support']['supported'])
+        if((int)$c['products']['total'] === 0 && array_sum(array_map('intval', (array)$c['services'])) === 0)
+        {
+            // everything was moved by an earlier run
+            $html .= '<div class="tssggs-note is-ok">' . htmlspecialchars($this->t('nothing_left')) . '</div>';
+        }
+        elseif($info['support']['supported'])
         {
             $token  = MigrationController::token();
             $report = 'addonmodules.php?module=TSSGGSModule&mg-page=migration&mg-action=report&source=' . $source;

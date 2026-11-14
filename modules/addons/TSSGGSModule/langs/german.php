@@ -1540,3 +1540,4 @@ $_LANG['admin.migration.wizard_continue'] = 'Weiter';
 $_LANG['admin.migration.wizard_later_hint'] = 'Sie können die Migration auch später unter Addons > Migration ausführen; bis dahin arbeitet das Altmodul weiter.';
 $_LANG['admin.migration.wizard_later'] = 'Später migrieren';
 $_LANG['admin.configuration.content.step6.migration_pending'] = 'Die Migration des Altmoduls wurde noch nicht ausgeführt: beide Module sind aktiv, bis Sie sie unter <b>Addons > Migration</b> ausführen.';
+$_LANG['admin.migration.nothing_left'] = 'Nichts mehr zu migrieren: die Produkte und Zertifikate dieses Altmoduls wurden durch die Migration unten übernommen.';

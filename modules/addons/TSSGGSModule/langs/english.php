@@ -1549,3 +1549,4 @@ $_LANG['admin.migration.wizard_continue'] = 'Continue';
 $_LANG['admin.migration.wizard_later_hint'] = 'You can also run the migration later from Addons > Migration; until then the legacy module keeps working.';
 $_LANG['admin.migration.wizard_later'] = 'Migrate later';
 $_LANG['admin.configuration.content.step6.migration_pending'] = 'The migration of the legacy module has not been run yet: both modules are active until you run it from <b>Addons > Migration</b>.';
+$_LANG['admin.migration.nothing_left'] = 'Nothing left to migrate: the products and certificates of this legacy module were moved by the migration below.';
