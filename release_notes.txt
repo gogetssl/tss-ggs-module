@@ -1,3 +1,9 @@
+1.4.1 (2026-11-14)
+Each edition calls itself by its own name everywhere. The line under the name
+in Setup > Addon Modules said "module" for TheSSLStore Plugin, and the server
+module could fall back to the other edition's name where nothing had loaded
+the edition yet.
+
 1.4.0 (2026-11-14)
 The module is installed in a folder of its own name: TSSPlugin for TheSSLStore
 Plugin, GGSModule for the GoGetSSL Module, in both modules/addons and
