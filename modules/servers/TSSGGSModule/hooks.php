@@ -589,6 +589,12 @@ add_hook('AfterModuleCreate', 1, function($vars) {
 add_hook('PreInvoicingGenerateInvoiceItems', 1, function($vars) {
     try
     {
+        // the "Create Automatic Renewal Invoice" switch decides who invoices: off, WHMCS does, as it always did
+        if(!\ModulesGarden\TSSGGSModule\App\Libs\RenewalPolicy::invoicing(\ModulesGarden\TSSGGSModule\App\Libs\RenewalPolicy::CERTIFICATE))
+        {
+            return;
+        }
+
         $rows = Capsule::table('tblhosting')
             ->join('tblproducts', 'tblproducts.id', '=', 'tblhosting.packageid')
             ->where('tblproducts.servertype', 'TSSGGSModule')
