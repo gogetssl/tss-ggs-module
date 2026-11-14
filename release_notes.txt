@@ -1,3 +1,19 @@
+1.5.2 (2026-11-14)
+Renewal paid but still pending: a renewal the client paid whose payment has
+not cleared yet (invoice "Payment Pending" - a bank transfer, an e-check).
+Each product type now has a setting for what to do with it:
+- SSL certificates (Finance page): wait 3, 7, 14 or 30 days after the order
+  ends before the service is terminated as unpaid, or treat it as unpaid.
+  Default: wait 14 days. Waiting costs nothing - the renewal is ordered only
+  once the payment clears.
+- Subscriptions (Automated SSL page): treat as unpaid (default - cancelled
+  the day before the vendor renews and charges you) or wait 3 to 30 days.
+  When waiting, the page warns that the vendor may charge you before the
+  payment clears.
+- The module no longer cancels a "Payment Pending" invoice when it
+  terminates an unpaid service; it is left for you and noted in the
+  activity log.
+
 1.5.1 (2026-11-14)
 A Sectigo renewal without "Additional Days For Renewal Order" set sends the
 days left on the current certificate, and now never more than 30 - the most
