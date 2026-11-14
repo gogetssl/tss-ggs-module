@@ -21,7 +21,15 @@ class Configuration extends AbstractConfiguration
 
     function __construct()
     {
-        // GoGetSSL Module / TheSSLStore Plugin - see modules/addons/TSSGGSModule/app/Config/edition.php
+        // GoGetSSL Module / TheSSLStore Plugin - see modules/addons/TSSGGSModule/app/Config/edition.php.
+        // The name is the edition's own: it is read here even where nothing has loaded the addon yet, so that
+        // neither edition can ever show the other one's name.
+        $edition = dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . 'addons' . DIRECTORY_SEPARATOR . basename(__DIR__)
+            . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'Libs' . DIRECTORY_SEPARATOR . 'Edition.php';
+        if(!class_exists('\ModulesGarden\TSSGGSModule\App\Libs\Edition', false) && is_file($edition))
+        {
+            require_once $edition;
+        }
         if(class_exists('\ModulesGarden\TSSGGSModule\App\Libs\Edition', false))
         {
             $this->name           = \ModulesGarden\TSSGGSModule\App\Libs\Edition::name();

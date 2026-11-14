@@ -24,13 +24,13 @@ class Edition
             'name'        => 'GoGetSSL Module',
             'brand'       => 'GoGetSSL',
             'tablePrefix' => 'GGSModule',
-            'description' => 'GoGetSSL module for WHMCS: sell and manage SSL/TLS certificates, ACME and AutoInstall SSL subscriptions and other security products.',
+            'description' => 'GoGetSSL Module for WHMCS: sell and manage SSL/TLS certificates, ACME and AutoInstall SSL subscriptions and other security products.',
         ],
         self::TSS => [
             'name'        => 'TheSSLStore Plugin',
             'brand'       => 'TheSSLStore',
             'tablePrefix' => 'TSSPlugin',
-            'description' => 'TheSSLStore module for WHMCS: sell and manage SSL/TLS certificates, ACME and AutoInstall SSL subscriptions and other security products.',
+            'description' => 'TheSSLStore Plugin for WHMCS: sell and manage SSL/TLS certificates, ACME and AutoInstall SSL subscriptions and other security products.',
         ],
     ];
 
