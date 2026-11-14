@@ -51,6 +51,8 @@ class FinanceSettingsProvider extends CrudProvider
         $this->availableValues['renewalPriceMode'] = $options('renewal', FinancePolicy::RENEWAL_MODES);
         $this->availableValues['rateSource']       = $options('rateSource', FinancePolicy::RATE_SOURCES);
         $this->availableValues['pendingPaymentWaitCertificate'] = $options('pendingWait', \ModulesGarden\TSSGGSModule\App\Libs\RenewalPolicy::PENDING_WAIT_OPTIONS);
+        // as a string: the dropdown takes a numeric 0 for "nothing chosen"
+        $this->data['pendingPaymentWaitCertificate'] = (string)\ModulesGarden\TSSGGSModule\App\Libs\RenewalPolicy::pendingWait(\ModulesGarden\TSSGGSModule\App\Libs\RenewalPolicy::CERTIFICATE);
         $this->availableValues['currency'] = Helpers::getCurrencyOptions();
     }
 
