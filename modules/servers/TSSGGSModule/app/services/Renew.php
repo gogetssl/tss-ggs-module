@@ -124,7 +124,12 @@ class Renew
         {
             throw new \Exception('The renewal order could not be created. Please check logs.');
         }
-        Service::where('id', $id)->update(['domain' => $params['domain']]);
+        // WHMCS gives a new service today's due date, which would bill the renewal just paid a second time: it carries
+        // the paid period instead - the renewed service's due date, which WHMCS moved on by a cycle on payment (the
+        // certificates sync later puts it on the new order's end)
+        $paidUntil = (string)Service::where('id', (int)$params['serviceid'])->value('nextduedate');
+        Service::where('id', $id)->update(['domain' => $params['domain']]
+            + ($paidUntil > date('Y-m-d') ? ['nextduedate' => $paidUntil, 'nextinvoicedate' => $paidUntil] : []));
 
         return $id;
     }
