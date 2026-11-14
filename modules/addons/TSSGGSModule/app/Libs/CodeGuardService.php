@@ -376,6 +376,72 @@ class CodeGuardService extends GatewayOrderService
      *
      * @param int $whmcsProductId the product the service is moving to
      */
+    /**
+     * Upgrade paths between the module's CodeGuard products (WHMCS product > Upgrades), set when products are
+     * imported: each plan can be upgraded to every dearer one. Only missing paths are added - paths the admin set
+     * (or removed and set differently) are left alone; downgrades are the admin's choice. Returns paths added.
+     */
+    public static function linkUpgradePaths()
+    {
+        if(!Capsule::schema()->hasTable('tblproduct_upgrade_products'))
+        {
+            return 0;
+        }
+        $plans = [];
+        $query = Capsule::table('tblproducts')->whereRaw('LOWER(configoption9) = ?', [strtolower(static::CATEGORY)]);
+        if(Capsule::schema()->hasColumn('tblproducts', 'retired'))
+        {
+            $query->where('retired', 0);
+        }
+        foreach($query->get(['id']) as $product)
+        {
+            $remote = static::remoteProduct((int)$product->id);
+            $price  = static::comparablePrice($remote && is_array($remote->rawData) ? $remote->rawData : []);
+            if($price !== null)
+            {
+                $plans[(int)$product->id] = $price;
+            }
+        }
+        asort($plans);
+        $ids   = array_keys($plans);
+        $added = 0;
+        for($i = 0; $i < count($ids); $i++)
+        {
+            for($j = $i + 1; $j < count($ids); $j++)
+            {
+                if($plans[$ids[$j]] <= $plans[$ids[$i]])
+                {
+                    continue; // same price: neither is an upgrade of the other
+                }
+                $exists = Capsule::table('tblproduct_upgrade_products')->where('product_id', $ids[$i])->where('upgrade_product_id', $ids[$j])->exists();
+                if(!$exists)
+                {
+                    Capsule::table('tblproduct_upgrade_products')->insert(['product_id' => $ids[$i], 'upgrade_product_id' => $ids[$j]]);
+                    $added++;
+                }
+            }
+        }
+
+        return $added;
+    }
+
+    /** Provider price of the shortest term (the same term for every plan, so the plans compare) */
+    protected static function comparablePrice(array $raw)
+    {
+        $best = null;
+        foreach((array)($raw['prices'] ?? []) as $price)
+        {
+            $term    = (int)($price['term'] ?? 0);
+            $selling = $price['selling'] ?? ($price['base']['single']['selling'] ?? null);
+            if($term > 0 && is_numeric($selling) && ($best === null || $term < $best[0]))
+            {
+                $best = [$term, (float)$selling / $term];
+            }
+        }
+
+        return $best === null ? null : $best[1];
+    }
+
     public static function changePlan($serviceId, $whmcsProductId)
     {
         $stored = static::requireLicense($serviceId);
