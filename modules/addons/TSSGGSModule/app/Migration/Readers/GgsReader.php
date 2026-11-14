@@ -119,15 +119,26 @@ class GgsReader extends AbstractReader
         $on  = function($key) use ($s) { return !empty($s[$key]) ? 'on' : ''; };
         $val = function($key, $default = '') use ($s) { return isset($s[$key]) && $s[$key] !== '' ? (string)$s[$key] : $default; };
 
+        // its renewal invoice was created L days before a due date that lay D days before the order end (D only with
+        // the subscription invoice switch on). The 1.5.0 pair keeps the due date where it was: the invoice is
+        // created D + L days before the end (at most 30), due D days before it.
+        $maxLead  = \ModulesGarden\TSSGGSModule\App\Libs\RenewalPolicy::MAX_LEAD;
+        $prior    = !empty($s['auto_renew_invoice_subscription']) ? max(0, (int)$val('renew_invoice_days_subscription', '0')) : 0;
+        $lead     = min($maxLead, max(1, $prior + max(0, (int)$val('renew_invoice_days_reccuring', '30'))));
+        // subscriptions: the same lead; due early enough that an unpaid renewal is cancelled before the vendor renews
+        $leadSub  = min($maxLead, max(1, (int)$val('renew_invoice_days_subscription', '30')));
+
         $ssl = [
             'recurringCreateAutomaticRenewalInvoice'             => $on('auto_renew_invoice_reccuring'),
-            'recurringDaysBeforeExpiry'                          => $val('renew_invoice_days_reccuring', '30'),
+            'recurringDaysBeforeExpiry'                          => (string)$lead,
+            'recurringPaymentTerm'                               => (string)max(0, $lead - $prior),
             'recurringSendExpirationNotifications'               => $on('send_expiration_notification_reccuring') ? '30,15,7,3,1' : '',
             'oneTimeCreateAutomaticRenewalInvoice'               => $on('auto_renew_invoice_one_time'),
             'oneTimeDaysBeforeExpiry'                            => $val('renew_invoice_days_one_time', '30'),
             'oneTimeSendExpirationNotifications'                 => $on('send_expiration_notification_one_time') ? '30,15,7,3,1' : '',
             'recurringCreateAutomaticRenewalInvoiceSubscription' => $on('auto_renew_invoice_subscription'),
-            'recurringDaysBeforeExpirySubscription'              => $val('renew_invoice_days_subscription', '30'),
+            'recurringDaysBeforeExpirySubscription'              => (string)$leadSub,
+            'recurringPaymentTermSubscription'                   => (string)min(\ModulesGarden\TSSGGSModule\App\Libs\RenewalPolicy::DEFAULT_TERM, \ModulesGarden\TSSGGSModule\App\Libs\RenewalPolicy::safeTerm(\ModulesGarden\TSSGGSModule\App\Libs\RenewalPolicy::SUBSCRIPTION, $leadSub)),
             'recurringSendExpirationNotificationsSubscription'   => $on('send_expiration_notification_subscription') ? '30,15,7,3,1' : '',
             'renewOrderViaExistingOrder'                         => empty($s['renew_new_order']) ? 'on' : '',
             'automaticProcessingOfRenewalOrders'                 => $on('automatic_processing_of_renewal_orders'),

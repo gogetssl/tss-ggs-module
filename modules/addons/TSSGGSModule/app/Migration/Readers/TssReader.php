@@ -172,9 +172,17 @@ class TssReader extends AbstractReader
         $notify       = implode(',', array_unique(array_filter([30, 15, $reminderDays, 7, 3, 1], function($d) use ($reminderDays) { return $d <= max(30, $reminderDays); })));
         $autorenew    = strtolower($val('autorenew', ''));
 
+        // its due date lay P days before the order end and WHMCS invoiced W days before that (its own Invoice
+        // Generation setting, 30 when empty - as the old module read it). The 1.5.0 pair keeps the due date where it
+        // was: the invoice is created P + W days before the end (at most 30), due P days before it.
+        $prior     = max(0, (int)$val('no_of_days_prior_to_expirationdate', '0'));
+        $whmcsLead = (int)(Capsule::table('tblconfiguration')->where('setting', 'CreateInvoiceDaysBefore')->value('value') ?: 30);
+        $lead      = min(\ModulesGarden\TSSGGSModule\App\Libs\RenewalPolicy::MAX_LEAD, max(1, $prior + max(0, $whmcsLead)));
+
         $ssl = [
             'recurringCreateAutomaticRenewalInvoice' => in_array($autorenew, ['full', 'autorenew', 'yes', 'on', '1'], true) ? 'on' : '',
-            'recurringDaysBeforeExpiry'              => $val('renewal_invoice_days', '30'),
+            'recurringDaysBeforeExpiry'              => (string)$lead,
+            'recurringPaymentTerm'                   => (string)max(0, $lead - $prior),
             'recurringSendExpirationNotifications'   => $on('send_expiration_reminder_email') ? $notify : '',
             'oneTimeCreateAutomaticRenewalInvoice'   => in_array($autorenew, ['full', 'autorenew', 'yes', 'on', '1'], true) ? 'on' : '',
             'oneTimeDaysBeforeExpiry'                => $val('renewal_invoice_days', '30'),

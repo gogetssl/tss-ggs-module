@@ -58,8 +58,29 @@ class Writer
         $current = $repo->getModuleConfiguration();
         $filled  = [];
 
-        $ssl = (array)($current['sslSettings'] ?? []);
-        foreach((array)($legacy['sslSettings'] ?? []) as $key => $value)
+        $ssl       = (array)($current['sslSettings'] ?? []);
+        $legacySsl = (array)($legacy['sslSettings'] ?? []);
+
+        // renewal timing moves as a pair (lead + payment term) or the migrated services' due dates would shift; the
+        // legacy pair is used unless this module's payment term (1.5.0) was already set - the administrator's choice
+        foreach(\ModulesGarden\TSSGGSModule\App\Libs\RenewalPolicy::KEYS as [, $leadKey, $termKey])
+        {
+            if(isset($legacySsl[$leadKey], $legacySsl[$termKey]) && (!isset($ssl[$termKey]) || $ssl[$termKey] === '' || $ssl[$termKey] === null))
+            {
+                $ssl[$leadKey] = $legacySsl[$leadKey];
+                $ssl[$termKey] = $legacySsl[$termKey];
+                $filled[]      = 'sslSettings.' . $leadKey;
+                $filled[]      = 'sslSettings.' . $termKey;
+            }
+            unset($legacySsl[$leadKey], $legacySsl[$termKey]);
+        }
+
+        // how a paid renewal was placed: one setting for every product since 1.5.0 (written below, after the general
+        // settings, which are copied only while this module has none)
+        $reuseDetails = isset($legacySsl['automaticProcessingOfRenewalOrders']) ? ($legacySsl['automaticProcessingOfRenewalOrders'] === 'on' ? 'on' : '') : null;
+        unset($legacySsl['automaticProcessingOfRenewalOrders']);
+
+        foreach($legacySsl as $key => $value)
         {
             if((!isset($ssl[$key]) || $ssl[$key] === '' || $ssl[$key] === null) && $value !== '' && $value !== null)
             {
@@ -92,6 +113,14 @@ class Writer
             {
                 $filled[] = 'generalSettings.' . $key;
             }
+        }
+
+        if($reuseDetails !== null)
+        {
+            $general                           = (array)((new AddonModuleRepository())->getModuleConfiguration()['generalSettings'] ?? []);
+            $general['renewReuseOrderDetails'] = $reuseDetails;
+            $this->saveSetting('generalSettings', $general);
+            $filled[] = 'generalSettings.renewReuseOrderDetails';
         }
 
         return $filled;
