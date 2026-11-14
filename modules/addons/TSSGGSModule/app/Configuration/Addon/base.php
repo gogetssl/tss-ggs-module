@@ -28,8 +28,9 @@ function TSSGGSModule_adoptAnOlderInstall()
     require_once $libs . 'Edition.php';
     require_once $libs . 'TablePrefix.php';
     require_once $libs . 'ModuleRename.php';
+    require_once $libs . 'SchemaIndexes.php';
 
-    foreach (['TablePrefix', 'ModuleRename'] as $step)
+    foreach (['TablePrefix', 'ModuleRename', 'SchemaIndexes'] as $step)
     {
         try
         {

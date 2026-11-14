@@ -25,10 +25,10 @@ class LegacyBlock
     const KIND_HELD = 'held';
 
     /**
-     * Module commands a payment triggers once - held and run again when the run has ended, through the WHMCS
-     * functions of includes/modulefunctions.php (the API has no command for a renewal)
+     * Module commands a payment triggers once - held and run again when the run has ended. WHMCS 8 has the create
+     * only as an API command and the renewal only as a function of includes/modulefunctions.php.
      */
-    const REPLAYED = ['Create' => 'ServerCreateAccount', 'Renew' => 'ServerRenew', 'ChangePackage' => 'ServerChangePackage'];
+    const REPLAYED = ['Create' => 'api:ModuleCreate', 'Renew' => 'fn:ServerRenew', 'ChangePackage' => 'fn:ServerChangePackage'];
 
     /** every module command WHMCS lets a hook abort (suspension and termination are retried by WHMCS itself) */
     const COMMANDS = ['Create', 'Renew', 'ChangePackage', 'Suspend', 'Unsuspend', 'Terminate', 'ChangePassword', 'Custom'];
@@ -227,22 +227,31 @@ class LegacyBlock
             $serviceId = (int)$job['object_id'];
             try
             {
-                $function = self::REPLAYED[$command] ?? '';
-                if(!function_exists($function) && defined('ROOTDIR'))
-                {
-                    require_once ROOTDIR . '/includes/modulefunctions.php';
-                }
-                if(!function_exists($function))
-                {
-                    throw new \RuntimeException('WHMCS function ' . $function . ' not available');
-                }
+                [$type, $name] = explode(':', self::REPLAYED[$command] ?? 'none:', 2);
                 if(!Capsule::table('tblhosting')->where('id', $serviceId)->exists())
                 {
                     throw new \RuntimeException('Service not found');
                 }
-                $answer = $function($serviceId);
-                $ok     = $answer === 'success';
-                $reason = $ok ? null : (is_string($answer) && $answer !== '' ? $answer : 'no answer');
+                if($type === 'api')
+                {
+                    $answer = localAPI($name, ['serviceid' => $serviceId]);
+                    $ok     = is_array($answer) && ($answer['result'] ?? '') === 'success';
+                    $reason = $ok ? null : (string)($answer['message'] ?? 'no answer');
+                }
+                else
+                {
+                    if(!function_exists($name) && defined('ROOTDIR'))
+                    {
+                        require_once ROOTDIR . '/includes/modulefunctions.php';
+                    }
+                    if(!function_exists($name))
+                    {
+                        throw new \RuntimeException('WHMCS function ' . $name . ' not available');
+                    }
+                    $answer = $name($serviceId);
+                    $ok     = $answer === 'success';
+                    $reason = $ok ? null : (is_string($answer) && $answer !== '' ? $answer : 'no answer');
+                }
             }
             catch(\Throwable $e)
             {

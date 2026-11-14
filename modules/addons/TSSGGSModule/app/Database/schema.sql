@@ -29,7 +29,8 @@ CREATE TABLE IF NOT EXISTS `#prefix#Requests` (
     `request`                text NOT NULL,
     `created_at`             datetime NOT NULL,
     `updated_at`             datetime NOT NULL,
-    PRIMARY KEY (`id`)
+    PRIMARY KEY (`id`),
+    KEY `serviceid` (`serviceid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=#charset# DEFAULT COLLATE #collation#;
 
 CREATE TABLE IF NOT EXISTS `#prefix#CronsCheck` (

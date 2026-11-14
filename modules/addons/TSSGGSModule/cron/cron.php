@@ -17,7 +17,7 @@ require_once $modulePath . DIRECTORY_SEPARATOR . 'core' . DIRECTORY_SEPARATOR . 
 ini_set('max_execution_time', 0);
 
 // an install upgraded by copying files, where WHMCS never ran the addon upgrade, is still moved over
-foreach (['TablePrefix', 'ModuleRename'] as $step)
+foreach (['TablePrefix', 'ModuleRename', 'SchemaIndexes'] as $step)
 {
     try
     {

@@ -273,6 +273,15 @@ class Engine
             LegacyBlock::reset();
             $this->log($runId, 'info', self::PHASE_PREPARE, 'Legacy module paused for the services of this run (client and admin actions, module commands, its own scripts) until it ends');
 
+            // every service is looked up by its id in these tables; without an index each lookup reads the whole
+            // table and a large install slows down with its own size. Added for the run, dropped when it ends.
+            $indexes = $this->addHelperIndexes();
+            if($indexes)
+            {
+                Store::mergeSummary($runId, ['helper_indexes' => $indexes]);
+                $this->log($runId, 'info', self::PHASE_PREPARE, 'Lookup indexes added for the run', ['indexes' => $indexes]);
+            }
+
             // 2. settings
             $writer = new Writer($runId, $this->source);
             $filled = $writer->writeSettings($this->reader->readSettings());
@@ -438,6 +447,60 @@ class Engine
         $this->switchPhase($runId, $writer, $products);
 
         return $this->status($runId);
+    }
+
+    /** [table, column] looked up per service by the readers and the switch; indexed for the run when they have none */
+    const HELPER_INDEXES = [
+        ['tblsslorders', 'serviceid'], ['tblinvoiceitems', 'relid'],
+        ['mod_sslstore_orders_data', 'service_id'], ['mod_autoinstallssl_orders', 'serviceid'],
+        ['SSLCENTER_orders', 'service_id'], ['SSLCENTER_cron_queue', 'service_id'],
+    ];
+    const HELPER_INDEX_NAME = 'tssggs_migration_lookup';
+
+    /** Returns the [table, name] pairs added (DDL - outside any transaction) */
+    protected function addHelperIndexes(): array
+    {
+        $added = [];
+        foreach(self::HELPER_INDEXES as [$table, $column])
+        {
+            try
+            {
+                if(Schema::addIndex($table, $column, self::HELPER_INDEX_NAME))
+                {
+                    $added[] = [$table, self::HELPER_INDEX_NAME];
+                }
+            }
+            catch(\Throwable $e)
+            {
+                // only slower without it
+            }
+        }
+        // the unified module's own table: kept (App\Libs\SchemaIndexes adds the same on every install)
+        try
+        {
+            Schema::addIndex(Writer::tRequests(), 'serviceid', 'serviceid');
+        }
+        catch(\Throwable $e)
+        {
+        }
+
+        return $added;
+    }
+
+    protected static function dropHelperIndexes(int $runId): void
+    {
+        $run = Store::getRun($runId);
+        foreach((array)($run['summary']['helper_indexes'] ?? []) as $pair)
+        {
+            try
+            {
+                Schema::dropIndex((string)$pair[0], (string)$pair[1]);
+            }
+            catch(\Throwable $e)
+            {
+                Store::log($runId, 'warning', 'cleanup', 'Lookup index not dropped: ' . $e->getMessage(), ['table' => $pair[0]]);
+            }
+        }
     }
 
     /** @var int run whose legacy product values were handed to the reader */
@@ -646,6 +709,8 @@ class Engine
             Store::updateRun($runId, ['status' => Store::RUN_COMPLETED, 'finished_at' => date('Y-m-d H:i:s'), 'last_error' => $verify['ok'] ? null : implode('; ', $verify['problems'])]);
             $this->log($runId, $verify['ok'] ? 'info' : 'warning', self::PHASE_SWITCH, 'Migration completed' . ($verify['ok'] ? '' : ' with verification warnings'), $verify);
 
+            self::dropHelperIndexes($runId);
+
             // orders, renewals and upgrades paid while the legacy module was paused: now on the unified module
             $held = LegacyBlock::replay($runId);
             if($held['done'] || $held['failed'])
@@ -836,6 +901,7 @@ class Engine
         });
 
         $reactivated = LegacyModuleControl::activate($reader->addonName());
+        self::dropHelperIndexes($runId);
         Store::updateRun($runId, ['status' => Store::RUN_ROLLED_BACK, 'finished_at' => date('Y-m-d H:i:s')]);
         Store::log($runId, 'info', self::PHASE_ROLLBACK, 'Rollback completed', ['legacy_reactivated' => $reactivated]);
 
