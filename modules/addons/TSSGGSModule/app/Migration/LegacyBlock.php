@@ -24,8 +24,11 @@ class LegacyBlock
     /** job kind of a held module command */
     const KIND_HELD = 'held';
 
-    /** module commands a payment triggers once - held and run again when the run has ended */
-    const REPLAYED = ['Create' => 'ModuleCreate', 'Renew' => 'ModuleRenew', 'ChangePackage' => 'ModuleChangePackage'];
+    /**
+     * Module commands a payment triggers once - held and run again when the run has ended, through the WHMCS
+     * functions of includes/modulefunctions.php (the API has no command for a renewal)
+     */
+    const REPLAYED = ['Create' => 'ServerCreateAccount', 'Renew' => 'ServerRenew', 'ChangePackage' => 'ServerChangePackage'];
 
     /** every module command WHMCS lets a hook abort (suspension and termination are retried by WHMCS itself) */
     const COMMANDS = ['Create', 'Renew', 'ChangePackage', 'Suspend', 'Unsuspend', 'Terminate', 'ChangePassword', 'Custom'];
@@ -224,9 +227,22 @@ class LegacyBlock
             $serviceId = (int)$job['object_id'];
             try
             {
-                $answer = localAPI(self::REPLAYED[$command], ['serviceid' => $serviceId]);
-                $ok     = is_array($answer) && ($answer['result'] ?? '') === 'success';
-                $reason = $ok ? null : (string)($answer['message'] ?? 'no answer');
+                $function = self::REPLAYED[$command] ?? '';
+                if(!function_exists($function) && defined('ROOTDIR'))
+                {
+                    require_once ROOTDIR . '/includes/modulefunctions.php';
+                }
+                if(!function_exists($function))
+                {
+                    throw new \RuntimeException('WHMCS function ' . $function . ' not available');
+                }
+                if(!Capsule::table('tblhosting')->where('id', $serviceId)->exists())
+                {
+                    throw new \RuntimeException('Service not found');
+                }
+                $answer = $function($serviceId);
+                $ok     = $answer === 'success';
+                $reason = $ok ? null : (is_string($answer) && $answer !== '' ? $answer : 'no answer');
             }
             catch(\Throwable $e)
             {
