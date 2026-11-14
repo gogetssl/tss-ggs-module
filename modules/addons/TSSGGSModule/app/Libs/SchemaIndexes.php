@@ -37,6 +37,20 @@ class SchemaIndexes
             }
         }
 
+        // tables of removed features; DemonTask held client session ids (1.7.1 removed the writer and the runner)
+        foreach(self::DROPPED as $name)
+        {
+            $table = Edition::table($name);
+            if(Capsule::selectOne('SELECT 1 AS x FROM information_schema.tables WHERE table_schema = DATABASE() AND table_name = ?', [$table]))
+            {
+                Capsule::statement('DROP TABLE `' . str_replace('`', '', $table) . '`');
+                $added[] = 'dropped ' . $table;
+            }
+        }
+
         return $added;
     }
+
+    /** tables without a use any more (names without prefix) */
+    const DROPPED = ['DemonTask'];
 }
