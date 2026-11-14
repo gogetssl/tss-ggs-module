@@ -58,6 +58,11 @@ class GeneralSettings
         // Renewal rules: days before the end of the certificate / subscription on which the service falls due
         'dueDateOffsetRegular'      => 0,
         'dueDateOffsetSubscription' => 0,
+        // a renewal paid but still "Payment Pending" at the deadline: days to wait for it to clear (0 = treat it as
+        // unpaid). Certificates wait by default - the renewal is ordered only once paid; subscriptions do not - the
+        // vendor renews and charges for them on its own (App\Libs\RenewalPolicy::pendingWait)
+        'pendingPaymentWaitCertificate'  => 14,
+        'pendingPaymentWaitSubscription' => 0,
         // Pricing
         'keepMarginOnSync'         => false,
         'belowCostEmail'           => true,

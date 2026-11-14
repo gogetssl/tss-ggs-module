@@ -133,16 +133,27 @@ class SubscriptionRenewals
         $category === 'caas' ? AcmeHelpers::refreshAcmeCertificateDetails($serviceId) : AisHelpers::refreshAisDetails($serviceId);
     }
 
-    /** an unpaid "Subscription Renewal" invoice of the service whose due date has passed */
+    /**
+     * An unpaid "Subscription Renewal" invoice of the service whose due date has passed. One paid but still "Payment
+     * Pending" counts only once the reseller's wait for it is over (RenewalPolicy::pendingWait; 0 = at once).
+     */
     protected static function overdueRenewalInvoice($serviceId)
     {
+        $wait = RenewalPolicy::pendingWait(RenewalPolicy::SUBSCRIPTION);
+
         return Capsule::table('tblinvoiceitems')
             ->join('tblinvoices', 'tblinvoices.id', '=', 'tblinvoiceitems.invoiceid')
             ->where('tblinvoiceitems.type', 'Hosting')
             ->where('tblinvoiceitems.relid', (int)$serviceId)
             ->where('tblinvoiceitems.description', 'LIKE', '%' . AcmeHelpers::RENEWAL_LABEL)
-            ->whereIn('tblinvoices.status', ['Unpaid', 'Payment Pending'])
-            ->where('tblinvoices.duedate', '<', date('Y-m-d'))
+            ->where(function($overdue) use ($wait) {
+                $overdue->where(function($unpaid) {
+                    $unpaid->where('tblinvoices.status', 'Unpaid')->where('tblinvoices.duedate', '<', date('Y-m-d'));
+                })->orWhere(function($pending) use ($wait) {
+                    $pending->where('tblinvoices.status', 'Payment Pending')
+                            ->where('tblinvoices.duedate', '<', date('Y-m-d', strtotime('-' . $wait . ' days')));
+                });
+            })
             ->exists();
     }
 

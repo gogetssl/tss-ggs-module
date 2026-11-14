@@ -33,6 +33,9 @@ class RenewalPolicy
     const DEFAULT_TERM = 14;
 
     const LEAD_OPTIONS = [1, 3, 7, 10, 14, 21, 30];
+
+    /** Days a renewal paid but still "Payment Pending" may take to clear before it counts as unpaid (0 = at once) */
+    const PENDING_WAIT_OPTIONS = [0, 3, 7, 14, 30];
     const TERM_OPTIONS = [0, 1, 3, 7, 10, 14, 21, 30];
 
     /** sslSettings keys of each product type: [create invoices, lead, payment term] */
@@ -239,6 +242,48 @@ class RenewalPolicy
     public static function renewalPlaced(int $serviceId): void
     {
         \ModulesGarden\TSSGGSModule\App\Models\Request::where('serviceid', $serviceId)->where('name', 'renewalPending')->delete();
+    }
+
+    /**
+     * Days a renewal paid but still "Payment Pending" (a bank transfer, an e-check ...) may take to clear after the
+     * deadline before it counts as unpaid. The reseller's choice, per product type: a certificate's renewal is ordered
+     * only once paid, so waiting costs nothing; a subscription is renewed and charged by the vendor on its own, so
+     * waiting past the renewal day carries the risk that the payment never clears.
+     */
+    public static function pendingWait(string $type): int
+    {
+        $key  = $type === self::SUBSCRIPTION ? 'pendingPaymentWaitSubscription' : 'pendingPaymentWaitCertificate';
+        $days = GeneralSettings::get($key);
+
+        return max(0, min(60, is_numeric($days) ? (int)$days : 0));
+    }
+
+    /**
+     * The service's renewal invoice that the client paid but whose payment has not cleared yet, or null
+     */
+    public static function pendingPaymentInvoice(int $serviceId)
+    {
+        return \WHMCS\Database\Capsule::table('tblinvoiceitems')
+            ->join('tblinvoices', 'tblinvoices.id', '=', 'tblinvoiceitems.invoiceid')
+            ->where('tblinvoiceitems.type', 'Hosting')
+            ->where('tblinvoiceitems.relid', $serviceId)
+            ->where('tblinvoices.status', 'Payment Pending')
+            ->orderBy('tblinvoices.id', 'desc')
+            ->first(['tblinvoices.id', 'tblinvoices.duedate']);
+    }
+
+    /**
+     * Whether a service past its deadline ($deadline, Y-m-d) still waits for a pending payment to clear
+     */
+    public static function waitingForPendingPayment(string $type, int $serviceId, string $deadline): bool
+    {
+        $wait = self::pendingWait($type);
+        if($wait <= 0 || !self::pendingPaymentInvoice($serviceId))
+        {
+            return false;
+        }
+
+        return date('Y-m-d') <= date('Y-m-d', strtotime('+' . $wait . ' days', strtotime($deadline)));
     }
 
     /**

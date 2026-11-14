@@ -1505,3 +1505,20 @@ $_LANG['admin.settings.index.forms.ssl_settings_form.renewalDueAfterSubscription
 $_LANG['admin.settings.index.forms.ssl_settings_form.recurringCreateAutomaticRenewalInvoice_description'] = 'On: the module creates the renewal invoices, from the days set below, and WHMCS\'s own invoicing is held back for these services - one invoice per renewal. Off: WHMCS invoices renewals by its own Invoice Generation setting, without the 30-day limit.';
 $_LANG['admin.emails.name_renewal_details_required'] = 'Renewal details required';
 $_LANG['admin.emails.when_renewal_details_required'] = 'Sent when a renewal is paid and the client has to submit the details again (CSR, domains, contacts) - "Renew With The Same Order Details" is off, or the vendor refused the previous details.';
+
+// renewal paid but still pending (1.5.2)
+$_LANG['admin.settings.index.forms.finance_settings_form.pendingPaymentWaitCertificate'] = 'Renewal Paid But Still Pending';
+$_LANG['admin.settings.index.forms.finance_settings_form.pendingPaymentWaitCertificate_description'] = 'A renewal the client paid whose payment has not cleared yet ("Payment Pending" - a bank transfer, an e-check) when the order ends. Wait: the service is not terminated for that many days; once the payment clears it is renewed as usual. Waiting costs you nothing - the renewal is ordered only once paid. A "Payment Pending" invoice is never cancelled by the module.';
+$_LANG['admin.settings.index.forms.ssl_settings_form.pendingPaymentWaitSubscription'] = 'Renewal Paid But Still Pending';
+$_LANG['admin.settings.index.forms.ssl_settings_form.pendingPaymentWaitSubscription_description'] = 'A renewal the client paid whose payment has not cleared yet ("Payment Pending") when its invoice falls due. Treat as unpaid: the subscription is cancelled the day before the vendor renews it, as for an unpaid renewal. Wait: it is not cancelled for that many days. A "Payment Pending" invoice is never cancelled by the module.';
+$_LANG['admin.settings.index.forms.ssl_settings_form.pendingWaitSubscriptionRisk'] = 'Waiting for pending payments: the vendor renews the subscription and charges you before a pending payment has cleared. If the payment then fails, the charge stays with you.';
+$_LANG['admin.settings.index.providers.finance_settings_provider.pendingWait_0'] = 'Treat as unpaid';
+$_LANG['admin.settings.index.providers.ssl_settings_provider.pendingWait_0'] = 'Treat as unpaid';
+$_LANG['admin.settings.index.providers.finance_settings_provider.pendingWait_3'] = 'Wait 3 days for it to clear';
+$_LANG['admin.settings.index.providers.ssl_settings_provider.pendingWait_3'] = 'Wait 3 days for it to clear';
+$_LANG['admin.settings.index.providers.finance_settings_provider.pendingWait_7'] = 'Wait 7 days for it to clear';
+$_LANG['admin.settings.index.providers.ssl_settings_provider.pendingWait_7'] = 'Wait 7 days for it to clear';
+$_LANG['admin.settings.index.providers.finance_settings_provider.pendingWait_14'] = 'Wait 14 days for it to clear';
+$_LANG['admin.settings.index.providers.ssl_settings_provider.pendingWait_14'] = 'Wait 14 days for it to clear';
+$_LANG['admin.settings.index.providers.finance_settings_provider.pendingWait_30'] = 'Wait 30 days for it to clear';
+$_LANG['admin.settings.index.providers.ssl_settings_provider.pendingWait_30'] = 'Wait 30 days for it to clear';

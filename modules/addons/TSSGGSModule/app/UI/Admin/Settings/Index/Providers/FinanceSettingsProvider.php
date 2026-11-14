@@ -18,7 +18,7 @@ class FinanceSettingsProvider extends CrudProvider
     const FINANCE  = ['profitMargin', 'rate'];
     const GENERAL  = ['minProfit', 'termMarginStep', 'priceRounding', 'keepMarginOnSync', 'belowCostAction', 'belowCostEmail', 'renewalPriceMode',
                       'renewalPriceClientEmail', 'renewalPriceEmailText', 'rateSource', 'currencyBuffer', 'terminateUnpaidOnExpiry',
-                      'dueDateOffsetRegular', 'dueDateOffsetSubscription', 'balanceAlert'];
+                      'pendingPaymentWaitCertificate', 'balanceAlert'];
     const SWITCHES = ['keepMarginOnSync', 'belowCostEmail', 'renewalPriceClientEmail', 'terminateUnpaidOnExpiry', 'balanceAlert'];
 
     public function read()
@@ -50,9 +50,7 @@ class FinanceSettingsProvider extends CrudProvider
         $this->availableValues['belowCostAction']  = $options('belowCost', FinancePolicy::BELOW_COST);
         $this->availableValues['renewalPriceMode'] = $options('renewal', FinancePolicy::RENEWAL_MODES);
         $this->availableValues['rateSource']       = $options('rateSource', FinancePolicy::RATE_SOURCES);
-        $offsets = ['0' => '0', '3' => '3', '7' => '7', '15' => '15', '30' => '30'];
-        $this->availableValues['dueDateOffsetRegular']      = $offsets;
-        $this->availableValues['dueDateOffsetSubscription'] = $offsets;
+        $this->availableValues['pendingPaymentWaitCertificate'] = $options('pendingWait', \ModulesGarden\TSSGGSModule\App\Libs\RenewalPolicy::PENDING_WAIT_OPTIONS);
         $this->availableValues['currency'] = Helpers::getCurrencyOptions();
     }
 
@@ -87,7 +85,7 @@ class FinanceSettingsProvider extends CrudProvider
                 $general[$key] = max(0, (float)str_replace(',', '.', (string)$general[$key]));
             }
         }
-        foreach(['dueDateOffsetRegular', 'dueDateOffsetSubscription'] as $key)
+        foreach(['pendingPaymentWaitCertificate'] as $key)
         {
             if(array_key_exists($key, $general))
             {

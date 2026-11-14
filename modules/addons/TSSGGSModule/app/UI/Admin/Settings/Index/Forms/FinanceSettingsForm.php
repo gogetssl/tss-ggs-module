@@ -72,6 +72,7 @@ class FinanceSettingsForm extends Form implements AdminAreaInterface, AjaxCompon
 
         $billing = $this->section('billing', 'credit-card-clock-outline');
         $this->builder->addFieldInContainer($billing, (new Switcher())->setName('terminateUnpaidOnExpiry')->addClass('switcher-revert'), true);
+        $this->builder->addFieldInContainer($billing, (new Dropdown())->setName('pendingPaymentWaitCertificate'), true);
 
         $balance = $this->section('balance', 'hand-coin-outline');
         $this->builder->addFieldInContainer($balance, (new Switcher())->setName('balanceAlert')->addClass('switcher-revert'), true);

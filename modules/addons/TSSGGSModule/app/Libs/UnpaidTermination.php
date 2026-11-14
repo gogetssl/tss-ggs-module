@@ -43,6 +43,11 @@ class UnpaidTermination
                 {
                     continue;
                 }
+                // the renewal was paid but the payment has not cleared yet: wait for it as long as the reseller chose
+                if(RenewalPolicy::waitingForPendingPayment(RenewalPolicy::CERTIFICATE, $serviceId, (string)$service->nextduedate))
+                {
+                    continue;
+                }
 
                 if(CertificateService::category($serviceId) === CertificateService::CATEGORY_TLS)
                 {
@@ -72,15 +77,22 @@ class UnpaidTermination
     }
 
     /**
-     * Unpaid invoices that only hold this service (its renewal) are cancelled
+     * Unpaid invoices that only hold this service (its renewal) are cancelled. A "Payment Pending" one is not: the
+     * client did pay, and when the money arrives the administrator decides - refund it or bring the service back.
      */
     protected static function cancelUnpaidInvoices($serviceId)
     {
+        $pending = RenewalPolicy::pendingPaymentInvoice((int)$serviceId);
+        if($pending)
+        {
+            GeneralSettings::activity('Service #' . (int)$serviceId . ' terminated with invoice #' . (int)$pending->id . ' still "Payment Pending": the invoice was left as it is - refund it or reactivate the service if the payment clears');
+        }
+
         $invoiceIds = Capsule::table('tblinvoiceitems')
             ->join('tblinvoices', 'tblinvoices.id', '=', 'tblinvoiceitems.invoiceid')
             ->where('tblinvoiceitems.type', 'Hosting')
             ->where('tblinvoiceitems.relid', (int)$serviceId)
-            ->whereIn('tblinvoices.status', ['Unpaid', 'Payment Pending'])
+            ->where('tblinvoices.status', 'Unpaid')
             ->pluck('tblinvoices.id');
 
         foreach($invoiceIds as $invoiceId)

@@ -1498,3 +1498,20 @@ $_LANG['admin.settings.index.forms.ssl_settings_form.renewalDueAfterSubscription
 $_LANG['admin.settings.index.forms.ssl_settings_form.recurringCreateAutomaticRenewalInvoice_description'] = 'Til: modulet opretter fornyelsesfakturaerne efter dagene nedenfor, og WHMCS\' egen fakturering holdes tilbage for disse tjenester - én faktura pr. fornyelse. Fra: WHMCS fakturerer fornyelser efter sin egen indstilling for fakturaoprettelse, uden 30-dages grænsen.';
 $_LANG['admin.emails.name_renewal_details_required'] = 'Fornyelsesoplysninger påkrævet';
 $_LANG['admin.emails.when_renewal_details_required'] = 'Sendes, når en fornyelse er betalt, og kunden skal indsende oplysningerne igen (CSR, domæner, kontakter) - "Forny med de samme ordreoplysninger" er slået fra, eller leverandøren afviste de tidligere oplysninger.';
+
+// renewal paid but still pending (1.5.2)
+$_LANG['admin.settings.index.forms.finance_settings_form.pendingPaymentWaitCertificate'] = 'Fornyelse betalt, men stadig afventende';
+$_LANG['admin.settings.index.forms.finance_settings_form.pendingPaymentWaitCertificate_description'] = 'En fornyelse, som kunden har betalt, men hvor betalingen endnu ikke er gået igennem ("Payment Pending" - bankoverførsel, e-check), når ordren udløber. Vent: tjenesten afsluttes ikke i så mange dage; når betalingen går igennem, fornyes den som normalt. Det koster dig intet - fornyelsen bestilles først, når den er betalt. En "Payment Pending"-faktura annulleres aldrig af modulet.';
+$_LANG['admin.settings.index.forms.ssl_settings_form.pendingPaymentWaitSubscription'] = 'Fornyelse betalt, men stadig afventende';
+$_LANG['admin.settings.index.forms.ssl_settings_form.pendingPaymentWaitSubscription_description'] = 'En fornyelse, som kunden har betalt, men hvor betalingen endnu ikke er gået igennem ("Payment Pending"), når fakturaen forfalder. Behandl som ubetalt: abonnementet annulleres dagen før leverandøren fornyer det, som ved en ubetalt fornyelse. Vent: det annulleres ikke i så mange dage. En "Payment Pending"-faktura annulleres aldrig af modulet.';
+$_LANG['admin.settings.index.forms.ssl_settings_form.pendingWaitSubscriptionRisk'] = 'Venter på afventende betalinger: leverandøren fornyer abonnementet og opkræver dig, før en afventende betaling er gået igennem. Mislykkes betalingen, bliver opkrævningen hos dig.';
+$_LANG['admin.settings.index.providers.finance_settings_provider.pendingWait_0'] = 'Behandl som ubetalt';
+$_LANG['admin.settings.index.providers.ssl_settings_provider.pendingWait_0'] = 'Behandl som ubetalt';
+$_LANG['admin.settings.index.providers.finance_settings_provider.pendingWait_3'] = 'Vent 3 dage på betalingen';
+$_LANG['admin.settings.index.providers.ssl_settings_provider.pendingWait_3'] = 'Vent 3 dage på betalingen';
+$_LANG['admin.settings.index.providers.finance_settings_provider.pendingWait_7'] = 'Vent 7 dage på betalingen';
+$_LANG['admin.settings.index.providers.ssl_settings_provider.pendingWait_7'] = 'Vent 7 dage på betalingen';
+$_LANG['admin.settings.index.providers.finance_settings_provider.pendingWait_14'] = 'Vent 14 dage på betalingen';
+$_LANG['admin.settings.index.providers.ssl_settings_provider.pendingWait_14'] = 'Vent 14 dage på betalingen';
+$_LANG['admin.settings.index.providers.finance_settings_provider.pendingWait_30'] = 'Vent 30 dage på betalingen';
+$_LANG['admin.settings.index.providers.ssl_settings_provider.pendingWait_30'] = 'Vent 30 dage på betalingen';

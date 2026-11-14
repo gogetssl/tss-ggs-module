@@ -1496,3 +1496,20 @@ $_LANG['admin.settings.index.forms.ssl_settings_form.renewalDueAfterSubscription
 $_LANG['admin.settings.index.forms.ssl_settings_form.recurringCreateAutomaticRenewalInvoice_description'] = 'Ein: das Modul erstellt die Verlängerungsrechnungen nach den Tagen unten, die eigene Rechnungsstellung von WHMCS wird für diese Dienste zurückgehalten - eine Rechnung pro Verlängerung. Aus: WHMCS stellt Verlängerungen nach seiner eigenen Einstellung zur Rechnungserstellung in Rechnung, ohne die 30-Tage-Grenze.';
 $_LANG['admin.emails.name_renewal_details_required'] = 'Verlängerungsdaten erforderlich';
 $_LANG['admin.emails.when_renewal_details_required'] = 'Wird gesendet, wenn eine Verlängerung bezahlt ist und der Kunde die Daten erneut einreichen muss (CSR, Domains, Kontakte) - "Mit denselben Bestelldaten verlängern" ist aus, oder der Anbieter hat die bisherigen Daten abgelehnt.';
+
+// renewal paid but still pending (1.5.2)
+$_LANG['admin.settings.index.forms.finance_settings_form.pendingPaymentWaitCertificate'] = 'Verlängerung bezahlt, aber noch ausstehend';
+$_LANG['admin.settings.index.forms.finance_settings_form.pendingPaymentWaitCertificate_description'] = 'Eine vom Kunden bezahlte Verlängerung, deren Zahlung beim Ende der Bestellung noch nicht eingegangen ist ("Payment Pending" - Überweisung, E-Check). Warten: der Dienst wird so viele Tage nicht beendet; geht die Zahlung ein, wird wie üblich verlängert. Für Sie ohne Kosten - die Verlängerung wird erst nach Zahlung bestellt. Eine "Payment Pending"-Rechnung storniert das Modul nie.';
+$_LANG['admin.settings.index.forms.ssl_settings_form.pendingPaymentWaitSubscription'] = 'Verlängerung bezahlt, aber noch ausstehend';
+$_LANG['admin.settings.index.forms.ssl_settings_form.pendingPaymentWaitSubscription_description'] = 'Eine vom Kunden bezahlte Verlängerung, deren Zahlung bei Fälligkeit der Rechnung noch nicht eingegangen ist ("Payment Pending"). Als unbezahlt behandeln: das Abonnement wird am Tag vor der Verlängerung durch den Anbieter storniert, wie eine unbezahlte Verlängerung. Warten: es wird so viele Tage nicht storniert. Eine "Payment Pending"-Rechnung storniert das Modul nie.';
+$_LANG['admin.settings.index.forms.ssl_settings_form.pendingWaitSubscriptionRisk'] = 'Warten auf ausstehende Zahlungen: der Anbieter verlängert das Abonnement und berechnet es Ihnen, bevor eine ausstehende Zahlung eingegangen ist. Schlägt die Zahlung fehl, bleibt die Belastung bei Ihnen.';
+$_LANG['admin.settings.index.providers.finance_settings_provider.pendingWait_0'] = 'Als unbezahlt behandeln';
+$_LANG['admin.settings.index.providers.ssl_settings_provider.pendingWait_0'] = 'Als unbezahlt behandeln';
+$_LANG['admin.settings.index.providers.finance_settings_provider.pendingWait_3'] = '3 Tage auf den Eingang warten';
+$_LANG['admin.settings.index.providers.ssl_settings_provider.pendingWait_3'] = '3 Tage auf den Eingang warten';
+$_LANG['admin.settings.index.providers.finance_settings_provider.pendingWait_7'] = '7 Tage auf den Eingang warten';
+$_LANG['admin.settings.index.providers.ssl_settings_provider.pendingWait_7'] = '7 Tage auf den Eingang warten';
+$_LANG['admin.settings.index.providers.finance_settings_provider.pendingWait_14'] = '14 Tage auf den Eingang warten';
+$_LANG['admin.settings.index.providers.ssl_settings_provider.pendingWait_14'] = '14 Tage auf den Eingang warten';
+$_LANG['admin.settings.index.providers.finance_settings_provider.pendingWait_30'] = '30 Tage auf den Eingang warten';
+$_LANG['admin.settings.index.providers.ssl_settings_provider.pendingWait_30'] = '30 Tage auf den Eingang warten';
