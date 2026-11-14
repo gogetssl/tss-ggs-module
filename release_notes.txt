@@ -1,3 +1,32 @@
+1.8.0 (2026-11-14)
+FLEX certificates (TheSSLStore): standard or wildcard main domain
+- DigiCert-family FLEX products (e.g. GeoTrust DV FLEX, Thawte SSL Web Server
+  Flex) take either a normal main domain (example.com) or a wildcard one
+  (*.example.com); the provider charges its wildcard price for the latter.
+  Each FLEX product now gets a "Main domain" option on the order form:
+  Standard (no charge) or Wildcard (the price difference). It is created on
+  product import, by "Fix configurable options" and by the pricing cron, and
+  priced like the SAN options (import margin / pricing cron margin).
+- The main domain must match what was paid for, on the first configuration,
+  on reissue and on renewal: Standard refuses *.example.com, Wildcard needs
+  it. Non-FLEX products: *. only on wildcard products.
+- The choice cannot be changed with an upgrade once the certificate is
+  ordered. Services without a choice (imported orders, services created by
+  hand or before the option existed) keep the type of the certificate
+  already ordered.
+- Renewal prices include the wildcard difference where it was chosen.
+- Migration from the legacy TheSSLStore module: its "CSR Domain" option
+  (where the FLEX price lived, with the product itself at 0.00) moves into
+  the product price (Standard) and the new option (Wildcard at the legacy
+  difference); services keep their choice. A rollback restores both.
+- GoGetSSL FLEX products follow in a later release.
+
+CodeGuard
+- Importing CodeGuard products adds the WHMCS upgrade paths from each plan to
+  every dearer plan (WHMCS product > Upgrades), so clients can move up a plan
+  without the admin setting each path. Only missing paths are added; paths
+  the administrator set, and downgrades, are left as they are.
+
 1.7.1 (2026-11-14)
 Security
 - The SSL configuration step no longer stores the client's WHMCS session id:
