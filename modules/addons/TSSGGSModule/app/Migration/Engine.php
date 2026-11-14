@@ -196,10 +196,17 @@ class Engine
             $missing = [];
             foreach($this->unmatched() as $item)
             {
-                if(!isset($map[strtolower($item['ref'])]))
+                if(isset($map[strtolower($item['ref'])]))
                 {
-                    $missing[] = $item['label'];
+                    continue;
                 }
+                // nothing active or waiting for configuration: kept as a retired record, no choice needed
+                if(!self::needsChoice($item))
+                {
+                    $map[strtolower($item['ref'])] = ProductMapper::RECORD;
+                    continue;
+                }
+                $missing[] = $item['label'];
             }
             if($missing)
             {
@@ -281,6 +288,12 @@ class Engine
                 $this->reader->setMapper($saved);
             }
         }
+    }
+
+    /** An unmatched product needs the administrator's choice when it has active or unconfigured services */
+    public static function needsChoice(array $item): bool
+    {
+        return (int)$item['services']['active'] + (int)$item['services']['awaiting'] > 0;
     }
 
     /** Gateway products of this source's vendor, for the choice */

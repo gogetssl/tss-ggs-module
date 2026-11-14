@@ -1538,3 +1538,4 @@ $_LANG['admin.migration.map_unsupported'] = 'This product type is not supported 
 $_LANG['admin.migration.map_record_hint'] = 'Record only: the certificate and its order details stay visible to the client and to you, but it can not be renewed, reissued or configured, it is never invoiced for a renewal, and the product can not be ordered again. Certificates awaiting configuration can never be configured then - map those products to an alternative where you can.';
 $_LANG['admin.migration.auto_rollback'] = 'This migration stopped and was rolled back automatically: :reason. The legacy module works as before. Download the error report and send it to support.';
 $_LANG['admin.migration.btn_error_report'] = 'Download error report';
+$_LANG['admin.migration.map_quiet'] = ':n more legacy products without an equivalent have no active or unconfigured certificates: they are kept as retired records (nothing to choose)';

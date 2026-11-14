@@ -120,9 +120,16 @@ class MigrationContainer extends Container implements AdminAreaInterface
             $unmatched = $engine->unmatched();
             $html     .= '<form method="post" action="' . htmlspecialchars($base . '&mg-action=start') . '" onsubmit="return confirm(' . htmlspecialchars(json_encode($this->t('confirm_start')), ENT_QUOTES) . ');">'
                 . '<input type="hidden" name="token" value="' . htmlspecialchars($token) . '">';
-            if($unmatched)
+            $toChoose = array_values(array_filter($unmatched, [Engine::class, 'needsChoice']));
+            $quiet    = array_values(array_filter($unmatched, function($item) { return !Engine::needsChoice($item); }));
+            if($toChoose)
             {
-                $html .= $this->mappingTable($unmatched, $engine->alternatives());
+                $html .= $this->mappingTable($toChoose, $engine->alternatives());
+            }
+            if($quiet)
+            {
+                $html .= '<details class="tssggs-details"><summary>' . htmlspecialchars($this->t('map_quiet', ['n' => count($quiet)])) . '</summary><p class="tssggs-muted">'
+                    . htmlspecialchars(implode(', ', array_column($quiet, 'label'))) . '</p></details>';
             }
             $html .= '<p class="tssggs-muted">' . htmlspecialchars($this->t('start_defaults')) . '</p>'
                 . '<div class="tssggs-actions">'

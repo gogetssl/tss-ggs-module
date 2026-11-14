@@ -1531,3 +1531,4 @@ $_LANG['admin.migration.map_unsupported'] = 'Denne produkttype understøttes ikk
 $_LANG['admin.migration.map_record_hint'] = 'Kun registrering: certifikatet og ordreoplysningerne forbliver synlige for kunden og dig, men det kan ikke fornyes, genudstedes eller konfigureres, faktureres aldrig for en fornyelse, og produktet kan ikke bestilles igen. Certifikater, der afventer konfiguration, kan så aldrig konfigureres - knyt de produkter til et alternativ, hvor det er muligt.';
 $_LANG['admin.migration.auto_rollback'] = 'Denne migrering stoppede og blev rullet tilbage automatisk: :reason. Det gamle modul virker som før. Download fejlrapporten og send den til support.';
 $_LANG['admin.migration.btn_error_report'] = 'Download fejlrapport';
+$_LANG['admin.migration.map_quiet'] = ':n flere ældre produkter uden tilsvarende har ingen aktive eller ukonfigurerede certifikater: de beholdes som udgåede registreringer (intet at vælge)';
