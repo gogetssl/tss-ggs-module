@@ -31,12 +31,19 @@ class Migration extends AbstractController implements AdminAreaInterface
             $source = $this->source();
             Choice::set($source, Choice::MIGRATE);
             $engine = new Engine($source);
-            // options are 'on' unless the link switches them off (opt_keys=0, opt_logs=0, opt_deactivate=0, opt_templates=0)
+            // options are 'on' unless switched off: by the button pressed (variant) or the link (opt_keys=0 ...)
+            $variant = (string)($_POST['variant'] ?? '');
+            $map     = [];
+            foreach((array)($_POST['map'] ?? []) as $ref => $target)
+            {
+                $map[(string)$ref] = (string)$target;
+            }
             $runId  = $engine->start($this->admin(), [
-                'fetch_cpanel_keys' => ($_REQUEST['opt_keys'] ?? '1') !== '0',
+                'fetch_cpanel_keys' => ($_REQUEST['opt_keys'] ?? '1') !== '0' && $variant !== 'nokeys',
                 'copy_templates'    => ($_REQUEST['opt_templates'] ?? '1') !== '0',
                 'backup_logs'       => ($_REQUEST['opt_logs'] ?? '1') !== '0',
-                'deactivate_legacy' => ($_REQUEST['opt_deactivate'] ?? '1') !== '0',
+                'deactivate_legacy' => ($_REQUEST['opt_deactivate'] ?? '1') !== '0' && $variant !== 'keeplegacy',
+                'product_map'       => $map,
             ]);
             $engine->runBatch($runId);
         }
@@ -118,6 +125,17 @@ class Migration extends AbstractController implements AdminAreaInterface
         header('Content-Disposition: attachment; filename="tssggs-migration-' . $id . '-log.csv"');
         header('X-Content-Type-Options: nosniff');
         echo $csv;
+        exit;
+    }
+
+    /** GET id: the run's error report (text) to send to support */
+    public function errorReport()
+    {
+        $id = (int)($_REQUEST['id'] ?? 0);
+        header('Content-Type: text/plain; charset=utf-8');
+        header('Content-Disposition: attachment; filename="' . strtolower(str_replace(' ', '-', \ModulesGarden\TSSGGSModule\App\Libs\Edition::name())) . '-migration-' . $id . '-error-report.txt"');
+        header('X-Content-Type-Options: nosniff');
+        echo Engine::errorReport($id);
         exit;
     }
 

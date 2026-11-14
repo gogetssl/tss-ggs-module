@@ -114,14 +114,24 @@ class MigrationContainer extends Container implements AdminAreaInterface
             $token  = MigrationController::token();
             $report = 'addonmodules.php?module=TSSGGSModule&mg-page=migration&mg-action=report&source=' . $source;
             $base   = 'addonmodules.php?module=TSSGGSModule&mg-page=migration&source=' . $source . '&token=' . rawurlencode($token);
-            $html  .= '<p class="tssggs-muted">' . htmlspecialchars($this->t('start_defaults')) . '</p>'
+
+            // products without a gateway match: the administrator chooses before the start (the form carries it)
+            $engine    = new Engine($source);
+            $unmatched = $engine->unmatched();
+            $html     .= '<form method="post" action="' . htmlspecialchars($base . '&mg-action=start') . '" onsubmit="return confirm(' . htmlspecialchars(json_encode($this->t('confirm_start')), ENT_QUOTES) . ');">'
+                . '<input type="hidden" name="token" value="' . htmlspecialchars($token) . '">';
+            if($unmatched)
+            {
+                $html .= $this->mappingTable($unmatched, $engine->alternatives());
+            }
+            $html .= '<p class="tssggs-muted">' . htmlspecialchars($this->t('start_defaults')) . '</p>'
                 . '<div class="tssggs-actions">'
                 . '<a class="lu-btn lu-btn--default" href="' . $report . '">' . htmlspecialchars($this->t('btn_report')) . '</a>'
-                . $this->link($base . '&mg-action=start', $this->t('btn_start'), 'lu-btn lu-btn--success', $this->t('confirm_start'))
-                . $this->link($base . '&mg-action=start&opt_keys=0', $this->t('btn_start_nokeys'), 'lu-btn lu-btn--default', $this->t('confirm_start'))
-                . $this->link($base . '&mg-action=start&opt_deactivate=0', $this->t('btn_start_keeplegacy'), 'lu-btn lu-btn--default', $this->t('confirm_start'))
+                . '<button type="submit" class="lu-btn lu-btn--success" name="variant" value="default">' . htmlspecialchars($this->t('btn_start')) . '</button>'
+                . '<button type="submit" class="lu-btn lu-btn--default" name="variant" value="nokeys">' . htmlspecialchars($this->t('btn_start_nokeys')) . '</button>'
+                . '<button type="submit" class="lu-btn lu-btn--default" name="variant" value="keeplegacy">' . htmlspecialchars($this->t('btn_start_keeplegacy')) . '</button>'
                 . $this->link($base . '&mg-action=skip', $this->t('btn_skip'), 'lu-btn lu-btn--default')
-                . '</div>';
+                . '</div></form>';
         }
         else
         {
@@ -196,8 +206,16 @@ class MigrationContainer extends Container implements AdminAreaInterface
 
         $token   = MigrationController::token();
         $runBase = 'addonmodules.php?module=TSSGGSModule&mg-page=migration&id=' . (int)$run['id'] . '&token=' . rawurlencode($token);
-        $html .= '<div class="tssggs-actions">'
-            . '<a class="lu-btn lu-btn--default" href="addonmodules.php?module=TSSGGSModule&mg-page=migration&mg-action=log&id=' . (int)$run['id'] . '">' . htmlspecialchars($this->t('btn_log')) . '</a>';
+        if(!empty($summary['auto_rollback']))
+        {
+            $html .= '<div class="tssggs-note is-bad">' . htmlspecialchars($this->t('auto_rollback', ['reason' => (string)$summary['auto_rollback']['reason']])) . '</div>';
+        }
+        $html .= '<div class="tssggs-actions">';
+        if(!empty($summary['auto_rollback']) || $run['status'] === Store::RUN_FAILED)
+        {
+            $html .= '<a class="lu-btn lu-btn--primary" href="addonmodules.php?module=TSSGGSModule&mg-page=migration&mg-action=errorReport&id=' . (int)$run['id'] . '">' . htmlspecialchars($this->t('btn_error_report')) . '</a>';
+        }
+        $html .= '<a class="lu-btn lu-btn--default" href="addonmodules.php?module=TSSGGSModule&mg-page=migration&mg-action=log&id=' . (int)$run['id'] . '">' . htmlspecialchars($this->t('btn_log')) . '</a>';
         if($run['backup_prefix'])
         {
             $html .= '<span class="tssggs-muted">' . htmlspecialchars($this->t('backups_until', ['date' => (string)$run['backup_expires_at']])) . '</span>'
@@ -230,6 +248,49 @@ class MigrationContainer extends Container implements AdminAreaInterface
         }
 
         return $runs;
+    }
+
+    /**
+     * One row per legacy product (or TSS order code) without a gateway match: an alternative gateway product, or keep
+     * the certificates as records. Products of the same brand are listed first.
+     */
+    protected function mappingTable(array $unmatched, array $alternatives): string
+    {
+        $html = '<div class="tssggs-note is-warn"><b>' . htmlspecialchars($this->t('map_title', ['n' => count($unmatched)])) . '</b><br>' . htmlspecialchars($this->t('map_intro')) . '</div>'
+            . '<table class="tssggs-table tssggs-map"><thead><tr><th>' . htmlspecialchars($this->t('map_col_legacy')) . '</th><th>' . htmlspecialchars($this->t('map_col_services')) . '</th><th>' . htmlspecialchars($this->t('map_col_choice')) . '</th></tr></thead><tbody>';
+        foreach($unmatched as $item)
+        {
+            $s       = $item['services'];
+            $counts  = $this->t('map_services', ['active' => (int)$s['active'], 'awaiting' => (int)$s['awaiting'], 'other' => (int)$s['other']]);
+            $brandOf = strtolower((string)preg_replace('/[^a-z].*$/i', '', implode(' ', $item['names']) ?: $item['ref']));
+            $same    = [];
+            $other   = [];
+            foreach($alternatives as $alt)
+            {
+                $option = '<option value="' . htmlspecialchars($alt['id']) . '">' . htmlspecialchars($alt['name'] . ($alt['validation'] ? ' (' . strtoupper($alt['validation']) . ')' : '')) . '</option>';
+                if($brandOf !== '' && stripos($alt['brand'] . ' ' . $alt['name'], $brandOf) !== false)
+                {
+                    $same[] = $option;
+                }
+                else
+                {
+                    $other[] = $option;
+                }
+            }
+            $select = '<select class="form-control" name="map[' . htmlspecialchars($item['ref']) . ']" required>'
+                . '<option value="">' . htmlspecialchars($this->t('map_choose')) . '</option>'
+                . '<option value="record">' . htmlspecialchars($this->t('map_record')) . '</option>';
+            if(!$item['unsupported'])
+            {
+                $select .= ($same ? '<optgroup label="' . htmlspecialchars($this->t('map_same_brand')) . '">' . implode('', $same) . '</optgroup>' : '')
+                    . '<optgroup label="' . htmlspecialchars($this->t('map_all_products')) . '">' . implode('', $other) . '</optgroup>';
+            }
+            $select .= '</select>';
+            $html   .= '<tr><td>' . htmlspecialchars($item['label']) . ($item['unsupported'] ? '<br><span class="tssggs-muted">' . htmlspecialchars($this->t('map_unsupported')) . '</span>' : '') . '</td>'
+                . '<td>' . htmlspecialchars($counts) . '</td><td>' . $select . '</td></tr>';
+        }
+
+        return $html . '</tbody></table><p class="tssggs-muted">' . htmlspecialchars($this->t('map_record_hint')) . '</p>';
     }
 
     // ---- small helpers ---- //

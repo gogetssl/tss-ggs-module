@@ -1515,3 +1515,19 @@ $_LANG['admin.settings.index.providers.finance_settings_provider.pendingWait_14'
 $_LANG['admin.settings.index.providers.ssl_settings_provider.pendingWait_14'] = 'Vent 14 dage på betalingen';
 $_LANG['admin.settings.index.providers.finance_settings_provider.pendingWait_30'] = 'Vent 30 dage på betalingen';
 $_LANG['admin.settings.index.providers.ssl_settings_provider.pendingWait_30'] = 'Vent 30 dage på betalingen';
+
+// migration: products without a gateway match, automatic rollback (1.7.0)
+$_LANG['admin.migration.map_title'] = ':n ældre produkter har ingen tilsvarende hos certifikatudbyderen';
+$_LANG['admin.migration.map_intro'] = 'Vælg for hvert produkt før start: et alternativt produkt (eksisterende certifikater virker fortsat og fornyes som det nye produkt), eller behold certifikaterne kun som registreringer. Det gamle modul bevares ikke for dem.';
+$_LANG['admin.migration.map_col_legacy'] = 'Ældre produkt';
+$_LANG['admin.migration.map_col_services'] = 'Tjenester';
+$_LANG['admin.migration.map_col_choice'] = 'Migrer som';
+$_LANG['admin.migration.map_services'] = ':active aktive, :awaiting afventer konfiguration, :other andre';
+$_LANG['admin.migration.map_choose'] = '- vælg -';
+$_LANG['admin.migration.map_record'] = 'Behold kun som registrering (ingen fornyelse)';
+$_LANG['admin.migration.map_same_brand'] = 'Samme mærke';
+$_LANG['admin.migration.map_all_products'] = 'Alle produkter';
+$_LANG['admin.migration.map_unsupported'] = 'Denne produkttype understøttes ikke af modulet: dens certifikater kan kun beholdes som registreringer.';
+$_LANG['admin.migration.map_record_hint'] = 'Kun registrering: certifikatet og ordreoplysningerne forbliver synlige for kunden og dig, men det kan ikke fornyes, genudstedes eller konfigureres, faktureres aldrig for en fornyelse, og produktet kan ikke bestilles igen. Certifikater, der afventer konfiguration, kan så aldrig konfigureres - knyt de produkter til et alternativ, hvor det er muligt.';
+$_LANG['admin.migration.auto_rollback'] = 'Denne migrering stoppede og blev rullet tilbage automatisk: :reason. Det gamle modul virker som før. Download fejlrapporten og send den til support.';
+$_LANG['admin.migration.btn_error_report'] = 'Download fejlrapport';

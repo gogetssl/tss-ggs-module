@@ -1513,3 +1513,19 @@ $_LANG['admin.settings.index.providers.finance_settings_provider.pendingWait_14'
 $_LANG['admin.settings.index.providers.ssl_settings_provider.pendingWait_14'] = '14 Tage auf den Eingang warten';
 $_LANG['admin.settings.index.providers.finance_settings_provider.pendingWait_30'] = '30 Tage auf den Eingang warten';
 $_LANG['admin.settings.index.providers.ssl_settings_provider.pendingWait_30'] = '30 Tage auf den Eingang warten';
+
+// migration: products without a gateway match, automatic rollback (1.7.0)
+$_LANG['admin.migration.map_title'] = ':n Altprodukte haben keine Entsprechung beim Zertifikatsanbieter';
+$_LANG['admin.migration.map_intro'] = 'Wählen Sie für jedes vor dem Start: ein Alternativprodukt (bestehende Zertifikate funktionieren weiter und werden als das neue Produkt verlängert) oder die Zertifikate nur als Aufzeichnung behalten. Das Altmodul bleibt für sie nicht erhalten.';
+$_LANG['admin.migration.map_col_legacy'] = 'Altprodukt';
+$_LANG['admin.migration.map_col_services'] = 'Dienste';
+$_LANG['admin.migration.map_col_choice'] = 'Migrieren als';
+$_LANG['admin.migration.map_services'] = ':active aktiv, :awaiting warten auf Konfiguration, :other sonstige';
+$_LANG['admin.migration.map_choose'] = '- wählen -';
+$_LANG['admin.migration.map_record'] = 'Nur als Aufzeichnung behalten (keine Verlängerung)';
+$_LANG['admin.migration.map_same_brand'] = 'Gleiche Marke';
+$_LANG['admin.migration.map_all_products'] = 'Alle Produkte';
+$_LANG['admin.migration.map_unsupported'] = 'Dieser Produkttyp wird vom Modul nicht unterstützt: seine Zertifikate können nur als Aufzeichnung behalten werden.';
+$_LANG['admin.migration.map_record_hint'] = 'Nur Aufzeichnung: das Zertifikat und seine Bestelldaten bleiben für den Kunden und Sie sichtbar, es kann aber nicht verlängert, neu ausgestellt oder konfiguriert werden, wird nie für eine Verlängerung in Rechnung gestellt, und das Produkt kann nicht erneut bestellt werden. Zertifikate, die auf Konfiguration warten, können dann nie konfiguriert werden - ordnen Sie diese Produkte nach Möglichkeit einer Alternative zu.';
+$_LANG['admin.migration.auto_rollback'] = 'Diese Migration wurde angehalten und automatisch zurückgesetzt: :reason. Das Altmodul arbeitet wie zuvor. Laden Sie den Fehlerbericht herunter und senden Sie ihn an den Support.';
+$_LANG['admin.migration.btn_error_report'] = 'Fehlerbericht herunterladen';

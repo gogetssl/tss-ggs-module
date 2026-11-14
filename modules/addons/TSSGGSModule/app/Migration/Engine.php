@@ -190,12 +190,109 @@ class Engine
                 throw new \RuntimeException('Migration #' . (int)$latest->id . ' stopped with an error. Roll it back before starting a new one.');
             }
 
+            // every legacy product without a gateway match needs the administrator's choice: an alternative product,
+            // or "keep as a record" - the legacy module is not kept for them
+            $map     = array_change_key_case(array_filter(array_map('strval', (array)($options['product_map'] ?? [])), 'strlen'), CASE_LOWER);
+            $missing = [];
+            foreach($this->unmatched() as $item)
+            {
+                if(!isset($map[strtolower($item['ref'])]))
+                {
+                    $missing[] = $item['label'];
+                }
+            }
+            if($missing)
+            {
+                throw new \RuntimeException('Choose an alternative product or "keep as a record" for: ' . implode(', ', array_slice($missing, 0, 20)) . (count($missing) > 20 ? ' ...' : ''));
+            }
+            $options['product_map'] = $map;
+            $this->mapper->setOverrides($map);
+
             return $this->prepare($startedBy, $options);
         }
         finally
         {
             self::unlock();
         }
+    }
+
+    /**
+     * Legacy products (and TSS order codes) the gateway has no product for, with the services that use them.
+     * Each needs a choice before a run: an alternative gateway product (renewals are ordered as that product) or
+     * "keep as a record" (App\Libs\RecordOnly). Read without the run's choices.
+     * [['ref', 'label', 'names' => [], 'pids' => [], 'unsupported' => bool, 'services' => ['active', 'awaiting', 'other']]]
+     */
+    public function unmatched(): array
+    {
+        $mapper = new ProductMapper();
+        $saved  = $this->mapper;
+        $this->mapper = $mapper;
+        if(method_exists($this->reader, 'setMapper'))
+        {
+            $this->reader->setMapper($mapper);
+        }
+        try
+        {
+            $list = [];
+            foreach($this->reader->productIds() as $pid)
+            {
+                $p = $this->reader->readProduct($pid);
+                if($p['remote_product'] && empty($p['unsupported']))
+                {
+                    continue;
+                }
+                $ref = strtolower(trim((string)$p['legacy_product_ref'])) ?: 'product-' . $pid;
+                if(!isset($list[$ref]))
+                {
+                    $list[$ref] = ['ref' => $ref, 'label' => '', 'names' => [], 'pids' => [], 'unsupported' => !empty($p['unsupported']), 'services' => ['active' => 0, 'awaiting' => 0, 'other' => 0]];
+                }
+                $list[$ref]['names'][] = (string)$p['name'];
+                $list[$ref]['pids'][]  = (int)$pid;
+                foreach(Capsule::table('tblhosting')->leftJoin('tblsslorders', 'tblsslorders.serviceid', '=', 'tblhosting.id')->where('tblhosting.packageid', $pid)
+                    ->selectRaw('tblsslorders.status AS s, COUNT(DISTINCT tblhosting.id) AS n')->groupBy('tblsslorders.status')->get() as $row)
+                {
+                    $key = in_array($row->s, ['Configuration Submitted', 'Completed'], true) ? 'active' : ($row->s === 'Awaiting Configuration' ? 'awaiting' : 'other');
+                    $list[$ref]['services'][$key] += (int)$row->n;
+                }
+            }
+            // TSS: an order code of a service whose product maps
+            if(method_exists($this->reader, 'serviceCodes'))
+            {
+                foreach($this->reader->serviceCodes() as $code => $n)
+                {
+                    if(!isset($list[$code]) && !$mapper->forTss($code))
+                    {
+                        $list[$code] = ['ref' => $code, 'label' => '', 'names' => [], 'pids' => [], 'unsupported' => false, 'services' => ['active' => 0, 'awaiting' => 0, 'other' => (int)$n]];
+                    }
+                }
+            }
+            foreach($list as $ref => $item)
+            {
+                $list[$ref]['label'] = ($item['names'] ? implode(' / ', array_unique($item['names'])) . ' ' : '') . '(' . $ref . ')';
+            }
+
+            return array_values($list);
+        }
+        finally
+        {
+            $this->mapper = $saved;
+            if(method_exists($this->reader, 'setMapper'))
+            {
+                $this->reader->setMapper($saved);
+            }
+        }
+    }
+
+    /** Gateway products of this source's vendor, for the choice */
+    public function alternatives(): array
+    {
+        $out = [];
+        foreach($this->mapper->vendorProducts(strtoupper($this->source)) as $product)
+        {
+            $out[] = ['id' => (string)$product->remoteId, 'name' => (string)$product->name, 'brand' => (string)$product->brand, 'validation' => (string)$product->validation];
+        }
+
+        return $out;
     }
 
     protected function prepare(string $startedBy, array $options): int
@@ -222,6 +319,8 @@ class Engine
             //    write half way through them). What the pause changes is backed up before it - a rollback puts it
             //    back: the WHMCS hook lists (its hooks are not loaded while it is out of them) and its schedule.
             $backup   = new Backup($runId);
+            // known from the first copy on, so a failure half way can be rolled back
+            Store::updateRun($runId, ['backup_prefix' => $backup->prefix(), 'backup_expires_at' => date('Y-m-d H:i:s', strtotime('+' . Store::BACKUP_RETENTION_DAYS . ' days'))]);
             $tables   = [];
             $tables[] = $backup->copyRows('tblconfiguration', function($q) { $q->whereIn('setting', self::HOOK_LISTS); });
             $early    = $this->reader->freezeTables();
@@ -317,9 +416,21 @@ class Engine
 
             // 3. products (configoptions + SAN option rename; servertype flips in the switch phase)
             $migratedPids = [];
+            $recordPids   = [];
             foreach($pids as $pid)
             {
-                $p = $this->reader->readProduct($pid);
+                $p   = $this->reader->readProduct($pid);
+                $ref = strtolower(trim((string)$p['legacy_product_ref'])) ?: 'product-' . $pid;
+                // no gateway product, kept as a record (the administrator's choice before the run)
+                if((!$p['remote_product'] || !empty($p['unsupported'])) && $this->mapper->isRecord($ref))
+                {
+                    $data           = $writer->writeRecordProduct($p);
+                    $migratedPids[] = $pid;
+                    $recordPids[]   = $pid;
+                    Store::addJob($runId, Store::KIND_PRODUCT, $pid, 0, Store::JOB_DONE, null, $data + ['name' => $p['name']]);
+                    $this->log($runId, 'info', self::PHASE_PREPARE, 'Product kept as a record (no gateway product)', ['pid' => $pid, 'name' => $p['name'], 'ref' => $ref]);
+                    continue;
+                }
                 if(!empty($p['unsupported']))
                 {
                     Store::addJob($runId, Store::KIND_PRODUCT, $pid, 0, Store::JOB_SKIPPED, 'Unsupported product type');
@@ -336,7 +447,7 @@ class Engine
                 Store::addJob($runId, Store::KIND_PRODUCT, $pid, 0, Store::JOB_DONE, null, $data);
                 $this->log($runId, 'info', self::PHASE_PREPARE, 'Product prepared', ['pid' => $pid, 'name' => $p['name'], 'remote' => $p['remote_product']->remoteId, 'renamed_options' => count($data['renamed_options'])]);
             }
-            Store::mergeSummary($runId, ['products' => $migratedPids, 'settings_filled' => $filled]);
+            Store::mergeSummary($runId, ['products' => $migratedPids, 'record_products' => $recordPids, 'settings_filled' => $filled]);
 
             // client markups of the migrated products (GGS)
             if(method_exists($this->reader, 'readMarkups'))
@@ -362,8 +473,9 @@ class Engine
         catch(\Throwable $e)
         {
             Store::updateRun($runId, ['status' => Store::RUN_FAILED, 'last_error' => $e->getMessage(), 'finished_at' => date('Y-m-d H:i:s')]);
-            $this->log($runId, 'error', self::PHASE_PREPARE, 'Preparation failed: ' . $e->getMessage());
-            throw $e;
+            $this->log($runId, 'error', self::PHASE_PREPARE, 'Preparation failed: ' . $e->getMessage(), ['trace' => substr($e->getTraceAsString(), 0, 2000)]);
+            $rolledBack = $this->autoRollback($runId, 'Preparation failed: ' . $e->getMessage());
+            throw new \RuntimeException('Preparation failed: ' . $e->getMessage() . ($rolledBack ? ' - the migration was rolled back automatically; the error report is on this page.' : ''), 0, $e);
         }
 
         return $runId;
@@ -399,6 +511,8 @@ class Engine
             {
                 return $this->status($runId);
             }
+            // the administrator's choices for products without a gateway match (made at the start)
+            $this->mapper->setOverrides((array)($run['options']['product_map'] ?? []));
 
             return $this->processBatch($runId, $run);
         }
@@ -426,14 +540,22 @@ class Engine
                 $counts = Store::jobCounts($runId);
                 $this->log($runId, 'info', self::PHASE_SERVICES, 'All services processed', $counts);
 
-                // many failures point to one cause (a missing table, the gateway product list): nothing is switched,
-                // the run stops here and can be rolled back
-                $written = (int)$counts[Store::JOB_DONE] + (int)$counts[Store::JOB_FAILED];
-                if($counts[Store::JOB_FAILED] >= self::MIN_FAILED_TO_STOP && $written > 0 && $counts[Store::JOB_FAILED] / $written > self::MAX_FAILED_SHARE)
+                // nothing is switched while a service failed: the switch would move its product to the new module with
+                // the service's order still on the legacy one. A database hiccup (lock wait, lost connection) passes on
+                // a second try; what fails again stops the run, which rolls itself back.
+                if($counts[Store::JOB_FAILED] > 0)
                 {
-                    $error = $counts[Store::JOB_FAILED] . ' of ' . $written . ' services could not be migrated. Nothing was switched: see the log for the reason, roll the migration back and start it again.';
-                    Store::updateRun($runId, ['status' => Store::RUN_FAILED, 'last_error' => $error, 'finished_at' => date('Y-m-d H:i:s')]);
-                    $this->log($runId, 'error', self::PHASE_SERVICES, $error, $counts);
+                    if(empty($run['summary']['retried']))
+                    {
+                        $n = Capsule::table(Store::jobsTable())->where('migration_id', $runId)->where('kind', Store::KIND_SERVICE)->where('status', Store::JOB_FAILED)
+                            ->update(['status' => Store::JOB_PENDING, 'updated_at' => date('Y-m-d H:i:s')]);
+                        Store::mergeSummary($runId, ['retried' => ['services' => $n, 'at' => date('Y-m-d H:i:s')]]);
+                        $this->log($runId, 'warning', self::PHASE_SERVICES, $n . ' failed services are tried once more');
+
+                        return $this->status($runId);
+                    }
+                    $written = (int)$counts[Store::JOB_DONE] + (int)$counts[Store::JOB_FAILED];
+                    $this->autoRollback($runId, $counts[Store::JOB_FAILED] . ' of ' . $written . ' services could not be migrated, also on a second try');
 
                     return $this->status($runId);
                 }
@@ -544,13 +666,67 @@ class Engine
         }
     }
 
+    /** @var array [run id, [pid => product name]] of the products kept as a record */
+    protected $recordProducts = [0, []];
+
+    protected function recordProductsOf(int $runId): array
+    {
+        if($this->recordProducts[0] !== $runId)
+        {
+            $list = [];
+            foreach(Store::jobsByStatus($runId, Store::KIND_PRODUCT, Store::JOB_DONE) as $job)
+            {
+                if(!empty($job['data']['record']))
+                {
+                    $list[(int)$job['object_id']] = (string)($job['data']['name'] ?? '');
+                }
+            }
+            $this->recordProducts = [$runId, $list];
+        }
+
+        return $this->recordProducts[1];
+    }
+
     /** @var int run whose legacy product values were handed to the reader */
     protected $legacyProductsOfRun = 0;
 
-    /** share of failed services above which the run stops before the switch */
-    const MAX_FAILED_SHARE = 0.2;
-    /** ... and only when at least this many services failed */
-    const MIN_FAILED_TO_STOP = 5;
+    /**
+     * A run either completes or is undone: a failure rolls it back at once (the legacy module carries on as before)
+     * and the reason stays with the run for the error report. Returns true when the rollback went through.
+     */
+    protected function autoRollback(int $runId, string $reason): bool
+    {
+        $failed = [];
+        foreach(Store::jobsByStatus($runId, Store::KIND_SERVICE, Store::JOB_FAILED) as $job)
+        {
+            $failed[] = ['service_id' => (int)$job['object_id'], 'reason' => (string)$job['reason']];
+        }
+        Store::mergeSummary($runId, ['auto_rollback' => ['reason' => $reason, 'failed_total' => count($failed), 'failed' => array_slice($failed, 0, self::SUMMARY_EXCEPTIONS), 'at' => date('Y-m-d H:i:s')]]);
+        $this->log($runId, 'error', self::PHASE_ROLLBACK, 'Migration stopped: ' . $reason . '. Rolling back automatically.');
+
+        $run = Store::getRun($runId);
+        try
+        {
+            $backup = $run['backup_prefix'] ? new Backup($runId, $run['backup_prefix']) : null;
+            if(!$backup || !$backup->tables())
+            {
+                Store::updateRun($runId, ['status' => Store::RUN_ROLLED_BACK, 'finished_at' => date('Y-m-d H:i:s'), 'last_error' => $reason . '. Nothing had been changed yet.']);
+
+                return true;
+            }
+            self::restore($runId, $run, $backup, 'automatic rollback');
+            Store::updateRun($runId, ['last_error' => $reason . '. The migration was rolled back automatically: the legacy module works as before. Download the error report and send it to support.']);
+
+            return true;
+        }
+        catch(\Throwable $e)
+        {
+            Store::updateRun($runId, ['status' => Store::RUN_FAILED, 'last_error' => $reason . '. The automatic rollback failed too (' . $e->getMessage() . '): roll the migration back from this page.']);
+            $this->log($runId, 'error', self::PHASE_ROLLBACK, 'Automatic rollback failed: ' . $e->getMessage(), ['trace' => substr($e->getTraceAsString(), 0, 2000)]);
+
+            return false;
+        }
+    }
 
     /**
      * One runner at a time (two admin tabs, or a tab and the command line, must not write the same services twice).
@@ -589,6 +765,21 @@ class Engine
                 $this->legacyProductsOfRun = $runId;
             }
             $rec = $this->reader->readService($serviceId);
+
+            // a product without a gateway equivalent, kept as a record: whatever the service is, its details are kept
+            $records = $this->recordProductsOf($runId);
+            $code    = strtolower(trim((string)($rec['product_code'] ?? '')));
+            $pid     = (int)($rec['product_id'] ?? 0);
+            if(isset($records[$pid]) || ($code !== '' && in_array($pid, $migratedProducts, true) && $this->mapper->isRecord($code)))
+            {
+                $name    = $records[$pid] ?? (string)Capsule::table('tblproducts')->where('id', $pid)->value('name');
+                $written = $writer->writeRecordService($rec, $name);
+                $written += ['kind' => 'record', 'record' => true, 'legacy_status' => $rec['legacy_status'] ?? '', 'legacy_remoteid' => '', 'target_status' => '', 'warnings' => []];
+                Store::finishJob($jobId, Store::JOB_DONE, null, $written);
+                $this->log($runId, 'info', self::PHASE_SERVICES, 'Kept as a record (no gateway product)', ['remote_id' => $rec['remote_id'] ?? '', 'code' => $code], $serviceId);
+
+                return;
+            }
 
             if(!empty($rec['skip_reason']) || ($rec['kind'] ?? '') === 'unsupported')
             {
@@ -708,6 +899,13 @@ class Engine
             {
                 $this->log($runId, 'info', self::PHASE_SWITCH, 'Rescan done', ['reconfigured' => $changed, 'new_orders' => $rescan]);
             }
+            $failedNow = (int)Store::jobCounts($runId)[Store::JOB_FAILED];
+            if($failedNow > 0)
+            {
+                $this->autoRollback($runId, $failedNow . ' services changed or ordered during the run could not be migrated');
+
+                return;
+            }
 
             $frozen = $this->reader->freeze();
             if($frozen)
@@ -766,7 +964,7 @@ class Engine
         {
             Store::updateRun($runId, ['status' => Store::RUN_FAILED, 'last_error' => $e->getMessage()]);
             $this->log($runId, 'error', self::PHASE_SWITCH, 'Switch failed: ' . $e->getMessage(), ['trace' => substr($e->getTraceAsString(), 0, 2000)]);
-            throw $e;
+            $this->autoRollback($runId, 'The switch failed: ' . $e->getMessage());
         }
     }
 
@@ -780,6 +978,10 @@ class Engine
             $order = Capsule::table('tblsslorders')->where('id', (int)$job['ssl_order_id'])->first();
             if(!$order)
             {
+                if(!empty($job['data']['record']))
+                {
+                    continue; // a record of a service that had no SSL order (unpaid)
+                }
                 $problems[] = 'service ' . $job['object_id'] . ': SSL order row missing';
                 continue;
             }
@@ -1007,6 +1209,71 @@ class Engine
     public static function log(int $runId, string $level, string $phase, string $message, array $context = [], int $serviceId = 0): void
     {
         Store::log($runId, $level, $phase, $message, $context, $serviceId);
+    }
+
+    /**
+     * Error report of a run, for the administrator to send to support: versions, what happened, the services that
+     * failed and the full log. E-mail addresses are masked.
+     */
+    public static function errorReport(int $runId): string
+    {
+        $run = Store::getRun($runId);
+        if(!$run)
+        {
+            return 'Migration #' . $runId . ' not found';
+        }
+        $whmcs   = (string)Capsule::table('tblconfiguration')->where('setting', 'Version')->value('value');
+        $mysql   = Capsule::selectOne('SELECT VERSION() AS v');
+        $summary = $run['summary'] ?? [];
+        $lines   = [
+            \ModulesGarden\TSSGGSModule\App\Libs\Edition::name() . ' - migration error report',
+            str_repeat('=', 60),
+            'Run:            #' . $runId . ' (' . strtoupper((string)$run['source']) . ', legacy module ' . ($run['source_version'] ?: '?') . ')',
+            'Status:         ' . $run['status'],
+            'Started:        ' . ($run['started_at'] ?: $run['created_at']) . ' by ' . $run['started_by'],
+            'Finished:       ' . ($run['finished_at'] ?: '-'),
+            'Module version: ' . self::moduleVersion(),
+            'WHMCS:          ' . $whmcs . ', PHP ' . PHP_VERSION . ', MySQL ' . ($mysql ? (string)$mysql->v : '?'),
+            'Result:         ' . (string)$run['last_error'],
+            'Services:       ' . json_encode(Store::jobCounts($runId)),
+            '',
+        ];
+        $failed = Store::jobsByStatus($runId, Store::KIND_SERVICE, Store::JOB_FAILED);
+        if(!$failed && !empty($summary['auto_rollback']['failed']))
+        {
+            $failed = array_map(function($f) { return ['object_id' => $f['service_id'], 'reason' => $f['reason']]; }, $summary['auto_rollback']['failed']);
+        }
+        if($failed)
+        {
+            $lines[] = 'Services that could not be migrated (' . count($failed) . '):';
+            foreach(array_slice($failed, 0, 1000) as $job)
+            {
+                $pid     = (int)Capsule::table('tblhosting')->where('id', (int)$job['object_id'])->value('packageid');
+                $lines[] = '  service #' . (int)$job['object_id'] . ' (product #' . $pid . '): ' . (string)$job['reason'];
+            }
+            $lines[] = '';
+        }
+        $lines[] = 'Log:';
+        foreach(Store::logRows($runId, 100000) as $row)
+        {
+            $context = (string)$row['context'];
+            $lines[] = $row['created_at'] . ' ' . str_pad(strtoupper((string)$row['level']), 7) . ' ' . str_pad((string)$row['phase'], 9) . ' '
+                . ($row['service_id'] ? '#' . $row['service_id'] . ' ' : '') . $row['message'] . ($context !== '' && $context !== '[]' ? ' ' . $context : '');
+        }
+
+        // e-mail addresses of clients and contacts are not needed to find a fault
+        return preg_replace('/([A-Za-z0-9._%+-])[A-Za-z0-9._%+-]*@([A-Za-z0-9.-]+\.[A-Za-z]{2,})/', '$1***@$2', implode("\n", $lines) . "\n");
+    }
+
+    protected static function moduleVersion(): string
+    {
+        $file = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'Config' . DIRECTORY_SEPARATOR . 'configuration.yml';
+        if(is_file($file) && preg_match("/version:\s*'?([0-9.]+)/", (string)file_get_contents($file), $m))
+        {
+            return $m[1];
+        }
+
+        return '?';
     }
 
     /**

@@ -890,3 +890,15 @@ $_LANG['migrationPause']['held_list'] = 'Podrženo na dobu po migraci: :commands
 $_LANG['migrationPause']['tab_title'] = 'Migrace';
 $_LANG['migrationPause']['paused_script'] = 'Starý SSL modul je pozastaven, zatímco migrace #:id přesouvá jeho služby do :module.';
 $_LANG['migrationPause']['open_migration'] = 'Otevřít migraci';
+
+// certificates kept as a record of the legacy module (1.7.0)
+$_LANG['recordOnly']['notice_client'] = 'Tento certifikát byl přenesen z našeho předchozího systému a je uchován pro vaši evidenci. Jeho produkt již není k dispozici, proto jej nelze obnovit, znovu vystavit ani změnit. Objednejte prosím nový certifikát.';
+$_LANG['recordOnly']['notice_admin'] = 'Pouze záznam: migrováno ze starého modulu, produkt nemá u poskytovatele certifikátů obdobu. Nikdy se nefakturuje obnovení; akce modulu nejsou k dispozici. Pozastavení, obnovení a ukončení mění pouze stav ve WHMCS.';
+$_LANG['recordOnly']['refused'] = 'Tento certifikát je záznam z předchozího modulu: jeho produkt již není k dispozici, proto tato akce není možná. Objednejte místo toho nový certifikát.';
+$_LANG['recordOnly']['tab'] = 'Certifikát (záznam)';
+$_LANG['recordOnly']['order_id'] = 'ID objednávky';
+$_LANG['recordOnly']['product'] = 'Produkt';
+$_LANG['recordOnly']['common_name'] = 'Doména';
+$_LANG['recordOnly']['status'] = 'Stav při migraci';
+$_LANG['recordOnly']['valid_until'] = 'Platný do';
+$_LANG['recordOnly']['migrated_at'] = 'Migrováno dne';

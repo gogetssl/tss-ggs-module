@@ -211,6 +211,70 @@ class Writer
     }
 
     /**
+     * A legacy product without a gateway equivalent, kept for its records (App\Libs\RecordOnly): on the module but
+     * without a gateway product, hidden and retired so it is never ordered again
+     */
+    public function writeRecordProduct(array $product): array
+    {
+        $before  = (array)Capsule::table('tblproducts')->where('id', $product['pid'])->first();
+        $options = ['configoption1' => strtoupper($this->source), 'configoption2' => '', 'configoption9' => 'record', 'hidden' => 1];
+        if(array_key_exists('retired', $before))
+        {
+            $options['retired'] = 1;
+        }
+        for($i = 3; $i <= 24; $i++)
+        {
+            if($i !== 9)
+            {
+                $options['configoption' . $i] = '';
+            }
+        }
+        $old = [];
+        foreach(array_keys($options) as $col)
+        {
+            $old[$col] = $before[$col] ?? '';
+        }
+        Capsule::table('tblproducts')->where('id', $product['pid'])->update($options);
+
+        return ['pid' => (int)$product['pid'], 'old_configoptions' => $old, 'record' => true, 'renamed_options' => [], 'hidden_options' => [], 'markup_ids' => []];
+    }
+
+    /**
+     * A service kept as a record: the order details are stored for reference, nothing a gateway would act on
+     */
+    public function writeRecordService(array $rec, string $productName): array
+    {
+        return Capsule::connection()->transaction(function() use ($rec, $productName) {
+            $serviceId = (int)$rec['service_id'];
+            $written   = ['ssl_order_id' => (int)($rec['ssl_order_id'] ?? 0), 'requests' => [], 'queue' => [], 'acme' => 0, 'acme_domains' => [], 'ais' => 0];
+            Capsule::table(self::tRequests())->where('serviceid', $serviceId)
+                ->whereIn('name', array_merge([\ModulesGarden\TSSGGSModule\App\Libs\RecordOnly::REQUEST, 'addOrder', 'certificate', 'autoinstall', 'renewOrder'], GatewayOrderService::requestNames()))->delete();
+
+            $payload = (array)($rec['order_payload'] ?? []);
+            $cert    = (array)($rec['certificate'] ?? []);
+            $domain  = (string)($cert['common_name'] ?? ($payload['common_name']['name'] ?? ''));
+            if($domain === '')
+            {
+                $domain = (string)Capsule::table('tblhosting')->where('id', $serviceId)->value('domain');
+            }
+            $details = [
+                'remote_id'      => (string)($rec['remote_id'] ?? ''),
+                'legacy_product' => trim($productName . (($rec['product_code'] ?? '') !== '' ? ' (' . $rec['product_code'] . ')' : '')),
+                'common_name'    => $domain,
+                'legacy_status'  => (string)($rec['legacy_status'] ?? ''),
+                'valid_until'    => (string)($cert['valid_till'] ?? ''),
+                'kind'           => (string)($rec['kind'] ?? ''),
+                'migrated_at'    => date('Y-m-d'),
+                'order'          => $payload,
+                'certificate'    => array_diff_key($cert, ['crt' => 1, 'ca' => 1]),
+            ];
+            $written['requests'][] = $this->insertRequest($serviceId, \ModulesGarden\TSSGGSModule\App\Libs\RecordOnly::REQUEST, $details, 'record', 0, 0, 0);
+
+            return $written;
+        });
+    }
+
+    /**
      * Markup rules ([client_id, product_id, percent]); an existing rule of the unified module is kept.
      * Returns the ids it created (undone by Engine::rollback()).
      */
@@ -278,7 +342,7 @@ class Writer
             Capsule::table('tblsslorders')->where('id', $rec['ssl_order_id'])->update($update);
 
             // remove any unified rows a previous attempt left behind
-            Capsule::table(self::tRequests())->where('serviceid', $rec['service_id'])->whereIn('name', array_merge(['addOrder', 'certificate', 'autoinstall', 'renewOrder'], GatewayOrderService::requestNames()))->delete();
+            Capsule::table(self::tRequests())->where('serviceid', $rec['service_id'])->whereIn('name', array_merge(['addOrder', 'certificate', 'autoinstall', 'renewOrder', \ModulesGarden\TSSGGSModule\App\Libs\RecordOnly::REQUEST], GatewayOrderService::requestNames()))->delete();
 
             $prices = (array)($rec['prices'] ?? []);
             $api    = (float)($prices['api_price'] ?? 0);

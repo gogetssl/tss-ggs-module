@@ -589,19 +589,21 @@ add_hook('AfterModuleCreate', 1, function($vars) {
 add_hook('PreInvoicingGenerateInvoiceItems', 1, function($vars) {
     try
     {
-        // the "Create Automatic Renewal Invoice" switch decides who invoices: off, WHMCS does, as it always did
-        if(!\ModulesGarden\TSSGGSModule\App\Libs\RenewalPolicy::invoicing(\ModulesGarden\TSSGGSModule\App\Libs\RenewalPolicy::CERTIFICATE))
-        {
-            return;
-        }
+        // the "Create Automatic Renewal Invoice" switch decides who invoices: off, WHMCS does, as it always did -
+        // except for certificates kept as a record of the legacy module (App\Libs\RecordOnly): never invoiced
+        $moduleInvoices = \ModulesGarden\TSSGGSModule\App\Libs\RenewalPolicy::invoicing(\ModulesGarden\TSSGGSModule\App\Libs\RenewalPolicy::CERTIFICATE);
 
-        $rows = Capsule::table('tblhosting')
+        $query = Capsule::table('tblhosting')
             ->join('tblproducts', 'tblproducts.id', '=', 'tblhosting.packageid')
             ->where('tblproducts.servertype', 'TSSGGSModule')
             ->whereNotIn('tblhosting.billingcycle', ['One Time', 'Free Account', 'Free'])
             ->where('tblhosting.nextinvoicedate', '>', '2000-01-01')
-            ->where('tblhosting.nextinvoicedate', '<', '2099-01-01')
-            ->get(['tblhosting.id', 'tblhosting.nextinvoicedate']);
+            ->where('tblhosting.nextinvoicedate', '<', '2099-01-01');
+        if(!$moduleInvoices)
+        {
+            \ModulesGarden\TSSGGSModule\App\Libs\RecordOnly::only($query);
+        }
+        $rows = $query->get(['tblhosting.id', 'tblhosting.nextinvoicedate']);
 
         $GLOBALS['tssggs_renewal_invoice_dates'] = [];
         foreach($rows as $row)

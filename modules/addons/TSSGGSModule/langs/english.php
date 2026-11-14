@@ -1522,3 +1522,19 @@ $_LANG['admin.settings.index.providers.finance_settings_provider.pendingWait_14'
 $_LANG['admin.settings.index.providers.ssl_settings_provider.pendingWait_14'] = 'Wait 14 days for it to clear';
 $_LANG['admin.settings.index.providers.finance_settings_provider.pendingWait_30'] = 'Wait 30 days for it to clear';
 $_LANG['admin.settings.index.providers.ssl_settings_provider.pendingWait_30'] = 'Wait 30 days for it to clear';
+
+// migration: products without a gateway match, automatic rollback (1.7.0)
+$_LANG['admin.migration.map_title'] = ':n legacy products have no equivalent at the certificate provider';
+$_LANG['admin.migration.map_intro'] = 'Choose for each one before starting: an alternative product (existing certificates keep working and are renewed as the new product), or keep its certificates as records. The legacy module is not kept for them.';
+$_LANG['admin.migration.map_col_legacy'] = 'Legacy product';
+$_LANG['admin.migration.map_col_services'] = 'Services';
+$_LANG['admin.migration.map_col_choice'] = 'Migrate as';
+$_LANG['admin.migration.map_services'] = ':active active, :awaiting awaiting configuration, :other other';
+$_LANG['admin.migration.map_choose'] = '- choose -';
+$_LANG['admin.migration.map_record'] = 'Keep as a record only (no renewal)';
+$_LANG['admin.migration.map_same_brand'] = 'Same brand';
+$_LANG['admin.migration.map_all_products'] = 'All products';
+$_LANG['admin.migration.map_unsupported'] = 'This product type is not supported by the module: its certificates can only be kept as records.';
+$_LANG['admin.migration.map_record_hint'] = 'Record only: the certificate and its order details stay visible to the client and to you, but it can not be renewed, reissued or configured, it is never invoiced for a renewal, and the product can not be ordered again. Certificates awaiting configuration can never be configured then - map those products to an alternative where you can.';
+$_LANG['admin.migration.auto_rollback'] = 'This migration stopped and was rolled back automatically: :reason. The legacy module works as before. Download the error report and send it to support.';
+$_LANG['admin.migration.btn_error_report'] = 'Download error report';

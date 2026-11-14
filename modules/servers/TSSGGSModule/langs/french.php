@@ -890,3 +890,15 @@ $_LANG['migrationPause']['held_list'] = 'Retenu pour après la migration : :comm
 $_LANG['migrationPause']['tab_title'] = 'Migration';
 $_LANG['migrationPause']['paused_script'] = 'L\'ancien module SSL est suspendu pendant que la migration #:id transfère ses services vers :module.';
 $_LANG['migrationPause']['open_migration'] = 'Ouvrir la migration';
+
+// certificates kept as a record of the legacy module (1.7.0)
+$_LANG['recordOnly']['notice_client'] = 'Ce certificat a été transféré depuis notre ancien système et est conservé pour vos archives. Son produit n\'est plus disponible : il ne peut donc pas être renouvelé, réémis ni modifié. Veuillez commander un nouveau certificat.';
+$_LANG['recordOnly']['notice_admin'] = 'Archive uniquement : migré depuis l\'ancien module, son produit n\'a pas d\'équivalent chez le fournisseur de certificats. Aucun renouvellement n\'est jamais facturé ; les actions du module ne sont pas disponibles. Suspendre, réactiver et résilier ne changent que le statut WHMCS.';
+$_LANG['recordOnly']['refused'] = 'Ce certificat est une archive de l\'ancien module : son produit n\'est plus disponible, cette action n\'est donc pas possible. Commandez plutôt un nouveau certificat.';
+$_LANG['recordOnly']['tab'] = 'Certificat (archive)';
+$_LANG['recordOnly']['order_id'] = 'ID de commande';
+$_LANG['recordOnly']['product'] = 'Produit';
+$_LANG['recordOnly']['common_name'] = 'Domaine';
+$_LANG['recordOnly']['status'] = 'Statut lors de la migration';
+$_LANG['recordOnly']['valid_until'] = 'Valide jusqu\'au';
+$_LANG['recordOnly']['migrated_at'] = 'Migré le';

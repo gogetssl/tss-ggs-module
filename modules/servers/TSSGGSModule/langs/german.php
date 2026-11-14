@@ -890,3 +890,15 @@ $_LANG['migrationPause']['held_list'] = 'Für nach der Migration zurückgehalten
 $_LANG['migrationPause']['tab_title'] = 'Migration';
 $_LANG['migrationPause']['paused_script'] = 'Das alte SSL-Modul ist pausiert, während Migration #:id seine Dienste nach :module überträgt.';
 $_LANG['migrationPause']['open_migration'] = 'Migration öffnen';
+
+// certificates kept as a record of the legacy module (1.7.0)
+$_LANG['recordOnly']['notice_client'] = 'Dieses Zertifikat wurde aus unserem bisherigen System übernommen und wird für Ihre Unterlagen aufbewahrt. Sein Produkt ist nicht mehr erhältlich, daher kann es nicht verlängert, neu ausgestellt oder geändert werden. Bitte bestellen Sie ein neues Zertifikat.';
+$_LANG['recordOnly']['notice_admin'] = 'Nur Aufzeichnung: aus dem Altmodul migriert, sein Produkt hat keine Entsprechung beim Zertifikatsanbieter. Es wird nie für eine Verlängerung in Rechnung gestellt; Modulaktionen sind nicht verfügbar. Sperren, Entsperren und Beenden ändern nur den WHMCS-Status.';
+$_LANG['recordOnly']['refused'] = 'Dieses Zertifikat ist eine Aufzeichnung aus dem bisherigen Modul: sein Produkt ist nicht mehr erhältlich, daher ist diese Aktion nicht möglich. Bestellen Sie stattdessen ein neues Zertifikat.';
+$_LANG['recordOnly']['tab'] = 'Zertifikat (Aufzeichnung)';
+$_LANG['recordOnly']['order_id'] = 'Bestell-ID';
+$_LANG['recordOnly']['product'] = 'Produkt';
+$_LANG['recordOnly']['common_name'] = 'Domain';
+$_LANG['recordOnly']['status'] = 'Status bei der Migration';
+$_LANG['recordOnly']['valid_until'] = 'Gültig bis';
+$_LANG['recordOnly']['migrated_at'] = 'Migriert am';

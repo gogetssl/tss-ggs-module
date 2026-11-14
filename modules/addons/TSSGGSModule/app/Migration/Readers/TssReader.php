@@ -75,6 +75,33 @@ class TssReader extends AbstractReader
         return ['php -q {WHMCS}/modules/addons/thesslstorefullv2_admin/tss_cron.php'];
     }
 
+    /**
+     * Product codes on the orders of the legacy services: a code the gateway does not know
+     * while the WHMCS product maps (the service was ordered under another product) needs the administrator's choice
+     * too. Returns code => number of services.
+     */
+    public function serviceCodes(): array
+    {
+        if(!Schema::tableExists('mod_sslstore_orders_data'))
+        {
+            return [];
+        }
+        $rows = Capsule::select('SELECT LOWER(TRIM(o.product_code)) AS code, COUNT(DISTINCT o.service_id) AS n FROM mod_sslstore_orders_data o'
+            . ' JOIN tblhosting h ON h.id = o.service_id JOIN tblproducts p ON p.id = h.packageid'
+            . ' WHERE p.servertype = ?'
+            . ' GROUP BY LOWER(TRIM(o.product_code))', [$this->serverType()]);
+        $out = [];
+        foreach($rows as $row)
+        {
+            if((string)$row->code !== '' && !$this->isUnsupportedCode((string)$row->code))
+            {
+                $out[(string)$row->code] = (int)$row->n;
+            }
+        }
+
+        return $out;
+    }
+
     public function freezeTables(): array
     {
         return array_values(array_filter(['mod_sslstore_settings_v2', 'mod_sslstore_crons'], [Schema::class, 'tableExists']));

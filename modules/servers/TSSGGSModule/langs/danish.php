@@ -890,3 +890,15 @@ $_LANG['migrationPause']['held_list'] = 'Holdt tilbage til efter migreringen: :c
 $_LANG['migrationPause']['tab_title'] = 'Migrering';
 $_LANG['migrationPause']['paused_script'] = 'Det gamle SSL-modul er sat på pause, mens migrering #:id flytter dets tjenester til :module.';
 $_LANG['migrationPause']['open_migration'] = 'Åbn migreringen';
+
+// certificates kept as a record of the legacy module (1.7.0)
+$_LANG['recordOnly']['notice_client'] = 'Dette certifikat er flyttet fra vores tidligere system og opbevares til dine optegnelser. Produktet findes ikke længere, så det kan ikke fornyes, genudstedes eller ændres. Bestil venligst et nyt certifikat.';
+$_LANG['recordOnly']['notice_admin'] = 'Kun registrering: migreret fra det gamle modul, produktet har ingen tilsvarende hos certifikatudbyderen. Det faktureres aldrig for en fornyelse; modulhandlinger er ikke tilgængelige. Suspender, genaktiver og afslut ændrer kun WHMCS-status.';
+$_LANG['recordOnly']['refused'] = 'Dette certifikat er en registrering fra det tidligere modul: produktet findes ikke længere, så handlingen er ikke mulig. Bestil et nyt certifikat i stedet.';
+$_LANG['recordOnly']['tab'] = 'Certifikat (registrering)';
+$_LANG['recordOnly']['order_id'] = 'Ordre-ID';
+$_LANG['recordOnly']['product'] = 'Produkt';
+$_LANG['recordOnly']['common_name'] = 'Domæne';
+$_LANG['recordOnly']['status'] = 'Status ved migrering';
+$_LANG['recordOnly']['valid_until'] = 'Gyldig til';
+$_LANG['recordOnly']['migrated_at'] = 'Migreret den';

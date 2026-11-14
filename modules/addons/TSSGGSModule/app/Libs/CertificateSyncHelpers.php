@@ -19,7 +19,8 @@ class CertificateSyncHelpers
      */
     public static function getCertificatesQuery()
     {
-        return Service::select(['tblhosting.*', 'tblsslorders.remoteid', 'tblproducts.configoption1', 'tblproducts.configoption9'])
+        // certificates kept as a record of the legacy module are not synced (App\Libs\RecordOnly)
+        return RecordOnly::exclude(Service::select(['tblhosting.*', 'tblsslorders.remoteid', 'tblproducts.configoption1', 'tblproducts.configoption9'])
             ->join('tblsslorders', 'tblsslorders.serviceid', '=', 'tblhosting.id')
             ->join('tblproducts', 'tblhosting.packageid', '=', 'tblproducts.id')
             ->where('tblproducts.servertype', 'TSSGGSModule')
@@ -29,7 +30,7 @@ class CertificateSyncHelpers
             ->where(function($query) {
                 // S/MIME, code signing and the subscriptions (ACME, Plan + Automate) have their own sync
                 $query->whereNull('tblproducts.configoption9')->orWhereNotIn('tblproducts.configoption9', array_merge(GatewayOrderService::categories(), SSLTrustCenterApi::SUBSCRIPTION_CATEGORIES));
-            });
+            }));
     }
 
     /**

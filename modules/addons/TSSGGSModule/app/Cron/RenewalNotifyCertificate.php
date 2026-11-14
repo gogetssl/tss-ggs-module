@@ -94,6 +94,8 @@ class RenewalNotifyCertificate extends AbstractCommand
                                                         ->where('tblsslorders.status', 'Completed');
                                               });
                                     });
+        // certificates kept as a record of the legacy module are never renewed (App\Libs\RecordOnly)
+        \ModulesGarden\TSSGGSModule\App\Libs\RecordOnly::exclude($certificatesQuery);
 
 
         $output->write('Start checking certificates...') .

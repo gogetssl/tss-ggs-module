@@ -16,6 +16,63 @@ class ProductMapper
 
     protected $byVendor = [];
 
+    /** The administrator's choice for legacy products without a match: legacy reference => gateway product id | RECORD */
+    protected $overrides = [];
+
+    const RECORD = 'record';
+
+    public function setOverrides(array $map): void
+    {
+        $this->overrides = [];
+        foreach($map as $ref => $target)
+        {
+            $ref = strtolower(trim((string)$ref));
+            if($ref !== '' && (string)$target !== '')
+            {
+                $this->overrides[$ref] = (string)$target;
+            }
+        }
+    }
+
+    /** The choice made for a legacy reference, null when none */
+    public function override(string $ref): ?string
+    {
+        return $this->overrides[strtolower(trim($ref))] ?? null;
+    }
+
+    public function isRecord(string $ref): bool
+    {
+        return $this->override($ref) === self::RECORD;
+    }
+
+    /** Gateway products of a vendor, for the administrator's choice (sorted by brand and name) */
+    public function vendorProducts(string $vendor): array
+    {
+        $list = $this->byVendor[strtoupper($vendor)] ?? [];
+        usort($list, function($a, $b) { return strcasecmp((string)$a->brand . ' ' . $a->name, (string)$b->brand . ' ' . $b->name); });
+
+        return $list;
+    }
+
+    /** The gateway product chosen for a legacy reference (null: none chosen, or kept as a record) */
+    protected function chosen(string $vendor, string $ref)
+    {
+        $target = $this->override($ref);
+        if($target === null || $target === self::RECORD)
+        {
+            return null;
+        }
+        foreach($this->byVendor[$vendor] ?? [] as $product)
+        {
+            if((string)$product->remoteId === $target)
+            {
+                return $product;
+            }
+        }
+
+        return null;
+    }
+
     public function __construct()
     {
         foreach(RemoteProduct::all() as $product)
@@ -35,6 +92,10 @@ class ProductMapper
      */
     public function forGgs($apiProductId)
     {
+        if($this->override((string)$apiProductId) !== null)
+        {
+            return $this->chosen('GGS', (string)$apiProductId);
+        }
         $apiProductId = (int)$apiProductId;
         foreach($this->byVendor['GGS'] ?? [] as $product)
         {
@@ -56,6 +117,10 @@ class ProductMapper
         if($productCode === '')
         {
             return null;
+        }
+        if($this->override($productCode) !== null)
+        {
+            return $this->chosen('TSS', $productCode);
         }
 
         foreach($this->byVendor['TSS'] ?? [] as $product)

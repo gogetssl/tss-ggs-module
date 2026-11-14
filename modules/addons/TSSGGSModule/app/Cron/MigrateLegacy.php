@@ -25,19 +25,36 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  */
 class MigrateLegacy extends AbstractCommand
 {
+    /** "ref=gatewayId,ref=record" -> [ref => target] */
+    protected static function map(string $raw): array
+    {
+        $map = [];
+        foreach(array_filter(array_map('trim', explode(',', $raw))) as $pair)
+        {
+            [$ref, $target] = array_pad(explode('=', $pair, 2), 2, '');
+            if(trim($ref) !== '' && trim($target) !== '')
+            {
+                $map[trim($ref)] = trim($target);
+            }
+        }
+
+        return $map;
+    }
+
     protected $name        = 'MigrateLegacy';
     protected $description = 'Migrate data of the legacy GoGetSSL / TheSSLStore modules into this module';
     protected $help        = '';
 
     protected function setup()
     {
-        $this->addArgument('task', InputArgument::OPTIONAL, 'detect | dry-run | start | run | status | rollback | housekeeping', 'detect');
+        $this->addArgument('task', InputArgument::OPTIONAL, 'detect | dry-run | unmatched | start | run | status | rollback | housekeeping', 'detect');
         $this->addOption('source', null, InputOption::VALUE_REQUIRED, 'ggs or tss');
         $this->addOption('id', null, InputOption::VALUE_REQUIRED, 'migration run id');
         $this->addOption('no-keys', null, InputOption::VALUE_NONE, 'do not fetch AutoInstall private keys from cPanel');
         $this->addOption('keep-legacy-active', null, InputOption::VALUE_NONE, 'do not deactivate the legacy addon after the switch');
         $this->addOption('no-templates', null, InputOption::VALUE_NONE, 'do not copy the legacy e-mail texts');
         $this->addOption('no-store', null, InputOption::VALUE_NONE, 'dry-run: print the report without storing it (pure read)');
+        $this->addOption('map', null, InputOption::VALUE_REQUIRED, 'start: choices for products without a gateway match, "ref=gatewayId,ref=record"');
     }
 
     protected function process(InputInterface $input, OutputInterface $output, SymfonyStyle $io)
@@ -53,6 +70,11 @@ class MigrateLegacy extends AbstractCommand
                     $io->section($found['label'] . ' ' . ($found['version'] ?: '(version unknown)') . ' - ' . $found['support']['band'] . ($found['support']['reason'] ? ': ' . $found['support']['reason'] : ''));
                     $io->writeln(json_encode($found['counts'], JSON_PRETTY_PRINT));
                 }
+                break;
+
+            case 'unmatched':
+                // products without a gateway match: each needs --map ref=gatewayId|record at the start
+                $io->writeln(json_encode((new Engine($this->source($input)))->unmatched(), JSON_PRETTY_PRINT));
                 break;
 
             case 'dry-run':
@@ -72,7 +94,7 @@ class MigrateLegacy extends AbstractCommand
 
             case 'start':
                 $engine = new Engine($this->source($input));
-                $id     = $engine->start('cli', ['fetch_cpanel_keys' => !$input->getOption('no-keys'), 'deactivate_legacy' => !$input->getOption('keep-legacy-active'), 'copy_templates' => !$input->getOption('no-templates')]);
+                $id     = $engine->start('cli', ['fetch_cpanel_keys' => !$input->getOption('no-keys'), 'deactivate_legacy' => !$input->getOption('keep-legacy-active'), 'copy_templates' => !$input->getOption('no-templates'), 'product_map' => self::map((string)$input->getOption('map'))]);
                 $io->success('Migration #' . $id . ' prepared. Running batches...');
                 $this->runAll($engine, $id, $io);
                 break;
