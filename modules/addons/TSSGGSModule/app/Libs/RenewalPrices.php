@@ -145,6 +145,16 @@ class RenewalPrices
             }
         }
 
+        // a wildcard main domain on a FLEX product
+        if(MainDomain::serviceChoice((int)$service->id) === MainDomain::WILDCARD)
+        {
+            $extra = MainDomain::wildcardCost($product['remote'], (int)$months);
+            if($extra !== null)
+            {
+                $cost += $pricing->convert($extra, (int)$service->currency);
+            }
+        }
+
         return round($cost, 2);
     }
 

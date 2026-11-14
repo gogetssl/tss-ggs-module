@@ -709,6 +709,8 @@ class CertificateService
         }
         // the names come from posted form keys: never trust them beyond the SANs that were paid for
         SanUpgrade::assertWithinLimits($serviceId, $commonName, array_keys($methods));
+        // a reissue may not turn the main domain into a wildcard the service has not paid for
+        MainDomain::assertCommonName((int)$serviceId, (string)$commonName);
 
         // the request of the current certificate (after a renewal: the renewal's, not the first order's)
         $request      = Request::currentOrder((int)$serviceId);

@@ -10,12 +10,13 @@ use WHMCS\Database\Capsule;
 /**
  * Prices of the module products against the reseller cost from the gateway catalogue:
  * pricing grid, "apply margin", below-cost detection and CSV export / import.
- * Items are the product itself ('base') and its SAN options ('sans', 'sans_wildcard').
+ * Items are the product itself ('base'), its SAN options ('sans', 'sans_wildcard') and, on FLEX products, the
+ * surcharge of a wildcard main domain ('main_wildcard', App\Libs\MainDomain).
  */
 class PricingService
 {
     const TERMS  = [12 => 'annually', 24 => 'biennially', 36 => 'triennially'];
-    const ITEMS  = ['base', 'sans', 'sans_wildcard'];
+    const ITEMS  = ['base', 'sans', 'sans_wildcard', 'main_wildcard'];
     const REMOTE = ['sans' => 'single', 'sans_wildcard' => 'wildcard'];
 
     protected $rate;
@@ -84,13 +85,13 @@ class PricingService
             ->join('tblproductconfigoptions', 'tblproductconfigoptions.gid', '=', 'tblproductconfiglinks.gid')
             ->join('tblproductconfigoptionssub', 'tblproductconfigoptionssub.configid', '=', 'tblproductconfigoptions.id')
             ->where('tblproducts.servertype', 'TSSGGSModule')
-            ->get(['tblproductconfiglinks.pid', 'tblproductconfigoptions.optionname', 'tblproductconfigoptionssub.id as subId']);
+            ->get(['tblproductconfiglinks.pid', 'tblproductconfigoptions.optionname', 'tblproductconfigoptionssub.id as subId', 'tblproductconfigoptionssub.optionname as subName']);
 
         $options = [];
         foreach($rows as $row)
         {
-            $name = explode('|', (string)$row->optionname)[0];
-            if(isset(self::REMOTE[$name]) && !isset($options[(int)$row->pid][$name]))
+            $name = self::itemOf((string)$row->optionname, (string)$row->subName);
+            if($name !== null && !isset($options[(int)$row->pid][$name]))
             {
                 $options[(int)$row->pid][$name] = (int)$row->subId;
             }
@@ -145,13 +146,13 @@ class PricingService
             ->join('tblproductconfigoptions', 'tblproductconfigoptions.gid', '=', 'tblproductconfiglinks.gid')
             ->join('tblproductconfigoptionssub', 'tblproductconfigoptionssub.configid', '=', 'tblproductconfigoptions.id')
             ->where('tblproductconfiglinks.pid', (int)$productId)
-            ->get(['tblproductconfigoptions.optionname', 'tblproductconfigoptionssub.id as subId']);
+            ->get(['tblproductconfigoptions.optionname', 'tblproductconfigoptionssub.id as subId', 'tblproductconfigoptionssub.optionname as subName']);
 
         $options = [];
         foreach($rows as $row)
         {
-            $name = explode('|', (string)$row->optionname)[0];
-            if(isset(self::REMOTE[$name]) && !isset($options[$name]))
+            $name = self::itemOf((string)$row->optionname, (string)$row->subName);
+            if($name !== null && !isset($options[$name]))
             {
                 $options[$name] = (int)$row->subId;
             }
@@ -163,8 +164,28 @@ class PricingService
     /**
      * Reseller cost of an item for a term in the gateway currency, null when the gateway has no price
      */
+    /** Pricing item of a configurable sub-option: 'sans' / 'sans_wildcard' / 'main_wildcard', null for any other */
+    protected static function itemOf(string $optionName, string $subName)
+    {
+        $name = explode('|', $optionName)[0];
+        if(isset(self::REMOTE[$name]))
+        {
+            return $name;
+        }
+        if($name === MainDomain::OPTION && explode('|', $subName)[0] === MainDomain::WILDCARD)
+        {
+            return MainDomain::PRICE_ITEM;
+        }
+
+        return null;
+    }
+
     public function remoteCost(?array $remote, $item, $term)
     {
+        if($item === MainDomain::PRICE_ITEM)
+        {
+            return MainDomain::wildcardCost($remote, (int)$term);
+        }
         foreach((array)($remote['prices'] ?? []) as $price)
         {
             if((int)($price['term'] ?? 0) !== (int)$term)

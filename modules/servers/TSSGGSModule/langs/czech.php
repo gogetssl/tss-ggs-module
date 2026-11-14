@@ -902,3 +902,7 @@ $_LANG['recordOnly']['common_name'] = 'Doména';
 $_LANG['recordOnly']['status'] = 'Stav při migraci';
 $_LANG['recordOnly']['valid_until'] = 'Platný do';
 $_LANG['recordOnly']['migrated_at'] = 'Migrováno dne';
+
+// main domain of FLEX products
+$_LANG['mainDomain']['needs_wildcard'] = 'Wildcard hlavní doména (*.example.com) vyžaduje volbu "Wildcard doména" tohoto certifikátu. Nejprve upgradujte volbu "Hlavní doména" služby, nebo použijte běžnou doménu.';
+$_LANG['mainDomain']['no_wildcard'] = 'Tento certifikát nepokrývá wildcard hlavní doménu (*.example.com). Použijte běžnou doménu, nebo objednejte wildcard certifikát.';

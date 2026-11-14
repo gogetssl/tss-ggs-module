@@ -68,6 +68,8 @@ class SSLStepThree
             $mainMethod = $params['method'][$decode['CN']] == 'email' ? $params['approver'][$decode['CN']] : $params['method'][$decode['CN']];
 
             SanUpgrade::assertWithinLimits($params['serviceid'], $decode['CN'], array_keys($params['method']), SanUpgrade::paidQuantities($params));
+            // *. only on a wildcard product, or a FLEX product with the Wildcard choice paid
+            \ModulesGarden\TSSGGSModule\App\Libs\MainDomain::assertCommonName((int)$params['serviceid'], (string)$decode['CN']);
 
             $san = [];
             foreach ($params['method'] as $domain_san => $method_san)

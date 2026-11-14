@@ -902,3 +902,7 @@ $_LANG['recordOnly']['common_name'] = 'Dominio';
 $_LANG['recordOnly']['status'] = 'Estado en la migración';
 $_LANG['recordOnly']['valid_until'] = 'Válido hasta';
 $_LANG['recordOnly']['migrated_at'] = 'Migrado el';
+
+// main domain of FLEX products
+$_LANG['mainDomain']['needs_wildcard'] = 'Un dominio principal wildcard (*.example.com) requiere la opción "Dominio wildcard" de este certificado. Mejore primero la opción "Dominio principal" del servicio, o use un dominio normal.';
+$_LANG['mainDomain']['no_wildcard'] = 'Este certificado no cubre un dominio principal wildcard (*.example.com). Use un dominio normal, o pida un certificado wildcard.';

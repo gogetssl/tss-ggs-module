@@ -1543,3 +1543,6 @@ $_LANG['admin.migration.wizard_later_hint'] = 'Du kan også køre migreringen se
 $_LANG['admin.migration.wizard_later'] = 'Migrer senere';
 $_LANG['admin.configuration.content.step6.migration_pending'] = 'Migreringen af det gamle modul er ikke kørt endnu: begge moduler er aktive, indtil du kører den under <b>Addons > Migrering</b>.';
 $_LANG['admin.migration.nothing_left'] = 'Intet tilbage at migrere: produkterne og certifikaterne fra dette gamle modul blev flyttet af migreringen nedenfor.';
+
+// main domain choice of FLEX products
+$_LANG['admin.pricing_grid.item_main_wildcard'] = 'Wildcard-hoveddomæne (tillæg)';
