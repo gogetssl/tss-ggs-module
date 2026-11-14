@@ -1,3 +1,24 @@
+1.4.0 (2026-11-14)
+The module is installed in a folder of its own name: TSSPlugin for TheSSLStore
+Plugin, GGSModule for the GoGetSSL Module, in both modules/addons and
+modules/servers. WHMCS knows a module by that folder, so the name now appears
+wherever the module does - in the admin address of its pages, in the product's
+server type and in the PHP namespace.
+
+Upgrading from an earlier version:
+- upload the new modules/addons and modules/servers folders;
+- DELETE the old tssmodule / ggsmodule folders, both of them, or WHMCS lists
+  the module twice;
+- open Setup > Addon Modules and activate the module under its new name. The
+  products, their server type, the addon's settings and the API credentials
+  are moved over for you; nothing has to be entered again, and no certificate
+  or order is touched;
+- if the module's cron runs from your crontab, change the path in it to the
+  new folder.
+
+Tables keep the names they were given in 1.3.0, and an install coming straight
+from 1.2.0 or older has those renamed in the same step.
+
 1.3.0 (2026-11-14)
 Every database table of the module now carries the name of the edition it
 belongs to: TSSPlugin_ for TheSSLStore Plugin, GGSModule_ for the GoGetSSL
