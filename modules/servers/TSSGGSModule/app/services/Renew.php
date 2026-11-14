@@ -196,7 +196,19 @@ class Renew
         $requestRenew['renewal']['prior_order_id'] = $requestRenew['renewal']['prior_certificate_id'] = $sslOrder->remoteid;
         $requestRenew['renewal']['remaining_days'] = CertificateService::renewalDays($serviceId, $days > 0 ? $days + 1 : 0);
 
-        $newOrder  = $api->renewOrder($targetServiceId, $requestRenew);
+        try
+        {
+            $newOrder = $api->renewOrder($targetServiceId, $requestRenew);
+        }
+        catch(\Throwable $e)
+        {
+            // the vendor renews an order only inside its renewal window ("This order is not up for renewal" - a renewal
+            // paid long before the end): the paid renewal is then ordered as a new certificate with the same details;
+            // only the carried-over days are lost. When that is refused too, the caller asks the client for new details.
+            unset($requestRenew['renewal']);
+            $newOrder = $api->renewOrder($targetServiceId, $requestRenew);
+            CertificateService::event($serviceId, 'info', '[Renewal] The vendor did not take it as a renewal of the previous order (' . $e->getMessage() . '): ordered as a new certificate with the same details');
+        }
         $newItemId = SSLTrustCenterApi::getItemId($newOrder);
 
         // from here the order exists at the vendor: what follows is stored on a best effort, a failure never reports the
