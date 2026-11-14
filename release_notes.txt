@@ -37,7 +37,13 @@ Placing a paid renewal - two independent settings
   e-mail. When the vendor refuses the previous details, the client is asked
   for new ones instead of the renewal failing.
 - Details submitted for a renewal are now ordered as the renewal of the
-  previous order, so its remaining days are carried over.
+  previous order, so its remaining days are carried over. The client page
+  says it is a renewal and until when the current certificate stays valid.
+- A renewal the vendor will not link to the previous order - one paid long
+  before the end, outside the vendor's renewal window - is ordered as a new
+  certificate with the same details instead of failing.
+- A renewal on a new service carries the paid period: the new service no
+  longer starts with today's due date, which billed it a second time.
 
 Migration from the legacy modules carries their renewal timing over as the
 new pair, so every migrated client's due date stays where it was.
