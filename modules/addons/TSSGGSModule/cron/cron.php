@@ -16,6 +16,16 @@ require_once $modulePath . DIRECTORY_SEPARATOR . 'core' . DIRECTORY_SEPARATOR . 
 //cause WHMCS
 ini_set('max_execution_time', 0);
 
+// an install upgraded by copying files, where WHMCS never ran the addon upgrade, still gets its tables renamed
+try
+{
+    \ModulesGarden\TSSGGSModule\App\Libs\TablePrefix::migrate();
+}
+catch (\Throwable $e)
+{
+    // the cron goes on with the names the tables have
+}
+
 $argList = $argv ?: ($_SERVER['argv'] ?: []);
 if (count($argList) === 0)
 {

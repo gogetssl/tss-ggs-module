@@ -3,7 +3,7 @@
 namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Pricing\Index;
 
 use ModulesGarden\TSSGGSModule\App\Http\Admin\Pricing as PricingController;
-use ModulesGarden\TSSGGSModule\App\Libs\Commissions;
+use ModulesGarden\TSSGGSModule\App\Libs\Markups;
 use ModulesGarden\TSSGGSModule\App\Libs\Helpers;
 use ModulesGarden\TSSGGSModule\App\Libs\PricingService;
 use ModulesGarden\TSSGGSModule\Components\Container\Container;
@@ -34,7 +34,7 @@ class PricingContainer extends Container implements AdminAreaInterface
         // notes sit right under the page header, the grid in its own card
         $notes = new Text();
         $notes->setCss('tssggs-html tssggs-notes');
-        $notes->setText($this->notices($session) . $this->commissionNote() . (\ModulesGarden\TSSGGSModule\App\Libs\GeneralSettings::enabled('hideInfoMessages') ? '' : '<div class="tssggs-note">' . $this->e($this->t('grid_help')) . '</div>'));
+        $notes->setText($this->notices($session) . $this->markupNote() . (\ModulesGarden\TSSGGSModule\App\Libs\GeneralSettings::enabled('hideInfoMessages') ? '' : '<div class="tssggs-note">' . $this->e($this->t('grid_help')) . '</div>'));
         $this->addElement($notes);
         unset($_SESSION[PricingController::SESSION]['notice'], $_SESSION[PricingController::SESSION]['error']);
 
@@ -53,11 +53,11 @@ class PricingContainer extends Container implements AdminAreaInterface
     }
 
     /**
-     * Commission rules are added on top of the base prices at order time; tell the admin they exist
+     * Markups are added on top of the base prices at order time; tell the admin they exist
      */
-    protected function commissionNote()
+    protected function markupNote()
     {
-        $rules = Commissions::all();
+        $rules = Markups::all();
         if(!count($rules))
         {
             return '';
@@ -68,7 +68,7 @@ class PricingContainer extends Container implements AdminAreaInterface
         {
             if(!(int)$rule->client_id && !(int)$rule->product_id)
             {
-                $global = (float)$rule->commission;
+                $global = (float)$rule->markup;
             }
             else
             {
@@ -76,10 +76,10 @@ class PricingContainer extends Container implements AdminAreaInterface
             }
         }
 
-        return '<div class="tssggs-note">' . $this->e($this->t('commission_note', [
+        return '<div class="tssggs-note">' . $this->e($this->t('markup_note', [
             'global' => $global === null ? '-' : ($global > 0 ? '+' : '') . rtrim(rtrim(number_format($global, 2, '.', ''), '0'), '.') . ' %',
             'count'  => $other,
-        ])) . ' <a href="addonmodules.php?module=TSSGGSModule&mg-page=commissions">' . $this->e($this->t('commission_edit')) . '</a></div>';
+        ])) . ' <a href="addonmodules.php?module=TSSGGSModule&mg-page=markups">' . $this->e($this->t('markup_edit')) . '</a></div>';
     }
 
     protected function notices(array $session)
@@ -177,7 +177,7 @@ class PricingContainer extends Container implements AdminAreaInterface
     }
 
     /**
-     * Price a client without a client-specific rule pays: base price with the "all clients" commission
+     * Price a client without a client-specific rule pays: base price with the "all clients" markup
      */
     protected function clientPrice($isBase, $productId, $price)
     {
@@ -185,15 +185,15 @@ class PricingContainer extends Container implements AdminAreaInterface
         {
             return '';
         }
-        $commission = Commissions::forProduct(0, (int)$productId);
-        if($commission === null)
+        $markup = Markups::forProduct(0, (int)$productId);
+        if($markup === null)
         {
             return '';
         }
 
         return '<br><small style="color:#1a6fb5;font-weight:600" title="' . $this->e($this->t('client_price_title')) . '">' . $this->e($this->t('client_price', [
-            'price' => number_format(Commissions::apply($price, $commission), 2),
-            'rate'  => ($commission > 0 ? '+' : '') . rtrim(rtrim(number_format($commission, 2, '.', ''), '0'), '.'),
+            'price' => number_format(Markups::apply($price, $markup), 2),
+            'rate'  => ($markup > 0 ? '+' : '') . rtrim(rtrim(number_format($markup, 2, '.', ''), '0'), '.'),
         ])) . '</small>';
     }
 

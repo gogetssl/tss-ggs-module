@@ -792,8 +792,8 @@ $_LANG['admin.settings.index.providers.general_settings_provider.moduleTemplate'
 //product configuration: per-product settings
 $_LANG['admin.products.index.data_tables.products.forms.configuration_form.payType']                  = 'Betalingstype';
 $_LANG['admin.products.index.data_tables.products.forms.configuration_form.months']                   = 'Certifikatperiode';
-$_LANG['admin.products.index.data_tables.products.forms.configuration_form.commission']               = 'Fortjenstmargen (%)';
-$_LANG['admin.products.index.data_tables.products.forms.configuration_form.commission_placeholder']   = 'Global margen fra Økonomiindstillinger';
+$_LANG['admin.products.index.data_tables.products.forms.configuration_form.margin']               = 'Fortjenstmargen (%)';
+$_LANG['admin.products.index.data_tables.products.forms.configuration_form.margin_placeholder']   = 'Global margen fra Økonomiindstillinger';
 $_LANG['admin.products.index.data_tables.products.forms.configuration_form.processingGuide']          = 'Behandlingsvejledning';
 $_LANG['admin.products.index.data_tables.products.forms.configuration_form.issuedMessage']            = 'Meddelelse om udstedt SSL';
 $_LANG['admin.products.index.data_tables.products.providers.configuration_provider.payTypeRecurring'] = 'Tilbagevendende';
@@ -901,22 +901,22 @@ $_LANG['admin.products.index.products_container.notice_unretired']          = ':
 $_LANG['admin.products.index.products_container.notice_options_fixed']      = 'Konfigurerbare indstillinger for :product kontrolleret. Ændringer: :detail';
 $_LANG['admin.products.index.products_container.notice_renewals_cancelled'] = 'Annulleringsanmodninger oprettet for :detail tjenester for :product.';
 
-//commissions
-$_LANG['admin.menu.commissions']                = 'Provisioner';
-$_LANG['admin.breadcrumbs.Commissions_index']   = 'Provisioner';
-$_LANG['admin.commissions.intro']               = 'Hæv eller sænk prisen på SSL-produkter for en kunde: +10 lægger 10 % til produktprisen, -5 er en rabat på 5 %. Den mest specifikke regel gælder: kunde + produkt, derefter kunde + alle produkter, derefter alle kunder + produkt. Gælder for nye ordrer i indkøbskurven, på standard- og Lagom-bestillingsformularen.';
-$_LANG['admin.commissions.client']              = 'Kunde';
-$_LANG['admin.commissions.product']             = 'Produkt';
-$_LANG['admin.commissions.commission']          = 'Provision %';
-$_LANG['admin.commissions.all_clients']         = 'Alle kunder';
-$_LANG['admin.commissions.all_products']        = 'Alle SSL-produkter';
-$_LANG['admin.commissions.save']                = 'Tilføj / ændr';
-$_LANG['admin.commissions.updated']             = 'Opdateret';
-$_LANG['admin.commissions.delete']              = 'Slet';
-$_LANG['admin.commissions.confirm_delete']      = 'Slet denne provisionsregel?';
-$_LANG['admin.commissions.empty']               = 'Ingen provisionsregler.';
-$_LANG['admin.commissions.notice_saved']        = 'Provisionsregel gemt.';
-$_LANG['admin.commissions.notice_deleted']      = 'Provisionsregel slettet.';
+//markups
+$_LANG['admin.menu.markups']                = 'Tillæg';
+$_LANG['admin.breadcrumbs.Markups_index']   = 'Tillæg';
+$_LANG['admin.markups.intro']               = 'Hæv eller sænk prisen på SSL-produkter for en kunde: +10 lægger 10 % til produktprisen, -5 er en rabat på 5 %. Den mest specifikke regel gælder: kunde + produkt, derefter kunde + alle produkter, derefter alle kunder + produkt. Gælder for nye ordrer i indkøbskurven, på standard- og Lagom-bestillingsformularen.';
+$_LANG['admin.markups.client']              = 'Kunde';
+$_LANG['admin.markups.product']             = 'Produkt';
+$_LANG['admin.markups.markup']          = 'Tillæg %';
+$_LANG['admin.markups.all_clients']         = 'Alle kunder';
+$_LANG['admin.markups.all_products']        = 'Alle SSL-produkter';
+$_LANG['admin.markups.save']                = 'Tilføj / ændr';
+$_LANG['admin.markups.updated']             = 'Opdateret';
+$_LANG['admin.markups.delete']              = 'Slet';
+$_LANG['admin.markups.confirm_delete']      = 'Slet denne provisionsregel?';
+$_LANG['admin.markups.empty']               = 'Ingen provisionsregler.';
+$_LANG['admin.markups.notice_saved']        = 'Provisionsregel gemt.';
+$_LANG['admin.markups.notice_deleted']      = 'Provisionsregel slettet.';
 
 //emails
 $_LANG['admin.menu.emails']                              = 'E-mails';
@@ -1024,7 +1024,7 @@ $_LANG['admin.emails.rich_failed']              = 'Den visuelle editor kunne ikk
 $_LANG['admin.emails.name_renewal_invoice_created']  = 'Fornyelsesfaktura oprettet';
 $_LANG['admin.emails.when_renewal_invoice_created']  = 'Sendes, når dette modul opretter en fornyelsesfaktura. Deaktiveret som standard: mens den er deaktiveret, sender WHMCS sin egen faktura-e-mail; aktiver den for at sende denne tekst i stedet.';
 $_LANG['admin.breadcrumbs.CertificateLog'] = 'Certifikatlog';
-$_LANG['admin.breadcrumbs.Commissions'] = 'Provisioner';
+$_LANG['admin.breadcrumbs.Markups'] = 'Tillæg';
 $_LANG['admin.breadcrumbs.Migration'] = 'Migrering';
 
 $_LANG['admin.switcher.yes'] = 'Ja';
@@ -1068,8 +1068,8 @@ $_LANG['admin.products.index.data_tables.products.array_data_provider.data_table
 $_LANG['admin.products.index.data_tables.products.array_data_provider.data_table.billing_recurring'] = 'Tilbagevendende';
 $_LANG['admin.products.index.data_tables.products.array_data_provider.data_table.billing_onetime'] = 'Engangs';
 $_LANG['admin.products.index.data_tables.products.array_data_provider.data_table.billing_free'] = 'Gratis';
-$_LANG['admin.pricing_grid.commission_note'] = 'Provisionsregler lægges oven i disse basispriser, når en kunde bestiller. Alle kunder: :global; kunde- eller produktspecifikke regler: :count.';
-$_LANG['admin.pricing_grid.commission_edit'] = 'Rediger provisioner';
+$_LANG['admin.pricing_grid.markup_note'] = 'Provisionsregler lægges oven i disse basispriser, når en kunde bestiller. Alle kunder: :global; kunde- eller produktspecifikke regler: :count.';
+$_LANG['admin.pricing_grid.markup_edit'] = 'Rediger provisioner';
 $_LANG['admin.pricing_grid.client_price'] = 'kunden betaler :price (:rate %)';
 $_LANG['admin.pricing_grid.client_price_title'] = 'Pris for kunder uden en kundespecifik regel';
 $_LANG['admin.settings.index.forms.general_settings_form.interface'] = 'Administrationsområde';
@@ -1406,18 +1406,18 @@ $_LANG['admin.settings.index.forms.finance_settings_form.pricing_desc'] = 'Stand
 $_LANG['admin.settings.index.forms.finance_settings_form.rulesIntro'] = 'Andre indstillinger påvirker også, hvad kunderne betaler. Det er aktuelt indstillet sådan:';
 $_LANG['admin.settings.index.forms.finance_settings_form.rulesAuto'] = 'Siden Priser:';
 $_LANG['admin.settings.index.forms.finance_settings_form.rulesProducts'] = 'Siden Produkter:';
-$_LANG['admin.settings.index.forms.finance_settings_form.rulesCommissions'] = 'Provisioner:';
-$_LANG['admin.settings.index.forms.finance_settings_form.rulesCommissionsGlobal'] = 'Provisioner:';
-$_LANG['admin.settings.index.forms.finance_settings_form.rulesCommissionsNone'] = 'Provisioner:';
-$_LANG['admin.settings.index.forms.finance_settings_form.rulesCommissionsNone_text'] = 'ingen regler, kunderne betaler de priser, der beregnes her.';
+$_LANG['admin.settings.index.forms.finance_settings_form.rulesMarkups'] = 'Tillæg:';
+$_LANG['admin.settings.index.forms.finance_settings_form.rulesMarkupsGlobal'] = 'Tillæg:';
+$_LANG['admin.settings.index.forms.finance_settings_form.rulesMarkupsNone'] = 'Tillæg:';
+$_LANG['admin.settings.index.forms.finance_settings_form.rulesMarkupsNone_text'] = 'ingen regler, kunderne betaler de priser, der beregnes her.';
 $_LANG['admin.settings.index.forms.finance_settings_form.openPricing'] = 'Åbn Priser';
 $_LANG['admin.settings.index.forms.finance_settings_form.openProducts'] = 'Åbn Produkter';
-$_LANG['admin.settings.index.forms.finance_settings_form.openCommissions'] = 'Åbn Provisioner';
+$_LANG['admin.settings.index.forms.finance_settings_form.openMarkups'] = 'Åbn Tillæg';
 $_LANG['admin.settings.index.forms.finance_settings_form.profitMargin_description'] = 'Lægges oven i forhandlerens omkostning for produkter med automatisk prissætning, der ikke har deres egen margen. 0 sælger til kostpris';
 $_LANG['admin.settings.index.forms.finance_settings_form.rulesAuto_text'] = 'automatisk prissætning (bruger margenen nedenfor): :auto, manuelle priser (ændres ikke af denne margen): :manual.';
 $_LANG['admin.settings.index.forms.finance_settings_form.rulesProducts_text'] = 'produkter med deres egen margen, som erstatter standardmargenen nedenfor: :count.';
-$_LANG['admin.settings.index.forms.finance_settings_form.rulesCommissions_text'] = 'regler, der lægger en procentdel oven i prisen for udvalgte kunder eller produkter, ved betaling og ved fornyelser: :count.';
-$_LANG['admin.settings.index.forms.finance_settings_form.rulesCommissionsGlobal_text'] = '+:global% for alle kunder på alle produkter (regler i alt: :count). Det lægges oven i hver pris ved betaling og ved fornyelser, så kunderne betaler mere end de priser, der beregnes her.';
+$_LANG['admin.settings.index.forms.finance_settings_form.rulesMarkups_text'] = 'regler, der lægger en procentdel oven i prisen for udvalgte kunder eller produkter, ved betaling og ved fornyelser: :count.';
+$_LANG['admin.settings.index.forms.finance_settings_form.rulesMarkupsGlobal_text'] = '+:global% for alle kunder på alle produkter (regler i alt: :count). Det lægges oven i hver pris ved betaling og ved fornyelser, så kunderne betaler mere end de priser, der beregnes her.';
 $_LANG['admin.settings.index.forms.ssl_settings_form.useDefaultWebServer'] = 'Spring spørgsmålet om webserver over';
 $_LANG['admin.settings.index.forms.ssl_settings_form.useDefaultWebServer_description'] = 'Ja: kunderne bliver ikke spurgt, hvilken webserver de bruger, når de konfigurerer certifikatet (Other registreres). Nej: kunderne vælger deres webserver (Apache, IIS, cPanel ...) på WHMCS-listen under konfigurationen; valget vises på tjenesten. Certifikatet er det samme i begge tilfælde';
 $_LANG['admin.settings.index.forms.ssl_settings_form.ordering_desc'] = 'Om kunderne bliver spurgt om deres webserver, og den abonnentaftale, de accepterer, før ordren afgives.';

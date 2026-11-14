@@ -2,6 +2,8 @@
 
 namespace ModulesGarden\TSSGGSModule\App\Libs;
 
+use ModulesGarden\TSSGGSModule\App\Libs\Edition;
+
 use WHMCS\Database\Capsule;
 
 /**
@@ -10,8 +12,14 @@ use WHMCS\Database\Capsule;
  */
 class AutoInstallQueue
 {
-    const QUEUE_TABLE = 'TSSGGSModule_AutoInstallQueue';
-    const LOGS_TABLE  = 'TSSGGSModule_AutoInstallLogs';
+    public static function queueTable()
+    {
+        return Edition::table('AutoInstallQueue');
+    }
+    public static function logsTable()
+    {
+        return Edition::table('AutoInstallLogs');
+    }
 
     const MAX_ATTEMPTS = 5;
 
@@ -26,9 +34,9 @@ class AutoInstallQueue
 
         $schema = Capsule::schema();
 
-        if(!$schema->hasTable(self::QUEUE_TABLE))
+        if(!$schema->hasTable(self::queueTable()))
         {
-            $schema->create(self::QUEUE_TABLE, function($table) {
+            $schema->create(self::queueTable(), function($table) {
                 $table->engine = 'InnoDB';
                 $table->increments('id');
                 $table->integer('client_id');
@@ -44,9 +52,9 @@ class AutoInstallQueue
             });
         }
 
-        if(!$schema->hasTable(self::LOGS_TABLE))
+        if(!$schema->hasTable(self::logsTable()))
         {
-            $schema->create(self::LOGS_TABLE, function($table) {
+            $schema->create(self::logsTable(), function($table) {
                 $table->engine = 'InnoDB';
                 $table->increments('id');
                 $table->integer('client_id');
@@ -66,7 +74,7 @@ class AutoInstallQueue
     {
         self::createTables();
 
-        return Capsule::table(self::QUEUE_TABLE)->insertGetId([
+        return Capsule::table(self::queueTable())->insertGetId([
             'client_id'  => (int)$clientId,
             'service_id' => (int)$serviceId,
             'type'       => $type,
@@ -83,7 +91,7 @@ class AutoInstallQueue
     {
         self::createTables();
 
-        return Capsule::table(self::QUEUE_TABLE)
+        return Capsule::table(self::queueTable())
             ->where('status', 'pending')
             ->where('type', $type)
             ->where('attempts', '<', self::MAX_ATTEMPTS)
@@ -99,7 +107,7 @@ class AutoInstallQueue
      */
     public static function claim($id)
     {
-        return Capsule::table(self::QUEUE_TABLE)
+        return Capsule::table(self::queueTable())
                 ->where('id', $id)
                 ->where('status', 'pending')
                 ->update(['status' => 'processing', 'updated_at' => date('Y-m-d H:i:s')]) > 0;
@@ -107,7 +115,7 @@ class AutoInstallQueue
 
     public static function markDone($id, $message = '')
     {
-        Capsule::table(self::QUEUE_TABLE)->where('id', $id)->update([
+        Capsule::table(self::queueTable())->where('id', $id)->update([
             'status'        => 'done',
             'error_message' => $message ? substr($message, 0, 512) : null,
             'updated_at'    => date('Y-m-d H:i:s'),
@@ -116,7 +124,7 @@ class AutoInstallQueue
 
     public static function markPending($id, $message = '')
     {
-        Capsule::table(self::QUEUE_TABLE)->where('id', $id)->update([
+        Capsule::table(self::queueTable())->where('id', $id)->update([
             'status'        => 'pending',
             'error_message' => $message ? substr($message, 0, 512) : null,
             'updated_at'    => date('Y-m-d H:i:s'),
@@ -128,11 +136,11 @@ class AutoInstallQueue
      */
     public static function markError($id, $message = '')
     {
-        $task      = Capsule::table(self::QUEUE_TABLE)->where('id', $id)->first();
+        $task      = Capsule::table(self::queueTable())->where('id', $id)->first();
         $attempts  = $task ? (int)$task->attempts + 1 : 1;
         $newStatus = $attempts >= self::MAX_ATTEMPTS ? 'error' : 'pending';
 
-        Capsule::table(self::QUEUE_TABLE)->where('id', $id)->update([
+        Capsule::table(self::queueTable())->where('id', $id)->update([
             'status'        => $newStatus,
             'attempts'      => $attempts,
             'error_message' => substr((string)$message, 0, 512),
@@ -144,7 +152,7 @@ class AutoInstallQueue
 
     public static function markFailed($id, $message = '')
     {
-        Capsule::table(self::QUEUE_TABLE)->where('id', $id)->update([
+        Capsule::table(self::queueTable())->where('id', $id)->update([
             'status'        => 'error',
             'error_message' => substr((string)$message, 0, 512),
             'updated_at'    => date('Y-m-d H:i:s'),
@@ -153,7 +161,7 @@ class AutoInstallQueue
 
     public static function updateTaskData($id, array $data)
     {
-        Capsule::table(self::QUEUE_TABLE)->where('id', $id)->update([
+        Capsule::table(self::queueTable())->where('id', $id)->update([
             'data'       => json_encode($data),
             'updated_at' => date('Y-m-d H:i:s'),
         ]);
@@ -167,7 +175,7 @@ class AutoInstallQueue
     {
         self::createTables();
 
-        $task = Capsule::table(self::QUEUE_TABLE)->where('id', (int)$id)->first();
+        $task = Capsule::table(self::queueTable())->where('id', (int)$id)->first();
         if(!$task)
         {
             throw new \Exception('Task #' . (int)$id . ' does not exist');
@@ -186,7 +194,7 @@ class AutoInstallQueue
             $data['api_order_id'] = $remoteId;
         }
 
-        Capsule::table(self::QUEUE_TABLE)->where('id', $task->id)->update([
+        Capsule::table(self::queueTable())->where('id', $task->id)->update([
             'status'        => 'pending',
             'attempts'      => 0,
             'data'          => json_encode($data),
@@ -199,7 +207,7 @@ class AutoInstallQueue
     {
         self::createTables();
 
-        Capsule::table(self::QUEUE_TABLE)
+        Capsule::table(self::queueTable())
             ->where('status', 'processing')
             ->where('updated_at', '<', date('Y-m-d H:i:s', strtotime('-' . (int)$minutesOld . ' minutes')))
             ->update([
@@ -213,7 +221,7 @@ class AutoInstallQueue
     {
         self::createTables();
 
-        $query = Capsule::table(self::QUEUE_TABLE)
+        $query = Capsule::table(self::queueTable())
             ->where('service_id', (int)$serviceId)
             ->whereIn('status', ['pending', 'processing']);
 
@@ -229,7 +237,7 @@ class AutoInstallQueue
     {
         self::createTables();
 
-        Capsule::table(self::QUEUE_TABLE)
+        Capsule::table(self::queueTable())
             ->where('service_id', (int)$serviceId)
             ->whereIn('status', ['pending', 'processing'])
             ->update([
@@ -251,7 +259,7 @@ class AutoInstallQueue
 
         self::createTables();
 
-        Capsule::table(self::LOGS_TABLE)->insert([
+        Capsule::table(self::logsTable())->insert([
             'client_id'  => (int)$clientId,
             'service_id' => (int)$serviceId,
             'type'       => $type,
@@ -264,7 +272,7 @@ class AutoInstallQueue
     {
         self::createTables();
 
-        return Capsule::table(self::LOGS_TABLE)
+        return Capsule::table(self::logsTable())
             ->where('service_id', (int)$serviceId)
             ->orderBy('id', 'desc')
             ->limit($limit)

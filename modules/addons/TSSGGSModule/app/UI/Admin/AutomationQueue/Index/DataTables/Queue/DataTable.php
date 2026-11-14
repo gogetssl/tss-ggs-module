@@ -67,7 +67,7 @@ class DataTable extends \ModulesGarden\TSSGGSModule\Components\DataTable\DataTab
         AutoInstallQueue::createTables();
 
         $dataProv = new QueryDataProvider(
-            Capsule::table(AutoInstallQueue::QUEUE_TABLE)->select(
+            Capsule::table(AutoInstallQueue::queueTable())->select(
                 'id', 'client_id', 'service_id', 'domain', 'type', 'status', 'attempts', 'error_message', 'updated_at',
                 Capsule::raw("IF(status IN ('pending', 'processing'), 0, 1) as canReset")
             )

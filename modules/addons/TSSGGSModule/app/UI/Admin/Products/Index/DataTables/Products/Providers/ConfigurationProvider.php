@@ -100,7 +100,7 @@ class ConfigurationProvider extends CrudProvider
 
         ProductSettings::save($whmcsProduct->id, [
             'months'          => $this->formData['months'],
-            'commission'      => $this->formData['commission'],
+            'margin'          => $this->formData['margin'],
             'processingGuide' => $this->formData['processingGuide'],
             'issuedMessage'   => $this->formData['issuedMessage'],
         ]);

@@ -2,6 +2,8 @@
 
 namespace ModulesGarden\TSSGGSModule\App\Migration;
 
+use ModulesGarden\TSSGGSModule\App\Libs\Edition;
+
 use ModulesGarden\TSSGGSModule\App\Migration\Support\Schema;
 use WHMCS\Database\Capsule;
 
@@ -11,7 +13,10 @@ use WHMCS\Database\Capsule;
  */
 class Backup
 {
-    const PREFIX_BASE = 'TSSGGSModule_bak';
+    public static function prefixBase()
+    {
+        return Edition::table('bak');
+    }
 
     protected $migrationId;
     protected $prefix;
@@ -19,7 +24,7 @@ class Backup
     public function __construct(int $migrationId, ?string $prefix = null)
     {
         $this->migrationId = $migrationId;
-        $this->prefix      = $prefix ?: self::PREFIX_BASE . '_' . $migrationId . '_' . date('Ymd_His');
+        $this->prefix      = $prefix ?: self::prefixBase() . '_' . $migrationId . '_' . date('Ymd_His');
     }
 
     public function prefix(): string

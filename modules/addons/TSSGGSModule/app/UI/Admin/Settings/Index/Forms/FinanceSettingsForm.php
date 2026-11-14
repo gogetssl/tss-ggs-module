@@ -3,7 +3,7 @@
 namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Forms;
 
 
-use ModulesGarden\TSSGGSModule\App\Libs\Commissions;
+use ModulesGarden\TSSGGSModule\App\Libs\Markups;
 use ModulesGarden\TSSGGSModule\App\Libs\Helpers;
 use ModulesGarden\TSSGGSModule\App\Libs\PricingService;
 use ModulesGarden\TSSGGSModule\App\Libs\ProductSettings;
@@ -83,7 +83,7 @@ class FinanceSettingsForm extends Form implements AdminAreaInterface, AjaxCompon
 
     /**
      * The other places that decide a price, with what is set there now: the default margin here only prices products
-     * with automatic pricing, a product margin replaces it, and commission rules are added on top at checkout.
+     * with automatic pricing, a product margin replaces it, and client markups are added on top at checkout.
      */
     protected function otherPriceRules(): string
     {
@@ -92,18 +92,18 @@ class FinanceSettingsForm extends Form implements AdminAreaInterface, AjaxCompon
         $own      = 0;
         foreach($products as $product)
         {
-            if(trim((string)ProductSettings::get($product['id'])['commission']) !== '')
+            if(trim((string)ProductSettings::get($product['id'])['margin']) !== '')
             {
                 $own++;
             }
         }
-        $rules  = Commissions::all();
+        $rules  = Markups::all();
         $global = null;
         foreach($rules as $rule)
         {
             if(!(int)$rule->client_id && !(int)$rule->product_id)
             {
-                $global = (float)$rule->commission;
+                $global = (float)$rule->markup;
             }
         }
 
@@ -115,12 +115,12 @@ class FinanceSettingsForm extends Form implements AdminAreaInterface, AjaxCompon
                 . ' <a href="' . htmlspecialchars($url($page)) . '">' . htmlspecialchars($this->translate($link)) . '</a></li>';
         };
 
-        $commissionKey = !count($rules) ? 'rulesCommissionsNone' : ($global !== null ? 'rulesCommissionsGlobal' : 'rulesCommissions');
+        $markupKey = !count($rules) ? 'rulesMarkupsNone' : ($global !== null ? 'rulesMarkupsGlobal' : 'rulesMarkups');
 
         return '<div class="tssggs-sec__desc tssggs-sec__desc--rules"><p>' . htmlspecialchars($this->translate('rulesIntro')) . '</p><ul>'
             . $item('rulesAuto', [':auto' => $auto, ':manual' => count($products) - $auto], 'pricing', 'openPricing')
             . $item('rulesProducts', [':count' => $own], 'products', 'openProducts')
-            . $item($commissionKey, [':count' => count($rules), ':global' => rtrim(rtrim(number_format((float)$global, 2, '.', ''), '0'), '.')], 'commissions', 'openCommissions')
+            . $item($markupKey, [':count' => count($rules), ':global' => rtrim(rtrim(number_format((float)$global, 2, '.', ''), '0'), '.')], 'markups', 'openMarkups')
             . '</ul></div>';
     }
 }

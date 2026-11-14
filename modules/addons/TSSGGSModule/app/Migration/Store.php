@@ -2,6 +2,8 @@
 
 namespace ModulesGarden\TSSGGSModule\App\Migration;
 
+use ModulesGarden\TSSGGSModule\App\Libs\Edition;
+
 use ModulesGarden\TSSGGSModule\App\Migration\Support\Schema;
 use WHMCS\Database\Capsule;
 
@@ -11,9 +13,18 @@ use WHMCS\Database\Capsule;
  */
 class Store
 {
-    const TABLE_RUNS = 'TSSGGSModule_Migrations';
-    const TABLE_JOBS = 'TSSGGSModule_MigrationJobs';
-    const TABLE_LOG  = 'TSSGGSModule_MigrationLog';
+    public static function runsTable()
+    {
+        return Edition::table('Migrations');
+    }
+    public static function jobsTable()
+    {
+        return Edition::table('MigrationJobs');
+    }
+    public static function logTable()
+    {
+        return Edition::table('MigrationLog');
+    }
 
     const LOG_RETENTION_DAYS    = 30;
     const BACKUP_RETENTION_DAYS = 14;
@@ -49,9 +60,9 @@ class Store
 
         $schema = Capsule::schema();
 
-        if(!$schema->hasTable(self::TABLE_RUNS))
+        if(!$schema->hasTable(self::runsTable()))
         {
-            $schema->create(self::TABLE_RUNS, function($t) {
+            $schema->create(self::runsTable(), function($t) {
                 $t->engine = 'InnoDB';
                 $t->increments('id');
                 $t->string('source', 8);                       // ggs | tss
@@ -73,9 +84,9 @@ class Store
             });
         }
 
-        if(!$schema->hasTable(self::TABLE_JOBS))
+        if(!$schema->hasTable(self::jobsTable()))
         {
-            $schema->create(self::TABLE_JOBS, function($t) {
+            $schema->create(self::jobsTable(), function($t) {
                 $t->engine = 'InnoDB';
                 $t->increments('id');
                 $t->integer('migration_id')->index();
@@ -91,9 +102,9 @@ class Store
             });
         }
 
-        if(!$schema->hasTable(self::TABLE_LOG))
+        if(!$schema->hasTable(self::logTable()))
         {
-            $schema->create(self::TABLE_LOG, function($t) {
+            $schema->create(self::logTable(), function($t) {
                 $t->engine = 'InnoDB';
                 $t->increments('id');
                 $t->integer('migration_id')->index();
@@ -116,7 +127,7 @@ class Store
     {
         self::createTables();
 
-        return (int)Capsule::table(self::TABLE_RUNS)->insertGetId([
+        return (int)Capsule::table(self::runsTable())->insertGetId([
             'source'         => $source,
             'source_version' => $sourceVersion,
             'status'         => $status,
@@ -130,7 +141,7 @@ class Store
     public static function getRun(int $id): ?array
     {
         self::createTables();
-        $row = Capsule::table(self::TABLE_RUNS)->where('id', $id)->first();
+        $row = Capsule::table(self::runsTable())->where('id', $id)->first();
 
         return $row ? self::decodeRun((array)$row) : null;
     }
@@ -141,7 +152,7 @@ class Store
     public static function latestRun(): ?array
     {
         self::createTables();
-        $row = Capsule::table(self::TABLE_RUNS)->where('status', '<>', self::RUN_DRY_RUN)->orderBy('id', 'desc')->first();
+        $row = Capsule::table(self::runsTable())->where('status', '<>', self::RUN_DRY_RUN)->orderBy('id', 'desc')->first();
 
         return $row ? self::decodeRun((array)$row) : null;
     }
@@ -152,7 +163,7 @@ class Store
     public static function activeRun(): ?array
     {
         self::createTables();
-        $row = Capsule::table(self::TABLE_RUNS)
+        $row = Capsule::table(self::runsTable())
             ->whereIn('status', [self::RUN_PREPARING, self::RUN_RUNNING, self::RUN_SWITCHING])
             ->orderBy('id', 'desc')->first();
 
@@ -169,7 +180,7 @@ class Store
             }
         }
         $fields['updated_at'] = date('Y-m-d H:i:s');
-        Capsule::table(self::TABLE_RUNS)->where('id', $id)->update($fields);
+        Capsule::table(self::runsTable())->where('id', $id)->update($fields);
     }
 
     public static function mergeSummary(int $id, array $patch): array
@@ -193,7 +204,7 @@ class Store
 
     public static function addJob(int $migrationId, string $kind, int $objectId, int $sslOrderId = 0, string $status = self::JOB_PENDING, ?string $reason = null, array $data = []): int
     {
-        return (int)Capsule::table(self::TABLE_JOBS)->insertGetId([
+        return (int)Capsule::table(self::jobsTable())->insertGetId([
             'migration_id' => $migrationId,
             'kind'         => $kind,
             'object_id'    => $objectId,
@@ -209,7 +220,7 @@ class Store
     public static function pendingJobs(int $migrationId, string $kind, int $limit): array
     {
         return array_map(function($row) { return self::decodeJob((array)$row); },
-            Capsule::table(self::TABLE_JOBS)
+            Capsule::table(self::jobsTable())
                 ->where('migration_id', $migrationId)->where('kind', $kind)->where('status', self::JOB_PENDING)
                 ->orderBy('id')->limit($limit)->get()->all());
     }
@@ -217,7 +228,7 @@ class Store
     public static function jobsByStatus(int $migrationId, string $kind, string $status): array
     {
         return array_map(function($row) { return self::decodeJob((array)$row); },
-            Capsule::table(self::TABLE_JOBS)
+            Capsule::table(self::jobsTable())
                 ->where('migration_id', $migrationId)->where('kind', $kind)->where('status', $status)
                 ->orderBy('id')->get()->all());
     }
@@ -225,7 +236,7 @@ class Store
     public static function jobCounts(int $migrationId, string $kind = self::KIND_SERVICE): array
     {
         $counts = [self::JOB_PENDING => 0, self::JOB_DONE => 0, self::JOB_FAILED => 0, self::JOB_SKIPPED => 0];
-        foreach(Capsule::table(self::TABLE_JOBS)->selectRaw('status, COUNT(*) AS c')->where('migration_id', $migrationId)->where('kind', $kind)->groupBy('status')->get() as $row)
+        foreach(Capsule::table(self::jobsTable())->selectRaw('status, COUNT(*) AS c')->where('migration_id', $migrationId)->where('kind', $kind)->groupBy('status')->get() as $row)
         {
             $counts[$row->status] = (int)$row->c;
         }
@@ -236,7 +247,7 @@ class Store
 
     public static function hasJob(int $migrationId, string $kind, int $objectId): bool
     {
-        return (bool)Capsule::table(self::TABLE_JOBS)->where('migration_id', $migrationId)->where('kind', $kind)->where('object_id', $objectId)->first();
+        return (bool)Capsule::table(self::jobsTable())->where('migration_id', $migrationId)->where('kind', $kind)->where('object_id', $objectId)->first();
     }
 
     public static function finishJob(int $jobId, string $status, ?string $reason = null, array $data = []): void
@@ -246,7 +257,7 @@ class Store
         {
             $update['ssl_order_id'] = (int)$data['ssl_order_id'];
         }
-        Capsule::table(self::TABLE_JOBS)->where('id', $jobId)->update($update + [
+        Capsule::table(self::jobsTable())->where('id', $jobId)->update($update + [
             'status'     => $status,
             'reason'     => $reason !== null ? substr($reason, 0, 512) : null,
             'data'       => json_encode($data),
@@ -267,7 +278,7 @@ class Store
     public static function log(int $migrationId, string $level, string $phase, string $message, array $context = [], int $serviceId = 0): void
     {
         self::createTables();
-        Capsule::table(self::TABLE_LOG)->insert([
+        Capsule::table(self::logTable())->insert([
             'migration_id' => $migrationId,
             'service_id'   => $serviceId,
             'level'        => $level,
@@ -280,7 +291,7 @@ class Store
 
     public static function logRows(int $migrationId, int $limit = 5000, ?string $level = null): array
     {
-        $query = Capsule::table(self::TABLE_LOG)->where('migration_id', $migrationId)->orderBy('id');
+        $query = Capsule::table(self::logTable())->where('migration_id', $migrationId)->orderBy('id');
         if($level)
         {
             $query->where('level', $level);
@@ -296,7 +307,7 @@ class Store
     {
         self::createTables();
 
-        return (int)Capsule::table(self::TABLE_LOG)
+        return (int)Capsule::table(self::logTable())
             ->where('created_at', '<', date('Y-m-d H:i:s', strtotime('-' . self::LOG_RETENTION_DAYS . ' days')))
             ->delete();
     }

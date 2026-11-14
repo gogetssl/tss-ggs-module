@@ -2,18 +2,23 @@
 
 namespace ModulesGarden\TSSGGSModule\App\Migration;
 
+use ModulesGarden\TSSGGSModule\App\Libs\Edition;
+
 use ModulesGarden\TSSGGSModule\App\Migration\Support\Schema;
 use WHMCS\Database\Capsule;
 
 /**
  * Baseline snapshot of a TEST install, so the installation + migration can be rehearsed repeatedly.
- * snapshot(): copies legacy, unified and the touched WHMCS tables to TSSGGSModule_base__<table>.
+ * snapshot(): copies legacy, unified and the touched WHMCS tables to <prefix>_base__<table>.
  * reset():    puts every live table back to the baseline, drops migration backups and stray unified tables.
  * Refuses to run unless the WHMCS SystemURL is a known development host. CLI only, no admin UI.
  */
 class TestEnvironment
 {
-    const PREFIX = 'TSSGGSModule_base__';
+    public static function prefix()
+    {
+        return Edition::table('base__');
+    }
 
     /** hosts (substring of the SystemURL) where this tool may run */
     const ALLOWED_HOSTS = ['ggssl.com', 'localhost', '.test', '.local'];
@@ -60,7 +65,7 @@ class TestEnvironment
         $out  = [];
         foreach($rows as $r)
         {
-            if(strpos($r->t, self::PREFIX) !== 0 && strpos($r->t, 'TSSGGSModule_bak_') !== 0)
+            if(strpos($r->t, self::prefix()) !== 0 && strpos($r->t, Backup::prefixBase() . '_') !== 0)
             {
                 $out[] = $r->t;
             }
@@ -71,11 +76,11 @@ class TestEnvironment
 
     public static function baselineTables(): array
     {
-        $rows = Capsule::select('SELECT table_name AS t, table_rows AS r, (data_length + index_length) AS b FROM information_schema.tables WHERE table_schema = DATABASE() AND table_name LIKE ? ORDER BY table_name', [str_replace('_', '\_', self::PREFIX) . '%']);
+        $rows = Capsule::select('SELECT table_name AS t, table_rows AS r, (data_length + index_length) AS b FROM information_schema.tables WHERE table_schema = DATABASE() AND table_name LIKE ? ORDER BY table_name', [str_replace('_', '\_', self::prefix()) . '%']);
         $out  = [];
         foreach($rows as $r)
         {
-            $out[substr($r->t, strlen(self::PREFIX))] = ['table' => $r->t, 'rows' => (int)$r->r, 'bytes' => (int)$r->b];
+            $out[substr($r->t, strlen(self::prefix()))] = ['table' => $r->t, 'rows' => (int)$r->r, 'bytes' => (int)$r->b];
         }
 
         return $out;
@@ -94,7 +99,7 @@ class TestEnvironment
         $done = [];
         foreach(self::liveTables() as $table)
         {
-            $target = self::PREFIX . $table;
+            $target = self::prefix() . $table;
             Capsule::statement('CREATE TABLE ' . Schema::quoteIdentifier($target) . ' LIKE ' . Schema::quoteIdentifier($table));
             Capsule::statement('INSERT INTO ' . Schema::quoteIdentifier($target) . ' SELECT * FROM ' . Schema::quoteIdentifier($table));
             $done[$table] = (int)Capsule::table($target)->count();

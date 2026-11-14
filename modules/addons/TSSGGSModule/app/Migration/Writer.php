@@ -3,7 +3,7 @@
 namespace ModulesGarden\TSSGGSModule\App\Migration;
 
 use ModulesGarden\TSSGGSModule\App\Libs\AutoInstallQueue;
-use ModulesGarden\TSSGGSModule\App\Libs\Commissions;
+use ModulesGarden\TSSGGSModule\App\Libs\Markups;
 use ModulesGarden\TSSGGSModule\App\Libs\Edition;
 use ModulesGarden\TSSGGSModule\App\Models\RemoteProduct;
 use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
@@ -17,11 +17,22 @@ use WHMCS\Database\Capsule;
 class Writer
 {
     const MODULE       = 'TSSGGSModule';
-    const PREFIX       = 'TSSGGSModule_';
-    const T_REQUESTS   = 'TSSGGSModule_Requests';
-    const T_ACME       = 'TSSGGSModule_AcmeSubscriptions';
-    const T_ACME_DOM   = 'TSSGGSModule_AcmeSubscriptionDomains';
-    const T_AIS        = 'TSSGGSModule_AisSubscriptions';
+    public static function tRequests()
+    {
+        return Edition::table('Requests');
+    }
+    public static function tAcme()
+    {
+        return Edition::table('AcmeSubscriptions');
+    }
+    public static function tAcmeDomains()
+    {
+        return Edition::table('AcmeSubscriptionDomains');
+    }
+    public static function tAis()
+    {
+        return Edition::table('AisSubscriptions');
+    }
 
     /** tblsslorders.updated_at value that puts migrated services first in the sync cron's "oldest first" sweep */
     const REFRESH_FIRST = '2000-01-01 00:00:00';
@@ -155,38 +166,38 @@ class Writer
             }
         }
 
-        // Products page settings (messages); the legacy product commission becomes an "all clients" commission rule
+        // Products page settings (messages); the legacy product markup becomes an "all clients" markup
         if(!empty($product['product_settings']))
         {
-            $this->saveSetting('product_' . (int)$product['pid'], array_merge(['months' => 0, 'commission' => '', 'processingGuide' => '', 'issuedMessage' => ''], $product['product_settings']));
+            $this->saveSetting('product_' . (int)$product['pid'], array_merge(['months' => 0, 'margin' => '', 'processingGuide' => '', 'issuedMessage' => ''], $product['product_settings']));
         }
-        $commissionIds = [];
-        if(!empty($product['commission_percent']))
+        $markupIds = [];
+        if(!empty($product['markup_percent']))
         {
-            $commissionIds = $this->writeCommissions([['client_id' => 0, 'product_id' => (int)$product['pid'], 'percent' => $product['commission_percent']]]);
+            $markupIds = $this->writeMarkups([['client_id' => 0, 'product_id' => (int)$product['pid'], 'percent' => $product['markup_percent']]]);
         }
 
         return ['pid' => (int)$product['pid'], 'old_configoptions' => $old, 'renamed_options' => $renamed, 'hidden_options' => array_column((array)($product['other_options'] ?? []), 'id'),
-                'commission_ids' => $commissionIds];
+                'markup_ids' => $markupIds];
     }
 
     /**
-     * Commission rules ([client_id, product_id, percent]); an existing rule of the unified module is kept.
+     * Markup rules ([client_id, product_id, percent]); an existing rule of the unified module is kept.
      * Returns the ids it created (undone by Engine::rollback()).
      */
-    public function writeCommissions(array $rules): array
+    public function writeMarkups(array $rules): array
     {
-        Commissions::createTable();
+        Markups::createTable();
         $ids = [];
         foreach($rules as $rule)
         {
-            $exists = Capsule::table(Commissions::TABLE)->where('client_id', (int)$rule['client_id'])->where('product_id', (int)$rule['product_id'])->exists();
+            $exists = Capsule::table(Markups::table())->where('client_id', (int)$rule['client_id'])->where('product_id', (int)$rule['product_id'])->exists();
             if($exists || ((int)$rule['client_id'] === 0 && (int)$rule['product_id'] === 0))
             {
                 continue;
             }
-            $ids[] = Capsule::table(Commissions::TABLE)->insertGetId([
-                'client_id' => (int)$rule['client_id'], 'product_id' => (int)$rule['product_id'], 'commission' => (float)$rule['percent'], 'created_at' => date('Y-m-d H:i:s'),
+            $ids[] = Capsule::table(Markups::table())->insertGetId([
+                'client_id' => (int)$rule['client_id'], 'product_id' => (int)$rule['product_id'], 'markup' => (float)$rule['percent'], 'created_at' => date('Y-m-d H:i:s'),
             ]);
         }
 
@@ -238,7 +249,7 @@ class Writer
             Capsule::table('tblsslorders')->where('id', $rec['ssl_order_id'])->update($update);
 
             // remove any unified rows a previous attempt left behind
-            Capsule::table(self::T_REQUESTS)->where('serviceid', $rec['service_id'])->whereIn('name', array_merge(['addOrder', 'certificate', 'autoinstall', 'renewOrder'], GatewayOrderService::requestNames()))->delete();
+            Capsule::table(self::tRequests())->where('serviceid', $rec['service_id'])->whereIn('name', array_merge(['addOrder', 'certificate', 'autoinstall', 'renewOrder'], GatewayOrderService::requestNames()))->delete();
 
             $prices = (array)($rec['prices'] ?? []);
             $api    = (float)($prices['api_price'] ?? 0);
@@ -294,9 +305,9 @@ class Writer
             if(!empty($rec['subscription']['acme']))
             {
                 $a = $rec['subscription']['acme'];
-                Capsule::table(self::T_ACME)->where('service_id', $rec['service_id'])->delete();
-                Capsule::table(self::T_ACME_DOM)->where('service_id', $rec['service_id'])->delete();
-                $written['acme'] = (int)Capsule::table(self::T_ACME)->insertGetId([
+                Capsule::table(self::tAcme())->where('service_id', $rec['service_id'])->delete();
+                Capsule::table(self::tAcmeDomains())->where('service_id', $rec['service_id'])->delete();
+                $written['acme'] = (int)Capsule::table(self::tAcme())->insertGetId([
                     'service_id' => $rec['service_id'], 'client_id' => $a['client_id'], 'api_order_id' => $a['api_order_id'], 'acme_id' => $a['acme_id'],
                     'status' => $a['status'] ?: 'pending', 'acme_account_id' => $a['acme_account_id'], 'eab_kid' => $a['eab_kid'], 'eab_hmac_key' => $a['eab_hmac_key'],
                     'server_url' => $a['server_url'], 'period_start' => $a['period_start'], 'period_end' => $a['period_end'], 'renewal_date' => $a['renewal_date'],
@@ -304,7 +315,7 @@ class Writer
                 ]);
                 foreach((array)$a['domains'] as $d)
                 {
-                    $written['acme_domains'][] = (int)Capsule::table(self::T_ACME_DOM)->insertGetId([
+                    $written['acme_domains'][] = (int)Capsule::table(self::tAcmeDomains())->insertGetId([
                         'service_id' => $rec['service_id'], 'domain' => $d['domain'], 'domain_type' => $d['domain_type'], 'status' => $d['status'],
                         'added_at' => $d['added_at'] ?: $now, 'removed_at' => $d['removed_at'], 'created_at' => $now, 'updated_at' => $now,
                     ]);
@@ -313,8 +324,8 @@ class Writer
             if(!empty($rec['subscription']['ais']))
             {
                 $s = $rec['subscription']['ais'];
-                Capsule::table(self::T_AIS)->where('service_id', $rec['service_id'])->delete();
-                $written['ais'] = (int)Capsule::table(self::T_AIS)->insertGetId([
+                Capsule::table(self::tAis())->where('service_id', $rec['service_id'])->delete();
+                $written['ais'] = (int)Capsule::table(self::tAis())->insertGetId([
                     'service_id' => $rec['service_id'], 'client_id' => $s['client_id'], 'api_order_id' => $s['api_order_id'], 'ais_item_id' => $s['ais_item_id'],
                     'status' => $s['status'] ?: 'pending', 'login_sso_link' => $s['login_sso_link'], 'manage_sso_link' => $s['manage_sso_link'],
                     'autoinstall_status' => $s['autoinstall_status'], 'period_start' => $s['period_start'], 'period_end' => $s['period_end'],
@@ -328,7 +339,7 @@ class Writer
 
     protected function insertRequest(int $serviceId, string $name, array $payload, string $status, float $apiPrice, float $whmcsPrice, int $invoiceId): int
     {
-        return (int)Capsule::table(self::T_REQUESTS)->insertGetId([
+        return (int)Capsule::table(self::tRequests())->insertGetId([
             'invoiceid'  => $invoiceId ?: null,
             'serviceid'  => $serviceId,
             'name'       => $name,
@@ -421,23 +432,23 @@ class Writer
     {
         if(!empty($written['requests']))
         {
-            Capsule::table(self::T_REQUESTS)->whereIn('id', $written['requests'])->delete();
+            Capsule::table(self::tRequests())->whereIn('id', $written['requests'])->delete();
         }
         if(!empty($written['queue']))
         {
-            Capsule::table(AutoInstallQueue::QUEUE_TABLE)->whereIn('id', $written['queue'])->delete();
+            Capsule::table(AutoInstallQueue::queueTable())->whereIn('id', $written['queue'])->delete();
         }
         if(!empty($written['acme']))
         {
-            Capsule::table(self::T_ACME)->where('id', $written['acme'])->delete();
+            Capsule::table(self::tAcme())->where('id', $written['acme'])->delete();
         }
         if(!empty($written['acme_domains']))
         {
-            Capsule::table(self::T_ACME_DOM)->whereIn('id', $written['acme_domains'])->delete();
+            Capsule::table(self::tAcmeDomains())->whereIn('id', $written['acme_domains'])->delete();
         }
         if(!empty($written['ais']))
         {
-            Capsule::table(self::T_AIS)->where('id', $written['ais'])->delete();
+            Capsule::table(self::tAis())->where('id', $written['ais'])->delete();
         }
     }
 }

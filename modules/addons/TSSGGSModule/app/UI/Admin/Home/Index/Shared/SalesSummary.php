@@ -2,6 +2,8 @@
 
 namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Shared;
 
+use ModulesGarden\TSSGGSModule\App\Libs\Edition;
+
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Reports\Index\DataTables\Shared\RecordsProvider;
 
 /**
@@ -54,15 +56,16 @@ class SalesSummary
             $data['issued'] = count($issued);
 
             // issued certificates only; the next due date of their service follows the end of the certificate
+            $requests         = Edition::table('Requests');
             $data['expiring'] = (int)\WHMCS\Database\Capsule::table('tblhosting')
                 ->join('tblproducts', 'tblproducts.id', '=', 'tblhosting.packageid')
                 ->where('tblproducts.servertype', 'TSSGGSModule')
                 ->where('tblhosting.domainstatus', 'Active')
                 ->whereBetween('tblhosting.nextduedate', [date('Y-m-d'), date('Y-m-d', strtotime('+90 days'))])
-                ->whereExists(function($issued) {
-                    $issued->select(\WHMCS\Database\Capsule::raw(1))->from('TSSGGSModule_Requests')
-                        ->whereColumn('TSSGGSModule_Requests.serviceid', 'tblhosting.id')
-                        ->where('TSSGGSModule_Requests.status', 'active');
+                ->whereExists(function($issued) use ($requests) {
+                    $issued->select(\WHMCS\Database\Capsule::raw(1))->from($requests)
+                        ->whereColumn($requests . '.serviceid', 'tblhosting.id')
+                        ->where($requests . '.status', 'active');
                 })
                 ->count();
             self::$data       = $data;

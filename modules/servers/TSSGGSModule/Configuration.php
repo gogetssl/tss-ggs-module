@@ -15,7 +15,8 @@ class Configuration extends AbstractConfiguration
     public $version = '1.2.0';
     public $author = 'ModulesGarden';
 
-    public $tablePrefix = 'TSSGGSModule_';
+    /** Tables are named by the edition - see App\Libs\Edition::table() */
+    public $tablePrefix = false;
     public $modelRegister = [];
 
     function __construct()

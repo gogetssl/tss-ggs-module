@@ -196,20 +196,20 @@ class GgsReader extends AbstractReader
             'price_auto'            => (string)$p['configoption5'] === '1',
             'san_options'           => $this->sanOptions($pid, ['sans' => '/^sans_count(\||$)/', 'sans_wildcard' => '/^sans_wildcard_count(\||$)/']),
             'other_options'         => [],
-            // per-product messages and the product commission (a fraction, 0.1 = +10 % for every client)
+            // per-product messages and the product markup (a fraction, 0.1 = +10 % for every client)
             'product_settings'      => array_filter([
                 'issuedMessage'   => trim((string)$p['configoption23']),
                 'processingGuide' => trim((string)$p['configoption24']),
             ], 'strlen'),
-            'commission_percent'    => (float)$p['configoption6'] > 0 ? round((float)$p['configoption6'] * 100, 2) : null,
+            'markup_percent'        => (float)$p['configoption6'] > 0 ? round((float)$p['configoption6'] * 100, 2) : null,
             'warnings'              => [],
         ];
     }
 
     /**
-     * Per-client commissions: [['client_id', 'product_id', 'percent']] (stored by the GGS module as a fraction)
+     * Client markups: [['client_id', 'product_id', 'percent']] (the GGS module stored them as a fraction)
      */
-    public function readCommissions(): array
+    public function readMarkups(): array
     {
         if(!Schema::tableExists('mgfw_SSLCENTER_user_commission'))
         {

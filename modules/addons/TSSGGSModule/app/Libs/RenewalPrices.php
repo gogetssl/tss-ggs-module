@@ -13,7 +13,7 @@ use WHMCS\Database\Capsule;
  *   belowCost  a service whose recurring amount is below its current reseller cost gets the current price
  *   always     every service follows the current price (up and down)
  * The current price is what WHMCS would charge today (product + SAN options + promotion, the same as the
- * "Recalculate on Save" of the service page) with the client's commission rule applied.
+ * "Recalculate on Save" of the service page) with the client's markup applied.
  */
 class RenewalPrices
 {
@@ -93,19 +93,19 @@ class RenewalPrices
         return $stats;
     }
 
-    /** What WHMCS would charge for the service today, with the client's commission rule */
+    /** What WHMCS would charge for the service today, with the client's markup */
     protected static function currentPrice($service)
     {
         $price = (float)\recalcRecurringProductPrice((int)$service->id);
 
-        $commission = Commissions::forProduct((int)$service->userid, (int)$service->packageid);
-        if($commission !== null)
+        $markup = Markups::forProduct((int)$service->userid, (int)$service->packageid);
+        if($markup !== null)
         {
             $column = strtolower(str_replace(['-', ' '], '', (string)$service->billingcycle));
             $base   = Capsule::table('tblpricing')->where('type', 'product')->where('relid', (int)$service->packageid)->where('currency', (int)$service->currency)->value($column);
             if($base !== null && (float)$base > 0)
             {
-                $price += Commissions::apply($base, $commission) - (float)$base; // the commission is on the certificate, not the SAN options
+                $price += Markups::apply($base, $markup) - (float)$base; // the markup is on the certificate, not the SAN options
             }
         }
 

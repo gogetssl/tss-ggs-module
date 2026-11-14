@@ -23,11 +23,13 @@ class Edition
         self::GGS => [
             'name'        => 'GoGetSSL Module',
             'brand'       => 'GoGetSSL',
+            'tablePrefix' => 'GGSModule',
             'description' => 'GoGetSSL module for WHMCS: sell and manage SSL/TLS certificates, ACME and AutoInstall SSL subscriptions and other security products.',
         ],
         self::TSS => [
             'name'        => 'TheSSLStore Plugin',
             'brand'       => 'TheSSLStore',
+            'tablePrefix' => 'TSSPlugin',
             'description' => 'TheSSLStore module for WHMCS: sell and manage SSL/TLS certificates, ACME and AutoInstall SSL subscriptions and other security products.',
         ],
     ];
@@ -91,5 +93,23 @@ class Edition
     public static function templateName($key)
     {
         return self::name() . ' - ' . $key;
+    }
+
+    /**
+     * Name every database table of this edition starts with, without the underscore.
+     * It follows the edition, not the folder the module is installed in, so the two editions never share a table.
+     * Installs made before 1.3.0 carry the folder name instead; App\Libs\TablePrefix renames those.
+     */
+    public static function tablePrefix()
+    {
+        return self::$editions[self::get()]['tablePrefix'];
+    }
+
+    /**
+     * Full name of a table of this edition, e.g. "TSSPlugin_Requests"
+     */
+    public static function table($name)
+    {
+        return self::tablePrefix() . '_' . $name;
     }
 }

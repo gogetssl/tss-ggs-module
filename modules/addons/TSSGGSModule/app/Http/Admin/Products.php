@@ -2,6 +2,8 @@
 
 namespace ModulesGarden\TSSGGSModule\App\Http\Admin;
 
+use ModulesGarden\TSSGGSModule\App\Libs\Edition;
+
 use ModulesGarden\TSSGGSModule\App\Libs\CsrfToken;
 use ModulesGarden\TSSGGSModule\App\Libs\ProductCatalog;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Products\Index\ProductsContainer;
@@ -55,7 +57,7 @@ class Products extends AbstractController implements AdminAreaInterface
     {
         return $this->run('options_fixed', function($pid) {
             $product = Capsule::table('tblproducts')->where('id', $pid)->first(['configoption1', 'configoption2']);
-            $remote  = $product ? Capsule::table('TSSGGSModule_RemoteProducts')->where('vendor', $product->configoption1)->where('remoteId', $product->configoption2)->value('rawData') : null;
+            $remote  = $product ? Capsule::table(Edition::table('RemoteProducts'))->where('vendor', $product->configoption1)->where('remoteId', $product->configoption2)->value('rawData') : null;
             if(!$remote)
             {
                 throw new \RuntimeException('The gateway product of this product is not synchronized');

@@ -1,9 +1,9 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Commissions\Index;
+namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Markups\Index;
 
-use ModulesGarden\TSSGGSModule\App\Http\Admin\Commissions as CommissionsController;
-use ModulesGarden\TSSGGSModule\App\Libs\Commissions;
+use ModulesGarden\TSSGGSModule\App\Http\Admin\Markups as MarkupsController;
+use ModulesGarden\TSSGGSModule\App\Libs\Markups;
 use ModulesGarden\TSSGGSModule\Components\Alert\AlertInfo;
 use ModulesGarden\TSSGGSModule\Components\Container\Container;
 use ModulesGarden\TSSGGSModule\Components\Text\Text;
@@ -12,20 +12,20 @@ use ModulesGarden\TSSGGSModule\Core\Translation\TranslatorTrait;
 use WHMCS\Database\Capsule;
 
 /**
- * Admin page "Commissions": price adjustment % per client and product
+ * Admin page "Markups": the % the reseller adds to the price per client and product
  */
-class CommissionsContainer extends Container implements AdminAreaInterface
+class MarkupsContainer extends Container implements AdminAreaInterface
 {
     use TranslatorTrait;
 
-    const BASE = 'addonmodules.php?module=TSSGGSModule&mg-page=commissions';
+    const BASE = 'addonmodules.php?module=TSSGGSModule&mg-page=markups';
 
     public function loadHtml(): void
     {
-        $this->setCss('tssggs-migration tssggs-commissions');
+        $this->setCss('tssggs-migration tssggs-markups');
         $token   = function_exists('generate_token') ? \generate_token('plain') : '';
-        $session = $_SESSION[CommissionsController::SESSION] ?? [];
-        unset($_SESSION[CommissionsController::SESSION]);
+        $session = $_SESSION[MarkupsController::SESSION] ?? [];
+        unset($_SESSION[MarkupsController::SESSION]);
 
         $html = '';
         if(!empty($session['error']))
@@ -68,21 +68,21 @@ class CommissionsContainer extends Container implements AdminAreaInterface
             $html .= '<option value="' . (int)$product->id . '">' . $this->e($product->name) . '</option>';
         }
 
-        return $html . '</select></div><div><label style="display:block;font-weight:600">' . $this->e($this->t('commission')) . '</label><input name="commission" class="form-control" style="width:110px" placeholder="10 or -5" required></div>'
+        return $html . '</select></div><div><label style="display:block;font-weight:600">' . $this->e($this->t('markup')) . '</label><input name="markup" class="form-control" style="width:110px" placeholder="10 or -5" required></div>'
             . '<button class="lu-btn lu-btn--success" type="submit">' . $this->e($this->t('save')) . '</button></form>';
     }
 
     protected function table($token)
     {
-        $rules = Commissions::all();
+        $rules = Markups::all();
         $html  = '<table class="table table-striped"><thead><tr><th>' . $this->e($this->t('client')) . '</th><th>' . $this->e($this->t('product')) . '</th><th style="width:130px">'
-            . $this->e($this->t('commission')) . '</th><th style="width:150px">' . $this->e($this->t('updated')) . '</th><th style="width:90px"></th></tr></thead><tbody>';
+            . $this->e($this->t('markup')) . '</th><th style="width:150px">' . $this->e($this->t('updated')) . '</th><th style="width:90px"></th></tr></thead><tbody>';
         foreach($rules as $rule)
         {
             $client = $rule->client_id ? '<a href="clientssummary.php?userid=' . (int)$rule->client_id . '">#' . (int)$rule->client_id . ' ' . $this->e(trim($rule->firstname . ' ' . $rule->lastname) . ($rule->companyname ? ' (' . $rule->companyname . ')' : '')) . '</a>'
                 : '<em>' . $this->e($this->t('all_clients')) . '</em>';
             $html  .= '<tr><td>' . $client . '</td><td>' . ($rule->product_id ? $this->e($rule->product ?: '#' . $rule->product_id) : '<em>' . $this->e($this->t('all_products')) . '</em>') . '</td>'
-                . '<td>' . ((float)$rule->commission > 0 ? '+' : '') . $this->e(rtrim(rtrim($rule->commission, '0'), '.')) . ' %</td><td>' . $this->e($rule->created_at) . '</td>'
+                . '<td>' . ((float)$rule->markup > 0 ? '+' : '') . $this->e(rtrim(rtrim($rule->markup, '0'), '.')) . ' %</td><td>' . $this->e($rule->created_at) . '</td>'
                 . '<td><a href="' . self::BASE . '&mg-action=delete&id=' . (int)$rule->id . '&token=' . $this->e($token) . '" onclick="return confirm(' . $this->e(json_encode($this->t('confirm_delete'))) . ')">' . $this->e($this->t('delete')) . '</a></td></tr>';
         }
         if(!count($rules))
@@ -100,6 +100,6 @@ class CommissionsContainer extends Container implements AdminAreaInterface
 
     protected function t(string $key, array $replace = []): string
     {
-        return (string)$this->translate($key, $replace, ['admin.commissions']);
+        return (string)$this->translate($key, $replace, ['admin.markups']);
     }
 }

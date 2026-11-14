@@ -10,7 +10,7 @@ reports:
   icon: 'mdi mdi-file-document-outline'
 pricing:
   icon: 'mdi mdi-credit-card-outline'
-commissions:
+markups:
   icon: 'mdi mdi-hand-coin-outline'
 automationQueue:
   icon: 'mdi mdi-pulse'

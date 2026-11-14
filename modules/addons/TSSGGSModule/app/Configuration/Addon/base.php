@@ -15,8 +15,29 @@ function TSSGGSModule_config()
     return (new AppContext())->runAddonModule(__FUNCTION__, []);
 }
 
+/**
+ * Tables of an install made before 1.3.0 still carry the folder name; they take the edition's name before
+ * anything else runs, so the schema below finds them instead of creating a second, empty set.
+ */
+function TSSGGSModule_renameTablesOfOlderInstalls()
+{
+    require_once dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . 'Libs' . DIRECTORY_SEPARATOR . 'Edition.php';
+    require_once dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . 'Libs' . DIRECTORY_SEPARATOR . 'TablePrefix.php';
+
+    try
+    {
+        \ModulesGarden\TSSGGSModule\App\Libs\TablePrefix::migrate();
+    }
+    catch (\Throwable $e)
+    {
+        // an install that cannot rename its tables keeps working on the ones it has
+    }
+}
+
 function TSSGGSModule_activate()
 {
+    TSSGGSModule_renameTablesOfOlderInstalls();
+
     return (new AppContext())->runAddonModule(__FUNCTION__, []);
 }
 
@@ -27,6 +48,8 @@ function TSSGGSModule_deactivate()
 
 function TSSGGSModule_upgrade($params)
 {
+    TSSGGSModule_renameTablesOfOlderInstalls();
+
     return (new AppContext())->runAddonModule(__FUNCTION__, $params);
 }
 

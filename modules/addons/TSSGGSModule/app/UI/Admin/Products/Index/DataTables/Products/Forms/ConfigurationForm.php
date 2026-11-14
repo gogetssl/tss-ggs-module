@@ -125,7 +125,7 @@ class ConfigurationForm extends Form implements AdminAreaInterface, AjaxComponen
         );
 
         $this->builder->addField(
-            (new FormInputText())->setName('commission')
+            (new FormInputText())->setName('margin')
         );
 
         $this->builder->addField(

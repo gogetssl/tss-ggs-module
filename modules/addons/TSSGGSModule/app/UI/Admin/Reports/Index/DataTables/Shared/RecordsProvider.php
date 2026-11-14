@@ -2,6 +2,8 @@
 
 namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Reports\Index\DataTables\Shared;
 
+use ModulesGarden\TSSGGSModule\App\Libs\Edition;
+
 
 use ModulesGarden\TSSGGSModule\App\Libs\AcmeHelpers;
 use ModulesGarden\TSSGGSModule\App\Libs\AisHelpers;
@@ -48,14 +50,15 @@ class RecordsProvider
 
     public function getRecords($filters = [], $onlyPaid = false)
     {
-        $query = Capsule::table('tblinvoiceitems')
+        $requests = Edition::table('Requests');
+        $query    = Capsule::table('tblinvoiceitems')
                         ->join('tblhosting', 'tblinvoiceitems.relid', '=', 'tblhosting.id')
                         ->join('tblclients', 'tblinvoiceitems.userid', '=', 'tblclients.id')
                         ->join('tblinvoices', 'tblinvoiceitems.invoiceid', '=', 'tblinvoices.id')
                         ->join('tblproducts', 'tblproducts.id', '=', 'tblhosting.packageid')
-                        ->leftJoin('TSSGGSModule_Requests', function($join) {
-                            $join->on('TSSGGSModule_Requests.serviceid', '=', 'tblhosting.id');
-                            $join->on('TSSGGSModule_Requests.invoiceid', '=', 'tblinvoiceitems.invoiceid');
+                        ->leftJoin($requests, function($join) use ($requests) {
+                            $join->on($requests . '.serviceid', '=', 'tblhosting.id');
+                            $join->on($requests . '.invoiceid', '=', 'tblinvoiceitems.invoiceid');
                         })
                         ->where('tblinvoiceitems.type', 'Hosting')
                         ->where('tblproducts.servertype', 'TSSGGSModule');
@@ -117,11 +120,11 @@ class RecordsProvider
                                     'tblproducts.configoption2',
                                     'tblproducts.configoption3',
                                     'tblproducts.configoption4',
-                                    'TSSGGSModule_Requests.api_price',
-                                    'TSSGGSModule_Requests.rate',
-                                    'TSSGGSModule_Requests.whmcs_price',
-                                    'TSSGGSModule_Requests.diff_price',
-                                    'TSSGGSModule_Requests.status as orderStatus',
+                                    $requests . '.api_price',
+                                    $requests . '.rate',
+                                    $requests . '.whmcs_price',
+                                    $requests . '.diff_price',
+                                    $requests . '.status as orderStatus',
                                 ])
                        ->get();
 
@@ -130,7 +133,7 @@ class RecordsProvider
         $certificates = [];
         foreach(array_chunk($serviceIds, 1000) as $chunk)
         {
-            foreach(Capsule::table('TSSGGSModule_Requests')->whereIn('serviceid', $chunk)->where('name', 'certificate')->get(['serviceid', 'request']) as $row)
+            foreach(Capsule::table($requests)->whereIn('serviceid', $chunk)->where('name', 'certificate')->get(['serviceid', 'request']) as $row)
             {
                 $certificates[(int)$row->serviceid] = $row->request;
             }

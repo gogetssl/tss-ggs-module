@@ -790,8 +790,8 @@ $_LANG['admin.settings.index.providers.general_settings_provider.moduleTemplate'
 //product configuration: per-product settings
 $_LANG['admin.products.index.data_tables.products.forms.configuration_form.payType'] = 'Zahlungsart';
 $_LANG['admin.products.index.data_tables.products.forms.configuration_form.months'] = 'Zertifikatslaufzeit';
-$_LANG['admin.products.index.data_tables.products.forms.configuration_form.commission'] = 'Gewinnmarge (%)';
-$_LANG['admin.products.index.data_tables.products.forms.configuration_form.commission_placeholder'] = 'Globale Marge aus den Finanzeinstellungen';
+$_LANG['admin.products.index.data_tables.products.forms.configuration_form.margin'] = 'Gewinnmarge (%)';
+$_LANG['admin.products.index.data_tables.products.forms.configuration_form.margin_placeholder'] = 'Globale Marge aus den Finanzeinstellungen';
 $_LANG['admin.products.index.data_tables.products.forms.configuration_form.processingGuide'] = 'Bearbeitungshinweis';
 $_LANG['admin.products.index.data_tables.products.forms.configuration_form.issuedMessage'] = 'Meldung für ausgestelltes SSL';
 $_LANG['admin.products.index.data_tables.products.providers.configuration_provider.payTypeRecurring'] = 'Wiederkehrend';
@@ -899,22 +899,22 @@ $_LANG['admin.products.index.products_container.notice_unretired'] = ':product i
 $_LANG['admin.products.index.products_container.notice_options_fixed'] = 'Konfigurierbare Optionen von :product geprüft. Änderungen: :detail';
 $_LANG['admin.products.index.products_container.notice_renewals_cancelled'] = 'Kündigungsanfragen für :detail Services von :product erstellt.';
 
-//commissions
-$_LANG['admin.menu.commissions'] = 'Provisionen';
-$_LANG['admin.breadcrumbs.Commissions_index'] = 'Provisionen';
-$_LANG['admin.commissions.intro'] = 'Erhöhen oder senken Sie den Preis von SSL-Produkten für einen Kunden: +10 addiert 10 % zum Produktpreis, -5 ist ein Rabatt von 5 %. Die spezifischste Regel gewinnt: Kunde + Produkt, dann Kunde + alle Produkte, dann alle Kunden + Produkt. Gilt für neue Bestellungen im Warenkorb, im Standard- und im Lagom-Bestellformular.';
-$_LANG['admin.commissions.client'] = 'Kunde';
-$_LANG['admin.commissions.product'] = 'Produkt';
-$_LANG['admin.commissions.commission'] = 'Provision %';
-$_LANG['admin.commissions.all_clients'] = 'Alle Kunden';
-$_LANG['admin.commissions.all_products'] = 'Alle SSL-Produkte';
-$_LANG['admin.commissions.save'] = 'Hinzufügen / ändern';
-$_LANG['admin.commissions.updated'] = 'Aktualisiert';
-$_LANG['admin.commissions.delete'] = 'Löschen';
-$_LANG['admin.commissions.confirm_delete'] = 'Diese Provisionsregel löschen?';
-$_LANG['admin.commissions.empty'] = 'Keine Provisionsregeln.';
-$_LANG['admin.commissions.notice_saved'] = 'Provisionsregel gespeichert.';
-$_LANG['admin.commissions.notice_deleted'] = 'Provisionsregel gelöscht.';
+//markups
+$_LANG['admin.menu.markups'] = 'Aufschläge';
+$_LANG['admin.breadcrumbs.Markups_index'] = 'Aufschläge';
+$_LANG['admin.markups.intro'] = 'Erhöhen oder senken Sie den Preis von SSL-Produkten für einen Kunden: +10 addiert 10 % zum Produktpreis, -5 ist ein Rabatt von 5 %. Die spezifischste Regel gewinnt: Kunde + Produkt, dann Kunde + alle Produkte, dann alle Kunden + Produkt. Gilt für neue Bestellungen im Warenkorb, im Standard- und im Lagom-Bestellformular.';
+$_LANG['admin.markups.client'] = 'Kunde';
+$_LANG['admin.markups.product'] = 'Produkt';
+$_LANG['admin.markups.markup'] = 'Aufschlag %';
+$_LANG['admin.markups.all_clients'] = 'Alle Kunden';
+$_LANG['admin.markups.all_products'] = 'Alle SSL-Produkte';
+$_LANG['admin.markups.save'] = 'Hinzufügen / ändern';
+$_LANG['admin.markups.updated'] = 'Aktualisiert';
+$_LANG['admin.markups.delete'] = 'Löschen';
+$_LANG['admin.markups.confirm_delete'] = 'Diesen Aufschlag löschen?';
+$_LANG['admin.markups.empty'] = 'Keine Aufschläge.';
+$_LANG['admin.markups.notice_saved'] = 'Aufschlag gespeichert.';
+$_LANG['admin.markups.notice_deleted'] = 'Aufschlag gelöscht.';
 
 //emails
 $_LANG['admin.menu.emails'] = 'E-Mails';
@@ -1022,7 +1022,7 @@ $_LANG['admin.emails.rich_failed'] = 'Der visuelle Editor konnte nicht geladen w
 $_LANG['admin.emails.name_renewal_invoice_created'] = 'Verlängerungsrechnung erstellt';
 $_LANG['admin.emails.when_renewal_invoice_created'] = 'Wird gesendet, wenn dieses Modul eine Verlängerungsrechnung erstellt. Standardmäßig deaktiviert: Solange sie deaktiviert ist, sendet WHMCS seine eigene Rechnungs-E-Mail; aktivieren Sie sie, um stattdessen diesen Text zu senden.';
 $_LANG['admin.breadcrumbs.CertificateLog'] = 'Zertifikatsprotokoll';
-$_LANG['admin.breadcrumbs.Commissions'] = 'Provisionen';
+$_LANG['admin.breadcrumbs.Markups'] = 'Aufschläge';
 $_LANG['admin.breadcrumbs.Migration'] = 'Migration';
 
 $_LANG['admin.switcher.yes'] = 'Ja';
@@ -1066,8 +1066,8 @@ $_LANG['admin.products.index.data_tables.products.array_data_provider.data_table
 $_LANG['admin.products.index.data_tables.products.array_data_provider.data_table.billing_recurring'] = 'Wiederkehrend';
 $_LANG['admin.products.index.data_tables.products.array_data_provider.data_table.billing_onetime'] = 'Einmalig';
 $_LANG['admin.products.index.data_tables.products.array_data_provider.data_table.billing_free'] = 'Kostenlos';
-$_LANG['admin.pricing_grid.commission_note'] = 'Provisionsregeln werden bei der Bestellung eines Kunden auf diese Basispreise aufgeschlagen. Alle Kunden: :global; kunden- oder produktspezifische Regeln: :count.';
-$_LANG['admin.pricing_grid.commission_edit'] = 'Provisionen bearbeiten';
+$_LANG['admin.pricing_grid.markup_note'] = 'Aufschläge werden bei der Bestellung eines Kunden auf diese Basispreise aufgeschlagen. Alle Kunden: :global; kunden- oder produktspezifische Regeln: :count.';
+$_LANG['admin.pricing_grid.markup_edit'] = 'Aufschläge bearbeiten';
 $_LANG['admin.pricing_grid.client_price'] = 'Kunde zahlt :price (:rate %)';
 $_LANG['admin.pricing_grid.client_price_title'] = 'Preis für Kunden ohne kundenspezifische Regel';
 $_LANG['admin.settings.index.forms.general_settings_form.interface'] = 'Adminbereich';
@@ -1393,7 +1393,7 @@ $_LANG['admin.settings.index.forms.finance_settings_form.renewalPoint_belowCost'
 $_LANG['admin.settings.index.forms.finance_settings_form.renewalPoint_belowCost_text'] = 'Ein Service behält seinen Preis, bis dieser Ihren Reseller-Einkaufspreis nicht mehr deckt; dann wechselt er zum aktuellen Preis. Treue Kunden behalten ihren Preis, und Sie machen nie Verlust.';
 $_LANG['admin.settings.index.forms.finance_settings_form.renewalPoint_always'] = 'Immer der aktuelle Preis:';
 $_LANG['admin.settings.index.forms.finance_settings_form.renewalPoint_always_text'] = 'Jeder Service verlängert zur heutigen Preisliste, nach oben wie nach unten, einschließlich der Services, denen Sie einen Sonderpreis gegeben haben.';
-$_LANG['admin.settings.index.forms.finance_settings_form.renewalPriceMode_description'] = 'Der aktuelle Preis ist der heutige Produktpreis mit seinen SAN-Optionen und der Aktion, zuzüglich der Provisionsregel des Kunden';
+$_LANG['admin.settings.index.forms.finance_settings_form.renewalPriceMode_description'] = 'Der aktuelle Preis ist der heutige Produktpreis mit seinen SAN-Optionen und der Aktion, zuzüglich des Aufschlags des Kunden';
 $_LANG['admin.settings.index.providers.finance_settings_provider.renewal_never'] = 'Bestellpreis beibehalten';
 $_LANG['admin.settings.index.providers.finance_settings_provider.renewal_belowCost'] = 'Nur aktualisieren, wenn unter Einkaufspreis';
 $_LANG['admin.settings.index.providers.finance_settings_provider.renewal_always'] = 'Immer der aktuelle Preis';
@@ -1404,18 +1404,18 @@ $_LANG['admin.settings.index.forms.finance_settings_form.pricing_desc'] = 'Die S
 $_LANG['admin.settings.index.forms.finance_settings_form.rulesIntro'] = 'Auch andere Einstellungen beeinflussen, was Kunden zahlen. Was dort derzeit eingestellt ist:';
 $_LANG['admin.settings.index.forms.finance_settings_form.rulesAuto'] = 'Seite Preise:';
 $_LANG['admin.settings.index.forms.finance_settings_form.rulesProducts'] = 'Seite Produkte:';
-$_LANG['admin.settings.index.forms.finance_settings_form.rulesCommissions'] = 'Provisionen:';
-$_LANG['admin.settings.index.forms.finance_settings_form.rulesCommissionsGlobal'] = 'Provisionen:';
-$_LANG['admin.settings.index.forms.finance_settings_form.rulesCommissionsNone'] = 'Provisionen:';
-$_LANG['admin.settings.index.forms.finance_settings_form.rulesCommissionsNone_text'] = 'keine Regeln, Kunden zahlen die hier berechneten Preise.';
+$_LANG['admin.settings.index.forms.finance_settings_form.rulesMarkups'] = 'Aufschläge:';
+$_LANG['admin.settings.index.forms.finance_settings_form.rulesMarkupsGlobal'] = 'Aufschläge:';
+$_LANG['admin.settings.index.forms.finance_settings_form.rulesMarkupsNone'] = 'Aufschläge:';
+$_LANG['admin.settings.index.forms.finance_settings_form.rulesMarkupsNone_text'] = 'keine Regeln, Kunden zahlen die hier berechneten Preise.';
 $_LANG['admin.settings.index.forms.finance_settings_form.openPricing'] = 'Preise öffnen';
 $_LANG['admin.settings.index.forms.finance_settings_form.openProducts'] = 'Produkte öffnen';
-$_LANG['admin.settings.index.forms.finance_settings_form.openCommissions'] = 'Provisionen öffnen';
+$_LANG['admin.settings.index.forms.finance_settings_form.openMarkups'] = 'Aufschläge öffnen';
 $_LANG['admin.settings.index.forms.finance_settings_form.profitMargin_description'] = 'Wird bei Produkten mit automatischer Preisgestaltung, die keine eigene Marge haben, auf den Reseller-Einkaufspreis aufgeschlagen. Bei 0 wird zum Einkaufspreis verkauft';
 $_LANG['admin.settings.index.forms.finance_settings_form.rulesAuto_text'] = 'automatische Preisgestaltung (verwendet die Marge unten): :auto, manuelle Preise (werden durch diese Marge nicht geändert): :manual.';
 $_LANG['admin.settings.index.forms.finance_settings_form.rulesProducts_text'] = 'Produkte mit eigener Marge, die die Standardmarge unten ersetzt: :count.';
-$_LANG['admin.settings.index.forms.finance_settings_form.rulesCommissions_text'] = 'Regeln, die für ausgewählte Kunden oder Produkte einen Prozentsatz auf den Preis aufschlagen, bei der Bestellung und bei Verlängerungen: :count.';
-$_LANG['admin.settings.index.forms.finance_settings_form.rulesCommissionsGlobal_text'] = '+:global% für alle Kunden auf alle Produkte (Regeln insgesamt: :count). Der Aufschlag kommt bei der Bestellung und bei Verlängerungen zu jedem Preis hinzu, sodass Kunden mehr als die hier berechneten Preise zahlen.';
+$_LANG['admin.settings.index.forms.finance_settings_form.rulesMarkups_text'] = 'Regeln, die für ausgewählte Kunden oder Produkte einen Prozentsatz auf den Preis aufschlagen, bei der Bestellung und bei Verlängerungen: :count.';
+$_LANG['admin.settings.index.forms.finance_settings_form.rulesMarkupsGlobal_text'] = '+:global% für alle Kunden auf alle Produkte (Regeln insgesamt: :count). Der Aufschlag kommt bei der Bestellung und bei Verlängerungen zu jedem Preis hinzu, sodass Kunden mehr als die hier berechneten Preise zahlen.';
 $_LANG['admin.settings.index.forms.ssl_settings_form.useDefaultWebServer'] = 'Frage nach dem Webserver überspringen';
 $_LANG['admin.settings.index.forms.ssl_settings_form.useDefaultWebServer_description'] = 'Ja: Kunden werden bei der Konfiguration des Zertifikats nicht gefragt, welchen Webserver sie verwenden (es wird Other gespeichert). Nein: Kunden wählen ihren Webserver (Apache, IIS, cPanel ...) während der Konfiguration aus der WHMCS-Liste; die Auswahl wird beim Service angezeigt. Das Zertifikat ist in beiden Fällen dasselbe';
 $_LANG['admin.settings.index.forms.ssl_settings_form.ordering_desc'] = 'Ob Kunden nach ihrem Webserver gefragt werden, und die Teilnehmervereinbarung, der sie zustimmen, bevor die Bestellung aufgegeben wird.';

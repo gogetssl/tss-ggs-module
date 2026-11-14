@@ -11,7 +11,7 @@ use ModulesGarden\TSSGGSModule\Core\Translation\TranslatorTrait;
 use WHMCS\Database\Capsule;
 
 /**
- * Admin page "Certificate Log": filterable list of the certificate events (TSSGGSModule_AutoInstallLogs)
+ * Admin page "Certificate Log": filterable list of the certificate events (the AutoInstallLogs table)
  */
 class CertificateLogContainer extends Container implements AdminAreaInterface
 {
@@ -31,7 +31,7 @@ class CertificateLogContainer extends Container implements AdminAreaInterface
         $search  = trim((string)($_GET['search'] ?? ''));
         $page    = max(1, (int)($_GET['p'] ?? 1));
 
-        $query = Capsule::table(AutoInstallQueue::LOGS_TABLE . ' as l')
+        $query = Capsule::table(AutoInstallQueue::logsTable() . ' as l')
             ->leftJoin('tblhosting as h', 'h.id', '=', 'l.service_id')
             ->leftJoin('tblclients as c', 'c.id', '=', 'l.client_id');
         if($service)

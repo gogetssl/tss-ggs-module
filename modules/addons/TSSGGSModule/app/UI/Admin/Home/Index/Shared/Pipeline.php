@@ -2,6 +2,8 @@
 
 namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Shared;
 
+use ModulesGarden\TSSGGSModule\App\Libs\Edition;
+
 use ModulesGarden\TSSGGSModule\App\Models\AcmeSubscription;
 use ModulesGarden\TSSGGSModule\App\Models\AisSubscription;
 use WHMCS\Database\Capsule;
@@ -31,16 +33,17 @@ class Pipeline
                 // the subscription tables do not exist before their first use
             }
 
+            $requests = Edition::table('Requests');
             $services = Capsule::table('tblhosting')
                 ->join('tblproducts', 'tblproducts.id', '=', 'tblhosting.packageid')
-                ->leftJoin('TSSGGSModule_Requests', function($join) {
+                ->leftJoin($requests, function($join) use ($requests) {
                     // SSL orders keep their state in "certificate", every other product type in its own row
-                    $join->on('TSSGGSModule_Requests.serviceid', '=', 'tblhosting.id')
-                        ->whereIn('TSSGGSModule_Requests.name', array_merge(['certificate'], \ModulesGarden\TSSGGSModule\App\Libs\GatewayOrderService::requestNames()));
+                    $join->on($requests . '.serviceid', '=', 'tblhosting.id')
+                        ->whereIn($requests . '.name', array_merge(['certificate'], \ModulesGarden\TSSGGSModule\App\Libs\GatewayOrderService::requestNames()));
                 })
                 ->where('tblproducts.servertype', 'TSSGGSModule')
                 ->whereNotIn('tblhosting.id', $subscriptions ?: [0])
-                ->get(['tblhosting.domainstatus', 'TSSGGSModule_Requests.status']);
+                ->get(['tblhosting.domainstatus', $requests . '.status']);
 
             foreach($services as $service)
             {

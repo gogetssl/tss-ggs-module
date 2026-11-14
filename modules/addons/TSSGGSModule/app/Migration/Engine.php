@@ -2,7 +2,7 @@
 
 namespace ModulesGarden\TSSGGSModule\App\Migration;
 
-use ModulesGarden\TSSGGSModule\App\Libs\Commissions;
+use ModulesGarden\TSSGGSModule\App\Libs\Markups;
 use ModulesGarden\TSSGGSModule\App\Libs\Cpanel;
 use ModulesGarden\TSSGGSModule\App\Libs\EmailCatalog;
 use ModulesGarden\TSSGGSModule\App\Libs\EmailManager;
@@ -184,7 +184,7 @@ class Engine
                 throw new \RuntimeException('Another migration is still running. Resume or roll it back first.');
             }
             // the latest run stopped with an error and left its changes behind: a new run would take a backup of changed data
-            $latest = Capsule::table(Store::TABLE_RUNS)->where('status', '<>', Store::RUN_DRY_RUN)->orderBy('id', 'desc')->first();
+            $latest = Capsule::table(Store::runsTable())->where('status', '<>', Store::RUN_DRY_RUN)->orderBy('id', 'desc')->first();
             if($latest && $latest->status === Store::RUN_FAILED && $latest->backup_prefix && (new Backup((int)$latest->id, $latest->backup_prefix))->tables())
             {
                 throw new \RuntimeException('Migration #' . (int)$latest->id . ' stopped with an error. Roll it back before starting a new one.');
@@ -324,15 +324,15 @@ class Engine
             }
             Store::mergeSummary($runId, ['products' => $migratedPids, 'settings_filled' => $filled]);
 
-            // per-client commissions of the migrated products (GGS)
-            if(method_exists($this->reader, 'readCommissions'))
+            // client markups of the migrated products (GGS)
+            if(method_exists($this->reader, 'readMarkups'))
             {
-                $rules = array_values(array_filter($this->reader->readCommissions(), function($rule) use ($migratedPids) {
+                $rules = array_values(array_filter($this->reader->readMarkups(), function($rule) use ($migratedPids) {
                     return in_array((int)$rule['product_id'], $migratedPids, true);
                 }));
-                $ids = $writer->writeCommissions($rules);
-                Store::addJob($runId, Store::KIND_SETTINGS, 0, 0, Store::JOB_DONE, null, ['commission_ids' => $ids]);
-                $this->log($runId, 'info', self::PHASE_PREPARE, 'Client commissions copied', ['rules' => count($ids), 'legacy_rules' => count($rules)]);
+                $ids = $writer->writeMarkups($rules);
+                Store::addJob($runId, Store::KIND_SETTINGS, 0, 0, Store::JOB_DONE, null, ['markup_ids' => $ids]);
+                $this->log($runId, 'info', self::PHASE_PREPARE, 'Client markups copied', ['rules' => count($ids), 'legacy_rules' => count($rules)]);
             }
 
             // 4. service job list
@@ -577,7 +577,7 @@ class Engine
                 if($current && $current !== 'Awaiting Configuration')
                 {
                     $writer->undoService($job['data']);
-                    Capsule::table(Store::TABLE_JOBS)->where('id', $job['id'])->update(['status' => Store::JOB_PENDING, 'updated_at' => date('Y-m-d H:i:s')]);
+                    Capsule::table(Store::jobsTable())->where('id', $job['id'])->update(['status' => Store::JOB_PENDING, 'updated_at' => date('Y-m-d H:i:s')]);
                     $this->migrateService($runId, $job['id'], (int)$job['object_id'], $writer, $products, (bool)$run['options']['fetch_cpanel_keys']);
                     $changed++;
                 }
@@ -674,7 +674,7 @@ class Engine
                 $active++;
                 foreach(['addOrder', 'certificate'] as $name)
                 {
-                    $n = (int)Capsule::table(Writer::T_REQUESTS)->where('serviceid', (int)$job['object_id'])->where('name', $name)->count();
+                    $n = (int)Capsule::table(Writer::tRequests())->where('serviceid', (int)$job['object_id'])->where('name', $name)->count();
                     if($n !== 1)
                     {
                         $problems[] = 'service ' . $job['object_id'] . ': ' . $n . ' ' . $name . ' rows (expected 1)';
@@ -776,15 +776,16 @@ class Engine
             {
                 $writer->undoService($job['data']);
             }
-            // commission rules created by the run (settings and product jobs)
-            $commissionIds = [];
+            // markup rules created by the run (settings and product jobs)
+            $markupIds = [];
             foreach(array_merge(Store::jobsByStatus($runId, Store::KIND_SETTINGS, Store::JOB_DONE), Store::jobsByStatus($runId, Store::KIND_PRODUCT, Store::JOB_DONE)) as $job)
             {
-                $commissionIds = array_merge($commissionIds, (array)($job['data']['commission_ids'] ?? []));
+                // runs started before 1.3.0 stored the same ids under their old name
+                    $markupIds = array_merge($markupIds, (array)($job['data']['markup_ids'] ?? $job['data']['commission_ids'] ?? []));
             }
-            if($commissionIds)
+            if($markupIds)
             {
-                Capsule::table(Commissions::TABLE)->whereIn('id', $commissionIds)->delete();
+                Capsule::table(Markups::table())->whereIn('id', $markupIds)->delete();
             }
             // e-mail template rows created by the copy; the ones it overwrote come back from the row backup
             $templateIds = [];
@@ -862,7 +863,7 @@ class Engine
     {
         Store::createTables();
         $dropped = 0;
-        foreach(Capsule::table(Store::TABLE_RUNS)->whereNotNull('backup_prefix')->where('backup_expires_at', '<', date('Y-m-d H:i:s'))
+        foreach(Capsule::table(Store::runsTable())->whereNotNull('backup_prefix')->where('backup_expires_at', '<', date('Y-m-d H:i:s'))
             // the backups of a run that failed or stopped are the only copy of the original data: never dropped automatically
             ->whereIn('status', [Store::RUN_COMPLETED, Store::RUN_ROLLED_BACK])->get() as $run)
         {

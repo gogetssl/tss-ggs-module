@@ -222,7 +222,7 @@ class MigrationContainer extends Container implements AdminAreaInterface
     protected function pastRuns(): array
     {
         Store::createTables();
-        $rows = \WHMCS\Database\Capsule::table(Store::TABLE_RUNS)->where('status', '<>', Store::RUN_DRY_RUN)->orderBy('id', 'desc')->limit(5)->get();
+        $rows = \WHMCS\Database\Capsule::table(Store::runsTable())->where('status', '<>', Store::RUN_DRY_RUN)->orderBy('id', 'desc')->limit(5)->get();
         $runs = [];
         foreach($rows as $row)
         {
