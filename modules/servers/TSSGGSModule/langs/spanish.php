@@ -880,3 +880,4 @@ $_LANG['serverCA']['home']['sslConfigInstallQuestion'] = '¿Cómo desea instalar
 $_LANG['serverCA']['home']['sslConfigAutoinstallHint'] = 'Generamos el CSR, validamos e instalamos automáticamente. Solo servidores WHM/cPanel.';
 $_LANG['serverCA']['home']['sslConfigManualHint'] = 'Funciona con cualquier servidor. Usted aporta el CSR e instala el certificado.';
 $_LANG['serverCA']['home']['sslConfigRequiredNote'] = 'Los campos marcados con * son obligatorios.';
+$_LANG['sslRenewalPendingNotice'] = 'Esta es la renovación de su certificado. Su certificado actual sigue siendo válido y se puede descargar hasta el %s.';

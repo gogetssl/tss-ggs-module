@@ -346,3 +346,6 @@ table.table-validation-details td.break-all {
 .tssggs-required { font-size: 12.5px; color: var(--c-muted); display: inline-flex; align-items: center; gap: 6px; }
 .tssggs-grid--flush { padding: 14px 20px 2px; gap: 0 28px; }
 .tssggs-grid--flush .tssggs-dl { margin: 0; padding: 0; }
+
+/* a paid renewal waiting for the client's details: says so above the form */
+.tssggs-cert .tssggs-renewal-notice { margin: 0 0 8px; padding: 10px 14px; border-radius: 8px; background: var(--c-green-tint); color: var(--c-text); font-size: 13.5px; }

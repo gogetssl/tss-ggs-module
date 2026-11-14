@@ -18,6 +18,7 @@
             </div>
         </div>
         <div class="tssggs-hero__foot">
+            {if $renewalNotice}<p class="tssggs-renewal-notice"><strong>{$renewalNotice|escape}</strong></p>{/if}
             <p>{$MGLANG->T('awaiting_configuration', 'desc')}</p>
             <div class="tssggs-actions">
                 <a class="tssggs-btn tssggs-btn--primary" href="{$url|escape}">

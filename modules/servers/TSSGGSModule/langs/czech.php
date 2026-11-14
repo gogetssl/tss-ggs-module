@@ -880,3 +880,4 @@ $_LANG['serverCA']['home']['sslConfigInstallQuestion'] = 'Jak chcete certifikát
 $_LANG['serverCA']['home']['sslConfigAutoinstallHint'] = 'Vygenerujeme CSR, ověříme a nainstalujeme automaticky. Pouze servery WHM/cPanel.';
 $_LANG['serverCA']['home']['sslConfigManualHint'] = 'Funguje na libovolném serveru. CSR dodáte a certifikát nainstalujete sami.';
 $_LANG['serverCA']['home']['sslConfigRequiredNote'] = 'Pole označená * jsou povinná.';
+$_LANG['sslRenewalPendingNotice'] = 'Toto je obnovení vašeho certifikátu. Váš současný certifikát zůstává platný a lze jej stáhnout do %s.';

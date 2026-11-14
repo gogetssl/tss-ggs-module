@@ -68,6 +68,10 @@ trait SslCertificatePages
             'cycle'        => $service->billingcycle,
         ];
 
+        // a paid renewal waiting for these details: the client is told so, and until when the current certificate holds
+        $renewalUntil         = \ModulesGarden\TSSGGSModule\App\Libs\RenewalPolicy::pendingRenewalUntil((int)$serviceId);
+        $vars['renewalNotice'] = $renewalUntil !== '' ? sprintf(Lang::absoluteT('sslRenewalPendingNotice'), $this->smimeDate($renewalUntil)) : '';
+
         return ['tpl' => 'awaiting_configuration', 'vars' => $vars];
     }
 

@@ -70,6 +70,7 @@
             <span class="tssggs-step"><span class="tssggs-step__n">4</span> {$MGLANG->T('sslStepIssued')}</span>
         </div>
         <div class="tssggs-hero__foot">
+            {if $renewalNotice}<p class="tssggs-renewal-notice"><strong>{$renewalNotice|escape}</strong></p>{/if}
             <p>{$MGLANG->T('sslConfigIntro')}</p>
         </div>
     </section>

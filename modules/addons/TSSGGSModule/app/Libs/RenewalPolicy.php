@@ -222,6 +222,19 @@ class RenewalPolicy
         ];
     }
 
+    /**
+     * For a service whose paid renewal waits for the client's details: the day the certificate it renews expires
+     * (Y-m-d), shown on the client page - '' when it waits for nothing or the day is not known
+     */
+    public static function pendingRenewalUntil(int $serviceId): string
+    {
+        $value = \ModulesGarden\TSSGGSModule\App\Models\Request::where('serviceid', $serviceId)->where('name', 'renewalPending')->value('request');
+        $data  = $value ? (json_decode((string)$value, true) ?: []) : [];
+        $end   = !empty($data['prior_end']) ? strtotime((string)$data['prior_end']) : false;
+
+        return $end ? date('Y-m-d', $end) : '';
+    }
+
     /** The renewal was ordered with the client's details */
     public static function renewalPlaced(int $serviceId): void
     {
