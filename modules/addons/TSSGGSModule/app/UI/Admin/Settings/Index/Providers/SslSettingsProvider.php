@@ -69,8 +69,6 @@ class SslSettingsProvider extends CrudProvider
         $this->availableValues['autoReissueDaysBeforeExpire']           = array_combine($reissueDays, $reissueDays);
         $this->availableValues['recurringDaysBeforeExpirySubscription'] = $this->dayOptions(RenewalPolicy::LEAD_OPTIONS, 'recurringDaysBeforeExpirySubscription');
         $this->availableValues['recurringPaymentTermSubscription']      = $this->dayOptions(RenewalPolicy::TERM_OPTIONS, 'recurringPaymentTermSubscription');
-        // as a string: the dropdown takes a numeric 0 for "nothing chosen"
-        $this->data['pendingPaymentWaitSubscription']                   = (string)RenewalPolicy::pendingWait(RenewalPolicy::SUBSCRIPTION);
         $this->availableValues['pendingPaymentWaitSubscription']        = [];
         foreach(RenewalPolicy::PENDING_WAIT_OPTIONS as $days)
         {
@@ -91,6 +89,8 @@ class SslSettingsProvider extends CrudProvider
         }
         // what applies: an install that never saved it keeps the choice it made for SSL before 1.5.0
         $this->data['renewReuseOrderDetails'] = RenewalPolicy::reuseDetails();
+        // as a string: the dropdown takes a numeric 0 for "nothing chosen"
+        $this->data['pendingPaymentWaitSubscription'] = (string)RenewalPolicy::pendingWait(RenewalPolicy::SUBSCRIPTION);
 
         $templates = ['' => $this->translate('moduleTemplate')];
         foreach(\WHMCS\Database\Capsule::table('tblemailtemplates')->where('type', 'general')->where('language', '')->orderBy('name')->pluck('name') as $name)
