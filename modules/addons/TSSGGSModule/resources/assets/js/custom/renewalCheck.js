@@ -68,10 +68,12 @@
         }
     }
 
-    // the module's dropdowns set the select's value themselves, without a change event: redraw shortly after any click
-    // or key as well (drawing does nothing when the text is the same)
+    // the module's dropdowns set the select's value themselves, without a change event and a moment after the click:
+    // redraw a few times after any click or key (drawing does nothing when the text is the same)
     function soon() {
         setTimeout(drawAll, 60);
+        setTimeout(drawAll, 250);
+        setTimeout(drawAll, 600);
     }
 
     document.addEventListener('change', drawAll, true);
