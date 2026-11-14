@@ -146,7 +146,9 @@ class RenewalPrices
         }
 
         // a wildcard main domain on a FLEX product
-        if(MainDomain::serviceChoice((int)$service->id) === MainDomain::WILDCARD)
+        $vendor = (string)Capsule::table('tblproducts')->where('id', (int)$service->packageid)->value('configoption1');
+        if(MainDomain::isChoice(is_array($product['remote']) ? $product['remote'] : null, $vendor)
+            && MainDomain::paidChoice((int)$service->id) === MainDomain::WILDCARD)
         {
             $extra = MainDomain::wildcardCost($product['remote'], (int)$months);
             if($extra !== null)

@@ -106,6 +106,46 @@ class MainDomain
         return strpos(strtolower(trim((string)$sub)), self::WILDCARD) === 0 ? self::WILDCARD : self::STANDARD;
     }
 
+    /**
+     * The main domain type the service has paid for: the client's choice; without one (an imported order, a
+     * service created by hand or before its product had the option) the type of the certificate already ordered;
+     * STANDARD when there is neither
+     */
+    public static function paidChoice(int $serviceId): string
+    {
+        $choice = self::serviceChoice($serviceId);
+        if($choice !== null)
+        {
+            return $choice;
+        }
+        $ordered = self::orderedCommonName($serviceId);
+
+        return $ordered !== '' && strpos($ordered, '*.') === 0 ? self::WILDCARD : self::STANDARD;
+    }
+
+    /** Main domain of the certificate ordered for the service ('' when none is stored) */
+    protected static function orderedCommonName(int $serviceId): string
+    {
+        try
+        {
+            // the last synced order, else the request the module sent
+            $stored = CertificateService::stored($serviceId);
+            $name   = trim((string)($stored['orderData']['orderData']['common_name']['name'] ?? ''));
+            if($name === '')
+            {
+                $request = \ModulesGarden\TSSGGSModule\App\Models\Request::currentOrder($serviceId);
+                $sent    = $request && $request->request ? (json_decode(\decrypt($request->request), true) ?: []) : [];
+                $name    = trim((string)($sent['common_name']['name'] ?? ''));
+            }
+
+            return $name;
+        }
+        catch(\Throwable $e)
+        {
+            return '';
+        }
+    }
+
     /** The FLEX product (raw catalogue data) of a service, null when the service's product is no FLEX product */
     protected static function flexProductOf(int $serviceId): ?array
     {
@@ -140,7 +180,7 @@ class MainDomain
         }
         if(self::isChoice($raw, (string)$product->configoption1))
         {
-            $choice = self::serviceChoice($serviceId) ?: self::STANDARD;
+            $choice = self::paidChoice($serviceId);
             if($isWildcard && $choice !== self::WILDCARD)
             {
                 throw new \Exception(self::text('needs_wildcard'));
