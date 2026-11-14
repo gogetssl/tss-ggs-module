@@ -77,6 +77,12 @@ class MainDomain
 
     // ---- the service ---- //
 
+    /**
+     * Option names that carry the choice: the module's own, and the legacy TheSSLStore module's "CSR Domain"
+     * (Standard / Wildcard), which services migrated from it still have
+     */
+    const OPTION_NAMES = [self::OPTION . '|%', 'CSR Domain%'];
+
     /** The client's choice on the service: STANDARD, WILDCARD, or null when the product has no such option */
     public static function serviceChoice(int $serviceId): ?string
     {
@@ -84,28 +90,44 @@ class MainDomain
             ->join('tblproductconfigoptions', 'tblproductconfigoptions.id', '=', 'tblhostingconfigoptions.configid')
             ->join('tblproductconfigoptionssub', 'tblproductconfigoptionssub.id', '=', 'tblhostingconfigoptions.optionid')
             ->where('tblhostingconfigoptions.relid', $serviceId)
-            ->where('tblproductconfigoptions.optionname', 'like', self::OPTION . '|%')
+            ->where(function($q) {
+                foreach(self::OPTION_NAMES as $pattern)
+                {
+                    $q->orWhere('tblproductconfigoptions.optionname', 'like', $pattern);
+                }
+            })
+            ->orderByRaw("CASE WHEN tblproductconfigoptions.optionname LIKE ? THEN 0 ELSE 1 END", [self::OPTION . '|%'])
             ->value('tblproductconfigoptionssub.optionname');
         if($sub === null)
         {
             return null;
         }
 
-        return strpos(strtolower((string)$sub), self::WILDCARD) === 0 ? self::WILDCARD : self::STANDARD;
+        return strpos(strtolower(trim((string)$sub)), self::WILDCARD) === 0 ? self::WILDCARD : self::STANDARD;
+    }
+
+    /** The FLEX product (raw catalogue data) of a service, null when the service's product is no FLEX product */
+    protected static function flexProductOf(int $serviceId): ?array
+    {
+        $packageId = (int)Capsule::table('tblhosting')->where('id', $serviceId)->value('packageid');
+        $vendor    = (string)Capsule::table('tblproducts')->where('id', $packageId)->value('configoption1');
+        $remote    = $packageId ? GatewayOrderService::remoteProduct($packageId) : null;
+        $raw       = $remote && is_array($remote->rawData) ? $remote->rawData : null;
+
+        return self::isChoice($raw, $vendor) ? $raw : null;
     }
 
     /**
-     * Refuses a main domain the service may not have: *. on a product without wildcard, or on a FLEX product
-     * where Wildcard was not paid for. Messages are shown to the client.
+     * Refuses a main domain the service may not have. Messages are shown to the client.
+     *  - *. only on a wildcard product, or on a FLEX product with the Wildcard choice
+     *  - on a FLEX product the main domain matches the choice both ways: the provider charges by the main domain,
+     *    so a paid Wildcard ordered as a normal domain would let a later reissue to *. pass at the lower price
      */
     public static function assertCommonName(int $serviceId, string $commonName): void
     {
-        if(strpos(trim($commonName), '*.') !== 0)
-        {
-            return;
-        }
-        $packageId = (int)Capsule::table('tblhosting')->where('id', $serviceId)->value('packageid');
-        $product   = Capsule::table('tblproducts')->where('id', $packageId)->first(['configoption1', 'configoption2']);
+        $isWildcard = strpos(trim($commonName), '*.') === 0;
+        $packageId  = (int)Capsule::table('tblhosting')->where('id', $serviceId)->value('packageid');
+        $product    = Capsule::table('tblproducts')->where('id', $packageId)->first(['configoption1', 'configoption2']);
         if(!$product)
         {
             return;
@@ -116,19 +138,52 @@ class MainDomain
         {
             return; // no catalogue entry to judge by: the provider decides
         }
-        if(self::wildcardOnly($raw))
-        {
-            return;
-        }
         if(self::isChoice($raw, (string)$product->configoption1))
         {
-            if(self::serviceChoice($serviceId) === self::WILDCARD)
+            $choice = self::serviceChoice($serviceId) ?: self::STANDARD;
+            if($isWildcard && $choice !== self::WILDCARD)
             {
-                return;
+                throw new \Exception(self::text('needs_wildcard'));
             }
-            throw new \Exception(self::text('needs_wildcard'));
+            if(!$isWildcard && $choice === self::WILDCARD)
+            {
+                throw new \Exception(self::text('needs_wildcard_name'));
+            }
+
+            return;
         }
-        throw new \Exception(self::text('no_wildcard'));
+        if($isWildcard && !self::wildcardOnly($raw))
+        {
+            throw new \Exception(self::text('no_wildcard'));
+        }
+    }
+
+    /**
+     * Upgrade page: the main domain type of an ordered FLEX certificate is fixed (the order was placed and charged
+     * as that type - a change would bill or refund the client for nothing the certificate gets); '' when allowed
+     */
+    public static function changeError(int $serviceId, array $postedOptions): string
+    {
+        if(!self::flexProductOf($serviceId) || !SanUpgrade::isOrderedCertificate($serviceId))
+        {
+            return '';
+        }
+        $current = Capsule::table('tblhostingconfigoptions')
+            ->join('tblproductconfigoptions', 'tblproductconfigoptions.id', '=', 'tblhostingconfigoptions.configid')
+            ->where('tblhostingconfigoptions.relid', $serviceId)
+            ->where(function($q) {
+                foreach(self::OPTION_NAMES as $pattern)
+                {
+                    $q->orWhere('tblproductconfigoptions.optionname', 'like', $pattern);
+                }
+            })
+            ->first(['tblhostingconfigoptions.configid', 'tblhostingconfigoptions.optionid']);
+        if($current && isset($postedOptions[$current->configid]) && (int)$postedOptions[$current->configid] !== (int)$current->optionid)
+        {
+            return self::text('locked');
+        }
+
+        return '';
     }
 
     // ---- the product option ---- //
@@ -233,7 +288,9 @@ class MainDomain
     }
 
     const ENGLISH = [
-        'needs_wildcard' => 'A wildcard main domain (*.example.com) needs the "Wildcard domain" choice of this certificate. Upgrade the "Main domain" option of the service first, or use a normal domain.',
-        'no_wildcard'    => 'This certificate does not cover a wildcard main domain (*.example.com). Use a normal domain, or order a wildcard certificate.',
+        'needs_wildcard'      => 'This certificate was ordered with a standard main domain: use a normal domain (example.com). For a wildcard main domain (*.example.com), order the certificate with the "Wildcard domain" choice.',
+        'needs_wildcard_name' => 'This certificate was ordered with a wildcard main domain: enter it as *.example.com.',
+        'no_wildcard'         => 'This certificate does not cover a wildcard main domain (*.example.com). Use a normal domain, or order a wildcard certificate.',
+        'locked'              => 'The main domain type (standard or wildcard) of an ordered certificate cannot be changed. To change it, order a new certificate.',
     ];
 }

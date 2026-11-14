@@ -904,5 +904,7 @@ $_LANG['recordOnly']['valid_until'] = 'Valid until';
 $_LANG['recordOnly']['migrated_at'] = 'Migrated on';
 
 // main domain of FLEX products
-$_LANG['mainDomain']['needs_wildcard'] = 'A wildcard main domain (*.example.com) needs the "Wildcard domain" choice of this certificate. Upgrade the "Main domain" option of the service first, or use a normal domain.';
+$_LANG['mainDomain']['needs_wildcard'] = 'This certificate was ordered with a standard main domain: use a normal domain (example.com). For a wildcard main domain (*.example.com), order the certificate with the "Wildcard domain" choice.';
+$_LANG['mainDomain']['needs_wildcard_name'] = 'This certificate was ordered with a wildcard main domain: enter it as *.example.com.';
 $_LANG['mainDomain']['no_wildcard'] = 'This certificate does not cover a wildcard main domain (*.example.com). Use a normal domain, or order a wildcard certificate.';
+$_LANG['mainDomain']['locked'] = 'The main domain type (standard or wildcard) of an ordered certificate cannot be changed. To change it, order a new certificate.';

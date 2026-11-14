@@ -904,5 +904,7 @@ $_LANG['recordOnly']['valid_until'] = 'Gyldig til';
 $_LANG['recordOnly']['migrated_at'] = 'Migreret den';
 
 // main domain of FLEX products
-$_LANG['mainDomain']['needs_wildcard'] = 'Et wildcard-hoveddomæne (*.example.com) kræver valget "Wildcard-domæne" for dette certifikat. Opgrader først tjenestens "Hoveddomæne"-indstilling, eller brug et almindeligt domæne.';
+$_LANG['mainDomain']['needs_wildcard'] = 'Dette certifikat er bestilt med et standard-hoveddomæne: brug et almindeligt domæne (example.com). For et wildcard-hoveddomæne (*.example.com) skal certifikatet bestilles med valget "Wildcard-domæne".';
+$_LANG['mainDomain']['needs_wildcard_name'] = 'Dette certifikat er bestilt med et wildcard-hoveddomæne: indtast det som *.example.com.';
 $_LANG['mainDomain']['no_wildcard'] = 'Dette certifikat dækker ikke et wildcard-hoveddomæne (*.example.com). Brug et almindeligt domæne, eller bestil et wildcard-certifikat.';
+$_LANG['mainDomain']['locked'] = 'Hoveddomænets type (standard eller wildcard) for et bestilt certifikat kan ikke ændres. Bestil et nyt certifikat for at ændre det.';

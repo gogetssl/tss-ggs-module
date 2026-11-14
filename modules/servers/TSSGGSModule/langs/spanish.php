@@ -904,5 +904,7 @@ $_LANG['recordOnly']['valid_until'] = 'Válido hasta';
 $_LANG['recordOnly']['migrated_at'] = 'Migrado el';
 
 // main domain of FLEX products
-$_LANG['mainDomain']['needs_wildcard'] = 'Un dominio principal wildcard (*.example.com) requiere la opción "Dominio wildcard" de este certificado. Mejore primero la opción "Dominio principal" del servicio, o use un dominio normal.';
+$_LANG['mainDomain']['needs_wildcard'] = 'Este certificado se pidió con un dominio principal estándar: use un dominio normal (example.com). Para un dominio principal wildcard (*.example.com), pida el certificado con la opción "Dominio wildcard".';
+$_LANG['mainDomain']['needs_wildcard_name'] = 'Este certificado se pidió con un dominio principal wildcard: introdúzcalo como *.example.com.';
 $_LANG['mainDomain']['no_wildcard'] = 'Este certificado no cubre un dominio principal wildcard (*.example.com). Use un dominio normal, o pida un certificado wildcard.';
+$_LANG['mainDomain']['locked'] = 'El tipo de dominio principal (estándar o wildcard) de un certificado pedido no se puede cambiar. Para cambiarlo, pida un certificado nuevo.';

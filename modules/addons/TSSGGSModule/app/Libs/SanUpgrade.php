@@ -311,7 +311,7 @@ class SanUpgrade
         }
     }
 
-    protected static function isOrderedCertificate($serviceId)
+    public static function isOrderedCertificate($serviceId)
     {
         $product = Capsule::table('tblhosting')
             ->join('tblproducts', 'tblproducts.id', '=', 'tblhosting.packageid')

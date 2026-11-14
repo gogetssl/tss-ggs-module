@@ -211,6 +211,109 @@ class Writer
     }
 
     /**
+     * TheSSLStore FLEX products of the legacy module: it sold them at a product price of 0 with the whole price in its
+     * "CSR Domain" option (Standard / Wildcard). That option is hidden by writeProduct(), so the product would sell for
+     * nothing. The Standard price becomes the product price (where the product has none), the module's "main_domain"
+     * option gets Wildcard at the legacy difference (the reseller's own prices, not the catalogue), and the services
+     * move to the new option - their recurring totals stay the same. Undone by the rollback (row backups).
+     */
+    public function adoptLegacyMainDomain(array $product, array $remoteRaw): array
+    {
+        $legacy = null;
+        foreach((array)($product['other_options'] ?? []) as $option)
+        {
+            if(preg_match('/^CSR Domain/i', (string)$option['optionname']))
+            {
+                $legacy = $option;
+                break;
+            }
+        }
+        $pid = (int)$product['pid'];
+        if(!$legacy || !\ModulesGarden\TSSGGSModule\App\Libs\MainDomain::isChoice($remoteRaw, strtoupper($this->source)))
+        {
+            return [];
+        }
+        $subs = [];
+        foreach(Capsule::table('tblproductconfigoptionssub')->where('configid', (int)$legacy['id'])->get(['id', 'optionname']) as $sub)
+        {
+            $subs[stripos(trim((string)$sub->optionname), 'wild') === 0 ? 'wildcard' : 'standard'] = (int)$sub->id;
+        }
+        if(empty($subs['standard']))
+        {
+            return [];
+        }
+
+        $columns = ['msetupfee', 'qsetupfee', 'ssetupfee', 'asetupfee', 'bsetupfee', 'tsetupfee', 'monthly', 'quarterly', 'semiannually', 'annually', 'biennially', 'triennially'];
+        $cycles  = ['monthly', 'quarterly', 'semiannually', 'annually', 'biennially', 'triennially'];
+        $moved   = 0;
+        foreach(Capsule::table('tblpricing')->where('type', 'configoptions')->where('relid', $subs['standard'])->get() as $standard)
+        {
+            $row    = (array)Capsule::table('tblpricing')->where('type', 'product')->where('relid', $pid)->where('currency', (int)$standard->currency)->first();
+            $update = [];
+            foreach($cycles as $cycle)
+            {
+                // the product carried nothing for this cycle: the legacy Standard price is the certificate's price
+                if((float)$standard->$cycle > 0 && (!$row || (float)($row[$cycle] ?? 0) <= 0))
+                {
+                    $update[$cycle] = $standard->$cycle;
+                }
+            }
+            if($update)
+            {
+                Capsule::table('tblpricing')->updateOrInsert(['type' => 'product', 'relid' => $pid, 'currency' => (int)$standard->currency], $update + ($row ? [] : array_fill_keys(array_diff($columns, array_keys($update)), 0)));
+                $moved++;
+            }
+        }
+
+        // the module's option, Wildcard at the legacy difference
+        \ModulesGarden\TSSGGSModule\App\Libs\MainDomain::ensureOption($pid, $remoteRaw);
+        $option = Capsule::table('tblproductconfiglinks')->join('tblproductconfigoptions', 'tblproductconfigoptions.gid', '=', 'tblproductconfiglinks.gid')
+            ->where('tblproductconfiglinks.pid', $pid)->where('tblproductconfigoptions.optionname', 'like', \ModulesGarden\TSSGGSModule\App\Libs\MainDomain::OPTION . '|%')
+            ->value('tblproductconfigoptions.id');
+        if(!$option)
+        {
+            return ['main_domain' => 'option not created'];
+        }
+        $newSubs = [];
+        foreach(Capsule::table('tblproductconfigoptionssub')->where('configid', (int)$option)->get(['id', 'optionname']) as $sub)
+        {
+            $newSubs[explode('|', (string)$sub->optionname)[0]] = (int)$sub->id;
+        }
+        if(!empty($subs['wildcard']) && !empty($newSubs['wildcard']))
+        {
+            foreach(Capsule::table('tblpricing')->where('type', 'configoptions')->where('relid', $subs['wildcard'])->get() as $wildcard)
+            {
+                $standard = (array)Capsule::table('tblpricing')->where('type', 'configoptions')->where('relid', $subs['standard'])->where('currency', (int)$wildcard->currency)->first();
+                $update   = [];
+                foreach($cycles as $cycle)
+                {
+                    if((float)$wildcard->$cycle > 0)
+                    {
+                        $update[$cycle] = max(0, round((float)$wildcard->$cycle - max(0, (float)($standard[$cycle] ?? 0)), 2));
+                    }
+                }
+                if($update)
+                {
+                    Capsule::table('tblpricing')->where('type', 'configoptions')->where('relid', $newSubs['wildcard'])->where('currency', (int)$wildcard->currency)->update($update);
+                }
+            }
+        }
+
+        // the services keep their choice on the new option
+        $remapped = 0;
+        foreach(['standard', 'wildcard'] as $choice)
+        {
+            if(!empty($subs[$choice]) && !empty($newSubs[$choice]))
+            {
+                $remapped += Capsule::table('tblhostingconfigoptions')->where('configid', (int)$legacy['id'])->where('optionid', $subs[$choice])
+                    ->update(['configid' => (int)$option, 'optionid' => $newSubs[$choice]]);
+            }
+        }
+
+        return ['main_domain' => ['legacy_option' => (int)$legacy['id'], 'option' => (int)$option, 'prices_moved' => $moved, 'services' => $remapped]];
+    }
+
+    /**
      * A legacy product without a gateway equivalent, kept for its records (App\Libs\RecordOnly): on the module but
      * without a gateway product, hidden and retired so it is never ordered again
      */
@@ -484,11 +587,17 @@ class Writer
         {
             return [];
         }
-        $prefix  = \ModulesGarden\TSSGGSModule\App\Libs\CodeSigningService::OPTION_PROVISIONING . '|';
-        $options = Capsule::table('tblproductconfiglinks')
+        // options the run may create: code signing "Certificate Delivery", the FLEX "main_domain" choice
+        $prefixes = [\ModulesGarden\TSSGGSModule\App\Libs\CodeSigningService::OPTION_PROVISIONING . '|', \ModulesGarden\TSSGGSModule\App\Libs\MainDomain::OPTION . '|'];
+        $options  = Capsule::table('tblproductconfiglinks')
             ->join('tblproductconfigoptions', 'tblproductconfigoptions.gid', '=', 'tblproductconfiglinks.gid')
             ->whereIn('tblproductconfiglinks.pid', $pids)
-            ->where('tblproductconfigoptions.optionname', 'like', str_replace(['%', '_'], ['\\%', '\\_'], $prefix) . '%')
+            ->where(function($q) use ($prefixes) {
+                foreach($prefixes as $prefix)
+                {
+                    $q->orWhere('tblproductconfigoptions.optionname', 'like', str_replace(['%', '_'], ['\\%', '\\_'], $prefix) . '%');
+                }
+            })
             ->get(['tblproductconfigoptions.id', 'tblproductconfigoptions.gid']);
 
         $removed = [];

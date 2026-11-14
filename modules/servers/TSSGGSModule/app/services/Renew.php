@@ -198,6 +198,10 @@ class Renew
         $end  = strtotime((string)(CertificateService::stored($serviceId)['orderFiles']['validity']['end'] ?? '')) ?: $now;
         $days = round(($end - $now) / (60 * 60 * 24));
 
+        // FLEX products: the provider charges the renewal by its main domain - it must match what the client pays for
+        // (refused: the caller asks the client for new details instead)
+        \ModulesGarden\TSSGGSModule\App\Libs\MainDomain::assertCommonName((int)$serviceId, (string)($requestRenew['common_name']['name'] ?? ''));
+
         $requestRenew['renewal']['prior_order_id'] = $requestRenew['renewal']['prior_certificate_id'] = $sslOrder->remoteid;
         $requestRenew['renewal']['remaining_days'] = CertificateService::renewalDays($serviceId, $days > 0 ? $days + 1 : 0);
 

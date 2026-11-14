@@ -904,5 +904,7 @@ $_LANG['recordOnly']['valid_until'] = 'Gültig bis';
 $_LANG['recordOnly']['migrated_at'] = 'Migriert am';
 
 // main domain of FLEX products
-$_LANG['mainDomain']['needs_wildcard'] = 'Eine Wildcard-Hauptdomain (*.example.com) erfordert die Auswahl "Wildcard-Domain" dieses Zertifikats. Ändern Sie zuerst die Option "Hauptdomain" des Dienstes oder verwenden Sie eine normale Domain.';
+$_LANG['mainDomain']['needs_wildcard'] = 'Dieses Zertifikat wurde mit einer Standard-Hauptdomain bestellt: verwenden Sie eine normale Domain (example.com). Für eine Wildcard-Hauptdomain (*.example.com) bestellen Sie das Zertifikat mit der Auswahl "Wildcard-Domain".';
+$_LANG['mainDomain']['needs_wildcard_name'] = 'Dieses Zertifikat wurde mit einer Wildcard-Hauptdomain bestellt: geben Sie sie als *.example.com ein.';
 $_LANG['mainDomain']['no_wildcard'] = 'Dieses Zertifikat deckt keine Wildcard-Hauptdomain (*.example.com) ab. Verwenden Sie eine normale Domain oder bestellen Sie ein Wildcard-Zertifikat.';
+$_LANG['mainDomain']['locked'] = 'Die Art der Hauptdomain (Standard oder Wildcard) eines bestellten Zertifikats kann nicht geändert werden. Bestellen Sie dafür ein neues Zertifikat.';
