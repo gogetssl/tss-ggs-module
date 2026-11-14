@@ -54,6 +54,24 @@ class ProductMapper
         return $list;
     }
 
+    /** A gateway product of a vendor by its id (null when unknown or empty) */
+    public function product(string $vendor, string $remoteId)
+    {
+        if($remoteId === '' || $remoteId === self::RECORD)
+        {
+            return null;
+        }
+        foreach($this->byVendor[strtoupper($vendor)] ?? [] as $product)
+        {
+            if((string)$product->remoteId === $remoteId)
+            {
+                return $product;
+            }
+        }
+
+        return null;
+    }
+
     /** The gateway product chosen for a legacy reference (null: none chosen, or kept as a record) */
     protected function chosen(string $vendor, string $ref)
     {

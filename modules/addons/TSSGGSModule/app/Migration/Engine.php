@@ -434,6 +434,11 @@ class Engine
             {
                 $p   = $this->reader->readProduct($pid);
                 $ref = strtolower(trim((string)$p['legacy_product_ref'])) ?: 'product-' . $pid;
+                // an alternative chosen for a product the reader could not look up by itself (no legacy code)
+                if(!$p['remote_product'] && empty($p['unsupported']))
+                {
+                    $p['remote_product'] = $this->mapper->product(strtoupper($this->source), (string)$this->mapper->override($ref));
+                }
                 // no gateway product, kept as a record (the administrator's choice before the run)
                 if((!$p['remote_product'] || !empty($p['unsupported'])) && $this->mapper->isRecord($ref))
                 {
@@ -807,6 +812,21 @@ class Engine
                 $this->log($runId, 'warning', self::PHASE_SERVICES, 'Skipped: product not migrated', ['product_id' => $rec['product_id']], $serviceId);
 
                 return;
+            }
+            // the service's own code is unknown but its product now points at a gateway product (mapped, or the
+            // alternative chosen for it): the service follows its product
+            if(!empty($rec['order_payload']) && (string)($rec['order_payload']['product']['id'] ?? '') === '' && ($code === '' || $this->mapper->override($code) === null))
+            {
+                $productRemote = trim((string)Capsule::table('tblproducts')->where('id', $pid)->value('configoption2'));
+                if($productRemote !== '')
+                {
+                    $rec['order_payload']['product']['id'] = \ModulesGarden\TSSGGSModule\App\Migration\Readers\AbstractReader::productIdValue($productRemote);
+                    if(isset($rec['certificate']) && is_array($rec['certificate']) && array_key_exists('remote_product_id', $rec['certificate']) && (string)$rec['certificate']['remote_product_id'] === '')
+                    {
+                        $rec['certificate']['remote_product_id'] = $productRemote;
+                    }
+                    $rec['warnings'][] = 'Order product code "' . $code . '" unknown to the gateway: the service follows its product (' . $productRemote . ')';
+                }
             }
             if(!empty($rec['order_payload']) && (string)($rec['order_payload']['product']['id'] ?? '') === '')
             {
