@@ -580,3 +580,52 @@ add_hook('AfterModuleCreate', 1, function($vars) {
         logActivity('TSSGGSModule order auto-accept: ' . $e->getMessage());
     }
 });
+
+// ---- Renewal invoices: the module creates them, never WHMCS (App\Libs\RenewalPolicy) ---- //
+// WHMCS invoices a service when its next invoice date enters the generation window. Right before it generates
+// invoices, the module's recurring services have that date moved out of the window; right after, it is put back.
+// So a renewal is billed once, on the module's terms (N days before the order end, at most 30), and the dates the
+// administrator sees do not change.
+add_hook('PreInvoicingGenerateInvoiceItems', 1, function($vars) {
+    try
+    {
+        $rows = Capsule::table('tblhosting')
+            ->join('tblproducts', 'tblproducts.id', '=', 'tblhosting.packageid')
+            ->where('tblproducts.servertype', 'TSSGGSModule')
+            ->whereNotIn('tblhosting.billingcycle', ['One Time', 'Free Account', 'Free'])
+            ->where('tblhosting.nextinvoicedate', '>', '2000-01-01')
+            ->where('tblhosting.nextinvoicedate', '<', '2099-01-01')
+            ->get(['tblhosting.id', 'tblhosting.nextinvoicedate']);
+
+        $GLOBALS['tssggs_renewal_invoice_dates'] = [];
+        foreach($rows as $row)
+        {
+            $GLOBALS['tssggs_renewal_invoice_dates'][(int)$row->id] = (string)$row->nextinvoicedate;
+        }
+        if($GLOBALS['tssggs_renewal_invoice_dates'])
+        {
+            Capsule::table('tblhosting')->whereIn('id', array_keys($GLOBALS['tssggs_renewal_invoice_dates']))->update(['nextinvoicedate' => '2099-12-31']);
+        }
+    }
+    catch(\Throwable $e)
+    {
+        logActivity('TSSGGSModule renewal invoices: WHMCS invoicing could not be held back: ' . $e->getMessage());
+    }
+});
+
+add_hook('AfterInvoicingGenerateInvoiceItems', 1, function($vars) {
+    $dates = isset($GLOBALS['tssggs_renewal_invoice_dates']) ? (array)$GLOBALS['tssggs_renewal_invoice_dates'] : [];
+    unset($GLOBALS['tssggs_renewal_invoice_dates']);
+    foreach($dates as $serviceId => $date)
+    {
+        try
+        {
+            // only where nothing else moved it in the meantime
+            Capsule::table('tblhosting')->where('id', (int)$serviceId)->where('nextinvoicedate', '2099-12-31')->update(['nextinvoicedate' => $date]);
+        }
+        catch(\Throwable $e)
+        {
+            logActivity('TSSGGSModule renewal invoices: next invoice date of service #' . (int)$serviceId . ' could not be put back: ' . $e->getMessage());
+        }
+    }
+});
