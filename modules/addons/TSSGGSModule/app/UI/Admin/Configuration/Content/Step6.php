@@ -24,6 +24,15 @@ class Step6 extends Widget implements AjaxComponentInterface
         $text->setText($this->translate('title_alert'));
         $this->addElement($text);
 
+        // "migrate" was chosen but no run has completed ("Later" in the migration step)
+        if(\ModulesGarden\TSSGGSModule\App\UI\Admin\Configuration\Shared\WizardLayout::migrationPlanned() && !$this->migrationCompleted())
+        {
+            $text = new Text();
+            $text->setCss('api_alert');
+            $text->setText('<div class="tssggs-note is-warn">' . $this->translate('migration_pending') . '</div>');
+            $this->addElement($text);
+        }
+
         $text = new Text();
         $text->setCss('api_alert');
         $text->setText($this->translate('step6_api'));
@@ -50,5 +59,20 @@ class Step6 extends Widget implements AjaxComponentInterface
         $this->addElement($text);
 
         $this->addElement(new FinalizeForm());
+    }
+
+    protected function migrationCompleted(): bool
+    {
+        try
+        {
+            \ModulesGarden\TSSGGSModule\App\Migration\Store::createTables();
+
+            return \WHMCS\Database\Capsule::table(\ModulesGarden\TSSGGSModule\App\Migration\Store::runsTable())
+                ->where('source', \ModulesGarden\TSSGGSModule\App\Libs\Edition::get())->where('status', \ModulesGarden\TSSGGSModule\App\Migration\Store::RUN_COMPLETED)->exists();
+        }
+        catch(\Throwable $e)
+        {
+            return false;
+        }
     }
 }
