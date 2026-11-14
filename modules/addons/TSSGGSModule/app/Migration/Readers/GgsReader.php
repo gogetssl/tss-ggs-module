@@ -85,6 +85,11 @@ class GgsReader extends AbstractReader
         return [];
     }
 
+    public function freezeTables(): array
+    {
+        return [];
+    }
+
     // ---- Settings ---- //
 
     protected function settings(): array

@@ -83,4 +83,7 @@ interface LegacyReaderInterface
      * products). Called once in the switch phase; must be undone by the rollback through the table backups.
      */
     public function freeze(): array;
+
+    /** Tables freeze() changes: backed up before it runs, so a rollback restores them as they were */
+    public function freezeTables(): array;
 }

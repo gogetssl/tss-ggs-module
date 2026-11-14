@@ -75,6 +75,11 @@ class TssReader extends AbstractReader
         return ['php -q {WHMCS}/modules/addons/thesslstorefullv2_admin/tss_cron.php'];
     }
 
+    public function freezeTables(): array
+    {
+        return array_values(array_filter(['mod_sslstore_settings_v2', 'mod_sslstore_crons'], [Schema::class, 'tableExists']));
+    }
+
     public function freeze(): array
     {
         $done = [];

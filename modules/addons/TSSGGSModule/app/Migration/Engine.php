@@ -218,13 +218,27 @@ class Engine
 
         try
         {
-            // 1. backups
-            $backup  = new Backup($runId);
-            $tables  = [];
+            // 1. the legacy module stops first, so the backups below are one consistent picture (its cron must not
+            //    write half way through them). What the pause changes is backed up before it - a rollback puts it
+            //    back: the WHMCS hook lists (its hooks are not loaded while it is out of them) and its schedule.
+            $backup   = new Backup($runId);
+            $tables   = [];
+            $tables[] = $backup->copyRows('tblconfiguration', function($q) { $q->whereIn('setting', self::HOOK_LISTS); });
+            $early    = $this->reader->freezeTables();
+            foreach($early as $table)
+            {
+                $tables[] = $backup->copyTable($table);
+            }
+            $hookLists = $this->pauseLegacyHooks();
+            $frozen    = $this->reader->freeze();
+            LegacyBlock::reset();
+            $this->log($runId, 'info', self::PHASE_PREPARE, 'Legacy module paused until the run ends: its hooks, schedule, scripts, client and admin actions and module commands', ['hook_lists' => array_keys($hookLists), 'frozen' => $frozen]);
+
+            // 2. backups
             $skipLog = $options['backup_logs'] ? [] : ['SSLCENTER_logs', 'mod_sslstore_logs', 'mod_autoinstallssl_logs'];
             foreach($this->reader->tables() as $table)
             {
-                if(in_array($table, $skipLog, true))
+                if(in_array($table, $skipLog, true) || in_array($table, $early, true))
                 {
                     continue;
                 }
@@ -244,7 +258,6 @@ class Engine
             $subIds     = $optionIds ? array_map('intval', Capsule::table('tblproductconfigoptionssub')->whereIn('configid', $optionIds)->pluck('id')->all()) : [];
             $tables[]   = $backup->copyRows('tblpricing', function($q) use ($subIds) { $q->where('type', 'configoptions')->whereIn('relid', $subIds ?: [0]); });
             $tables[]   = $backup->copyRows('tbladdonmodules', function($q) { $q->whereIn('module', ['configuration_' . Writer::MODULE, $this->reader->addonName()]); });
-            $tables[]   = $backup->copyRows('tblconfiguration', function($q) { $q->where('setting', 'ActiveAddonModules'); });
             if(!empty($options['copy_templates']))
             {
                 // the unified e-mail templates the copy may overwrite
@@ -259,19 +272,9 @@ class Engine
                 'backup_prefix'     => $backup->prefix(),
                 'backup_expires_at' => date('Y-m-d H:i:s', strtotime('+' . Store::BACKUP_RETENTION_DAYS . ' days')),
                 'snapshot_at'       => date('Y-m-d H:i:s'),
-                'summary'           => ['backups' => $backup->tables(), 'snapshot_max_order_id' => $maxOrderId, 'products' => [], 'settings_filled' => []],
+                'summary'           => ['backups' => $backup->tables(), 'snapshot_max_order_id' => $maxOrderId, 'products' => [], 'settings_filled' => [], 'hook_lists' => $hookLists],
             ]);
             $this->log($runId, 'info', self::PHASE_PREPARE, 'Backups written', ['tables' => $tables]);
-
-            // the legacy module's own automation stops now (not only at the switch): while the services are processed
-            // it must not act on products and orders that are half way to the new module. Its tables are in the backup.
-            $frozen = $this->reader->freeze();
-            if($frozen)
-            {
-                $this->log($runId, 'info', self::PHASE_PREPARE, 'Legacy automation frozen', ['changes' => $frozen]);
-            }
-            LegacyBlock::reset();
-            $this->log($runId, 'info', self::PHASE_PREPARE, 'Legacy module paused for the services of this run (client and admin actions, module commands, its own scripts) until it ends');
 
             // every service is looked up by its id in these tables; without an index each lookup reads the whole
             // table and a large install slows down with its own size. Added for the run, dropped when it ends.
@@ -447,6 +450,44 @@ class Engine
         $this->switchPhase($runId, $writer, $products);
 
         return $this->status($runId);
+    }
+
+    /** tblconfiguration rows the run changes: backed up first, restored by the rollback */
+    const HOOK_LISTS = ['ActiveAddonModules', 'AddonModulesHooks', 'ModuleHooks'];
+
+    /**
+     * WHMCS loads the hooks of the addons in AddonModulesHooks and of the server modules in ModuleHooks only. The legacy
+     * module is taken out of both for the run (its invoice, cron and cancellation hooks would act on services half
+     * way to the new module). Returns the values before, for the switch to put back.
+     */
+    protected function pauseLegacyHooks(): array
+    {
+        $before = [];
+        foreach(['AddonModulesHooks' => $this->reader->addonName(), 'ModuleHooks' => $this->reader->serverType()] as $setting => $module)
+        {
+            $value = Capsule::table('tblconfiguration')->where('setting', $setting)->value('value');
+            if($value === null)
+            {
+                continue;
+            }
+            $before[$setting] = (string)$value;
+            $list = array_filter(array_map('trim', explode(',', (string)$value)), function($name) use ($module) {
+                return $name !== '' && strcasecmp($name, $module) !== 0;
+            });
+            Capsule::table('tblconfiguration')->where('setting', $setting)->update(['value' => implode(',', $list)]);
+        }
+
+        return $before;
+    }
+
+    /** The hook lists as they were before the run (services the run left on the legacy module keep its hooks) */
+    protected static function restoreHookLists(int $runId): void
+    {
+        $run = Store::getRun($runId);
+        foreach((array)($run['summary']['hook_lists'] ?? []) as $setting => $value)
+        {
+            Capsule::table('tblconfiguration')->where('setting', $setting)->update(['value' => (string)$value]);
+        }
     }
 
     /** [table, column] looked up per service by the readers and the switch; indexed for the run when they have none */
@@ -690,6 +731,9 @@ class Engine
             Store::mergeSummary($runId, ['snapshot_max_order_id' => (int)Capsule::table('tblsslorders')->max('id')]);
             $this->log($runId, 'info', self::PHASE_SWITCH, 'Switched to the unified module', ['products' => count($products), 'orders' => count($doneOrderIds)]);
 
+            // the legacy hooks come back for what stays on the legacy module; the deactivation below takes the addon's out
+            self::restoreHookLists($runId);
+
             // legacy addon off (its tables stay; rollback reactivates it)
             $deactivated = null;
             if(!empty($run['options']['deactivate_legacy']))
@@ -905,7 +949,14 @@ class Engine
         Store::updateRun($runId, ['status' => Store::RUN_ROLLED_BACK, 'finished_at' => date('Y-m-d H:i:s')]);
         Store::log($runId, 'info', self::PHASE_ROLLBACK, 'Rollback completed', ['legacy_reactivated' => $reactivated]);
 
-        // commands held while the legacy module was paused: back on the legacy module, they run there
+        // commands held while the legacy module was paused and already run on the new module after the switch: the
+        // rollback does not undo them (they are ordinary module actions) - listed for a check on the legacy module
+        foreach(Store::jobsByStatus($runId, LegacyBlock::KIND_HELD, Store::JOB_DONE) as $job)
+        {
+            Store::log($runId, 'warning', self::PHASE_ROLLBACK, $job['reason'] . ' ran on the new module after the switch and is not rolled back: check this service on the legacy module', [], (int)$job['object_id']);
+        }
+
+        // commands still held: back on the legacy module, they run there
         $held = LegacyBlock::replay($runId);
 
         return ['ok' => true, 'legacy_reactivated' => $reactivated, 'held_commands' => $held];
