@@ -1,3 +1,32 @@
+1.7.1 (2026-11-14)
+Security
+- The SSL configuration step no longer stores the client's WHMCS session id:
+  it was written to the DemonTask table for every order that came back as
+  "processing", for a task runner that never ran. The table is dropped on
+  upgrade (with any session ids in it); processing orders are picked up by
+  the SSLCertificatesProcessing cron as before.
+- feeds/productsinfo2.php is no longer shipped. It answered get=configoption
+  for any product without a login (configuration fields of every module,
+  hidden products too) and added nothing for this module.
+  DELETE feeds/productsinfo2.php from your WHMCS folder - an upgrade does not
+  remove files - unless the legacy GoGetSSL module still uses it. Price
+  widgets: WHMCS's own feeds/productsinfo.php.
+- feeds/WHMCS_cpanel.pdf is no longer shipped; it can be deleted too.
+- The module's PHP files run only inside WHMCS: a direct web request gets
+  403 and no output (no error with the server path). Apache: a .htaccess in
+  both module folders refuses direct PHP requests, except the stylesheet /
+  script builders (resources/build/css.php, js.php, components.php). nginx
+  ignores .htaccess - add:
+    location ~ ^/modules/(addons|servers)/(TSSPlugin|GGSModule)/(?!.*resources/build/(css|js|components)\.php$).*\.php$ { deny all; }
+
+Other
+- Certificate e-mails: the attachment copies written to the WHMCS
+  attachments folder are removed once the e-mail is sent (one pair per
+  e-mail stayed behind); the download ZIP's temp file is removed also when
+  building it fails.
+- Removed: the unused multi-process task runner (cron/cronScript.php) and
+  developer files (.php-cs-fixer.php, .gitlab-ci.yml).
+
 1.7.0 (2026-11-14)
 Migration from the legacy module
 - The migration is a step of the setup wizard: when "migrate" is chosen for the
