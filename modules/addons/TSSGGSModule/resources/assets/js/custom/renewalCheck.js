@@ -78,6 +78,9 @@
 
     document.addEventListener('change', drawAll, true);
     document.addEventListener('input', drawAll, true);
+    // the dropdown picks an option on mousedown and no click follows, so mouse buttons are watched too
+    document.addEventListener('mousedown', soon, true);
+    document.addEventListener('mouseup', soon, true);
     document.addEventListener('click', soon, true);
     document.addEventListener('keyup', soon, true);
 })();
