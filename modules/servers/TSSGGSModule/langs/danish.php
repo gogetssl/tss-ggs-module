@@ -881,3 +881,12 @@ $_LANG['serverCA']['home']['sslConfigAutoinstallHint'] = 'Vi genererer CSR, vali
 $_LANG['serverCA']['home']['sslConfigManualHint'] = 'Virker med enhver server. Du leverer CSR og installerer certifikatet selv.';
 $_LANG['serverCA']['home']['sslConfigRequiredNote'] = 'Felter markeret med * er obligatoriske.';
 $_LANG['sslRenewalPendingNotice'] = 'Dette er fornyelsen af dit certifikat. Dit nuværende certifikat forbliver gyldigt og kan downloades indtil %s.';
+
+// legacy module paused during a migration (M-25)
+$_LANG['migrationPause']['client'] = 'Dette certifikat flyttes til vores nye SSL-system. Ændringer er sat på pause i nogle minutter - prøv igen om lidt.';
+$_LANG['migrationPause']['admin'] = 'Migrering #:id flytter denne tjeneste til :module. Indtil den slutter, er det gamle modul sat på pause for den: at gemme tjenesten og modulhandlinger venter. En betalt ordre, fornyelse eller opgradering holdes tilbage og kører automatisk, når migreringen er slut.';
+$_LANG['migrationPause']['admin_failed'] = 'Migrering #:id stoppede med en fejl. Det gamle modul forbliver på pause for denne tjeneste, indtil migreringen rulles tilbage (Addons > :module > Migration).';
+$_LANG['migrationPause']['held_list'] = 'Holdt tilbage til efter migreringen: :commands';
+$_LANG['migrationPause']['tab_title'] = 'Migrering';
+$_LANG['migrationPause']['paused_script'] = 'Det gamle SSL-modul er sat på pause, mens migrering #:id flytter dets tjenester til :module.';
+$_LANG['migrationPause']['open_migration'] = 'Åbn migreringen';

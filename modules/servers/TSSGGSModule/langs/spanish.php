@@ -881,3 +881,12 @@ $_LANG['serverCA']['home']['sslConfigAutoinstallHint'] = 'Generamos el CSR, vali
 $_LANG['serverCA']['home']['sslConfigManualHint'] = 'Funciona con cualquier servidor. Usted aporta el CSR e instala el certificado.';
 $_LANG['serverCA']['home']['sslConfigRequiredNote'] = 'Los campos marcados con * son obligatorios.';
 $_LANG['sslRenewalPendingNotice'] = 'Esta es la renovación de su certificado. Su certificado actual sigue siendo válido y se puede descargar hasta el %s.';
+
+// legacy module paused during a migration (M-25)
+$_LANG['migrationPause']['client'] = 'Este certificado se está trasladando a nuestro nuevo sistema SSL. Los cambios están en pausa unos minutos - inténtelo de nuevo en breve.';
+$_LANG['migrationPause']['admin'] = 'La migración #:id está trasladando este servicio a :module. Hasta que termine, el módulo antiguo está en pausa para él: guardar el servicio y las acciones del módulo esperan. Un pedido, renovación o mejora pagados se retienen y se ejecutan automáticamente al terminar la migración.';
+$_LANG['migrationPause']['admin_failed'] = 'La migración #:id se detuvo con un error. El módulo antiguo sigue en pausa para este servicio hasta que se revierta la migración (Addons > :module > Migration).';
+$_LANG['migrationPause']['held_list'] = 'Retenido para después de la migración: :commands';
+$_LANG['migrationPause']['tab_title'] = 'Migración';
+$_LANG['migrationPause']['paused_script'] = 'El módulo SSL antiguo está en pausa mientras la migración #:id traslada sus servicios a :module.';
+$_LANG['migrationPause']['open_migration'] = 'Abrir la migración';

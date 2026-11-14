@@ -270,6 +270,8 @@ class Engine
             {
                 $this->log($runId, 'info', self::PHASE_PREPARE, 'Legacy automation frozen', ['changes' => $frozen]);
             }
+            LegacyBlock::reset();
+            $this->log($runId, 'info', self::PHASE_PREPARE, 'Legacy module paused for the services of this run (client and admin actions, module commands, its own scripts) until it ends');
 
             // 2. settings
             $writer = new Writer($runId, $this->source);
@@ -643,6 +645,13 @@ class Engine
             ]);
             Store::updateRun($runId, ['status' => Store::RUN_COMPLETED, 'finished_at' => date('Y-m-d H:i:s'), 'last_error' => $verify['ok'] ? null : implode('; ', $verify['problems'])]);
             $this->log($runId, $verify['ok'] ? 'info' : 'warning', self::PHASE_SWITCH, 'Migration completed' . ($verify['ok'] ? '' : ' with verification warnings'), $verify);
+
+            // orders, renewals and upgrades paid while the legacy module was paused: now on the unified module
+            $held = LegacyBlock::replay($runId);
+            if($held['done'] || $held['failed'])
+            {
+                Store::mergeSummary($runId, ['held_commands' => $held]);
+            }
         }
         catch(\Throwable $e)
         {
@@ -830,7 +839,10 @@ class Engine
         Store::updateRun($runId, ['status' => Store::RUN_ROLLED_BACK, 'finished_at' => date('Y-m-d H:i:s')]);
         Store::log($runId, 'info', self::PHASE_ROLLBACK, 'Rollback completed', ['legacy_reactivated' => $reactivated]);
 
-        return ['ok' => true, 'legacy_reactivated' => $reactivated];
+        // commands held while the legacy module was paused: back on the legacy module, they run there
+        $held = LegacyBlock::replay($runId);
+
+        return ['ok' => true, 'legacy_reactivated' => $reactivated, 'held_commands' => $held];
     }
 
     /**

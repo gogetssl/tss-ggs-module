@@ -881,3 +881,12 @@ $_LANG['serverCA']['home']['sslConfigAutoinstallHint'] = 'Vygenerujeme CSR, ově
 $_LANG['serverCA']['home']['sslConfigManualHint'] = 'Funguje na libovolném serveru. CSR dodáte a certifikát nainstalujete sami.';
 $_LANG['serverCA']['home']['sslConfigRequiredNote'] = 'Pole označená * jsou povinná.';
 $_LANG['sslRenewalPendingNotice'] = 'Toto je obnovení vašeho certifikátu. Váš současný certifikát zůstává platný a lze jej stáhnout do %s.';
+
+// legacy module paused during a migration (M-25)
+$_LANG['migrationPause']['client'] = 'Tento certifikát se přesouvá do našeho nového SSL systému. Změny jsou na několik minut pozastaveny - zkuste to prosím za chvíli znovu.';
+$_LANG['migrationPause']['admin'] = 'Migrace #:id přesouvá tuto službu do :module. Do jejího konce je pro ni starý modul pozastaven: uložení služby a akce modulu čekají. Zaplacená objednávka, obnovení nebo upgrade se podrží a po skončení migrace proběhne automaticky.';
+$_LANG['migrationPause']['admin_failed'] = 'Migrace #:id skončila chybou. Starý modul zůstává pro tuto službu pozastaven, dokud se migrace nevrátí zpět (Addons > :module > Migration).';
+$_LANG['migrationPause']['held_list'] = 'Podrženo na dobu po migraci: :commands';
+$_LANG['migrationPause']['tab_title'] = 'Migrace';
+$_LANG['migrationPause']['paused_script'] = 'Starý SSL modul je pozastaven, zatímco migrace #:id přesouvá jeho služby do :module.';
+$_LANG['migrationPause']['open_migration'] = 'Otevřít migraci';

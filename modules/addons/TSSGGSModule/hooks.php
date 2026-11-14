@@ -10,3 +10,6 @@ if(file_exists($serverHooks))
 {
     require_once $serverHooks;
 }
+
+// while a migration moves the legacy module's services, that module is paused for them (requests, commands, crons)
+\ModulesGarden\TSSGGSModule\App\Migration\LegacyBlock::register();

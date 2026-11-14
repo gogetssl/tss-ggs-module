@@ -881,3 +881,12 @@ $_LANG['serverCA']['home']['sslConfigAutoinstallHint'] = 'We generate the CSR, v
 $_LANG['serverCA']['home']['sslConfigManualHint'] = 'Works with any server. You provide the CSR and install the certificate yourself.';
 $_LANG['serverCA']['home']['sslConfigRequiredNote'] = 'Fields marked * are required.';
 $_LANG['sslRenewalPendingNotice'] = 'This is the renewal of your certificate. Your current certificate stays valid and can be downloaded until %s.';
+
+// legacy module paused during a migration (M-25)
+$_LANG['migrationPause']['client'] = 'This certificate is being moved to our new SSL system. Changes are paused for a few minutes - please try again shortly.';
+$_LANG['migrationPause']['admin'] = 'Migration #:id is moving this service to :module. Until it ends, the legacy module is paused for it: saving the service and its module actions wait. A paid order, renewal or upgrade is held and runs automatically when the migration has ended.';
+$_LANG['migrationPause']['admin_failed'] = 'Migration #:id stopped with an error. The legacy module stays paused for this service until the migration is rolled back (Addons > :module > Migration).';
+$_LANG['migrationPause']['held_list'] = 'Held for after the migration: :commands';
+$_LANG['migrationPause']['tab_title'] = 'Migration';
+$_LANG['migrationPause']['paused_script'] = 'The legacy SSL module is paused while migration #:id moves its services to :module.';
+$_LANG['migrationPause']['open_migration'] = 'Open the migration';
