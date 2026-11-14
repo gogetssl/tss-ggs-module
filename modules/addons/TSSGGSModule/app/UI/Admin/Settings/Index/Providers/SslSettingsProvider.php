@@ -69,11 +69,13 @@ class SslSettingsProvider extends CrudProvider
         $this->availableValues['autoReissueDaysBeforeExpire']           = array_combine($reissueDays, $reissueDays);
         $this->availableValues['recurringDaysBeforeExpirySubscription'] = $this->dayOptions(RenewalPolicy::LEAD_OPTIONS, 'recurringDaysBeforeExpirySubscription');
         $this->availableValues['recurringPaymentTermSubscription']      = $this->dayOptions(RenewalPolicy::TERM_OPTIONS, 'recurringPaymentTermSubscription');
-        $this->availableValues['pendingPaymentWaitSubscription']        = [];
+        // built first and assigned whole: availableValues is not a plain array, a nested write would be lost
+        $pendingWait = [];
         foreach(RenewalPolicy::PENDING_WAIT_OPTIONS as $days)
         {
-            $this->availableValues['pendingPaymentWaitSubscription'][(string)$days] = $this->translate('pendingWait_' . $days);
+            $pendingWait[(string)$days] = $this->translate('pendingWait_' . $days);
         }
+        $this->availableValues['pendingPaymentWaitSubscription']        = $pendingWait;
         $this->availableValues['subscriptionSlotPricing']               = [
             \ModulesGarden\TSSGGSModule\App\Libs\SubscriptionBilling::SLOT_PRICING_PRORATED => $this->translate('subscriptionSlotPricing_prorated'),
             \ModulesGarden\TSSGGSModule\App\Libs\SubscriptionBilling::SLOT_PRICING_FULL     => $this->translate('subscriptionSlotPricing_full'),
