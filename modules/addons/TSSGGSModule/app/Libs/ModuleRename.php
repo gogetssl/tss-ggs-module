@@ -34,7 +34,17 @@ class ModuleRename
                 continue;
             }
 
-            $done = array_merge($done, self::products($old, $new), self::addonSettings($old, $new), self::servers($old, $new));
+            // MySQL compares these columns without regard to case, so a name that differs from the old one only
+            // in case is already the same name to the database: the rows are found as they are and only their
+            // spelling is brought up to date. Nothing may be deleted in that case - it would delete the rows in use.
+            $sameToTheDatabase = strcasecmp($old, $new) === 0;
+
+            $done = array_merge(
+                $done,
+                self::products($old, $new),
+                self::addonSettings($old, $new, $sameToTheDatabase),
+                self::servers($old, $new)
+            );
         }
 
         return $done;
@@ -60,13 +70,23 @@ class ModuleRename
     /**
      * The addon's settings, and the module's own settings namespace ("configuration_<module>")
      */
-    protected static function addonSettings($old, $new): array
+    protected static function addonSettings($old, $new, $sameToTheDatabase = false): array
     {
         $done = [];
         foreach([$old => $new, 'configuration_' . $old => 'configuration_' . $new] as $from => $to)
         {
             try
             {
+                if($sameToTheDatabase)
+                {
+                    $moved = Capsule::table('tbladdonmodules')->where('module', $from)->update(['module' => $to]);
+                    if($moved)
+                    {
+                        $done[] = 'tbladdonmodules ' . $from . ' -> ' . $to . ': ' . $moved;
+                    }
+                    continue;
+                }
+
                 $moved = 0;
                 foreach(Capsule::table('tbladdonmodules')->where('module', $from)->get(['setting']) as $row)
                 {

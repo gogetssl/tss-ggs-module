@@ -5,10 +5,15 @@ modules/servers. WHMCS knows a module by that folder, so the name now appears
 wherever the module does - in the admin address of its pages, in the product's
 server type and in the PHP namespace.
 
-Upgrading from an earlier version:
-- upload the new modules/addons and modules/servers folders;
-- DELETE the old tssmodule / ggsmodule folders, both of them, or WHMCS lists
-  the module twice;
+Upgrading from an earlier version, in this order:
+- DELETE the old module folders first, both of them: modules/addons/ggsmodule
+  and modules/servers/ggsmodule for the GoGetSSL Module, modules/addons/
+  tssmodule and modules/servers/tssmodule for TheSSLStore Plugin. Nothing of
+  yours lives in them; your data is in the database.
+  For the GoGetSSL Module this order matters: PHP reads GGSModule and the old
+  ggsmodule as the same name, so while both folders are there WHMCS stops with
+  "Cannot redeclare ... Core\make()" on any page that loads the module;
+- then upload the new modules/addons and modules/servers folders;
 - open Setup > Addon Modules and activate the module under its new name. The
   products, their server type, the addon's settings and the API credentials
   are moved over for you; nothing has to be entered again, and no certificate
