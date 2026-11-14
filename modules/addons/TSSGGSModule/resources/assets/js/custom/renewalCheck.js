@@ -4,7 +4,9 @@
  * translated in its data-text-* attributes; this script only puts the numbers in. Same rules as
  * App\Libs\RenewalPolicy::warning() and SslSettingsForm::renewalCheckBody().
  */
-(function () {
+// the leading semicolon matters: the module joins every script into one bundle, and the file before this one may end
+// without a semicolon - "{...}(function () {...})()" would then call the object and stop the whole bundle
+;(function () {
     'use strict';
 
     function escapeHtml(text) {
