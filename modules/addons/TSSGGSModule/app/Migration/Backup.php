@@ -146,6 +146,23 @@ class Backup
     }
 
     /**
+     * Rows of $column in $values that were added after the row backup (a rollback removes them; restoreRows() only
+     * puts back the rows that were there)
+     */
+    public function removeAddedRows(string $table, string $column, array $values, string $primaryKey = 'id'): int
+    {
+        $source = $this->nameFor($table);
+        if(!$values || !Schema::tableExists($source) || !Schema::tableExists($table))
+        {
+            return 0;
+        }
+
+        return (int)Capsule::table($table)->whereIn($column, $values)
+            ->whereRaw(Schema::quoteIdentifier($primaryKey) . ' NOT IN (SELECT ' . Schema::quoteIdentifier($primaryKey) . ' FROM ' . Schema::quoteIdentifier($source) . ')')
+            ->delete();
+    }
+
+    /**
      * Restores a legacy module table completely (truncate + insert from the copy)
      */
     /** Creates a table that has a backup but no longer exists (empty; restoreTable() fills it) */
