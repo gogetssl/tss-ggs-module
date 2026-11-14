@@ -163,22 +163,29 @@ class CertificateBundle
         }
 
         $path = tempnam(sys_get_temp_dir(), 'tssggs');
-        $zip  = new \ZipArchive();
-        if($zip->open($path, \ZipArchive::OVERWRITE) !== true)
+        try
         {
-            throw new \Exception('Unable to create the ZIP file');
-        }
-        foreach($files as $name => $content)
-        {
-            if(trim($content) !== '')
+            $zip = new \ZipArchive();
+            if($zip->open($path, \ZipArchive::OVERWRITE) !== true)
             {
-                $zip->addFromString($name, $content);
+                throw new \Exception('Unable to create the ZIP file');
             }
-        }
-        $zip->close();
+            foreach($files as $name => $content)
+            {
+                if(trim($content) !== '')
+                {
+                    $zip->addFromString($name, $content);
+                }
+            }
+            $zip->close();
 
-        $content = file_get_contents($path);
-        @unlink($path);
+            $content = file_get_contents($path);
+        }
+        finally
+        {
+            // also when the ZIP fails: no temp file stays behind
+            @unlink($path);
+        }
 
         return ['filename' => $filename, 'mime' => 'application/zip', 'content' => $content];
     }

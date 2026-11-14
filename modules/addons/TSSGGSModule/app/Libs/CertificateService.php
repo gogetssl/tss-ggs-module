@@ -374,11 +374,17 @@ class CertificateService
         }
         finally
         {
+            // the attachments are read while the e-mail is sent: the copies (temp folder or the WHMCS attachments
+            // folder) are not kept - before, one pair per certificate e-mail stayed in the attachments folder
             foreach($files as $file)
             {
                 if(isset($file['path']))
                 {
                     @unlink($file['path']);
+                }
+                elseif($dir !== null && !empty($file['filename']) && basename($file['filename']) === $file['filename'])
+                {
+                    @unlink($dir . DIRECTORY_SEPARATOR . $file['filename']);
                 }
             }
         }

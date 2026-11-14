@@ -44,20 +44,6 @@ CREATE TABLE IF NOT EXISTS `#prefix#CronsCheck` (
 ) ENGINE=InnoDB DEFAULT CHARSET=#charset# DEFAULT COLLATE #collation#;
 
 --
--- `#prefix#DemonTask`
---
-CREATE TABLE IF NOT EXISTS `#prefix#DemonTask` (
-    `id`               int(10)      unsigned                NOT NULL AUTO_INCREMENT,
-    `session_id`       VARCHAR(128)                         NOT NULL,
-    `service_id`       VARCHAR(255)                         NOT NULL,
-    `status`           enum('waiting','ready', 'queue', 'processing')              NOT NULL                  DEFAULT 'waiting',
-    `created_at`       timestamp                            NULL                      DEFAULT '0000-00-00 00:00:00',
-    `updated_at`       timestamp                            NULL                      DEFAULT '0000-00-00 00:00:00',
-    `deleted_at`       timestamp                            NULL                      DEFAULT NULL,
-    PRIMARY KEY (`id`)
-    ) ENGINE=InnoDB  DEFAULT CHARSET=#charset# DEFAULT COLLATE #collation#;
-
---
 -- `#prefix#AcmeSubscriptions`
 --
 CREATE TABLE IF NOT EXISTS `#prefix#AcmeSubscriptions` (

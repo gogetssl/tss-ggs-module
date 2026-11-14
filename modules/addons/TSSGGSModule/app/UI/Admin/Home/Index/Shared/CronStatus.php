@@ -26,8 +26,6 @@ class CronStatus
     {
         if(self::$rows === null)
         {
-            // (the framework's task runner cronScript.php is not listed: nothing is queued for it in this module, so its
-            // "never" said nothing about the jobs)
             self::$rows = [];
 
             foreach(self::TASKS as $task)
