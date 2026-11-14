@@ -142,6 +142,22 @@ class EmailTemplates
                                       <p>{$signature}</p>';
 
 
+    const RENEWAL_DETAILS_TEMPLATE = 'Renewal Details Required';
+    const RENEWAL_DETAILS_SUBJECT  = 'SSL Certificate - renewal details required';
+    const RENEWAL_DETAILS_MESSAGE  = '<p>Dear {$client_name},</p>
+                                     <p>
+                                        Thank you for renewing your SSL certificate for {$service_domain}.
+                                        To order the renewed certificate we need its details once more - the CSR,
+                                        the domains and the contacts. Please submit them at the URL below.
+                                     </p>
+                                     <p>{$ssl_configuration_link}</p>
+                                     <p>
+                                        Your current certificate stays valid and downloadable until it expires, and the
+                                        days it has left are added to the renewed one.
+                                     </p>
+                                     <p>{$signature}</p>';
+
+
     const RENEWAL_TEMPLATE = 'Renewal';
     const RENEWAL_SUBJECT  = 'SSL Certificate - Renew';
     const RENEWAL_MESSAGE  = '<p>Dear {$client_name},</p>
@@ -250,7 +266,7 @@ class EmailTemplates
                              <p>{$ssl_configuration_link}</p>
                              <p>{$signature}</p>';
 
-    const TEMPLATE_NAMES = ['CONFIGURATION', 'SMIME_CONFIGURATION', 'SMIME_REMINDER', 'SMIME_ISSUED', 'SMIME_EXPIRATION', 'CS_CONFIGURATION', 'CS_ISSUED', 'CS_EXPIRATION', 'EXPIRATION', 'SEND_CERTIFICATE', 'RENEWAL', 'REISSUE', 'SUBSCRIPTION', 'SUBSCRIPTION_EXPIRATION', 'SUBSCRIPTION_RENEWAL', 'RENEWAL_INVOICE', 'DISCONTINUED', 'CODE_GUARD_READY', 'DS_CONFIGURATION', 'DS_ISSUED'];
+    const TEMPLATE_NAMES = ['CONFIGURATION', 'SMIME_CONFIGURATION', 'SMIME_REMINDER', 'SMIME_ISSUED', 'SMIME_EXPIRATION', 'CS_CONFIGURATION', 'CS_ISSUED', 'CS_EXPIRATION', 'EXPIRATION', 'SEND_CERTIFICATE', 'RENEWAL', 'RENEWAL_DETAILS', 'REISSUE', 'SUBSCRIPTION', 'SUBSCRIPTION_EXPIRATION', 'SUBSCRIPTION_RENEWAL', 'RENEWAL_INVOICE', 'DISCONTINUED', 'CODE_GUARD_READY', 'DS_CONFIGURATION', 'DS_ISSUED'];
 
     /** S/MIME e-mails */
     const SMIME_TEMPLATES = [self::SMIME_CONFIGURATION_TEMPLATE, self::SMIME_REMINDER_TEMPLATE, self::SMIME_ISSUED_TEMPLATE, self::SMIME_EXPIRATION_TEMPLATE];

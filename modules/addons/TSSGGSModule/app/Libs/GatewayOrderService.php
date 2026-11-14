@@ -523,7 +523,8 @@ abstract class GatewayOrderService
         }
 
         $choice = (string)($before['renewChoice'] ?? '');
-        $reuse  = $choice !== '' ? $choice === 'same' : GeneralSettings::enabled('renewReuseOrderDetails');
+        // the client's choice in the Renew dialog, else the "Renew With The Same Order Details" setting
+        $reuse  = $choice !== '' ? $choice === 'same' : RenewalPolicy::reuseDetails();
         if($reuse)
         {
             try

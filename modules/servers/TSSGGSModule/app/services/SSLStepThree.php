@@ -111,7 +111,19 @@ class SSLStepThree
                 $orderParams['contacts']['organization'] = $this->prepareContactOrganization($params);
             }
 
+            // a paid renewal that waited for these details: placed as the renewal of the previous order, so the
+            // vendor carries its days over (App\Libs\RenewalPolicy)
+            $renewal = \ModulesGarden\TSSGGSModule\App\Libs\RenewalPolicy::pendingRenewal((int)$params['serviceid']);
+            if($renewal)
+            {
+                $orderParams['renewal'] = $renewal;
+            }
+
             $newOrder = $api->addOrder($orderParams, $params['serviceid']);
+            if($renewal)
+            {
+                \ModulesGarden\TSSGGSModule\App\Libs\RenewalPolicy::renewalPlaced((int)$params['serviceid']);
+            }
             $itemId   = SSLTrustCenterApi::getItemId($newOrder);
             SSL::where('serviceid', $params['serviceid'])->update(['remoteid' => $itemId]);
             Service::where('id', $params['serviceid'])->update(['domain' => $decode['CN']]);

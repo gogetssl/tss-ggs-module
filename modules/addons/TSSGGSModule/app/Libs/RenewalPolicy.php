@@ -183,6 +183,52 @@ class RenewalPolicy
     }
 
     /**
+     * A paid renewal waits for the client's details: $serviceId (the renewing service itself, or the new service of
+     * a renewal on a new order) will place the renewal of $priorServiceId's order once the client submits them.
+     */
+    public static function awaitDetails(int $serviceId, int $priorServiceId, string $priorItemId, string $priorEnd): void
+    {
+        \ModulesGarden\TSSGGSModule\App\Models\Request::updateOrInsert(
+            ['serviceid' => $serviceId, 'name' => 'renewalPending'],
+            [
+                'request'    => json_encode(['prior_service' => $priorServiceId, 'prior_item' => $priorItemId, 'prior_end' => substr($priorEnd, 0, 19)]),
+                'status'     => 'pending',
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
+            ]
+        );
+    }
+
+    /**
+     * The renewal block of the order the client submits for a renewal that waits for details, null when the service
+     * waits for nothing: the vendor then treats it as the renewal of the previous order and carries its days over.
+     */
+    public static function pendingRenewal(int $serviceId)
+    {
+        $value = \ModulesGarden\TSSGGSModule\App\Models\Request::where('serviceid', $serviceId)->where('name', 'renewalPending')->value('request');
+        $data  = $value ? (json_decode((string)$value, true) ?: []) : [];
+        if(empty($data['prior_item']))
+        {
+            return null;
+        }
+
+        // the days the previous certificate has left now, not when the renewal was paid
+        $left = !empty($data['prior_end']) ? (int)floor((strtotime((string)$data['prior_end']) - time()) / 86400) : 0;
+
+        return [
+            'prior_order_id'       => (string)$data['prior_item'],
+            'prior_certificate_id' => (string)$data['prior_item'],
+            'remaining_days'       => CertificateService::renewalDays((int)($data['prior_service'] ?? $serviceId), $left > 0 ? $left + 1 : 0),
+        ];
+    }
+
+    /** The renewal was ordered with the client's details */
+    public static function renewalPlaced(int $serviceId): void
+    {
+        \ModulesGarden\TSSGGSModule\App\Models\Request::where('serviceid', $serviceId)->where('name', 'renewalPending')->delete();
+    }
+
+    /**
      * Whether a paid renewal keeps the same WHMCS service (true) or gets a new service of its own (false)
      */
     public static function sameService(): bool

@@ -238,7 +238,7 @@ class RenewalNotifyCertificate extends AbstractCommand
         }
 
         // each step on its own: the time of this run is always saved, or the job would start again every 5 minutes
-        foreach(['terminateUnpaid'] as $step)
+        foreach(['terminateUnpaid', 'closeRenewed'] as $step)
         {
             try
             {
@@ -261,6 +261,31 @@ class RenewalNotifyCertificate extends AbstractCommand
     private function terminateUnpaid()
     {
         \ModulesGarden\TSSGGSModule\App\Libs\UnpaidTermination::run();
+    }
+
+    /**
+     * Renewals on a new order: the renewed service stopped being billed when the new one took over, and is marked
+     * Completed once its own order has ended (its certificate stayed downloadable until then). The order end comes
+     * from the stored order - WHMCS moved the due date on when the renewal invoice was paid.
+     */
+    private function closeRenewed()
+    {
+        $today = date('Y-m-d');
+        foreach(Request::where('name', 'renewedTo')->get(['serviceid', 'request']) as $row)
+        {
+            $serviceId = (int)$row->serviceid;
+            if(\WHMCS\Database\Capsule::table('tblhosting')->where('id', $serviceId)->value('domainstatus') !== 'Active')
+            {
+                continue;
+            }
+            $stored = \ModulesGarden\TSSGGSModule\App\Libs\CertificateService::stored($serviceId);
+            $end    = \ModulesGarden\TSSGGSModule\App\Libs\SslProductHelpers::getServiceDueDate((array)($stored['orderData'] ?? []));
+            if($end && $end < $today)
+            {
+                \WHMCS\Database\Capsule::table('tblhosting')->where('id', $serviceId)->update(['domainstatus' => 'Completed']);
+                \ModulesGarden\TSSGGSModule\App\Libs\CertificateService::event($serviceId, 'info', '[Renewal] Order ended on ' . $end . ': service completed, renewed as service #' . (int)$row->request);
+            }
+        }
     }
 
     public function checkOrderExpireDate($expireDate)

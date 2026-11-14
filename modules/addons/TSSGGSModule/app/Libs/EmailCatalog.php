@@ -35,6 +35,7 @@ class EmailCatalog
         'Product Discontinued'              => ['renewals', [], true],
         'Renewal Complete'                  => ['renewals', ['domain', 'order_url'], true],
         'Certificate Autorenewed'           => ['renewals', ['domain', 'order_number', 'common_name', 'order_url'], true],
+        'Renewal Details Required'          => ['renewals', ['ssl_configuration_link'], true],
         'ACME Subscription Expiration'      => ['renewals', [], true],
         'ACME Subscription Renewal'         => ['renewals', [], true],
         'Renewal'                           => ['renewals', [], false],
