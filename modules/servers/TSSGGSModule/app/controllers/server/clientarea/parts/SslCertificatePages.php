@@ -699,8 +699,9 @@ trait SslCertificatePages
         $vars['visibleRenewButtonAfterExpiration']  = $configuration['sslSettings']['visibleRenewButtonAfterExpiration'];
 
         $today                      = strtotime(date('Y-m-d'));
-        // renewal is about the subscription: within it an expiring certificate is reissued, not renewed
-        $expiryDate                 = strtotime(!empty($itemOrder['subscription']['end']) ? $itemOrder['subscription']['end'] : $params['certificate']['validity']['end']);
+        // renewal is about the order: within it an expiring certificate is reissued, not renewed. Without an order end
+        // from the gateway the service's due date stands in - never the certificate's own expiry
+        $expiryDate                 = strtotime(!empty($itemOrder['subscription']['end']) ? $itemOrder['subscription']['end'] : (string)$params['service']->nextduedate);
         $vars['visibleRenewButton'] = false;
         if($configuration['sslSettings']['visibleRenewButtonBeforeExpiration'] && $today <= $expiryDate)
         {

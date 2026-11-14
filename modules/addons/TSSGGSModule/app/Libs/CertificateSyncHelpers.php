@@ -94,7 +94,7 @@ class CertificateSyncHelpers
         ]);
 
         if($orderData['order']['status'] == 'active') {
-            // Subscription end (falls back to the certificate end) - certificates within the subscription are reissued
+            // the order end (never the certificate end) - certificates within the order are reissued
             $nextDueDate = SslProductHelpers::getServiceDueDate($orderData, $orderFiles);
             if($nextDueDate) {
                 Service::where('id', $certificate['id'])->update([

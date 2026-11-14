@@ -151,9 +151,9 @@ class AcmeHelpers
             'userid'           => $service->userid,
             'sendinvoice'      => true,
             'date'             => $dateInvoice,
-            // due the day before the subscription renews: an unpaid renewal is cancelled at the vendor before the
-            // vendor renews it (and charges for it)
-            'duedate'          => max($dateInvoice, date('Y-m-d', strtotime('-1 day', strtotime((string)$subscriptionData->renewal_date)))),
+            // due the payment term after it is created (App\Libs\RenewalPolicy): an unpaid renewal is cancelled at the
+            // vendor once overdue, so a term that ends before the renewal day keeps the vendor from charging for it
+            'duedate'          => \ModulesGarden\TSSGGSModule\App\Libs\RenewalPolicy::invoiceDueDate(\ModulesGarden\TSSGGSModule\App\Libs\RenewalPolicy::SUBSCRIPTION, $dateInvoice),
             'itemdescription1' => $description,
             'itemamount1'      => $amount,
             'itemtaxed1'       => isset($product->tax) ? $product->tax : 0,

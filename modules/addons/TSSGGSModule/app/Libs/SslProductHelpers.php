@@ -7,53 +7,32 @@ use ModulesGarden\TSSGGSModule\App\Models\RemoteProduct;
 class SslProductHelpers
 {
     /**
-     * Next due date of an SSL service: end of the subscription (order), not of the current certificate.
-     * Multi-year subscriptions get several certificates (reissues) - the service is renewed only when the subscription
-     * ends. Falls back to the certificate end when the API does not return the subscription. Returns Y-m-d or null.
+     * Next due date of a certificate or other gateway product: the end of the ORDER.
+     *
+     * The order (the gateway's "subscription") is what the client pays for - one to three years, as the billing
+     * cycle. Inside it the certificate is reissued as often as needed, so the certificate's own expiry says nothing
+     * about when the service is due and is never used here. When the gateway gives no order end: null, and the
+     * caller keeps the due date WHMCS set. When the renewal is billed is App\Libs\RenewalPolicy's part.
+     * Returns Y-m-d or null.
+     *
+     * @param array $orderFiles unused, kept for the callers' signature
      */
-    public static function getServiceDueDate($orderData, $orderFiles)
+    public static function getServiceDueDate($orderData, $orderFiles = [])
     {
-        $items = isset($orderData['items']) && is_array($orderData['items']) ? $orderData['items'] : [];
-        $item  = reset($items);
+        $items     = isset($orderData['items']) && is_array($orderData['items']) ? $orderData['items'] : [];
+        $item      = reset($items);
+        $end       = isset($item['subscription']['end']) ? (string)$item['subscription']['end'] : '';
+        $timestamp = $end !== '' ? strtotime($end) : false;
 
-        $candidates = [
-            isset($item['subscription']['end']) ? $item['subscription']['end'] : '',
-            isset($orderFiles['validity']['end']) ? $orderFiles['validity']['end'] : '',
-        ];
-
-        foreach($candidates as $date)
-        {
-            $timestamp = $date ? strtotime($date) : false;
-            if($timestamp && $timestamp > 0)
-            {
-                // the due date can be moved N days before the end (settings: regular certificates / subscriptions)
-                return date('Y-m-d', strtotime('-' . self::dueDateOffset($orderData) . ' days', $timestamp));
-            }
-        }
-
-        return null;
+        return $timestamp && $timestamp > 0 ? date('Y-m-d', $timestamp) : null;
     }
 
     /**
-     * A multi-year subscription (the gateway returns the subscription end) as opposed to a regular single certificate
+     * @deprecated since 1.5.0 the service falls due on the order end itself; always 0
      */
-    public static function isSubscription($orderData)
+    public static function dueDateOffset($orderData = [])
     {
-        $items = isset($orderData['items']) && is_array($orderData['items']) ? $orderData['items'] : [];
-        $item  = reset($items);
-
-        return !empty($item['subscription']['end']);
-    }
-
-    /**
-     * Days before the end of the certificate / subscription on which the service falls due (renewal rules differ for
-     * regular certificates and subscriptions)
-     */
-    public static function dueDateOffset($orderData)
-    {
-        $days = (int)GeneralSettings::get(self::isSubscription($orderData) ? 'dueDateOffsetSubscription' : 'dueDateOffsetRegular');
-
-        return max(0, min(60, $days));
+        return 0;
     }
 
     /**

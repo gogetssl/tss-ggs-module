@@ -611,7 +611,7 @@ class SubscriptionBilling
      */
     public static function renewalPaid($serviceId, $invoiceId)
     {
-        $invoice = Capsule::table('tblinvoices')->where('id', (int)$invoiceId)->first(['duedate']);
+        $invoice = Capsule::table('tblinvoices')->where('id', (int)$invoiceId)->first(['date', 'duedate']);
         foreach([AcmeSubscription::class, AisSubscription::class] as $model)
         {
             $subscription = $model::getByServiceId($serviceId);
@@ -620,8 +620,9 @@ class SubscriptionBilling
                 continue;
             }
             $renewal = date('Y-m-d', strtotime((string)$subscription->renewal_date));
-            // the invoice of this renewal is due the day before it (or on it, invoices before 1.4)
-            if((string)$invoice->duedate < date('Y-m-d', strtotime('-1 day', strtotime($renewal))))
+            // the invoice of this renewal was created within its lead (at most 30 days before it); an invoice of an
+            // earlier period, paid late, does not move the renewal on
+            if(substr((string)$invoice->date, 0, 10) < RenewalPolicy::earliestInvoiceDate($renewal))
             {
                 return false;
             }

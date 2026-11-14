@@ -134,7 +134,7 @@ class SSLCertificatesProcessing extends AbstractCommand
 
                 if($orderData['order']['status'] == 'active')
                 {
-                    // Subscription end (falls back to the certificate end) - certificates within the subscription are reissued
+                    // the order end (never the certificate end) - certificates within the order are reissued
                     $nextDueDate = SslProductHelpers::getServiceDueDate($orderData, $orderFiles);
                     if($nextDueDate)
                     {

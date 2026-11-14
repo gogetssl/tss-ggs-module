@@ -105,21 +105,22 @@ class SubscriptionRenewals
             Capsule::table('tblhosting')->where('id', $serviceId)->update(['nextduedate' => $renewalDate, 'nextinvoicedate' => $renewalDate]);
         }
 
-        // an unpaid renewal invoice past its due date
-        if(!self::settingOff($settings, 'terminateUnpaidSubscriptions') && self::overdueRenewalInvoice($serviceId))
+        // an unpaid renewal invoice past its due date ends the subscription the day before the vendor renews it: the
+        // reseller is not charged for a year nobody paid, and the client keeps the year that was paid. A due date
+        // after the renewal (the settings page warns about it) can only end it once the vendor has renewed.
+        if(!self::settingOff($settings, 'terminateUnpaidSubscriptions') && self::overdueRenewalInvoice($serviceId)
+            && ($renewalDate === '' || $today >= date('Y-m-d', strtotime('-1 day', strtotime($renewalDate)))))
         {
             self::close($category, $subscription, $itemColumn, 'Terminated', 'Renewal invoice not paid');
 
             return;
         }
 
-        // the renewal invoice, from "Days Before Expiry" until the renewal date (a day without a cron run loses nothing);
-        // on unless the administrator turned it off
-        if(!self::settingOff($settings, 'recurringCreateAutomaticRenewalInvoiceSubscription') && $renewalDate !== '' && $renewalDate > $today)
+        // the renewal invoice, from N days before the renewal until the renewal date (App\Libs\RenewalPolicy; a day
+        // without a cron run loses nothing); on unless the administrator turned it off
+        if(RenewalPolicy::invoicing(RenewalPolicy::SUBSCRIPTION) && RenewalPolicy::invoiceDue(RenewalPolicy::SUBSCRIPTION, $renewalDate, $today))
         {
-            $invoiceDate = AcmeHelpers::getAcmeNextInvoiceDate($renewalDate, max(1, (int)($settings['recurringDaysBeforeExpirySubscription'] ?? 30)));
-            if($invoiceDate !== null && $invoiceDate <= $today
-                && AcmeHelpers::createAcmeSubscriptionRenewalInvoice($service, $service->product, $subscription)
+            if(AcmeHelpers::createAcmeSubscriptionRenewalInvoice($service, $service->product, $subscription)
                 && !empty($settings['recurringSendExpirationNotificationsSubscription']))
             {
                 EmailTemplates::sendEmail(EmailTemplates::SUBSCRIPTION_EXPIRATION_TEMPLATE, $serviceId, []);

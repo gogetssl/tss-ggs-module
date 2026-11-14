@@ -103,7 +103,6 @@ class InvoiceRenew {
             'Biennially' => 24,
             'Triennially' => 36
         ];
-        $daysBefore = 0;
         // a service that is billed once (or free) has no renewal price: no empty invoice, which would be paid at once
         if(!isset($cycles[$billingCycle]))
         {
@@ -124,11 +123,12 @@ class InvoiceRenew {
             $endDate = date('Y-m-d', strtotime("+{$cycles[$billingCycle]} months", strtotime($service['nextduedate'])));
             $itemAmount = $service['amount'];
             $invoiceItemDescription = $service['name'] . ($service['domain'] ? ' - ' . $service['domain'] : '' ) . ' (' . $service['nextduedate'] . ' - ' . $endDate . ') - Renewal';
-            $daysBefore = $configuration['sslSettings']['recurringDaysBeforeExpiry'];
         }
 
-        $invoiceDate = date('Y-m-d');
-        $invoiceDueDate = date('Y-m-d', strtotime("+{$daysBefore} days", strtotime($invoiceDate)));
+        // due the payment term after today (App\Libs\RenewalPolicy); a term longer than the lead puts it after the
+        // order end, which the settings page warns about
+        $invoiceDate    = date('Y-m-d');
+        $invoiceDueDate = \ModulesGarden\TSSGGSModule\App\Libs\RenewalPolicy::invoiceDueDate(\ModulesGarden\TSSGGSModule\App\Libs\RenewalPolicy::CERTIFICATE, $invoiceDate);
 
         $results = localAPI('CreateInvoice', [
             'userid' => $service['userid'],

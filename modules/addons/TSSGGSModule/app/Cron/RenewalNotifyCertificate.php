@@ -74,9 +74,9 @@ class RenewalNotifyCertificate extends AbstractCommand
         $addonConfig = (new AddonModuleRepository())->getModuleConfiguration();
         $sslSettings = $addonConfig['sslSettings'];
 
-        $auto_renew_invoice_reccuring           = (bool)$sslSettings['recurringCreateAutomaticRenewalInvoice'];
-        $renew_new_order                        = (bool)$sslSettings['renewOrderViaExistingOrder'];
-        $renew_invoice_days_reccuring           = $sslSettings['recurringDaysBeforeExpiry'];
+        // renewal invoices: from N days before the order end (App\Libs\RenewalPolicy); the module is the only one
+        // that creates them, whichever way a paid renewal is placed
+        $auto_renew_invoice_reccuring           = \ModulesGarden\TSSGGSModule\App\Libs\RenewalPolicy::invoicing(\ModulesGarden\TSSGGSModule\App\Libs\RenewalPolicy::CERTIFICATE);
         $send_expiration_notification_reccuring = $sslSettings['recurringSendExpirationNotifications'];
 
         $daysNotify = explode(',', $send_expiration_notification_reccuring);
@@ -164,14 +164,13 @@ class RenewalNotifyCertificate extends AbstractCommand
                     }
                 }
 
-                $savedRenewDays = $renew_invoice_days_reccuring;
-                if($daysLeft == (int)$savedRenewDays)
+                // the service falls due on the order end: its renewal invoice is created from N days before it, on or
+                // after that day (a day without a cron run loses nothing; an invoice that exists is not made again)
+                if($auto_renew_invoice_reccuring && !in_array($srv->billingcycle, ['One Time', 'Free Account'], true)
+                    && \ModulesGarden\TSSGGSModule\App\Libs\RenewalPolicy::invoiceDue(\ModulesGarden\TSSGGSModule\App\Libs\RenewalPolicy::CERTIFICATE, $srv->nextduedate))
                 {
-                    if(!in_array($srv->billingcycle, ['One Time', 'Free Account'], true) && $auto_renew_invoice_reccuring)
-                    {
-                        $packageLists[$srv->packageid][] = $srv;
-                        $serviceIDs[]                    = $srv->id;
-                    }
+                    $packageLists[$srv->packageid][] = $srv;
+                    $serviceIDs[]                    = $srv->id;
                 }
 
             }
@@ -191,7 +190,7 @@ class RenewalNotifyCertificate extends AbstractCommand
 
         CronCheck::updateOrCreate(['type' => self::REMINDERS_MARKER], ['last_run' => $today . ' ' . date('H:i:s'), 'last_error' => $failedIds ? json_encode($failedIds) : '']);
 
-        if(!$renew_new_order)
+        if($serviceIDs)
         {
             $output->write('Invoice Checking...');
 
