@@ -250,6 +250,41 @@ class ProductPricingUpdate extends AbstractCommand
 
                     Logger::info("Configurable Options Pricing for product #{$whmcsProduct->id} has been updated");
                 }
+
+                // FLEX products: the wildcard main domain surcharge (created when missing, then priced like a SAN option)
+                if(\ModulesGarden\TSSGGSModule\App\Libs\MainDomain::isChoice((array)$remoteProductData, (string)$whmcsProduct->configoption1))
+                {
+                    \ModulesGarden\TSSGGSModule\App\Libs\MainDomain::ensureOption((int)$whmcsProduct->id, (array)$remoteProductData);
+                    $wildcardSub = \WHMCS\Database\Capsule::table('tblproductconfiglinks')
+                        ->join('tblproductconfigoptions', 'tblproductconfigoptions.gid', '=', 'tblproductconfiglinks.gid')
+                        ->join('tblproductconfigoptionssub', 'tblproductconfigoptionssub.configid', '=', 'tblproductconfigoptions.id')
+                        ->where('tblproductconfiglinks.pid', (int)$whmcsProduct->id)
+                        ->where('tblproductconfigoptions.optionname', 'like', \ModulesGarden\TSSGGSModule\App\Libs\MainDomain::OPTION . '|%')
+                        ->where('tblproductconfigoptionssub.optionname', 'like', \ModulesGarden\TSSGGSModule\App\Libs\MainDomain::WILDCARD . '|%')
+                        ->value('tblproductconfigoptionssub.id');
+                    if($wildcardSub)
+                    {
+                        foreach($remoteProductData['prices'] as $remotePriceData)
+                        {
+                            $billingPeriod = Helpers::monthsToBillingPeriod($remotePriceData['term']);
+                            $extra         = \ModulesGarden\TSSGGSModule\App\Libs\MainDomain::wildcardCost((array)$remoteProductData, (int)$remotePriceData['term']);
+                            if($billingPeriod === false || $extra === null)
+                            {
+                                continue;
+                            }
+                            foreach(Currency::get() as $currency)
+                            {
+                                $value   = FinancePolicy::sell($extra * $baseCurrencyRate, $margin, (int)$remotePriceData['term'], $currency->id, false);
+                                $columns = [$billingPeriod => $value];
+                                if($whmcsProduct->paytype == 'onetime' && $billingPeriod == 'annually')
+                                {
+                                    $columns['monthly'] = $value;
+                                }
+                                Pricing::where('type', 'configoptions')->where('currency', $currency->id)->where('relid', (int)$wildcardSub)->update($columns);
+                            }
+                        }
+                    }
+                }
             }
 
             // Manual prices follow cost changes (same margin); admins hear about prices below cost

@@ -193,6 +193,14 @@ class ProductCatalog
             }
         }
 
+        $product = Capsule::table('tblproducts')->where('id', (int)$productId)->first(['configoption1']);
+        if($product && MainDomain::isChoice($remoteRaw, (string)$product->configoption1)
+            && !Capsule::table('tblproductconfiglinks')->join('tblproductconfigoptions', 'tblproductconfigoptions.gid', '=', 'tblproductconfiglinks.gid')
+                ->where('tblproductconfiglinks.pid', (int)$productId)->where('tblproductconfigoptions.optionname', 'like', MainDomain::OPTION . '|%')->exists())
+        {
+            $problems[] = MainDomain::OPTION . ' missing';
+        }
+
         return $problems;
     }
 
@@ -261,7 +269,8 @@ class ProductCatalog
             self::ensurePricing($product, $subId, $remoteRaw, $remote);
         }
 
-        return $fixed;
+        // FLEX products: the Standard / Wildcard choice of the main domain
+        return array_merge($fixed, MainDomain::ensureOption((int)$productId, $remoteRaw));
     }
 
     /**
@@ -325,6 +334,12 @@ class ProductCatalog
         }
 
         return $options;
+    }
+
+    /** The product's configurable option group (created and linked when it has none) */
+    public static function configGroupOf($product)
+    {
+        return self::configGroup($product);
     }
 
     protected static function configGroup($product)

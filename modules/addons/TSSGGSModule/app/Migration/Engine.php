@@ -368,7 +368,14 @@ class Engine
             $tables[]   = $backup->copyRows('tblproductconfigoptionssub', function($q) use ($optionIds) { $q->whereIn('configid', $optionIds ?: [0]); });
             // the prices of those options (code signing: the legacy delivery choices get the gateway fees)
             $subIds     = $optionIds ? array_map('intval', Capsule::table('tblproductconfigoptionssub')->whereIn('configid', $optionIds)->pluck('id')->all()) : [];
-            $tables[]   = $backup->copyRows('tblpricing', function($q) use ($subIds) { $q->where('type', 'configoptions')->whereIn('relid', $subIds ?: [0]); });
+            // ... and the product prices (FLEX products of the legacy TSS module get theirs from its "CSR Domain" option)
+            $tables[]   = $backup->copyRows('tblpricing', function($q) use ($subIds, $pids) {
+                $q->where(function($w) use ($subIds) { $w->where('type', 'configoptions')->whereIn('relid', $subIds ?: [0]); })
+                  ->orWhere(function($w) use ($pids) { $w->where('type', 'product')->whereIn('relid', $pids ?: [0]); });
+            });
+            // the services' choices of the legacy "CSR Domain" option (moved to the module's main_domain option)
+            $legacyMainDomain = $optionIds ? array_map('intval', Capsule::table('tblproductconfigoptions')->whereIn('id', $optionIds)->where('optionname', 'like', 'CSR Domain%')->pluck('id')->all()) : [];
+            $tables[]   = $backup->copyRows('tblhostingconfigoptions', function($q) use ($legacyMainDomain) { $q->whereIn('configid', $legacyMainDomain ?: [0]); });
             $tables[]   = $backup->copyRows('tbladdonmodules', function($q) { $q->whereIn('module', ['configuration_' . Writer::MODULE, $this->reader->addonName()]); });
             if(!empty($options['copy_templates']))
             {
@@ -461,6 +468,8 @@ class Engine
                     continue;
                 }
                 $data = $writer->writeProduct($p, $p['remote_product']);
+                // FLEX products of the legacy TSS module: their price lived in its "CSR Domain" option
+                $data += $writer->adoptLegacyMainDomain($p, is_array($p['remote_product']->rawData) ? $p['remote_product']->rawData : []);
                 $migratedPids[] = $pid;
                 Store::addJob($runId, Store::KIND_PRODUCT, $pid, 0, Store::JOB_DONE, null, $data);
                 $this->log($runId, 'info', self::PHASE_PREPARE, 'Product prepared', ['pid' => $pid, 'name' => $p['name'], 'remote' => $p['remote_product']->remoteId, 'renamed_options' => count($data['renamed_options'])]);
@@ -1164,6 +1173,7 @@ class Engine
             $backup->restoreRows('tblproductconfiggroups');
             $backup->restoreRows('tblproductconfigoptions');
             $backup->restoreRows('tblproductconfigoptionssub');
+            $backup->restoreRows('tblhostingconfigoptions');
             // settings the run added (the merge of the legacy settings into a fresh install) go, the rest comes back
             $backup->removeAddedRows('tbladdonmodules', 'module', ['configuration_' . Writer::MODULE, $reader->addonName()]);
             $backup->restoreRows('tbladdonmodules');
