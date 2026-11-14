@@ -101,7 +101,10 @@ class TablePrefix
         $names = [];
         try
         {
-            $rows = Capsule::select('SHOW TABLES LIKE ?', [str_replace('_', '\\_', $prefix) . '%']);
+            $rows = Capsule::select(
+                'SELECT TABLE_NAME FROM information_schema.TABLES WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME LIKE ?',
+                [str_replace('_', '\\_', $prefix) . '%']
+            );
             foreach($rows as $row)
             {
                 $names[] = (string)current((array)$row);
