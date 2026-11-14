@@ -31,6 +31,8 @@ class LegacyModuleControl
 
         self::callHook($addon, 'deactivate');
         self::saveActiveList(array_values(array_diff(self::activeList(), [$addon])));
+        // WHMCS loads addon hooks from this list: an addon left in it keeps running its hooks while inactive
+        self::saveList('AddonModulesHooks', array_values(array_diff(self::list('AddonModulesHooks'), [$addon])));
 
         return ['ok' => !self::isActive($addon), 'method' => 'direct', 'message' => 'API: ' . $result['message']];
     }
@@ -51,6 +53,10 @@ class LegacyModuleControl
         $list   = self::activeList();
         $list[] = $addon;
         self::saveActiveList(array_values(array_unique($list)));
+        if(is_file(dirname(__DIR__, 3) . DIRECTORY_SEPARATOR . $addon . DIRECTORY_SEPARATOR . 'hooks.php'))
+        {
+            self::saveList('AddonModulesHooks', array_values(array_unique(array_merge(self::list('AddonModulesHooks'), [$addon]))));
+        }
         self::callHook($addon, 'activate');
 
         return ['ok' => self::isActive($addon), 'method' => 'direct', 'message' => 'API: ' . $result['message']];
@@ -70,14 +76,24 @@ class LegacyModuleControl
 
     protected static function activeList(): array
     {
-        $raw = (string)Capsule::table('tblconfiguration')->where('setting', 'ActiveAddonModules')->value('value');
-
-        return array_values(array_filter(array_map('trim', explode(',', $raw))));
+        return self::list('ActiveAddonModules');
     }
 
     protected static function saveActiveList(array $list): void
     {
-        Capsule::table('tblconfiguration')->where('setting', 'ActiveAddonModules')->update(['value' => implode(',', $list)]);
+        self::saveList('ActiveAddonModules', $list);
+    }
+
+    protected static function list(string $setting): array
+    {
+        $raw = (string)Capsule::table('tblconfiguration')->where('setting', $setting)->value('value');
+
+        return array_values(array_filter(array_map('trim', explode(',', $raw))));
+    }
+
+    protected static function saveList(string $setting, array $list): void
+    {
+        Capsule::table('tblconfiguration')->where('setting', $setting)->update(['value' => implode(',', $list)]);
     }
 
     /**
