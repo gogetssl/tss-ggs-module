@@ -1,5 +1,13 @@
 <?php
 
+// only through WHMCS: a direct request gets nothing (no output, no error with the server path)
+if(!defined('WHMCS'))
+{
+    http_response_code(403);
+    exit;
+}
+
+
 use ModulesGarden\TSSGGSModule\Core\Support\Facades\Request;
 use ModulesGarden\TSSGGSModule\Packages\Product\Services\ProductConfiguration;
 use ModulesGarden\TSSGGSModule\Packages\Product\Helpers\RequiredCustomFieldsGenerator;
