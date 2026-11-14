@@ -1088,7 +1088,9 @@ class CertificateService
         }
         $global = (int)((new AddonModuleRepository())->getModuleConfiguration()['sslSettings']['additionalDaysForRenewalOrder'] ?? 0);
 
-        return $global > 0 ? $global : max(0, (int)$remainingDays);
+        // without a setting, the days left - but Sectigo adds no more than 30, and a renewal paid on the first day of a
+        // 30-day lead counts 31
+        return $global > 0 ? $global : min(self::RENEWAL_DAYS_MAX, max(0, (int)$remainingDays));
     }
 
     /**

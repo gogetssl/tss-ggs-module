@@ -1,4 +1,4 @@
-version: '1.5.0'
+version: '1.5.1'
 # systemName and description are replaced at runtime by the edition (app/Config/edition.php, App\Libs\Edition)
 systemName: 'GoGetSSL Module'
 description: 'GoGetSSL Module for WHMCS: sell and manage SSL/TLS certificates, ACME and AutoInstall SSL subscriptions and other security products.'
