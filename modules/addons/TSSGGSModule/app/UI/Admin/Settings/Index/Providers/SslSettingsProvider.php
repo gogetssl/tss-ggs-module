@@ -4,6 +4,7 @@ namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Providers;
 
 use ModulesGarden\TSSGGSModule\App\Libs\AutoInstallHelpers;
 use ModulesGarden\TSSGGSModule\App\Libs\GeneralSettings;
+use ModulesGarden\TSSGGSModule\App\Libs\RenewalPolicy;
 use ModulesGarden\TSSGGSModule\App\Libs\Helpers;
 use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Widgets\NextStepsWidget;
@@ -23,10 +24,13 @@ class SslSettingsProvider extends CrudProvider
             $this->data[$key] = $value;
         }
 
-        // 0 (on the end date) is no longer offered: an invoice due the day it is created can not be paid in time
-        if(!isset($this->data['recurringDaysBeforeExpirySubscription']) || (int)$this->data['recurringDaysBeforeExpirySubscription'] < 1)
+        // renewal invoices (App\Libs\RenewalPolicy): created 1 to 30 days before the order end, due a payment term
+        // later. What is shown is what applies - a lead saved above 30 before 1.5.0 works as 30.
+        foreach([RenewalPolicy::CERTIFICATE, RenewalPolicy::SUBSCRIPTION] as $type)
         {
-            $this->data['recurringDaysBeforeExpirySubscription'] = isset($this->data['recurringDaysBeforeExpirySubscription']) ? 1 : 30;
+            [, $leadKey, $termKey] = RenewalPolicy::KEYS[$type];
+            $this->data[$leadKey]  = RenewalPolicy::lead($type);
+            $this->data[$termKey]  = RenewalPolicy::term($type);
         }
         // subscriptions: the renewal invoice and the termination of unpaid renewals are on unless turned off
         foreach(['recurringCreateAutomaticRenewalInvoiceSubscription', 'terminateUnpaidSubscriptions'] as $key)
@@ -63,12 +67,14 @@ class SslSettingsProvider extends CrudProvider
             sort($reissueDays);
         }
         $this->availableValues['autoReissueDaysBeforeExpire']           = array_combine($reissueDays, $reissueDays);
-        $this->availableValues['recurringDaysBeforeExpirySubscription'] = Helpers::getDaysOptions(true);
+        $this->availableValues['recurringDaysBeforeExpirySubscription'] = $this->dayOptions(RenewalPolicy::LEAD_OPTIONS, 'recurringDaysBeforeExpirySubscription');
+        $this->availableValues['recurringPaymentTermSubscription']      = $this->dayOptions(RenewalPolicy::TERM_OPTIONS, 'recurringPaymentTermSubscription');
         $this->availableValues['subscriptionSlotPricing']               = [
             \ModulesGarden\TSSGGSModule\App\Libs\SubscriptionBilling::SLOT_PRICING_PRORATED => $this->translate('subscriptionSlotPricing_prorated'),
             \ModulesGarden\TSSGGSModule\App\Libs\SubscriptionBilling::SLOT_PRICING_FULL     => $this->translate('subscriptionSlotPricing_full'),
         ];
-        $this->availableValues['recurringDaysBeforeExpiry']             = Helpers::getDaysOptions();
+        $this->availableValues['recurringDaysBeforeExpiry']             = $this->dayOptions(RenewalPolicy::LEAD_OPTIONS, 'recurringDaysBeforeExpiry');
+        $this->availableValues['recurringPaymentTerm']                  = $this->dayOptions(RenewalPolicy::TERM_OPTIONS, 'recurringPaymentTerm');
         $this->availableValues['oneTimeDaysBeforeExpiry']               = Helpers::getDaysOptions();
 
         // the SSL certificates page also shows settings of the general store (downloads, messages, due dates, ordering)
@@ -76,9 +82,8 @@ class SslSettingsProvider extends CrudProvider
         {
             $this->data[$key] = in_array($key, GeneralSettingsProvider::SWITCHES, true) ? GeneralSettings::enabled($key) : $value;
         }
-        $offsets = ['0' => '0', '3' => '3', '7' => '7', '15' => '15', '30' => '30'];
-        $this->availableValues['dueDateOffsetRegular']      = $offsets;
-        $this->availableValues['dueDateOffsetSubscription'] = $offsets;
+        // what applies: an install that never saved it keeps the choice it made for SSL before 1.5.0
+        $this->data['renewReuseOrderDetails'] = RenewalPolicy::reuseDetails();
 
         $templates = ['' => $this->translate('moduleTemplate')];
         foreach(\WHMCS\Database\Capsule::table('tblemailtemplates')->where('type', 'general')->where('language', '')->orderBy('name')->pluck('name') as $name)
@@ -162,5 +167,20 @@ class SslSettingsProvider extends CrudProvider
         (new AddonModuleRepository)->saveSslSettings(array_diff_key($data, GeneralSettings::DEFAULTS));
         // the dashboard's "Check renewal settings" step
         NextStepsWidget::markDone(NextStepsWidget::STEP_RENEWALS);
+    }
+
+    /**
+     * Day options of a dropdown; a value saved that is not in the list stays selectable
+     */
+    protected function dayOptions(array $days, string $key): array
+    {
+        $current = isset($this->data[$key]) && is_numeric($this->data[$key]) ? (int)$this->data[$key] : null;
+        if($current !== null && !in_array($current, $days, true))
+        {
+            $days[] = $current;
+            sort($days);
+        }
+
+        return array_combine($days, $days);
     }
 }

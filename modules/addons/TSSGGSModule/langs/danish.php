@@ -561,7 +561,7 @@ $_LANG['admin.settings.index.forms.ssl_settings_form.additionalDaysForRenewalOrd
 $_LANG['admin.settings.index.forms.ssl_settings_form.autoReissueDaysBeforeExpire']                              = 'Automatisk genudstedelse, dage før udløb';
 $_LANG['admin.settings.index.forms.ssl_settings_form.autoReissueDaysBeforeExpire_description']                  = 'AutoInstall (cPanel)-certifikater genudstedes automatisk dette antal dage før certifikatet udløber, så længe abonnementet fortsætter. 0 deaktiverer automatisk genudstedelse. Standard: 7';
 $_LANG['admin.settings.index.forms.ssl_settings_form.recurringCreateAutomaticRenewalInvoice']                   = 'Opret automatisk fornyelsesfaktura';
-$_LANG['admin.settings.index.forms.ssl_settings_form.recurringDaysBeforeExpiry']                                = 'Dage før udløb';
+$_LANG['admin.settings.index.forms.ssl_settings_form.recurringDaysBeforeExpiry'] = 'Opret fornyelsesfaktura: dage før ordren udløber';
 $_LANG['admin.settings.index.forms.ssl_settings_form.recurringSendExpirationNotifications']                     = 'Send udløbsmeddelelser';
 $_LANG['admin.settings.index.forms.ssl_settings_form.recurringSendExpirationNotifications_description']         = 'Dage før udløb, hvor kunden får en påmindelses-e-mail, adskilt af komma, 0-30. Fungerer med eller uden automatiske fornyelsesfakturaer: med fakturakontakten slået fra er dette en ren påmindelsestilstand.';
 $_LANG['admin.settings.index.providers.ssl_settings_provider.recurringSendExpirationNotificationsInvalidValue'] = 'Værdierne skal være i intervallet 0-30';
@@ -573,7 +573,7 @@ $_LANG['admin.settings.index.providers.ssl_settings_provider.oneTimeSendExpirati
 
 $_LANG['admin.settings.index.forms.ssl_settings_form.renewalsSubscription']                                     = 'Fornyelser (abonnementsfakturering)';
 $_LANG['admin.settings.index.forms.ssl_settings_form.recurringCreateAutomaticRenewalInvoiceSubscription']       = 'Opret automatisk fornyelsesfaktura';
-$_LANG['admin.settings.index.forms.ssl_settings_form.recurringDaysBeforeExpirySubscription']                    = 'Dage før udløb';
+$_LANG['admin.settings.index.forms.ssl_settings_form.recurringDaysBeforeExpirySubscription'] = 'Opret fornyelsesfaktura: dage før abonnementet fornyes';
 $_LANG['admin.settings.index.forms.ssl_settings_form.recurringSendExpirationNotificationsSubscription']         = 'Send udløbsmeddelelser';
 $_LANG['admin.settings.index.providers.ssl_settings_provider.recurringSendExpirationNotificationsSubscription'] = 'Værdierne skal være i intervallet 0-30';
 
@@ -1475,3 +1475,23 @@ $_LANG['admin.settings.index.forms.ssl_settings_form.subscriptionSlotPricing'] =
 $_LANG['admin.settings.index.forms.ssl_settings_form.subscriptionSlotPricing_description'] = 'Pris for domæner (pladser), som en kunde køber i abonnementsperioden. Forholdsmæssig: årsprisen for de dage, der er tilbage til næste fornyelse. Fuld pris: årsprisen, uanset hvornår de købes. Fornyelsen opkræver altid den fulde årspris for alle domæner.';
 $_LANG['admin.settings.index.providers.ssl_settings_provider.subscriptionSlotPricing_prorated'] = 'Forholdsmæssigt til næste fornyelse';
 $_LANG['admin.settings.index.providers.ssl_settings_provider.subscriptionSlotPricing_full'] = 'Fuld årspris';
+
+// renewal invoices and renewals (1.5.0)
+$_LANG['admin.settings.index.forms.ssl_settings_form.recurringDaysBeforeExpiry_description'] = 'Fornyelsesfakturaen oprettes så mange dage før ordren udløber - aldrig efter certifikatets eget udløb. Højst 30: en CA overfører ikke mere end 30 dage af det gamle certifikat, så en kunde, der fornyede tidligere, ville miste forskellen.';
+$_LANG['admin.settings.index.forms.ssl_settings_form.recurringPaymentTerm'] = 'Betalingsfrist (dage)';
+$_LANG['admin.settings.index.forms.ssl_settings_form.recurringPaymentTerm_description'] = 'Fornyelsesfakturaen forfalder så mange dage efter, at den er oprettet.';
+$_LANG['admin.settings.index.forms.ssl_settings_form.recurringDaysBeforeExpirySubscription_description'] = 'Fornyelsesfakturaen oprettes så mange dage før leverandøren fornyer abonnementet (højst 30).';
+$_LANG['admin.settings.index.forms.ssl_settings_form.recurringPaymentTermSubscription'] = 'Betalingsfrist (dage)';
+$_LANG['admin.settings.index.forms.ssl_settings_form.recurringPaymentTermSubscription_description'] = 'Fornyelsesfakturaen forfalder så mange dage efter, at den er oprettet. En ubetalt fornyelse annulleres hos leverandøren dagen før den ville blive fornyet, så kunden beholder det betalte år, og du bliver ikke opkrævet for det næste.';
+$_LANG['admin.settings.index.forms.ssl_settings_form.renewOrderViaExistingOrder_description'] = 'Til: en betalt fornyelse forbliver på den samme WHMCS-tjeneste, som får det nye certifikat (det udløbende kan downloades, indtil det udløber) - én tjeneste pr. domæne. Fra: fornyelsen får en ny WHMCS-tjeneste, og den udløbende lukkes. Faktureringen er den samme i begge tilfælde.';
+$_LANG['admin.settings.index.forms.ssl_settings_form.renewReuseOrderDetails'] = 'Forny med de samme ordreoplysninger';
+$_LANG['admin.settings.index.forms.ssl_settings_form.renewReuseOrderDetails_description'] = 'Til: en betalt fornyelse sendes straks til leverandøren med den tidligere CSR, domæner og kontakter, og kunden får en e-mail om automatisk fornyelse. Fra: kunden bliver bedt om at indsende dem igen via e-mail. Gælder alle produkter. Afviser leverandøren de tidligere oplysninger, bliver kunden bedt om nye.';
+$_LANG['admin.settings.index.forms.ssl_settings_form.renewalCheckCertificateBefore'] = 'Faktura oprettet :lead dage før ordren udløber og forfalder :term dage senere: :days dage før udløb.';
+$_LANG['admin.settings.index.forms.ssl_settings_form.renewalCheckCertificateOn'] = 'Faktura oprettet :lead dage før ordren udløber og forfalder :term dage senere: på dagen, hvor ordren udløber.';
+$_LANG['admin.settings.index.forms.ssl_settings_form.renewalCheckCertificateAfter'] = 'Faktura oprettet :lead dage før ordren udløber og forfalder :term dage senere: :days dage efter udløb.';
+$_LANG['admin.settings.index.forms.ssl_settings_form.renewalCheckSubscriptionBefore'] = 'Faktura oprettet :lead dage før abonnementet fornyes og forfalder :term dage senere: :days dage før fornyelsen.';
+$_LANG['admin.settings.index.forms.ssl_settings_form.renewalCheckSubscriptionOn'] = 'Faktura oprettet :lead dage før abonnementet fornyes og forfalder :term dage senere: på fornyelsesdagen.';
+$_LANG['admin.settings.index.forms.ssl_settings_form.renewalCheckSubscriptionAfter'] = 'Faktura oprettet :lead dage før abonnementet fornyes og forfalder :term dage senere: :days dage efter fornyelsen.';
+$_LANG['admin.settings.index.forms.ssl_settings_form.renewalDueAfterCertificateEnds'] = 'Fakturaen forfalder :days dage efter, at ordren udløber. En kunde, der betaler på forfaldsdagen, fornyer efter certifikatet er udløbet, så webstedet kører uden gyldigt certifikat i op til :days dage. Det koster dig intet: fornyelsen bestilles først, når den er betalt. Anbefalet: en betalingsfrist på højst :safe dage.';
+$_LANG['admin.settings.index.forms.ssl_settings_form.renewalDueDayBeforeRenewal'] = 'Fakturaen forfalder dagen før abonnementet fornyes. En ubetalt fornyelse annulleres så først på selve fornyelsesdagen, hvilket kan være for sent til at forhindre leverandøren i at forny og opkræve dig. Anbefalet: en betalingsfrist på højst :safe dage.';
+$_LANG['admin.settings.index.forms.ssl_settings_form.renewalDueAfterSubscriptionRenews'] = 'Risiko: fakturaen forfalder på eller efter den dag, hvor leverandøren fornyer abonnementet. Du bliver opkrævet for det næste år, før din kunde har betalt, og en ubetalt fornyelse kan først annulleres derefter. Anbefalet: en betalingsfrist på højst :safe dage.';

@@ -569,7 +569,7 @@ $_LANG['admin.settings.index.forms.ssl_settings_form.additionalDaysForRenewalOrd
 $_LANG['admin.settings.index.forms.ssl_settings_form.autoReissueDaysBeforeExpire']                              = 'Auto Reissue Days Before Expiration';
 $_LANG['admin.settings.index.forms.ssl_settings_form.autoReissueDaysBeforeExpire_description']                  = 'AutoInstall (cPanel) certificates are reissued automatically this many days before the certificate expires, as long as the subscription continues. 0 disables automatic reissue. Default: 7';
 $_LANG['admin.settings.index.forms.ssl_settings_form.recurringCreateAutomaticRenewalInvoice']                   = 'Create Automatic Renewal Invoice';
-$_LANG['admin.settings.index.forms.ssl_settings_form.recurringDaysBeforeExpiry']                                = 'Days Before Expiry';
+$_LANG['admin.settings.index.forms.ssl_settings_form.recurringDaysBeforeExpiry'] = 'Create Renewal Invoice: Days Before The Order Ends';
 $_LANG['admin.settings.index.forms.ssl_settings_form.recurringSendExpirationNotifications']                     = 'Send Expiration Notifications';
 $_LANG['admin.settings.index.forms.ssl_settings_form.recurringSendExpirationNotifications_description']         = 'Days before the expiry on which the client gets a reminder e-mail, comma separated, 0-30. Works with or without automatic renewal invoices: with the invoice switch off this is reminder-only mode.';
 $_LANG['admin.settings.index.providers.ssl_settings_provider.recurringSendExpirationNotificationsInvalidValue'] = 'Values should be in the range of 0-30';
@@ -581,7 +581,7 @@ $_LANG['admin.settings.index.providers.ssl_settings_provider.oneTimeSendExpirati
 
 $_LANG['admin.settings.index.forms.ssl_settings_form.renewalsSubscription']                                     = 'Renewals (Subscription Billing)';
 $_LANG['admin.settings.index.forms.ssl_settings_form.recurringCreateAutomaticRenewalInvoiceSubscription']       = 'Create Automatic Renewal Invoice';
-$_LANG['admin.settings.index.forms.ssl_settings_form.recurringDaysBeforeExpirySubscription']                    = 'Days Before Expiry';
+$_LANG['admin.settings.index.forms.ssl_settings_form.recurringDaysBeforeExpirySubscription'] = 'Create Renewal Invoice: Days Before The Subscription Renews';
 $_LANG['admin.settings.index.forms.ssl_settings_form.recurringSendExpirationNotificationsSubscription']         = 'Send Expiration Notifications';
 $_LANG['admin.settings.index.providers.ssl_settings_provider.recurringSendExpirationNotificationsSubscription'] = 'Values should be in the range of 0-30';
 
@@ -1482,3 +1482,23 @@ $_LANG['admin.settings.index.forms.ssl_settings_form.subscriptionSlotPricing'] =
 $_LANG['admin.settings.index.forms.ssl_settings_form.subscriptionSlotPricing_description'] = 'Price of domains (slots) a client buys during the subscription period. Prorated: the yearly price for the days left until the next renewal. Full price: the yearly price, whenever they are bought. The renewal always charges the full yearly price for all domains.';
 $_LANG['admin.settings.index.providers.ssl_settings_provider.subscriptionSlotPricing_prorated'] = 'Prorated to the next renewal';
 $_LANG['admin.settings.index.providers.ssl_settings_provider.subscriptionSlotPricing_full'] = 'Full yearly price';
+
+// renewal invoices and renewals (1.5.0)
+$_LANG['admin.settings.index.forms.ssl_settings_form.recurringDaysBeforeExpiry_description'] = 'The renewal invoice is created this many days before the order ends - never the certificate\'s own expiry. At most 30: a CA carries over no more than 30 days of the old certificate, so a client who renewed earlier would lose the difference.';
+$_LANG['admin.settings.index.forms.ssl_settings_form.recurringPaymentTerm'] = 'Payment Term (Days)';
+$_LANG['admin.settings.index.forms.ssl_settings_form.recurringPaymentTerm_description'] = 'The renewal invoice falls due this many days after it is created.';
+$_LANG['admin.settings.index.forms.ssl_settings_form.recurringDaysBeforeExpirySubscription_description'] = 'The renewal invoice is created this many days before the vendor renews the subscription (at most 30).';
+$_LANG['admin.settings.index.forms.ssl_settings_form.recurringPaymentTermSubscription'] = 'Payment Term (Days)';
+$_LANG['admin.settings.index.forms.ssl_settings_form.recurringPaymentTermSubscription_description'] = 'The renewal invoice falls due this many days after it is created. An unpaid renewal is cancelled at the vendor the day before it would renew, so the client keeps the year already paid and you are not charged for the next one.';
+$_LANG['admin.settings.index.forms.ssl_settings_form.renewOrderViaExistingOrder_description'] = 'On: a paid renewal stays on the same WHMCS service, which gets the new certificate (the expiring one stays downloadable until it expires) - one service per domain. Off: the renewal gets a new WHMCS service and the expiring one is closed. Invoicing is the same either way.';
+$_LANG['admin.settings.index.forms.ssl_settings_form.renewReuseOrderDetails'] = 'Renew With The Same Order Details';
+$_LANG['admin.settings.index.forms.ssl_settings_form.renewReuseOrderDetails_description'] = 'On: a paid renewal is sent to the vendor at once with the previous CSR, domains and contacts, and the client gets a "renewed automatically" e-mail. Off: the client is asked by e-mail to submit them again. Applies to every product. When the vendor refuses the previous details, the client is asked for new ones.';
+$_LANG['admin.settings.index.forms.ssl_settings_form.renewalCheckCertificateBefore'] = 'Invoice created :lead days before the order ends and due :term days later: :days days before the end.';
+$_LANG['admin.settings.index.forms.ssl_settings_form.renewalCheckCertificateOn'] = 'Invoice created :lead days before the order ends and due :term days later: on the day the order ends.';
+$_LANG['admin.settings.index.forms.ssl_settings_form.renewalCheckCertificateAfter'] = 'Invoice created :lead days before the order ends and due :term days later: :days days after the end.';
+$_LANG['admin.settings.index.forms.ssl_settings_form.renewalCheckSubscriptionBefore'] = 'Invoice created :lead days before the subscription renews and due :term days later: :days days before the renewal.';
+$_LANG['admin.settings.index.forms.ssl_settings_form.renewalCheckSubscriptionOn'] = 'Invoice created :lead days before the subscription renews and due :term days later: on the day it renews.';
+$_LANG['admin.settings.index.forms.ssl_settings_form.renewalCheckSubscriptionAfter'] = 'Invoice created :lead days before the subscription renews and due :term days later: :days days after the renewal.';
+$_LANG['admin.settings.index.forms.ssl_settings_form.renewalDueAfterCertificateEnds'] = 'The invoice falls due :days days after the order ends. A client who pays on the due date renews after the certificate has expired, so the site runs without a valid certificate for up to :days days. It costs you nothing: the renewal is ordered only once it is paid. Suggested: a payment term of :safe days or less.';
+$_LANG['admin.settings.index.forms.ssl_settings_form.renewalDueDayBeforeRenewal'] = 'The invoice falls due the day before the subscription renews. An unpaid renewal is then cancelled on the renewal day itself, which can be too late to stop the vendor renewing it and charging you. Suggested: a payment term of :safe days or less.';
+$_LANG['admin.settings.index.forms.ssl_settings_form.renewalDueAfterSubscriptionRenews'] = 'Risk: the invoice falls due on or after the day the vendor renews the subscription. You are charged for the next year before your client has paid, and an unpaid renewal can only be cancelled after that. Suggested: a payment term of :safe days or less.';

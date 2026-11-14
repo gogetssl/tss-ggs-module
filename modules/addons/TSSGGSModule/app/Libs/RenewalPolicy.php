@@ -128,30 +128,37 @@ class RenewalPolicy
     }
 
     /**
-     * What a lead and a payment term mean together. null when the invoice falls due before the order ends;
-     * otherwise ['level' => 'amber'|'red', 'days' => days after the end, 'key' => language key].
+     * What a lead and a payment term mean together. null when nothing is at risk; otherwise
+     * ['level' => 'amber'|'red', 'days' => days after the end (0 = on it, -1 = the day before), 'key' => language key].
      *
-     *   - certificate, due after the end: the client may pay after the certificate expired. No cost to the reseller,
-     *     the renewal is ordered only once paid - amber.
-     *   - subscription, due after the renewal: the vendor renews and charges the reseller before the client paid - red.
-     *     Due on the renewal day itself - amber.
+     *   - certificate, due after the order end: a client who pays on the due date renews after the certificate
+     *     expired. No cost to the reseller - the renewal is ordered only once paid - so amber.
+     *   - subscription: an unpaid renewal is cancelled at the vendor once its invoice is overdue. Due on or after the
+     *     renewal day, the vendor renews and charges the reseller before that - red. Due the day before, it is
+     *     cancelled on the renewal day itself, racing the vendor - amber.
      */
     public static function warning(string $type, int $lead, int $term)
     {
         $after = $term - $lead;
-        if($after < 0 || ($after === 0 && $type === self::CERTIFICATE))
-        {
-            return null;
-        }
-
         if($type === self::SUBSCRIPTION)
         {
-            return $after === 0
-                ? ['level' => 'amber', 'days' => 0, 'key' => 'renewalDueOnRenewalDay']
-                : ['level' => 'red', 'days' => $after, 'key' => 'renewalDueAfterSubscriptionRenews'];
+            if($after >= 0)
+            {
+                return ['level' => 'red', 'days' => $after, 'key' => 'renewalDueAfterSubscriptionRenews'];
+            }
+
+            return $after === -1 ? ['level' => 'amber', 'days' => -1, 'key' => 'renewalDueDayBeforeRenewal'] : null;
         }
 
-        return ['level' => 'amber', 'days' => $after, 'key' => 'renewalDueAfterCertificateEnds'];
+        return $after > 0 ? ['level' => 'amber', 'days' => $after, 'key' => 'renewalDueAfterCertificateEnds'] : null;
+    }
+
+    /**
+     * Longest payment term with nothing at risk for a lead (what the warning suggests)
+     */
+    public static function safeTerm(string $type, int $lead): int
+    {
+        return max(0, $type === self::SUBSCRIPTION ? $lead - 2 : $lead);
     }
 
     /**

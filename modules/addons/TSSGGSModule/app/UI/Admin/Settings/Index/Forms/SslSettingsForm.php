@@ -13,6 +13,8 @@ use ModulesGarden\TSSGGSModule\Components\Form\Form;
 use ModulesGarden\TSSGGSModule\Components\FormInputText\FormInputText;
 use ModulesGarden\TSSGGSModule\Components\Grid\Grid;
 use ModulesGarden\TSSGGSModule\Components\Switcher\Switcher;
+use ModulesGarden\TSSGGSModule\Components\Text\Text;
+use ModulesGarden\TSSGGSModule\App\Libs\RenewalPolicy;
 use ModulesGarden\TSSGGSModule\Components\TextArea\TextArea;
 use ModulesGarden\TSSGGSModule\Components\Toolbar\Toolbar;
 use ModulesGarden\TSSGGSModule\Components\Widget\Widget;
@@ -190,7 +192,7 @@ class SslSettingsForm extends Form implements AdminAreaInterface, AjaxComponentI
 
     protected function renewalFields($widget, $withReissue)
     {
-        foreach(['visibleRenewButtonBeforeExpiration', 'visibleRenewButtonAfterExpiration', 'renewOrderViaExistingOrder', 'automaticProcessingOfRenewalOrders', 'setTheUnpaidStatusForRenewalInvoices'] as $name)
+        foreach(['visibleRenewButtonBeforeExpiration', 'visibleRenewButtonAfterExpiration', 'renewOrderViaExistingOrder', 'renewReuseOrderDetails', 'setTheUnpaidStatusForRenewalInvoices'] as $name)
         {
             $this->builder->addFieldInContainer($widget, (new Switcher())->setName($name)->addClass('switcher-revert'));
         }
@@ -238,6 +240,8 @@ class SslSettingsForm extends Form implements AdminAreaInterface, AjaxComponentI
                 ->setName('recurringDaysBeforeExpiry')
                 ->setDefaultValueAsFirstOption()
         );
+        $this->builder->addFieldInContainer($recurringContainer, (new Dropdown())->setName('recurringPaymentTerm'));
+        $recurringContainer->addElement((new Text())->setText($this->renewalCheck(RenewalPolicy::CERTIFICATE)));
 
         $oneTimeOrdersWidget = $this->subSection('oneTimeOrders', $widget);
 
@@ -279,6 +283,8 @@ class SslSettingsForm extends Form implements AdminAreaInterface, AjaxComponentI
         );
 
         $this->builder->addFieldInContainer($recurringContainer, (new Dropdown())->setName('recurringDaysBeforeExpirySubscription')->setDefaultValueAsFirstOption());
+        $this->builder->addFieldInContainer($recurringContainer, (new Dropdown())->setName('recurringPaymentTermSubscription'));
+        $recurringContainer->addElement((new Text())->setText($this->renewalCheck(RenewalPolicy::SUBSCRIPTION)));
         $this->builder->addFieldInContainer($recurringContainer, (new Switcher())->setName('recurringSendExpirationNotificationsSubscription')->addClass('switcher-revert'));
         $this->builder->addFieldInContainer($recurringContainer, (new Switcher())->setName('terminateUnpaidSubscriptions')->addClass('switcher-revert'));
         $this->builder->addFieldInContainer($recurringOrdersWidget, (new Dropdown())->setName('subscriptionSlotPricing')->setDefaultValueAsFirstOption());
@@ -317,9 +323,52 @@ class SslSettingsForm extends Form implements AdminAreaInterface, AjaxComponentI
         $this->builder->addFieldInContainer($widget, (new Dropdown())->setName('certificateEmailTemplate'), true);
     }
 
-    protected function dueDateFields($widget)
+    /**
+     * What the lead and the payment term mean together, in words: a summary line and, when something is at risk, a
+     * warning (App\Libs\RenewalPolicy::warning). Shown as saved; resources/assets/js/custom/renewalCheck.js redraws
+     * it while the administrator changes the two fields. Every text is given here, translated - the script only puts
+     * the numbers in.
+     */
+    protected function renewalCheck(string $type): string
     {
-        $this->builder->addFieldInContainer($widget, (new Dropdown())->setName('dueDateOffsetRegular'), true);
-        $this->builder->addFieldInContainer($widget, (new Dropdown())->setName('dueDateOffsetSubscription'), true);
+        [, $leadKey, $termKey] = RenewalPolicy::KEYS[$type];
+        $lead   = RenewalPolicy::lead($type);
+        $term   = RenewalPolicy::term($type);
+        $prefix = $type === RenewalPolicy::SUBSCRIPTION ? 'renewalCheckSubscription' : 'renewalCheckCertificate';
+        $texts  = [
+            'before' => $this->translate($prefix . 'Before'),
+            'on'     => $this->translate($prefix . 'On'),
+            'after'  => $this->translate($prefix . 'After'),
+            'amber'  => $this->translate($type === RenewalPolicy::SUBSCRIPTION ? 'renewalDueDayBeforeRenewal' : 'renewalDueAfterCertificateEnds'),
+            'red'    => $this->translate('renewalDueAfterSubscriptionRenews'),
+        ];
+
+        $attributes = ' data-type="' . htmlspecialchars($type) . '" data-lead="' . htmlspecialchars($leadKey) . '" data-term="' . htmlspecialchars($termKey) . '"';
+        foreach($texts as $name => $text)
+        {
+            $attributes .= ' data-text-' . $name . '="' . htmlspecialchars($text) . '"';
+        }
+
+        return '<div class="tssggs-renewal-check"' . $attributes . '>' . self::renewalCheckBody($type, $lead, $term, $texts) . '</div>';
+    }
+
+    /**
+     * The inner HTML of a renewal check - the same rules as renewalCheck.js
+     */
+    public static function renewalCheckBody(string $type, int $lead, int $term, array $texts): string
+    {
+        $after   = $term - $lead;
+        $vars    = [':lead' => $lead, ':term' => $term, ':days' => abs($after), ':safe' => RenewalPolicy::safeTerm($type, $lead)];
+        $summary = strtr($after < 0 ? $texts['before'] : ($after === 0 ? $texts['on'] : $texts['after']), $vars);
+        $html    = '<p class="tssggs-renewal-check__summary">' . htmlspecialchars($summary) . '</p>';
+
+        $warning = RenewalPolicy::warning($type, $lead, $term);
+        if($warning)
+        {
+            $text  = $warning['level'] === 'red' ? $texts['red'] : $texts['amber'];
+            $html .= '<p class="tssggs-renewal-check__warning tssggs-renewal-check__warning--' . $warning['level'] . '">' . htmlspecialchars(strtr($text, $vars)) . '</p>';
+        }
+
+        return $html;
     }
 }

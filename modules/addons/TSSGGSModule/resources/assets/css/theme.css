@@ -526,3 +526,18 @@
 
 /* inline code: no grey chip, a calmer red than the framework default (#ff3860) */
 #layers2 code { background-color: transparent; color: #b4233a; }
+
+/* Settings > SSL certificates: renewal invoice lead + payment term, in words (SslSettingsForm::renewalCheck) */
+#layers2 .tssggs-renewal-check { margin: 4px 0 16px; }
+#layers2 .tssggs-renewal-check__summary { margin: 0; padding: 10px 14px; border-radius: 8px; background: var(--nt-info-soft); color: var(--nt-text); font-size: 13px; line-height: 20px; }
+#layers2 .tssggs-renewal-check__warning {
+    position: relative; margin: 8px 0 0; padding: 12px 14px 12px 44px;
+    border: 1px solid var(--notice-color); border-left-width: 3px; border-radius: 8px;
+    background: var(--notice-bg); color: var(--nt-text); font-size: 13px; line-height: 20px; overflow-wrap: anywhere;
+}
+#layers2 .tssggs-renewal-check__warning::before {
+    content: ''; position: absolute; left: 14px; top: 13px; width: 18px; height: 18px;
+    background: var(--notice-color); -webkit-mask: var(--nt-icon-warn) center/18px 18px no-repeat; mask: var(--nt-icon-warn) center/18px 18px no-repeat;
+}
+#layers2 .tssggs-renewal-check__warning--amber { --notice-color: var(--nt-warning); --notice-bg: var(--nt-warning-soft); }
+#layers2 .tssggs-renewal-check__warning--red   { --notice-color: var(--nt-error);   --notice-bg: var(--nt-error-soft); }

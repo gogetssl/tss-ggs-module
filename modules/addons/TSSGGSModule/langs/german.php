@@ -560,7 +560,7 @@ $_LANG['admin.settings.index.forms.ssl_settings_form.additionalDaysForRenewalOrd
 $_LANG['admin.settings.index.forms.ssl_settings_form.autoReissueDaysBeforeExpire'] = 'Automatische Neuausstellung (Tage vor Ablauf)';
 $_LANG['admin.settings.index.forms.ssl_settings_form.autoReissueDaysBeforeExpire_description'] = 'AutoInstall-Zertifikate (cPanel) werden automatisch so viele Tage vor Ablauf des Zertifikats neu ausgestellt, solange das Abonnement fortgeführt wird. 0 deaktiviert die automatische Neuausstellung. Standard: 7';
 $_LANG['admin.settings.index.forms.ssl_settings_form.recurringCreateAutomaticRenewalInvoice'] = 'Verlängerungsrechnung automatisch erstellen';
-$_LANG['admin.settings.index.forms.ssl_settings_form.recurringDaysBeforeExpiry'] = 'Tage vor Ablauf';
+$_LANG['admin.settings.index.forms.ssl_settings_form.recurringDaysBeforeExpiry'] = 'Verlängerungsrechnung erstellen: Tage vor Ende der Bestellung';
 $_LANG['admin.settings.index.forms.ssl_settings_form.recurringSendExpirationNotifications'] = 'Ablaufbenachrichtigungen senden';
 $_LANG['admin.settings.index.forms.ssl_settings_form.recurringSendExpirationNotifications_description'] = 'Tage vor Ablauf, an denen der Kunde eine Erinnerungs-E-Mail erhält, durch Komma getrennt, 0-30. Funktioniert mit oder ohne automatische Verlängerungsrechnungen: Bei ausgeschaltetem Rechnungsschalter ist dies der reine Erinnerungsmodus.';
 $_LANG['admin.settings.index.providers.ssl_settings_provider.recurringSendExpirationNotificationsInvalidValue'] = 'Die Werte müssen im Bereich von 0-30 liegen';
@@ -572,7 +572,7 @@ $_LANG['admin.settings.index.providers.ssl_settings_provider.oneTimeSendExpirati
 
 $_LANG['admin.settings.index.forms.ssl_settings_form.renewalsSubscription'] = 'Verlängerungen (Abonnementabrechnung)';
 $_LANG['admin.settings.index.forms.ssl_settings_form.recurringCreateAutomaticRenewalInvoiceSubscription'] = 'Verlängerungsrechnung automatisch erstellen';
-$_LANG['admin.settings.index.forms.ssl_settings_form.recurringDaysBeforeExpirySubscription'] = 'Tage vor Ablauf';
+$_LANG['admin.settings.index.forms.ssl_settings_form.recurringDaysBeforeExpirySubscription'] = 'Verlängerungsrechnung erstellen: Tage vor der Verlängerung des Abonnements';
 $_LANG['admin.settings.index.forms.ssl_settings_form.recurringSendExpirationNotificationsSubscription'] = 'Ablaufbenachrichtigungen senden';
 $_LANG['admin.settings.index.providers.ssl_settings_provider.recurringSendExpirationNotificationsSubscription'] = 'Die Werte müssen im Bereich von 0-30 liegen';
 
@@ -1473,3 +1473,23 @@ $_LANG['admin.settings.index.forms.ssl_settings_form.subscriptionSlotPricing'] =
 $_LANG['admin.settings.index.forms.ssl_settings_form.subscriptionSlotPricing_description'] = 'Preis der Domains (Plätze), die ein Kunde während der Abonnementlaufzeit kauft. Anteilig: der Jahrespreis für die Tage bis zur nächsten Verlängerung. Voller Preis: der Jahrespreis, unabhängig vom Kaufzeitpunkt. Die Verlängerung berechnet immer den vollen Jahrespreis für alle Domains.';
 $_LANG['admin.settings.index.providers.ssl_settings_provider.subscriptionSlotPricing_prorated'] = 'Anteilig bis zur nächsten Verlängerung';
 $_LANG['admin.settings.index.providers.ssl_settings_provider.subscriptionSlotPricing_full'] = 'Voller Jahrespreis';
+
+// renewal invoices and renewals (1.5.0)
+$_LANG['admin.settings.index.forms.ssl_settings_form.recurringDaysBeforeExpiry_description'] = 'Die Verlängerungsrechnung wird so viele Tage vor dem Ende der Bestellung erstellt - nie nach dem Ablauf des Zertifikats selbst. Höchstens 30: eine CA überträgt nicht mehr als 30 Tage des alten Zertifikats, ein früher verlängernder Kunde würde die Differenz verlieren.';
+$_LANG['admin.settings.index.forms.ssl_settings_form.recurringPaymentTerm'] = 'Zahlungsziel (Tage)';
+$_LANG['admin.settings.index.forms.ssl_settings_form.recurringPaymentTerm_description'] = 'Die Verlängerungsrechnung ist so viele Tage nach ihrer Erstellung fällig.';
+$_LANG['admin.settings.index.forms.ssl_settings_form.recurringDaysBeforeExpirySubscription_description'] = 'Die Verlängerungsrechnung wird so viele Tage erstellt, bevor der Anbieter das Abonnement verlängert (höchstens 30).';
+$_LANG['admin.settings.index.forms.ssl_settings_form.recurringPaymentTermSubscription'] = 'Zahlungsziel (Tage)';
+$_LANG['admin.settings.index.forms.ssl_settings_form.recurringPaymentTermSubscription_description'] = 'Die Verlängerungsrechnung ist so viele Tage nach ihrer Erstellung fällig. Eine unbezahlte Verlängerung wird beim Anbieter am Tag vor der Verlängerung storniert: der Kunde behält das bezahlte Jahr, und Ihnen wird das nächste nicht berechnet.';
+$_LANG['admin.settings.index.forms.ssl_settings_form.renewOrderViaExistingOrder_description'] = 'Ein: eine bezahlte Verlängerung bleibt im selben WHMCS-Dienst, der das neue Zertifikat erhält (das ablaufende bleibt bis zum Ablauf herunterladbar) - ein Dienst pro Domain. Aus: die Verlängerung erhält einen neuen WHMCS-Dienst, der ablaufende wird geschlossen. Die Rechnungsstellung ist in beiden Fällen gleich.';
+$_LANG['admin.settings.index.forms.ssl_settings_form.renewReuseOrderDetails'] = 'Mit denselben Bestelldaten verlängern';
+$_LANG['admin.settings.index.forms.ssl_settings_form.renewReuseOrderDetails_description'] = 'Ein: eine bezahlte Verlängerung wird sofort mit dem bisherigen CSR, den Domains und Kontakten an den Anbieter gesendet, der Kunde erhält eine E-Mail "automatisch verlängert". Aus: der Kunde wird per E-Mail gebeten, sie erneut einzureichen. Gilt für alle Produkte. Lehnt der Anbieter die bisherigen Daten ab, wird der Kunde um neue gebeten.';
+$_LANG['admin.settings.index.forms.ssl_settings_form.renewalCheckCertificateBefore'] = 'Rechnung :lead Tage vor Ende der Bestellung erstellt und :term Tage später fällig: :days Tage vor dem Ende.';
+$_LANG['admin.settings.index.forms.ssl_settings_form.renewalCheckCertificateOn'] = 'Rechnung :lead Tage vor Ende der Bestellung erstellt und :term Tage später fällig: am Tag, an dem die Bestellung endet.';
+$_LANG['admin.settings.index.forms.ssl_settings_form.renewalCheckCertificateAfter'] = 'Rechnung :lead Tage vor Ende der Bestellung erstellt und :term Tage später fällig: :days Tage nach dem Ende.';
+$_LANG['admin.settings.index.forms.ssl_settings_form.renewalCheckSubscriptionBefore'] = 'Rechnung :lead Tage vor der Verlängerung des Abonnements erstellt und :term Tage später fällig: :days Tage vor der Verlängerung.';
+$_LANG['admin.settings.index.forms.ssl_settings_form.renewalCheckSubscriptionOn'] = 'Rechnung :lead Tage vor der Verlängerung des Abonnements erstellt und :term Tage später fällig: am Tag der Verlängerung.';
+$_LANG['admin.settings.index.forms.ssl_settings_form.renewalCheckSubscriptionAfter'] = 'Rechnung :lead Tage vor der Verlängerung des Abonnements erstellt und :term Tage später fällig: :days Tage nach der Verlängerung.';
+$_LANG['admin.settings.index.forms.ssl_settings_form.renewalDueAfterCertificateEnds'] = 'Die Rechnung ist :days Tage nach dem Ende der Bestellung fällig. Ein Kunde, der am Fälligkeitstag zahlt, verlängert erst nach Ablauf des Zertifikats, die Website läuft bis zu :days Tage ohne gültiges Zertifikat. Für Sie ohne Kosten: die Verlängerung wird erst nach Zahlung bestellt. Empfohlen: ein Zahlungsziel von höchstens :safe Tagen.';
+$_LANG['admin.settings.index.forms.ssl_settings_form.renewalDueDayBeforeRenewal'] = 'Die Rechnung ist am Tag vor der Verlängerung des Abonnements fällig. Eine unbezahlte Verlängerung wird dann erst am Tag der Verlängerung storniert, was zu spät sein kann, um die Verlängerung und Berechnung durch den Anbieter zu verhindern. Empfohlen: ein Zahlungsziel von höchstens :safe Tagen.';
+$_LANG['admin.settings.index.forms.ssl_settings_form.renewalDueAfterSubscriptionRenews'] = 'Risiko: die Rechnung ist am oder nach dem Tag fällig, an dem der Anbieter das Abonnement verlängert. Ihnen wird das nächste Jahr berechnet, bevor Ihr Kunde bezahlt hat, und eine unbezahlte Verlängerung kann erst danach storniert werden. Empfohlen: ein Zahlungsziel von höchstens :safe Tagen.';
