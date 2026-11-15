@@ -11,7 +11,8 @@
  *   mode "upgrade"  after the swap: runs WHMCS's addon upgrade from the previous version, then answers
  */
 
-$token = isset($_GET['token']) ? (string)$_GET['token'] : '';
+// from the command line (App\Libs\Update\Health::callCli) the token comes in the environment
+$token = PHP_SAPI === 'cli' ? (string)getenv('TSSGGS_HEALTH_TOKEN') : (isset($_GET['token']) ? (string)$_GET['token'] : '');
 $file  = dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . '.' . strtolower(basename(__DIR__)) . '-update' . DIRECTORY_SEPARATOR . 'health.json';
 $stored = preg_match('/^[0-9a-f]{64}$/', $token) ? json_decode((string)@file_get_contents($file), true) : null;
 if(!is_array($stored) || (int)($stored['expires'] ?? 0) < time() || !hash_equals((string)($stored['hash'] ?? ''), hash('sha256', $token)))

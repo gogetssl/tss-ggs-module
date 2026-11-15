@@ -43,9 +43,14 @@ class Workdir
     public static function ensure(...$parts)
     {
         $base = self::path();
-        if(!is_dir($base) && !@mkdir($base, 0755) && !is_dir($base))
+        if(!is_dir($base))
         {
-            throw new \RuntimeException('Cannot create ' . $base);
+            if(!@mkdir($base, 0775) && !is_dir($base))
+            {
+                throw new \RuntimeException('Cannot create ' . $base);
+            }
+            // the cron (command line) and the web server may run as different users of one group
+            @chmod($base, 0775);
         }
         if(!is_file($base . '/.htaccess'))
         {

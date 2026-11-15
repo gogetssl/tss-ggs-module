@@ -73,11 +73,82 @@ class Health
         return $answer;
     }
 
+    /** How the last check reached the module: 'web' (through the web server) or 'cli' (a separate command-line PHP) */
+    public static $via = '';
+
+    /**
+     * Through the web server first. When that is blocked (password-protected site, firewall) and the update runs from
+     * the command line, a separate command-line PHP process runs the same check instead. A PHP error (HTTP 5xx) in
+     * the web check is a failure and is never retried another way.
+     */
     protected static function call($mode, array $params = [])
+    {
+        try
+        {
+            self::$via = 'web';
+
+            return self::callWeb($mode, $params);
+        }
+        catch(\RuntimeException $e)
+        {
+            if(PHP_SAPI !== 'cli' || $mode === 'reset' || $e->getCode() >= 500)
+            {
+                throw $e;
+            }
+            $answer = self::callCli($mode, $params);
+            self::$via = 'cli';
+
+            return $answer;
+        }
+    }
+
+    protected static function token($mode, array $params)
     {
         $token = bin2hex(random_bytes(32));
         Workdir::ensure();
         file_put_contents(Workdir::path('health.json'), json_encode(['hash' => hash('sha256', $token), 'mode' => $mode, 'expires' => time() + 300] + $params));
+        @chmod(Workdir::path('health.json'), 0664);
+
+        return $token;
+    }
+
+    protected static function callCli($mode, array $params)
+    {
+        if(!function_exists('proc_open') || in_array('proc_open', array_map('trim', explode(',', (string)ini_get('disable_functions'))), true))
+        {
+            throw new \RuntimeException('the web check is blocked and proc_open is disabled');
+        }
+        $token = self::token($mode, $params);
+        try
+        {
+            $script  = Workdir::addonDir() . DIRECTORY_SEPARATOR . 'update-health.php';
+            $process = proc_open([PHP_BINARY, $script], [1 => ['pipe', 'w'], 2 => ['pipe', 'w']], $pipes, dirname($script), ['TSSGGS_HEALTH_TOKEN' => $token] + getenv());
+            if(!is_resource($process))
+            {
+                throw new \RuntimeException('cannot start PHP');
+            }
+            $body = stream_get_contents($pipes[1]);
+            $err  = stream_get_contents($pipes[2]);
+            fclose($pipes[1]);
+            fclose($pipes[2]);
+            $code = proc_close($process);
+        }
+        finally
+        {
+            @unlink(Workdir::path('health.json'));
+        }
+        $answer = json_decode(trim((string)$body), true);
+        if(!is_array($answer))
+        {
+            throw new \RuntimeException('command-line check: exit ' . $code . ($err !== '' ? ', ' . mb_substr(trim($err), 0, 300) : ''));
+        }
+
+        return $answer;
+    }
+
+    protected static function callWeb($mode, array $params)
+    {
+        $token = self::token($mode, $params);
         try
         {
             $base = rtrim((string)\WHMCS\Config\Setting::getValue('SystemURL'), '/');
@@ -108,7 +179,7 @@ class Health
         $answer = json_decode((string)$body, true);
         if(!is_array($answer))
         {
-            throw new \RuntimeException('HTTP ' . $status . ($status >= 500 ? ' (PHP error in the module)' : ''));
+            throw new \RuntimeException('HTTP ' . $status . ($status >= 500 ? ' (PHP error in the module)' : ''), $status);
         }
 
         return $answer;

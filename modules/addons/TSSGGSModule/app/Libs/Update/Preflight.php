@@ -70,14 +70,24 @@ class Preflight
         if($withLoopback)
         {
             $health = Health::ping();
-            $add('loopback', $health === true, $health === true ? '' : 'the server can not reach its own WHMCS address (' . $health . '): the new version could not be checked before it is kept');
+            $add('loopback', $health === true, $health === true
+                ? (Health::$via === 'cli' ? 'checked by a separate command-line PHP (the web server blocks the check)' : '')
+                : 'the server can not reach its own WHMCS address (' . $health . '): the new version could not be checked before it is kept');
             // what counts is the web server's OPcache, which a command-line run does not see
-            if($health === true && isset(Health::$lastAnswer['opcache_ok']))
+            if($health === true && Health::$via === 'web' && isset(Health::$lastAnswer['opcache_ok']))
             {
                 $opcache = (bool)Health::$lastAnswer['opcache_ok'];
             }
+            elseif($health === true && Health::$via === 'cli')
+            {
+                $add('opcache', true, 'the web server\'s OPcache could not be checked: if pages show errors after the update, restart PHP', false);
+                $opcache = null;
+            }
         }
-        $add('opcache', $opcache, $opcache ? '' : 'OPcache never rechecks files and the module may not clear it: ask the host to restart PHP after a manual update');
+        if($opcache !== null)
+        {
+            $add('opcache', $opcache, $opcache ? '' : 'OPcache never rechecks files and the module may not clear it: ask the host to restart PHP after a manual update');
+        }
 
         // local changes: warned about, the admin decides
         $changed = self::changedFiles();
