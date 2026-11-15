@@ -137,10 +137,20 @@ class Health
         {
             @unlink(Workdir::path('health.json'));
         }
-        $answer = json_decode(trim((string)$body), true);
+        // the answer is the last JSON line; anything before it is output of PHP itself (warnings, errors)
+        $answer = null;
+        foreach(array_reverse(preg_split('/\R/', trim((string)$body))) as $line)
+        {
+            if(substr(ltrim($line), 0, 1) === '{')
+            {
+                $answer = json_decode($line, true);
+                break;
+            }
+        }
         if(!is_array($answer))
         {
-            throw new \RuntimeException('command-line check: exit ' . $code . ($err !== '' ? ', ' . mb_substr(trim($err), 0, 300) : ''));
+            $output = trim(strip_tags($err . ' ' . $body));
+            throw new \RuntimeException('command-line check: exit ' . $code . ($output !== '' ? ', ' . mb_substr(preg_replace('/\s+/', ' ', $output), 0, 300) : ''));
         }
 
         return $answer;
