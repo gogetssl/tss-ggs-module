@@ -24,4 +24,4 @@ class ReSyncProvider extends CrudProvider
     {
         Helpers::reSyncProducts(true);
     }
-}
+}
