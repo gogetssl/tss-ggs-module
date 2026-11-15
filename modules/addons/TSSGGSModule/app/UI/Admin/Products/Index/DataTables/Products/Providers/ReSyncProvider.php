@@ -22,6 +22,6 @@ class ReSyncProvider extends CrudProvider
 
     public function create()
     {
-        Helpers::reSyncProducts();
+        Helpers::reSyncProducts(true);
     }
-}
+}

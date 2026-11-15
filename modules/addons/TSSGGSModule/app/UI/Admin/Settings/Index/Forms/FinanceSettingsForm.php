@@ -57,6 +57,10 @@ class FinanceSettingsForm extends Form implements AdminAreaInterface, AjaxCompon
         $this->builder->addFieldInContainer($belowCost, (new Dropdown())->setName('belowCostAction'), true);
         $this->builder->addFieldInContainer($belowCost, (new Switcher())->setName('belowCostEmail')->addClass('switcher-revert'), true);
 
+        $catalogue = $this->section('catalogueSync', 'sync', null, ['catalogueMode_manual', 'catalogueMode_alterations', 'catalogueMode_alterations_removal', 'catalogueMode_all']);
+        $this->builder->addFieldInContainer($catalogue, (new Dropdown())->setName('catalogueSyncMode'), true);
+        $this->builder->addFieldInContainer($catalogue, (new Switcher())->setName('catalogueChangesEmail')->addClass('switcher-revert'), true);
+
         $renewals = $this->section('renewalPrices', 'refresh', null, ['renewalPoint_never', 'renewalPoint_belowCost', 'renewalPoint_always']);
         $this->builder->addFieldInContainer($renewals, (new Dropdown())->setName('renewalPriceMode'), true);
         $this->builder->addFieldInContainer($renewals, (new Switcher())->setName('renewalPriceClientEmail')->addClass('switcher-revert'), true);

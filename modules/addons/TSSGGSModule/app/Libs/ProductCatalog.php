@@ -319,6 +319,7 @@ class ProductCatalog
             }
             $raw['missing_since'] = date('Y-m-d');
             Capsule::table(Edition::table('RemoteProducts'))->where('id', $row->id)->update(['rawData' => json_encode($raw)]);
+            CatalogueSync::discontinued($vendor, (string)$row->remoteId, $raw);
         }
     }
 
