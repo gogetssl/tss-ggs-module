@@ -144,7 +144,7 @@ class AddonCertificates
         }
         if(!$serviceId || !in_array($status, self::OPEN, true))
         {
-            $serviceId = self::newService($addon, $productId);
+            $serviceId = self::createService($addon, $productId);
         }
 
         $result = localAPI('ModuleCreate', ['serviceid' => $serviceId]);
@@ -157,8 +157,11 @@ class AddonCertificates
         return 'success';
     }
 
-    /** A service of the certificate product for the addon's client: billed on the addon, so free and without invoices */
-    protected static function newService($addon, int $productId): int
+    /**
+     * A service of the certificate product for the addon's client: billed on the addon, so free and without invoices.
+     * $status: Pending for a new sale (the module's create activates it); the migration passes the addon's status.
+     */
+    public static function createService($addon, int $productId, string $status = 'Pending', array $linkExtra = []): int
     {
         $parentDomain = (string)Capsule::table('tblhosting')->where('id', (int)$addon->hostingid)->value('domain');
         $due          = $addon->nextduedate && $addon->nextduedate !== '0000-00-00' ? (string)$addon->nextduedate : date('Y-m-d');
@@ -175,12 +178,12 @@ class AddonCertificates
             'billingcycle'      => 'Free Account',
             'nextduedate'       => $due,
             'nextinvoicedate'   => $due,
-            'domainstatus'      => 'Pending',
+            'domainstatus'      => in_array($status, self::OPEN, true) ? $status : 'Pending',
             'notes'             => 'Certificate of product addon #' . (int)$addon->id . ' (service #' . (int)$addon->hostingid . '). Billed on the product addon.',
             'created_at'        => date('Y-m-d H:i:s'),
             'updated_at'        => date('Y-m-d H:i:s'),
         ]);
-        self::link($serviceId, (int)$addon->id);
+        self::link($serviceId, (int)$addon->id, $linkExtra);
 
         return $serviceId;
     }

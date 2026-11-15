@@ -46,10 +46,11 @@ class ProductAddons
         return $ids;
     }
 
-    public static function link(int $addonDefinitionId, int $productId): void
+    /** @param bool $syncPrices the addon takes the product's prices (created here); a migrated addon keeps its own */
+    public static function link(int $addonDefinitionId, int $productId, bool $syncPrices = true): void
     {
         $setting = self::SETTING_PREFIX . $addonDefinitionId;
-        $value   = json_encode(['pid' => $productId]);
+        $value   = json_encode(['pid' => $productId, 'sync' => $syncPrices]);
         if(Capsule::table('tbladdonmodules')->where('module', self::settingsModule())->where('setting', $setting)->exists())
         {
             Capsule::table('tbladdonmodules')->where('module', self::settingsModule())->where('setting', $setting)->update(['value' => $value]);
@@ -134,9 +135,13 @@ class ProductAddons
     public static function syncAll(): int
     {
         $count = 0;
-        foreach(Capsule::table('tbladdonmodules')->where('module', self::settingsModule())->where('setting', 'like', self::SETTING_PREFIX . '%')->pluck('setting') as $setting)
+        foreach(Capsule::table('tbladdonmodules')->where('module', self::settingsModule())->where('setting', 'like', self::SETTING_PREFIX . '%')->get(['setting', 'value']) as $row)
         {
-            $addonId = (int)substr((string)$setting, strlen(self::SETTING_PREFIX));
+            $addonId = (int)substr((string)$row->setting, strlen(self::SETTING_PREFIX));
+            if(((json_decode((string)$row->value, true) ?: [])['sync'] ?? true) === false)
+            {
+                continue; // a product addon taken over from the legacy module keeps its own prices
+            }
             $pid     = $addonId > 0 && Capsule::table('tbladdons')->where('id', $addonId)->where('module', 'TSSGGSModule')->exists() ? self::productOf($addonId) : null;
             if($pid)
             {

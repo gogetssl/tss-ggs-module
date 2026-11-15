@@ -144,6 +144,24 @@ class Engine
             }
         }
 
+        // certificates sold as product addons: moved with the product of the same code (AddonMigration)
+        $codes = [];
+        foreach($products as $pid => $p)
+        {
+            if($p['mapped'])
+            {
+                $codes[$pid] = (string)$p['legacy_product_ref'];
+            }
+        }
+        $addonPlan = AddonMigration::plan($this->source, $codes);
+        foreach($addonPlan['addons'] as $addon)
+        {
+            if(!$addon['pid'] && $addon['certificates'])
+            {
+                $warnings['Product addon "' . $addon['name'] . '" (' . $addon['code'] . '): none of the migrated products sells this certificate, so its ' . $addon['certificates'] . ' certificate(s) stay on the legacy module'] = $addon['certificates'];
+            }
+        }
+
         $legacyTables = $this->reader->tables();
         $summary = [
             'source'          => $this->source,
@@ -161,6 +179,7 @@ class Engine
             'cron_lines'      => $this->reader->cronLines(),
             'addon_active'    => LegacyModuleControl::isActive($this->reader->addonName()),
             'mapper_has_vendor' => $this->mapper->hasVendor(strtoupper($this->source)),
+            'addon_certificates' => ['moved' => $addonPlan['certificates'], 'not_moved' => $addonPlan['not_moved']],
         ];
 
         return ['summary' => $summary, 'products' => array_values($products), 'services' => $services];
@@ -361,6 +380,12 @@ class Engine
             $pids       = $this->reader->productIds();
             $tables[]   = $backup->copyRows('tblproducts', function($q) use ($serverType) { $q->where('servertype', $serverType); });
             $tables[]   = $backup->copyRows('tblsslorders', function($q) use ($modules) { $q->whereIn('module', $modules); });
+            // product addons the legacy module provisioned (AddonMigration moves them to this module at the switch)
+            $legacyAddonModule = AddonMigration::legacyModule($this->source);
+            if($legacyAddonModule)
+            {
+                $tables[] = $backup->copyRows('tbladdons', function($q) use ($legacyAddonModule) { $q->where('module', $legacyAddonModule); });
+            }
             $gids       = $pids ? array_map('intval', Capsule::table('tblproductconfiglinks')->whereIn('pid', $pids)->pluck('gid')->all()) : [];
             $tables[]   = $backup->copyRows('tblproductconfiggroups', function($q) use ($gids) { $q->whereIn('id', $gids ?: [0]); });
             $tables[]   = $backup->copyRows('tblproductconfigoptions', function($q) use ($gids) { $q->whereIn('gid', $gids ?: [0]); });
@@ -437,6 +462,7 @@ class Engine
             // 3. products (configoptions + SAN option rename; servertype flips in the switch phase)
             $migratedPids = [];
             $recordPids   = [];
+            $productCodes = [];
             foreach($pids as $pid)
             {
                 $p   = $this->reader->readProduct($pid);
@@ -471,6 +497,7 @@ class Engine
                 // FLEX products of the legacy TSS module: their price lived in its "CSR Domain" option
                 $data += $writer->adoptLegacyMainDomain($p, is_array($p['remote_product']->rawData) ? $p['remote_product']->rawData : []);
                 $migratedPids[] = $pid;
+                $productCodes[$pid] = (string)$p['legacy_product_ref'];
                 Store::addJob($runId, Store::KIND_PRODUCT, $pid, 0, Store::JOB_DONE, null, $data);
                 $this->log($runId, 'info', self::PHASE_PREPARE, 'Product prepared', ['pid' => $pid, 'name' => $p['name'], 'remote' => $p['remote_product']->remoteId, 'renamed_options' => count($data['renamed_options'])]);
             }
@@ -485,6 +512,22 @@ class Engine
                 $ids = $writer->writeMarkups($rules);
                 Store::addJob($runId, Store::KIND_SETTINGS, 0, 0, Store::JOB_DONE, null, ['markup_ids' => $ids]);
                 $this->log($runId, 'info', self::PHASE_PREPARE, 'Client markups copied', ['rules' => count($ids), 'legacy_rules' => count($rules)]);
+            }
+
+            // 3b. certificates sold as WHMCS product addons: each gets its certificate service, so the job list below
+            // picks it up like any other service (AddonMigration)
+            if($legacyAddonModule)
+            {
+                $addons = AddonMigration::prepare($runId, $this->source, $productCodes);
+                Store::mergeSummary($runId, ['addons' => $addons]);
+                if($addons['services'] || $addons['not_moved'])
+                {
+                    $this->log($runId, 'info', self::PHASE_PREPARE, 'Product addon certificates prepared', ['services' => count($addons['services']), 'product_addons' => count($addons['definitions'])]);
+                }
+                foreach($addons['not_moved'] as $kept)
+                {
+                    $this->log($runId, 'warning', self::PHASE_PREPARE, 'Product addon "' . $kept['name'] . '" stays on the legacy module: no migrated product sells "' . $kept['code'] . '"', $kept);
+                }
             }
 
             // 4. service job list
@@ -964,9 +1007,11 @@ class Engine
                     $doneOrderIds[] = (int)$job['ssl_order_id'];
                 }
             }
-            Capsule::connection()->transaction(function() use ($writer, $products, $doneOrderIds) {
+            $addonSummary = (array)($run['summary']['addons'] ?? []);
+            Capsule::connection()->transaction(function() use ($writer, $products, $doneOrderIds, $addonSummary) {
                 $writer->switchProducts($products);
                 $writer->switchOrders($doneOrderIds);
+                AddonMigration::switchAddons($addonSummary);
             });
             Store::mergeSummary($runId, ['snapshot_max_order_id' => (int)Capsule::table('tblsslorders')->max('id')]);
             $this->log($runId, 'info', self::PHASE_SWITCH, 'Switched to the unified module', ['products' => count($products), 'orders' => count($doneOrderIds)]);
@@ -1165,10 +1210,17 @@ class Engine
             {
                 Store::log($runId, 'info', self::PHASE_ROLLBACK, 'Configurable options created by the migration removed', ['options' => $removed]);
             }
+            // certificate services made for product addons; their SSL orders and the addons come back below
+            $addonServices = AddonMigration::rollback((array)($run['summary']['addons'] ?? []));
+            if($addonServices)
+            {
+                Store::log($runId, 'info', self::PHASE_ROLLBACK, 'Certificate services of product addons removed', ['services' => $addonServices]);
+            }
             // unified rows written for products are reverted through the row backups below
             $backup->removeAddedPricing();
             $backup->restoreRows('tblpricing');
             $backup->restoreRows('tblsslorders');
+            $backup->restoreRows('tbladdons');
             $backup->restoreRows('tblproducts');
             $backup->restoreRows('tblproductconfiggroups');
             $backup->restoreRows('tblproductconfigoptions');
