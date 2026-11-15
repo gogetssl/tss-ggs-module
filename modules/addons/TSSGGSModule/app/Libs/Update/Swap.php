@@ -46,12 +46,33 @@ class Swap
     public static function lock()
     {
         Workdir::ensure();
-        self::$lock = fopen(Workdir::path('update.lock'), 'c');
-        if(!self::$lock || !flock(self::$lock, LOCK_EX | LOCK_NB))
+        self::$lock = self::openLock('update.lock');
+        if(!self::$lock)
+        {
+            throw new \RuntimeException('Cannot open ' . Workdir::path('update.lock'));
+        }
+        if(!flock(self::$lock, LOCK_EX | LOCK_NB))
         {
             self::$lock = null;
             throw new \RuntimeException('Another update is running');
         }
+    }
+
+    /**
+     * A lock file of the work folder. flock() needs no write access, so a file another user (web server / cron)
+     * created is opened read-only when it can not be opened for writing.
+     */
+    public static function openLock($name)
+    {
+        $file   = Workdir::path($name);
+        $exists = is_file($file);
+        $handle = @fopen($file, 'c') ?: @fopen($file, 'r');
+        if($handle && !$exists)
+        {
+            @chmod($file, 0664);
+        }
+
+        return $handle ?: null;
     }
 
     public static function unlock()
@@ -71,7 +92,12 @@ class Swap
     public static function pauseCrons($timeout = 300)
     {
         State::set(['since' => time()], 'moduleUpdateLock');
-        $handle = fopen(Workdir::path('cron.lock'), 'c');
+        $handle = self::openLock('cron.lock');
+        if(!$handle)
+        {
+            State::forget('moduleUpdateLock');
+            throw new \RuntimeException('Cannot open ' . Workdir::path('cron.lock'));
+        }
         $until  = time() + $timeout;
         while(!flock($handle, LOCK_EX | LOCK_NB))
         {
@@ -229,8 +255,9 @@ $journalFile = $work . '/journal.json';
 $journal = json_decode((string)@file_get_contents($journalFile), true);
 if(!is_array($journal) || !in_array($journal['state'] ?? '', ['swapping', 'swapped'], true)) { if(PHP_SAPI === 'cli') echo "Nothing to repair.\n"; return; }
 // not while an update is running: the running update holds update.lock (released by the system if it died)
-$lock = @fopen($work . '/update.lock', 'c');
-if(!$lock || !flock($lock, LOCK_EX | LOCK_NB)) { if(PHP_SAPI === 'cli') echo "An update is running right now.\n"; return; }
+$lock = @fopen($work . '/update.lock', 'c') ?: @fopen($work . '/update.lock', 'r');
+if(!$lock) { if(PHP_SAPI === 'cli') echo "Cannot open " . $work . "/update.lock: run this as the owner of the module files.\n"; return; }
+if(!flock($lock, LOCK_EX | LOCK_NB)) { if(PHP_SAPI === 'cli') echo "An update is running right now.\n"; return; }
 if(PHP_SAPI !== 'cli' && time() - (int)($journal['updated'] ?? 0) < 300) { flock($lock, LOCK_UN); return; }
 $rm = function($dir) use (&$rm) { if(is_link($dir) || is_file($dir)) { @unlink($dir); return; } if(!is_dir($dir)) return; foreach(scandir($dir) as $e) { if($e !== '.' && $e !== '..') $rm($dir . '/' . $e); } @rmdir($dir); };
 foreach(array_reverse($components, true) as $name => list($live, $old, $new)) {
@@ -242,11 +269,15 @@ foreach(array_reverse($components, true) as $name => list($live, $old, $new)) {
         @rename($old, $live);
     }
 }
-$journal['state'] = 'rolled_back'; $journal['error'] = 'interrupted update repaired by recover.php'; $journal['updated'] = time();
+// leftovers hold runnable PHP: removed once every live folder is back (never while one is still missing)
+$back = true;
+foreach($components as $name => list($live, $old, $new)) { if(!is_dir($live) || is_dir($old)) $back = false; }
+if($back) { $rm($work . '/new'); $rm($work . '/old'); }
+$journal['state'] = $back ? 'rolled_back' : 'swapping'; $journal['error'] = $back ? 'interrupted update repaired by recover.php' : 'repair incomplete: check the module folders'; $journal['updated'] = time();
 @file_put_contents($journalFile, json_encode($journal));
 if(function_exists('opcache_reset')) @opcache_reset();
 flock($lock, LOCK_UN);
-if(PHP_SAPI === 'cli') echo "Repaired: the previous version of the module is back in place.\n";
+if(PHP_SAPI === 'cli') echo $back ? "Repaired: the previous version of the module is back in place.\n" : "Repair incomplete: the module folders could not all be moved back (permissions?). Run this as the owner of the module files.\n";
 PHP;
         file_put_contents(Workdir::path('recover.php'), $script . "\n");
     }

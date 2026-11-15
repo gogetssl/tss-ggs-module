@@ -27,7 +27,7 @@ if (!$moduleUpdateCommand && \ModulesGarden\TSSGGSModule\App\Libs\Update\State::
 $moduleUpdateCronLock = null;
 if (!$moduleUpdateCommand && is_dir(\ModulesGarden\TSSGGSModule\App\Libs\Update\Workdir::path()))
 {
-    $moduleUpdateCronLock = @fopen(\ModulesGarden\TSSGGSModule\App\Libs\Update\Workdir::path('cron.lock'), 'c');
+    $moduleUpdateCronLock = \ModulesGarden\TSSGGSModule\App\Libs\Update\Swap::openLock('cron.lock');
     // an update holds it exclusively while it swaps: this job then does not start at all (it would load old and new
     // files mixed)
     if ($moduleUpdateCronLock && !@flock($moduleUpdateCronLock, LOCK_SH | LOCK_NB))
