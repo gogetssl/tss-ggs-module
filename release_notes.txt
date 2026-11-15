@@ -1,3 +1,28 @@
+1.11.0 (2026-11-15)
+Catalogue sync mode and catalogue changes
+- The nightly sync now compares the provider's product list with the previous
+  one and records every new, changed, discontinued and returned product: name,
+  validation, category, SAN limits and types, terms and the reseller cost of
+  each term.
+- Settings > Finance > Catalogue sync: choose what the sync changes by itself.
+  Manually: nothing, every change is only reported. Only alterations (default,
+  the behaviour of earlier versions): changed products get their SAN options and
+  product settings updated. Alterations and removal: products the provider no
+  longer sells (missing on two different days) are also retired; a product with
+  active services is only hidden from the order form and its services keep
+  working; it is shown again when the provider offers it again. All: new products
+  are also imported, hidden and with the default margin, into a hidden group
+  "<module name>: new products to review", so nothing goes on sale unchecked.
+- The Re-sync button on the Products page always updates the products, whatever
+  the mode.
+- E-mail to the administrators after the nightly sync with the changes and what
+  the module did about them (no changes, no e-mail; it can be switched off in the
+  same section). A summary is written to the WHMCS activity log.
+- Products page: new tab "Catalogue changes" with the changes of the last 90 days.
+- Safety: the first sync of a provider only records the starting point; when the
+  provider returns far fewer products than before, nothing is marked as
+  discontinued or retired and a warning is shown instead.
+
 1.10.0 (2026-11-15)
 Certificates sold as WHMCS product addons
 - Products page: "Sell as product addon" creates a WHMCS product addon that sells
