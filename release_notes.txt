@@ -1,3 +1,37 @@
+1.10.0 (2026-11-15)
+Certificates sold as WHMCS product addons
+- Products page: "Sell as product addon" creates a WHMCS product addon that sells
+  the certificate (same name and prices) and opens it in WHMCS, where you choose
+  the products it is offered with. SSL, S/MIME and document signing certificates;
+  not subscriptions, CodeGuard or code signing.
+- When the addon is paid, the client gets the certificate as its own service
+  (free, billed on the addon): configuration, validation, reissue, AutoInstall
+  and downloads work as for any certificate. Suspend, unsuspend, terminate and
+  renew of the addon are done on the certificate; the addon's due date follows
+  the certificate's, and the term follows the addon's billing cycle (a 2-year
+  addon orders a 2-year certificate). The addon's client and admin pages link to
+  the certificate; the certificate's page says which addon bills it.
+- When either ends without the module (a cancellation, an admin change, a
+  revocation), the other follows. A certificate that ended is never renewed.
+- Addon prices follow the product's prices until you change them by hand; hiding
+  or retiring the product hides or retires its addon too.
+- Product addons carry no configurable options: a certificate sold as an addon
+  has its included SANs and, for FLEX products, the standard main domain.
+- Migration from the TheSSLStore module: certificates it sold as product addons
+  now move with the product of the same certificate (before, they were left
+  behind on the legacy module). The migration page lists addon certificates that
+  stay because no migrated product sells them.
+
+Revoked, refunded and expired certificates
+- Revoked: the service is cancelled (no more invoices, no reissue or renewal) and
+  the client gets the new e-mail "Certificate Revoked". Refunded: the service is
+  cancelled. Expired: the service is terminated as before and the client gets the
+  new e-mail "Certificate Expired". All are written to the WHMCS activity log.
+- The same now applies to S/MIME, code signing and document signing (their
+  service stayed Active after a revocation).
+- The migration copies the legacy "Certificate Revoked" / "Certificate Expired"
+  e-mail texts.
+
 1.9.0 (2026-11-15)
 E-mails
 - New e-mail "Organization Validation Required": sent once when an OV or EV order
