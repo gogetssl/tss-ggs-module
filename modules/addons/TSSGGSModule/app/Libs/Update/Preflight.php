@@ -29,7 +29,8 @@ class Preflight
         $minWhmcs = (string)($state['min_whmcs'] ?? '');
         $add('whmcs', $minWhmcs === '' || version_compare(preg_replace('/-.*$/', '', $whmcs), $minWhmcs, '>='), 'WHMCS ' . $whmcs . ($minWhmcs !== '' ? ', needs ' . $minWhmcs : ''));
 
-        $add('extensions', class_exists('ZipArchive') && function_exists('curl_init') && function_exists('hash_file'), 'needs the PHP zip and curl extensions');
+        $extensions = class_exists('ZipArchive') && function_exists('curl_init') && function_exists('hash_file');
+        $add('extensions', $extensions, $extensions ? '' : 'needs the PHP zip and curl extensions');
         $add('os', PHP_OS_FAMILY !== 'Windows', PHP_OS_FAMILY === 'Windows' ? 'Windows servers can not swap folders that are in use' : '');
 
         // write access: the two module folders are renamed (their parents must be writable) and later deleted
@@ -53,16 +54,17 @@ class Preflight
         $add('writable', !$problems, $problems ? 'not writable by PHP: ' . implode(', ', array_slice($problems, 0, 3)) : 'owner ' . self::owner(Workdir::addonDir()));
 
         // a rename is instant only within one disk
-        $same = @stat(Workdir::modulesDir())['dev'] ?? null;
-        $add('disk', $same !== null && $same === (@stat(dirname(Workdir::addonDir()))['dev'] ?? null) && $same === (@stat(dirname(Workdir::serverDir()))['dev'] ?? null),
-            'the module folders are on different disks');
+        $same    = @stat(Workdir::modulesDir())['dev'] ?? null;
+        $oneDisk = $same !== null && $same === (@stat(dirname(Workdir::addonDir()))['dev'] ?? null) && $same === (@stat(dirname(Workdir::serverDir()))['dev'] ?? null);
+        $add('disk', $oneDisk, $oneDisk ? '' : 'the module folders are on different disks');
 
         $need = 3 * max((int)($state['size'] ?? 0) * 4, 40 * 1048576); // the ZIP unpacks to about 4x its size
         $free = @disk_free_space(Workdir::modulesDir());
         $add('space', $free === false || $free >= $need, $free === false ? '' : round($free / 1048576) . ' MB free, needs ' . round($need / 1048576) . ' MB');
 
         $journal = Swap::journal();
-        $add('idle', !$journal || in_array($journal['state'] ?? '', ['committed', 'rolled_back'], true), 'an update is already in progress');
+        $idle    = !$journal || in_array($journal['state'] ?? '', ['committed', 'rolled_back'], true);
+        $add('idle', $idle, $idle ? '' : 'an update is already in progress');
 
         $opcache = self::opcacheOk();
         if($withLoopback)
@@ -97,13 +99,18 @@ class Preflight
         return true;
     }
 
+    /** storage/ is moved as one folder and never rewritten: what lies inside it does not matter */
     protected static function firstNotWritable($dir)
     {
         if(!is_writable($dir))
         {
             return $dir;
         }
-        $iterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($dir, \FilesystemIterator::SKIP_DOTS), \RecursiveIteratorIterator::SELF_FIRST);
+        $storage  = $dir . DIRECTORY_SEPARATOR . 'storage';
+        $filter   = new \RecursiveCallbackFilterIterator(new \RecursiveDirectoryIterator($dir, \FilesystemIterator::SKIP_DOTS), function($item) use ($storage) {
+            return $item->getPathname() !== $storage;
+        });
+        $iterator = new \RecursiveIteratorIterator($filter, \RecursiveIteratorIterator::SELF_FIRST);
         foreach($iterator as $item)
         {
             if($item->isDir() && !$item->isWritable())
