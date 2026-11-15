@@ -418,7 +418,7 @@ class CatalogueSync
                 }
                 ProductCatalog::setHidden($product->id, true);
                 $type   = self::HIDDEN;
-                $action = 'Hidden from the order form; not retired because ' . $services . ' services use it (they keep working). Plan replacements for their renewals';
+                $action = 'Hidden from the order form; not retired because ' . $services . ($services === 1 ? ' service uses' : ' services use') . ' it (it keeps working). Plan a replacement for the renewal' . ($services === 1 ? '' : 's');
             }
             else
             {
