@@ -153,20 +153,8 @@ class SSLCertificatesProcessing extends AbstractCommand
                     CertificateService::forgetPreviousCertificate($certificate['id']);
                 }
 
-                // same rule as the order status sync (CertificateSyncHelpers): expired / filed = Terminated with a date
-                if($orderData['order']['status'] == 'cancelled' || $orderData['order']['status'] == 'rejected')
-                {
-                    Service::where('id', $certificate['id'])->update([
-                        'domainstatus' => 'Cancelled'
-                    ]);
-                }
-                elseif($orderData['order']['status'] == 'expired' || $orderData['order']['status'] == 'filed')
-                {
-                    Service::where('id', $certificate['id'])->whereIn('domainstatus', ['Pending', 'Active', 'Suspended'])->update([
-                        'domainstatus'     => 'Terminated',
-                        'termination_date' => date('Y-m-d'),
-                    ]);
-                }
+                // same rule as the order status sync (CertificateSyncHelpers): App\Libs\CertificateEnd
+                \ModulesGarden\TSSGGSModule\App\Libs\CertificateEnd::apply((int)$certificate['id'], (string)$previousStatus, (string)$orderData['order']['status']);
 
                 if($previousStatus !== $orderData['order']['status'])
                 {

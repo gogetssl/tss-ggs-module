@@ -1560,3 +1560,9 @@ $_LANG['admin.emails.name_document_signing_certificate_issued'] = 'Document-Sign
 $_LANG['admin.emails.when_document_signing_certificate_issued'] = 'Wird gesendet, wenn die Zertifizierungsstelle das Document-Signing-Zertifikat ausstellt.';
 $_LANG['admin.emails.name_codeguard_licence_ready'] = 'CodeGuard-Lizenz bereit';
 $_LANG['admin.emails.when_codeguard_licence_ready'] = 'Wird gesendet, wenn eine CodeGuard-Lizenz eingerichtet ist, mit dem Weg zu ihrem Dashboard.';
+
+// certificate revoked / expired e-mails
+$_LANG['admin.emails.name_certificate_revoked'] = 'Zertifikat widerrufen';
+$_LANG['admin.emails.when_certificate_revoked'] = 'Wird gesendet, wenn die Synchronisierung das Zertifikat als von der Zertifizierungsstelle widerrufen erkennt; der Dienst wird gekündigt.';
+$_LANG['admin.emails.name_certificate_expired'] = 'Zertifikat abgelaufen';
+$_LANG['admin.emails.when_certificate_expired'] = 'Wird gesendet, wenn die Synchronisierung das Zertifikat als abgelaufen und nicht verlängert erkennt; der Dienst wird beendet.';

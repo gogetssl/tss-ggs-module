@@ -1569,3 +1569,9 @@ $_LANG['admin.emails.name_document_signing_certificate_issued'] = 'Document sign
 $_LANG['admin.emails.when_document_signing_certificate_issued'] = 'Sent when the certificate authority issues the document signing certificate.';
 $_LANG['admin.emails.name_codeguard_licence_ready'] = 'CodeGuard licence ready';
 $_LANG['admin.emails.when_codeguard_licence_ready'] = 'Sent when a CodeGuard licence is set up, with the way to its dashboard.';
+
+// certificate revoked / expired e-mails
+$_LANG['admin.emails.name_certificate_revoked'] = 'Certificate revoked';
+$_LANG['admin.emails.when_certificate_revoked'] = 'Sent when the sync finds the certificate revoked by the certificate authority; the service is cancelled.';
+$_LANG['admin.emails.name_certificate_expired'] = 'Certificate expired';
+$_LANG['admin.emails.when_certificate_expired'] = 'Sent when the sync finds the certificate expired and not renewed; the service is terminated.';

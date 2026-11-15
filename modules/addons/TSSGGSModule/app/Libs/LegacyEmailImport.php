@@ -28,6 +28,7 @@ class LegacyEmailImport
             'SSLCenter - Validation Warning'              => 'Validation Warning',
             'SSLCenter - Renewal Started'                 => 'Renewal Started',
             'SSLCenter - Certificate Autorenewed'         => 'Certificate Autorenewed',
+            'SSLCenter - Certificate Revoked'             => 'Certificate Revoked',
         ],
         'tss' => [
             'Your SSL Certificate - Enrollment steps'              => 'Configuration Required',
@@ -44,6 +45,8 @@ class LegacyEmailImport
             'AutoInstall SSL – Domain Validation Required'         => 'Validation Warning',
             'AutoInstall SSL – Certificate Renewal Initiated'      => 'Renewal Started',
             'AutoInstall SSL – Certificate Autorenewed'            => 'Certificate Autorenewed',
+            'AutoInstall SSL – Certificate Revoked'                => 'Certificate Revoked',
+            'AutoInstall SSL – Certificate Expired'                => 'Certificate Expired',
         ],
     ];
 
@@ -54,6 +57,7 @@ class LegacyEmailImport
         'reminder_days' => 'expireDaysLeft',
         'common_name'   => 'service_domain',
         'sso_link'      => 'order_url',
+        'order_id'      => 'storeorder_id',
     ];
 
     /** Variables WHMCS fills for every e-mail of a service (prefixes) and a few global ones */

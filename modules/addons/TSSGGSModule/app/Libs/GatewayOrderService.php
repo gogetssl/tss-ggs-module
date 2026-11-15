@@ -322,6 +322,12 @@ abstract class GatewayOrderService
             }
 
             CertificateService::event($serviceId, in_array($status, ['failed', 'rejected'], true) ? 'error' : 'info', static::LABEL . ' certificate status: ' . ($previousStatus ?: '-') . ' -> ' . $status);
+            // certificates (not CodeGuard): revoked / refunded = service cancelled, expired = terminated, with the
+            // client e-mails (M-13)
+            if(in_array(static::CATEGORY, ['smime', 'cs', 'ds'], true))
+            {
+                CertificateEnd::apply((int)$serviceId, $previousStatus, $status, false, (string)($stored['validTill'] ?? ''));
+            }
             static::onStatusChange($serviceId, $previousStatus, $stored);
         }
 

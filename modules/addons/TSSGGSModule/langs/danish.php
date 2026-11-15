@@ -1562,3 +1562,9 @@ $_LANG['admin.emails.name_document_signing_certificate_issued'] = 'Dokumentsigne
 $_LANG['admin.emails.when_document_signing_certificate_issued'] = 'Sendes, når certifikatudstederen udsteder dokumentsigneringscertifikatet.';
 $_LANG['admin.emails.name_codeguard_licence_ready'] = 'CodeGuard-licens klar';
 $_LANG['admin.emails.when_codeguard_licence_ready'] = 'Sendes, når en CodeGuard-licens er sat op, med vejen til dens dashboard.';
+
+// certificate revoked / expired e-mails
+$_LANG['admin.emails.name_certificate_revoked'] = 'Certifikat tilbagekaldt';
+$_LANG['admin.emails.when_certificate_revoked'] = 'Sendes, når synkroniseringen finder certifikatet tilbagekaldt af certifikatudstederen; tjenesten annulleres.';
+$_LANG['admin.emails.name_certificate_expired'] = 'Certifikat udløbet';
+$_LANG['admin.emails.when_certificate_expired'] = 'Sendes, når synkroniseringen finder certifikatet udløbet og ikke fornyet; tjenesten afsluttes.';
