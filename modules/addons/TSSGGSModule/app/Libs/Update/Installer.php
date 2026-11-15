@@ -94,6 +94,7 @@ class Installer
         $staging = Workdir::path('new');
         Workdir::removeTree($staging);
         Workdir::ensure('new');
+        list($dirMode, $fileMode) = self::modes();
 
         $zip = new \ZipArchive();
         if($zip->open($zipFile) !== true)
@@ -126,10 +127,7 @@ class Installer
                     throw new \RuntimeException('The release ZIP unpacks to more than expected');
                 }
                 $target = $staging . '/' . substr($name, strlen('modules/'));
-                if(!is_dir(dirname($target)) && !@mkdir(dirname($target), 0755, true) && !is_dir(dirname($target)))
-                {
-                    throw new \RuntimeException('Cannot create ' . dirname($target));
-                }
+                self::makeDir(dirname($target), $dirMode);
                 $in  = $zip->getStream($stat['name']);
                 $out = fopen($target, 'wb');
                 if(!$in || !$out)
@@ -139,7 +137,7 @@ class Installer
                 stream_copy_to_stream($in, $out, self::MAX_UNPACKED);
                 fclose($in);
                 fclose($out);
-                @chmod($target, 0644);
+                @chmod($target, $fileMode);
                 if(hash_file('sha256', $target) !== $files[$name])
                 {
                     throw new \RuntimeException('File does not match the signed release: ' . $name);
@@ -170,11 +168,39 @@ class Installer
         }
     }
 
+    /**
+     * Folder and file modes of the new files: those of the running module folder, so the update changes nothing
+     * about who may manage the files (a group-writable install stays group-writable for the FTP / cron user, a
+     * locked-down one stays locked down). The owner becomes the user PHP runs as.
+     */
+    protected static function modes()
+    {
+        $dir = @fileperms(Workdir::addonDir());
+        $dir = $dir !== false ? ($dir & 0777) | 0700 : 0755;
+
+        return [$dir, $dir & 0666];
+    }
+
+    /** Creates a folder and its missing parents with exactly $mode (umask does not apply) */
+    protected static function makeDir($path, $mode)
+    {
+        if(is_dir($path))
+        {
+            return;
+        }
+        self::makeDir(dirname($path), $mode);
+        if(!@mkdir($path, $mode) && !is_dir($path))
+        {
+            throw new \RuntimeException('Cannot create ' . $path);
+        }
+        @chmod($path, $mode);
+    }
+
     protected static function copyMissing($from, $to)
     {
         if(!is_dir($to))
         {
-            @mkdir($to, 0755, true);
+            self::makeDir($to, self::modes()[0]);
         }
         foreach(scandir($from) as $entry)
         {
@@ -370,6 +396,7 @@ class Installer
         $staging = Workdir::path('new');
         Workdir::removeTree($staging);
         Workdir::ensure('new');
+        list($dirMode, $fileMode) = self::modes();
         $zip = new \ZipArchive();
         if($zip->open($backup) !== true)
         {
@@ -388,8 +415,9 @@ class Installer
                 throw new \RuntimeException('Unexpected file in the backup: ' . $name);
             }
             $file = $staging . '/' . substr($name, strlen('modules/'));
-            @mkdir(dirname($file), 0755, true);
+            self::makeDir(dirname($file), $dirMode);
             file_put_contents($file, $zip->getFromIndex($i));
+            @chmod($file, $fileMode);
         }
         $zip->close();
 

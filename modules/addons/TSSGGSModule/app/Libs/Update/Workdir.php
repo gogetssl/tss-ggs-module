@@ -58,9 +58,22 @@ class Workdir
             @file_put_contents($base . '/index.html', '');
         }
         $dir = self::path(...$parts);
-        if($parts && !is_dir($dir) && !@mkdir($dir, 0755, true) && !is_dir($dir))
+        if($parts && !is_dir($dir))
         {
-            throw new \RuntimeException('Cannot create ' . $dir);
+            // group-writable like the folder itself: the web server and the cron may run as different users
+            $path = $base;
+            foreach($parts as $part)
+            {
+                $path .= DIRECTORY_SEPARATOR . $part;
+                if(!is_dir($path))
+                {
+                    if(!@mkdir($path, 0775) && !is_dir($path))
+                    {
+                        throw new \RuntimeException('Cannot create ' . $path);
+                    }
+                    @chmod($path, 0775);
+                }
+            }
         }
 
         return $dir;
