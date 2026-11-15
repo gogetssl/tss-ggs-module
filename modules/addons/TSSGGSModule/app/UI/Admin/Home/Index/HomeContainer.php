@@ -78,7 +78,7 @@ class HomeContainer extends Container implements AdminAreaInterface
         }
         $t = function($key, array $vars = []) { return Card::e($this->translate($key, $vars, ['admin.module_update'])); };
 
-        return '<div class="tssggs-upd-banner">' . Card::icon('arrow-up-circle-outline')
+        return '<div class="tssggs-upd-banner">' . Card::icon('package-variant-closed')
             . '<span>' . $t('banner', [':version' => (string)$state['version'], ':installed' => \ModulesGarden\TSSGGSModule\App\Libs\Update\State::installedVersion()]) . '</span>'
             . '<a href="addonmodules.php?module=TSSGGSModule&amp;mg-page=moduleUpdate">' . $t('banner_link') . '</a></div>';
     }

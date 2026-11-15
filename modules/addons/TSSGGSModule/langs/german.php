@@ -1659,3 +1659,4 @@ $_LANG['admin.module_update.banner_link'] = 'Ansehen und installieren';
 $_LANG['admin.breadcrumbs.ModuleUpdate'] = 'Modul-Update';
 $_LANG['admin.breadcrumbs.ModuleUpdate_index'] = 'Modul-Update';
 $_LANG['admin.module_update.rollback_cli'] = 'Das Zurücksetzen ist auf diesem Server nicht über diese Seite möglich (siehe Serverprüfungen). Auf dem Server ausführen: :command';
+$_LANG['admin.module_update.continue'] = 'Weiter';

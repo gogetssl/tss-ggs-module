@@ -62,9 +62,13 @@ class UpdateContainer extends Container implements AdminAreaInterface
                 $done  = array_search($step, ModuleUpdate::STEPS, true) <= array_search($session['done'], ModuleUpdate::STEPS, true);
                 $html .= '<li class="' . ($done ? 'is-done' : ($step === $session['next'] ? 'is-running' : '')) . '">' . $this->t('step_' . $step) . '</li>';
             }
+            // the page inserts this HTML dynamically, where <script> tags do not run: the image's error handler posts
+            // the next step instead; the button is there if that does not happen
             $html .= '</ol><p>' . $this->t('installing_wait') . '</p>'
-                . '<form id="tssggs-upd-next" method="post" action="' . $url('step') . '"><input type="hidden" name="token" value="' . Card::e($token) . '"><input type="hidden" name="step" value="' . Card::e($session['next']) . '"></form>'
-                . '<script>setTimeout(function(){document.getElementById("tssggs-upd-next").submit();}, 300);</script></div></div>';
+                . '<form id="tssggs-upd-next" method="post" action="' . $url('step') . '"><input type="hidden" name="token" value="' . Card::e($token) . '"><input type="hidden" name="step" value="' . Card::e($session['next']) . '">'
+                . '<button type="submit" class="tssggs-upd__btn is-primary">' . $this->t('continue') . '</button></form>'
+                . '<img src="data:," alt="" style="display:none" onerror="var f=document.getElementById(\'tssggs-upd-next\');if(f&&!f.dataset.sent){f.dataset.sent=1;setTimeout(function(){f.submit();},400);}">'
+                . '</div></div>';
             $this->addElement(Card::html($html));
 
             return;

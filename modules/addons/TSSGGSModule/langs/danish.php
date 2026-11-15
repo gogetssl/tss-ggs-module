@@ -1661,3 +1661,4 @@ $_LANG['admin.module_update.banner_link'] = 'Se og installér';
 $_LANG['admin.breadcrumbs.ModuleUpdate'] = 'Modulopdatering';
 $_LANG['admin.breadcrumbs.ModuleUpdate_index'] = 'Modulopdatering';
 $_LANG['admin.module_update.rollback_cli'] = 'Tilbagerulning er ikke mulig fra denne side på denne server (se serverkontrollerne). Kør på serveren: :command';
+$_LANG['admin.module_update.continue'] = 'Fortsæt';
