@@ -908,3 +908,11 @@ $_LANG['mainDomain']['needs_wildcard'] = 'Dette certifikat er bestilt med et sta
 $_LANG['mainDomain']['needs_wildcard_name'] = 'Dette certifikat er bestilt med et wildcard-hoveddomæne: indtast det som *.example.com.';
 $_LANG['mainDomain']['no_wildcard'] = 'Dette certifikat dækker ikke et wildcard-hoveddomæne (*.example.com). Brug et almindeligt domæne, eller bestil et wildcard-certifikat.';
 $_LANG['mainDomain']['locked'] = 'Hoveddomænets type (standard eller wildcard) for et bestilt certifikat kan ikke ændres. Bestil et nyt certifikat for at ændre det.';
+
+// certificates sold as product addons
+$_LANG['addonCertificate']['not_linked'] = 'Denne produkttilføjelse er ikke knyttet til et certifikatprodukt. Opret den fra modulets Produkter-side ("Sælg som produkttilføjelse").';
+$_LANG['addonCertificate']['not_set_up'] = 'Certifikatet sættes op, når produkttilføjelsen er betalt.';
+$_LANG['addonCertificate']['client_intro'] = 'Dette SSL-certifikat administreres på sin egen side: konfigurer det, følg valideringen og download det der.';
+$_LANG['addonCertificate']['client_button'] = 'Administrer certifikat';
+$_LANG['addonCertificate']['admin_label'] = 'Certifikattjeneste';
+$_LANG['addonCertificate']['managed_elsewhere'] = 'Dette certifikat administreres på sin certifikattjeneste :service:.';

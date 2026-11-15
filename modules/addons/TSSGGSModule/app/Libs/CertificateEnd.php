@@ -38,6 +38,11 @@ class CertificateEnd
         if(in_array($status, $cancel, true))
         {
             $changed = Capsule::table('tblhosting')->where('id', $serviceId)->whereIn('domainstatus', self::RUNNING)->update(['domainstatus' => 'Cancelled']);
+            if($changed)
+            {
+                // a product addon's certificate: the addon stops being billed too
+                AddonCertificates::followEnd($serviceId, 'Cancelled');
+            }
             if($changed && in_array($status, ['revoked', 'refunded'], true))
             {
                 \logActivity('Service #' . $serviceId . ' cancelled: the certificate was ' . $status . ' at the certificate authority', self::userId($serviceId));
@@ -57,6 +62,10 @@ class CertificateEnd
                 'domainstatus'     => 'Terminated',
                 'termination_date' => date('Y-m-d'),
             ]);
+            if($changed)
+            {
+                AddonCertificates::followEnd($serviceId, 'Terminated');
+            }
             if($changed && $status === 'expired')
             {
                 \logActivity('Service #' . $serviceId . ' terminated: the certificate expired', self::userId($serviceId));

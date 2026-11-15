@@ -67,7 +67,8 @@ class Renew
         // two independent choices (App\Libs\RenewalPolicy): which WHMCS service carries the renewal, and whether it is
         // ordered with the previous details at once or the client submits them again
         $serviceId   = (int)$serviceId;
-        $sameService = RenewalPolicy::sameService();
+        // the certificate service of a product addon is billed on the addon: its renewal always stays on it
+        $sameService = RenewalPolicy::sameService() || \ModulesGarden\TSSGGSModule\App\Libs\AddonCertificates::isCertificateService($serviceId);
         $target      = $sameService ? $serviceId : $this->renewalService($params);
         $amount      = $sameService ? (float)$params['model']->amount : (float)Service::where('id', $target)->value('amount');
 

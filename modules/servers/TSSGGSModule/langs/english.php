@@ -908,3 +908,11 @@ $_LANG['mainDomain']['needs_wildcard'] = 'This certificate was ordered with a st
 $_LANG['mainDomain']['needs_wildcard_name'] = 'This certificate was ordered with a wildcard main domain: enter it as *.example.com.';
 $_LANG['mainDomain']['no_wildcard'] = 'This certificate does not cover a wildcard main domain (*.example.com). Use a normal domain, or order a wildcard certificate.';
 $_LANG['mainDomain']['locked'] = 'The main domain type (standard or wildcard) of an ordered certificate cannot be changed. To change it, order a new certificate.';
+
+// certificates sold as product addons
+$_LANG['addonCertificate']['not_linked'] = 'This product addon is not linked to a certificate product. Create it from the module\'s Products page ("Sell as product addon").';
+$_LANG['addonCertificate']['not_set_up'] = 'The certificate is set up once the product addon is paid.';
+$_LANG['addonCertificate']['client_intro'] = 'This SSL certificate is managed on its own page: configure it, follow its validation and download it there.';
+$_LANG['addonCertificate']['client_button'] = 'Manage certificate';
+$_LANG['addonCertificate']['admin_label'] = 'Certificate service';
+$_LANG['addonCertificate']['managed_elsewhere'] = 'This certificate is managed on its certificate service :service:.';

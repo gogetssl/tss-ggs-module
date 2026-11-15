@@ -1568,3 +1568,8 @@ $_LANG['admin.emails.name_certificate_revoked'] = 'Certifikat tilbagekaldt';
 $_LANG['admin.emails.when_certificate_revoked'] = 'Sendes, når synkroniseringen finder certifikatet tilbagekaldt af certifikatudstederen; tjenesten annulleres.';
 $_LANG['admin.emails.name_certificate_expired'] = 'Certifikat udløbet';
 $_LANG['admin.emails.when_certificate_expired'] = 'Sendes, når synkroniseringen finder certifikatet udløbet og ikke fornyet; tjenesten afsluttes.';
+
+// certificates sold as product addons
+$_LANG['admin.products.index.data_tables.products.array_data_provider.data_table.action_sellAsAddon'] = 'Sælg som produkttilføjelse';
+$_LANG['admin.products.index.data_tables.products.array_data_provider.data_table.confirm_sell_as_addon'] = 'Opret en WHMCS-produkttilføjelse, der sælger dette certifikat (samme navn og priser)? På næste side vælger du de produkter, den tilbydes sammen med.';
+$_LANG['admin.products.index.data_tables.products.array_data_provider.data_table.product_addon'] = 'Produkttilføjelse #:id';

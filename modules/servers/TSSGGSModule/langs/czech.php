@@ -908,3 +908,11 @@ $_LANG['mainDomain']['needs_wildcard'] = 'Tento certifikát byl objednán se sta
 $_LANG['mainDomain']['needs_wildcard_name'] = 'Tento certifikát byl objednán s wildcard hlavní doménou: zadejte ji jako *.example.com.';
 $_LANG['mainDomain']['no_wildcard'] = 'Tento certifikát nepokrývá wildcard hlavní doménu (*.example.com). Použijte běžnou doménu, nebo objednejte wildcard certifikát.';
 $_LANG['mainDomain']['locked'] = 'Typ hlavní domény (standardní nebo wildcard) objednaného certifikátu nelze změnit. Pro změnu objednejte nový certifikát.';
+
+// certificates sold as product addons
+$_LANG['addonCertificate']['not_linked'] = 'Tento doplněk produktu není propojen s certifikátovým produktem. Vytvořte jej na stránce Produkty modulu ("Prodávat jako doplněk produktu").';
+$_LANG['addonCertificate']['not_set_up'] = 'Certifikát se nastaví po zaplacení doplňku produktu.';
+$_LANG['addonCertificate']['client_intro'] = 'Tento SSL certifikát se spravuje na vlastní stránce: tam jej nastavíte, sledujete ověření a stáhnete.';
+$_LANG['addonCertificate']['client_button'] = 'Spravovat certifikát';
+$_LANG['addonCertificate']['admin_label'] = 'Služba certifikátu';
+$_LANG['addonCertificate']['managed_elsewhere'] = 'Tento certifikát se spravuje ve své službě certifikátu :service:.';

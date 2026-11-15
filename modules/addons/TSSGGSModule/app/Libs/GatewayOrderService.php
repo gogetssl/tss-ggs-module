@@ -310,6 +310,7 @@ abstract class GatewayOrderService
                 if($dueDate)
                 {
                     Capsule::table('tblhosting')->where('id', (int)$serviceId)->update(['nextduedate' => $dueDate, 'nextinvoicedate' => $dueDate]);
+                    AddonCertificates::followDueDate((int)$serviceId, (string)$dueDate);
                 }
             }
             elseif(in_array($status, ['cancelled', 'revoked', 'refunded'], true))

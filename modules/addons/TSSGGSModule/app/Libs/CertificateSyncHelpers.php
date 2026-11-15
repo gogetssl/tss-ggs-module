@@ -102,6 +102,8 @@ class CertificateSyncHelpers
                     'nextinvoicedate' => $nextDueDate,
                     'nextduedate' => $nextDueDate,
                 ]);
+                // a product addon's certificate: the addon is billed on the same date
+                AddonCertificates::followDueDate((int)$certificate['id'], (string)$nextDueDate);
             }
         }
 

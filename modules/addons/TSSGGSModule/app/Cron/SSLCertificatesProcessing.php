@@ -143,6 +143,7 @@ class SSLCertificatesProcessing extends AbstractCommand
                             'nextinvoicedate' => $nextDueDate,
                             'nextduedate' => $nextDueDate,
                         ]);
+                        \ModulesGarden\TSSGGSModule\App\Libs\AddonCertificates::followDueDate((int)$certificate['id'], (string)$nextDueDate);
                     }
                 }
 

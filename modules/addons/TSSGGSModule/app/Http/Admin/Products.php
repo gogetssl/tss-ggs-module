@@ -74,7 +74,38 @@ class Products extends AbstractController implements AdminAreaInterface
         });
     }
 
-    protected function run($notice, callable $action)
+    /**
+     * Sells the product as a WHMCS product addon (M-14): the addon is created and opened in WHMCS, where the admin
+     * picks the products it is offered with
+     */
+    public function sellAsAddon()
+    {
+        $addonId = 0;
+        $this->run('addon_created', function($pid) use (&$addonId) {
+            if(\ModulesGarden\TSSGGSModule\App\Libs\ProductAddons::addonsOf($pid))
+            {
+                throw new \RuntimeException('This product is already sold as a product addon');
+            }
+            if(Capsule::table('tblproducts')->where('id', $pid)->value('paytype') === 'free')
+            {
+                throw new \RuntimeException('A free product can not be sold as a product addon');
+            }
+            $addonId = \ModulesGarden\TSSGGSModule\App\Libs\ProductAddons::create($pid);
+
+            return '#' . $addonId;
+        }, false);
+        if($addonId)
+        {
+            // WHMCS's addon page opens next: the notice would only show up later, out of context
+            unset($_SESSION[self::SESSION]['notice']);
+            header('Location: configaddons.php?action=manage&id=' . $addonId);
+            exit;
+        }
+
+        return Helper\redirect('products', 'index');
+    }
+
+    protected function run($notice, callable $action, bool $redirect = true)
     {
         try
         {
@@ -96,6 +127,6 @@ class Products extends AbstractController implements AdminAreaInterface
             $_SESSION[self::SESSION]['error'] = $e->getMessage();
         }
 
-        return Helper\redirect('products', 'index');
+        return $redirect ? Helper\redirect('products', 'index') : null;
     }
 }

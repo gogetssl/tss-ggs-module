@@ -185,11 +185,22 @@ class DataTable extends \ModulesGarden\TSSGGSModule\Components\DataTable\DataTab
         }
         $actions['cancelRenewals'] = 'confirm_cancel_renewals';
 
+        // sold as a WHMCS product addon (App\Libs\ProductAddons): one link per such addon, or the action that creates one
+        $addons = \ModulesGarden\TSSGGSModule\App\Libs\ProductAddons::addonsOf((int)$whmcsProduct->id);
+        if(!$addons)
+        {
+            $actions['sellAsAddon'] = 'confirm_sell_as_addon';
+        }
+
         $links = [];
         foreach($actions as $action => $confirm)
         {
             $links[] = '<a href="' . htmlspecialchars($base . $action) . '"' . ($confirm ? ' onclick="return confirm(' . htmlspecialchars(json_encode($this->translate($confirm))) . ')"' : '') . '>'
                 . htmlspecialchars($this->translate('action_' . $action)) . '</a>';
+        }
+        foreach($addons as $addonId)
+        {
+            $links[] = '<a href="configaddons.php?action=manage&amp;id=' . (int)$addonId . '">' . htmlspecialchars($this->translate('product_addon', ['id' => $addonId])) . '</a>';
         }
 
         return '<span style="white-space:nowrap;font-size:12px">' . implode(' · ', $links) . '</span>';
