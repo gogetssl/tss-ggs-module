@@ -589,7 +589,7 @@
 #layers2 .tssggs-upd__history { width: 100%; border-collapse: collapse; font-size: 13px; }
 #layers2 .tssggs-upd__history th { padding: 6px 8px; border-bottom: 1px solid var(--tw-border); color: var(--tw-muted); text-align: left; font-weight: 600; }
 #layers2 .tssggs-upd__history td { padding: 6px 8px; border-bottom: 1px solid var(--th-line-soft); color: var(--tw-fg); }
-#layers2 .tssggs-upd-banner { display: flex; align-items: center; gap: 10px; margin: 0 0 16px; padding: 12px 16px; border: 1px solid var(--tw-primary); border-radius: 8px; background: var(--tw-primary-soft); color: var(--tw-fg); font-size: 13.5px; }
+#layers2 .tssggs-upd-banner { display: flex; align-items: center; gap: 10px; margin: 16px 0; padding: 12px 16px; border: 1px solid var(--tw-primary); border-radius: 8px; background: var(--tw-primary-soft); color: var(--tw-fg); font-size: 13.5px; }
 #layers2 .tssggs-upd-banner svg { width: 20px; height: 20px; color: var(--tw-primary); flex: none; }
 #layers2 .tssggs-upd-banner a { margin-left: auto; font-weight: 600; color: var(--tw-primary); white-space: nowrap; }
 @media (max-width: 640px) { #layers2 .tssggs-upd__facts { grid-template-columns: 1fr; } }
