@@ -158,15 +158,10 @@ class EmailTemplates
                                      <p>{$signature}</p>';
 
 
-    const RENEWAL_TEMPLATE = 'Renewal';
-    const RENEWAL_SUBJECT  = 'SSL Certificate - Renew';
-    const RENEWAL_MESSAGE  = '<p>Dear {$client_name},</p>
-                             <p>
-                                Your current SSL certificate #{$service_id} expires within next 30-days. 
-                                Please login to the client area and click "Renew" button to start the renewal process.
-                             </p>
-                             <p>{$signature}</p>';
-
+    /** keys of e-mails the module no longer has: their templates are deleted on upgrade (SchemaIndexes) */
+    const REMOVED_TEMPLATES = [
+        'Renewal', // the GoGetSSL module's "expires within 30 days, click Renew" - Service Expiration does it (removed in 1.9.0)
+    ];
 
     const REISSUE_TEMPLATE = 'Reissue';
     const REISSUE_SUBJECT  = 'SSL Certificate - Reissue';
@@ -295,7 +290,7 @@ class EmailTemplates
                              <p>{$ssl_configuration_link}</p>
                              <p>{$signature}</p>';
 
-    const TEMPLATE_NAMES = ['CONFIGURATION', 'SMIME_CONFIGURATION', 'SMIME_REMINDER', 'SMIME_ISSUED', 'SMIME_EXPIRATION', 'CS_CONFIGURATION', 'CS_ISSUED', 'CS_EXPIRATION', 'EXPIRATION', 'SEND_CERTIFICATE', 'RENEWAL', 'RENEWAL_DETAILS', 'REISSUE', 'SUBSCRIPTION', 'SUBSCRIPTION_EXPIRATION', 'SUBSCRIPTION_RENEWAL', 'RENEWAL_INVOICE', 'DISCONTINUED', 'CODE_GUARD_READY', 'DS_CONFIGURATION', 'DS_ISSUED', 'ORG_VALIDATION'];
+    const TEMPLATE_NAMES = ['CONFIGURATION', 'SMIME_CONFIGURATION', 'SMIME_REMINDER', 'SMIME_ISSUED', 'SMIME_EXPIRATION', 'CS_CONFIGURATION', 'CS_ISSUED', 'CS_EXPIRATION', 'EXPIRATION', 'SEND_CERTIFICATE', 'RENEWAL_DETAILS', 'REISSUE', 'SUBSCRIPTION', 'SUBSCRIPTION_EXPIRATION', 'SUBSCRIPTION_RENEWAL', 'RENEWAL_INVOICE', 'DISCONTINUED', 'CODE_GUARD_READY', 'DS_CONFIGURATION', 'DS_ISSUED', 'ORG_VALIDATION'];
 
     /** S/MIME e-mails */
     const SMIME_TEMPLATES = [self::SMIME_CONFIGURATION_TEMPLATE, self::SMIME_REMINDER_TEMPLATE, self::SMIME_ISSUED_TEMPLATE, self::SMIME_EXPIRATION_TEMPLATE];

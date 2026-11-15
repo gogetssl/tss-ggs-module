@@ -42,7 +42,6 @@ class EmailCatalog
         'Renewal Details Required'          => ['renewals', ['ssl_configuration_link'], true],
         'ACME Subscription Expiration'      => ['renewals', [], true],
         'ACME Subscription Renewal'         => ['renewals', [], true],
-        'Renewal'                           => ['renewals', [], false],
         'Auto Reissue Failed'               => ['problems', ['domain', 'cert_expiry', 'days_left', 'error_message', 'order_url'], true],
     ];
 

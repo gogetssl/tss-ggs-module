@@ -998,8 +998,6 @@ $_LANG['admin.emails.name_acme_subscription_expiration'] = 'ACME-Abonnement - Ve
 $_LANG['admin.emails.when_acme_subscription_expiration'] = 'Wird gesendet, wenn die Verlängerungsrechnung eines ACME-Abonnements erstellt wurde (sofern in den SSL-Einstellungen aktiviert).';
 $_LANG['admin.emails.name_acme_subscription_renewal'] = 'ACME-Abonnement - Verlängerung bezahlt';
 $_LANG['admin.emails.when_acme_subscription_renewal'] = 'Wird gesendet, wenn die Verlängerungsrechnung eines ACME-Abonnements bezahlt wurde.';
-$_LANG['admin.emails.name_renewal'] = 'Verlängerung (nicht verwendet)';
-$_LANG['admin.emails.when_renewal'] = 'Aus Kompatibilitätsgründen mit dem GoGetSSL-Modul definiert; diese Version sendet sie nicht.';
 $_LANG['admin.emails.name_auto_reissue_failed'] = 'Automatische Neuausstellung fehlgeschlagen';
 $_LANG['admin.emails.when_auto_reissue_failed'] = 'Wird gesendet, wenn die automatische Neuausstellung vor Ablauf nach allen Versuchen fehlgeschlagen ist.';
 

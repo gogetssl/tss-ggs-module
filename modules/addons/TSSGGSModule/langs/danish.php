@@ -1000,8 +1000,6 @@ $_LANG['admin.emails.name_acme_subscription_expiration'] = 'ACME-abonnement - fo
 $_LANG['admin.emails.when_acme_subscription_expiration'] = 'Sendes, når fornyelsesfakturaen for et ACME-abonnement er oprettet (hvis aktiveret i SSL-indstillinger).';
 $_LANG['admin.emails.name_acme_subscription_renewal']    = 'ACME-abonnement - fornyelse betalt';
 $_LANG['admin.emails.when_acme_subscription_renewal']    = 'Sendes, når fornyelsesfakturaen for et ACME-abonnement er betalt.';
-$_LANG['admin.emails.name_renewal']                      = 'Fornyelse (ikke i brug)';
-$_LANG['admin.emails.when_renewal']                      = 'Defineret af hensyn til kompatibilitet med GoGetSSL-modulet; denne version sender den ikke.';
 $_LANG['admin.emails.name_auto_reissue_failed']          = 'Automatisk genudstedelse mislykkedes';
 $_LANG['admin.emails.when_auto_reissue_failed']          = 'Sendes, når den automatiske genudstedelse før udløb mislykkedes efter alle forsøg.';
 

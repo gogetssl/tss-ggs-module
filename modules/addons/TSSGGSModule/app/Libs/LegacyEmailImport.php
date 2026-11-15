@@ -17,7 +17,6 @@ class LegacyEmailImport
             'SSLCenter - Configuration Required'          => 'Configuration Required',
             'SSLCenter - Service Expiration'              => 'Service Expiration',
             'SSLCenter - Send Certificate'                => 'Send Certificate',
-            'SSLCenter - Renewal'                         => 'Renewal',
             'SSLCenter - Reissue'                         => 'Reissue',
             'SSLCenter - ACME Subscription Configuration' => 'ACME Subscription Configuration',
             'SSLCenter - ACME Subscription Expiration'    => 'ACME Subscription Expiration',

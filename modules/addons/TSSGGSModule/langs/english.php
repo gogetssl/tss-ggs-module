@@ -1033,8 +1033,6 @@ $_LANG['admin.emails.name_acme_subscription_expiration'] = 'ACME subscription - 
 $_LANG['admin.emails.when_acme_subscription_expiration'] = 'Sent when the renewal invoice of an ACME subscription was created (if enabled in SSL Settings).';
 $_LANG['admin.emails.name_acme_subscription_renewal']    = 'ACME subscription - renewal paid';
 $_LANG['admin.emails.when_acme_subscription_renewal']    = 'Sent when the renewal invoice of an ACME subscription was paid.';
-$_LANG['admin.emails.name_renewal']                      = 'Renewal (not used)';
-$_LANG['admin.emails.when_renewal']                      = 'Defined for compatibility with the GoGetSSL module; this version does not send it.';
 $_LANG['admin.emails.name_auto_reissue_failed']          = 'Automatic reissue failed';
 $_LANG['admin.emails.when_auto_reissue_failed']          = 'Sent when the automatic reissue before expiry failed after all attempts.';
 
