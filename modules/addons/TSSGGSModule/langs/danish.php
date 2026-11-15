@@ -1548,3 +1548,19 @@ $_LANG['admin.migration.nothing_left'] = 'Intet tilbage at migrere: produkterne 
 
 // main domain choice of FLEX products
 $_LANG['admin.pricing_grid.item_main_wildcard'] = 'Wildcard-hoveddomæne (tillæg)';
+
+// Settings > Email notifications
+$_LANG['admin.settings.index.widgets.sidebar.emailSettings'] = 'E-mailnotifikationer';
+$_LANG['admin.settings.index.widgets.email_settings_widget.title'] = 'E-mailnotifikationer';
+$_LANG['admin.settings.index.widgets.email_settings_widget.subtitle'] = 'Alle e-mails, modulet sender til kunder: slå hver enkelt til eller fra. Teksterne redigeres på siden E-mails.';
+$_LANG['admin.settings.index.widgets.email_settings_widget.col_email'] = 'E-mail';
+$_LANG['admin.settings.index.widgets.email_settings_widget.col_when'] = 'Sendes når';
+$_LANG['admin.settings.index.widgets.email_settings_widget.col_status'] = 'Status';
+$_LANG['admin.settings.index.widgets.email_settings_widget.enabled'] = 'aktiv';
+$_LANG['admin.settings.index.widgets.email_settings_widget.edit'] = 'Rediger';
+$_LANG['admin.emails.name_document_signing_configuration_required'] = 'Dokumentsignering: ordreoplysninger påkrævet';
+$_LANG['admin.emails.when_document_signing_configuration_required'] = 'Sendes, når en dokumentsigneringstjeneste oprettes: kunden indtaster organisation, administrator og valg af token.';
+$_LANG['admin.emails.name_document_signing_certificate_issued'] = 'Dokumentsigneringscertifikat udstedt';
+$_LANG['admin.emails.when_document_signing_certificate_issued'] = 'Sendes, når certifikatudstederen udsteder dokumentsigneringscertifikatet.';
+$_LANG['admin.emails.name_codeguard_licence_ready'] = 'CodeGuard-licens klar';
+$_LANG['admin.emails.when_codeguard_licence_ready'] = 'Sendes, når en CodeGuard-licens er sat op, med vejen til dens dashboard.';

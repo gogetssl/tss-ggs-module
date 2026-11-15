@@ -132,6 +132,16 @@
 .tssggs-emails .em-tag { font-size: 10px; font-weight: 600; border-radius: 10px; padding: 1px 7px; white-space: nowrap; background: var(--tw-surface-alt); color: var(--tw-muted); border: 1px solid var(--tw-border); }
 .tssggs-emails .em-tag.is-edited { background: var(--tw-warning-soft); color: var(--tw-warning); border-color: rgba(166,95,0,.3); }
 .tssggs-emails .em-tag.is-off { background: var(--tw-danger-soft); color: var(--tw-danger); border-color: rgba(231,0,11,.3); }
+.tssggs-emails .em-tag.is-on { background: var(--tw-primary-soft); color: var(--tw-primary); border-color: rgba(0,113,54,.3); }
+/* Settings > Email notifications */
+.tssggs-emails table.em-list { width: 100%; border-collapse: collapse; font-size: 13px; }
+.tssggs-emails table.em-list th { text-align: left; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--tw-muted); padding: 6px 10px; border-bottom: 1px solid var(--tw-border); }
+.tssggs-emails table.em-list td { padding: 8px 10px; border-bottom: 1px solid var(--tw-border); vertical-align: top; }
+.tssggs-emails table.em-list td.tssggs-muted { margin: 0; font-size: 12px; }
+.tssggs-emails table.em-list tr.em-group td { background: var(--tw-surface-alt); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--tw-muted); padding: 6px 10px; }
+.tssggs-emails table.em-list tr.is-off td strong { color: var(--tw-muted); }
+.tssggs-emails table.em-list td.em-actions { white-space: nowrap; text-align: right; }
+.tssggs-emails table.em-list .lu-btn--success { background: var(--tw-primary); border-color: var(--tw-primary); color: #fff; }
 .tssggs-emails .em-head h3 { margin: 0 0 6px !important; font-size: 20px !important; line-height: 1.25 !important; }
 .tssggs-emails .em-head p { margin: 0 0 4px; }
 .tssggs-emails .em-tabs { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; margin: 14px 0; padding-bottom: 12px; border-bottom: 1px solid var(--tw-border); }

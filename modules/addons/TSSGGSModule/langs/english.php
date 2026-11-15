@@ -1555,3 +1555,19 @@ $_LANG['admin.migration.nothing_left'] = 'Nothing left to migrate: the products 
 
 // main domain choice of FLEX products
 $_LANG['admin.pricing_grid.item_main_wildcard'] = 'Wildcard main domain (extra)';
+
+// Settings > Email notifications
+$_LANG['admin.settings.index.widgets.sidebar.emailSettings'] = 'Email notifications';
+$_LANG['admin.settings.index.widgets.email_settings_widget.title'] = 'Email notifications';
+$_LANG['admin.settings.index.widgets.email_settings_widget.subtitle'] = 'Every e-mail the module sends to clients: switch each one on or off. Texts are edited on the Emails page.';
+$_LANG['admin.settings.index.widgets.email_settings_widget.col_email'] = 'E-mail';
+$_LANG['admin.settings.index.widgets.email_settings_widget.col_when'] = 'Sent when';
+$_LANG['admin.settings.index.widgets.email_settings_widget.col_status'] = 'Status';
+$_LANG['admin.settings.index.widgets.email_settings_widget.enabled'] = 'enabled';
+$_LANG['admin.settings.index.widgets.email_settings_widget.edit'] = 'Edit';
+$_LANG['admin.emails.name_document_signing_configuration_required'] = 'Document signing: order details required';
+$_LANG['admin.emails.when_document_signing_configuration_required'] = 'Sent when a document signing service is created: the client enters the organization, administrator and token choice.';
+$_LANG['admin.emails.name_document_signing_certificate_issued'] = 'Document signing certificate issued';
+$_LANG['admin.emails.when_document_signing_certificate_issued'] = 'Sent when the certificate authority issues the document signing certificate.';
+$_LANG['admin.emails.name_codeguard_licence_ready'] = 'CodeGuard licence ready';
+$_LANG['admin.emails.when_codeguard_licence_ready'] = 'Sent when a CodeGuard licence is set up, with the way to its dashboard.';

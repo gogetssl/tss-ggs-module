@@ -134,6 +134,7 @@ class Emails extends AbstractController implements AdminAreaInterface
             if($notice)
             {
                 $_SESSION[self::SESSION]['notice'] = $notice;
+                self::logChange($notice, $key, $language);
             }
         }
         catch(\Throwable $e)
@@ -141,8 +142,39 @@ class Emails extends AbstractController implements AdminAreaInterface
             $_SESSION[self::SESSION]['error'] = $e->getMessage();
         }
 
+        // Settings > Email notifications posts here too and goes back there
+        if(($_POST['return'] ?? '') === 'settings')
+        {
+            header('Location: addonmodules.php?module=TSSGGSModule&mg-page=settings&settings-page=emailSettings');
+            exit;
+        }
         header('Location: addonmodules.php?module=TSSGGSModule&mg-page=emails' . ($key !== '' ? '&key=' . rawurlencode($key) : '') . ($language !== '' ? '&lang=' . rawurlencode($language) : ''));
         exit;
+    }
+
+    /** What changed, in the WHMCS activity log (WHMCS adds the administrator); a preview changes nothing */
+    const LOGGED = [
+        'saved'            => 'edited',
+        'test_sent'        => 'test e-mail sent',
+        'reset'            => 'reset to the default text',
+        'language_removed' => 'language removed',
+        'disabled'         => 'disabled',
+        'enabled'          => 'enabled',
+    ];
+
+    protected static function logChange($notice, $key, $language)
+    {
+        if(!isset(self::LOGGED[$notice]) || $key === '')
+        {
+            return;
+        }
+        $what = self::LOGGED[$notice];
+        if($notice === 'saved' && $language === '')
+        {
+            // the default text's form also carries the on / off switch
+            $what .= ' (' . (!empty($_POST['disabled']) ? 'disabled' : 'enabled') . ')';
+        }
+        \logActivity('E-mail template "' . EmailManager::name($key) . '"' . ($language !== '' ? ' [' . $language . ']' : '') . ' ' . $what);
     }
 
     protected function require($permission)

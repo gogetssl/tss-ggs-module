@@ -19,6 +19,8 @@ class EmailCatalog
         'S/MIME Configuration Required'     => ['order', ['ssl_configuration_link'], true],
         'Code Signing Configuration Required' => ['order', ['ssl_configuration_link'], true],
         'ACME Subscription Configuration'   => ['order', ['ssl_configuration_link'], true],
+        'Document Signing Configuration Required' => ['order', ['ssl_configuration_link'], true],
+        'CodeGuard Licence Ready'           => ['order', ['ssl_configuration_link'], true],
         'DNS Validation Switched to Email'  => ['validation', ['domain', 'dcv_email', 'order_url'], true],
         'S/MIME Mailbox Not Confirmed'      => ['validation', ['smime_pending_emails', 'smime_ordered_date', 'order_url'], true],
         'Validation Warning'                => ['validation', ['domain', 'dcv_method', 'order_url'], true],
@@ -27,6 +29,7 @@ class EmailCatalog
         'Certificate Installed'             => ['issued', ['domain', 'order_url'], true],
         'S/MIME Certificate Issued'         => ['issued', ['smime_emails', 'smime_valid_till', 'smime_csr_provided', 'order_url'], true],
         'Code Signing Certificate Issued'   => ['issued', ['cs_organization', 'cs_valid_till', 'cs_method', 'order_url'], true],
+        'Document Signing Certificate Issued' => ['issued', ['ds_organization', 'ds_valid_till', 'ds_method', 'order_url'], true],
         'Service Expiration'                => ['renewals', ['expireDaysLeft'], true],
         'S/MIME Expiration'                 => ['renewals', ['expireDaysLeft'], true],
         'Code Signing Expiration'           => ['renewals', ['expireDaysLeft'], true],
@@ -85,6 +88,12 @@ class EmailCatalog
             {
                 continue;
             }
+            // document signing and CodeGuard are sold through TheSSLStore only
+            if(in_array($key, [EmailTemplates::DS_CONFIGURATION_TEMPLATE, EmailTemplates::DS_ISSUED_TEMPLATE, EmailTemplates::CODE_GUARD_READY_TEMPLATE], true)
+                && !in_array('tss', Edition::vendors(), true))
+            {
+                continue;
+            }
             self::$all[$key] = [
                 'key'     => $key,
                 'slug'    => self::slug($key),
@@ -138,6 +147,9 @@ class EmailCatalog
             'invoice_url'            => $systemUrl . '/viewinvoice.php?id=1001',
             'dcv_email'              => 'admin@example.com',
             'dcv_method'             => 'HTTP',
+            'ds_organization'        => 'Example Ltd',
+            'ds_valid_till'          => date('Y-m-d', strtotime('+1 year')),
+            'ds_method'              => 'ship-token',
             'validation_type'        => 'OV',
             'is_renewal'             => 0,
             'ssl_configuration_link' => $orderUrl . '&configssl=1',
