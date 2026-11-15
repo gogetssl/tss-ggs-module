@@ -108,14 +108,15 @@ class ProductAddons
         return $addonId;
     }
 
-    /** The product's prices become the addon's (every currency and billing cycle) */
+    const PRICE_COLUMNS = ['msetupfee', 'qsetupfee', 'ssetupfee', 'asetupfee', 'bsetupfee', 'tsetupfee', 'monthly', 'quarterly', 'semiannually', 'annually', 'biennially', 'triennially'];
+
+    /** The product's prices become the addon's (every currency and billing cycle); the link remembers what was copied */
     public static function copyPricing(int $productId, int $addonId): void
     {
-        $columns = ['msetupfee', 'qsetupfee', 'ssetupfee', 'asetupfee', 'bsetupfee', 'tsetupfee', 'monthly', 'quarterly', 'semiannually', 'annually', 'biennially', 'triennially'];
         foreach(Capsule::table('tblpricing')->where('type', 'product')->where('relid', $productId)->get() as $row)
         {
             $values = [];
-            foreach($columns as $column)
+            foreach(self::PRICE_COLUMNS as $column)
             {
                 $values[$column] = $row->$column;
             }
@@ -129,23 +130,67 @@ class ProductAddons
                 Capsule::table('tblpricing')->insert($match + $values);
             }
         }
+        self::setLinkValue($addonId, 'prices', self::fingerprint('addon', $addonId));
     }
 
-    /** Every linked product addon takes its product's current prices; returns how many were updated */
+    /** The prices of a product or addon as one comparable value */
+    protected static function fingerprint(string $type, int $id): string
+    {
+        $rows = [];
+        foreach(Capsule::table('tblpricing')->where('type', $type)->where('relid', $id)->orderBy('currency')->get() as $row)
+        {
+            $rows[] = $row->currency . ':' . implode(',', array_map(function($c) use ($row) { return number_format((float)$row->$c, 2, '.', ''); }, self::PRICE_COLUMNS));
+        }
+
+        return md5(implode('|', $rows));
+    }
+
+    protected static function linkValue(int $addonId): array
+    {
+        return json_decode((string)Capsule::table('tbladdonmodules')->where('module', self::settingsModule())->where('setting', self::SETTING_PREFIX . $addonId)->value('value'), true) ?: [];
+    }
+
+    protected static function setLinkValue(int $addonId, string $key, $value): void
+    {
+        $data = self::linkValue($addonId);
+        if(!$data)
+        {
+            return;
+        }
+        $data[$key] = $value;
+        Capsule::table('tbladdonmodules')->where('module', self::settingsModule())->where('setting', self::SETTING_PREFIX . $addonId)->update(['value' => json_encode($data)]);
+    }
+
+    /**
+     * Every linked product addon takes its product's current prices, unless the administrator set its prices by hand
+     * (they differ from the last copy): that addon then keeps its own prices from now on. Returns how many changed.
+     */
     public static function syncAll(): int
     {
         $count = 0;
         foreach(Capsule::table('tbladdonmodules')->where('module', self::settingsModule())->where('setting', 'like', self::SETTING_PREFIX . '%')->get(['setting', 'value']) as $row)
         {
             $addonId = (int)substr((string)$row->setting, strlen(self::SETTING_PREFIX));
-            if(((json_decode((string)$row->value, true) ?: [])['sync'] ?? true) === false)
+            $data    = json_decode((string)$row->value, true) ?: [];
+            if(($data['sync'] ?? true) === false)
             {
-                continue; // a product addon taken over from the legacy module keeps its own prices
+                continue; // taken over from the legacy module, or priced by hand
             }
-            $pid     = $addonId > 0 && Capsule::table('tbladdons')->where('id', $addonId)->where('module', 'TSSGGSModule')->exists() ? self::productOf($addonId) : null;
-            if($pid)
+            $pid = $addonId > 0 && Capsule::table('tbladdons')->where('id', $addonId)->where('module', 'TSSGGSModule')->exists() ? self::productOf($addonId) : null;
+            if(!$pid)
             {
-                self::copyPricing($pid, $addonId);
+                continue;
+            }
+            if(!empty($data['prices']) && $data['prices'] !== self::fingerprint('addon', $addonId))
+            {
+                self::setLinkValue($addonId, 'sync', false);
+                \logActivity('Product addon #' . $addonId . ': its prices were changed by hand, they no longer follow the product #' . $pid);
+                continue;
+            }
+            $before = self::fingerprint('addon', $addonId);
+            self::copyPricing($pid, $addonId);
+            if(self::fingerprint('addon', $addonId) !== $before)
+            {
                 $count++;
             }
         }
@@ -153,15 +198,40 @@ class ProductAddons
         return $count;
     }
 
-    /** After the pricing update changed a product: its product addons follow (they sell the same certificate) */
-    public static function syncPricing(int $productId): int
+    /** Categories that work as product addons: no subscriptions, no CodeGuard, no code signing (token delivery options) */
+    const ADDON_CATEGORIES = ['tls', 'smime', 'ds'];
+
+    /** Why a product can not be sold as a product addon ('' when it can) */
+    public static function refusal(int $productId): string
     {
-        $addons = self::addonsOf($productId);
-        foreach($addons as $addonId)
+        $product = Capsule::table('tblproducts')->where('id', $productId)->first(['paytype', 'configoption1', 'configoption2']);
+        if(!$product)
         {
-            self::copyPricing($productId, $addonId);
+            return 'Product not found';
+        }
+        if($product->paytype === 'free')
+        {
+            return 'A free product can not be sold as a product addon';
+        }
+        $remote   = GatewayOrderService::remoteProduct($productId);
+        $raw      = $remote && is_array($remote->rawData) ? $remote->rawData : [];
+        $category = strtolower((string)($raw['category'] ?? 'tls'));
+        if(!in_array($category, self::ADDON_CATEGORIES, true))
+        {
+            return 'This product type can not be sold as a product addon (subscriptions, CodeGuard and code signing need options and billing an addon does not have)';
         }
 
-        return count($addons);
+        return '';
+    }
+
+    /** The product was hidden / shown / retired: the product addons that sell it follow */
+    public static function followProduct(int $productId, array $change): void
+    {
+        $values = array_intersect_key($change, ['hidden' => 1, 'retired' => 1]);
+        $ids    = self::addonsOf($productId);
+        if($values && $ids)
+        {
+            Capsule::table('tbladdons')->whereIn('id', $ids)->update($values + ['updated_at' => date('Y-m-d H:i:s')]);
+        }
     }
 }

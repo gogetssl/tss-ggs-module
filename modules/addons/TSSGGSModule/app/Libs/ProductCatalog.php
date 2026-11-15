@@ -152,7 +152,11 @@ class ProductCatalog
 
     public static function setHidden($productId, $hidden)
     {
-        return Capsule::table('tblproducts')->where('id', (int)$productId)->where('servertype', 'TSSGGSModule')->update(['hidden' => $hidden ? 1 : 0]);
+        $changed = Capsule::table('tblproducts')->where('id', (int)$productId)->where('servertype', 'TSSGGSModule')->update(['hidden' => $hidden ? 1 : 0]);
+        // the product addons that sell it follow (M-14)
+        ProductAddons::followProduct((int)$productId, ['hidden' => $hidden ? 1 : 0]);
+
+        return $changed;
     }
 
     /**
@@ -166,7 +170,10 @@ class ProductCatalog
             $columns['hidden'] = 1;
         }
 
-        return Capsule::table('tblproducts')->where('id', (int)$productId)->where('servertype', 'TSSGGSModule')->update($columns);
+        $changed = Capsule::table('tblproducts')->where('id', (int)$productId)->where('servertype', 'TSSGGSModule')->update($columns);
+        ProductAddons::followProduct((int)$productId, $columns);
+
+        return $changed;
     }
 
     /**

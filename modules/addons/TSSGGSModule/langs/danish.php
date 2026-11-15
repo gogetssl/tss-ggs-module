@@ -1571,5 +1571,5 @@ $_LANG['admin.emails.when_certificate_expired'] = 'Sendes, når synkroniseringen
 
 // certificates sold as product addons
 $_LANG['admin.products.index.data_tables.products.array_data_provider.data_table.action_sellAsAddon'] = 'Sælg som produkttilføjelse';
-$_LANG['admin.products.index.data_tables.products.array_data_provider.data_table.confirm_sell_as_addon'] = 'Opret en WHMCS-produkttilføjelse, der sælger dette certifikat (samme navn og priser)? På næste side vælger du de produkter, den tilbydes sammen med.';
+$_LANG['admin.products.index.data_tables.products.array_data_provider.data_table.confirm_sell_as_addon'] = 'Opret en WHMCS-produkttilføjelse, der sælger dette certifikat (samme navn og priser)? Produkttilføjelser har ingen konfigurerbare indstillinger: ekstra SAN og FLEX-wildcard-valget sælges ikke med den. På næste side vælger du de produkter, den tilbydes sammen med.';
 $_LANG['admin.products.index.data_tables.products.array_data_provider.data_table.product_addon'] = 'Produkttilføjelse #:id';

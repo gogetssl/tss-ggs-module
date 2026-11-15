@@ -916,3 +916,5 @@ $_LANG['addonCertificate']['client_intro'] = 'Este certificado SSL se gestiona e
 $_LANG['addonCertificate']['client_button'] = 'Gestionar certificado';
 $_LANG['addonCertificate']['admin_label'] = 'Servicio del certificado';
 $_LANG['addonCertificate']['managed_elsewhere'] = 'Este certificado se gestiona en su servicio de certificado :service:.';
+$_LANG['addonCertificate']['service_notice'] = 'Este certificado se factura con el complemento de producto ":addon:" de :service:. Se renueva y se cancela allí.';
+$_LANG['addonCertificate']['upgrade_blocked'] = 'Este certificado se factura con un complemento de producto: no se puede mejorar ni añadirle dominios. Pida en su lugar un certificado con más dominios.';

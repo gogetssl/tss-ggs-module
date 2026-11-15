@@ -29,7 +29,11 @@ class AddonCertificates
     /** The certificate service of a hosting addon (tblhostingaddons.id), the newest one; null when there is none */
     public static function serviceOf(int $hostingAddonId): ?int
     {
-        foreach(Request::where('name', self::LINK)->orderBy('id', 'desc')->get(['serviceid', 'request']) as $row)
+        // the link text starts with {"addon":<id>, (link()): only that addon's rows are read
+        $rows = Request::where('name', self::LINK)->where(function($q) use ($hostingAddonId) {
+            $q->where('request', '{"addon":' . $hostingAddonId . '}')->orWhere('request', 'like', '{"addon":' . $hostingAddonId . ',%');
+        })->orderBy('id', 'desc')->get(['serviceid', 'request']);
+        foreach($rows as $row)
         {
             if((int)((json_decode((string)$row->request, true) ?: [])['addon'] ?? 0) === $hostingAddonId
                 && Capsule::table('tblhosting')->where('id', (int)$row->serviceid)->exists())
@@ -135,16 +139,34 @@ class AddonCertificates
         {
             return self::text('not_linked');
         }
-
-        $serviceId = self::serviceOf($hostingAddonId);
-        $status    = $serviceId ? (string)Capsule::table('tblhosting')->where('id', $serviceId)->value('domainstatus') : '';
-        if($serviceId && $status === 'Active')
+        $refused = ProductAddons::refusal($productId);
+        if($refused !== '')
         {
-            return 'success';
+            return $refused;
         }
-        if(!$serviceId || !in_array($status, self::OPEN, true))
+
+        // the payment and the admin's "Create" can arrive at the same moment: one certificate service per addon
+        $lock = 'tssggs_addon_' . $hostingAddonId;
+        if((int)(Capsule::selectOne('SELECT GET_LOCK(?, 10) AS l', [$lock])->l ?? 0) !== 1)
         {
-            $serviceId = self::createService($addon, $productId);
+            return 'The product addon is being set up already. Try again in a moment.';
+        }
+        try
+        {
+            $serviceId = self::serviceOf($hostingAddonId);
+            $status    = $serviceId ? (string)Capsule::table('tblhosting')->where('id', $serviceId)->value('domainstatus') : '';
+            if($serviceId && in_array($status, ['Active', 'Suspended'], true))
+            {
+                return 'success'; // set up already (a suspended one is unsuspended, not created again)
+            }
+            if(!$serviceId || !in_array($status, self::OPEN, true))
+            {
+                $serviceId = self::createService($addon, $productId);
+            }
+        }
+        finally
+        {
+            Capsule::select('SELECT RELEASE_LOCK(?)', [$lock]);
         }
 
         $result = localAPI('ModuleCreate', ['serviceid' => $serviceId]);
@@ -222,6 +244,15 @@ class AddonCertificates
         {
             return 'The product addon has no certificate service to renew';
         }
+        // an ended certificate service (cancelled by the client or an admin, revoked, terminated) is never renewed: the
+        // renewal would order a new certificate at the vendor for an addon that should have stopped
+        $status = (string)Capsule::table('tblhosting')->where('id', $serviceId)->value('domainstatus');
+        if(!in_array($status, self::OPEN, true))
+        {
+            self::followEnd($serviceId, in_array($status, ['Cancelled', 'Fraud'], true) ? 'Cancelled' : 'Terminated');
+
+            return 'The certificate service #' . $serviceId . ' has ended (' . $status . '): the product addon is not renewed. Order a new certificate instead.';
+        }
         $due = (string)Capsule::table('tblhostingaddons')->where('id', $hostingAddonId)->value('nextduedate');
         if($due && $due !== '0000-00-00')
         {
@@ -270,7 +301,94 @@ class AddonCertificates
         }
     }
 
+    // ---- billing of a certificate service (it has none of its own) ---- //
+
+    /**
+     * The addon's billing cycle for a certificate service (the order term follows it: a 2-year addon orders a 2-year
+     * certificate), null for an ordinary service
+     */
+    public static function billingCycleOf(int $serviceId): ?string
+    {
+        $hostingAddonId = self::addonOf($serviceId);
+        $cycle          = $hostingAddonId ? (string)Capsule::table('tblhostingaddons')->where('id', $hostingAddonId)->value('billingcycle') : '';
+
+        return $cycle !== '' ? $cycle : null;
+    }
+
+    /**
+     * What the client pays for a certificate service and the invoice it was paid with - the addon's - for the module's
+     * cost / profit records; null for an ordinary service
+     */
+    public static function billing(int $serviceId): ?array
+    {
+        $hostingAddonId = self::addonOf($serviceId);
+        if(!$hostingAddonId)
+        {
+            return null;
+        }
+        $addon   = Capsule::table('tblhostingaddons')->where('id', $hostingAddonId)->first(['recurring', 'setupfee']);
+        $invoice = (int)Capsule::table('tblinvoiceitems')->where('type', 'Addon')->where('relid', $hostingAddonId)->orderBy('id', 'desc')->value('invoiceid');
+
+        return ['amount' => (float)($addon->recurring ?? 0), 'invoiceid' => $invoice];
+    }
+
+    // ---- keeping addon and certificate service in step (cron) ---- //
+
+    /**
+     * Ends that happened outside the module's own calls: the client cancelled the certificate service, an admin
+     * terminated it or changed the addon by hand, the addon was deleted. The side still running follows the ended one -
+     * by status only, nothing is ordered or cancelled at the vendor here. Returns what was changed.
+     */
+    public static function reconcile(): array
+    {
+        $changes = [];
+        foreach(Request::where('name', self::LINK)->get(['serviceid', 'request']) as $row)
+        {
+            $serviceId      = (int)$row->serviceid;
+            $hostingAddonId = (int)((json_decode((string)$row->request, true) ?: [])['addon'] ?? 0);
+            $service        = Capsule::table('tblhosting')->where('id', $serviceId)->value('domainstatus');
+            $addon          = $hostingAddonId ? Capsule::table('tblhostingaddons')->where('id', $hostingAddonId)->value('status') : null;
+            if($service === null)
+            {
+                continue;
+            }
+            $serviceOpen = in_array($service, self::OPEN, true);
+            $addonOpen   = $addon !== null && in_array($addon, self::OPEN, true);
+            if(!$serviceOpen && $addonOpen && self::serviceOf($hostingAddonId) === $serviceId)
+            {
+                self::followEnd($serviceId, in_array($service, ['Cancelled', 'Fraud'], true) ? 'Cancelled' : 'Terminated');
+                $changes[] = 'addon #' . $hostingAddonId . ' follows service #' . $serviceId . ' (' . $service . ')';
+            }
+            elseif($serviceOpen && !$addonOpen)
+            {
+                // the addon was cancelled, terminated or deleted without the module: its certificate is billed no more
+                $to = $addon === null || in_array($addon, ['Cancelled', 'Fraud'], true) ? 'Cancelled' : 'Terminated';
+                Capsule::table('tblhosting')->where('id', $serviceId)->whereIn('domainstatus', self::OPEN)->update(['domainstatus' => $to]
+                    + ($to === 'Terminated' ? ['termination_date' => date('Y-m-d')] : []));
+                \logActivity('Certificate service #' . $serviceId . ' ' . strtolower($to) . ': its product addon #' . $hostingAddonId . ' ' . ($addon === null ? 'was deleted' : 'is ' . $addon));
+                $changes[] = 'service #' . $serviceId . ' follows addon #' . $hostingAddonId . ' (' . ($addon ?? 'deleted') . ')';
+            }
+        }
+
+        return $changes;
+    }
+
     // ---- pages ---- //
+
+    /** Shown on top of a certificate service's client page: it is billed with a product addon of another service */
+    public static function clientNotice(int $serviceId): string
+    {
+        $hostingAddonId = self::addonOf($serviceId);
+        if(!$hostingAddonId)
+        {
+            return '';
+        }
+        $addon  = Capsule::table('tblhostingaddons')->where('id', $hostingAddonId)->first(['hostingid', 'addonid', 'name']);
+        $name   = $addon ? ((string)$addon->name ?: (string)Capsule::table('tbladdons')->where('id', (int)$addon->addonid)->value('name')) : '';
+        $domain = $addon ? (string)Capsule::table('tblhosting')->where('id', (int)$addon->hostingid)->value('domain') : '';
+
+        return self::text('service_notice', ['addon' => $name, 'service' => $domain !== '' ? $domain : '#' . (int)($addon->hostingid ?? 0)]);
+    }
 
     protected static function clientArea(int $hostingAddonId): string
     {
@@ -306,6 +424,8 @@ class AddonCertificates
         'client_button'     => 'Manage certificate',
         'admin_label'       => 'Certificate service',
         'managed_elsewhere' => 'This certificate is managed on its certificate service :service:.',
+        'service_notice'    => 'This certificate is billed with the product addon ":addon:" of :service:. It is renewed and cancelled there.',
+        'upgrade_blocked'   => 'This certificate is billed with a product addon: it can not be upgraded and no domains can be added to it. Order a certificate with more domains instead.',
     ];
 
     /** Server module language (mainDomain-style keys under addonCertificate), English when not loaded */

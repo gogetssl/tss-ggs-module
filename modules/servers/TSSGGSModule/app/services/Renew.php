@@ -239,10 +239,18 @@ class Renew
             }
             $item     = InvoiceItem::where('relid', $targetServiceId)->where('type', 'Hosting')->orderBy('id', 'desc')->first();
             $apiPrice = $newOrder['order']['total_amount'] ?? 0;
+            $invoice  = !empty($item->invoiceid) ? $item->invoiceid : 0;
+            // a product addon's certificate: the renewal was paid on the addon's invoice, at the addon's price
+            $addonBilling = \ModulesGarden\TSSGGSModule\App\Libs\AddonCertificates::billing((int)$targetServiceId);
+            if($addonBilling)
+            {
+                $amount  = $addonBilling['amount'];
+                $invoice = $addonBilling['invoiceid'] ?: $invoice;
+            }
 
             // this renewal's row only: the rows of earlier renewals keep their own invoice and prices
             Request::where('id', (int)Request::where('serviceid', $targetServiceId)->where('name', 'renewOrder')->max('id'))->update([
-                'invoiceid'   => !empty($item->invoiceid) ? $item->invoiceid : 0,
+                'invoiceid'   => $invoice,
                 'api_price'   => $apiPrice,
                 'whmcs_price' => $amount,
                 'rate'        => $rate,

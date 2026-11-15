@@ -1578,5 +1578,5 @@ $_LANG['admin.emails.when_certificate_expired'] = 'Sent when the sync finds the 
 
 // certificates sold as product addons
 $_LANG['admin.products.index.data_tables.products.array_data_provider.data_table.action_sellAsAddon'] = 'Sell as product addon';
-$_LANG['admin.products.index.data_tables.products.array_data_provider.data_table.confirm_sell_as_addon'] = 'Create a WHMCS product addon that sells this certificate (same name and prices)? You choose the products it is offered with on the next page.';
+$_LANG['admin.products.index.data_tables.products.array_data_provider.data_table.confirm_sell_as_addon'] = 'Create a WHMCS product addon that sells this certificate (same name and prices)? Product addons can not carry configurable options: extra SANs and the FLEX wildcard choice are not sold with it. You choose the products it is offered with on the next page.';
 $_LANG['admin.products.index.data_tables.products.array_data_provider.data_table.product_addon'] = 'Product addon #:id';

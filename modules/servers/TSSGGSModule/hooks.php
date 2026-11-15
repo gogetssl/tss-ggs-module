@@ -199,6 +199,14 @@ add_hook('ClientAreaHeadOutput', 1, function($params) {
 add_hook('ClientAreaPage', 1, function($params) {
     $page = basename($_SERVER['PHP_SELF']);
 
+    // a product addon's certificate is free: an upgrade or more SANs would bypass the addon's billing (M-14)
+    if($page == 'upgrade.php' && !empty($_GET['id']) && class_exists('\ModulesGarden\TSSGGSModule\App\Libs\AddonCertificates')
+        && \ModulesGarden\TSSGGSModule\App\Libs\AddonCertificates::isCertificateService((int)$_GET['id']))
+    {
+        header('Location: clientarea.php?action=productdetails&id=' . (int)$_GET['id']);
+        exit;
+    }
+
     if($page == 'upgrade.php' && isset($_GET['type']) && $_GET['type'] == 'configoptions')
     {
         $serviceId = (int)$_GET['id'];
@@ -647,5 +655,27 @@ add_hook('AfterInvoicingGenerateInvoiceItems', 1, function($vars) {
         {
             logActivity('TSSGGSModule renewal invoices: next invoice date of service #' . (int)$serviceId . ' could not be put back: ' . $e->getMessage());
         }
+    }
+});
+
+/**
+ * A product addon's certificate service (M-14): its page says which addon it is billed with, so the client does not
+ * look for renewal or cancellation on the free service
+ */
+add_hook('ClientAreaProductDetailsOutput', 1, function($vars) {
+    try
+    {
+        $serviceId = (int)($vars['service']->id ?? ($vars['serviceid'] ?? 0));
+        if($serviceId <= 0 || !class_exists('\ModulesGarden\TSSGGSModule\App\Libs\AddonCertificates'))
+        {
+            return '';
+        }
+        $notice = \ModulesGarden\TSSGGSModule\App\Libs\AddonCertificates::clientNotice($serviceId);
+
+        return $notice !== '' ? '<div class="alert alert-info" style="text-align:left">' . htmlspecialchars($notice) . '</div>' : '';
+    }
+    catch(\Throwable $e)
+    {
+        return '';
     }
 });

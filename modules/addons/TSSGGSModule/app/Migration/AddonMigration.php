@@ -76,7 +76,10 @@ class AddonMigration
         return ['addons' => $addons, 'certificates' => $moved, 'not_moved' => $kept];
     }
 
-    /** SSL orders of a legacy product addon on hosting addons that still run: [ssl order row, hosting addon row] */
+    /**
+     * SSL orders of a legacy product addon on hosting addons that still run: one per hosting addon - its newest order
+     * (the legacy module keeps earlier orders of a renewed addon; they are history and stay where they are)
+     */
     protected static function certificatesOf(int $addonDefinitionId, string $module): array
     {
         $out = [];
@@ -85,13 +88,14 @@ class AddonMigration
             ->where('tblsslorders.module', $module)->where('tblsslorders.addon_id', '>', 0)
             ->where('tblhostingaddons.addonid', $addonDefinitionId)
             ->whereIn('tblhostingaddons.status', ['Pending', 'Active', 'Suspended'])
+            ->orderBy('tblsslorders.id')
             ->get(['tblsslorders.id AS order_id', 'tblhostingaddons.id AS hosting_addon_id']);
         foreach($rows as $row)
         {
-            $out[] = ['order_id' => (int)$row->order_id, 'hosting_addon_id' => (int)$row->hosting_addon_id];
+            $out[(int)$row->hosting_addon_id] = ['order_id' => (int)$row->order_id, 'hosting_addon_id' => (int)$row->hosting_addon_id];
         }
 
-        return $out;
+        return array_values($out);
     }
 
     /**

@@ -1569,5 +1569,5 @@ $_LANG['admin.emails.when_certificate_expired'] = 'Wird gesendet, wenn die Synch
 
 // certificates sold as product addons
 $_LANG['admin.products.index.data_tables.products.array_data_provider.data_table.action_sellAsAddon'] = 'Als Produkt-Addon verkaufen';
-$_LANG['admin.products.index.data_tables.products.array_data_provider.data_table.confirm_sell_as_addon'] = 'Ein WHMCS-Produkt-Addon anlegen, das dieses Zertifikat verkauft (gleicher Name und Preise)? Auf der nächsten Seite wählen Sie die Produkte, zu denen es angeboten wird.';
+$_LANG['admin.products.index.data_tables.products.array_data_provider.data_table.confirm_sell_as_addon'] = 'Ein WHMCS-Produkt-Addon anlegen, das dieses Zertifikat verkauft (gleicher Name und Preise)? Produkt-Addons haben keine konfigurierbaren Optionen: zusätzliche SANs und die FLEX-Wildcard-Wahl werden damit nicht verkauft. Auf der nächsten Seite wählen Sie die Produkte, zu denen es angeboten wird.';
 $_LANG['admin.products.index.data_tables.products.array_data_provider.data_table.product_addon'] = 'Produkt-Addon #:id';

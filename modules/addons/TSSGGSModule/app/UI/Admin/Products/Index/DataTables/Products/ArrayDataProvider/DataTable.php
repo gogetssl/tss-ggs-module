@@ -187,7 +187,7 @@ class DataTable extends \ModulesGarden\TSSGGSModule\Components\DataTable\DataTab
 
         // sold as a WHMCS product addon (App\Libs\ProductAddons): one link per such addon, or the action that creates one
         $addons = \ModulesGarden\TSSGGSModule\App\Libs\ProductAddons::addonsOf((int)$whmcsProduct->id);
-        if(!$addons)
+        if(!$addons && !$whmcsProduct->retired && \ModulesGarden\TSSGGSModule\App\Libs\ProductAddons::refusal((int)$whmcsProduct->id) === '')
         {
             $actions['sellAsAddon'] = 'confirm_sell_as_addon';
         }

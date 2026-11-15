@@ -916,3 +916,5 @@ $_LANG['addonCertificate']['client_intro'] = 'Dieses SSL-Zertifikat wird auf ein
 $_LANG['addonCertificate']['client_button'] = 'Zertifikat verwalten';
 $_LANG['addonCertificate']['admin_label'] = 'Zertifikatsdienst';
 $_LANG['addonCertificate']['managed_elsewhere'] = 'Dieses Zertifikat wird über seinen Zertifikatsdienst :service: verwaltet.';
+$_LANG['addonCertificate']['service_notice'] = 'Dieses Zertifikat wird mit dem Produkt-Addon ":addon:" von :service: abgerechnet. Es wird dort verlängert und gekündigt.';
+$_LANG['addonCertificate']['upgrade_blocked'] = 'Dieses Zertifikat wird mit einem Produkt-Addon abgerechnet: Es kann nicht hochgestuft werden und es lassen sich keine Domains hinzufügen. Bestellen Sie stattdessen ein Zertifikat mit mehr Domains.';

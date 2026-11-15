@@ -109,6 +109,19 @@ class SSLCertificates extends AbstractCommand
             (new AddonModuleRepository())->updateLastCertificatesSync($timestamp);
         }
 
+        // product addons and their certificate services ended outside the module's own calls (M-14)
+        try
+        {
+            foreach(\ModulesGarden\TSSGGSModule\App\Libs\AddonCertificates::reconcile() as $change)
+            {
+                Logger::info('Product addon certificates: ' . $change);
+            }
+        }
+        catch(\Throwable $e)
+        {
+            $io->write('Product addon check: ' . $e->getMessage());
+        }
+
         $certificatesQuery = CertificateSyncHelpers::getCertificatesQuery()
             ->whereIn('tblsslorders.remoteid', $certificatesWhere);
 

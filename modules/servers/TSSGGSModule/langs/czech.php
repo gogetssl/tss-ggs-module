@@ -916,3 +916,5 @@ $_LANG['addonCertificate']['client_intro'] = 'Tento SSL certifikát se spravuje 
 $_LANG['addonCertificate']['client_button'] = 'Spravovat certifikát';
 $_LANG['addonCertificate']['admin_label'] = 'Služba certifikátu';
 $_LANG['addonCertificate']['managed_elsewhere'] = 'Tento certifikát se spravuje ve své službě certifikátu :service:.';
+$_LANG['addonCertificate']['service_notice'] = 'Tento certifikát se účtuje s doplňkem produktu ":addon:" služby :service:. Prodlužuje se a ruší tam.';
+$_LANG['addonCertificate']['upgrade_blocked'] = 'Tento certifikát se účtuje s doplňkem produktu: nelze jej povýšit ani k němu přidat domény. Objednejte místo toho certifikát s více doménami.';

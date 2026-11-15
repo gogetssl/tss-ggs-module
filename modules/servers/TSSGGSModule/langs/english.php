@@ -916,3 +916,5 @@ $_LANG['addonCertificate']['client_intro'] = 'This SSL certificate is managed on
 $_LANG['addonCertificate']['client_button'] = 'Manage certificate';
 $_LANG['addonCertificate']['admin_label'] = 'Certificate service';
 $_LANG['addonCertificate']['managed_elsewhere'] = 'This certificate is managed on its certificate service :service:.';
+$_LANG['addonCertificate']['service_notice'] = 'This certificate is billed with the product addon ":addon:" of :service:. It is renewed and cancelled there.';
+$_LANG['addonCertificate']['upgrade_blocked'] = 'This certificate is billed with a product addon: it can not be upgraded and no domains can be added to it. Order a certificate with more domains instead.';

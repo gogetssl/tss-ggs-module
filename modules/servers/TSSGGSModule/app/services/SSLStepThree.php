@@ -22,6 +22,8 @@ class SSLStepThree
         try {
 
             $serviceDetails = $params['model']->toArray();
+            // a product addon's certificate: its term follows the addon's billing cycle (the service itself is free)
+            $serviceDetails['billingcycle'] = \ModulesGarden\TSSGGSModule\App\Libs\AddonCertificates::billingCycleOf((int)$params['serviceid']) ?? $serviceDetails['billingcycle'];
 
             $billingCycle = 12;
             switch ($serviceDetails['billingcycle']) {
@@ -153,13 +155,21 @@ class SSLStepThree
             {
                 $invoiceId = $item->invoiceid;
             }
+            // a product addon's certificate: the client pays the addon, the service itself is free
+            $sellingPrice = (float)$params['model']->amount;
+            $addonBilling = \ModulesGarden\TSSGGSModule\App\Libs\AddonCertificates::billing((int)$params['serviceid']);
+            if($addonBilling)
+            {
+                $sellingPrice = $addonBilling['amount'];
+                $invoiceId    = $addonBilling['invoiceid'] ?: $invoiceId;
+            }
 
             Request::where('serviceid', $params['serviceid'])->where('name', 'addOrder')->update([
                 'invoiceid' => $invoiceId,
                 'api_price' => $apiPrice,
-                'whmcs_price' => $params['model']->amount,
+                'whmcs_price' => $sellingPrice,
                 'rate' => $rate,
-                'diff_price' => $params['model']->amount - $apiPrice,
+                'diff_price' => $sellingPrice - $apiPrice,
                 'status' => $newOrder['order']['status']
             ]);
 

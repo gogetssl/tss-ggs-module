@@ -86,9 +86,10 @@ class Products extends AbstractController implements AdminAreaInterface
             {
                 throw new \RuntimeException('This product is already sold as a product addon');
             }
-            if(Capsule::table('tblproducts')->where('id', $pid)->value('paytype') === 'free')
+            $refused = \ModulesGarden\TSSGGSModule\App\Libs\ProductAddons::refusal($pid);
+            if($refused !== '')
             {
-                throw new \RuntimeException('A free product can not be sold as a product addon');
+                throw new \RuntimeException($refused);
             }
             $addonId = \ModulesGarden\TSSGGSModule\App\Libs\ProductAddons::create($pid);
 

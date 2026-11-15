@@ -916,3 +916,5 @@ $_LANG['addonCertificate']['client_intro'] = 'Dette SSL-certifikat administreres
 $_LANG['addonCertificate']['client_button'] = 'Administrer certifikat';
 $_LANG['addonCertificate']['admin_label'] = 'Certifikattjeneste';
 $_LANG['addonCertificate']['managed_elsewhere'] = 'Dette certifikat administreres på sin certifikattjeneste :service:.';
+$_LANG['addonCertificate']['service_notice'] = 'Dette certifikat faktureres med produkttilføjelsen ":addon:" til :service:. Det fornyes og opsiges dér.';
+$_LANG['addonCertificate']['upgrade_blocked'] = 'Dette certifikat faktureres med en produkttilføjelse: det kan ikke opgraderes, og der kan ikke tilføjes domæner. Bestil i stedet et certifikat med flere domæner.';
