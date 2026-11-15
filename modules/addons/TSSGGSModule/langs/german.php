@@ -978,6 +978,8 @@ $_LANG['admin.emails.name_dns_validation_switched_to_email'] = 'DNS-Validierung 
 $_LANG['admin.emails.when_dns_validation_switched_to_email'] = 'Wird gesendet, wenn die DNS-Validierung nicht abgeschlossen wurde und AutoInstall die Bestellung auf E-Mail-Validierung umgestellt hat.';
 $_LANG['admin.emails.name_validation_warning'] = 'Validierungsproblem (Dateimethode)';
 $_LANG['admin.emails.when_validation_warning'] = 'Wird gesendet, wenn die CA die Validierungsdatei nach mehreren Prüfungen nicht verifizieren konnte.';
+$_LANG['admin.emails.name_organization_validation_required'] = 'Organisationsvalidierung erforderlich';
+$_LANG['admin.emails.when_organization_validation_required'] = 'Wird gesendet, wenn eine OV- oder EV-Bestellung (SSL, S/MIME, Code Signing, Document Signing) aufgegeben oder verlängert wird: Die CA prüft die Organisation und kontaktiert den Administrator.';
 $_LANG['admin.emails.name_send_certificate'] = 'Zertifikat senden';
 $_LANG['admin.emails.when_send_certificate'] = 'Wird gesendet, wenn das Zertifikat ausgestellt wird und wenn der Kunde oder ein Administrator es erneut sendet; das Zertifikat und das CA-Bundle sind angehängt.';
 $_LANG['admin.emails.name_certificate_installed'] = 'Zertifikat installiert (AutoInstall)';
@@ -996,8 +998,6 @@ $_LANG['admin.emails.name_acme_subscription_expiration'] = 'ACME-Abonnement - Ve
 $_LANG['admin.emails.when_acme_subscription_expiration'] = 'Wird gesendet, wenn die Verlängerungsrechnung eines ACME-Abonnements erstellt wurde (sofern in den SSL-Einstellungen aktiviert).';
 $_LANG['admin.emails.name_acme_subscription_renewal'] = 'ACME-Abonnement - Verlängerung bezahlt';
 $_LANG['admin.emails.when_acme_subscription_renewal'] = 'Wird gesendet, wenn die Verlängerungsrechnung eines ACME-Abonnements bezahlt wurde.';
-$_LANG['admin.emails.name_renewal'] = 'Verlängerung (nicht verwendet)';
-$_LANG['admin.emails.when_renewal'] = 'Aus Kompatibilitätsgründen mit dem GoGetSSL-Modul definiert; diese Version sendet sie nicht.';
 $_LANG['admin.emails.name_auto_reissue_failed'] = 'Automatische Neuausstellung fehlgeschlagen';
 $_LANG['admin.emails.when_auto_reissue_failed'] = 'Wird gesendet, wenn die automatische Neuausstellung vor Ablauf nach allen Versuchen fehlgeschlagen ist.';
 
@@ -1544,3 +1544,19 @@ $_LANG['admin.migration.nothing_left'] = 'Nichts mehr zu migrieren: die Produkte
 
 // main domain choice of FLEX products
 $_LANG['admin.pricing_grid.item_main_wildcard'] = 'Wildcard-Hauptdomain (Aufpreis)';
+
+// Settings > Email notifications
+$_LANG['admin.settings.index.widgets.sidebar.emailSettings'] = 'E-Mail-Benachrichtigungen';
+$_LANG['admin.settings.index.widgets.email_settings_widget.title'] = 'E-Mail-Benachrichtigungen';
+$_LANG['admin.settings.index.widgets.email_settings_widget.subtitle'] = 'Alle E-Mails, die das Modul an Kunden sendet: jede einzeln ein- oder ausschalten. Die Texte bearbeiten Sie auf der Seite E-Mails.';
+$_LANG['admin.settings.index.widgets.email_settings_widget.col_email'] = 'E-Mail';
+$_LANG['admin.settings.index.widgets.email_settings_widget.col_when'] = 'Wird gesendet';
+$_LANG['admin.settings.index.widgets.email_settings_widget.col_status'] = 'Status';
+$_LANG['admin.settings.index.widgets.email_settings_widget.enabled'] = 'aktiv';
+$_LANG['admin.settings.index.widgets.email_settings_widget.edit'] = 'Bearbeiten';
+$_LANG['admin.emails.name_document_signing_configuration_required'] = 'Document Signing: Bestelldaten erforderlich';
+$_LANG['admin.emails.when_document_signing_configuration_required'] = 'Wird gesendet, wenn ein Document-Signing-Dienst angelegt wird: Der Kunde gibt Organisation, Administrator und Token-Wahl ein.';
+$_LANG['admin.emails.name_document_signing_certificate_issued'] = 'Document-Signing-Zertifikat ausgestellt';
+$_LANG['admin.emails.when_document_signing_certificate_issued'] = 'Wird gesendet, wenn die Zertifizierungsstelle das Document-Signing-Zertifikat ausstellt.';
+$_LANG['admin.emails.name_codeguard_licence_ready'] = 'CodeGuard-Lizenz bereit';
+$_LANG['admin.emails.when_codeguard_licence_ready'] = 'Wird gesendet, wenn eine CodeGuard-Lizenz eingerichtet ist, mit dem Weg zu ihrem Dashboard.';

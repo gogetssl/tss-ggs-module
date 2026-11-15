@@ -29,16 +29,23 @@ if (isset($_REQUEST['type']) && $_REQUEST['type'] == 'module')
 
 header('Content-Type: text/css');
 
+// every imported file carries the module version and its own modification time: browsers cache an @import by its
+// URL, so without them an upgrade (or a changed override) kept showing the old styles until the cache expired
+$version = preg_replace('/[^0-9A-Za-z.\-]/', '', (string)($_GET['v'] ?? ''));
+$stamp   = function($path) use ($version) {
+    return '?v=' . rawurlencode($version . '.' . (is_file($path) ? filemtime($path) : 0));
+};
+
 foreach ($files as $file)
 {
     $override = \ModulesGarden\TSSGGSModule\Core\ModuleConstants::getFullPath('overrides', 'assets', 'css', $file);
     if (file_exists($override))
     {
-        echo "@import \"../../overrides/assets/css/$file\";\n";
+        echo "@import \"../../overrides/assets/css/$file" . $stamp($override) . "\";\n";
     }
     else
     {
-        echo "@import \"../assets/css/$file\";\n";
+        echo "@import \"../assets/css/$file" . $stamp(dirname(__DIR__) . '/assets/css/' . $file) . "\";\n";
     }
 }
 

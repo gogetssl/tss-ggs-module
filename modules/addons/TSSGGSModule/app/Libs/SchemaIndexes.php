@@ -48,6 +48,16 @@ class SchemaIndexes
             }
         }
 
+        // e-mails the module no longer has: only this edition's own template (never a legacy module's)
+        foreach(\ModulesGarden\TSSGGSModule\App\Helpers\EmailTemplates::REMOVED_TEMPLATES as $key)
+        {
+            $deleted = Capsule::table('tblemailtemplates')->where('name', Edition::templateName($key))->delete();
+            if($deleted)
+            {
+                $added[] = 'removed e-mail template ' . Edition::templateName($key);
+            }
+        }
+
         return $added;
     }
 

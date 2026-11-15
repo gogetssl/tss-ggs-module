@@ -1013,6 +1013,8 @@ $_LANG['admin.emails.name_dns_validation_switched_to_email'] = 'DNS validation s
 $_LANG['admin.emails.when_dns_validation_switched_to_email'] = 'Sent when DNS validation did not complete and AutoInstall switched the order to email validation.';
 $_LANG['admin.emails.name_validation_warning']           = 'Validation problem (file method)';
 $_LANG['admin.emails.when_validation_warning']           = 'Sent when the CA could not verify the validation file after several checks.';
+$_LANG['admin.emails.name_organization_validation_required'] = 'Organization validation required';
+$_LANG['admin.emails.when_organization_validation_required'] = 'Sent when an OV or EV order (SSL, S/MIME, code signing, document signing) is placed or renewed: the CA will verify the organization and contact the administrator.';
 $_LANG['admin.emails.name_send_certificate']             = 'Send certificate';
 $_LANG['admin.emails.when_send_certificate']             = 'Sent when the certificate is issued and when the client or an administrator sends it again; the certificate and the CA bundle are attached.';
 $_LANG['admin.emails.name_certificate_installed']        = 'Certificate installed (AutoInstall)';
@@ -1031,8 +1033,6 @@ $_LANG['admin.emails.name_acme_subscription_expiration'] = 'ACME subscription - 
 $_LANG['admin.emails.when_acme_subscription_expiration'] = 'Sent when the renewal invoice of an ACME subscription was created (if enabled in SSL Settings).';
 $_LANG['admin.emails.name_acme_subscription_renewal']    = 'ACME subscription - renewal paid';
 $_LANG['admin.emails.when_acme_subscription_renewal']    = 'Sent when the renewal invoice of an ACME subscription was paid.';
-$_LANG['admin.emails.name_renewal']                      = 'Renewal (not used)';
-$_LANG['admin.emails.when_renewal']                      = 'Defined for compatibility with the GoGetSSL module; this version does not send it.';
 $_LANG['admin.emails.name_auto_reissue_failed']          = 'Automatic reissue failed';
 $_LANG['admin.emails.when_auto_reissue_failed']          = 'Sent when the automatic reissue before expiry failed after all attempts.';
 
@@ -1553,3 +1553,19 @@ $_LANG['admin.migration.nothing_left'] = 'Nothing left to migrate: the products 
 
 // main domain choice of FLEX products
 $_LANG['admin.pricing_grid.item_main_wildcard'] = 'Wildcard main domain (extra)';
+
+// Settings > Email notifications
+$_LANG['admin.settings.index.widgets.sidebar.emailSettings'] = 'Email notifications';
+$_LANG['admin.settings.index.widgets.email_settings_widget.title'] = 'Email notifications';
+$_LANG['admin.settings.index.widgets.email_settings_widget.subtitle'] = 'Every e-mail the module sends to clients: switch each one on or off. Texts are edited on the Emails page.';
+$_LANG['admin.settings.index.widgets.email_settings_widget.col_email'] = 'E-mail';
+$_LANG['admin.settings.index.widgets.email_settings_widget.col_when'] = 'Sent when';
+$_LANG['admin.settings.index.widgets.email_settings_widget.col_status'] = 'Status';
+$_LANG['admin.settings.index.widgets.email_settings_widget.enabled'] = 'enabled';
+$_LANG['admin.settings.index.widgets.email_settings_widget.edit'] = 'Edit';
+$_LANG['admin.emails.name_document_signing_configuration_required'] = 'Document signing: order details required';
+$_LANG['admin.emails.when_document_signing_configuration_required'] = 'Sent when a document signing service is created: the client enters the organization, administrator and token choice.';
+$_LANG['admin.emails.name_document_signing_certificate_issued'] = 'Document signing certificate issued';
+$_LANG['admin.emails.when_document_signing_certificate_issued'] = 'Sent when the certificate authority issues the document signing certificate.';
+$_LANG['admin.emails.name_codeguard_licence_ready'] = 'CodeGuard licence ready';
+$_LANG['admin.emails.when_codeguard_licence_ready'] = 'Sent when a CodeGuard licence is set up, with the way to its dashboard.';

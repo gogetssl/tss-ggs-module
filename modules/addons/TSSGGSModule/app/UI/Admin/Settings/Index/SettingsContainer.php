@@ -5,6 +5,7 @@ namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Widgets\ApiSettingsWidget;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Widgets\AutomatedSettingsWidget;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Widgets\CronSettingsWidget;
+use ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Widgets\EmailSettingsWidget;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Widgets\FinanceSettingsWidget;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Widgets\GeneralSettingsWidget;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Widgets\LogsSettingsWidget;
@@ -43,6 +44,10 @@ class SettingsContainer extends Container implements AdminAreaInterface
         elseif(Request::get('settings-page') == 'cronSettings')
         {
             $mainWidget = new CronSettingsWidget();
+        }
+        elseif(Request::get('settings-page') == 'emailSettings')
+        {
+            $mainWidget = new EmailSettingsWidget();
         }
         elseif(Request::get('settings-page') == 'logsSettings')
         {

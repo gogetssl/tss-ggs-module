@@ -878,3 +878,62 @@
 
 /* Settings side menu: the font's glyphs sit a little low in the line box, so the icon is nudged down to match the text */
 #layers2 .tssggs-settings .lu-navbar__nav li.lu-nav__item > a.lu-nav__link .lu-nav__icon { position: relative; top: 1px; }
+
+
+/*
+ * ---- main navigation, green bar (2026-11-15, Vlad's design) ----
+ * Bar: #0b7a3e with a shade from #096634 over its top 24px, a 1px #dde3ea line between it and the header, bottom
+ * corners rounded with the header card. Items: white text and icons on the bar. Current page: a white 40px pill,
+ * 6px corners, dark green text #09572c. Hover: a faint white pill. "More" takes the current look while one of its
+ * pages is open; its dropdown is a white card, the current page in it in green.
+ */
+#layers2 .tssggs-head { position: relative; z-index: 1; }
+#layers2 .lu-app-navbar {
+    border: 0 !important; border-top: 1px solid #dde3ea !important; border-radius: 0 0 12px 12px;
+    background: linear-gradient(180deg, #096634 0, #0b7a3e 24px, #0b7a3e 100%) !important;
+    box-shadow: none !important;
+}
+#layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav { padding: 15px 24px !important; gap: 6px; background: transparent !important; }
+#layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav > li.lu-nav__item > a.lu-nav__link {
+    position: relative; gap: 10px; height: 40px; min-height: 40px; padding: 0 12px !important;
+    border: 0 !important; border-radius: 6px; background: transparent !important;
+    color: #fff !important; font-size: 15px; font-weight: 400;
+    transition: background-color .15s ease, color .15s ease;
+}
+#layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav > li.lu-nav__item > a.lu-nav__link::after,
+#layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav > li.lu-nav__item > a.lu-nav__link::before { display: none !important; }
+#layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav > li.lu-nav__item > a.lu-nav__link i,
+#layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav > li.lu-nav__item > a.lu-nav__link svg,
+#layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav > li.lu-nav__item > a.lu-nav__link .lu-nav__link-icon { color: inherit !important; fill: currentColor; opacity: 1; }
+/* hover: a faint white pill */
+#layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav > li.lu-nav__item > a.lu-nav__link:hover,
+#layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav > li.lu-has-dropdown.tssggs-open > a.lu-nav__link { background: rgba(255,255,255,.14) !important; color: #fff !important; }
+/* current page: the white pill */
+#layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav > li.lu-nav__item.is-active > a.lu-nav__link,
+#layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav > li.lu-has-dropdown:has(ul.lu-nav--sub li.is-active) > a.lu-nav__link {
+    background: #fff !important; color: #09572c !important; font-weight: 500; box-shadow: none;
+}
+#layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav > li.lu-nav__item > a.lu-nav__link .tssggs-nav-chevron { transition: transform .15s ease; }
+#layers2 .lu-app-navbar li.lu-has-dropdown.tssggs-open > a.lu-nav__link .tssggs-nav-chevron { transform: rotate(180deg); }
+#layers2 .lu-app-navbar a.lu-nav__link:focus-visible { outline: 2px solid #fff; outline-offset: 2px; border-radius: 6px; }
+
+/* the "More" dropdown: a white card under the bar */
+#layers2 .lu-app-navbar li.lu-has-dropdown > ul.lu-nav--sub {
+    top: calc(100% + 10px); width: 224px; min-width: 224px; padding: 6px;
+    border-radius: 10px; box-shadow: 0 10px 24px -6px rgba(15,23,42,.22), 0 2px 6px -2px rgba(15,23,42,.12);
+}
+#layers2 .lu-app-navbar ul.lu-nav--sub > li.lu-nav__item > a.lu-nav__link { border-radius: 6px; color: var(--tw-fg) !important; }
+#layers2 .lu-app-navbar ul.lu-nav--sub > li.lu-nav__item > a.lu-nav__link:hover { background: var(--tw-surface-alt) !important; }
+#layers2 .lu-app-navbar ul.lu-nav--sub > li.lu-nav__item > a.lu-nav__link .lu-nav__link-icon,
+#layers2 .lu-app-navbar ul.lu-nav--sub > li.lu-nav__item > a.lu-nav__link svg { color: var(--tw-muted) !important; }
+#layers2 .lu-app-navbar ul.lu-nav--sub > li.lu-nav__item.is-active > a.lu-nav__link { background: #e4f3ea !important; color: #09572c !important; font-weight: 500; }
+#layers2 .lu-app-navbar ul.lu-nav--sub > li.lu-nav__item.is-active > a.lu-nav__link .lu-nav__link-icon,
+#layers2 .lu-app-navbar ul.lu-nav--sub > li.lu-nav__item.is-active > a.lu-nav__link svg { color: #09572c !important; }
+#layers2 .lu-app-navbar ul.lu-nav--sub > li.lu-nav__item > a.lu-nav__link::after { display: none !important; }
+@media (prefers-reduced-motion: reduce) {
+    #layers2 .lu-app-navbar a.lu-nav__link, #layers2 .lu-app-navbar .tssggs-nav-chevron { transition: none !important; }
+}
+/* the framework's own nav rules are more specific: the bar's spacing and the 40px items win with a doubled class */
+#layers2 .lu-app-navbar.lu-navbar .lu-navbar__nav > ul.lu-nav.lu-nav { padding: 10px 24px !important; align-items: center !important; gap: 6px !important; }
+#layers2 .lu-app-navbar.lu-navbar .lu-navbar__nav > ul.lu-nav > li.lu-nav__item { align-self: center !important; height: auto !important; }
+#layers2 .lu-app-navbar.lu-navbar .lu-navbar__nav > ul.lu-nav > li.lu-nav__item > a.lu-nav__link { height: 32px !important; min-height: 32px !important; max-height: 32px; }

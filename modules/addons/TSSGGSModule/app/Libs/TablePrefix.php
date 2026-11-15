@@ -66,6 +66,38 @@ class TablePrefix
                     // a table that cannot be renamed (locked, no permission) stays where it is - the next run tries again
                 }
             }
+
+            $done = array_merge($done, self::backupNames($old, $new));
+        }
+
+        return $done;
+    }
+
+    /**
+     * Migration runs remember the prefix of their backup tables ("<old>_bak_3_20261112_182550"). The tables above
+     * were renamed to the new prefix, the remembered name was not (before 1.9.0): the backups could then never be
+     * restored, listed or cleaned up - they stayed in the database for good. Each run's name follows its tables.
+     */
+    protected static function backupNames($old, $new): array
+    {
+        $runs = $new . '_Migrations';
+        if(!self::name($runs) || !self::exists($runs))
+        {
+            return [];
+        }
+        $done = [];
+        try
+        {
+            foreach(Capsule::table($runs)->where('backup_prefix', 'like', str_replace('_', '\\_', $old . '_bak_') . '%')->get(['id', 'backup_prefix']) as $run)
+            {
+                $renamed = $new . substr((string)$run->backup_prefix, strlen($old));
+                Capsule::table($runs)->where('id', $run->id)->update(['backup_prefix' => $renamed]);
+                $done[] = 'migration run ' . $run->id . ' backups: ' . $run->backup_prefix . ' -> ' . $renamed;
+            }
+        }
+        catch(\Throwable $e)
+        {
+            // the next activation / upgrade tries again
         }
 
         return $done;

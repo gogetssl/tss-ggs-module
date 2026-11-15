@@ -276,6 +276,9 @@ class Renew
             \logActivity('TSSGGS: Renewal of service #' . (int)$serviceId . ' was ordered (certificate ' . $newItemId . '), its details will be read by the next certificates sync: ' . $exception->getMessage());
         }
 
+        // OV / EV: the certificate authority may confirm the organization again
+        \ModulesGarden\TSSGGSModule\App\Libs\OrganizationValidation::notify((int)$targetServiceId, $newItemId, true);
+
         // AutoInstall: install the renewed certificate (same CSR / private key) + "Renewal Started"; otherwise "Autorenewed" email
         try
         {

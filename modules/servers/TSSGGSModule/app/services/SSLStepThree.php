@@ -187,6 +187,9 @@ class SSLStepThree
             CertificateService::event($params['serviceid'], 'success', '[Order] SSL order placed for domain: ' . $decode['CN']
                 . ' (order #' . $newOrder['order']['id'] . ', ' . (count($san) + 1) . ' domain(s))', $params['userid']);
 
+            // OV / EV: tell the client the certificate authority now verifies the organization
+            \ModulesGarden\TSSGGSModule\App\Libs\OrganizationValidation::notify((int)$params['serviceid'], $itemId, (bool)$renewal);
+
             // Integrator hook; SSLCenter_StepThree keeps hooks written for the GoGetSSL module working after the migration
             $hookParams = [
                 'serviceid'     => $params['serviceid'],

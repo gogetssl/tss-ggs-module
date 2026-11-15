@@ -980,6 +980,8 @@ $_LANG['admin.emails.name_dns_validation_switched_to_email'] = 'DNS-validering s
 $_LANG['admin.emails.when_dns_validation_switched_to_email'] = 'Sendes, når DNS-valideringen ikke blev gennemført, og AutoInstall skiftede ordren til e-mailvalidering.';
 $_LANG['admin.emails.name_validation_warning']           = 'Valideringsproblem (filmetode)';
 $_LANG['admin.emails.when_validation_warning']           = 'Sendes, når CA\'en ikke kunne verificere valideringsfilen efter flere kontroller.';
+$_LANG['admin.emails.name_organization_validation_required'] = 'Organisationsvalidering påkrævet';
+$_LANG['admin.emails.when_organization_validation_required'] = 'Sendes, når en OV- eller EV-ordre (SSL, S/MIME, kodesignering, dokumentsignering) afgives eller fornyes: CA\'en verificerer organisationen og kontakter administratoren.';
 $_LANG['admin.emails.name_send_certificate']             = 'Send certifikat';
 $_LANG['admin.emails.when_send_certificate']             = 'Sendes, når certifikatet udstedes, og når kunden eller en administrator sender det igen; certifikatet og CA-bundlen er vedhæftet.';
 $_LANG['admin.emails.name_certificate_installed']        = 'Certifikat installeret (AutoInstall)';
@@ -998,8 +1000,6 @@ $_LANG['admin.emails.name_acme_subscription_expiration'] = 'ACME-abonnement - fo
 $_LANG['admin.emails.when_acme_subscription_expiration'] = 'Sendes, når fornyelsesfakturaen for et ACME-abonnement er oprettet (hvis aktiveret i SSL-indstillinger).';
 $_LANG['admin.emails.name_acme_subscription_renewal']    = 'ACME-abonnement - fornyelse betalt';
 $_LANG['admin.emails.when_acme_subscription_renewal']    = 'Sendes, når fornyelsesfakturaen for et ACME-abonnement er betalt.';
-$_LANG['admin.emails.name_renewal']                      = 'Fornyelse (ikke i brug)';
-$_LANG['admin.emails.when_renewal']                      = 'Defineret af hensyn til kompatibilitet med GoGetSSL-modulet; denne version sender den ikke.';
 $_LANG['admin.emails.name_auto_reissue_failed']          = 'Automatisk genudstedelse mislykkedes';
 $_LANG['admin.emails.when_auto_reissue_failed']          = 'Sendes, når den automatiske genudstedelse før udløb mislykkedes efter alle forsøg.';
 
@@ -1546,3 +1546,19 @@ $_LANG['admin.migration.nothing_left'] = 'Intet tilbage at migrere: produkterne 
 
 // main domain choice of FLEX products
 $_LANG['admin.pricing_grid.item_main_wildcard'] = 'Wildcard-hoveddomæne (tillæg)';
+
+// Settings > Email notifications
+$_LANG['admin.settings.index.widgets.sidebar.emailSettings'] = 'E-mailnotifikationer';
+$_LANG['admin.settings.index.widgets.email_settings_widget.title'] = 'E-mailnotifikationer';
+$_LANG['admin.settings.index.widgets.email_settings_widget.subtitle'] = 'Alle e-mails, modulet sender til kunder: slå hver enkelt til eller fra. Teksterne redigeres på siden E-mails.';
+$_LANG['admin.settings.index.widgets.email_settings_widget.col_email'] = 'E-mail';
+$_LANG['admin.settings.index.widgets.email_settings_widget.col_when'] = 'Sendes når';
+$_LANG['admin.settings.index.widgets.email_settings_widget.col_status'] = 'Status';
+$_LANG['admin.settings.index.widgets.email_settings_widget.enabled'] = 'aktiv';
+$_LANG['admin.settings.index.widgets.email_settings_widget.edit'] = 'Rediger';
+$_LANG['admin.emails.name_document_signing_configuration_required'] = 'Dokumentsignering: ordreoplysninger påkrævet';
+$_LANG['admin.emails.when_document_signing_configuration_required'] = 'Sendes, når en dokumentsigneringstjeneste oprettes: kunden indtaster organisation, administrator og valg af token.';
+$_LANG['admin.emails.name_document_signing_certificate_issued'] = 'Dokumentsigneringscertifikat udstedt';
+$_LANG['admin.emails.when_document_signing_certificate_issued'] = 'Sendes, når certifikatudstederen udsteder dokumentsigneringscertifikatet.';
+$_LANG['admin.emails.name_codeguard_licence_ready'] = 'CodeGuard-licens klar';
+$_LANG['admin.emails.when_codeguard_licence_ready'] = 'Sendes, når en CodeGuard-licens er sat op, med vejen til dens dashboard.';
