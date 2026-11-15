@@ -36,7 +36,13 @@ class Installer
         $manifest = Workdir::manifest();
         if(!$manifest || $manifest['version'] !== $state['version'])
         {
-            throw new \RuntimeException('The release could not be verified');
+            // the stored copy is gone or outdated: fetched and verified again
+            $state    = Release::check(true);
+            $manifest = Workdir::manifest();
+        }
+        if(!$manifest || $manifest['version'] !== ($state['version'] ?? null) || !Release::available($state))
+        {
+            throw new \RuntimeException('The release could not be verified' . (!empty($state['error']) ? ': ' . $state['error'] : ''));
         }
 
         return [$state, $manifest];
