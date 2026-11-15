@@ -951,3 +951,7 @@
 #layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav > li.lu-nav__item > a.lu-nav__link svg { color: inherit !important; fill: currentColor; }
 #layers2 .lu-app-navbar ul.lu-nav--sub > li.lu-nav__item > a.lu-nav__link i,
 #layers2 .lu-app-navbar ul.lu-nav--sub > li.lu-nav__item > a.lu-nav__link svg { color: inherit !important; }
+#layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav > li.lu-nav__item > a.lu-nav__link .lu-nav__link-icon,
+#layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav > li.lu-nav__item > a.lu-nav__link .lu-nav__link-icon svg { color: inherit !important; opacity: .92; }
+#layers2 .lu-app-navbar ul.lu-nav--sub > li.lu-nav__item > a.lu-nav__link .lu-nav__link-icon { color: var(--tw-muted) !important; }
+#layers2 .lu-app-navbar ul.lu-nav--sub > li.lu-nav__item.is-active > a.lu-nav__link .lu-nav__link-icon { color: var(--tw-primary) !important; }
