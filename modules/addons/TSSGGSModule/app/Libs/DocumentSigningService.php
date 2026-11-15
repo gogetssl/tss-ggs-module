@@ -135,7 +135,7 @@ class DocumentSigningService extends GatewayOrderService
             'methods'          => static::methods($rawData),
             'shipping_options' => static::shippingOptions($rawData),
             'models'           => self::TOKEN_MODELS,
-            'term'             => static::termForBillingCycle((string)Capsule::table('tblhosting')->where('id', (int)$serviceId)->value('billingcycle'), static::availableTerms($packageId)),
+            'term'             => static::termForBillingCycle(AddonCertificates::billingCycleOf((int)$serviceId) ?? (string)Capsule::table('tblhosting')->where('id', (int)$serviceId)->value('billingcycle'), static::availableTerms($packageId)),
             'renewal'          => !empty(static::stored($serviceId)['previous']),
         ];
     }
@@ -231,7 +231,7 @@ class DocumentSigningService extends GatewayOrderService
         [$service, $ssl] = static::requireOrderable($serviceId);
 
         $productId = (string)Capsule::table('tblproducts')->where('id', (int)$service->packageid)->value('configoption2');
-        $term      = static::termForBillingCycle($service->billingcycle, static::availableTerms($service->packageid));
+        $term      = static::termForBillingCycle(AddonCertificates::billingCycleOf((int)$serviceId) ?? $service->billingcycle, static::availableTerms($service->packageid));
         $payload   = [
             'product'      => ['id' => SSLTrustCenterApi::productId($productId), 'term' => $term],
             'provisioning' => $order['provisioning'],

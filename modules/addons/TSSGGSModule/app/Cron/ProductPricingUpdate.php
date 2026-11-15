@@ -307,6 +307,13 @@ class ProductPricingUpdate extends AbstractCommand
                 $pricing->notifyBelowCost();
             }
 
+            // product addons that sell a certificate product (M-14) keep its prices
+            $addons = \ModulesGarden\TSSGGSModule\App\Libs\ProductAddons::syncAll();
+            if($addons)
+            {
+                Logger::info('Product addon prices updated from their certificate products: ' . $addons);
+            }
+
             // existing services renew at the current price (Settings > Finance > Renewal prices)
             $renewals = RenewalPrices::sync();
             if($renewals['updated'])

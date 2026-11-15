@@ -690,6 +690,8 @@ trait SslCertificatePages
         $vars['serviceid']                          = $params['service']->id;
         // cancelled / terminated: the page stays readable, but no downloads, sending, reissue or install
         $vars['certificateUsable']                  = CertificateService::usable((int)$params['service']->id);
+        // a product addon's certificate: billed on the addon, no upgrades or extra SANs on the free service (M-14)
+        $vars['addonNotice']                        = \ModulesGarden\TSSGGSModule\App\Libs\AddonCertificates::clientNotice((int)$params['service']->id);
         $vars['order_details']['registration_date'] = date('F j, Y', strtotime($params['service']->regdate));
         $vars['order_details']['expiration_date']   = $params['service']->nextduedate != '0000-00-00' ? date('F j, Y', strtotime($params['service']->nextduedate)) : "";
         $vars['order_details']['reccuring_amount']  = formatCurrency($params['service']->amount, $params['client']->currency);
@@ -1090,6 +1092,8 @@ trait SslCertificatePages
             }
             CertificateService::cancel((int)$input['id'], 'Cancelled by customer');
             Service::where('id', (int)$input['id'])->update(['domainstatus' => 'Cancelled']);
+            // a product addon's certificate: the addon is billed no more either (M-14)
+            \ModulesGarden\TSSGGSModule\App\Libs\AddonCertificates::followEnd((int)$input['id'], 'Cancelled');
             CertificateService::forgetPrivateKeys((int)$input['id']);
         }
         catch(\Exception $e)

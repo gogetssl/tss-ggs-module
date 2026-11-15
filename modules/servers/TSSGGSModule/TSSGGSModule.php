@@ -22,8 +22,16 @@ if (!defined("WHMCS")) {
     die("This file cannot be accessed directly");
 }
 
-/** A certificate kept as a record of the legacy module (App\Libs\RecordOnly): the answer for it, null for any other */
+/**
+ * The answer for a call the module must not run as an ordinary service; null for any other:
+ *  - a WHMCS product addon (App\Libs\AddonCertificates): WHMCS passes the parent service, the certificate lives on the
+ *    addon's own certificate service
+ *  - a certificate kept as a record of the legacy module (App\Libs\RecordOnly)
+ */
 function TSSGGSModule_recordOnlyGuard($function, $params) {
+    if(!empty($params['addonId']) && class_exists('\ModulesGarden\TSSGGSModule\App\Libs\AddonCertificates')) {
+        return \ModulesGarden\TSSGGSModule\App\Libs\AddonCertificates::guard($function, (array)$params);
+    }
     try {
         return class_exists('\ModulesGarden\TSSGGSModule\App\Libs\RecordOnly') ? \ModulesGarden\TSSGGSModule\App\Libs\RecordOnly::guard($function, $params) : null;
     } catch(\Throwable $e) {

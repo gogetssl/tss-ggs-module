@@ -908,3 +908,13 @@ $_LANG['mainDomain']['needs_wildcard'] = 'Dieses Zertifikat wurde mit einer Stan
 $_LANG['mainDomain']['needs_wildcard_name'] = 'Dieses Zertifikat wurde mit einer Wildcard-Hauptdomain bestellt: geben Sie sie als *.example.com ein.';
 $_LANG['mainDomain']['no_wildcard'] = 'Dieses Zertifikat deckt keine Wildcard-Hauptdomain (*.example.com) ab. Verwenden Sie eine normale Domain oder bestellen Sie ein Wildcard-Zertifikat.';
 $_LANG['mainDomain']['locked'] = 'Die Art der Hauptdomain (Standard oder Wildcard) eines bestellten Zertifikats kann nicht geändert werden. Bestellen Sie dafür ein neues Zertifikat.';
+
+// certificates sold as product addons
+$_LANG['addonCertificate']['not_linked'] = 'Dieses Produkt-Addon ist mit keinem Zertifikatsprodukt verknüpft. Legen Sie es auf der Produkte-Seite des Moduls an ("Als Produkt-Addon verkaufen").';
+$_LANG['addonCertificate']['not_set_up'] = 'Das Zertifikat wird eingerichtet, sobald das Produkt-Addon bezahlt ist.';
+$_LANG['addonCertificate']['client_intro'] = 'Dieses SSL-Zertifikat wird auf einer eigenen Seite verwaltet: dort konfigurieren Sie es, verfolgen die Validierung und laden es herunter.';
+$_LANG['addonCertificate']['client_button'] = 'Zertifikat verwalten';
+$_LANG['addonCertificate']['admin_label'] = 'Zertifikatsdienst';
+$_LANG['addonCertificate']['managed_elsewhere'] = 'Dieses Zertifikat wird über seinen Zertifikatsdienst :service: verwaltet.';
+$_LANG['addonCertificate']['service_notice'] = 'Dieses Zertifikat wird mit dem Produkt-Addon ":addon:" von :service: abgerechnet. Es wird dort verlängert und gekündigt.';
+$_LANG['addonCertificate']['upgrade_blocked'] = 'Dieses Zertifikat wird mit einem Produkt-Addon abgerechnet: Es kann nicht hochgestuft werden und es lassen sich keine Domains hinzufügen. Bestellen Sie stattdessen ein Zertifikat mit mehr Domains.';

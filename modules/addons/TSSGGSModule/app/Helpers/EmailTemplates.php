@@ -276,6 +276,36 @@ class EmailTemplates
                              <p>Order details: {$order_url}</p>
                              <p>{$signature}</p>';
 
+    /** Sent when the certificate authority revoked the certificate: the service is cancelled (App\Libs\CertificateEnd) */
+    const CERT_REVOKED_TEMPLATE = 'Certificate Revoked';
+    const CERT_REVOKED_SUBJECT  = 'Important: your certificate has been revoked - {$service_product_name}';
+    const CERT_REVOKED_MESSAGE  = '<p>Dear {$client_name},</p>
+                             <p>
+                                Your certificate {$service_product_name}{if $domain} for <strong>{$domain}</strong>{/if}
+                                {if $serial_number}(serial number {$serial_number}){/if} has been revoked by the certificate
+                                authority. It is no longer trusted: browsers and other software show a warning or refuse it.
+                             </p>
+                             <p>
+                                The service has been cancelled. Please contact our support team, so that we can find out why
+                                it was revoked and arrange a replacement.
+                             </p>
+                             <p>Order details: {$order_url}</p>
+                             <p>{$signature}</p>';
+
+    /** Sent when the certificate expired and was not renewed: the service is terminated (App\Libs\CertificateEnd) */
+    const CERT_EXPIRED_TEMPLATE = 'Certificate Expired';
+    const CERT_EXPIRED_SUBJECT  = 'Your certificate has expired - {$service_product_name}';
+    const CERT_EXPIRED_MESSAGE  = '<p>Dear {$client_name},</p>
+                             <p>
+                                Your certificate {$service_product_name}{if $domain} for <strong>{$domain}</strong>{/if}
+                                expired{if $cert_expiry} on {$cert_expiry}{/if} and was not renewed. Websites and software
+                                that use it now show a security warning.
+                             </p>
+                             <p>
+                                To restore the protection, order a new certificate in our client area: {$whmcs_url}cart.php
+                             </p>
+                             <p>{$signature}</p>';
+
     /**
      * Sent when a CodeGuard licence is set up. Nothing has to be configured - the client only needs the way in.
      */
@@ -290,7 +320,7 @@ class EmailTemplates
                              <p>{$ssl_configuration_link}</p>
                              <p>{$signature}</p>';
 
-    const TEMPLATE_NAMES = ['CONFIGURATION', 'SMIME_CONFIGURATION', 'SMIME_REMINDER', 'SMIME_ISSUED', 'SMIME_EXPIRATION', 'CS_CONFIGURATION', 'CS_ISSUED', 'CS_EXPIRATION', 'EXPIRATION', 'SEND_CERTIFICATE', 'RENEWAL_DETAILS', 'REISSUE', 'SUBSCRIPTION', 'SUBSCRIPTION_EXPIRATION', 'SUBSCRIPTION_RENEWAL', 'RENEWAL_INVOICE', 'DISCONTINUED', 'CODE_GUARD_READY', 'DS_CONFIGURATION', 'DS_ISSUED', 'ORG_VALIDATION'];
+    const TEMPLATE_NAMES = ['CONFIGURATION', 'SMIME_CONFIGURATION', 'SMIME_REMINDER', 'SMIME_ISSUED', 'SMIME_EXPIRATION', 'CS_CONFIGURATION', 'CS_ISSUED', 'CS_EXPIRATION', 'EXPIRATION', 'SEND_CERTIFICATE', 'RENEWAL_DETAILS', 'REISSUE', 'SUBSCRIPTION', 'SUBSCRIPTION_EXPIRATION', 'SUBSCRIPTION_RENEWAL', 'RENEWAL_INVOICE', 'DISCONTINUED', 'CODE_GUARD_READY', 'DS_CONFIGURATION', 'DS_ISSUED', 'ORG_VALIDATION', 'CERT_REVOKED', 'CERT_EXPIRED'];
 
     /** S/MIME e-mails */
     const SMIME_TEMPLATES = [self::SMIME_CONFIGURATION_TEMPLATE, self::SMIME_REMINDER_TEMPLATE, self::SMIME_ISSUED_TEMPLATE, self::SMIME_EXPIRATION_TEMPLATE];

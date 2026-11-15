@@ -263,7 +263,7 @@
                             <dt>{$MGLANG->T('validation_page', 'Wildcard SAN items')}</dt><dd>{$configurableOptions.sans_wildcard} ({$countSANWildcard} {$MGLANG->T('validation_page', 'used')})</dd>
                         {/if}
                     </dl>
-                    {if $certificateUsable}
+                    {if $certificateUsable && !$addonNotice}
                         <a href="{$whmcs_url}/upgrade.php?type=configoptions&id={$serviceid}" class="tssggs-btn" style="margin-top:14px;">{$MGLANG->T('validation_page', 'Purchase additional SANs')}</a>
                     {/if}
                 </div>

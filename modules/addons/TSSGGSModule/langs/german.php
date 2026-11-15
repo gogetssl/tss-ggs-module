@@ -1560,3 +1560,14 @@ $_LANG['admin.emails.name_document_signing_certificate_issued'] = 'Document-Sign
 $_LANG['admin.emails.when_document_signing_certificate_issued'] = 'Wird gesendet, wenn die Zertifizierungsstelle das Document-Signing-Zertifikat ausstellt.';
 $_LANG['admin.emails.name_codeguard_licence_ready'] = 'CodeGuard-Lizenz bereit';
 $_LANG['admin.emails.when_codeguard_licence_ready'] = 'Wird gesendet, wenn eine CodeGuard-Lizenz eingerichtet ist, mit dem Weg zu ihrem Dashboard.';
+
+// certificate revoked / expired e-mails
+$_LANG['admin.emails.name_certificate_revoked'] = 'Zertifikat widerrufen';
+$_LANG['admin.emails.when_certificate_revoked'] = 'Wird gesendet, wenn die Synchronisierung das Zertifikat als von der Zertifizierungsstelle widerrufen erkennt; der Dienst wird gekündigt.';
+$_LANG['admin.emails.name_certificate_expired'] = 'Zertifikat abgelaufen';
+$_LANG['admin.emails.when_certificate_expired'] = 'Wird gesendet, wenn die Synchronisierung das Zertifikat als abgelaufen und nicht verlängert erkennt; der Dienst wird beendet.';
+
+// certificates sold as product addons
+$_LANG['admin.products.index.data_tables.products.array_data_provider.data_table.action_sellAsAddon'] = 'Als Produkt-Addon verkaufen';
+$_LANG['admin.products.index.data_tables.products.array_data_provider.data_table.confirm_sell_as_addon'] = 'Ein WHMCS-Produkt-Addon anlegen, das dieses Zertifikat verkauft (gleicher Name und Preise)? Produkt-Addons haben keine konfigurierbaren Optionen: zusätzliche SANs und die FLEX-Wildcard-Wahl werden damit nicht verkauft. Auf der nächsten Seite wählen Sie die Produkte, zu denen es angeboten wird.';
+$_LANG['admin.products.index.data_tables.products.array_data_provider.data_table.product_addon'] = 'Produkt-Addon #:id';

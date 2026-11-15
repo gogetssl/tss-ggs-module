@@ -43,6 +43,8 @@ class EmailCatalog
         'ACME Subscription Expiration'      => ['renewals', [], true],
         'ACME Subscription Renewal'         => ['renewals', [], true],
         'Auto Reissue Failed'               => ['problems', ['domain', 'cert_expiry', 'days_left', 'error_message', 'order_url'], true],
+        'Certificate Revoked'               => ['problems', ['domain', 'serial_number', 'support_url', 'order_url'], true],
+        'Certificate Expired'               => ['problems', ['domain', 'cert_expiry'], true],
     ];
 
     /**
@@ -146,6 +148,8 @@ class EmailCatalog
             'invoice_url'            => $systemUrl . '/viewinvoice.php?id=1001',
             'dcv_email'              => 'admin@example.com',
             'dcv_method'             => 'HTTP',
+            'serial_number'          => '0A1B2C3D4E5F60718293A4B5C6D7E8F9',
+            'support_url'            => $systemUrl . '/submitticket.php',
             'ds_organization'        => 'Example Ltd',
             'ds_valid_till'          => date('Y-m-d', strtotime('+1 year')),
             'ds_method'              => 'ship-token',

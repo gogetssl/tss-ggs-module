@@ -94,7 +94,7 @@ class SmimeService extends GatewayOrderService
         [$service, $ssl] = static::requireOrderable($serviceId);
 
         $productId = (string)Capsule::table('tblproducts')->where('id', (int)$service->packageid)->value('configoption2');
-        $term      = static::termForBillingCycle($service->billingcycle, static::availableTerms($service->packageid));
+        $term      = static::termForBillingCycle(AddonCertificates::billingCycleOf((int)$serviceId) ?? $service->billingcycle, static::availableTerms($service->packageid));
         $emails    = array_values($input['emails']);
 
         $payload = [
