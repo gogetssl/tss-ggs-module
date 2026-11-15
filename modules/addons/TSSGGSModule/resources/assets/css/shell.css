@@ -937,3 +937,12 @@
 @media (prefers-reduced-motion: reduce) {
     #layers2 .lu-app-navbar a.lu-nav__link, #layers2 .lu-app-navbar .tssggs-nav-chevron { transition: none !important; }
 }
+/* the framework paints the list white and colours the current item green: the bar shows through, text stays white */
+#layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav { background: transparent !important; }
+#layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav > li.lu-nav__item > a.lu-nav__link { color: rgba(255,255,255,.86) !important; }
+#layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav > li.lu-nav__item > a.lu-nav__link:hover,
+#layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav > li.lu-nav__item.is-active > a.lu-nav__link,
+#layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav > li.lu-has-dropdown.tssggs-open > a.lu-nav__link,
+#layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav > li.lu-has-dropdown:has(ul.lu-nav--sub li.is-active) > a.lu-nav__link { color: #fff !important; }
+#layers2 .lu-app-navbar ul.lu-nav--sub > li.lu-nav__item > a.lu-nav__link { color: var(--tw-fg) !important; }
+#layers2 .lu-app-navbar ul.lu-nav--sub > li.lu-nav__item.is-active > a.lu-nav__link { color: var(--tw-primary) !important; }
