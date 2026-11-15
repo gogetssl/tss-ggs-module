@@ -78,7 +78,9 @@ class Release
         }
         catch(\Throwable $e)
         {
-            $state['error'] = $e->getMessage();
+            // what was verified before no longer counts
+            $state['error']    = $e->getMessage();
+            $state['verified'] = false;
         }
         State::set($state);
 
