@@ -556,3 +556,40 @@
 #layers2 .tssggs-changes__badge--discontinued, #layers2 .tssggs-changes__badge--retired, #layers2 .tssggs-changes__badge--hidden { background: var(--tw-danger-soft); color: var(--tw-danger); }
 #layers2 .tssggs-changes__badge--warning { background: var(--tw-warning-soft); color: var(--tw-warning); }
 #layers2 .tssggs-changes__badge--changed { background: var(--th-info-soft); color: var(--th-info); }
+/* Module update page and dashboard banner (App\Libs\Update) */
+#layers2 .tssggs-upd { max-width: 920px; }
+#layers2 .tssggs-upd h2 { margin: 0 0 16px; font-size: 20px; font-weight: 600; color: var(--tw-fg); }
+#layers2 .tssggs-upd h3 { margin: 0 0 10px; font-size: 16px; font-weight: 600; color: var(--tw-fg); }
+#layers2 .tssggs-upd h4 { margin: 14px 0 8px; font-size: 14px; font-weight: 600; color: var(--tw-fg); }
+#layers2 .tssggs-upd__card { margin: 0 0 16px; padding: 18px 20px; border: 1px solid var(--tw-border); border-radius: 8px; background: var(--tw-surface); }
+#layers2 .tssggs-upd__card p { margin: 0 0 10px; color: var(--tw-fg-soft); font-size: 13px; line-height: 20px; }
+#layers2 .tssggs-upd__facts { display: grid; grid-template-columns: 160px 1fr; gap: 6px 12px; margin: 0 0 14px; font-size: 13px; }
+#layers2 .tssggs-upd__facts dt { color: var(--tw-muted); font-weight: 500; }
+#layers2 .tssggs-upd__facts dd { margin: 0; color: var(--tw-fg); }
+#layers2 .tssggs-upd__muted { color: var(--tw-muted); font-size: 12px; }
+#layers2 .tssggs-upd__notes { margin: 0 0 12px; padding: 12px 14px; border-radius: 6px; background: var(--tw-surface-alt); color: var(--tw-fg); font-size: 13px; line-height: 20px; white-space: pre-wrap; max-height: 320px; overflow: auto; }
+#layers2 .tssggs-upd__checks { margin: 0 0 14px; padding: 0; list-style: none; font-size: 13px; }
+#layers2 .tssggs-upd__checks li { padding: 5px 0 5px 24px; position: relative; color: var(--tw-fg); }
+#layers2 .tssggs-upd__checks li::before { position: absolute; left: 0; top: 5px; width: 16px; text-align: center; font-weight: 700; }
+#layers2 .tssggs-upd__checks li.is-ok::before { content: "\2713"; color: var(--tw-primary); }
+#layers2 .tssggs-upd__checks li.is-fail::before { content: "\2715"; color: var(--tw-danger); }
+#layers2 .tssggs-upd__checks li.is-warn::before { content: "!"; color: var(--tw-warning); }
+#layers2 .tssggs-upd__form { display: inline-block; margin: 0 8px 0 0; }
+#layers2 .tssggs-upd__btn { padding: 7px 16px; border: 1px solid var(--tw-border); border-radius: 6px; background: var(--tw-surface); color: var(--tw-fg); font-size: 13px; font-weight: 600; cursor: pointer; }
+#layers2 .tssggs-upd__btn.is-primary { border-color: var(--tw-primary); background: var(--tw-primary); color: #fff; }
+#layers2 .tssggs-upd__btn.is-primary:hover { background: var(--tw-primary-hover); }
+#layers2 .tssggs-upd__btn:focus-visible { outline: 2px solid var(--tw-ring); outline-offset: 2px; }
+#layers2 .tssggs-upd__msg { margin: 0 0 16px; padding: 12px 16px; border-radius: 8px; font-size: 13px; }
+#layers2 .tssggs-upd__msg.is-ok { background: var(--tw-primary-soft); color: var(--tw-primary); }
+#layers2 .tssggs-upd__msg.is-error { background: var(--tw-danger-soft); color: var(--tw-danger); }
+#layers2 .tssggs-upd__steps { margin: 0 0 12px; padding-left: 20px; font-size: 13px; line-height: 24px; }
+#layers2 .tssggs-upd__steps li.is-done { color: var(--tw-muted); text-decoration: line-through; }
+#layers2 .tssggs-upd__steps li.is-running { color: var(--tw-fg); font-weight: 600; }
+#layers2 .tssggs-upd__manual a, #layers2 .tssggs-upd__facts a { font-weight: 600; }
+#layers2 .tssggs-upd__history { width: 100%; border-collapse: collapse; font-size: 13px; }
+#layers2 .tssggs-upd__history th { padding: 6px 8px; border-bottom: 1px solid var(--tw-border); color: var(--tw-muted); text-align: left; font-weight: 600; }
+#layers2 .tssggs-upd__history td { padding: 6px 8px; border-bottom: 1px solid var(--th-line-soft); color: var(--tw-fg); }
+#layers2 .tssggs-upd-banner { display: flex; align-items: center; gap: 10px; margin: 0 0 16px; padding: 12px 16px; border: 1px solid var(--tw-primary); border-radius: 8px; background: var(--tw-primary-soft); color: var(--tw-fg); font-size: 13.5px; }
+#layers2 .tssggs-upd-banner svg { width: 20px; height: 20px; color: var(--tw-primary); flex: none; }
+#layers2 .tssggs-upd-banner a { margin-left: auto; font-weight: 600; color: var(--tw-primary); white-space: nowrap; }
+@media (max-width: 640px) { #layers2 .tssggs-upd__facts { grid-template-columns: 1fr; } }

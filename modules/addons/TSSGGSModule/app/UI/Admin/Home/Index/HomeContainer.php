@@ -33,6 +33,11 @@ class HomeContainer extends Container implements AdminAreaInterface
         $this->setCss('tssggs-dash');
 
         $this->addElement(Card::html($this->headHtml()));
+        $update = $this->updateHtml();
+        if($update !== '')
+        {
+            $this->addElement(Card::html($update));
+        }
         // setup guide until all three steps are done
         if(NextStepsWidget::visible())
         {
@@ -47,6 +52,35 @@ class HomeContainer extends Container implements AdminAreaInterface
         $this->addElement($this->row(new AnnouncementsWidget(), new SupportWidget()));
 
         $this->addElement(Card::html($this->footHtml()));
+    }
+
+    /**
+     * "Version X is available" with a link to the update page. The cron looks once a day; without a cron the
+     * dashboard looks itself when the last check is older than three days.
+     */
+    protected function updateHtml(): string
+    {
+        try
+        {
+            $state = \ModulesGarden\TSSGGSModule\App\Libs\Update\State::get();
+            if(time() - (int)($state['checkedAt'] ?? 0) > 3 * 86400)
+            {
+                $state = \ModulesGarden\TSSGGSModule\App\Libs\Update\Release::check(true);
+            }
+            if(!\ModulesGarden\TSSGGSModule\App\Libs\Update\Release::available($state))
+            {
+                return '';
+            }
+        }
+        catch(\Throwable $e)
+        {
+            return '';
+        }
+        $t = function($key, array $vars = []) { return Card::e($this->translate($key, $vars, ['admin.module_update'])); };
+
+        return '<div class="tssggs-upd-banner">' . Card::icon('arrow-up-circle-outline')
+            . '<span>' . $t('banner', [':version' => (string)$state['version'], ':installed' => \ModulesGarden\TSSGGSModule\App\Libs\Update\State::installedVersion()]) . '</span>'
+            . '<a href="addonmodules.php?module=TSSGGSModule&amp;mg-page=moduleUpdate">' . $t('banner_link') . '</a></div>';
     }
 
     /** A wide panel and, when given, a narrow one beside it */
