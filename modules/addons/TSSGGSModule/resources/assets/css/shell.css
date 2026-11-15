@@ -946,3 +946,8 @@
 #layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav > li.lu-has-dropdown:has(ul.lu-nav--sub li.is-active) > a.lu-nav__link { color: #fff !important; }
 #layers2 .lu-app-navbar ul.lu-nav--sub > li.lu-nav__item > a.lu-nav__link { color: var(--tw-fg) !important; }
 #layers2 .lu-app-navbar ul.lu-nav--sub > li.lu-nav__item.is-active > a.lu-nav__link { color: var(--tw-primary) !important; }
+#layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav > li.lu-nav__item > a.lu-nav__link i,
+#layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav > li.lu-nav__item > a.lu-nav__link i::before,
+#layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav > li.lu-nav__item > a.lu-nav__link svg { color: inherit !important; fill: currentColor; }
+#layers2 .lu-app-navbar ul.lu-nav--sub > li.lu-nav__item > a.lu-nav__link i,
+#layers2 .lu-app-navbar ul.lu-nav--sub > li.lu-nav__item > a.lu-nav__link svg { color: inherit !important; }
