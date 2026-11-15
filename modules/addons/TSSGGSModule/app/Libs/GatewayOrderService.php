@@ -266,6 +266,11 @@ abstract class GatewayOrderService
         {
             static::onStatusChange($serviceId, '', $stored);
         }
+        else
+        {
+            // OV / EV (S/MIME, code signing, document signing): the certificate authority now verifies the organization
+            OrganizationValidation::notify((int)$serviceId, $itemId, !empty($stored['previous']));
+        }
 
         return $stored;
     }

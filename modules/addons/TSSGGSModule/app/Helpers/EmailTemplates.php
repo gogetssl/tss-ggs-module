@@ -253,6 +253,35 @@ class EmailTemplates
                              <p>{$signature}</p>';
 
     /**
+     * Sent when an OV / EV order (SSL, S/MIME, code signing, document signing) has been placed: the certificate
+     * authority now verifies the organization and contacts the administrator - see App\Libs\OrganizationValidation
+     */
+    const ORG_VALIDATION_TEMPLATE = 'Organization Validation Required';
+    const ORG_VALIDATION_SUBJECT  = 'Organization validation for your order - {$service_product_name}';
+    const ORG_VALIDATION_MESSAGE  = '<p>Dear {$client_name},</p>
+                             <p>
+                                Your order for {$service_product_name}{if $domain} ({$domain}){/if} has been placed.
+                                {if $is_renewal}As this is a renewal, the certificate authority may reuse the organization
+                                details it verified before; if they have to be confirmed again, it contacts you as described
+                                below.{else}Before the certificate can be issued, the certificate authority verifies your
+                                organization ({if $validation_type == \'EV\'}Extended Validation{else}Organization
+                                Validation{/if}).{/if}
+                             </p>
+                             <p>What to expect:</p>
+                             <ul>
+                                <li>The certificate authority contacts the administrator contact of the order by email and by
+                                phone, to confirm the organization details and that the order is authorized. Please answer
+                                promptly: an unanswered call or email is the most common cause of delay.</li>
+                                <li>It checks the organization in public business registers. If it cannot confirm the details
+                                there, it may ask for documents, such as a business registration extract.</li>
+                                <li>{if $validation_type == \'EV\'}Extended Validation usually takes a few working days{else}Organization
+                                Validation usually takes 1-3 working days{/if} once everything the certificate authority asked
+                                for has been confirmed.</li>
+                             </ul>
+                             <p>Order details: {$order_url}</p>
+                             <p>{$signature}</p>';
+
+    /**
      * Sent when a CodeGuard licence is set up. Nothing has to be configured - the client only needs the way in.
      */
     const CODE_GUARD_READY_TEMPLATE = 'CodeGuard Licence Ready';
@@ -266,7 +295,7 @@ class EmailTemplates
                              <p>{$ssl_configuration_link}</p>
                              <p>{$signature}</p>';
 
-    const TEMPLATE_NAMES = ['CONFIGURATION', 'SMIME_CONFIGURATION', 'SMIME_REMINDER', 'SMIME_ISSUED', 'SMIME_EXPIRATION', 'CS_CONFIGURATION', 'CS_ISSUED', 'CS_EXPIRATION', 'EXPIRATION', 'SEND_CERTIFICATE', 'RENEWAL', 'RENEWAL_DETAILS', 'REISSUE', 'SUBSCRIPTION', 'SUBSCRIPTION_EXPIRATION', 'SUBSCRIPTION_RENEWAL', 'RENEWAL_INVOICE', 'DISCONTINUED', 'CODE_GUARD_READY', 'DS_CONFIGURATION', 'DS_ISSUED'];
+    const TEMPLATE_NAMES = ['CONFIGURATION', 'SMIME_CONFIGURATION', 'SMIME_REMINDER', 'SMIME_ISSUED', 'SMIME_EXPIRATION', 'CS_CONFIGURATION', 'CS_ISSUED', 'CS_EXPIRATION', 'EXPIRATION', 'SEND_CERTIFICATE', 'RENEWAL', 'RENEWAL_DETAILS', 'REISSUE', 'SUBSCRIPTION', 'SUBSCRIPTION_EXPIRATION', 'SUBSCRIPTION_RENEWAL', 'RENEWAL_INVOICE', 'DISCONTINUED', 'CODE_GUARD_READY', 'DS_CONFIGURATION', 'DS_ISSUED', 'ORG_VALIDATION'];
 
     /** S/MIME e-mails */
     const SMIME_TEMPLATES = [self::SMIME_CONFIGURATION_TEMPLATE, self::SMIME_REMINDER_TEMPLATE, self::SMIME_ISSUED_TEMPLATE, self::SMIME_EXPIRATION_TEMPLATE];
