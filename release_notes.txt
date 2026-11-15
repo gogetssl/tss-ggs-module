@@ -1,3 +1,32 @@
+1.12.0 (2026-11-15)
+One-click module update
+- The module looks for a new release once a day (the GitHub release of its
+  distribution repository, with a copy on the GoGetSSL CDN as fallback). The
+  dashboard shows "Version X is available" with a link to the new Module update
+  page: installed and newest version, the release notes, the server checks and
+  the Install button (full administrators only).
+- Every release is signed (Ed25519). The module installs only a release whose
+  signature checks out against the keys built into it, and checks every file of
+  the download against the signed list before anything is replaced. Older
+  versions than the installed one are never installed.
+- The install runs in three steps: download and verify, back up the running
+  version (the last 3 backups are kept), then swap the module folders by
+  renaming them, never by copying. The new version then upgrades the database
+  and is checked in a separate request (every PHP file must parse and the
+  module must load); if it does not start, the previous version is put back by
+  itself. The module's crons pause for the few seconds of the swap.
+- Where the server does not allow it (module folders not writable, the site
+  can not reach itself, Windows, OPcache that never rechecks files, missing PHP
+  extensions), the page says why and links to the release for a manual update.
+- Rollback to the previous version from its backup, update history, activity
+  log entries and an e-mail to the administrators after every update.
+- Command line for hosting staff: php cron/cron.php ModuleUpdate [--install |
+  --rollback]. An update that stopped half way (the server died during the
+  swap) is repaired with php modules/.<module>-update/recover.php, or by itself
+  on a later page load.
+- Database changes still need no disable / re-enable: WHMCS runs the module's
+  upgrade by itself when the version changes; the updater runs it right away.
+
 1.11.0 (2026-11-15)
 Catalogue sync mode and catalogue changes
 - The nightly sync now compares the provider's product list with the previous
