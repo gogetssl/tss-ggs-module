@@ -1665,3 +1665,6 @@ $_LANG['admin.module_update.h_result'] = 'Result';
 $_LANG['admin.module_update.recover_hint'] = 'If an update ever stops half way and the module is missing, run on the server: php :path';
 $_LANG['admin.module_update.banner'] = 'Version :version of the module is available (installed: :installed).';
 $_LANG['admin.module_update.banner_link'] = 'Review and install';
+$_LANG['admin.breadcrumbs.ModuleUpdate'] = 'Module update';
+$_LANG['admin.breadcrumbs.ModuleUpdate_index'] = 'Module update';
+$_LANG['admin.module_update.rollback_cli'] = 'Rolling back is not possible from this page here (see the server checks). Run on the server: :command';

@@ -1656,3 +1656,6 @@ $_LANG['admin.module_update.h_result'] = 'Ergebnis';
 $_LANG['admin.module_update.recover_hint'] = 'Falls ein Update einmal mittendrin stoppt und das Modul fehlt, führen Sie auf dem Server aus: php :path';
 $_LANG['admin.module_update.banner'] = 'Version :version des Moduls ist verfügbar (installiert: :installed).';
 $_LANG['admin.module_update.banner_link'] = 'Ansehen und installieren';
+$_LANG['admin.breadcrumbs.ModuleUpdate'] = 'Modul-Update';
+$_LANG['admin.breadcrumbs.ModuleUpdate_index'] = 'Modul-Update';
+$_LANG['admin.module_update.rollback_cli'] = 'Das Zurücksetzen ist auf diesem Server nicht über diese Seite möglich (siehe Serverprüfungen). Auf dem Server ausführen: :command';

@@ -10,7 +10,7 @@ namespace ModulesGarden\TSSGGSModule\App\Libs\Update;
  */
 class Preflight
 {
-    public static function run(array $state = null, $withLoopback = true)
+    public static function run(array $state = null, $withLoopback = true, $withChanges = true)
     {
         $state  = $state ?? State::get();
         $checks = [];
@@ -90,10 +90,24 @@ class Preflight
         }
 
         // local changes: warned about, the admin decides
-        $changed = self::changedFiles();
+        $changed = $withChanges ? self::changedFiles() : [];
         $add('changes', !$changed, $changed ? count($changed) . ' file(s) changed by hand, e.g. ' . implode(', ', array_slice($changed, 0, 3)) . ' - they will be replaced' : '', false);
 
         return $checks;
+    }
+
+    /** Whether PHP here may swap the module folders at all (for the rollback, which needs no release) */
+    public static function canSwap()
+    {
+        foreach(self::run(['verified' => true], false, false) as $check)
+        {
+            if(in_array($check['key'], ['extensions', 'os', 'writable', 'disk', 'idle'], true) && !$check['ok'])
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public static function passed(array $checks)

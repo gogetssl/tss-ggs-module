@@ -41,7 +41,7 @@ class UpdateContainer extends Container implements AdminAreaInterface
                 . $hidden . '<button type="submit" class="tssggs-upd__btn ' . $class . '">' . Card::e($label) . '</button></form>';
         };
 
-        $html = '<div class="tssggs-upd"><h2>' . $this->t('title') . '</h2>';
+        $html = '<div class="tssggs-upd">';
 
         // result of the last step
         if(!empty($session['error']))
@@ -127,9 +127,17 @@ class UpdateContainer extends Container implements AdminAreaInterface
         if($backup && ModuleUpdate::fullAdmin())
         {
             $html .= '<div class="tssggs-upd__card"><h4>' . $this->t('rollback_title') . '</h4>';
-            $html .= (isset($state['rollbackSafe']) && !$state['rollbackSafe'])
-                ? '<p>' . $this->t('rollback_unsafe') . '</p>'
-                : '<p>' . $this->t('rollback_info', [':version' => $backup[1]]) . '</p>' . $form('rollback', $this->tRaw('rollback', [':version' => $backup[1]]), 'is-plain', [], $this->tRaw('rollback_confirm', [':version' => $backup[1]]));
+            if(isset($state['rollbackSafe']) && !$state['rollbackSafe'])
+            {
+                $html .= '<p>' . $this->t('rollback_unsafe') . '</p>';
+            }
+            else
+            {
+                $html .= '<p>' . $this->t('rollback_info', [':version' => $backup[1]]) . '</p>'
+                    . (Preflight::canSwap()
+                        ? $form('rollback', $this->tRaw('rollback', [':version' => $backup[1]]), 'is-plain', [], $this->tRaw('rollback_confirm', [':version' => $backup[1]]))
+                        : '<p class="tssggs-upd__muted">' . $this->t('rollback_cli', [':command' => 'php ' . Workdir::addonDir() . '/cron/cron.php ModuleUpdate --rollback']) . '</p>');
+            }
             $html .= '</div>';
         }
 

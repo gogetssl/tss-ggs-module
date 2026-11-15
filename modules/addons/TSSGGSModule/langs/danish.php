@@ -1658,3 +1658,6 @@ $_LANG['admin.module_update.h_result'] = 'Resultat';
 $_LANG['admin.module_update.recover_hint'] = 'Hvis en opdatering stopper halvvejs, og modulet mangler, så kør på serveren: php :path';
 $_LANG['admin.module_update.banner'] = 'Version :version af modulet er tilgængelig (installeret: :installed).';
 $_LANG['admin.module_update.banner_link'] = 'Se og installér';
+$_LANG['admin.breadcrumbs.ModuleUpdate'] = 'Modulopdatering';
+$_LANG['admin.breadcrumbs.ModuleUpdate_index'] = 'Modulopdatering';
+$_LANG['admin.module_update.rollback_cli'] = 'Tilbagerulning er ikke mulig fra denne side på denne server (se serverkontrollerne). Kør på serveren: :command';
