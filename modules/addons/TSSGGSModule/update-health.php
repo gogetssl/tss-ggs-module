@@ -36,7 +36,41 @@ $answer = ['ok' => false];
 try
 {
     require_once dirname(__DIR__, 3) . DIRECTORY_SEPARATOR . 'init.php';
+
+    $server = dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . 'servers' . DIRECTORY_SEPARATOR . basename(__DIR__);
+    if(($stored['mode'] ?? '') === 'upgrade')
+    {
+        // every PHP file of the new version must at least parse (WHMCS hides errors of a module's hooks.php, so a
+        // broken file would otherwise pass unnoticed and fail later on some page)
+        foreach([__DIR__, $server] as $root)
+        {
+            $files = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($root, \FilesystemIterator::SKIP_DOTS));
+            foreach($files as $item)
+            {
+                if(substr($item->getFilename(), -4) !== '.php' || strpos($item->getPathname(), DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR) !== false)
+                {
+                    continue;
+                }
+                try
+                {
+                    token_get_all((string)file_get_contents($item->getPathname()), TOKEN_PARSE);
+                }
+                catch(\ParseError $e)
+                {
+                    throw new \RuntimeException('syntax error in ' . substr($item->getPathname(), strlen(dirname(__DIR__, 3)) + 1) . ' line ' . $e->getLine() . ': ' . $e->getMessage());
+                }
+            }
+        }
+    }
+
+    // the module's entry files run here, so an error in them is caught (WHMCS swallows errors of hooks.php)
     require_once __DIR__ . DIRECTORY_SEPARATOR . 'core' . DIRECTORY_SEPARATOR . 'Bootstrap.php';
+    include __DIR__ . DIRECTORY_SEPARATOR . 'hooks.php';
+    require_once __DIR__ . DIRECTORY_SEPARATOR . 'TSSGGSModule.php';
+    if(is_file($server . DIRECTORY_SEPARATOR . 'TSSGGSModule.php'))
+    {
+        require_once $server . DIRECTORY_SEPARATOR . 'TSSGGSModule.php';
+    }
     $version = (string)\ModulesGarden\TSSGGSModule\Core\Support\Facades\Config::get('configuration.version', '');
 
     if(($stored['mode'] ?? '') === 'upgrade')
