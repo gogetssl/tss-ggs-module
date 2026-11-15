@@ -114,3 +114,23 @@ CREATE TABLE IF NOT EXISTS `#prefix#AisSubscriptions` (
     `updated_at`            timestamp           NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`)
     ) ENGINE=InnoDB  DEFAULT CHARSET=#charset# DEFAULT COLLATE #collation#;
+--
+-- `#prefix#CatalogueChanges`: what changed in the provider's product list (App\Libs\CatalogueSync)
+--
+CREATE TABLE IF NOT EXISTS `#prefix#CatalogueChanges` (
+    `id`            int(10) unsigned    NOT NULL AUTO_INCREMENT,
+    `vendor`        varchar(32)         NOT NULL,
+    `remote_id`     varchar(191)        NOT NULL,
+    `product_name`  varchar(255)        NOT NULL DEFAULT '',
+    `whmcs_pid`     int(11)             NOT NULL DEFAULT 0,
+    `type`          varchar(32)         NOT NULL,
+    `field`         varchar(64)         NOT NULL DEFAULT '',
+    `old_value`     text                NULL,
+    `new_value`     text                NULL,
+    `action`        text                NULL,
+    `created_at`    datetime            NOT NULL,
+    `emailed_at`    datetime            NULL,
+    PRIMARY KEY (`id`),
+    KEY `created_at` (`created_at`),
+    KEY `emailed_at` (`emailed_at`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=#charset# DEFAULT COLLATE #collation#;

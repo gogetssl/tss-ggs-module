@@ -18,8 +18,8 @@ class FinanceSettingsProvider extends CrudProvider
     const FINANCE  = ['profitMargin', 'rate'];
     const GENERAL  = ['minProfit', 'termMarginStep', 'priceRounding', 'keepMarginOnSync', 'belowCostAction', 'belowCostEmail', 'renewalPriceMode',
                       'renewalPriceClientEmail', 'renewalPriceEmailText', 'rateSource', 'currencyBuffer', 'terminateUnpaidOnExpiry',
-                      'pendingPaymentWaitCertificate', 'balanceAlert'];
-    const SWITCHES = ['keepMarginOnSync', 'belowCostEmail', 'renewalPriceClientEmail', 'terminateUnpaidOnExpiry', 'balanceAlert'];
+                      'pendingPaymentWaitCertificate', 'balanceAlert', 'catalogueSyncMode', 'catalogueChangesEmail'];
+    const SWITCHES = ['keepMarginOnSync', 'belowCostEmail', 'renewalPriceClientEmail', 'terminateUnpaidOnExpiry', 'balanceAlert', 'catalogueChangesEmail'];
 
     public function read()
     {
@@ -54,6 +54,8 @@ class FinanceSettingsProvider extends CrudProvider
         // as a string: the dropdown takes a numeric 0 for "nothing chosen"
         $this->data['pendingPaymentWaitCertificate'] = (string)\ModulesGarden\TSSGGSModule\App\Libs\RenewalPolicy::pendingWait(\ModulesGarden\TSSGGSModule\App\Libs\RenewalPolicy::CERTIFICATE);
         $this->availableValues['currency'] = Helpers::getCurrencyOptions();
+        $this->availableValues['catalogueSyncMode'] = $options('catalogueSync', \ModulesGarden\TSSGGSModule\App\Libs\CatalogueSync::MODES);
+        $this->data['catalogueSyncMode']            = \ModulesGarden\TSSGGSModule\App\Libs\CatalogueSync::mode();
     }
 
     public function update()
@@ -93,6 +95,10 @@ class FinanceSettingsProvider extends CrudProvider
             {
                 $general[$key] = max(0, (int)$general[$key]);
             }
+        }
+        if(isset($general['catalogueSyncMode']) && !in_array($general['catalogueSyncMode'], \ModulesGarden\TSSGGSModule\App\Libs\CatalogueSync::MODES, true))
+        {
+            $general['catalogueSyncMode'] = \ModulesGarden\TSSGGSModule\App\Libs\CatalogueSync::DEFAULT_MODE;
         }
         // the default text is shown in the field; keep it empty when unchanged so later wording updates reach it
         if(isset($general['renewalPriceEmailText']) && trim(str_replace("\r", '', (string)$general['renewalPriceEmailText'])) === trim(RenewalPrices::defaultEmailText()))

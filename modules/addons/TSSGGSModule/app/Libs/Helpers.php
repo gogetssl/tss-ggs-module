@@ -433,9 +433,16 @@ class Helpers
         file_put_contents($checksumFile, json_encode($checksumData, JSON_PRETTY_PRINT));
     }
 
-    public static function reSyncProducts()
+    public static function reSyncProducts($force = false)
     {
         RemoteProduct::synchronize();
+
+        // Catalogue sync mode "Manually" (M-16): the nightly sync only reports the changes; the Re-sync button
+        // ($force) still updates the products
+        if(!$force && !CatalogueSync::fixes())
+        {
+            return;
+        }
 
         $remoteProducts = RemoteProduct::get();
 
@@ -838,4 +845,4 @@ class Helpers
             "ZW" => "Zimbabwe"
         ];
     }
-}
+}

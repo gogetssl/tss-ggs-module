@@ -66,6 +66,9 @@ class GeneralSettings
         // Pricing
         'keepMarginOnSync'         => false,
         'belowCostEmail'           => true,
+        // Catalogue sync (App\Libs\CatalogueSync): what the daily sync changes by itself, and the e-mail of the changes
+        'catalogueSyncMode'        => 'alterations',
+        'catalogueChangesEmail'    => true,
         // Finance (App\Libs\FinancePolicy)
         'minProfit'                => 0,
         'termMarginStep'           => 0,

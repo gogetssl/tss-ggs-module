@@ -2,6 +2,7 @@
 
 namespace ModulesGarden\TSSGGSModule\App\Models;
 
+use ModulesGarden\TSSGGSModule\App\Libs\CatalogueSync;
 use ModulesGarden\TSSGGSModule\App\Libs\Helpers;
 use ModulesGarden\TSSGGSModule\App\Libs\ProductCatalog;
 use ModulesGarden\TSSGGSModule\Core\Models\ExtendedEloquentModel;
@@ -37,6 +38,10 @@ class RemoteProduct extends ExtendedEloquentModel
                 continue;
             }
             $returnedIds    = [];
+            // the stored copies, compared with the new list before they are overwritten (catalogue changes, M-16);
+            // nothing stored yet = the first sync of this provider: it becomes the baseline, nothing is reported
+            $before   = CatalogueSync::before($vendor);
+            $baseline = !$before;
 
             foreach($remoteProducts as $remoteProductData)
             {
@@ -58,10 +63,13 @@ class RemoteProduct extends ExtendedEloquentModel
                 $model->category    = $remoteProductData['category'] ?: '';
                 $model->rawData     = $remoteProductData;
                 $model->save();
+
+                CatalogueSync::compare($vendor, $model, $before[(string)$remoteId] ?? null, (array)$remoteProductData, $baseline);
             }
 
-            // Products the gateway no longer offers get a "Removed by the gateway" badge on the Products page
-            if($returnedIds)
+            // Products the gateway no longer offers get a "Removed by the gateway" badge on the Products page - unless
+            // the list looks incomplete (far fewer products than before), which is reported instead
+            if($returnedIds && CatalogueSync::listComplete($vendor, $before, $returnedIds))
             {
                 ProductCatalog::markMissing($vendor, $returnedIds);
             }

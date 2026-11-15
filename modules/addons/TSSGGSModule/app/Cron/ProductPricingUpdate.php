@@ -84,6 +84,13 @@ class ProductPricingUpdate extends AbstractCommand
             }
             Helpers::reSyncProducts();
 
+            // catalogue sync mode (M-16): retire / hide discontinued products, show returned ones, import new ones
+            $catalogue = \ModulesGarden\TSSGGSModule\App\Libs\CatalogueSync::apply();
+            if(array_sum($catalogue))
+            {
+                Logger::info('Catalogue sync: ' . json_encode($catalogue));
+            }
+
             //$baseCurrencyId - USD or default WHMCS currency
             $baseCurrencyId = Helpers::getCurrencyIdByCode('USD');
 
@@ -320,6 +327,9 @@ class ProductPricingUpdate extends AbstractCommand
             {
                 Logger::info('Renewal prices of existing services updated: ' . $renewals['updated'] . ' (raised ' . $renewals['raised'] . ', lowered ' . $renewals['lowered'] . ')');
             }
+
+            // what changed in the provider's catalogue since the last e-mail, to the administrators (M-16)
+            \ModulesGarden\TSSGGSModule\App\Libs\CatalogueSync::notify();
         }
         catch(\Throwable $exception)
         {
