@@ -23,8 +23,8 @@ class EmailSettingsWidget extends Widget
         $this->setSubtitle($this->translate('subtitle'));
 
         $text = new Text();
-        $text->setCss('tssggs-html tssggs-emails');
-        $text->setText($this->table());
+        $text->setCss('tssggs-html');
+        $text->setText('<div class="tssggs-emails">' . $this->table() . '</div>');
         $this->addElement($text);
     }
 
