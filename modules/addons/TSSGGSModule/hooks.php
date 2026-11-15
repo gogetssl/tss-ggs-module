@@ -7,6 +7,13 @@ if(!defined('WHMCS'))
     exit;
 }
 
+// an update of the module that stopped half way (its process died) is undone here (App\Libs\Update\Swap)
+$moduleUpdateJournal = dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . '.' . strtolower(basename(__DIR__)) . '-update' . DIRECTORY_SEPARATOR . 'journal.json';
+if(is_file($moduleUpdateJournal) && is_file(dirname($moduleUpdateJournal) . DIRECTORY_SEPARATOR . 'recover.php'))
+{
+    include dirname($moduleUpdateJournal) . DIRECTORY_SEPARATOR . 'recover.php';
+}
+
 
 require_once __DIR__ . DIRECTORY_SEPARATOR . 'core' . DIRECTORY_SEPARATOR . 'Bootstrap.php';
 

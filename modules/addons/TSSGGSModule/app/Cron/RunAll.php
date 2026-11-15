@@ -29,6 +29,15 @@ class RunAll extends AbstractCommand
         $php        = PHP_BINARY !== '' && is_executable(PHP_BINARY) && stripos(basename(PHP_BINARY), 'fpm') === false ? PHP_BINARY : 'php';
         $script     = ModuleConstants::getFullPath('cron', 'cron.php');
 
+        // a new module release: looked for once a day (the dashboard shows it)
+        try
+        {
+            \ModulesGarden\TSSGGSModule\App\Libs\Update\Release::check();
+        }
+        catch(\Throwable $e)
+        {
+        }
+
         foreach(CronStatus::TASKS as $job)
         {
             if($background)

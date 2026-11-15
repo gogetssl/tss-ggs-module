@@ -144,6 +144,17 @@ function build(edition) {
     });
     if (leftovers.length) fail('working name (tssggs) left in ' + leftovers.slice(0, 5).join(', '));
 
+    // what this package ships, file by file (SHA-256): the module updater compares the installed files with it to
+    // spot files changed by hand (App\Libs\Update\Preflight). storage/ is the install's own and left out.
+    const filesList = {};
+    const listFile = path.join(dir, 'modules', 'addons', name, 'app', 'Config', 'release-files.json');
+    walk(path.join(dir, 'modules'), (file) => {
+        const rel = path.relative(dir, file).split(path.sep).join('/');
+        if (rel.startsWith('modules/addons/' + name + '/storage/') || file === listFile) return;
+        filesList[rel] = crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex');
+    });
+    fs.writeFileSync(listFile, JSON.stringify(filesList));
+
     fs.mkdirSync(path.join(root, 'dist'), { recursive: true });
     const zipFile = path.join(root, 'dist', edition.package + '_' + version + '.zip');
     fs.rmSync(zipFile, { force: true });

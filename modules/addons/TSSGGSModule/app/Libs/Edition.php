@@ -24,12 +24,16 @@ class Edition
             'name'        => 'GoGetSSL Module',
             'brand'       => 'GoGetSSL',
             'tablePrefix' => 'GGSModule',
+            'releaseRepo' => 'gogetssl/whmcs-module',   // GitHub releases the module updates from (App\Libs\Update)
+            'cdnDir'      => 'ggsmodule',               // https://ggssl.com/cdn/releases/<cdnDir>/ (fallback copy)
             'description' => 'GoGetSSL Module for WHMCS: sell and manage SSL/TLS certificates, ACME and AutoInstall SSL subscriptions and other security products.',
         ],
         self::TSS => [
             'name'        => 'TheSSLStore Plugin',
             'brand'       => 'TheSSLStore',
             'tablePrefix' => 'TSSPlugin',
+            'releaseRepo' => 'thestores/whmcs',
+            'cdnDir'      => 'tssplugin',
             'description' => 'TheSSLStore Plugin for WHMCS: sell and manage SSL/TLS certificates, ACME and AutoInstall SSL subscriptions and other security products.',
         ],
     ];
@@ -100,6 +104,12 @@ class Edition
      * It follows the edition, not the folder the module is installed in, so the two editions never share a table.
      * Installs made before 1.3.0 carry the folder name instead; App\Libs\TablePrefix renames those.
      */
+    /** A value of this edition's definition ('releaseRepo', 'cdnDir', 'brand' ...) */
+    public static function value($key)
+    {
+        return self::$editions[self::get()][$key] ?? null;
+    }
+
     public static function tablePrefix()
     {
         return self::$editions[self::get()]['tablePrefix'];
