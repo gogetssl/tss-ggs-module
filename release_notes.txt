@@ -1,3 +1,34 @@
+1.9.0 (2026-11-15)
+E-mails
+- New e-mail "Organization Validation Required": sent once when an OV or EV order
+  is placed or renewed - SSL (OV, EV), S/MIME (OV), code signing and document
+  signing. It tells the client that the certificate authority verifies the
+  organization, contacts the administrator by e-mail and phone, checks public
+  business registers, and how long it usually takes. Renewals say the earlier
+  validation may be reused. DV products and subscriptions do not get it.
+- Settings > Email notifications: every e-mail the module sends, grouped as on
+  the Emails page, with its status (enabled / disabled / not sent / edited), an
+  Enable / Disable button and a link to edit the text.
+- Changes on the Emails page (edit, enable, disable, reset, test e-mail, remove a
+  language) are written to the WHMCS activity log with the template name.
+- The document signing and CodeGuard e-mails are listed on the Emails page
+  (TheSSLStore edition); they were sent but could not be edited there.
+- Removed: the "Renewal" e-mail (the GoGetSSL module's "expires within 30 days,
+  click Renew"; Service Expiration does this). Nothing sent it. Its template is
+  deleted on upgrade and a migration no longer copies "SSLCenter - Renewal".
+
+Admin area
+- Main navigation restyled: a green bar under the header, the current page as a
+  white tab, "More" marked while one of its pages is open.
+- The module's styles carry the version and the file date, so browsers load the
+  new styles right after an upgrade instead of showing cached ones.
+
+Fixes
+- Migration backups of installs upgraded across 1.4.0: the backup tables were
+  renamed with the table prefix but each run kept the old name, so those backups
+  could never be restored or cleaned up. Runs now follow their tables (repaired
+  on upgrade), and expired backups are removed as intended.
+
 1.8.0 (2026-11-14)
 FLEX certificates (TheSSLStore): standard or wildcard main domain
 - DigiCert-family FLEX products (e.g. GeoTrust DV FLEX, Thawte SSL Web Server
