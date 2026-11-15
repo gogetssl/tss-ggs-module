@@ -14,6 +14,6 @@
  *   define('TSSGGS_UPDATE_TEST_KEY', '<base64 public key>');
  */
 return [
-    // 'primary' => '',
+    'primary' => 'IN8o112j2/wL92ndHRm9/r2f3YWI3g9x8y3EF+NlDAE=', // created 2026-11-15
     // 'reserve' => '',
 ];
