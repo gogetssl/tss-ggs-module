@@ -933,3 +933,7 @@
 @media (prefers-reduced-motion: reduce) {
     #layers2 .lu-app-navbar a.lu-nav__link, #layers2 .lu-app-navbar .tssggs-nav-chevron { transition: none !important; }
 }
+/* the framework's own nav rules are more specific: the bar's spacing and the 40px items win with a doubled class */
+#layers2 .lu-app-navbar.lu-navbar .lu-navbar__nav > ul.lu-nav.lu-nav { padding: 15px 24px !important; align-items: center !important; gap: 6px !important; }
+#layers2 .lu-app-navbar.lu-navbar .lu-navbar__nav > ul.lu-nav > li.lu-nav__item { align-self: center !important; height: auto !important; }
+#layers2 .lu-app-navbar.lu-navbar .lu-navbar__nav > ul.lu-nav > li.lu-nav__item > a.lu-nav__link { height: 40px !important; min-height: 40px !important; max-height: 40px; }
