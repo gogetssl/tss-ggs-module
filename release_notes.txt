@@ -1,3 +1,14 @@
+1.13.1 (2026-11-16)
+Reissue of wildcard certificates, SANs only from the order form
+- Reissue of a wildcard certificate (*.example.com) no longer pre-fills the
+  base domain example.com as an additional domain. The base domain is included
+  free with the wildcard; listing it as a paid SAN could make the reissue fail.
+  Affected: imported and migrated wildcard orders.
+- SSL configuration: the additional domains (SANs) of an order are only the
+  ones entered in the SAN fields. Names written into the client's own CSR are
+  no longer used: CSR tools often add the free www. name of the main domain,
+  which took a paid SAN slot.
+
 1.13.0 (2026-11-16)
 Additional SANs at full price, CAA warning, API names
 - Additional domains (SANs) a client adds to an SSL certificate after the
