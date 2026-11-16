@@ -67,12 +67,7 @@ $_LANG['admin.home.index.widgets.migration_widget.last_run_counts'] = ':done mig
 $_LANG['admin.home.index.widgets.migration_widget.backups_until'] = 'Backups werden bis :date aufbewahrt';
 $_LANG['admin.home.index.widgets.migration_widget.open'] = 'Migration öffnen';
 
-$_LANG['admin.home.index.widgets.partner_widget.title'] = 'Ihr Partner Growth Manager';
-$_LANG['admin.home.index.widgets.partner_widget.none'] = 'Noch kein Partner Growth Manager zugewiesen.';
 
-$_LANG['admin.home.index.widgets.reporting_widget.title'] = 'Problemmeldung zum Modul';
-$_LANG['admin.home.index.widgets.reporting_widget.info'] = 'Teilen Sie das Aktivitätsprotokoll des Moduls mit unserem Support-Team: Es listet Fehler auf und hilft bei der Analyse von Problemen, die bei Ihnen oder Ihren Kunden auftreten.';
-$_LANG['admin.home.index.widgets.reporting_widget.sendReport'] = 'Bericht senden';
 
 
 $_LANG['admin.migration.title'] = 'Migration des Altmoduls';
@@ -241,11 +236,7 @@ $_LANG['admin.configuration.content.step6.step6_title'] = 'SCHRITT 6. Abschluss'
 $_LANG['admin.configuration.content.step6.finalize'] = 'Abschließen';
 
 
-$_LANG['admin.configuration.shared.forms.vendor_selection_form.save'] = 'Nächster Schritt';
-$_LANG['admin.configuration.shared.providers.vendor_selection_provider.error_vendor'] = 'Bitte wählen Sie einen der Anbieter aus';
-$_LANG['admin.configuration.shared.providers.vendor_selection_provider.successVendorSelection'] = 'Die Konfiguration wurde erfolgreich gespeichert';
 $_LANG['admin.configuration.shared.providers.finalize_provider.successFinalize'] = 'Die Konfiguration wurde erfolgreich gespeichert';
-$_LANG['admin.configuration.shared.forms.vendor_selection_form.update_success'] = 'Die Anbieterkonfiguration wurde erfolgreich gespeichert';
 $_LANG['admin.settings.index.forms.settings_form.next_step'] = 'Nächster Schritt';
 $_LANG['admin.settings.index.providers.settings_provider.successAPI'] = 'Die API-Konfiguration wurde erfolgreich gespeichert';
 
@@ -253,7 +244,7 @@ $_LANG['admin.configuration.shared.forms.finalize_form.finalize'] = 'Abschließe
 
 $_LANG['admin.configuration.content.step6.title_list'] = 'Nächste Schritte';
 $_LANG['admin.configuration.content.step6.item_list1'] = '1. Öffnen Sie den Bereich <b>Preise</b>, um die Produkte zu aktivieren, die Sie weiterverkaufen möchten';
-$_LANG['admin.configuration.content.step6.item_list2'] = '2. Richten Sie die <b>Verlängerungsregeln</b> unter Einstellungen -> Verlängerungen ein';
+$_LANG['admin.configuration.content.step6.item_list2'] = '2. Richten Sie die <b>Verlängerungen</b> unter Einstellungen > SSL-Einstellungen (Verlängerungen) und Einstellungen > Automatisiertes SSL (Abonnements) ein';
 
 $_LANG['admin.configuration.content.step6.title_alert'] = '<b>Glückwunsch!</b> Sie haben die Modulinstallation erfolgreich abgeschlossen';
 $_LANG['admin.configuration.content.step6.step6_api'] = '<b>API-Konfiguration</b> abgeschlossen und in Betrieb';
@@ -554,7 +545,6 @@ $_LANG['admin.settings.index.forms.ssl_settings_form.oneTimeOrders'] = 'Einmalig
 $_LANG['admin.settings.index.forms.ssl_settings_form.visibleRenewButtonBeforeExpiration'] = 'Schaltfläche "Verlängern" vor Ablauf sichtbar';
 $_LANG['admin.settings.index.forms.ssl_settings_form.visibleRenewButtonAfterExpiration'] = 'Schaltfläche "Verlängern" nach Ablauf sichtbar';
 $_LANG['admin.settings.index.forms.ssl_settings_form.renewOrderViaExistingOrder'] = 'Bestellung über bestehende Bestellung verlängern';
-$_LANG['admin.settings.index.forms.ssl_settings_form.automaticProcessingOfRenewalOrders'] = 'Verlängerungsbestellungen automatisch verarbeiten';
 $_LANG['admin.settings.index.forms.ssl_settings_form.setTheUnpaidStatusForRenewalInvoices'] = 'Status "Unbezahlt" für Verlängerungsrechnungen setzen';
 $_LANG['admin.settings.index.forms.ssl_settings_form.additionalDaysForRenewalOrder'] = 'Zusätzliche Tage für Verlängerungsbestellung (Sectigo)';
 $_LANG['admin.settings.index.forms.ssl_settings_form.autoReissueDaysBeforeExpire'] = 'Automatische Neuausstellung (Tage vor Ablauf)';
@@ -582,8 +572,6 @@ $_LANG['admin.settings.index.forms.ssl_settings_form.update_success'] = 'Einstel
 //finance settings
 
 $_LANG['admin.settings.index.widgets.finance_settings_widget.title'] = 'Finanzeinstellungen';
-$_LANG['admin.settings.index.forms.finance_settings_form.majorSettings'] = 'Haupteinstellungen';
-$_LANG['admin.settings.index.forms.finance_settings_form.exchangeRate'] = 'Wechselkurs';
 
 $_LANG['admin.settings.index.forms.finance_settings_form.profitMargin'] = 'Gewünschte Gewinnmarge';
 $_LANG['admin.settings.index.forms.finance_settings_form.currency'] = 'Standardwährung';
@@ -728,17 +716,7 @@ $_LANG['admin.pricing.index.data_tables.pricing.array_data_provider.data_table.b
 $_LANG['admin.pricing.index.data_tables.pricing.array_data_provider.data_table.trienniallyPrice'] = 'Alle 3 Jahre';
 
 //pricing form
-$_LANG['admin.pricing.index.data_tables.pricing.modals.pricing_modal.title'] = 'Preise';
-$_LANG['admin.pricing.index.data_tables.pricing.forms.pricing_form.options'] = 'Optionen';
-$_LANG['admin.pricing.index.data_tables.pricing.forms.pricing_form.annuallyStrict'] = 'Jährlich';
-$_LANG['admin.pricing.index.data_tables.pricing.forms.pricing_form.annually'] = 'Jährlich/Einmalig';
-$_LANG['admin.pricing.index.data_tables.pricing.forms.pricing_form.biennially'] = 'Alle 2 Jahre';
-$_LANG['admin.pricing.index.data_tables.pricing.forms.pricing_form.triennially'] = 'Alle 3 Jahre';
-$_LANG['admin.pricing.index.data_tables.pricing.forms.pricing_form.update_success'] = 'Preise erfolgreich aktualisiert';
-$_LANG['admin.pricing.index.data_tables.pricing.forms.pricing_form.autoUpdate'] = 'Automatische Aktualisierung';
-$_LANG['admin.pricing.index.data_tables.pricing.forms.pricing_form.oneTime'] = 'Einmalig';
 
-$_LANG['admin.pricing.index.data_tables.pricing.forms.pricing_form.info'] = 'Informationen zur automatischen Aktualisierung';
 
 $_LANG['acme_order_requires_at_least_one_san'] = 'Um dieses Produkt zu bestellen, müssen Sie mindestens 1 zusätzliche Einzeldomain-SAN oder zusätzliche Wildcard-SAN auswählen.';
 $_LANG['csCartTermNeedsHsm'] = 'Code-Signing-Zertifikate für 2 oder 3 Jahre können nur auf Ihrem eigenen HSM installiert werden. Wählen Sie "Mein eigenes HSM" als Zertifikatszustellung oder einen Abrechnungszeitraum von 1 Jahr.';
@@ -770,20 +748,6 @@ $_LANG['admin.settings.index.forms.general_settings_form.certificatesByDomain_de
 $_LANG['admin.settings.index.forms.general_settings_form.lifecycle'] = 'Service-Lebenszyklus';
 $_LANG['admin.settings.index.forms.general_settings_form.terminateCancelsOrder'] = 'Anbieterbestellung beim Kündigen stornieren';
 $_LANG['admin.settings.index.forms.general_settings_form.terminateCancelsOrder_description'] = 'Das Kündigen des Services in WHMCS storniert auch die Zertifikatsbestellung bzw. das Abonnement beim Anbieter';
-$_LANG['admin.settings.index.forms.general_settings_form.renewReuseOrderDetails'] = 'S/MIME und Code Signing mit denselben Angaben verlängern';
-$_LANG['admin.settings.index.forms.general_settings_form.renewReuseOrderDetails_description'] = 'Eine bezahlte S/MIME- oder Code-Signing-Verlängerung bestellt das nächste Zertifikat mit den Angaben der vorherigen Bestellung (E-Mail-Adressen, Organisation, Administrator, Hardware-Token), außer der Kunde hat im Verlängerungsdialog neue Angaben gewählt. Aus: Der Kunde füllt nach der Zahlung immer das Bestellformular aus.';
-$_LANG['admin.settings.index.forms.general_settings_form.messages'] = 'Kundenmitteilungen';
-$_LANG['admin.settings.index.forms.general_settings_form.processingGuide'] = 'Bearbeitungshinweis';
-$_LANG['admin.settings.index.forms.general_settings_form.processingGuide_description'] = 'Wird dem Kunden angezeigt, während das Zertifikat validiert wird (HTML erlaubt). Kann pro Produkt überschrieben werden';
-$_LANG['admin.settings.index.forms.general_settings_form.issuedMessage'] = 'Meldung für ausgestelltes SSL';
-$_LANG['admin.settings.index.forms.general_settings_form.issuedMessage_description'] = 'Wird dem Kunden angezeigt, sobald das Zertifikat ausgestellt ist, z. B. Installationsanleitung (HTML erlaubt). Kann pro Produkt überschrieben werden';
-$_LANG['admin.settings.index.forms.general_settings_form.certificateEmailTemplate'] = 'E-Mail-Vorlage für Zertifikat';
-$_LANG['admin.settings.index.forms.general_settings_form.certificateEmailTemplate_description'] = 'Vorlage, die beim Senden des Zertifikats an den Kunden verwendet wird';
-$_LANG['admin.settings.index.forms.general_settings_form.agreement'] = 'Teilnehmervereinbarung';
-$_LANG['admin.settings.index.forms.general_settings_form.requireAgreement'] = 'Zustimmung erforderlich';
-$_LANG['admin.settings.index.forms.general_settings_form.requireAgreement_description'] = 'Der Kunde muss der Teilnehmervereinbarung der Zertifizierungsstelle zustimmen, bevor die Bestellung aufgegeben wird';
-$_LANG['admin.settings.index.forms.general_settings_form.agreementText'] = 'Vereinbarungstext';
-$_LANG['admin.settings.index.forms.general_settings_form.agreementText_description'] = 'Optionaler Text oberhalb des Kontrollkästchens (HTML erlaubt). Der Link zur Vereinbarung der Zertifizierungsstelle des Produkts wird automatisch hinzugefügt';
 $_LANG['admin.settings.index.forms.general_settings_form.save'] = 'Speichern';
 $_LANG['admin.settings.index.providers.general_settings_provider.moduleTemplate'] = 'Modulvorlage (Zertifikat senden)';
 
@@ -870,11 +834,6 @@ $_LANG['admin.pricing_grid.notice_saved'] = ':count Preise gespeichert.';
 $_LANG['admin.pricing_grid.notice_invalid'] = ':count Werte wurden nicht gespeichert, weil sie keine Beträge sind (Ziffern und Dezimalpunkt verwenden, zum Beispiel 49.90).';
 $_LANG['admin.pricing_grid.notice_margin_applied'] = ':count Preise aus dem Reseller-Einkaufspreis aktualisiert.';
 $_LANG['admin.pricing_grid.notice_imported'] = ':count Preise importiert.';
-$_LANG['admin.settings.index.forms.general_settings_form.pricing'] = 'Preise';
-$_LANG['admin.settings.index.forms.general_settings_form.keepMarginOnSync'] = 'Marge bei Synchronisierung beibehalten';
-$_LANG['admin.settings.index.forms.general_settings_form.keepMarginOnSync_description'] = 'Produkte mit manuellen Preisen ("Auto" auf der Seite Preise deaktiviert) folgen Änderungen des Reseller-Einkaufspreises, sodass ihre Marge gleich bleibt';
-$_LANG['admin.settings.index.forms.general_settings_form.belowCostEmail'] = 'E-Mail bei Preis unter Einkaufspreis';
-$_LANG['admin.settings.index.forms.general_settings_form.belowCostEmail_description'] = 'Die Administratoren per E-Mail informieren, wenn Preise unter dem Reseller-Einkaufspreis liegen (wird vom Preisaktualisierungs-Cron geprüft, einmal pro Änderung gesendet)';
 
 //products: lifecycle
 $_LANG['admin.products.index.data_tables.products.array_data_provider.data_table.manage'] = 'Verwalten';
@@ -1076,29 +1035,12 @@ $_LANG['admin.settings.index.forms.general_settings_form.hideInfoMessages_descri
 $_LANG['admin.emails.about_title'] = 'Was Sie hier finden';
 $_LANG['admin.emails.about_edit'] = 'Wählen Sie eine E-Mail in der Liste aus, bearbeiten Sie Betreff und Nachricht je Sprache und speichern Sie. Die Vorschau zeigt, was ein Kunde erhält.';
 $_LANG['admin.emails.about_fields'] = 'Platzhalterfelder werden beim Versand der E-Mail durch Kunden- und Bestelldaten ersetzt. Klicken Sie auf ein Feld, um es einzufügen.';
-$_LANG['admin.settings.index.forms.general_settings_form.terminateUnpaidOnExpiry'] = 'Unbezahlte Services bei Ablauf kündigen';
-$_LANG['admin.settings.index.forms.general_settings_form.terminateUnpaidOnExpiry_description'] = 'Ein Service, dessen Ablaufdatum ohne Zahlung verstrichen ist, wird gekündigt, seine Bestellung bzw. sein Abonnement wird beim Anbieter storniert und seine unbezahlte Verlängerungsrechnung wird storniert. Ist der Anbieter nicht erreichbar, bleibt der Service offen und der nächste Cron-Lauf versucht es erneut. Gilt für Abonnement-Services (nicht für einmalige Services).';
-$_LANG['admin.settings.index.forms.general_settings_form.dueDateOffsetRegular'] = 'Reguläre Zertifikate: Fälligkeit in Tagen vor Ablauf';
-$_LANG['admin.settings.index.forms.general_settings_form.dueDateOffsetRegular_description'] = 'Ein einzelnes Zertifikat (kein Abonnement) wird so viele Tage vor seinem Ablauf fällig (0 = am Ablaufdatum). Wird bei der nächsten Synchronisierung der Bestellung angewendet.';
-$_LANG['admin.settings.index.forms.general_settings_form.dueDateOffsetSubscription'] = 'Abonnements: Fälligkeit in Tagen vor Ende';
-$_LANG['admin.settings.index.forms.general_settings_form.dueDateOffsetSubscription_description'] = 'Ein mehrjähriges Abonnement wird so viele Tage vor dem Ende des Abonnements fällig (0 = am Enddatum). Wird bei der nächsten Synchronisierung der Bestellung angewendet.';
-$_LANG['admin.settings.index.forms.general_settings_form.defaultWebServer'] = 'Standard-Webservertyp';
-$_LANG['admin.settings.index.forms.general_settings_form.defaultWebServer_description'] = 'Wird mit jeder Bestellung als webserver_type gesendet, sodass Kunden nie danach gefragt werden. Lassen Sie das Feld leer, wenn %%VENDOR%% es nicht benötigt.';
 $_LANG['admin.emails.name_product_discontinued'] = 'Produkt eingestellt';
 $_LANG['admin.emails.when_product_discontinued'] = 'Wird mit der Verlängerungsrechnung an den Kunden gesendet, wenn %%VENDOR%% das Produkt des Services nicht mehr verkauft (eingestellt oder entfernt), sodass die Verlängerung unter demselben Produkt abgelehnt werden kann.';
 $_LANG['admin.settings.index.forms.general_settings_form.sslTools'] = 'SSL-Tools für Kunden';
 $_LANG['admin.settings.index.forms.general_settings_form.sslTools_description'] = 'Seite im Kundenbereich mit CSR- / Zertifikats-Decoder, Schlüsselabgleich, Formatkonverter, CSR-Generator und SSL-Checker. Die Tools laufen auf diesem Server und rufen keine API auf.';
-$_LANG['admin.settings.index.forms.general_settings_form.downloads'] = 'Zertifikat-Downloads';
-$_LANG['admin.settings.index.forms.general_settings_form.downloadFormat_zip'] = 'Alle Formate (ZIP)';
-$_LANG['admin.settings.index.forms.general_settings_form.downloadFormat_crt'] = 'Zertifikat (.crt)';
-$_LANG['admin.settings.index.forms.general_settings_form.downloadFormat_ca'] = 'CA-Bundle (.ca-bundle)';
-$_LANG['admin.settings.index.forms.general_settings_form.downloadFormat_fullchain'] = 'Vollständige Kette (.crt)';
-$_LANG['admin.settings.index.forms.general_settings_form.downloadFormat_nginx'] = 'Nginx (verkettete .crt)';
-$_LANG['admin.settings.index.forms.general_settings_form.downloadFormat_apache'] = 'Apache (.crt + .ca-bundle, ZIP)';
-$_LANG['admin.settings.index.forms.general_settings_form.downloadFormat_pkcs7'] = 'IIS / Tomcat (PKCS#7 .p7b)';
 $_LANG['admin.settings.index.forms.ssl_settings_form.ordering'] = 'Bestellung und Vereinbarung';
 $_LANG['admin.settings.index.forms.ssl_settings_form.delivery'] = 'Zertifikatsbereitstellung';
-$_LANG['admin.settings.index.forms.ssl_settings_form.dueDates'] = 'Fälligkeitsdaten';
 $_LANG['admin.settings.index.forms.ssl_settings_form.autoInstall'] = 'AutoInstall (cPanel)';
 $_LANG['admin.settings.index.providers.ssl_settings_provider.moduleTemplate'] = 'Modulvorlage (Zertifikat senden)';
 $_LANG['admin.settings.index.widgets.automated_settings_widget.title'] = 'Automatisiertes SSL (AutoInstall, ACME und Plan-Abonnements)';
@@ -1110,16 +1052,6 @@ $_LANG['admin.settings.index.forms.ssl_settings_form.issuedMessage_description']
 $_LANG['admin.settings.index.forms.ssl_settings_form.certificateEmailTemplate'] = 'E-Mail-Vorlage für Zertifikat';
 $_LANG['admin.settings.index.forms.ssl_settings_form.certificateEmailTemplate_description'] = 'Vorlage, die beim Versand des Zertifikats an den Kunden verwendet wird';
 $_LANG['admin.settings.index.forms.ssl_settings_form.requireAgreement'] = 'Zustimmung erforderlich';
-$_LANG['admin.settings.index.forms.ssl_settings_form.dueDateOffsetRegular'] = 'Reguläre Zertifikate: Fälligkeit in Tagen vor Ablauf';
-$_LANG['admin.settings.index.forms.ssl_settings_form.dueDateOffsetRegular_description'] = 'Ein einzelnes Zertifikat (kein Abonnement) wird so viele Tage vor seinem Ablauf fällig (0 = am Ablaufdatum). Wird bei der nächsten Synchronisierung der Bestellung angewendet.';
-$_LANG['admin.settings.index.forms.ssl_settings_form.dueDateOffsetSubscription'] = 'Abonnements: Fälligkeit in Tagen vor Ende';
-$_LANG['admin.settings.index.forms.ssl_settings_form.dueDateOffsetSubscription_description'] = 'Ein mehrjähriges Abonnement wird so viele Tage vor dem Ende des Abonnements fällig (0 = am Enddatum). Wird bei der nächsten Synchronisierung der Bestellung angewendet.';
-$_LANG['admin.settings.index.forms.ssl_settings_form.defaultWebServer'] = 'Standard-Webservertyp';
-$_LANG['admin.settings.index.forms.ssl_settings_form.defaultWebServer_description'] = 'Wird mit jeder Bestellung als webserver_type gesendet, sodass Kunden nie danach gefragt werden. Lassen Sie das Feld leer, wenn %%VENDOR%% es nicht benötigt.';
-$_LANG['admin.home.index.widgets.documentation_widget.title'] = 'Moduldokumentation';
-$_LANG['admin.home.index.widgets.documentation_widget.info'] = 'Installationsanleitungen, Konfigurationsreferenz und Fehlerbehebung an einem Ort.';
-$_LANG['admin.home.index.widgets.documentation_widget.open_thesslstore'] = 'TheSSLStore-Dokumentation';
-$_LANG['admin.home.index.widgets.documentation_widget.open_gogetssl'] = 'GoGetSSL-Dokumentation';
 $_LANG['admin.home.index.widgets.next_steps_widget.title'] = 'Nächste Schritte nach der Modulinstallation';
 $_LANG['admin.home.index.widgets.next_steps_widget.chip'] = 'Einrichtung abschließen';
 $_LANG['admin.home.index.widgets.next_steps_widget.step_products'] = 'Produkte einrichten';
@@ -1306,11 +1238,8 @@ $_LANG['admin.settings.index.forms.api_settings_form.ggs_desc'] = 'Partnercode u
 $_LANG['admin.settings.index.forms.general_settings_form.clientArea_desc'] = 'Was Kunden auf ihren Zertifikatsseiten sehen.';
 $_LANG['admin.settings.index.forms.general_settings_form.interface_desc'] = 'Wie das Modul für Administratoren aussieht.';
 $_LANG['admin.settings.index.forms.general_settings_form.lifecycle_desc'] = 'Was mit einem Service geschieht, wenn er gekündigt oder nicht bezahlt wird.';
-$_LANG['admin.settings.index.forms.general_settings_form.pricing_desc'] = 'Wie die Preise an die der Zertifizierungsstelle angepasst bleiben.';
 $_LANG['admin.settings.index.forms.logs_settings_form.moduleLogs_desc'] = 'Werden im Modul gespeichert und auf dessen eigenen Seiten angezeigt. Wenn Sie ein Protokoll ausschalten, entstehen keine neuen Einträge; gespeicherte Einträge bleiben erhalten, bis Sie sie löschen.';
 $_LANG['admin.settings.index.forms.logs_settings_form.whmcsLogs_desc'] = 'Werden in WHMCS selbst geschrieben und dort gelesen, nicht in diesem Modul.';
-$_LANG['admin.settings.index.forms.finance_settings_form.majorSettings_desc'] = 'Ihre Gewinnmarge auf den Preis der Zertifizierungsstelle.';
-$_LANG['admin.settings.index.forms.finance_settings_form.exchangeRate_desc'] = 'Erforderlich, weil USD in WHMCS nicht als Währung definiert ist.';
 $_LANG['admin.settings.index.forms.ssl_settings_form.sslValidation_desc'] = 'Legen Sie fest, wie Kunden- und Kontaktdaten für die Validierung verwendet werden.';
 $_LANG['admin.settings.index.forms.ssl_settings_form.csrGenerator_desc'] = 'Legen Sie die Standardwerte für Zertifikatsignierungsanfragen (CSR) fest.';
 $_LANG['admin.settings.index.forms.ssl_settings_form.clientMessages'] = 'Kundenmeldungen';
@@ -1318,7 +1247,6 @@ $_LANG['admin.settings.index.forms.ssl_settings_form.clientMessages_desc'] = 'Ve
 $_LANG['admin.settings.index.forms.ssl_settings_form.renewals_desc'] = 'Steuern Sie die Verfügbarkeit von Verlängerungen und die Bestellverarbeitung.';
 $_LANG['admin.settings.index.forms.ssl_settings_form.recurringAndOneTime'] = 'Wiederkehrende und einmalige Bestellungen';
 $_LANG['admin.settings.index.forms.ssl_settings_form.recurringAndOneTime_desc'] = 'Konfigurieren Sie Verlängerungsrechnungen und Ablauferinnerungen getrennt.';
-$_LANG['admin.settings.index.forms.ssl_settings_form.dueDates_desc'] = 'Legen Sie fest, wann die Zahlung vor dem Ende eines Zertifikats oder Abonnements fällig wird.';
 $_LANG['admin.settings.index.forms.ssl_settings_form.autoInstall_desc'] = 'DNS-Wartezeit, TLS-Prüfung der cPanel-Server und automatische Neuausstellung.';
 $_LANG['admin.settings.index.forms.ssl_settings_form.renewalsSubscription_desc'] = 'Verlängerungsrechnungen und Erinnerungen für ACME- und Plan-Abonnements.';
 $_LANG['admin.log_policy.apiMode_off'] = 'Nicht protokollieren';
@@ -1381,10 +1309,6 @@ $_LANG['admin.settings.index.forms.finance_settings_form.billing'] = 'Abrechnung
 $_LANG['admin.settings.index.forms.finance_settings_form.billing_desc'] = 'Wann Verlängerungen fällig werden und was mit unbezahlten Services geschieht. Verlängerungsrechnungen und Ablauferinnerungen finden Sie unter Einstellungen > SSL-Zertifikate und Automatisiertes SSL.';
 $_LANG['admin.settings.index.forms.finance_settings_form.terminateUnpaidOnExpiry'] = 'Unbezahlte Services bei Ablauf kündigen';
 $_LANG['admin.settings.index.forms.finance_settings_form.terminateUnpaidOnExpiry_description'] = 'Ein Service, dessen Ablaufdatum ohne Zahlung verstrichen ist, wird gekündigt, seine Bestellung bzw. sein Abonnement wird beim Anbieter storniert und seine unbezahlte Verlängerungsrechnung wird storniert. Ist der Anbieter nicht erreichbar, bleibt der Service offen und der nächste Cron-Lauf versucht es erneut. Gilt für Abonnement-Services (nicht für einmalige Services)';
-$_LANG['admin.settings.index.forms.finance_settings_form.dueDateOffsetRegular'] = 'Zertifikate: Fälligkeit in Tagen vor Ablauf';
-$_LANG['admin.settings.index.forms.finance_settings_form.dueDateOffsetRegular_description'] = 'Ein einzelnes Zertifikat (kein Abonnement) wird so viele Tage vor seinem Ablauf fällig (0 = am Ablaufdatum). Wird bei der nächsten Synchronisierung der Bestellung angewendet';
-$_LANG['admin.settings.index.forms.finance_settings_form.dueDateOffsetSubscription'] = 'Abonnements: Fälligkeit in Tagen vor dem Ende';
-$_LANG['admin.settings.index.forms.finance_settings_form.dueDateOffsetSubscription_description'] = 'Ein mehrjähriges Abonnement wird so viele Tage vor dem Ende des Abonnements fällig (0 = am Enddatum). Wird bei der nächsten Synchronisierung der Bestellung angewendet';
 $_LANG['admin.settings.index.forms.finance_settings_form.balance'] = 'Reseller-Guthaben';
 $_LANG['admin.settings.index.forms.finance_settings_form.renewalPrices_desc'] = 'Wenn Sie einen Preis ändern, berechnet WHMCS bestehenden Services weiterhin den Preis, zu dem sie bestellt wurden. Wählen Sie, was bestehende Services bei ihrer nächsten Verlängerung zahlen (wird nach jeder Preisaktualisierung geprüft; bereits vorhandene Rechnungen ändern sich nicht):';
 $_LANG['admin.settings.index.forms.finance_settings_form.renewalPoint_never'] = 'Bestellpreis beibehalten:';

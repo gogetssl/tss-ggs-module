@@ -67,12 +67,7 @@ $_LANG['admin.home.index.widgets.migration_widget.last_run_counts'] = ':done mig
 $_LANG['admin.home.index.widgets.migration_widget.backups_until']   = 'Sikkerhedskopier gemmes indtil :date';
 $_LANG['admin.home.index.widgets.migration_widget.open']            = 'Åbn migrering';
 
-$_LANG['admin.home.index.widgets.partner_widget.title'] = 'Din partner growth manager';
-$_LANG['admin.home.index.widgets.partner_widget.none']  = 'Ingen partner growth manager er tildelt endnu.';
 
-$_LANG['admin.home.index.widgets.reporting_widget.title']      = 'Rapportering af modulproblemer';
-$_LANG['admin.home.index.widgets.reporting_widget.info']       = 'Del modulets aktivitetslog med vores supportteam: den viser fejl og hjælper med at fejlfinde problemer, som du eller dine kunder oplever.';
-$_LANG['admin.home.index.widgets.reporting_widget.sendReport'] = 'Send rapport';
 
 
 $_LANG['admin.migration.title']                 = 'Migrering af ældre modul';
@@ -241,11 +236,7 @@ $_LANG['admin.configuration.content.step6.step6_title'] = 'TRIN 6. Afslutning';
 $_LANG['admin.configuration.content.step6.finalize']    = 'Afslut';
 
 
-$_LANG['admin.configuration.shared.forms.vendor_selection_form.save']                           = 'Næste trin';
-$_LANG['admin.configuration.shared.providers.vendor_selection_provider.error_vendor']           = 'Vælg en af leverandørerne';
-$_LANG['admin.configuration.shared.providers.vendor_selection_provider.successVendorSelection'] = 'Konfigurationen blev gemt';
 $_LANG['admin.configuration.shared.providers.finalize_provider.successFinalize']                = 'Konfigurationen blev gemt';
-$_LANG['admin.configuration.shared.forms.vendor_selection_form.update_success']                 = 'Leverandørkonfigurationen blev gemt';
 $_LANG['admin.settings.index.forms.settings_form.next_step']                                    = 'Næste trin';
 $_LANG['admin.settings.index.providers.settings_provider.successAPI']                           = 'API-konfigurationen blev gemt';
 
@@ -253,7 +244,7 @@ $_LANG['admin.configuration.shared.forms.finalize_form.finalize'] = 'Afslut';
 
 $_LANG['admin.configuration.content.step6.title_list'] = 'Næste trin';
 $_LANG['admin.configuration.content.step6.item_list1'] = '1. Gå til sektionen <b>Priser</b> for at aktivere de produkter, du vil begynde at videresælge';
-$_LANG['admin.configuration.content.step6.item_list2'] = '2. Opsæt regler for <b>fornyelse</b> under Indstillinger -> Fornyelser';
+$_LANG['admin.configuration.content.step6.item_list2'] = '2. Opsæt <b>fornyelser</b> under Indstillinger > SSL-indstillinger (Fornyelser) og Indstillinger > Automatiseret SSL (abonnementer)';
 
 $_LANG['admin.configuration.content.step6.title_alert']    = '<b>Tillykke!</b> Du har gennemført modulinstallationen';
 $_LANG['admin.configuration.content.step6.step6_api']      = '<b>API-konfiguration</b> gennemført og i drift';
@@ -555,7 +546,6 @@ $_LANG['admin.settings.index.forms.ssl_settings_form.oneTimeOrders']            
 $_LANG['admin.settings.index.forms.ssl_settings_form.visibleRenewButtonBeforeExpiration']                       = 'Vis knappen "Forny" før udløb';
 $_LANG['admin.settings.index.forms.ssl_settings_form.visibleRenewButtonAfterExpiration']                        = 'Vis knappen "Forny" efter udløb';
 $_LANG['admin.settings.index.forms.ssl_settings_form.renewOrderViaExistingOrder']                               = 'Forny ordre via eksisterende ordre';
-$_LANG['admin.settings.index.forms.ssl_settings_form.automaticProcessingOfRenewalOrders']                       = 'Automatisk behandling af fornyelsesordrer';
 $_LANG['admin.settings.index.forms.ssl_settings_form.setTheUnpaidStatusForRenewalInvoices']                     = 'Sæt status ubetalt på fornyelsesfakturaer';
 $_LANG['admin.settings.index.forms.ssl_settings_form.additionalDaysForRenewalOrder']                            = 'Ekstra dage til fornyelsesordre (Sectigo)';
 $_LANG['admin.settings.index.forms.ssl_settings_form.autoReissueDaysBeforeExpire']                              = 'Automatisk genudstedelse, dage før udløb';
@@ -583,8 +573,6 @@ $_LANG['admin.settings.index.forms.ssl_settings_form.update_success'] = 'Indstil
 //finance settings
 
 $_LANG['admin.settings.index.widgets.finance_settings_widget.title']     = 'Økonomiindstillinger';
-$_LANG['admin.settings.index.forms.finance_settings_form.majorSettings'] = 'Hovedindstillinger';
-$_LANG['admin.settings.index.forms.finance_settings_form.exchangeRate']  = 'Valutakurs';
 
 $_LANG['admin.settings.index.forms.finance_settings_form.profitMargin'] = 'Ønsket fortjenstmargen';
 $_LANG['admin.settings.index.forms.finance_settings_form.currency']     = 'Standardvaluta';
@@ -730,17 +718,7 @@ $_LANG['admin.pricing.index.data_tables.pricing.array_data_provider.data_table.b
 $_LANG['admin.pricing.index.data_tables.pricing.array_data_provider.data_table.trienniallyPrice']    = 'Hvert tredje år';
 
 //pricing form
-$_LANG['admin.pricing.index.data_tables.pricing.modals.pricing_modal.title']        = 'Priser';
-$_LANG['admin.pricing.index.data_tables.pricing.forms.pricing_form.options']        = 'Indstillinger';
-$_LANG['admin.pricing.index.data_tables.pricing.forms.pricing_form.annuallyStrict'] = 'Årligt';
-$_LANG['admin.pricing.index.data_tables.pricing.forms.pricing_form.annually']       = 'Årligt/engang';
-$_LANG['admin.pricing.index.data_tables.pricing.forms.pricing_form.biennially']     = 'Hvert andet år';
-$_LANG['admin.pricing.index.data_tables.pricing.forms.pricing_form.triennially']    = 'Hvert tredje år';
-$_LANG['admin.pricing.index.data_tables.pricing.forms.pricing_form.update_success'] = 'Priserne blev opdateret';
-$_LANG['admin.pricing.index.data_tables.pricing.forms.pricing_form.autoUpdate']     = 'Automatisk opdatering';
-$_LANG['admin.pricing.index.data_tables.pricing.forms.pricing_form.oneTime']        = 'Engangs';
 
-$_LANG['admin.pricing.index.data_tables.pricing.forms.pricing_form.info'] = 'Oplysninger om automatisk opdatering';
 
 $_LANG['acme_order_requires_at_least_one_san'] = 'For at bestille dette produkt skal du vælge mindst 1 ekstra enkelt domæne-SAN eller ekstra wildcard-SAN.';
 $_LANG['csCartTermNeedsHsm'] = 'Kodesigneringscertifikater for 2 eller 3 år kan kun installeres på din egen HSM. Vælg "Min egen HSM" som certifikatlevering eller en betalingsperiode på 1 år.';
@@ -772,20 +750,6 @@ $_LANG['admin.settings.index.forms.general_settings_form.certificatesByDomain_de
 $_LANG['admin.settings.index.forms.general_settings_form.lifecycle']                         = 'Tjenestens livscyklus';
 $_LANG['admin.settings.index.forms.general_settings_form.terminateCancelsOrder']             = 'Annuller leverandørordre ved opsigelse';
 $_LANG['admin.settings.index.forms.general_settings_form.terminateCancelsOrder_description'] = 'Når tjenesten opsiges i WHMCS, annulleres også certifikatordren/abonnementet hos leverandøren';
-$_LANG['admin.settings.index.forms.general_settings_form.renewReuseOrderDetails'] = 'Forny S/MIME og kodesignering med de samme oplysninger';
-$_LANG['admin.settings.index.forms.general_settings_form.renewReuseOrderDetails_description'] = 'En betalt fornyelse af S/MIME eller kodesignering bestiller det næste certifikat med oplysningerne fra den forrige ordre (e-mailadresser, organisation, administrator, hardware-token), medmindre kunden har valgt nye oplysninger i fornyelsesdialogen. Fra: kunden udfylder altid bestillingsformularen efter betaling.';
-$_LANG['admin.settings.index.forms.general_settings_form.messages']                          = 'Kundemeddelelser';
-$_LANG['admin.settings.index.forms.general_settings_form.processingGuide']                   = 'Behandlingsvejledning';
-$_LANG['admin.settings.index.forms.general_settings_form.processingGuide_description']       = 'Vises for kunden, mens certifikatet valideres (HTML tilladt). Kan tilsidesættes pr. produkt';
-$_LANG['admin.settings.index.forms.general_settings_form.issuedMessage']                     = 'Meddelelse om udstedt SSL';
-$_LANG['admin.settings.index.forms.general_settings_form.issuedMessage_description']         = 'Vises for kunden, når certifikatet er udstedt, f.eks. installationsvejledning (HTML tilladt). Kan tilsidesættes pr. produkt';
-$_LANG['admin.settings.index.forms.general_settings_form.certificateEmailTemplate']          = 'E-mailskabelon til certifikat';
-$_LANG['admin.settings.index.forms.general_settings_form.certificateEmailTemplate_description'] = 'Skabelon, der bruges, når certifikatet sendes til kunden';
-$_LANG['admin.settings.index.forms.general_settings_form.agreement']                         = 'Abonnentaftale';
-$_LANG['admin.settings.index.forms.general_settings_form.requireAgreement']                  = 'Kræv accept af aftale';
-$_LANG['admin.settings.index.forms.general_settings_form.requireAgreement_description']      = 'Kunden skal acceptere certifikatudstederens abonnentaftale, før ordren afgives';
-$_LANG['admin.settings.index.forms.general_settings_form.agreementText']                     = 'Aftaletekst';
-$_LANG['admin.settings.index.forms.general_settings_form.agreementText_description']         = 'Valgfri tekst vist over afkrydsningsfeltet (HTML tilladt). Linket til aftalen for produktets certifikatudsteder tilføjes automatisk';
 $_LANG['admin.settings.index.forms.general_settings_form.save']                              = 'Gem';
 $_LANG['admin.settings.index.providers.general_settings_provider.moduleTemplate']            = 'Modulskabelon (Send certifikat)';
 
@@ -872,11 +836,6 @@ $_LANG['admin.pricing_grid.notice_saved']      = ':count priser gemt.';
 $_LANG['admin.pricing_grid.notice_invalid'] = ':count værdier blev ikke gemt, fordi de ikke er beløb (brug cifre og decimalpunktum, for eksempel 49.90).';
 $_LANG['admin.pricing_grid.notice_margin_applied'] = ':count priser opdateret ud fra forhandlerens omkostning.';
 $_LANG['admin.pricing_grid.notice_imported']   = ':count priser importeret.';
-$_LANG['admin.settings.index.forms.general_settings_form.pricing']                       = 'Priser';
-$_LANG['admin.settings.index.forms.general_settings_form.keepMarginOnSync']              = 'Bevar margen ved synkronisering';
-$_LANG['admin.settings.index.forms.general_settings_form.keepMarginOnSync_description']  = 'Produkter med manuelle priser ("Auto" slået fra på siden Priser) følger ændringer i forhandlerens omkostning, så deres margen forbliver den samme';
-$_LANG['admin.settings.index.forms.general_settings_form.belowCostEmail']                = 'E-mail ved pris under omkostning';
-$_LANG['admin.settings.index.forms.general_settings_form.belowCostEmail_description']    = 'Send e-mail til administratorerne, når priser ligger under forhandlerens omkostning (kontrolleres af cron-jobbet til prisopdatering, sendes én gang pr. ændring)';
 
 //products: lifecycle
 $_LANG['admin.products.index.data_tables.products.array_data_provider.data_table.manage']                  = 'Administrer';
@@ -1078,29 +1037,12 @@ $_LANG['admin.settings.index.forms.general_settings_form.hideInfoMessages_descri
 $_LANG['admin.emails.about_title'] = 'Det finder du her';
 $_LANG['admin.emails.about_edit'] = 'Vælg en e-mail på listen, rediger emne og tekst pr. sprog, og gem. Forhåndsvisning viser, hvad en kunde modtager.';
 $_LANG['admin.emails.about_fields'] = 'Flettefelter erstattes med kunde- og ordredata, når e-mailen sendes. Klik på et felt for at indsætte det.';
-$_LANG['admin.settings.index.forms.general_settings_form.terminateUnpaidOnExpiry'] = 'Opsig ubetalte tjenester ved udløb';
-$_LANG['admin.settings.index.forms.general_settings_form.terminateUnpaidOnExpiry_description'] = 'En tjeneste, hvis udløbsdato er passeret uden betaling, opsiges, dens ordre/abonnement annulleres hos leverandøren, og dens ubetalte fornyelsesfaktura annulleres. Hvis leverandøren ikke kan nås, forbliver tjenesten åben, og næste cron-kørsel forsøger igen. Gælder for abonnementstjenester (ikke engangstjenester).';
-$_LANG['admin.settings.index.forms.general_settings_form.dueDateOffsetRegular'] = 'Almindelige certifikater: forfaldsdato, dage før udløb';
-$_LANG['admin.settings.index.forms.general_settings_form.dueDateOffsetRegular_description'] = 'Et enkelt certifikat (uden abonnement) forfalder dette antal dage før udløb (0 = på udløbsdatoen). Anvendes, næste gang ordren synkroniseres.';
-$_LANG['admin.settings.index.forms.general_settings_form.dueDateOffsetSubscription'] = 'Abonnementer: forfaldsdato, dage før ophør';
-$_LANG['admin.settings.index.forms.general_settings_form.dueDateOffsetSubscription_description'] = 'Et flerårigt abonnement forfalder dette antal dage, før abonnementet ophører (0 = på slutdatoen). Anvendes, næste gang ordren synkroniseres.';
-$_LANG['admin.settings.index.forms.general_settings_form.defaultWebServer'] = 'Standardtype for webserver';
-$_LANG['admin.settings.index.forms.general_settings_form.defaultWebServer_description'] = 'Sendes med hver ordre som webserver_type, så kunderne aldrig bliver spurgt. Lad feltet være tomt, hvis %%VENDOR%% ikke har brug for det.';
 $_LANG['admin.emails.name_product_discontinued'] = 'Produkt udgået';
 $_LANG['admin.emails.when_product_discontinued'] = 'Sendes til kunden sammen med fornyelsesfakturaen, når %%VENDOR%% ikke længere sælger tjenestens produkt (udgået eller fjernet), så fornyelse under samme produkt kan blive afvist.';
 $_LANG['admin.settings.index.forms.general_settings_form.sslTools'] = 'SSL-værktøjer til kunder';
 $_LANG['admin.settings.index.forms.general_settings_form.sslTools_description'] = 'Side i kundeområdet med CSR-/certifikatdekoder, nøglematch, formatkonvertering, CSR-generator og SSL-tjek. De kører på denne server og kalder ingen API.';
-$_LANG['admin.settings.index.forms.general_settings_form.downloads'] = 'Download af certifikater';
-$_LANG['admin.settings.index.forms.general_settings_form.downloadFormat_zip'] = 'Alle formater (ZIP)';
-$_LANG['admin.settings.index.forms.general_settings_form.downloadFormat_crt'] = 'Certifikat (.crt)';
-$_LANG['admin.settings.index.forms.general_settings_form.downloadFormat_ca'] = 'CA-bundle (.ca-bundle)';
-$_LANG['admin.settings.index.forms.general_settings_form.downloadFormat_fullchain'] = 'Fuld kæde (.crt)';
-$_LANG['admin.settings.index.forms.general_settings_form.downloadFormat_nginx'] = 'Nginx (kædet .crt)';
-$_LANG['admin.settings.index.forms.general_settings_form.downloadFormat_apache'] = 'Apache (.crt + .ca-bundle, ZIP)';
-$_LANG['admin.settings.index.forms.general_settings_form.downloadFormat_pkcs7'] = 'IIS / Tomcat (PKCS#7 .p7b)';
 $_LANG['admin.settings.index.forms.ssl_settings_form.ordering'] = 'Bestilling og aftale';
 $_LANG['admin.settings.index.forms.ssl_settings_form.delivery'] = 'Levering af certifikater';
-$_LANG['admin.settings.index.forms.ssl_settings_form.dueDates'] = 'Forfaldsdatoer';
 $_LANG['admin.settings.index.forms.ssl_settings_form.autoInstall'] = 'AutoInstall (cPanel)';
 $_LANG['admin.settings.index.providers.ssl_settings_provider.moduleTemplate'] = 'Modulskabelon (Send certifikat)';
 $_LANG['admin.settings.index.widgets.automated_settings_widget.title'] = 'Automatiseret SSL (AutoInstall, ACME og planabonnementer)';
@@ -1112,16 +1054,6 @@ $_LANG['admin.settings.index.forms.ssl_settings_form.issuedMessage_description']
 $_LANG['admin.settings.index.forms.ssl_settings_form.certificateEmailTemplate'] = 'E-mailskabelon til certifikat';
 $_LANG['admin.settings.index.forms.ssl_settings_form.certificateEmailTemplate_description'] = 'Skabelon, der bruges, når certifikatet sendes til kunden';
 $_LANG['admin.settings.index.forms.ssl_settings_form.requireAgreement'] = 'Kræv aftale';
-$_LANG['admin.settings.index.forms.ssl_settings_form.dueDateOffsetRegular'] = 'Almindelige certifikater: forfaldsdato, dage før udløb';
-$_LANG['admin.settings.index.forms.ssl_settings_form.dueDateOffsetRegular_description'] = 'Et enkelt certifikat (uden abonnement) forfalder dette antal dage før udløb (0 = på udløbsdatoen). Anvendes, næste gang ordren synkroniseres.';
-$_LANG['admin.settings.index.forms.ssl_settings_form.dueDateOffsetSubscription'] = 'Abonnementer: forfaldsdato, dage før ophør';
-$_LANG['admin.settings.index.forms.ssl_settings_form.dueDateOffsetSubscription_description'] = 'Et flerårigt abonnement forfalder dette antal dage, før abonnementet ophører (0 = på slutdatoen). Anvendes, næste gang ordren synkroniseres.';
-$_LANG['admin.settings.index.forms.ssl_settings_form.defaultWebServer'] = 'Standardtype for webserver';
-$_LANG['admin.settings.index.forms.ssl_settings_form.defaultWebServer_description'] = 'Sendes med hver ordre som webserver_type, så kunderne aldrig bliver spurgt. Lad feltet være tomt, hvis %%VENDOR%% ikke har brug for det.';
-$_LANG['admin.home.index.widgets.documentation_widget.title'] = 'Moduldokumentation';
-$_LANG['admin.home.index.widgets.documentation_widget.info'] = 'Installationsvejledninger, konfigurationsreference og fejlfinding samlet ét sted.';
-$_LANG['admin.home.index.widgets.documentation_widget.open_thesslstore'] = 'TheSSLStore-dokumentation';
-$_LANG['admin.home.index.widgets.documentation_widget.open_gogetssl'] = 'GoGetSSL-dokumentation';
 $_LANG['admin.home.index.widgets.next_steps_widget.title'] = 'Næste trin efter modulinstallationen';
 $_LANG['admin.home.index.widgets.next_steps_widget.chip'] = 'Afslut opsætningen';
 $_LANG['admin.home.index.widgets.next_steps_widget.step_products'] = 'Opsæt produkter';
@@ -1308,11 +1240,8 @@ $_LANG['admin.settings.index.forms.api_settings_form.ggs_desc'] = 'Partnerkode o
 $_LANG['admin.settings.index.forms.general_settings_form.clientArea_desc'] = 'Hvad kunderne ser på deres certifikatsider.';
 $_LANG['admin.settings.index.forms.general_settings_form.interface_desc'] = 'Hvordan modulet ser ud for administratorer.';
 $_LANG['admin.settings.index.forms.general_settings_form.lifecycle_desc'] = 'Hvad der sker med en tjeneste, når den opsiges eller ikke betales.';
-$_LANG['admin.settings.index.forms.general_settings_form.pricing_desc'] = 'Hvordan priserne holdes på linje med certifikatudstederen.';
 $_LANG['admin.settings.index.forms.logs_settings_form.moduleLogs_desc'] = 'Gemmes i modulet og vises på dets egne sider. Når en log slås fra, stopper nye poster; gemte poster bliver stående, indtil du rydder dem.';
 $_LANG['admin.settings.index.forms.logs_settings_form.whmcsLogs_desc'] = 'Skrives i selve WHMCS og læses der, ikke i dette modul.';
-$_LANG['admin.settings.index.forms.finance_settings_form.majorSettings_desc'] = 'Din fortjenstmargen oven på certifikatudstederens pris.';
-$_LANG['admin.settings.index.forms.finance_settings_form.exchangeRate_desc'] = 'Nødvendig, fordi USD ikke er defineret som valuta i WHMCS.';
 $_LANG['admin.settings.index.forms.ssl_settings_form.sslValidation_desc'] = 'Vælg, hvordan kunde- og kontaktoplysninger bruges til validering.';
 $_LANG['admin.settings.index.forms.ssl_settings_form.csrGenerator_desc'] = 'Angiv standardværdierne for anmodninger om certifikatsignering (CSR).';
 $_LANG['admin.settings.index.forms.ssl_settings_form.clientMessages'] = 'Meddelelser til kunder';
@@ -1320,7 +1249,6 @@ $_LANG['admin.settings.index.forms.ssl_settings_form.clientMessages_desc'] = 'Ad
 $_LANG['admin.settings.index.forms.ssl_settings_form.renewals_desc'] = 'Styr, hvornår fornyelse er mulig, og hvordan ordrer behandles.';
 $_LANG['admin.settings.index.forms.ssl_settings_form.recurringAndOneTime'] = 'Tilbagevendende ordrer og engangsordrer';
 $_LANG['admin.settings.index.forms.ssl_settings_form.recurringAndOneTime_desc'] = 'Konfigurer fornyelsesfakturaer og udløbspåmindelser hver for sig.';
-$_LANG['admin.settings.index.forms.ssl_settings_form.dueDates_desc'] = 'Angiv, hvornår betalingen forfalder, før et certifikat eller abonnement ophører.';
 $_LANG['admin.settings.index.forms.ssl_settings_form.autoInstall_desc'] = 'DNS-ventetid, TLS-kontrol af cPanel-serverne og automatisk genudstedelse.';
 $_LANG['admin.settings.index.forms.ssl_settings_form.renewalsSubscription_desc'] = 'Fornyelsesfakturaer og påmindelser for ACME- og planabonnementer.';
 $_LANG['admin.log_policy.apiMode_off'] = 'Log ikke';
@@ -1383,10 +1311,6 @@ $_LANG['admin.settings.index.forms.finance_settings_form.billing'] = 'Fakturerin
 $_LANG['admin.settings.index.forms.finance_settings_form.billing_desc'] = 'Hvornår fornyelser forfalder, og hvad der sker med ubetalte tjenester. Fornyelsesfakturaer og udløbspåmindelser findes under Indstillinger > SSL-certifikater og Automatiseret SSL.';
 $_LANG['admin.settings.index.forms.finance_settings_form.terminateUnpaidOnExpiry'] = 'Opsig ubetalte tjenester ved udløb';
 $_LANG['admin.settings.index.forms.finance_settings_form.terminateUnpaidOnExpiry_description'] = 'En tjeneste, hvis udløbsdato er passeret uden betaling, opsiges, dens ordre/abonnement annulleres hos leverandøren, og dens ubetalte fornyelsesfaktura annulleres. Hvis leverandøren ikke kan nås, forbliver tjenesten åben, og næste cron-kørsel forsøger igen. Gælder for abonnementstjenester (ikke engangstjenester)';
-$_LANG['admin.settings.index.forms.finance_settings_form.dueDateOffsetRegular'] = 'Certifikater: forfaldsdato, dage før udløb';
-$_LANG['admin.settings.index.forms.finance_settings_form.dueDateOffsetRegular_description'] = 'Et enkelt certifikat (uden abonnement) forfalder dette antal dage før udløb (0 = på udløbsdatoen). Anvendes, næste gang ordren synkroniseres';
-$_LANG['admin.settings.index.forms.finance_settings_form.dueDateOffsetSubscription'] = 'Abonnementer: forfaldsdato, dage før ophør';
-$_LANG['admin.settings.index.forms.finance_settings_form.dueDateOffsetSubscription_description'] = 'Et flerårigt abonnement forfalder dette antal dage, før abonnementet ophører (0 = på slutdatoen). Anvendes, næste gang ordren synkroniseres';
 $_LANG['admin.settings.index.forms.finance_settings_form.balance'] = 'Forhandlersaldo';
 $_LANG['admin.settings.index.forms.finance_settings_form.renewalPrices_desc'] = 'Når du ændrer en pris, fortsætter WHMCS med at opkræve den pris, som eksisterende tjenester blev bestilt til. Vælg, hvad eksisterende tjenester betaler ved næste fornyelse (kontrolleres efter hver prisopdatering; fakturaer, der allerede findes, ændres ikke):';
 $_LANG['admin.settings.index.forms.finance_settings_form.renewalPoint_never'] = 'Behold den bestilte pris:';

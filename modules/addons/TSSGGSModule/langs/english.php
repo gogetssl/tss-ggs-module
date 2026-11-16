@@ -61,12 +61,7 @@ $_LANG['admin.home.index.widgets.migration_widget.last_run_counts'] = ':done mig
 $_LANG['admin.home.index.widgets.migration_widget.backups_until']   = 'Backups kept until :date';
 $_LANG['admin.home.index.widgets.migration_widget.open']            = 'Open migration';
 
-$_LANG['admin.home.index.widgets.partner_widget.title'] = 'Your partner growth manager';
-$_LANG['admin.home.index.widgets.partner_widget.none']  = 'No partner growth manager assigned yet.';
 
-$_LANG['admin.home.index.widgets.reporting_widget.title']      = 'Module issue reporting';
-$_LANG['admin.home.index.widgets.reporting_widget.info']       = 'Share the module activity log with our support team: it lists errors and helps troubleshoot issues you or your clients run into.';
-$_LANG['admin.home.index.widgets.reporting_widget.sendReport'] = 'Send report';
 
 
 $_LANG['admin.migration.title']                 = 'Legacy module migration';
@@ -234,11 +229,7 @@ $_LANG['admin.configuration.content.step6.step6_title'] = 'STEP 6. Finalization'
 $_LANG['admin.configuration.content.step6.finalize']    = 'Finalize';
 
 
-$_LANG['admin.configuration.shared.forms.vendor_selection_form.save']                           = 'Next Step';
-$_LANG['admin.configuration.shared.providers.vendor_selection_provider.error_vendor']           = 'Please select one of the vendor';
-$_LANG['admin.configuration.shared.providers.vendor_selection_provider.successVendorSelection'] = 'The configuration has been saved successfully';
 $_LANG['admin.configuration.shared.providers.finalize_provider.successFinalize']                = 'The configuration has been saved successfully';
-$_LANG['admin.configuration.shared.forms.vendor_selection_form.update_success']                 = 'The vendor configuration has been saved successfully';
 $_LANG['admin.settings.index.forms.settings_form.next_step']                                    = 'Next Step';
 $_LANG['admin.settings.index.providers.settings_provider.successAPI']                           = 'The API configuration has been saved successfully';
 
@@ -246,7 +237,7 @@ $_LANG['admin.configuration.shared.forms.finalize_form.finalize'] = 'Finalize';
 
 $_LANG['admin.configuration.content.step6.title_list'] = 'Next steps';
 $_LANG['admin.configuration.content.step6.item_list1'] = '1. Please visit <b>Pricing</b> section to enable products you wish to start reselling';
-$_LANG['admin.configuration.content.step6.item_list2'] = '2. Setup <b>Renewal</b> rules in Settings -> Renewals';
+$_LANG['admin.configuration.content.step6.item_list2'] = '2. Set up the <b>renewals</b> in Settings > SSL Certificates (Renewals) and Settings > Automated SSL (subscriptions)';
 
 $_LANG['admin.configuration.content.step6.title_alert']    = '<b>Congratulations!</b> You have successfully finalized the module installation';
 $_LANG['admin.configuration.content.step6.step6_api']      = '<b>API Configuration</b> completed and operating';
@@ -563,7 +554,6 @@ $_LANG['admin.settings.index.forms.ssl_settings_form.oneTimeOrders']            
 $_LANG['admin.settings.index.forms.ssl_settings_form.visibleRenewButtonBeforeExpiration']                       = 'Visible "Renew" Button Before Expiration';
 $_LANG['admin.settings.index.forms.ssl_settings_form.visibleRenewButtonAfterExpiration']                        = 'Visible "Renew" Button After Expiration';
 $_LANG['admin.settings.index.forms.ssl_settings_form.renewOrderViaExistingOrder']                               = 'Renew Order Via Existing Order';
-$_LANG['admin.settings.index.forms.ssl_settings_form.automaticProcessingOfRenewalOrders']                       = 'Automatic Process of Renewal Orders';
 $_LANG['admin.settings.index.forms.ssl_settings_form.setTheUnpaidStatusForRenewalInvoices']                     = 'Set The Unpaid Status For Renewal Invoices';
 $_LANG['admin.settings.index.forms.ssl_settings_form.additionalDaysForRenewalOrder']                            = 'Additional Days For Renewal Order (Sectigo)';
 $_LANG['admin.settings.index.forms.ssl_settings_form.autoReissueDaysBeforeExpire']                              = 'Auto Reissue Days Before Expiration';
@@ -591,8 +581,6 @@ $_LANG['admin.settings.index.forms.ssl_settings_form.update_success'] = 'Setting
 //finance settings
 
 $_LANG['admin.settings.index.widgets.finance_settings_widget.title']     = 'Finance Settings';
-$_LANG['admin.settings.index.forms.finance_settings_form.majorSettings'] = 'Major Settings';
-$_LANG['admin.settings.index.forms.finance_settings_form.exchangeRate']  = 'Exchange Rate';
 
 $_LANG['admin.settings.index.forms.finance_settings_form.info']         = 'Your WHMCS doesn\'t have a USD currency defined. Your default currency is :defaultCurrency. Please provide a USD to :defaultCurrency conversion rate.<br><br>For example, if rate is  1.20 and the product price is 1.00 USD, then in WHMCS, the price will be set to 1.20 :defaultCurrency.';
 
@@ -756,17 +744,7 @@ $_LANG['admin.pricing.index.data_tables.pricing.array_data_provider.data_table.b
 $_LANG['admin.pricing.index.data_tables.pricing.array_data_provider.data_table.trienniallyPrice']    = 'Triennially';
 
 //pricing form
-$_LANG['admin.pricing.index.data_tables.pricing.modals.pricing_modal.title']        = 'Pricing';
-$_LANG['admin.pricing.index.data_tables.pricing.forms.pricing_form.options']        = 'Options';
-$_LANG['admin.pricing.index.data_tables.pricing.forms.pricing_form.annuallyStrict'] = 'Annually';
-$_LANG['admin.pricing.index.data_tables.pricing.forms.pricing_form.annually']       = 'Annually/One-Time';
-$_LANG['admin.pricing.index.data_tables.pricing.forms.pricing_form.biennially']     = 'Biennially';
-$_LANG['admin.pricing.index.data_tables.pricing.forms.pricing_form.triennially']    = 'Triennially';
-$_LANG['admin.pricing.index.data_tables.pricing.forms.pricing_form.update_success'] = 'Prices updated successfully';
-$_LANG['admin.pricing.index.data_tables.pricing.forms.pricing_form.autoUpdate']     = 'Auto Update';
-$_LANG['admin.pricing.index.data_tables.pricing.forms.pricing_form.oneTime']        = 'One Time';
 
-$_LANG['admin.pricing.index.data_tables.pricing.forms.pricing_form.info'] = 'Auto Update Information';
 
 $_LANG['acme_order_requires_at_least_one_san'] = 'To order this product you must select at least 1 Additional Single domain SAN or Additional Wildcard SAN.';
 $_LANG['csCartTermNeedsHsm'] = 'Code signing certificates for 2 or 3 years can be installed only on your own HSM. Choose "My own HSM" as the certificate delivery or a 1-year billing cycle.';
@@ -796,20 +774,6 @@ $_LANG['admin.settings.index.forms.general_settings_form.certificatesByDomain_de
 $_LANG['admin.settings.index.forms.general_settings_form.lifecycle']                         = 'Service Lifecycle';
 $_LANG['admin.settings.index.forms.general_settings_form.terminateCancelsOrder']             = 'Cancel Vendor Order On Terminate';
 $_LANG['admin.settings.index.forms.general_settings_form.terminateCancelsOrder_description'] = 'Terminating the service in WHMCS also cancels the certificate order / subscription at the vendor';
-$_LANG['admin.settings.index.forms.general_settings_form.renewReuseOrderDetails'] = 'Renew S/MIME And Code Signing With The Same Details';
-$_LANG['admin.settings.index.forms.general_settings_form.renewReuseOrderDetails_description'] = 'A paid S/MIME or code signing renewal orders the next certificate with the details of the previous order (email addresses, organization, administrator, hardware token), unless the client chose to enter new details in the Renew dialog. Off: the client always fills in the order form after paying.';
-$_LANG['admin.settings.index.forms.general_settings_form.messages']                          = 'Client Messages';
-$_LANG['admin.settings.index.forms.general_settings_form.processingGuide']                   = 'Processing Guide';
-$_LANG['admin.settings.index.forms.general_settings_form.processingGuide_description']       = 'Shown to the client while the certificate is being validated (HTML allowed). Can be overridden per product';
-$_LANG['admin.settings.index.forms.general_settings_form.issuedMessage']                     = 'Issued SSL Message';
-$_LANG['admin.settings.index.forms.general_settings_form.issuedMessage_description']         = 'Shown to the client once the certificate is issued, e.g. installation instructions (HTML allowed). Can be overridden per product';
-$_LANG['admin.settings.index.forms.general_settings_form.certificateEmailTemplate']          = 'Certificate Email Template';
-$_LANG['admin.settings.index.forms.general_settings_form.certificateEmailTemplate_description'] = 'Template used when the certificate is sent to the client';
-$_LANG['admin.settings.index.forms.general_settings_form.agreement']                         = 'Subscriber Agreement';
-$_LANG['admin.settings.index.forms.general_settings_form.requireAgreement']                  = 'Require Agreement';
-$_LANG['admin.settings.index.forms.general_settings_form.requireAgreement_description']      = 'The client has to accept the certificate authority\'s subscriber agreement before the order is placed';
-$_LANG['admin.settings.index.forms.general_settings_form.agreementText']                     = 'Agreement Text';
-$_LANG['admin.settings.index.forms.general_settings_form.agreementText_description']         = 'Optional text shown above the checkbox (HTML allowed). The link to the agreement of the product\'s certificate authority is added automatically';
 $_LANG['admin.settings.index.forms.general_settings_form.save']                              = 'Save';
 $_LANG['admin.settings.index.providers.general_settings_provider.moduleTemplate']            = 'Module template (Send Certificate)';
 
@@ -900,11 +864,6 @@ $_LANG['admin.pricing_grid.notice_saved']      = ':count prices saved.';
 $_LANG['admin.pricing_grid.notice_invalid'] = ':count values were not saved because they are not amounts (use digits and a decimal point, for example 49.90).';
 $_LANG['admin.pricing_grid.notice_margin_applied'] = ':count prices updated from the reseller cost.';
 $_LANG['admin.pricing_grid.notice_imported']   = ':count prices imported.';
-$_LANG['admin.settings.index.forms.general_settings_form.pricing']                       = 'Pricing';
-$_LANG['admin.settings.index.forms.general_settings_form.keepMarginOnSync']              = 'Keep Margin On Sync';
-$_LANG['admin.settings.index.forms.general_settings_form.keepMarginOnSync_description']  = 'Products with manual prices ("Auto" off on the Pricing page) follow reseller cost changes, so their margin stays the same';
-$_LANG['admin.settings.index.forms.general_settings_form.belowCostEmail']                = 'Below-Cost Email';
-$_LANG['admin.settings.index.forms.general_settings_form.belowCostEmail_description']    = 'E-mail the administrators when prices are below the reseller cost (checked by the price update cron, sent once per change)';
 $_LANG['admin.settings.index.forms.general_settings_form.interface']                       = 'Admin Area';
 $_LANG['admin.settings.index.forms.general_settings_form.hideInfoMessages']                = 'Hide Info Messages';
 $_LANG['admin.settings.index.forms.general_settings_form.hideInfoMessages_description']    = 'Removes the large information blocks under the page titles of the module. Warnings, errors and confirmations stay.';
@@ -1056,29 +1015,12 @@ $_LANG['admin.emails.rich_editor']              = 'Rich-text editor';
 $_LANG['admin.emails.rich_failed']              = 'The visual editor could not be loaded (assets/js/tinymce of WHMCS); the text is edited as HTML source.';
 $_LANG['admin.emails.name_renewal_invoice_created']  = 'Renewal invoice created';
 $_LANG['admin.emails.when_renewal_invoice_created']  = 'Sent when this module creates a renewal invoice. Disabled by default: while it is disabled WHMCS sends its own invoice e-mail; enable it to send this text instead.';
-$_LANG['admin.settings.index.forms.general_settings_form.terminateUnpaidOnExpiry']             = 'Terminate Unpaid Services On Expiry';
-$_LANG['admin.settings.index.forms.general_settings_form.terminateUnpaidOnExpiry_description'] = 'A service whose expiry date has passed without a payment is terminated, its order / subscription is cancelled at the vendor and its unpaid renewal invoice is cancelled. If the vendor can not be reached the service stays open and the next cron run tries again. Applies to subscription (non one-time) services.';
-$_LANG['admin.settings.index.forms.general_settings_form.dueDateOffsetRegular']                  = 'Regular Certificates: Due Date Days Before Expiry';
-$_LANG['admin.settings.index.forms.general_settings_form.dueDateOffsetRegular_description']      = 'A single (non-subscription) certificate falls due this many days before its expiry (0 = on the expiry date). Applied the next time the order is synchronised.';
-$_LANG['admin.settings.index.forms.general_settings_form.dueDateOffsetSubscription']             = 'Subscriptions: Due Date Days Before End';
-$_LANG['admin.settings.index.forms.general_settings_form.dueDateOffsetSubscription_description'] = 'A multi-year subscription falls due this many days before the subscription ends (0 = on the end date). Applied the next time the order is synchronised.';
-$_LANG['admin.settings.index.forms.general_settings_form.defaultWebServer']             = 'Default Web Server Type';
-$_LANG['admin.settings.index.forms.general_settings_form.defaultWebServer_description'] = 'Sent with every order as webserver_type so clients are never asked. Leave empty when %%VENDOR%% does not need it.';
 $_LANG['admin.emails.name_product_discontinued']     = 'Product discontinued';
 $_LANG['admin.emails.when_product_discontinued']     = 'Sent to the client with the renewal invoice when %%VENDOR%% no longer sells the service\'s product (retired or removed), so renewal under the same product may be refused.';
 $_LANG['admin.settings.index.forms.general_settings_form.sslTools']             = 'SSL Tools For Clients';
 $_LANG['admin.settings.index.forms.general_settings_form.sslTools_description'] = 'Client area page with a CSR / certificate decoder, key match, format converter, CSR generator and SSL checker. They run on this server and call no API.';
-$_LANG['admin.settings.index.forms.general_settings_form.downloads']                           = 'Certificate Downloads';
-$_LANG['admin.settings.index.forms.general_settings_form.downloadFormat_zip']                  = 'All formats (ZIP)';
-$_LANG['admin.settings.index.forms.general_settings_form.downloadFormat_crt']                  = 'Certificate (.crt)';
-$_LANG['admin.settings.index.forms.general_settings_form.downloadFormat_ca']                   = 'CA bundle (.ca-bundle)';
-$_LANG['admin.settings.index.forms.general_settings_form.downloadFormat_fullchain']            = 'Full chain (.crt)';
-$_LANG['admin.settings.index.forms.general_settings_form.downloadFormat_nginx']                = 'Nginx (chained .crt)';
-$_LANG['admin.settings.index.forms.general_settings_form.downloadFormat_apache']               = 'Apache (.crt + .ca-bundle, ZIP)';
-$_LANG['admin.settings.index.forms.general_settings_form.downloadFormat_pkcs7']                = 'IIS / Tomcat (PKCS#7 .p7b)';
 $_LANG['admin.settings.index.forms.ssl_settings_form.ordering']                = 'Ordering And Agreement';
 $_LANG['admin.settings.index.forms.ssl_settings_form.delivery']                = 'Certificate Delivery';
-$_LANG['admin.settings.index.forms.ssl_settings_form.dueDates']                = 'Due Dates';
 $_LANG['admin.settings.index.forms.ssl_settings_form.autoInstall']             = 'AutoInstall (cPanel)';
 $_LANG['admin.settings.index.providers.ssl_settings_provider.moduleTemplate']  = 'Module template (Send Certificate)';
 $_LANG['admin.settings.index.widgets.automated_settings_widget.title']         = 'Automated SSL (AutoInstall, ACME and plan subscriptions)';
@@ -1090,16 +1032,6 @@ $_LANG['admin.settings.index.forms.ssl_settings_form.issuedMessage_description']
 $_LANG['admin.settings.index.forms.ssl_settings_form.certificateEmailTemplate']          = 'Certificate Email Template';
 $_LANG['admin.settings.index.forms.ssl_settings_form.certificateEmailTemplate_description'] = 'Template used when the certificate is sent to the client';
 $_LANG['admin.settings.index.forms.ssl_settings_form.requireAgreement']                  = 'Require Agreement';
-$_LANG['admin.settings.index.forms.ssl_settings_form.dueDateOffsetRegular']                  = 'Regular Certificates: Due Date Days Before Expiry';
-$_LANG['admin.settings.index.forms.ssl_settings_form.dueDateOffsetRegular_description']      = 'A single (non-subscription) certificate falls due this many days before its expiry (0 = on the expiry date). Applied the next time the order is synchronised.';
-$_LANG['admin.settings.index.forms.ssl_settings_form.dueDateOffsetSubscription']             = 'Subscriptions: Due Date Days Before End';
-$_LANG['admin.settings.index.forms.ssl_settings_form.dueDateOffsetSubscription_description'] = 'A multi-year subscription falls due this many days before the subscription ends (0 = on the end date). Applied the next time the order is synchronised.';
-$_LANG['admin.settings.index.forms.ssl_settings_form.defaultWebServer']             = 'Default Web Server Type';
-$_LANG['admin.settings.index.forms.ssl_settings_form.defaultWebServer_description'] = 'Sent with every order as webserver_type so clients are never asked. Leave empty when %%VENDOR%% does not need it.';
-$_LANG['admin.home.index.widgets.documentation_widget.title']        = 'Module documentation';
-$_LANG['admin.home.index.widgets.documentation_widget.info']         = 'Installation guides, configuration reference and troubleshooting in one place.';
-$_LANG['admin.home.index.widgets.documentation_widget.open_thesslstore'] = 'TheSSLStore documentation';
-$_LANG['admin.home.index.widgets.documentation_widget.open_gogetssl']    = 'GoGetSSL documentation';
 $_LANG['admin.home.index.widgets.next_steps_widget.title']           = 'Next steps after module installation';
 $_LANG['admin.home.index.widgets.next_steps_widget.chip']            = 'Finish setup';
 $_LANG['admin.home.index.widgets.next_steps_widget.step_products']        = 'Setup products';
@@ -1304,13 +1236,10 @@ $_LANG['admin.settings.index.forms.api_settings_form.ggs_desc'] = 'Partner code 
 $_LANG['admin.settings.index.forms.general_settings_form.clientArea_desc'] = 'What clients see on their certificate pages.';
 $_LANG['admin.settings.index.forms.general_settings_form.interface_desc']  = 'How the module looks for administrators.';
 $_LANG['admin.settings.index.forms.general_settings_form.lifecycle_desc']  = 'What happens to a service when it is terminated or not paid.';
-$_LANG['admin.settings.index.forms.general_settings_form.pricing_desc']    = 'How prices are kept in line with the certificate authority.';
 
 $_LANG['admin.settings.index.forms.logs_settings_form.moduleLogs_desc'] = 'Kept in the module and shown on its own pages. Switching one off stops new entries; stored entries stay until you clear them.';
 $_LANG['admin.settings.index.forms.logs_settings_form.whmcsLogs_desc']  = 'Written into WHMCS itself and read there, not in this module.';
 
-$_LANG['admin.settings.index.forms.finance_settings_form.majorSettings_desc'] = 'Your profit margin on top of the certificate authority price.';
-$_LANG['admin.settings.index.forms.finance_settings_form.exchangeRate_desc']  = 'Needed because USD is not defined as a currency in WHMCS.';
 
 $_LANG['admin.settings.index.forms.ssl_settings_form.sslValidation_desc']        = 'Choose how client and contact details are used for validation.';
 $_LANG['admin.settings.index.forms.ssl_settings_form.csrGenerator_desc']         = 'Set the defaults for certificate signing requests.';
@@ -1319,7 +1248,6 @@ $_LANG['admin.settings.index.forms.ssl_settings_form.clientMessages_desc']      
 $_LANG['admin.settings.index.forms.ssl_settings_form.renewals_desc']             = 'Control renewal availability and order processing.';
 $_LANG['admin.settings.index.forms.ssl_settings_form.recurringAndOneTime']       = 'Recurring and One-time Orders';
 $_LANG['admin.settings.index.forms.ssl_settings_form.recurringAndOneTime_desc']  = 'Configure renewal invoices and expiry reminders separately.';
-$_LANG['admin.settings.index.forms.ssl_settings_form.dueDates_desc']             = 'Set when payment becomes due before a certificate or subscription ends.';
 $_LANG['admin.settings.index.forms.ssl_settings_form.autoInstall_desc']          = 'DNS wait, TLS check of the cPanel servers and automatic reissue.';
 $_LANG['admin.settings.index.forms.ssl_settings_form.renewalsSubscription_desc'] = 'Renewal invoices and reminders for ACME and plan subscriptions.';
 $_LANG['admin.log_policy.apiMode_off'] = 'Don\'t log';
@@ -1387,10 +1315,6 @@ $_LANG['admin.settings.index.forms.finance_settings_form.billing'] = 'Billing';
 $_LANG['admin.settings.index.forms.finance_settings_form.billing_desc'] = 'When renewals fall due and what happens to unpaid services. Renewal invoices and expiry reminders are on Settings > SSL Certificates and Automated SSL.';
 $_LANG['admin.settings.index.forms.finance_settings_form.terminateUnpaidOnExpiry'] = 'Terminate unpaid services on expiry';
 $_LANG['admin.settings.index.forms.finance_settings_form.terminateUnpaidOnExpiry_description'] = 'A service whose expiry date has passed without a payment is terminated, its order / subscription is cancelled at the vendor and its unpaid renewal invoice is cancelled. If the vendor can not be reached the service stays open and the next cron run tries again. Applies to subscription (non one-time) services';
-$_LANG['admin.settings.index.forms.finance_settings_form.dueDateOffsetRegular'] = 'Certificates: due date days before expiry';
-$_LANG['admin.settings.index.forms.finance_settings_form.dueDateOffsetRegular_description'] = 'A single (non-subscription) certificate falls due this many days before its expiry (0 = on the expiry date). Applied the next time the order is synchronised';
-$_LANG['admin.settings.index.forms.finance_settings_form.dueDateOffsetSubscription'] = 'Subscriptions: due date days before the end';
-$_LANG['admin.settings.index.forms.finance_settings_form.dueDateOffsetSubscription_description'] = 'A multi-year subscription falls due this many days before the subscription ends (0 = on the end date). Applied the next time the order is synchronised';
 $_LANG['admin.settings.index.forms.finance_settings_form.balance'] = 'Reseller balance';
 $_LANG['admin.settings.index.forms.finance_settings_form.renewalPrices_desc'] = 'When you change a price, WHMCS keeps charging existing services the price they were ordered with. Choose what existing services pay at their next renewal (checked after every price update; invoices that already exist do not change):';
 $_LANG['admin.settings.index.forms.finance_settings_form.renewalPoint_never'] = 'Keep the ordered price:';

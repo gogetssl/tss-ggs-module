@@ -55,9 +55,6 @@ class GeneralSettings
         // Orders
         'defaultWebServer'         => '',     // legacy free text (migrated TSS setting), still sent when set
         'useDefaultWebServer'      => true,   // true: clients are not asked for their web server
-        // Renewal rules: days before the end of the certificate / subscription on which the service falls due
-        'dueDateOffsetRegular'      => 0,
-        'dueDateOffsetSubscription' => 0,
         // a renewal paid but still "Payment Pending" at the deadline: days to wait for it to clear (0 = treat it as
         // unpaid). Certificates wait by default - the renewal is ordered only once paid; subscriptions do not - the
         // vendor renews and charges for them on its own (App\Libs\RenewalPolicy::pendingWait)
