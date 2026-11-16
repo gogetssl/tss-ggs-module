@@ -152,6 +152,8 @@ class SslSettingsForm extends Form implements AdminAreaInterface, AjaxComponentI
         {
             $this->builder->addFieldInContainer($widget, (new Dropdown())->setName('autoReissueDaysBeforeExpire'));
         }
+        // daily e-mail to the administrators: installed, failed and long-waiting AutoInstall jobs (App\Libs\AutoInstallReport)
+        $this->builder->addFieldInContainer($widget, (new Switcher())->setName('autoInstallReportEmail')->addClass('switcher-revert'), true);
     }
 
     protected function csrFields($widget)

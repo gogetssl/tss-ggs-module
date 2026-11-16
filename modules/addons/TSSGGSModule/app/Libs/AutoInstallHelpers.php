@@ -87,6 +87,20 @@ class AutoInstallHelpers
             'status'     => $status,
             'updated_at' => date('Y-m-d H:i:s')
         ]);
+
+        // the admin report (M-21): the running job of the service ends here
+        if($status === self::STATUS_INSTALLED)
+        {
+            AutoInstallReport::finish($serviceId, AutoInstallReport::INSTALLED);
+        }
+        elseif($status === self::STATUS_FAILED)
+        {
+            AutoInstallReport::finish($serviceId, AutoInstallReport::FAILED, (string)($data['last_error'] ?? ''));
+        }
+        elseif($status === self::STATUS_DISABLED)
+        {
+            AutoInstallReport::finish($serviceId, AutoInstallReport::STOPPED, 'AutoInstall turned off');
+        }
     }
 
     /**
@@ -155,6 +169,7 @@ class AutoInstallHelpers
         self::create($serviceId, $config);
         AutoInstallQueue::cancelOpenTasks($serviceId, 'Replaced by a new configuration');
         AutoInstallQueue::addTask($userId, $serviceId, 'validate', $validateTaskData);
+        AutoInstallReport::start($serviceId, AutoInstallReport::KIND_ORDER, (string)($config['domain'] ?? ''));
 
         self::log($userId, $serviceId, 'success', 'SSL order placed for domain: ' . $config['domain'] .
             ' (API order #' . $validateTaskData['api_order_id'] . ', validation: ' . strtoupper($config['dcv_method']) . ') - AutoInstall validation task created');
@@ -267,6 +282,7 @@ class AutoInstallHelpers
             $taskData['dns_fallback_email'] = $config['dns_fallback_email'];
         }
         AutoInstallQueue::addTask($userId, $targetServiceId, 'validate', $taskData);
+        AutoInstallReport::start($targetServiceId, AutoInstallReport::KIND_RENEWAL, (string)$config['domain']);
 
         self::log($userId, $targetServiceId, 'info', '[Renew] Certificate renewal placed (API order #' . (int)$newOrderId .
             ') - the renewed certificate will be installed automatically on ' . $config['domain']);
@@ -704,6 +720,7 @@ class AutoInstallHelpers
 
             if($final)
             {
+                AutoInstallReport::finish($serviceId, AutoInstallReport::FAILED, 'Automatic reissue: ' . $e->getMessage());
                 $validTill = isset($taskData['cert_expiry']) ? $taskData['cert_expiry'] : (isset($state['valid_till']) ? $state['valid_till'] : '');
                 $daysLeft  = $validTill ? (int)floor((strtotime($validTill) - time()) / 86400) : 0;
 
@@ -825,6 +842,8 @@ class AutoInstallHelpers
 
                 $state['reissue_for_valid_till'] = $validTill;
                 self::save($serviceId, $state, self::STATUS_INSTALLED);
+                // after the save above: the certificate in place stays installed, the reissue is the new job
+                AutoInstallReport::start($serviceId, AutoInstallReport::KIND_REISSUE, (string)$state['domain']);
 
                 self::log($clientId, $serviceId, 'info', '[AutoReissue] Reissue task created for domain: ' . $state['domain'] .
                     ' - certificate expires ' . $validTill . ' (' . $daysLeft . ' days remaining)');
