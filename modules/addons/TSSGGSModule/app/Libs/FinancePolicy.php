@@ -242,7 +242,7 @@ class FinancePolicy
         }
         GeneralSettings::save(['balanceAlertSent' => time()]);
 
-        $text = '<p>The certificate gateway refused an order' . ($serviceId ? ' (service #' . (int)$serviceId . ')' : '')
+        $text = '<p>%%VENDOR%% refused an order' . ($serviceId ? ' (service #' . (int)$serviceId . ')' : '')
             . ' because your reseller balance is too low:</p><p><i>' . htmlspecialchars((string)$message) . '</i></p>'
             . '<p>Top up your reseller account. Paid orders are not sent to the certificate authority until the balance covers them: '
             . 'open each failed service and run "Create" again (or let the client retry) once the balance is topped up.</p>';

@@ -479,7 +479,7 @@ class TssReader extends AbstractReader
         $rec['remote_product_id'] = $remote ? (string)$remote->remoteId : $code;
         if(!$remote)
         {
-            $rec['warnings'][] = 'Gateway product not found for TheSSLStore product code "' . $code . '"';
+            $rec['warnings'][] = '%%VENDOR%% product not found for TheSSLStore product code "' . $code . '"';
         }
 
         $remoteId = trim((string)$order['remoteid']);
@@ -543,7 +543,7 @@ class TssReader extends AbstractReader
         }
         if(!$smime['emails'] && $smime['status'] !== 'invited')
         {
-            $rec['warnings'][] = 'S/MIME email address not known yet; it is read from the gateway by the first refresh';
+            $rec['warnings'][] = 'S/MIME email address not known yet; it is read from %%VENDOR%% by the first refresh';
         }
 
         $rec['remote_id']      = $remoteId;
@@ -576,7 +576,7 @@ class TssReader extends AbstractReader
         $rec['remote_product_id'] = $remote ? (string)$remote->remoteId : $code;
         if(!$remote)
         {
-            $rec['warnings'][] = 'Gateway product not found for TheSSLStore product code "' . $code . '"';
+            $rec['warnings'][] = '%%VENDOR%% product not found for TheSSLStore product code "' . $code . '"';
         }
 
         $remoteId = trim((string)$order['remoteid']);
@@ -659,7 +659,7 @@ class TssReader extends AbstractReader
         $rec['remote_product_id'] = $remote ? (string)$remote->remoteId : $code;
         if(!$remote)
         {
-            $rec['warnings'][] = 'Gateway product not found for TheSSLStore product code "' . $code . '"';
+            $rec['warnings'][] = '%%VENDOR%% product not found for TheSSLStore product code "' . $code . '"';
         }
 
         $remoteId = trim((string)$order['remoteid']);
@@ -818,7 +818,7 @@ class TssReader extends AbstractReader
         $rec['remote_product_id'] = $remoteProduct ? (string)$remoteProduct->remoteId : '';
         if(!$remoteProduct)
         {
-            $rec['warnings'][] = 'Gateway product not found for TheSSLStore product code "' . $code . '"';
+            $rec['warnings'][] = '%%VENDOR%% product not found for TheSSLStore product code "' . $code . '"';
         }
 
         $remoteId = trim((string)$order['remoteid']);
@@ -925,7 +925,7 @@ class TssReader extends AbstractReader
             'order_date' => (string)($od['order_placed_date'] ?? $order['completiondate']), 'order_payload' => $payload,
             'api_price' => (float)($od['purchase_amt'] ?? 0),
         ]);
-        $rec['warnings'][] = 'Certificate files are not stored by the TSS module; downloads appear after the first gateway sync';
+        $rec['warnings'][] = 'Certificate files are not stored by the TSS module; downloads appear after the first sync';
 
         $rec['prices'] = [
             'api_price'   => (float)($od['purchase_amt'] ?? 0),
@@ -1047,7 +1047,7 @@ class TssReader extends AbstractReader
                 'limits' => ['single' => (int)$sub['limit_standard'], 'wildcard' => (int)$sub['limit_wildcard']],
             ]];
             $rec['configdata'] = ['ssl_status' => $uStatus];
-            $rec['warnings'][] = 'AIS SSO links are refreshed from the gateway on first open';
+            $rec['warnings'][] = 'AIS SSO links are refreshed from %%VENDOR%% on first open';
         }
 
         return $rec;

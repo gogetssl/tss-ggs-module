@@ -64,7 +64,7 @@ class AdminServicesTabFields
             }
             if(CertificateService::category($params['serviceid']) !== CertificateService::CATEGORY_TLS)
             {
-                return ['Gateway Item ID' => (int)$sslService->remoteid];
+                return ['%%VENDOR%% Item ID' => (int)$sslService->remoteid];
             }
 
             $fields = array_merge($this->getCertificateDetails($params, $sslService), $this->getAutoInstallDetails($params['serviceid'], (int)$params['userid']));
@@ -102,7 +102,7 @@ class AdminServicesTabFields
 
         $fields = [];
         $fields['Configuration Status'] = htmlspecialchars($sslService->status);
-        $fields['Gateway Order']        = 'Order #' . (int)($stored['orderId'] ?? 0) . ' | Item #' . (int)($stored['itemId'] ?? 0)
+        $fields['%%VENDOR%% Order']        = 'Order #' . (int)($stored['orderId'] ?? 0) . ' | Item #' . (int)($stored['itemId'] ?? 0)
             . (!empty($stored['vendorOrderId']) ? ' | Vendor (CA) order #' . htmlspecialchars($stored['vendorOrderId']) : '');
         $fields['Vendor Status']        = '<span class="label ' . ($labels[$status] ?? 'label-default') . '">' . htmlspecialchars(ucfirst($status ?: 'unknown')) . '</span>'
             . (!empty($stored['orderedAt']) ? ' &nbsp;ordered ' . htmlspecialchars($stored['orderedAt']) : '')
@@ -137,7 +137,7 @@ class AdminServicesTabFields
 
         $fields = [];
         $fields['Configuration Status'] = htmlspecialchars($sslService->status);
-        $fields['Gateway Order']        = 'Order #' . (int)($stored['orderId'] ?? 0) . ' | Item #' . (int)($stored['itemId'] ?? 0)
+        $fields['%%VENDOR%% Order']        = 'Order #' . (int)($stored['orderId'] ?? 0) . ' | Item #' . (int)($stored['itemId'] ?? 0)
             . (!empty($stored['vendorOrderId']) ? ' | Vendor (CA) order #' . htmlspecialchars($stored['vendorOrderId']) : '');
         $fields['Vendor Status']        = '<span class="label ' . ($labels[$status] ?? 'label-default') . '">' . htmlspecialchars(ucfirst($status ?: 'unknown')) . '</span>'
             . (!empty($stored['orderedAt']) ? ' &nbsp;ordered ' . htmlspecialchars($stored['orderedAt']) : '')
@@ -171,7 +171,7 @@ class AdminServicesTabFields
 
         $fields = [];
         $fields['Configuration Status'] = htmlspecialchars($sslService->status);
-        $fields['Gateway Order']        = 'Order #' . (int)($stored['orderId'] ?? 0) . ' | Licence #' . (int)($stored['itemId'] ?? 0)
+        $fields['%%VENDOR%% Order']        = 'Order #' . (int)($stored['orderId'] ?? 0) . ' | Licence #' . (int)($stored['itemId'] ?? 0)
             . (!empty($stored['vendorOrderId']) ? ' | Vendor licence ' . htmlspecialchars($stored['vendorOrderId']) : '');
         $fields['Vendor Status']        = '<span class="label ' . ($labels[$status] ?? 'label-default') . '">' . htmlspecialchars(ucfirst($status ?: 'unknown')) . '</span>'
             . (!empty($stored['orderedAt']) ? ' &nbsp;ordered ' . htmlspecialchars($stored['orderedAt']) : '')
@@ -215,7 +215,7 @@ class AdminServicesTabFields
 
         $fields = [];
         $fields['Configuration Status'] = htmlspecialchars($sslService->status);
-        $fields['Gateway Order']        = 'Order #' . (int)($stored['orderId'] ?? 0) . ' | Item #' . (int)($stored['itemId'] ?? 0)
+        $fields['%%VENDOR%% Order']        = 'Order #' . (int)($stored['orderId'] ?? 0) . ' | Item #' . (int)($stored['itemId'] ?? 0)
             . (!empty($stored['vendorOrderId']) ? ' | Vendor (CA) order #' . htmlspecialchars($stored['vendorOrderId']) : '');
         $fields['Vendor Status']        = '<span class="label ' . ($labels[$status] ?? 'label-default') . '">' . htmlspecialchars(ucfirst($status ?: 'unknown')) . '</span>'
             . (!empty($stored['vendorStatus']) ? ' &nbsp;CA: ' . htmlspecialchars($stored['vendorStatus']) : '')
@@ -269,7 +269,7 @@ class AdminServicesTabFields
 
         $fields = [];
         $fields['Configuration Status'] = htmlspecialchars($sslService->status);
-        $fields['Gateway Order']        = 'Order #' . (int)($order['order']['id'] ?? 0) . ' | Item #' . (int)$sslService->remoteid
+        $fields['%%VENDOR%% Order']        = 'Order #' . (int)($order['order']['id'] ?? 0) . ' | Item #' . (int)$sslService->remoteid
             . (!empty($item['vendor']['id']) ? ' | Vendor (CA) order #' . htmlspecialchars($item['vendor']['id']) : '')
             . ' | ' . htmlspecialchars(Helpers::vendorToDisplay($params['configoption1']));
         $fields['Vendor Status']        = '<span class="label ' . ($labels[$status] ?? 'label-default') . '">' . htmlspecialchars(ucfirst($status ?: 'unknown')) . '</span>'

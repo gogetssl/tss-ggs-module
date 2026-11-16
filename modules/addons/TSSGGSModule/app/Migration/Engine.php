@@ -88,7 +88,7 @@ class Engine
             $p['mapped'] = $p['remote_product'] !== null && empty($p['unsupported']);
             if(!$p['remote_product'] && empty($p['unsupported']))
             {
-                $p['warnings'][] = 'No gateway product found for "' . $p['legacy_product_ref'] . '"; services of this product stay on the legacy module';
+                $p['warnings'][] = 'No %%VENDOR%% product found for "' . $p['legacy_product_ref'] . '"; services of this product stay on the legacy module';
             }
             $p['remote_product'] = $p['remote_product'] ? ['id' => $p['remote_product']->remoteId, 'name' => $p['remote_product']->name] : null;
             $products[$pid] = $p;
@@ -104,13 +104,13 @@ class Engine
             ];
             if(!empty($rec['product_id']) && isset($products[$rec['product_id']]) && !$products[$rec['product_id']]['mapped'] && !$rec['skip_reason'])
             {
-                $row['reason'] = 'Product "' . $products[$rec['product_id']]['name'] . '" is not mapped to a gateway product';
+                $row['reason'] = 'Product "' . $products[$rec['product_id']]['name'] . '" is not mapped to a %%VENDOR%% product';
                 $services['skipped'][] = $row;
                 continue;
             }
             if(empty($rec['skip_reason']) && !empty($rec['order_payload']) && (string)($rec['order_payload']['product']['id'] ?? '') === '')
             {
-                $row['reason'] = 'Gateway product not resolved for this service (code "' . ($rec['product_code'] ?? '') . '")';
+                $row['reason'] = '%%VENDOR%% product not resolved for this service (code "' . ($rec['product_code'] ?? '') . '")';
                 $services['skipped'][] = $row;
                 continue;
             }
@@ -336,7 +336,7 @@ class Engine
         }
         if(!$this->mapper->hasVendor(strtoupper($this->source)))
         {
-            throw new \RuntimeException('Gateway products for ' . strtoupper($this->source) . ' are not synced yet (complete the API connection step first).');
+            throw new \RuntimeException('%%VENDOR%% products for ' . strtoupper($this->source) . ' are not synced yet (complete the API connection step first).');
         }
 
         $options = array_merge(['batch_size' => self::BATCH_SIZE, 'fetch_cpanel_keys' => true, 'copy_templates' => true, 'backup_logs' => true, 'deactivate_legacy' => true], $options);
@@ -436,11 +436,11 @@ class Engine
             if($copied === 'copied')
             {
                 $filled[] = 'credentials.' . $this->source;
-                $this->log($runId, 'info', self::PHASE_PREPARE, 'Gateway credentials copied from the legacy module');
+                $this->log($runId, 'info', self::PHASE_PREPARE, 'API credentials copied from the legacy module');
             }
             elseif($copied !== '')
             {
-                $this->log($runId, 'warning', self::PHASE_PREPARE, 'Legacy gateway credentials not reusable, enter them in Settings', ['error' => $copied]);
+                $this->log($runId, 'warning', self::PHASE_PREPARE, 'Legacy API credentials not reusable, enter them in Settings', ['error' => $copied]);
             }
             Store::addJob($runId, Store::KIND_SETTINGS, 0, 0, Store::JOB_DONE, null, ['filled' => $filled]);
             $this->log($runId, 'info', self::PHASE_PREPARE, 'Settings merged', ['filled' => $filled]);
@@ -479,7 +479,7 @@ class Engine
                     $migratedPids[] = $pid;
                     $recordPids[]   = $pid;
                     Store::addJob($runId, Store::KIND_PRODUCT, $pid, 0, Store::JOB_DONE, null, $data + ['name' => $p['name']]);
-                    $this->log($runId, 'info', self::PHASE_PREPARE, 'Product kept as a record (no gateway product)', ['pid' => $pid, 'name' => $p['name'], 'ref' => $ref]);
+                    $this->log($runId, 'info', self::PHASE_PREPARE, 'Product kept as a record (no %%VENDOR%% product)', ['pid' => $pid, 'name' => $p['name'], 'ref' => $ref]);
                     continue;
                 }
                 if(!empty($p['unsupported']))
@@ -489,7 +489,7 @@ class Engine
                 }
                 if(!$p['remote_product'])
                 {
-                    Store::addJob($runId, Store::KIND_PRODUCT, $pid, 0, Store::JOB_SKIPPED, 'No gateway product for "' . $p['legacy_product_ref'] . '"');
+                    Store::addJob($runId, Store::KIND_PRODUCT, $pid, 0, Store::JOB_SKIPPED, 'No %%VENDOR%% product for "' . $p['legacy_product_ref'] . '"');
                     $this->log($runId, 'warning', self::PHASE_PREPARE, 'Product not mapped, left on legacy module', ['pid' => $pid, 'ref' => $p['legacy_product_ref'], 'name' => $p['name']]);
                     continue;
                 }
@@ -846,7 +846,7 @@ class Engine
                 $written = $writer->writeRecordService($rec, $name);
                 $written += ['kind' => 'record', 'record' => true, 'legacy_status' => $rec['legacy_status'] ?? '', 'legacy_remoteid' => '', 'target_status' => '', 'warnings' => []];
                 Store::finishJob($jobId, Store::JOB_DONE, null, $written);
-                $this->log($runId, 'info', self::PHASE_SERVICES, 'Kept as a record (no gateway product)', ['remote_id' => $rec['remote_id'] ?? '', 'code' => $code], $serviceId);
+                $this->log($runId, 'info', self::PHASE_SERVICES, 'Kept as a record (no %%VENDOR%% product)', ['remote_id' => $rec['remote_id'] ?? '', 'code' => $code], $serviceId);
 
                 return;
             }
@@ -860,7 +860,7 @@ class Engine
             }
             if(!in_array((int)$rec['product_id'], $migratedProducts, true))
             {
-                Store::finishJob($jobId, Store::JOB_SKIPPED, 'Product not migrated (no gateway mapping)', ['product_id' => $rec['product_id']]);
+                Store::finishJob($jobId, Store::JOB_SKIPPED, 'Product not migrated (no %%VENDOR%% product mapping)', ['product_id' => $rec['product_id']]);
                 $this->log($runId, 'warning', self::PHASE_SERVICES, 'Skipped: product not migrated', ['product_id' => $rec['product_id']], $serviceId);
 
                 return;
@@ -877,12 +877,12 @@ class Engine
                     {
                         $rec['certificate']['remote_product_id'] = $productRemote;
                     }
-                    $rec['warnings'][] = 'Order product code "' . $code . '" unknown to the gateway: the service follows its product (' . $productRemote . ')';
+                    $rec['warnings'][] = 'Order product code "' . $code . '" unknown to %%VENDOR%%: the service follows its product (' . $productRemote . ')';
                 }
             }
             if(!empty($rec['order_payload']) && (string)($rec['order_payload']['product']['id'] ?? '') === '')
             {
-                throw new \RuntimeException('Order payload has no gateway product id');
+                throw new \RuntimeException('Order payload has no %%VENDOR%% product id');
             }
 
             $privateKey = (string)($rec['private_key'] ?? '');

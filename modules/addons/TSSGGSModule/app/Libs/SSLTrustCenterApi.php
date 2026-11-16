@@ -54,7 +54,7 @@ class SSLTrustCenterApi
         $credentials = self::credentialsOf($vendor);
         if($credentials === null)
         {
-            throw new \Exception('No gateway credentials configured for ' . Helpers::vendorToDisplay($vendor));
+            throw new \Exception('No API credentials configured for ' . Helpers::vendorToDisplay($vendor));
         }
 
         return new self($vendor, $credentials[0], $credentials[1], $category ?: 'tls');
@@ -901,7 +901,7 @@ class SSLTrustCenterApi
             $error = curl_error($c);
             curl_close($c);
             $this->logCall($method, $uri, $queryData, 0, '', microtime(true) - $started, $error, ['Time: ' . $info['total_time'] . ' ' . $uri, $queryData, $error]);
-            throw new \Exception('Gateway request failed: ' . $error);
+            throw new \Exception('%%VENDOR%% API request failed: ' . $error);
         }
 
         $result = substr($data, $info['header_size']);
