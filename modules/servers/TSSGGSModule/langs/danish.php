@@ -927,4 +927,4 @@ $_LANG['caa_now'] = 'CAA-post nu';
 $_LANG['caa_add'] = 'Tilføj denne post';
 $_LANG['caa_fix'] = 'Tilføj posten i domænets DNS-zone (eller fjern dets CAA-poster). DNS-ændringer kan tage op til en time om at slå igennem.';
 $_LANG['caa_gateway'] = 'Certifikatudstederen melder, at dens CAA-kontrol fejlede for denne ordre. Den kontrollerer igen, når CAA-posten tillader det.';
-$_LANG['caa_continue'] = 'Du kan fortsætte: ordren afgives nu, og certifikatet udstedes, når posten er rettet.';
+$_LANG['caa_gateway_fix'] = 'For at rette det skal du tilføje %s i domænets DNS-zone (eller fjerne dets CAA-poster). DNS-ændringer kan tage op til en time om at slå igennem.';

@@ -6,10 +6,9 @@ use ModulesGarden\TSSGGSModule\App\Models\Request;
 
 /**
  * CAA DNS records (RFC 8659): a domain owner lists the certificate authorities that may issue for the domain. A record
- * that does not list the product's authority stops the order at the CA without any message, so the module warns:
- * - on the validation step of the configuration (before the order is placed; the client can continue),
- * - on the pending certificate page and the admin service tab,
- * from its own DNS lookup and from the gateway's flag (items[].caa.status = 1: the CA's own check failed).
+ * that does not list the product's authority stops the order at the CA without any message, so the module warns on the
+ * pending certificate page and the admin service tab, from its own DNS lookup and from the order details
+ * (items[].caa.status = 1: the CA's own check failed). Texts never name the gateway: resellers know TheSSLStore / GoGetSSL.
  */
 class CaaCheck
 {
@@ -178,8 +177,21 @@ class CaaCheck
         $authority = self::authority($packageId);
         $blocked   = $authority ? self::blocked($authority, $domains) : [];
         $gateway   = self::gatewayFlag($orderData);
+        // the CA's check failed but DNS shows nothing here (changed since, or a resolver of its own): the record to add
+        // on the main domain, so the client still knows the fix
+        $suggest = '';
+        if($gateway && !$blocked && $authority)
+        {
+            $main     = strtolower(trim((string)($domains[0] ?? ($orderData['items'][0]['domains'][0]['name'] ?? ''))));
+            $wildcard = strpos($main, '*.') === 0;
+            $main     = $wildcard ? substr($main, 2) : $main;
+            if($main !== '')
+            {
+                $suggest = $main . '. CAA 0 ' . ($wildcard ? 'issuewild' : 'issue') . ' "' . self::IDENTIFIERS[$authority][0] . '"';
+            }
+        }
 
-        return $blocked || $gateway ? ['blocked' => $blocked, 'gateway' => $gateway, 'authority' => $authority ? self::NAMES[$authority] : ''] : null;
+        return $blocked || $gateway ? ['blocked' => $blocked, 'gateway' => $gateway, 'suggest' => $suggest, 'authority' => $authority ? self::NAMES[$authority] : ''] : null;
     }
 
     /** After a status sync: the first time the gateway flags CAA, the certificate log says so */
@@ -195,7 +207,8 @@ class CaaCheck
     }
 
     /**
-     * The warning box. $texts: title, intro (with %s = authority), fix, gateway, extra (optional last line)
+     * The warning box. $texts: title, intro (with %s = authority), inherited, now, add, fix, gateway, gateway_fix (%s = the
+     * record to add when only the CA reported it), extra (optional last line)
      */
     public static function html(array $warning, array $texts)
     {
@@ -218,6 +231,11 @@ class CaaCheck
         if(!empty($warning['gateway']))
         {
             $html .= '<p style="margin:' . (!empty($warning['blocked']) ? '8px' : '0') . ' 0 0">' . $e($texts['gateway']) . '</p>';
+            if(empty($warning['blocked']) && !empty($warning['suggest']) && !empty($texts['gateway_fix']))
+            {
+                // %s = the record to add
+                $html .= '<p style="margin:8px 0 0">' . str_replace('%s', '<code>' . $e($warning['suggest']) . '</code>', $e($texts['gateway_fix'])) . '</p>';
+            }
         }
         if(!empty($texts['extra']))
         {

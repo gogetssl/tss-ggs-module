@@ -927,4 +927,4 @@ $_LANG['caa_now'] = 'Současný záznam CAA';
 $_LANG['caa_add'] = 'Přidejte tento záznam';
 $_LANG['caa_fix'] = 'Přidejte záznam do DNS zóny domény (nebo její záznamy CAA odstraňte). Projevení změn v DNS může trvat až hodinu.';
 $_LANG['caa_gateway'] = 'Certifikační autorita hlásí, že kontrola CAA pro tuto objednávku selhala. Zkontroluje ji znovu, jakmile to záznam CAA povolí.';
-$_LANG['caa_continue'] = 'Můžete pokračovat: objednávka se odešle hned a certifikát bude vydán, jakmile bude záznam opraven.';
+$_LANG['caa_gateway_fix'] = 'Opravíte to přidáním %s do DNS zóny domény (nebo odstraněním jejích záznamů CAA). Projevení změn v DNS může trvat až hodinu.';

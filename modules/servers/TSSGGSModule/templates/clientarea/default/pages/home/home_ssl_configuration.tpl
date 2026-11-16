@@ -403,8 +403,6 @@
     </div>
     {/if}
 
-    <div id="tssggs-caa-box" style="margin-top:20px;"></div>
-
     <div style="margin-top:25px; padding-top:15px; border-top:1px solid #e0e0e0;">
         <button type="button" class="tssggs-btn tssggs-btn--primary" id="btn-submit-ssl-config">{$MGLANG->T('sslConfigSubmit')}</button>
         <span class="tssggs-required">
@@ -900,56 +898,12 @@
         });
     });
 
-    // ---- CAA DNS records (App\Libs\CaaCheck): a warning above the submit button, the client can still submit ----
-    var caaTimer = null;
-    var caaLast  = '';
-    function checkCaa() {
-        var data = { 'mg-action': 'checkCaa' };
-        if ($('#install_type').val() === 'autoinstall') {
-            var main = $('#main_domain').val();
-            if (main && main !== '__manual__') {
-                data['main_domain'] = ($('#wildcard_selected_autoinstall').is(':checked') && main.indexOf('*.') !== 0 ? '*.' : '') + main;
-            }
-            var sans = [];
-            $('select[name="san_domains[]"]').each(function () { if ($(this).val()) sans.push($(this).val()); });
-            $('select[name="wildcard_san_domains[]"]').each(function () { var v = $(this).val(); if (v) sans.push(v.indexOf('*.') === 0 ? v : '*.' + v); });
-            data['san_domains'] = sans.join("\n");
-        } else {
-            if (isManualCsrGenerated()) {
-                var manual = $.trim($('#manual_domain').val());
-                data['main_domain'] = ($('#wildcard_selected_manual').is(':checked') && manual && manual.indexOf('*.') !== 0 ? '*.' : '') + manual;
-            } else {
-                data['own_csr'] = $.trim($('#manual_own_csr').val());
-            }
-            data['san_domains'] = ($('#san_domains_manual').val() || '') + "\n" + ($('#wildcard_san_manual').val() || '');
-        }
-        var key = JSON.stringify(data);
-        if (key === caaLast) {
-            return;
-        }
-        caaLast = key;
-        $.post(serviceUrl, data, function (ret) {
-            var html = '';
-            try {
-                var payload = parseResponse(ret);
-                html = payload.data && payload.data.html ? payload.data.html : '';
-            } catch (e) {}
-            $('#tssggs-caa-box').html(html);
-        });
-    }
-    $(document).on('change input click', '#main_domain, #wildcard_selected_autoinstall, select[name="san_domains[]"], select[name="wildcard_san_domains[]"], '
-        + '#manual_own_csr, #manual_domain, #wildcard_selected_manual, #san_domains_manual, #wildcard_san_manual, #manual_auto_generate_csr, #btn-autoinstall, #btn-manual', function () {
-        clearTimeout(caaTimer);
-        caaTimer = setTimeout(checkCaa, 800);
-    });
-
     // ---- Init ----
     if (hasCpanel) {
         refreshAutoinstallDcv();
     } else {
         updateManualCsrMode();
     }
-    caaTimer = setTimeout(checkCaa, 800);
 
 }(jQuery));
 </script>

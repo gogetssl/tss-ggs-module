@@ -264,45 +264,6 @@ trait SslConfigurationActions
         ];
     }
 
-    /**
-     * CAA DNS records of the names about to be ordered (the CSR's common name and SANs, or the domains picked):
-     * ['html' => warning box, or '' when the certificate authority may issue]
-     */
-    public function checkCaaJSON($input, $vars = array())
-    {
-        $names = [];
-        $csr   = isset($input['own_csr']) ? trim((string)$input['own_csr']) : '';
-        if($csr !== '')
-        {
-            $subject = @openssl_csr_get_subject($csr);
-            if(!empty($subject['CN']))
-            {
-                $names[] = (string)$subject['CN'];
-            }
-        }
-        $names[] = isset($input['main_domain']) ? (string)$input['main_domain'] : '';
-        foreach(preg_split('/[\s,]+/', isset($input['san_domains']) ? (string)$input['san_domains'] : '') as $name)
-        {
-            $names[] = $name;
-        }
-        $clean = [];
-        foreach($names as $name)
-        {
-            $name = strtolower(trim($name));
-            // only names that look like domains (the field may hold half-typed text)
-            if($name !== '' && preg_match('/^(\*\.)?([a-z0-9-]+\.)+[a-z]{2,}$/', $name))
-            {
-                $clean[] = $name;
-            }
-        }
-        if(!$clean)
-        {
-            return ['html' => ''];
-        }
-
-        return ['html' => \ModulesGarden\Servers\TSSGGSModule\app\services\CaaWarning::beforeOrder($input['params']['packageid'], array_slice(array_unique($clean), 0, 50))];
-    }
-
     public function getApproverEmailsJSON($input, $vars = array())
     {
         $domain = isset($input['domain']) ? strtolower(trim($input['domain'])) : '';

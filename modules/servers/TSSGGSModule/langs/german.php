@@ -927,4 +927,4 @@ $_LANG['caa_now'] = 'CAA-Eintrag jetzt';
 $_LANG['caa_add'] = 'Diesen Eintrag hinzufügen';
 $_LANG['caa_fix'] = 'Fügen Sie den Eintrag in der DNS-Zone der Domain hinzu (oder entfernen Sie ihre CAA-Einträge). DNS-Änderungen können bis zu einer Stunde dauern.';
 $_LANG['caa_gateway'] = 'Die Zertifizierungsstelle meldet, dass ihre CAA-Prüfung für diese Bestellung fehlgeschlagen ist. Sie prüft erneut, sobald der CAA-Eintrag es erlaubt.';
-$_LANG['caa_continue'] = 'Sie können fortfahren: die Bestellung wird jetzt aufgegeben, und das Zertifikat wird ausgestellt, sobald der Eintrag korrigiert ist.';
+$_LANG['caa_gateway_fix'] = 'Zur Behebung fügen Sie %s in der DNS-Zone der Domain hinzu (oder entfernen Sie ihre CAA-Einträge). DNS-Änderungen können bis zu einer Stunde dauern.';

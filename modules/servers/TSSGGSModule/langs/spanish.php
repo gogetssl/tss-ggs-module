@@ -927,4 +927,4 @@ $_LANG['caa_now'] = 'Registro CAA actual';
 $_LANG['caa_add'] = 'Añada este registro';
 $_LANG['caa_fix'] = 'Añada el registro en la zona DNS del dominio (o elimine sus registros CAA). Los cambios de DNS pueden tardar hasta una hora.';
 $_LANG['caa_gateway'] = 'La autoridad de certificación informa de que su comprobación CAA falló para este pedido. Vuelve a comprobarlo cuando el registro CAA lo permita.';
-$_LANG['caa_continue'] = 'Puede continuar: el pedido se realiza ahora y el certificado se emite cuando se corrija el registro.';
+$_LANG['caa_gateway_fix'] = 'Para corregirlo, añada %s en la zona DNS del dominio (o elimine sus registros CAA). Los cambios de DNS pueden tardar hasta una hora.';

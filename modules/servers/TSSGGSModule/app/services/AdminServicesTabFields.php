@@ -111,8 +111,9 @@ class AdminServicesTabFields
                 'inherited' => 'record set on %s',
                 'now'       => 'CAA record now',
                 'add'       => 'Record to add',
-                'fix'       => 'The domain owner adds the record (or removes the CAA records); the CA then issues without a new order.',
-                'gateway'   => 'The gateway reports that the CA\'s own CAA check failed for this order.',
+                'fix'         => 'The domain owner adds the record (or removes the CAA records); the CA then issues without a new order.',
+                'gateway'     => 'The certificate authority reports that its CAA check failed for this order (the client sees the same notice).',
+                'gateway_fix' => 'Fix: the domain owner adds %s to the domain\'s DNS (or removes its CAA records); the CA then issues without a new order.',
             ]) : '';
         }
         catch(\Throwable $e)

@@ -927,4 +927,4 @@ $_LANG['caa_now'] = 'Enregistrement CAA actuel';
 $_LANG['caa_add'] = 'Ajoutez cet enregistrement';
 $_LANG['caa_fix'] = 'Ajoutez l’enregistrement dans la zone DNS du domaine (ou supprimez ses enregistrements CAA). Les modifications DNS peuvent prendre jusqu’à une heure.';
 $_LANG['caa_gateway'] = 'L’autorité de certification signale que sa vérification CAA a échoué pour cette commande. Elle vérifie à nouveau dès que l’enregistrement CAA l’autorise.';
-$_LANG['caa_continue'] = 'Vous pouvez continuer : la commande est passée maintenant et le certificat est émis dès que l’enregistrement est corrigé.';
+$_LANG['caa_gateway_fix'] = 'Pour corriger, ajoutez %s dans la zone DNS du domaine (ou supprimez ses enregistrements CAA). Les modifications DNS peuvent prendre jusqu’à une heure.';

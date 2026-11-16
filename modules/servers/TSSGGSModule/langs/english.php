@@ -927,4 +927,4 @@ $_LANG['caa_now'] = 'CAA record now';
 $_LANG['caa_add'] = 'Add this record';
 $_LANG['caa_fix'] = 'Add the record in the DNS zone of the domain (or remove its CAA records). DNS changes can take up to an hour to be seen.';
 $_LANG['caa_gateway'] = 'The certificate authority reports that its CAA check failed for this order. It checks again once the CAA record allows it.';
-$_LANG['caa_continue'] = 'You can continue: the order is placed now, and the certificate is issued once the record is fixed.';
+$_LANG['caa_gateway_fix'] = 'To fix it, add %s to the DNS zone of the domain (or remove its CAA records). DNS changes can take up to an hour to be seen.';
