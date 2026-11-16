@@ -32,6 +32,12 @@ const DEV_ONLY = [
     'modules/addons/TSSGGSModule/app/Cron/TestCommand.php',
     'modules/addons/TSSGGSModule/app/Migration/TestEnvironment.php',
 ];
+// framework tooling files that are never shipped, not even to the test box: of no use on a WHMCS server, and
+// ".codeclimate.yml" next to its SHA-256 in release-files.json is read by secret scanners (GitGuardian) as a
+// "Code Climate key" - a false positive raised on every release
+const NOT_SHIPPED = [
+    'modules/addons/TSSGGSModule/.codeclimate.yml',
+];
 const VERSION_FILE = 'modules/addons/TSSGGSModule/app/Config/configuration.yml';
 const TEXT_EXT = new Set(['.php', '.js', '.css', '.html', '.tpl', '.yml', '.yaml', '.json', '.sql', '.md', '.txt', '.lock', '.xml', '.svg', '.htaccess', '.ini', '.dist', '']);
 
@@ -61,6 +67,7 @@ execFileSync('git', ['-C', root, 'archive', '--format=tar', '-o', tarFile, ref, 
 execFileSync(TAR, ['-xf', tarFile, '-C', src]);
 
 if (!process.env.KEEP_DEV) DEV_ONLY.forEach((file) => fs.rmSync(path.join(src, file), { force: true }));
+NOT_SHIPPED.forEach((file) => fs.rmSync(path.join(src, file), { force: true }));
 if (!fs.existsSync(path.join(src, EDITION_FILE))) fail(EDITION_FILE + ' not found in ' + ref);
 const versionMatch = fs.readFileSync(path.join(src, VERSION_FILE), 'utf8').match(/^version:\s*'([^']+)'/m);
 if (!versionMatch) fail('version not found in ' + VERSION_FILE);
