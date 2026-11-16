@@ -1,3 +1,29 @@
+1.13.0 (2026-11-16)
+Additional SANs at full price, CAA warning, API names
+- Additional domains (SANs) a client adds to an SSL certificate after the
+  order cost the full price of the billing period (1, 2 or 3 years), as the
+  vendor charges it in full - not WHMCS's prorated price. The upgrade page and
+  the invoice show the same amounts. New setting Settings > SSL Certificates >
+  "Additional SANs Bought Later": Full price (default) or Prorated. Automated
+  SSL (ACME / Plan + Automate) domain slots keep their own setting.
+- Promotion codes for upgrades apply to the SAN price; tax follows the product
+  and the client as on any invoice.
+- Removing SANs: only domains bought in the last 30 days that the certificate
+  does not use and that were not followed by a reissue (or renewal) can be
+  removed. With "Credit on Downgrade" on in WHMCS, the client gets back the
+  price paid for them (WHMCS's prorated credit is topped up).
+- Renewal invoices that come to 0.00 (certificates and Automated SSL) are paid
+  at once and the service renews as for a paid invoice; the client gets no
+  invoice to pay.
+- CAA DNS records: when a domain's CAA record does not allow the certificate
+  authority of the product, the pending certificate page and the admin service
+  tab say so and show the record to add. The module checks DNS itself and
+  reads the authority's own CAA result.
+- The admin and client texts name your API (TheSSLStore / GoGetSSL).
+- The connection checks (dashboard, API settings, migration) use the API's
+  credential check instead of loading the product list: faster. "Test
+  connection" now checks every configured API.
+
 1.12.0 (2026-11-15)
 One-click module update
 - The module looks for a new release once a day (the GitHub release of its
