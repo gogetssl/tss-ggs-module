@@ -11,7 +11,8 @@ use WHMCS\Database\Capsule;
  *
  * WHMCS computes upgrade prices in encoded code, so two hooks correct them (as the GoGetSSL module 2.x did):
  * - ClientAreaPageUpgrade (summary step): the prices, discount, tax and total the client confirms
- * - InvoiceCreationPreEmail / InvoiceCreated: the upgrade invoice, its promotion line and the order amount
+ * - InvoiceCreation (the invoice is still being built): the upgrade invoice and its promotion line;
+ *   InvoiceCreated: the order amount follows
  *
  * Only SSL/TLS certificate products of the module and only their SAN options ("sans", "sans_wildcard"). ACME and
  * Plan + Automate domain slots have their own setting (Settings > SSL > Subscriptions); other configurable options
@@ -175,7 +176,8 @@ class UpgradePricing
 
         return [
             'upgrades' => $upgrades,
-            'subtotal' => formatCurrency($net),
+            // before the discount, as WHMCS shows it: subtotal, discount, then the total
+            'subtotal' => formatCurrency($subtotal),
             'discount' => formatCurrency($discount),
             'tax'      => formatCurrency($tax),
             'tax2'     => formatCurrency($tax2),
@@ -224,8 +226,10 @@ class UpgradePricing
     /* ---------------------------------------------------------------- invoice */
 
     /**
-     * InvoiceCreationPreEmail / InvoiceCreated: the SAN lines of an upgrade invoice at full price, the promotion line
-     * worked out on that price, the order amount following. Runs once per invoice.
+     * InvoiceCreation: the SAN lines of an upgrade invoice at full price and the promotion line worked out on that
+     * price - while WHMCS still builds the invoice. WHMCS 9 refuses any change to the lines of a finalised invoice
+     * ("only in Draft status"), and credit on the account can pay it the moment it is finalised, so this is the only
+     * point where the price can be set. WHMCS recalculates the totals (and tax) after this hook. Runs once per invoice.
      */
     public static function fixInvoice($invoiceId)
     {
@@ -235,8 +239,8 @@ class UpgradePricing
             return false;
         }
         $items = Capsule::table('tblinvoiceitems')->where('invoiceid', $invoiceId)->get(['id', 'type', 'relid', 'description', 'amount', 'taxed']);
-        $lines = [];   // invoice item id => [amount, configId]
-        $orderId = 0;
+        $lines     = [];   // invoice item id => [new amount, config option id, WHMCS's amount, upgrade id]
+        $orderId   = 0;
         $serviceId = 0;
         foreach($items as $item)
         {
@@ -249,15 +253,15 @@ class UpgradePricing
             {
                 continue;
             }
-            $configId = (int)explode('=>', (string)$upgrade->originalvalue)[0];
+            $configId  = (int)explode('=>', (string)$upgrade->originalvalue)[0];
             $packageId = (int)Capsule::table('tblhosting')->where('id', (int)$upgrade->relid)->value('packageid');
-            $amount   = (float)$item->amount;
+            $amount    = (float)$item->amount;
             if(in_array($configId, self::sanOptionIds($packageId), true) && (float)$upgrade->recurringchange > 0)
             {
+                // the full price of the added SANs for the billing cycle
                 $amount = round((float)$upgrade->recurringchange, 2);
-                Capsule::table('tblupgrades')->where('id', (int)$upgrade->id)->update(['amount' => $amount]);
             }
-            $lines[(int)$item->id] = [$amount, $configId, (float)$item->amount];
+            $lines[(int)$item->id] = [$amount, $configId, (float)$item->amount, (int)$upgrade->id];
             $orderId   = (int)$upgrade->orderid;
             $serviceId = (int)$upgrade->relid;
         }
@@ -267,17 +271,11 @@ class UpgradePricing
             return false;
         }
 
-        $update = ['invoiceid' => $invoiceId, 'itemdescription' => [], 'itemamount' => [], 'itemtaxed' => []];
-        foreach($items as $item)
+        $set = []; // invoice item id => amount
+        foreach($changed as $itemId => $line)
         {
-            if(isset($changed[(int)$item->id]))
-            {
-                $update['itemdescription'][(int)$item->id] = $item->description;
-                $update['itemamount'][(int)$item->id]      = $changed[(int)$item->id][0];
-                $update['itemtaxed'][(int)$item->id]       = (int)$item->taxed;
-            }
+            $set[$itemId] = $line[0];
         }
-
         // the promotion line (negative, naming the code) is worked out again on the corrected prices
         $code  = $orderId ? (string)Capsule::table('tblorders')->where('id', $orderId)->value('promocode') : '';
         $promo = self::promotion($code);
@@ -292,35 +290,48 @@ class UpgradePricing
             {
                 if((float)$item->amount < 0 && $item->type !== 'Upgrade' && stripos((string)$item->description, $code) !== false)
                 {
-                    $update['itemdescription'][(int)$item->id] = $item->description;
-                    $update['itemamount'][(int)$item->id]      = -1 * round($discount, 2);
-                    $update['itemtaxed'][(int)$item->id]       = (int)$item->taxed;
+                    $set[(int)$item->id] = -1 * round($discount, 2);
                     break;
                 }
             }
         }
 
-        $result = localAPI('UpdateInvoice', $update);
-        if(($result['result'] ?? '') !== 'success')
+        Capsule::connection()->transaction(function() use ($set, $changed) {
+            foreach($set as $itemId => $amount)
+            {
+                Capsule::table('tblinvoiceitems')->where('id', (int)$itemId)->update(['amount' => $amount]);
+            }
+            foreach($changed as $line)
+            {
+                Capsule::table('tblupgrades')->where('id', $line[3])->update(['amount' => $line[0]]);
+            }
+        });
+        if(function_exists('updateInvoiceTotal'))
         {
-            GeneralSettings::activity('Upgrade invoice #' . $invoiceId . ': SAN prices could not be set to full price: ' . ($result['message'] ?? 'unknown error'));
-
-            return false;
-        }
-        $total = (float)Capsule::table('tblinvoices')->where('id', $invoiceId)->value('total');
-        if($orderId)
-        {
-            Capsule::table('tblorders')->where('id', $orderId)->update(['amount' => $total]);
+            updateInvoiceTotal($invoiceId);
         }
         \ModulesGarden\TSSGGSModule\App\Models\Request::insert([
-            'serviceid' => $invoiceId, 'name' => self::DONE, 'request' => json_encode(['service' => $serviceId, 'lines' => $changed]),
+            'serviceid' => $invoiceId, 'name' => self::DONE, 'request' => json_encode(['service' => $serviceId, 'order' => $orderId, 'lines' => $changed, 'set' => $set]),
             'status' => 'done', 'created_at' => date('Y-m-d H:i:s'), 'updated_at' => date('Y-m-d H:i:s'),
         ]);
         if($serviceId)
         {
-            CertificateService::event($serviceId, 'info', '[Upgrade] Invoice #' . $invoiceId . ': additional SANs charged at full price (total ' . number_format($total, 2, '.', '') . ')');
+            CertificateService::event($serviceId, 'info', '[Upgrade] Invoice #' . $invoiceId . ': additional SANs charged at full price');
         }
 
         return true;
+    }
+
+    /** InvoiceCreated: the upgrade order's amount follows the corrected invoice */
+    public static function syncOrder($invoiceId)
+    {
+        $row = \ModulesGarden\TSSGGSModule\App\Models\Request::where('name', self::DONE)->where('serviceid', (int)$invoiceId)->first();
+        $data = $row ? (json_decode((string)$row->request, true) ?: []) : [];
+        if(empty($data['order']))
+        {
+            return;
+        }
+        $total = (float)Capsule::table('tblinvoices')->where('id', (int)$invoiceId)->value('total');
+        Capsule::table('tblorders')->where('id', (int)$data['order'])->update(['amount' => $total]);
     }
 }

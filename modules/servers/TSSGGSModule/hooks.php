@@ -274,19 +274,26 @@ add_hook('ClientAreaPageUpgrade', 1, function($vars) {
         return [];
     }
 });
-foreach(['InvoiceCreationPreEmail', 'InvoiceCreated'] as $moduleUpgradeInvoiceHook)
-{
-    add_hook($moduleUpgradeInvoiceHook, 1, function($vars) {
-        try
-        {
-            \ModulesGarden\TSSGGSModule\App\Libs\UpgradePricing::fixInvoice(isset($vars['invoiceid']) ? (int)$vars['invoiceid'] : 0);
-        }
-        catch(\Throwable $e)
-        {
-            logActivity('TSSGGSModule: SAN upgrade invoice could not be corrected: ' . $e->getMessage());
-        }
-    });
-}
+// while WHMCS still builds the invoice (WHMCS 9 refuses changes to a finalised one)
+add_hook('InvoiceCreation', 1, function($vars) {
+    try
+    {
+        \ModulesGarden\TSSGGSModule\App\Libs\UpgradePricing::fixInvoice(isset($vars['invoiceid']) ? (int)$vars['invoiceid'] : 0);
+    }
+    catch(\Throwable $e)
+    {
+        logActivity('TSSGGSModule: SAN upgrade invoice could not be corrected: ' . $e->getMessage());
+    }
+});
+add_hook('InvoiceCreated', 1, function($vars) {
+    try
+    {
+        \ModulesGarden\TSSGGSModule\App\Libs\UpgradePricing::syncOrder(isset($vars['invoiceid']) ? (int)$vars['invoiceid'] : 0);
+    }
+    catch(\Throwable $e)
+    {
+    }
+});
 
 // Paid SAN upgrade of an ordered certificate - buy the additional SANs at the gateway
 add_hook('AfterConfigOptionsUpgrade', 1, function($vars) {
