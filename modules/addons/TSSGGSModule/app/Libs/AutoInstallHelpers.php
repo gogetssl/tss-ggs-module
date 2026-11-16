@@ -649,6 +649,8 @@ class AutoInstallHelpers
 
             // api_order_id holds the certificate (item) ID - the one used by /certificates/* endpoints
             $newOrderId = SSLTrustCenterApi::getItemId($reissue, $remoteId);
+            // SANs bought before a reissue can no longer be given back for a refund
+            SanUpgrade::noteReissue($serviceId);
 
             // Same bookkeeping as the client area reissue (home::reissueStep3)
             Request::where('serviceid', $serviceId)->where('name', 'addOrder')->update([

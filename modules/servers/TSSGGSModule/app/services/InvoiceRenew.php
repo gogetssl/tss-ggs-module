@@ -132,7 +132,8 @@ class InvoiceRenew {
 
         $results = localAPI('CreateInvoice', [
             'userid' => $service['userid'],
-            'sendinvoice' => !EmailTemplates::renewalInvoiceEmailActive(),
+            // a 0.00 renewal is paid at once below: no "please pay" e-mail
+            'sendinvoice' => (float)$itemAmount > 0 && !EmailTemplates::renewalInvoiceEmailActive(),
             'date' => date('Y-m-d'),
             'duedate' => $invoiceDueDate,
             'itemdescription1' => $invoiceItemDescription,
@@ -145,17 +146,14 @@ class InvoiceRenew {
             throw new \Exception('The renewal invoice could not be created' . (!empty($results['message']) ? ': ' . $results['message'] : ''));
         }
         $invoiceId = $results['invoiceid'];
-        EmailTemplates::sendRenewalInvoiceEmail($serviceId, $invoiceId);
-        \ModulesGarden\TSSGGSModule\App\Libs\ProductCatalog::noticeIfDiscontinued($serviceId);
         InvoiceItem::where('invoiceid', $invoiceId)->update(['type' => 'Hosting', 'relid' => $serviceId]);
-        $invoiceData = Invoice::where('id', $invoiceId)->first()->toArray();
-
-        if($invoiceData['total'] == '0.00')
+        // a renewal that costs nothing (0.00) is paid at once, so the renewal starts (WHMCS renews the service as for
+        // a paid invoice); the client gets no invoice to pay
+        if(!\ModulesGarden\TSSGGSModule\App\Libs\ZeroInvoice::settle($invoiceId, 'renewal of service #' . (int)$serviceId))
         {
-            Invoice::where('id', $invoiceId)->update(['status' => 'Unpaid']);
-            localAPI('UpdateInvoice', ['invoiceid' => $invoiceId, 'status' => 'Paid']);
-            run_hook("InvoicePaid", ["invoiceid" => $invoiceId]);
+            EmailTemplates::sendRenewalInvoiceEmail($serviceId, $invoiceId);
         }
+        \ModulesGarden\TSSGGSModule\App\Libs\ProductCatalog::noticeIfDiscontinued($serviceId);
 
         return $invoiceId;
     }

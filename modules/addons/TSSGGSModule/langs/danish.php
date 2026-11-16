@@ -1471,6 +1471,10 @@ $_LANG['admin.configuration.content.step2.command_hint'] = 'Kør dette på serve
 
 $_LANG['admin.settings.index.forms.ssl_settings_form.terminateUnpaidSubscriptions'] = 'Afslut ubetalte abonnementer';
 $_LANG['admin.settings.index.forms.ssl_settings_form.terminateUnpaidSubscriptions_description'] = 'Er fornyelsesfakturaen stadig ubetalt efter forfaldsdatoen, opsiges abonnementet hos leverandøren, før det fornyes, og tjenesten afsluttes. Fornyelsesfakturaen forfalder dagen før abonnementet fornyes.';
+$_LANG['admin.settings.index.forms.ssl_settings_form.sanUpgradePricing'] = 'Ekstra SAN-navne købt senere';
+$_LANG['admin.settings.index.forms.ssl_settings_form.sanUpgradePricing_description'] = 'Pris for ekstra domæner (SAN), som en kunde tilføjer et SSL-certifikat efter bestillingen. Fuld pris: prisen for hele faktureringsperioden (1, 2 eller 3 år), da leverandøren opkræver den fuldt ud. Forholdsmæssig: WHMCS-prisen for den tid, der er tilbage til næste forfaldsdato. Kampagnekoder for opgraderinger gælder i begge tilfælde. En kunde kan kun fjerne domæner købt inden for de sidste 30 dage, så længe certifikatet ikke bruger dem og ikke er genudstedt siden; når "Credit on Downgrade" er slået til i WHMCS, krediteres den betalte pris.';
+$_LANG['admin.settings.index.providers.ssl_settings_provider.sanUpgradePricing_full'] = 'Fuld pris for faktureringsperioden';
+$_LANG['admin.settings.index.providers.ssl_settings_provider.sanUpgradePricing_prorated'] = 'Forholdsmæssigt til næste forfaldsdato';
 $_LANG['admin.settings.index.forms.ssl_settings_form.subscriptionSlotPricing'] = 'Pris for "Køb flere domæner"';
 $_LANG['admin.settings.index.forms.ssl_settings_form.subscriptionSlotPricing_description'] = 'Pris for domæner (pladser), som en kunde køber i abonnementsperioden. Forholdsmæssig: årsprisen for de dage, der er tilbage til næste fornyelse. Fuld pris: årsprisen, uanset hvornår de købes. Fornyelsen opkræver altid den fulde årspris for alle domæner.';
 $_LANG['admin.settings.index.providers.ssl_settings_provider.subscriptionSlotPricing_prorated'] = 'Forholdsmæssigt til næste fornyelse';

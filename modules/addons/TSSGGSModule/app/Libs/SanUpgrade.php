@@ -13,6 +13,18 @@ class SanUpgrade
 {
     const REQUEST_NAME = 'purchasedSans';
     const LEDGER_NAME  = 'sanLedger';
+    const LAST_REISSUE = 'sanLastReissue';
+
+    /** Settings > SSL "Additional SANs bought later": the full price for the billing cycle (default) or WHMCS's prorated one */
+    const PRICING_FULL     = 'full';
+    const PRICING_PRORATED = 'prorated';
+
+    public static function pricing()
+    {
+        $settings = (new \ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository())->getModuleConfiguration()['sslSettings'] ?? [];
+
+        return ($settings['sanUpgradePricing'] ?? self::PRICING_FULL) === self::PRICING_PRORATED ? self::PRICING_PRORATED : self::PRICING_FULL;
+    }
 
     /** extra SANs can be reduced this many days after their purchase */
     const DOWNGRADE_DAYS = 30;
@@ -118,7 +130,7 @@ class SanUpgrade
         $wildcard = max(0, $current['wildcard'] - (int)$purchased['wildcard']);
         if(!$single && !$wildcard)
         {
-            self::afterDowngrade($serviceId, $current, $purchased);
+            self::afterDowngrade($serviceId, $current, $purchased, $upgrade);
 
             return;
         }
@@ -132,7 +144,9 @@ class SanUpgrade
             {
                 if($qty > 0)
                 {
-                    $ledger[] = ['type' => $type, 'qty' => $qty, 'date' => date('Y-m-d'), 'initial' => false];
+                    // "paid": what the client paid for them (after a promotion, before tax) - the refund if given back
+                    $ledger[] = ['type' => $type, 'qty' => $qty, 'date' => date('Y-m-d'), 'at' => date('Y-m-d H:i:s'), 'initial' => false,
+                                 'paid' => self::paidForUpgrade($serviceId, $upgrade, $type)];
                 }
             }
             self::saveLedger($serviceId, $ledger);
@@ -201,68 +215,265 @@ class SanUpgrade
         );
     }
 
+    /** The certificate was reissued (client, admin or automatic): SANs bought before it are no longer refundable */
+    public static function noteReissue($serviceId)
+    {
+        try
+        {
+            Request::updateOrInsert(
+                ['serviceid' => (int)$serviceId, 'name' => self::LAST_REISSUE],
+                ['request' => date('Y-m-d H:i:s'), 'status' => 'done', 'created_at' => date('Y-m-d H:i:s'), 'updated_at' => date('Y-m-d H:i:s')]
+            );
+        }
+        catch(\Throwable $e)
+        {
+            // never break a reissue that went through at the vendor
+        }
+    }
+
+    /** Date and time of the last reissue or renewal order of the certificate ('' when none) */
+    public static function lastReissue($serviceId)
+    {
+        $reissue = (string)Request::where('serviceid', (int)$serviceId)->where('name', self::LAST_REISSUE)->value('request');
+        $renewal = (string)Request::where('serviceid', (int)$serviceId)->where('name', 'renewOrder')->max('created_at');
+
+        return max($reissue, $renewal);
+    }
+
     /**
-     * SANs that can still be reduced per type: bought after the order, not older than DOWNGRADE_DAYS
+     * Names the certificate uses beyond the common name ['single' => n, 'wildcard' => n] (the request of the current
+     * order or of its last reissue)
+     */
+    public static function usedNames($serviceId)
+    {
+        $used    = ['single' => 0, 'wildcard' => 0];
+        $request = Request::currentOrder((int)$serviceId);
+        $data    = $request && $request->request ? (json_decode((string)\decrypt($request->request), true) ?: []) : [];
+        $common  = strtolower((string)($data['common_name']['name'] ?? ''));
+        $base    = strpos($common, '*.') === 0 ? substr($common, 2) : null;
+        foreach((array)($data['alternative_names'] ?? []) as $san)
+        {
+            $name = strtolower(trim((string)(is_array($san) ? ($san['name'] ?? '') : $san)));
+            if($name === '' || $name === $common || $name === $base)
+            {
+                continue;
+            }
+            $used[strpos($name, '*.') === 0 ? 'wildcard' : 'single']++;
+        }
+
+        return $used;
+    }
+
+    /**
+     * A ledger purchase that can be given back for a refund: bought after the order, within DOWNGRADE_DAYS, and the
+     * certificate has not been reissued (or renewed) since
+     */
+    protected static function refundableEntry(array $entry, $lastReissue)
+    {
+        if(!empty($entry['initial']) || $entry['date'] < date('Y-m-d', strtotime('-' . self::DOWNGRADE_DAYS . ' days')))
+        {
+            return false;
+        }
+        if($lastReissue === '')
+        {
+            return true;
+        }
+        // purchases recorded before the time was kept: a reissue on the same day counts as after them
+        return isset($entry['at']) ? $entry['at'] > $lastReissue : $entry['date'] > substr($lastReissue, 0, 10);
+    }
+
+    /**
+     * SANs that can still be reduced per type: refundable purchases (refundableEntry), and never into names the
+     * certificate uses
      * @return array ['single' => n, 'wildcard' => n]
      */
     public static function reducible($serviceId)
     {
         $result = ['single' => 0, 'wildcard' => 0];
-        $limit  = date('Y-m-d', strtotime('-' . self::DOWNGRADE_DAYS . ' days'));
+        $last   = self::lastReissue($serviceId);
         foreach(self::ledger($serviceId) as $entry)
         {
-            if(empty($entry['initial']) && $entry['date'] >= $limit)
+            if(self::refundableEntry($entry, $last))
             {
                 $result[$entry['type']] += (int)$entry['qty'];
             }
+        }
+        $paid = self::currentQuantities($serviceId);
+        $used = self::usedNames($serviceId);
+        foreach($result as $type => $count)
+        {
+            $result[$type] = max(0, min($count, $paid[$type] - $used[$type]));
         }
 
         return $result;
     }
 
     /**
-     * After a reduction: the newest reducible purchases are used up first
+     * Takes reduced SANs out of the ledger, newest refundable purchases first.
+     * @return array [ledger, refund (what the client paid for them), refund known (every purchase taken has its price)]
      */
-    protected static function afterDowngrade($serviceId, array $current, array $purchased)
+    protected static function take(array $ledger, array $remove, $lastReissue)
     {
-        $ledger  = self::ledger($serviceId, $purchased);
-        $limit   = date('Y-m-d', strtotime('-' . self::DOWNGRADE_DAYS . ' days'));
-        $removed = [];
-        foreach(['single', 'wildcard'] as $type)
+        $refund = 0.0;
+        $known  = true;
+        foreach($remove as $type => $left)
         {
-            $left = max(0, (int)$purchased[$type] - (int)$current[$type]);
-            if(!$left)
-            {
-                continue;
-            }
-            $removed[$type] = $left;
             for($i = count($ledger) - 1; $i >= 0 && $left > 0; $i--)
             {
-                if($ledger[$i]['type'] !== $type || !empty($ledger[$i]['initial']) || $ledger[$i]['date'] < $limit)
+                if($ledger[$i]['type'] !== $type || !self::refundableEntry($ledger[$i], $lastReissue))
                 {
                     continue;
                 }
-                $take = min($left, (int)$ledger[$i]['qty']);
+                $qty  = (int)$ledger[$i]['qty'];
+                $take = min($left, $qty);
+                if(isset($ledger[$i]['paid']) && $qty > 0)
+                {
+                    $part = round((float)$ledger[$i]['paid'] * $take / $qty, 2);
+                    $refund += $part;
+                    $ledger[$i]['paid'] = round((float)$ledger[$i]['paid'] - $part, 2);
+                }
+                else
+                {
+                    $known = false;
+                }
                 $ledger[$i]['qty'] -= $take;
                 $left -= $take;
             }
         }
-        if(!$removed)
+
+        return [$ledger, round($refund, 2), $known];
+    }
+
+    /**
+     * What the client gets back for reducing the SANs ['single' => n, 'wildcard' => n]: the price paid for them, or
+     * null when it is not known (purchases made before the module recorded prices) - WHMCS's own credit then applies
+     */
+    public static function refundQuote($serviceId, array $remove)
+    {
+        list(, $refund, $known) = self::take(self::ledger($serviceId), $remove, self::lastReissue($serviceId));
+
+        return $known ? $refund : null;
+    }
+
+    /**
+     * What the client paid for the SANs of one type added by an upgrade order: its invoice line, less its share of the
+     * promotion line, before tax (0.00 when WHMCS made no invoice)
+     */
+    protected static function paidForUpgrade($serviceId, $upgrade, $type)
+    {
+        $rows      = self::optionQuantities($serviceId);
+        $configId  = isset($rows[$type]) ? (int)$rows[$type]->configid : 0;
+        $paid      = 0.0;
+        // this upgrade, or the other option's upgrade of the same order (both SAN types changed at once)
+        $upgrades  = (int)$upgrade->orderid > 0
+            ? Capsule::table('tblupgrades')->where('orderid', (int)$upgrade->orderid)->where('type', 'configoptions')->get()->all()
+            : [$upgrade];
+        foreach($upgrades as $row)
+        {
+            if((int)explode('=>', (string)$row->originalvalue)[0] !== $configId)
+            {
+                continue;
+            }
+            $line = Capsule::table('tblinvoiceitems')->where('type', 'Upgrade')->where('relid', (int)$row->id)->first(['invoiceid', 'amount']);
+            if(!$line)
+            {
+                continue;
+            }
+            $items    = Capsule::table('tblinvoiceitems')->where('invoiceid', (int)$line->invoiceid)->pluck('amount')->all();
+            $positive = array_sum(array_filter(array_map('floatval', $items), function($a) { return $a > 0; }));
+            $factor   = $positive > 0 ? max(0, array_sum(array_map('floatval', $items))) / $positive : 1;
+            $paid    += round((float)$line->amount * $factor, 2);
+        }
+
+        return round($paid, 2);
+    }
+
+    /**
+     * After a reduction: the newest refundable purchases are taken out first; when WHMCS credits downgrades, the client
+     * gets back what was paid for them (WHMCS credits a prorated amount: the difference is credited, or taken back)
+     */
+    protected static function afterDowngrade($serviceId, array $current, array $purchased, $upgrade = null)
+    {
+        // WHMCS runs the hook once per changed option: only this upgrade's SAN type is settled here (and remembered), so
+        // its credit is compared with this upgrade's own WHMCS credit
+        $only = $upgrade ? self::upgradeType($serviceId, $upgrade) : null;
+        if($only)
+        {
+            $other           = $only === 'single' ? 'wildcard' : 'single';
+            $current[$other] = (int)$purchased[$other];
+        }
+        $remove = [];
+        foreach(['single', 'wildcard'] as $type)
+        {
+            $left = max(0, (int)$purchased[$type] - (int)$current[$type]);
+            if($left)
+            {
+                $remove[$type] = $left;
+            }
+        }
+        if(!$remove)
         {
             return;
         }
+        list($ledger, $refund, $known) = self::take(self::ledger($serviceId, $purchased), $remove, self::lastReissue($serviceId));
 
         self::saveLedger($serviceId, array_filter($ledger, function($entry) { return (int)$entry['qty'] > 0; }));
         self::rememberPurchased($serviceId, $current);
-        $text = 'SANs reduced by the client: ' . implode(', ', array_map(function($type, $qty) { return $qty . ' ' . $type; }, array_keys($removed), $removed))
+        $text = 'SANs reduced by the client: ' . implode(', ', array_map(function($type, $qty) { return $qty . ' ' . $type; }, array_keys($remove), $remove))
             . ' - reduce them at the vendor too if it refunds extra SANs';
+        if($upgrade && $known && \WHMCS\Config\Setting::getValue('CreditOnDowngrade') === 'on')
+        {
+            $text .= self::creditDifference($serviceId, $upgrade, $refund);
+        }
         CertificateService::event($serviceId, 'info', $text);
         GeneralSettings::activity('Service #' . $serviceId . ': ' . $text);
     }
 
+    /** 'single' | 'wildcard': the SAN option an upgrade row changed (null when it is not a SAN option) */
+    protected static function upgradeType($serviceId, $upgrade)
+    {
+        $configId = (int)explode('=>', (string)$upgrade->originalvalue)[0];
+        foreach(self::optionQuantities($serviceId) as $type => $row)
+        {
+            if((int)$row->configid === $configId)
+            {
+                return $type;
+            }
+        }
+
+        return null;
+    }
+
+    /** Credits the client the difference between the price paid and WHMCS's prorated downgrade credit */
+    protected static function creditDifference($serviceId, $upgrade, $refund)
+    {
+        // this upgrade's own credit (the hook runs before WHMCS links the upgrade to its order)
+        $whmcs      = (float)$upgrade->amount < 0 ? -(float)$upgrade->amount : 0.0;
+        $difference = round($refund - $whmcs, 2);
+        if(abs($difference) < 0.005)
+        {
+            return '; credited ' . number_format($refund, 2, '.', '') . ' (the price paid)';
+        }
+        $clientId = (int)Capsule::table('tblhosting')->where('id', (int)$serviceId)->value('userid');
+        $balance  = (float)Capsule::table('tblclients')->where('id', $clientId)->value('credit');
+        // never below zero: credit the client has already used is not taken back
+        $difference = max($difference, -$balance);
+        Capsule::table('tblcredit')->insert([
+            'clientid'    => $clientId,
+            'date'        => date('Y-m-d'),
+            'description' => 'Upgrade/Downgrade Credit: additional SANs refunded at the price paid',
+            'amount'      => $difference,
+            'relid'       => 0,
+        ]);
+        Capsule::table('tblclients')->where('id', $clientId)->update(['credit' => round($balance + $difference, 2)]);
+
+        return '; credited ' . number_format($refund, 2, '.', '') . ' (the price paid; WHMCS credited ' . number_format($whmcs, 2, '.', '') . ', difference ' . number_format($difference, 2, '.', '') . ')';
+    }
+
     /**
      * Error message when the posted quantities lower the SANs of an ordered certificate more than allowed, '' otherwise:
-     * only SANs bought after the order can be reduced, and only within DOWNGRADE_DAYS of their purchase
+     * only SANs bought after the order, within DOWNGRADE_DAYS, not used by the certificate and not followed by a reissue
+     * (the vendor refunds nothing else)
      */
     public static function downgradeError($serviceId, array $postedOptions)
     {
@@ -276,7 +487,7 @@ class SanUpgrade
         {
             if(isset($postedOptions[$row->configid]) && (int)$row->qty - (int)$postedOptions[$row->configid] > $reducible[$type])
             {
-                return 'You can only reduce SANs that were bought after the order and not longer than ' . self::DOWNGRADE_DAYS . ' days ago (' . $reducible[$type] . ' can be reduced now).';
+                return 'You can only remove additional domains bought within the last ' . self::DOWNGRADE_DAYS . ' days that the certificate does not use yet and only if it has not been reissued since they were bought (' . $reducible[$type] . ' can be removed now).';
             }
         }
 
