@@ -203,7 +203,7 @@ class AutoInstallReport
             }
             $html .= '</table>' . (count($sections[$key]) > self::MAX_ROWS ? '<p>... and ' . (count($sections[$key]) - self::MAX_ROWS) . ' more.</p>' : '');
         }
-        $html .= '<p>The details of each service are in the module\'s Certificate Log. This e-mail can be turned off in Settings &gt; SSL Certificates &gt; AutoInstall.</p>';
+        $html .= '<p>The details of each service are in the module\'s Certificate Log. This e-mail can be turned off in Settings &gt; Automated SSL &gt; AutoInstall (cPanel).</p>';
 
         return $html;
     }
