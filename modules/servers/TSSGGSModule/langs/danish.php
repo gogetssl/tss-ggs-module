@@ -939,3 +939,7 @@ $_LANG['serverCA']['home']['sslConfigIpNamesRequired'] = 'Angiv mindst én offen
 $_LANG['sslConfigIpNamesRequired'] = 'Angiv mindst én offentlig IP-adresse eller ét domænenavn.';
 $_LANG['serverCA']['home']['sslConfigIpCsrHasCn'] = 'Dette certifikat kræver en CSR uden common name: opret CSR\'en igen uden CN, eller vælg "Generér CSR automatisk".';
 $_LANG['sslConfigIpCsrHasCn'] = 'Dette certifikat kræver en CSR uden common name: opret CSR\'en igen uden CN, eller vælg "Generér CSR automatisk".';
+$_LANG['serverCA']['home']['reissueIpCsrHint'] = 'Dette certifikat sikrer offentlige IP-adresser: indsæt en CSR uden common name. Hovednavnet %s bevares; angiv de øvrige IP-adresser eller domænenavne nedenfor.';
+$_LANG['reissueIpCsrHint'] = 'Dette certifikat sikrer offentlige IP-adresser: indsæt en CSR uden common name. Hovednavnet %s bevares; angiv de øvrige IP-adresser eller domænenavne nedenfor.';
+$_LANG['serverCA']['home']['reissueIpCsrHasCn'] = 'Dette certifikat kræver en CSR uden common name: opret CSR\'en igen uden CN.';
+$_LANG['reissueIpCsrHasCn'] = 'Dette certifikat kræver en CSR uden common name: opret CSR\'en igen uden CN.';

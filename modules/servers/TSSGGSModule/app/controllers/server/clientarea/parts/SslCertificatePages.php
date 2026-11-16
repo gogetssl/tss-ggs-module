@@ -422,6 +422,16 @@ trait SslCertificatePages
         $vars['sans_wildcard']     += (int)$params['configoption8'];
         $vars['serviceid']         = $input['id'];
 
+        // a certificate for public IPs (App\Libs\IpCertificate): CSR without common name, the main name stays and
+        // uses one of the product's SANs - the field takes the other names only
+        $vars['ipProduct'] = \ModulesGarden\TSSGGSModule\App\Libs\IpCertificate::isProduct($params['packageid']);
+        if($vars['ipProduct'])
+        {
+            $vars['sans']          = max(0, (int)$vars['sans'] - 1);
+            $vars['sans_wildcard'] = 0;
+            $vars['ip_csr_hint']   = sprintf(Lang::absoluteT('reissueIpCsrHint'), (string)$input['params']['domain']);
+        }
+
         // Reissue with the AutoInstall key keeps the automatic installation; more SANs can be bought before the reissue
         $autoInstall             = AutoInstallHelpers::get($serviceId);
         $vars['autoinstall_key'] = !empty($autoInstall['private_key']) && $autoInstall['status'] !== AutoInstallHelpers::STATUS_DISABLED;
@@ -498,7 +508,7 @@ trait SslCertificatePages
             {
                 if($mainName !== '')
                 {
-                    throw new \Exception(Lang::absoluteT('sslConfigIpCsrHasCn'));
+                    throw new \Exception(Lang::absoluteT('reissueIpCsrHasCn'));
                 }
                 $mainName = strtolower(trim((string)$input['params']['domain']));
                 // every name uses a SAN of the product, the main name too
@@ -1049,15 +1059,17 @@ trait SslCertificatePages
             $privateKey = openssl_pkey_new(["private_key_bits" => 2048, "private_key_type" => OPENSSL_KEYTYPE_RSA]);
             openssl_pkey_export($privateKey, $pKeyOut);
 
-            $csr = openssl_csr_new([
-                'countryName' => strtoupper($input['country']),
-                'stateOrProvinceName' => $input['state'],
-                'localityName' => $input['locality'],
-                'organizationName' => $input['organization'],
-                'organizationalUnitName' => $input['unit_name'],
-                'commonName' => $input['common_name'],
-                'emailAddress' => $input['email_address'],
-            ], $privateKey);
+            // a certificate for public IPs (App\Libs\IpCertificate): the CSR has no common name
+            $ipProduct = \ModulesGarden\TSSGGSModule\App\Libs\IpCertificate::isProduct($input['params']['packageid'] ?? 0);
+            $csr = openssl_csr_new(array_filter([
+                'countryName' => strtoupper((string)$input['country']),
+                'stateOrProvinceName' => (string)$input['state'],
+                'localityName' => (string)$input['locality'],
+                'organizationName' => (string)$input['organization'],
+                'organizationalUnitName' => (string)$input['unit_name'],
+                'commonName' => $ipProduct ? '' : (string)$input['common_name'],
+                'emailAddress' => (string)$input['email_address'],
+            ], function($v) { return $v !== ''; }), $privateKey);
 
             if(!$csr)
             {

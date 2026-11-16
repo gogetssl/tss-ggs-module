@@ -24,6 +24,7 @@
 
     
             <div class="alert alert-info">{$MGLANG->T('reissue_page', 'desc_page')}</div>
+            {if $ipProduct}<div class="alert alert-warning">{$ip_csr_hint|escape}</div>{/if}
 
             <div class="form-group">
                 <label for="inputCsr" class="text-md-right">{$MGLANG->T('reissue_page', 'Certificate Signing Request')}</label>
@@ -73,7 +74,7 @@
                                         <label class="control-label" for="OU">{$MGLANG->T('reissue_page', 'Organization Unit')}</label>
                                         <input {if $use_profile_data}value="IT"{/if} class="form-control generateCsrInput" id="organizationalUnitName" placeholder="Organization Unit" type="text">
                                     </div>
-                                    <div class="form-group">
+                                    <div class="form-group"{if $ipProduct} style="display:none;"{/if}>
                                         <label class="control-label" for="CN">{$MGLANG->T('reissue_page', 'Common Name')}</label>
                                         <input {if $use_profile_data}value="{$domain}"{/if} class="form-control generateCsrInput" autocomplete="off" id="commonName" placeholder="Common Name" name="CN" type="text">
                                     </div>
@@ -277,7 +278,7 @@
                 $('#organizationalUnitName').parent('.form-group').removeClass('has-error');
             }
 
-            if(CN == '')
+            if(CN == '' && !{if $ipProduct}true{else}false{/if})
             {
                 validate = false;
                 $('#commonName').parent('.form-group').addClass('has-error');

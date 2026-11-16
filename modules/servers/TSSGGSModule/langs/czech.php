@@ -939,3 +939,7 @@ $_LANG['serverCA']['home']['sslConfigIpNamesRequired'] = 'Zadejte alespoň jednu
 $_LANG['sslConfigIpNamesRequired'] = 'Zadejte alespoň jednu veřejnou IP adresu nebo doménové jméno.';
 $_LANG['serverCA']['home']['sslConfigIpCsrHasCn'] = 'Tento certifikát vyžaduje CSR bez Common Name: vytvořte CSR znovu bez CN, nebo zaškrtněte „Vygenerovat CSR automaticky“.';
 $_LANG['sslConfigIpCsrHasCn'] = 'Tento certifikát vyžaduje CSR bez Common Name: vytvořte CSR znovu bez CN, nebo zaškrtněte „Vygenerovat CSR automaticky“.';
+$_LANG['serverCA']['home']['reissueIpCsrHint'] = 'Tento certifikát zabezpečuje veřejné IP adresy: vložte CSR bez Common Name. Hlavní název %s zůstává; další IP adresy nebo doménová jména zadejte níže.';
+$_LANG['reissueIpCsrHint'] = 'Tento certifikát zabezpečuje veřejné IP adresy: vložte CSR bez Common Name. Hlavní název %s zůstává; další IP adresy nebo doménová jména zadejte níže.';
+$_LANG['serverCA']['home']['reissueIpCsrHasCn'] = 'Tento certifikát vyžaduje CSR bez Common Name: vytvořte CSR znovu bez CN.';
+$_LANG['reissueIpCsrHasCn'] = 'Tento certifikát vyžaduje CSR bez Common Name: vytvořte CSR znovu bez CN.';

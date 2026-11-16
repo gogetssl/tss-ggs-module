@@ -939,3 +939,7 @@ $_LANG['serverCA']['home']['sslConfigIpNamesRequired'] = 'Enter at least one pub
 $_LANG['sslConfigIpNamesRequired'] = 'Enter at least one public IP address or domain name.';
 $_LANG['serverCA']['home']['sslConfigIpCsrHasCn'] = 'This certificate needs a CSR without a common name: create the CSR again without CN, or tick "Generate CSR automatically".';
 $_LANG['sslConfigIpCsrHasCn'] = 'This certificate needs a CSR without a common name: create the CSR again without CN, or tick "Generate CSR automatically".';
+$_LANG['serverCA']['home']['reissueIpCsrHint'] = 'This certificate secures public IP addresses: paste a CSR without a common name. The main name %s stays; enter the other IP addresses or domain names below.';
+$_LANG['reissueIpCsrHint'] = 'This certificate secures public IP addresses: paste a CSR without a common name. The main name %s stays; enter the other IP addresses or domain names below.';
+$_LANG['serverCA']['home']['reissueIpCsrHasCn'] = 'This certificate needs a CSR without a common name: create the CSR again without CN.';
+$_LANG['reissueIpCsrHasCn'] = 'This certificate needs a CSR without a common name: create the CSR again without CN.';
