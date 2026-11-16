@@ -258,6 +258,36 @@ add_hook('ClientAreaPage', 1, function($params) {
     return [];
 });
 
+// Additional SANs cost their full price, not WHMCS's prorated one (App\Libs\UpgradePricing): the summary the client
+// confirms, then the upgrade invoice
+add_hook('ClientAreaPageUpgrade', 1, function($vars) {
+    try
+    {
+        $step = isset($_POST['step']) ? (int)$_POST['step'] : 0;
+
+        return $step === 2 ? \ModulesGarden\TSSGGSModule\App\Libs\UpgradePricing::summary($vars) : [];
+    }
+    catch(\Throwable $e)
+    {
+        logActivity('TSSGGSModule: SAN upgrade price could not be shown: ' . $e->getMessage());
+
+        return [];
+    }
+});
+foreach(['InvoiceCreationPreEmail', 'InvoiceCreated'] as $moduleUpgradeInvoiceHook)
+{
+    add_hook($moduleUpgradeInvoiceHook, 1, function($vars) {
+        try
+        {
+            \ModulesGarden\TSSGGSModule\App\Libs\UpgradePricing::fixInvoice(isset($vars['invoiceid']) ? (int)$vars['invoiceid'] : 0);
+        }
+        catch(\Throwable $e)
+        {
+            logActivity('TSSGGSModule: SAN upgrade invoice could not be corrected: ' . $e->getMessage());
+        }
+    });
+}
+
 // Paid SAN upgrade of an ordered certificate - buy the additional SANs at the gateway
 add_hook('AfterConfigOptionsUpgrade', 1, function($vars) {
     try

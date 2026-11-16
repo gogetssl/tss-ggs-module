@@ -148,14 +148,8 @@ class InvoiceRenew {
         EmailTemplates::sendRenewalInvoiceEmail($serviceId, $invoiceId);
         \ModulesGarden\TSSGGSModule\App\Libs\ProductCatalog::noticeIfDiscontinued($serviceId);
         InvoiceItem::where('invoiceid', $invoiceId)->update(['type' => 'Hosting', 'relid' => $serviceId]);
-        $invoiceData = Invoice::where('id', $invoiceId)->first()->toArray();
-
-        if($invoiceData['total'] == '0.00')
-        {
-            Invoice::where('id', $invoiceId)->update(['status' => 'Unpaid']);
-            localAPI('UpdateInvoice', ['invoiceid' => $invoiceId, 'status' => 'Paid']);
-            run_hook("InvoicePaid", ["invoiceid" => $invoiceId]);
-        }
+        // a renewal that costs nothing (0.00) is paid at once, so the renewal starts
+        \ModulesGarden\TSSGGSModule\App\Libs\ZeroInvoice::settle($invoiceId, 'renewal of service #' . (int)$serviceId);
 
         return $invoiceId;
     }

@@ -178,6 +178,9 @@ class AcmeHelpers
 
         \logActivity('TSSGGS: Subscription renewal invoice #' . $invoiceId . ' created for service #' . (int)$service->id . '.');
 
+        // a renewal that costs nothing (0.00) is paid at once, so the subscription renews (M-18)
+        ZeroInvoice::settle($invoiceId, 'subscription renewal of service #' . (int)$service->id);
+
         return 1;
     }
 
