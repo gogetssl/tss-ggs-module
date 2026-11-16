@@ -571,6 +571,11 @@ class AdminServicesTabFields
         $order   = $stored['orderData']['orderData'] ?? [];
         $cn      = openssl_csr_get_subject($csr)['CN'] ?? '';
         $default = $order['common_name']['validation_method'] ?? 'dns';
+        // a CSR without common name (IP certificates, App\Libs\IpCertificate): the current main name stays first
+        if($cn === '')
+        {
+            $cn = (string)($order['common_name']['name'] ?? '');
+        }
 
         $methods = [$cn => $default];
         foreach(isset($order['alternative_names']) ? (array)$order['alternative_names'] : [] as $san)
