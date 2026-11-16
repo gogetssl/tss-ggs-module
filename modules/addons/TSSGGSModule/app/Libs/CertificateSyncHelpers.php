@@ -94,6 +94,15 @@ class CertificateSyncHelpers
             'updated_at' => date('Y-m-d H:i:s')
         ]);
 
+        // the CA's own CAA check failed: logged once
+        try
+        {
+            CaaCheck::afterSync((int)$certificate['id'], $orderData);
+        }
+        catch(\Throwable $e)
+        {
+        }
+
         if($orderData['order']['status'] == 'active') {
             // the order end (never the certificate end) - certificates within the order are reissued
             $nextDueDate = SslProductHelpers::getServiceDueDate($orderData, $orderFiles);

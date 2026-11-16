@@ -53,6 +53,9 @@
         </div>
     </section>
 
+    {* a CAA DNS record keeps the certificate authority from issuing (App\Libs\CaaCheck) *}
+    {if $caa_warning}{$caa_warning}{/if}
+
     <div class="tssggs-grid">
         <section class="tssggs-card">
             <h4 class="tssggs-card__title">
