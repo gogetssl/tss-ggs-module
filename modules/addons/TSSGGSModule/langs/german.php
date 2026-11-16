@@ -1648,6 +1648,7 @@ $_LANG['admin.module_update.install'] = 'Version :version installieren';
 $_LANG['admin.module_update.install_confirm'] = 'Version :version jetzt installieren? Das Modul pausiert einige Sekunden.';
 $_LANG['admin.module_update.full_admin_only'] = 'Nur ein Vollständiger Administrator kann das Update starten.';
 $_LANG['admin.module_update.manual_only'] = 'Ein automatisches Update ist auf diesem Server nicht möglich (siehe Prüfungen oben). Manuell aktualisieren:';
+$_LANG['admin.module_update.cli_hint'] = 'Oder aktualisieren Sie über die Kommandozeile auf dem Server: Dort wird die neue Version selbst geprüft.';
 $_LANG['admin.module_update.download'] = 'Version :version herunterladen';
 $_LANG['admin.module_update.up_to_date'] = 'Das Modul ist aktuell.';
 $_LANG['admin.module_update.rollback_title'] = 'Vorherige Version';

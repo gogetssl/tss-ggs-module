@@ -1650,6 +1650,7 @@ $_LANG['admin.module_update.install'] = 'Installér version :version';
 $_LANG['admin.module_update.install_confirm'] = 'Installér version :version nu? Modulet holder pause i nogle sekunder.';
 $_LANG['admin.module_update.full_admin_only'] = 'Kun en fuld administrator kan starte opdateringen.';
 $_LANG['admin.module_update.manual_only'] = 'Automatisk opdatering er ikke mulig på denne server (se kontrollerne ovenfor). Opdatér manuelt:';
+$_LANG['admin.module_update.cli_hint'] = 'Eller opdater fra kommandolinjen på serveren: den kontrollerer selv den nye version.';
 $_LANG['admin.module_update.download'] = 'hent version :version';
 $_LANG['admin.module_update.up_to_date'] = 'Modulet er opdateret.';
 $_LANG['admin.module_update.rollback_title'] = 'Forrige version';
