@@ -491,7 +491,25 @@ trait SslCertificatePages
             unset($_POST['fields']);
 
             $decode  = $this->decodeCSR($input['csr']);
-            $domains = $this->validateDomains($decode['CN'], $fields, $input['params']);
+            $mainName = (string)($decode['CN'] ?? '');
+            // a certificate for public IPs (App\Libs\IpCertificate): CSR without common name, the main name stays
+            $ipCertificate = \ModulesGarden\TSSGGSModule\App\Libs\IpCertificate::isProduct($input['params']['packageid']);
+            if($ipCertificate)
+            {
+                if($mainName !== '')
+                {
+                    throw new \Exception(Lang::absoluteT('sslConfigIpCsrHasCn'));
+                }
+                $mainName = strtolower(trim((string)$input['params']['domain']));
+                // every name uses a SAN of the product, the main name too
+                $count = count(array_filter(preg_split('/[\s,;]+/', (string)$fields['sans_domains'])));
+                $limit = (int)($input['params']['configoptions']['sans'] ?? 0) + (int)$input['params']['configoption7'];
+                if($count + 1 > max(1, $limit))
+                {
+                    throw new \Exception(sprintf(Lang::absoluteT('using_max_san'), max(0, $limit - 1)));
+                }
+            }
+            $domains = $this->validateDomains($mainName, $fields, $input['params']);
 
             $configProduct = (new ProductRepository())->getProductConfiguration($input['params']['packageid']);
             $addonConfig   = (new AddonModuleRepository())->getModuleConfiguration();
@@ -512,7 +530,8 @@ trait SslCertificatePages
             $vars['available_method_validation'] = json_encode($available_method_validation);
 
             $api               = SSLTrustCenterApi::forVendor($configProduct['provider'], $configProduct['category']);
-            $approvers         = $api->getDomainEmails($domains);
+            // IP addresses have no approver mailboxes (file validation only)
+            $approvers         = $ipCertificate ? array_map(function($name) { return ['domain' => $name, 'emails' => []]; }, $domains) : $api->getDomainEmails($domains);
             $vars['approvers'] = $this->approversToOptions($approvers);
 
             if(isset($input['customAction']) && $input['customAction'] == 'sendReissue')
@@ -550,8 +569,12 @@ trait SslCertificatePages
                 $methods[$domain] = $method == 'email' ? $input['approver'][$domain] : $method;
             }
 
-            // CN first
-            $commonName = openssl_csr_get_subject($input['csr'])['CN'];
+            // CN first - for a certificate for public IPs (CSR without CN) the current main name
+            $commonName = (string)(openssl_csr_get_subject($input['csr'])['CN'] ?? '');
+            if($commonName === '' && \ModulesGarden\TSSGGSModule\App\Libs\IpCertificate::isProduct($input['params']['packageid']))
+            {
+                $commonName = strtolower(trim((string)$input['params']['domain']));
+            }
             if(isset($methods[$commonName]))
             {
                 $methods = [$commonName => $methods[$commonName]] + $methods;
@@ -1365,7 +1388,10 @@ trait SslCertificatePages
             return strpos($method, 'dns') === 0 && !in_array($method, $available_method_validation, true) ? 'dns' : $method;
         }, $current);
 
-        $approvers         = $api->getDomainEmails($domains);
+        // IP addresses have no approver mailboxes (IP certificates validate by file only)
+        $approvers         = \ModulesGarden\TSSGGSModule\App\Libs\IpCertificate::isProduct((int)\WHMCS\Database\Capsule::table('tblhosting')->where('id', (int)$serviceId)->value('packageid'))
+            ? array_map(function($name) { return ['domain' => $name, 'emails' => []]; }, $domains)
+            : $api->getDomainEmails($domains);
         $vars['approvers'] = $this->approversToOptions($approvers);
 
         return ['tpl' => 'change_approval_method', 'vars' => $vars];

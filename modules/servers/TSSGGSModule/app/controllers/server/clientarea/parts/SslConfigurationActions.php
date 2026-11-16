@@ -218,8 +218,10 @@ trait SslConfigurationActions
         $vars['serviceid']          = $serviceId;
         $vars['assetsURL']          = Server::I()->getAssetsURL();
         $vars['productName']        = $settings['productName'];
-        $vars['domainGroups']       = $domainGroups;
-        $vars['hasCpanel']          = !empty($domainGroups);
+        // a certificate for public IPs (CSR without common name): its names are entered as a list, no AutoInstall
+        $vars['ipProduct']          = \ModulesGarden\TSSGGSModule\App\Libs\IpCertificate::isProduct($params['packageid']);
+        $vars['domainGroups']       = $vars['ipProduct'] ? [] : $domainGroups;
+        $vars['hasCpanel']          = !$vars['ipProduct'] && !empty($domainGroups);
         $vars['dcvMethods']         = $settings['dcvMethods'];
         $vars['dcvMethodsManual']   = $settings['dcvMethodsManual'];
         $vars['countries']          = $countries;
@@ -366,6 +368,12 @@ trait SslConfigurationActions
 
         $settings    = $this->getSslConfigurationSettings($params);
         $installType = (isset($input['install_type']) && $input['install_type'] === 'autoinstall') ? 'autoinstall' : 'manual';
+        // a certificate for public IPs (CSR without common name, App\Libs\IpCertificate): manual enrollment only
+        $ipProduct = \ModulesGarden\TSSGGSModule\App\Libs\IpCertificate::isProduct($params['packageid']);
+        if($ipProduct)
+        {
+            $installType = 'manual';
+        }
         $dcvMethod   = isset($input['dcv_method']) ? strtolower(trim($input['dcv_method'])) : '';
         $includeWww  = !empty($input['include_www']);
         $ownCsr      = ($installType === 'manual') ? trim(isset($input['own_csr']) ? $input['own_csr'] : '') : '';
@@ -381,7 +389,43 @@ trait SslConfigurationActions
 
         // ---- Main domain ----
         $autoinstallDomain = '';
-        if($installType === 'autoinstall')
+        if($ipProduct)
+        {
+            // every name is a SAN (public IP or domain); the CSR carries no common name
+            if(!empty($ownCsr))
+            {
+                $csrSubject = @openssl_csr_get_subject($ownCsr);
+                if($csrSubject === false)
+                {
+                    throw new \Exception(Lang::absoluteT('csr_error'));
+                }
+                if(!empty($csrSubject['CN']))
+                {
+                    throw new \Exception(Lang::absoluteT('sslConfigIpCsrHasCn'));
+                }
+                CertificateService::assertCsrKey($ownCsr);
+            }
+            $names = $this->parseSslDomainList(isset($input['san_domains']) ? $input['san_domains'] : '');
+            if(!$names)
+            {
+                throw new \Exception(Lang::absoluteT('sslConfigIpNamesRequired'));
+            }
+            // all names use a SAN of the product (there is no free common name)
+            if(count($names) > max(1, (int)$settings['sansLimit']))
+            {
+                throw new \Exception(sprintf(Lang::absoluteT('using_max_san'), max(1, (int)$settings['sansLimit'])));
+            }
+            $domainValidation = new Domain();
+            foreach($names as $name)
+            {
+                $domainValidation->validateDomain($name, false, true);
+            }
+            $mainDomain   = $names[0];
+            $isWildcardCn = false;
+            $sanDomains   = array_slice($names, 1);
+            $wildcardSans = [];
+        }
+        elseif($installType === 'autoinstall')
         {
             $mainDomain = isset($input['main_domain']) ? strtolower(trim($input['main_domain'])) : '';
             if(empty($mainDomain) || $mainDomain === '__manual__')
@@ -417,6 +461,8 @@ trait SslConfigurationActions
             throw new \Exception(Lang::absoluteT('sslConfigDomainRequired'));
         }
 
+        if(!$ipProduct)
+        {
         $domainValidation = new Domain();
         $isWildcardCn     = strpos($mainDomain, '*.') === 0;
         $domainValidation->validateDomain($mainDomain, $isWildcardCn);
@@ -451,6 +497,7 @@ trait SslConfigurationActions
         {
             $domainValidation->validateDomain($wildcardSan, true);
         }
+        }
 
         // ---- CSR ----
         $privateKey = '';
@@ -479,9 +526,10 @@ trait SslConfigurationActions
                 'countryName'            => strtoupper(!empty($input['csr_country']) ? $input['csr_country'] : 'US'),
                 'stateOrProvinceName'    => isset($input['csr_state']) ? trim($input['csr_state']) : '',
                 'localityName'           => isset($input['csr_city']) ? trim($input['csr_city']) : '',
-                'organizationName'       => !empty($input['csr_org']) ? trim($input['csr_org']) : $commonName,
+                'organizationName'       => !empty($input['csr_org']) ? trim($input['csr_org']) : ($ipProduct ? '' : $commonName),
                 'organizationalUnitName' => isset($input['csr_org_unit']) ? trim($input['csr_org_unit']) : '',
-                'commonName'             => $commonName,
+                // an IP certificate's CSR has no common name: its names are all SANs of the order
+                'commonName'             => $ipProduct ? '' : $commonName,
                 'emailAddress'           => isset($input['csr_email']) ? trim($input['csr_email']) : '',
             ], function($v) { return $v !== ''; });
             $csr = openssl_csr_new($dn, $privKey, ['digest_alg' => 'sha256']);
@@ -492,11 +540,23 @@ trait SslConfigurationActions
         }
 
         $csrSubject = openssl_csr_get_subject($csrCode);
-        if(!$csrSubject || empty($csrSubject['CN']))
+        if($ipProduct)
         {
-            throw new \Exception(Lang::absoluteT('csr_error'));
+            // the main name of an IP certificate is the first name entered (not in the CSR)
+            if($csrSubject === false)
+            {
+                throw new \Exception(Lang::absoluteT('csr_error'));
+            }
+            $commonName = $mainDomain;
         }
-        $commonName = $csrSubject['CN'];
+        else
+        {
+            if(!$csrSubject || empty($csrSubject['CN']))
+            {
+                throw new \Exception(Lang::absoluteT('csr_error'));
+            }
+            $commonName = $csrSubject['CN'];
+        }
 
         // ---- Validation methods (format expected by SSLStepThree) ----
         $allDomains = array_values(array_unique(array_merge([$commonName], array_diff(array_merge($sanDomains, $wildcardSans), [$commonName]))));
@@ -590,9 +650,11 @@ trait SslConfigurationActions
 
         // ---- Place the order (same path as WHMCS configuressl.php step three) ----
         $stepParams = array_merge($params, $contact, [
-            'csr'      => $csrCode,
-            'method'   => $method,
-            'approver' => $approver,
+            'csr'         => $csrCode,
+            'method'      => $method,
+            'approver'    => $approver,
+            // the order's main name when it is not the CSR's common name (IP certificates)
+            'common_name' => $ipProduct ? $commonName : '',
         ]);
         $result = (new SSLStepThree())->run($stepParams);
 

@@ -928,3 +928,14 @@ $_LANG['caa_add'] = 'Añada este registro';
 $_LANG['caa_fix'] = 'Añada el registro en la zona DNS del dominio (o elimine sus registros CAA). Los cambios de DNS pueden tardar hasta una hora.';
 $_LANG['caa_gateway'] = 'La autoridad de certificación informa de que su comprobación CAA falló para este pedido. Vuelve a comprobarlo cuando el registro CAA lo permita.';
 $_LANG['caa_gateway_fix'] = 'Para corregirlo, añada %s en la zona DNS del dominio (o elimine sus registros CAA). Los cambios de DNS pueden tardar hasta una hora.';
+// IP certificates: CSR without common name (App\Libs\IpCertificate)
+$_LANG['serverCA']['home']['sslConfigIpCsrHint'] = 'Pegue un CSR sin common name: este certificado protege las direcciones IP y nombres de dominio que indique abajo. O marque «Generar CSR automáticamente».';
+$_LANG['sslConfigIpCsrHint'] = 'Pegue un CSR sin common name: este certificado protege las direcciones IP y nombres de dominio que indique abajo. O marque «Generar CSR automáticamente».';
+$_LANG['serverCA']['home']['sslConfigIpNames'] = 'Direcciones IP públicas o nombres de dominio, uno por línea';
+$_LANG['sslConfigIpNames'] = 'Direcciones IP públicas o nombres de dominio, uno por línea';
+$_LANG['serverCA']['home']['sslConfigIpNamesHint'] = 'El primero será el nombre principal del certificado. La validación es por archivo (HTTP / HTTPS) en el servidor web de cada dirección.';
+$_LANG['sslConfigIpNamesHint'] = 'El primero será el nombre principal del certificado. La validación es por archivo (HTTP / HTTPS) en el servidor web de cada dirección.';
+$_LANG['serverCA']['home']['sslConfigIpNamesRequired'] = 'Indique al menos una dirección IP pública o un nombre de dominio.';
+$_LANG['sslConfigIpNamesRequired'] = 'Indique al menos una dirección IP pública o un nombre de dominio.';
+$_LANG['serverCA']['home']['sslConfigIpCsrHasCn'] = 'Este certificado necesita un CSR sin common name: vuelva a crear el CSR sin CN o marque «Generar CSR automáticamente».';
+$_LANG['sslConfigIpCsrHasCn'] = 'Este certificado necesita un CSR sin common name: vuelva a crear el CSR sin CN o marque «Generar CSR automáticamente».';

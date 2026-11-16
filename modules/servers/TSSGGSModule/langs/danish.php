@@ -928,3 +928,14 @@ $_LANG['caa_add'] = 'Tilføj denne post';
 $_LANG['caa_fix'] = 'Tilføj posten i domænets DNS-zone (eller fjern dets CAA-poster). DNS-ændringer kan tage op til en time om at slå igennem.';
 $_LANG['caa_gateway'] = 'Certifikatudstederen melder, at dens CAA-kontrol fejlede for denne ordre. Den kontrollerer igen, når CAA-posten tillader det.';
 $_LANG['caa_gateway_fix'] = 'For at rette det skal du tilføje %s i domænets DNS-zone (eller fjerne dets CAA-poster). DNS-ændringer kan tage op til en time om at slå igennem.';
+// IP certificates: CSR without common name (App\Libs\IpCertificate)
+$_LANG['serverCA']['home']['sslConfigIpCsrHint'] = 'Indsæt en CSR uden common name: certifikatet sikrer de IP-adresser og domænenavne, du angiver nedenfor. Eller vælg "Generér CSR automatisk".';
+$_LANG['sslConfigIpCsrHint'] = 'Indsæt en CSR uden common name: certifikatet sikrer de IP-adresser og domænenavne, du angiver nedenfor. Eller vælg "Generér CSR automatisk".';
+$_LANG['serverCA']['home']['sslConfigIpNames'] = 'Offentlige IP-adresser eller domænenavne, ét pr. linje';
+$_LANG['sslConfigIpNames'] = 'Offentlige IP-adresser eller domænenavne, ét pr. linje';
+$_LANG['serverCA']['home']['sslConfigIpNamesHint'] = 'Det første bliver certifikatets hovednavn. Validering sker med en fil (HTTP / HTTPS) på webserveren for hver adresse.';
+$_LANG['sslConfigIpNamesHint'] = 'Det første bliver certifikatets hovednavn. Validering sker med en fil (HTTP / HTTPS) på webserveren for hver adresse.';
+$_LANG['serverCA']['home']['sslConfigIpNamesRequired'] = 'Angiv mindst én offentlig IP-adresse eller ét domænenavn.';
+$_LANG['sslConfigIpNamesRequired'] = 'Angiv mindst én offentlig IP-adresse eller ét domænenavn.';
+$_LANG['serverCA']['home']['sslConfigIpCsrHasCn'] = 'Dette certifikat kræver en CSR uden common name: opret CSR\'en igen uden CN, eller vælg "Generér CSR automatisk".';
+$_LANG['sslConfigIpCsrHasCn'] = 'Dette certifikat kræver en CSR uden common name: opret CSR\'en igen uden CN, eller vælg "Generér CSR automatisk".';

@@ -928,3 +928,14 @@ $_LANG['caa_add'] = 'Add this record';
 $_LANG['caa_fix'] = 'Add the record in the DNS zone of the domain (or remove its CAA records). DNS changes can take up to an hour to be seen.';
 $_LANG['caa_gateway'] = 'The certificate authority reports that its CAA check failed for this order. It checks again once the CAA record allows it.';
 $_LANG['caa_gateway_fix'] = 'To fix it, add %s to the DNS zone of the domain (or remove its CAA records). DNS changes can take up to an hour to be seen.';
+// IP certificates: CSR without common name (App\Libs\IpCertificate)
+$_LANG['serverCA']['home']['sslConfigIpCsrHint'] = 'Paste a CSR without a common name: this certificate secures the IP addresses and domain names you enter below. Or tick "Generate CSR automatically".';
+$_LANG['sslConfigIpCsrHint'] = 'Paste a CSR without a common name: this certificate secures the IP addresses and domain names you enter below. Or tick "Generate CSR automatically".';
+$_LANG['serverCA']['home']['sslConfigIpNames'] = 'Public IP addresses or domain names, one per line';
+$_LANG['sslConfigIpNames'] = 'Public IP addresses or domain names, one per line';
+$_LANG['serverCA']['home']['sslConfigIpNamesHint'] = 'The first one becomes the main name of the certificate. Validation is by file (HTTP / HTTPS) on the web server of each address.';
+$_LANG['sslConfigIpNamesHint'] = 'The first one becomes the main name of the certificate. Validation is by file (HTTP / HTTPS) on the web server of each address.';
+$_LANG['serverCA']['home']['sslConfigIpNamesRequired'] = 'Enter at least one public IP address or domain name.';
+$_LANG['sslConfigIpNamesRequired'] = 'Enter at least one public IP address or domain name.';
+$_LANG['serverCA']['home']['sslConfigIpCsrHasCn'] = 'This certificate needs a CSR without a common name: create the CSR again without CN, or tick "Generate CSR automatically".';
+$_LANG['sslConfigIpCsrHasCn'] = 'This certificate needs a CSR without a common name: create the CSR again without CN, or tick "Generate CSR automatically".';

@@ -928,3 +928,14 @@ $_LANG['caa_add'] = 'Diesen Eintrag hinzufügen';
 $_LANG['caa_fix'] = 'Fügen Sie den Eintrag in der DNS-Zone der Domain hinzu (oder entfernen Sie ihre CAA-Einträge). DNS-Änderungen können bis zu einer Stunde dauern.';
 $_LANG['caa_gateway'] = 'Die Zertifizierungsstelle meldet, dass ihre CAA-Prüfung für diese Bestellung fehlgeschlagen ist. Sie prüft erneut, sobald der CAA-Eintrag es erlaubt.';
 $_LANG['caa_gateway_fix'] = 'Zur Behebung fügen Sie %s in der DNS-Zone der Domain hinzu (oder entfernen Sie ihre CAA-Einträge). DNS-Änderungen können bis zu einer Stunde dauern.';
+// IP certificates: CSR without common name (App\Libs\IpCertificate)
+$_LANG['serverCA']['home']['sslConfigIpCsrHint'] = 'Fügen Sie eine CSR ohne Common Name ein: Dieses Zertifikat sichert die unten eingegebenen IP-Adressen und Domainnamen. Oder wählen Sie „CSR automatisch erzeugen“.';
+$_LANG['sslConfigIpCsrHint'] = 'Fügen Sie eine CSR ohne Common Name ein: Dieses Zertifikat sichert die unten eingegebenen IP-Adressen und Domainnamen. Oder wählen Sie „CSR automatisch erzeugen“.';
+$_LANG['serverCA']['home']['sslConfigIpNames'] = 'Öffentliche IP-Adressen oder Domainnamen, einer pro Zeile';
+$_LANG['sslConfigIpNames'] = 'Öffentliche IP-Adressen oder Domainnamen, einer pro Zeile';
+$_LANG['serverCA']['home']['sslConfigIpNamesHint'] = 'Der erste wird der Hauptname des Zertifikats. Die Validierung erfolgt per Datei (HTTP / HTTPS) auf dem Webserver jeder Adresse.';
+$_LANG['sslConfigIpNamesHint'] = 'Der erste wird der Hauptname des Zertifikats. Die Validierung erfolgt per Datei (HTTP / HTTPS) auf dem Webserver jeder Adresse.';
+$_LANG['serverCA']['home']['sslConfigIpNamesRequired'] = 'Geben Sie mindestens eine öffentliche IP-Adresse oder einen Domainnamen ein.';
+$_LANG['sslConfigIpNamesRequired'] = 'Geben Sie mindestens eine öffentliche IP-Adresse oder einen Domainnamen ein.';
+$_LANG['serverCA']['home']['sslConfigIpCsrHasCn'] = 'Dieses Zertifikat benötigt eine CSR ohne Common Name: Erstellen Sie die CSR ohne CN neu oder wählen Sie „CSR automatisch erzeugen“.';
+$_LANG['sslConfigIpCsrHasCn'] = 'Dieses Zertifikat benötigt eine CSR ohne Common Name: Erstellen Sie die CSR ohne CN neu oder wählen Sie „CSR automatisch erzeugen“.';

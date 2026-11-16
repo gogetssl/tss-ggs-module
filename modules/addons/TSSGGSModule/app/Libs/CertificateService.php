@@ -647,11 +647,25 @@ class CertificateService
         self::requireUsable($serviceId);
         $ssl     = self::requireOrder($serviceId);
         $subject = @openssl_csr_get_subject($csr);
-        if(!$subject || empty($subject['CN']))
+        // a certificate for public IPs (App\Libs\IpCertificate): the CSR has no common name, the main name is the
+        // first of the names (the current main name stays first)
+        $ipCertificate = IpCertificate::isProduct((int)Capsule::table('tblhosting')->where('id', (int)$serviceId)->value('packageid'));
+        if($ipCertificate)
         {
-            throw new \Exception('The CSR is not valid');
+            if($subject === false || !empty($subject['CN']))
+            {
+                throw new \Exception('This certificate needs a CSR without a common name');
+            }
+            $commonName = (string)array_key_first($methods);
         }
-        $commonName = $subject['CN'];
+        else
+        {
+            if(!$subject || empty($subject['CN']))
+            {
+                throw new \Exception('The CSR is not valid');
+            }
+            $commonName = $subject['CN'];
+        }
         if(empty($methods[$commonName]))
         {
             throw new \Exception('No validation method for ' . $commonName);
