@@ -657,6 +657,14 @@ class CertificateService
                 throw new \Exception('This certificate needs a CSR without a common name');
             }
             $commonName = (string)array_key_first($methods);
+            // IP addresses are validated by file only (no mailbox, no DNS zone)
+            foreach($methods as $name => $method)
+            {
+                if(!in_array($method, ['http', 'https'], true))
+                {
+                    throw new \Exception('Use HTTP or HTTPS file validation for ' . $name);
+                }
+            }
         }
         else
         {

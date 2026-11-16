@@ -35,34 +35,34 @@
                         <p><b>{$MGLANG->T('reissue_page', 'HTTP FILE')}: </b>{$MGLANG->T('reissue_page', 'Create a text file to be served from the domain name requested.')}</p>
                     </div>
                     <div class="row switch-row" style="margin:20px 0;">
-                        <div class="col-md-3 col-sm-6 col-sx-12">
+                        {if in_array('email', $dcv_methods)}<div class="col-md-3 col-sm-6 col-sx-12">
                             <label class="switch">
                                 <input class="change-dcv-method" value="email" type="checkbox">
                                 <span class="slider round"></span>
                                 <span class="label-text">{$MGLANG->T('reissue_page', 'EMAIL for all')}</span>
                             </label>
-                        </div>
-                        <div class="col-md-3 col-sm-6 col-sx-12">
+                        </div>{/if}
+                        {if in_array('http', $dcv_methods)}<div class="col-md-3 col-sm-6 col-sx-12">
                             <label class="switch">
                                 <input class="change-dcv-method" value="http" type="checkbox">
                                 <span class="slider round"></span>
                                 <span class="label-text">{$MGLANG->T('reissue_page', 'HTTP for all')}</span>
                             </label>
-                        </div>
-                        <div class="col-md-3 col-sm-6 col-sx-12">
+                        </div>{/if}
+                        {if in_array('https', $dcv_methods)}<div class="col-md-3 col-sm-6 col-sx-12">
                             <label class="switch">
                                 <input class="change-dcv-method" value="https" type="checkbox">
                                 <span class="slider round"></span>
                                 <span class="label-text">{$MGLANG->T('reissue_page', 'HTTPs for all')}</span>
                             </label>
-                        </div>
-                        <div class="col-md-3 col-sm-6 col-sx-12">
+                        </div>{/if}
+                        {if in_array('dns', $dcv_methods)}<div class="col-md-3 col-sm-6 col-sx-12">
                             <label class="switch">
                                 <input class="change-dcv-method" value="dns" type="checkbox">
                                 <span class="slider round"></span>
                                 <span class="label-text">{$MGLANG->T('reissue_page', 'DNS for all')}</span>
                             </label>
-                        </div>
+                        </div>{/if}
                     </div>
                     <table class="table">
                         <thead>
@@ -78,10 +78,7 @@
                                 <td>{$domain}</td>
                                 <td>
                                     <select name="method[{$domain}]" class="select_method form-control">
-                                        <option value="email">EMAIL</option>
-                                        <option value="dns">DNS</option>
-                                        <option value="http">HTTP</option>
-                                        <option value="https">HTTPS</option>
+                                        {foreach $dcv_methods as $dcvMethod}<option value="{$dcvMethod}">{$dcvMethod|upper}</option>{/foreach}
                                     </select>
                                 </td>
                                 <td>
@@ -168,7 +165,7 @@
 
         });
 
-        $('.switch-row div.col-md-3:first-child input.change-dcv-method').prop('checked', true).trigger("change");
+        $('.switch-row input.change-dcv-method').first().prop('checked', true).trigger("change");
 
     });
 </script>

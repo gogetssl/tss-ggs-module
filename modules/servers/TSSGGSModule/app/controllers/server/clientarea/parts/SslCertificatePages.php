@@ -538,6 +538,17 @@ trait SslCertificatePages
                 $available_method_validation = $temp_available_method_validation;
             }
             $vars['available_method_validation'] = json_encode($available_method_validation);
+            // the methods offered on the page: the product's (dns-cname / dns-txt shown as DNS), file validation only
+            // for IP certificates
+            $dcvMethods = array_values(array_intersect(['email', 'http', 'https', 'dns'], array_map(function($method) {
+                $method = strtolower(trim((string)$method));
+                return in_array($method, ['dns-cname', 'dns-txt']) ? 'dns' : $method;
+            }, $available_method_validation)));
+            if($ipCertificate)
+            {
+                $dcvMethods = array_values(array_intersect($dcvMethods ?: ['http', 'https'], ['http', 'https'])) ?: ['http', 'https'];
+            }
+            $vars['dcv_methods'] = $dcvMethods ?: ['email', 'http', 'https', 'dns'];
 
             $api               = SSLTrustCenterApi::forVendor($configProduct['provider'], $configProduct['category']);
             // IP addresses have no approver mailboxes (file validation only)
