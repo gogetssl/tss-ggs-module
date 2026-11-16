@@ -22,6 +22,8 @@ const { execFileSync } = require('child_process');
 
 const SOURCE_NAME  = 'TSSGGSModule';
 const SHORT_NAME   = 'tssggs';
+// in texts: replaced by the edition's vendor name ("author": TheSSLStore / GoGetSSL)
+const VENDOR_TOKEN = '%%VENDOR%%';
 const PACKAGE_PATHS = ['modules'];
 const EDITION_FILE = 'modules/addons/TSSGGSModule/app/Config/edition.php';
 // development tools: never in a package for clients (KEEP_DEV=1 keeps them, for the test box)
@@ -94,6 +96,8 @@ function build(edition) {
         const original = content;
         content = content.split(SOURCE_NAME).join(name).split(SOURCE_NAME.toUpperCase()).join(name.toUpperCase())
             .split(SHORT_NAME).join(edition.short).split(SHORT_NAME.toUpperCase()).join(edition.short.toUpperCase());
+        // texts name the reseller's API (TheSSLStore / GoGetSSL), never the gateway in between
+        content = content.split(VENDOR_TOKEN).join(edition.author);
         content = content.replace(/(Composer(?:Autoloader|Static)Init)([0-9a-f]{32})/g, (m, prefix, hash) => prefix + crypto.createHash('md5').update(name + hash).digest('hex'));
         if (file.endsWith(path.join('vendor', 'composer', 'autoload_static.php'))) content = fixAutoloadLengths(content);
         if (content !== original) fs.writeFileSync(file, content);

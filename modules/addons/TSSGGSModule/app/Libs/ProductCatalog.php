@@ -136,7 +136,7 @@ class ProductCatalog
             return false;
         }
 
-        $text = 'The product of this service is discontinued at the gateway: renewal under the same product may be refused - arrange a replacement certificate';
+        $text = 'The product of this service is discontinued at %%VENDOR%%: renewal under the same product may be refused - arrange a replacement certificate';
         GeneralSettings::activity('Service #' . (int)$serviceId . ': ' . $text);
         CertificateService::event((int)$serviceId, 'warning', $text);
         try
@@ -196,7 +196,7 @@ class ProductCatalog
             }
             elseif(!empty($existing[$name]) && !$allowed && !$existing[$name]->hidden)
             {
-                $problems[] = $name . ' not offered by the gateway';
+                $problems[] = $name . ' not offered by %%VENDOR%%';
             }
         }
 

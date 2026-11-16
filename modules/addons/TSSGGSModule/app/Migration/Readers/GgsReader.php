@@ -308,13 +308,13 @@ class GgsReader extends AbstractReader
         $rec['remote_product_id'] = $remoteProduct ? (string)$remoteProduct->remoteId : (string)(int)Configdata::get($cd, 'product_id', $svc['configoption1']);
         if(!$remoteProduct)
         {
-            $rec['warnings'][] = 'Gateway product not found for GoGetSSL product id ' . $rec['remote_product_id'] . ' (sync products in step 4)';
+            $rec['warnings'][] = '%%VENDOR%% product not found for GoGetSSL product id ' . $rec['remote_product_id'] . ' (sync products in step 4)';
         }
 
         // a closed order without a gateway order must not become configurable again
         if($rec['remote_id'] === '' && in_array((string)$order['status'], ['Cancelled', 'Expired', 'Completed'], true))
         {
-            $rec['skip_reason'] = 'SSL order has no gateway order ID (status ' . $order['status'] . ')';
+            $rec['skip_reason'] = 'SSL order has no %%VENDOR%% order ID (status ' . $order['status'] . ')';
 
             return $rec;
         }
@@ -557,7 +557,7 @@ class GgsReader extends AbstractReader
         $rec['remote_product_id'] = $remote ? (string)$remote->remoteId : (string)(int)Configdata::get($cd, 'product_id', $svc['configoption1']);
         if(!$remote)
         {
-            $rec['warnings'][] = 'Gateway product not found for GoGetSSL product id ' . $rec['remote_product_id'] . ' (sync products in step 4)';
+            $rec['warnings'][] = '%%VENDOR%% product not found for GoGetSSL product id ' . $rec['remote_product_id'] . ' (sync products in step 4)';
         }
 
         $itemId = (int)Configdata::get($cd, 'smime_item_id', 0);
@@ -607,7 +607,7 @@ class GgsReader extends AbstractReader
         ];
         if(!$emails)
         {
-            $rec['warnings'][] = 'S/MIME email addresses missing in legacy data; they are read from the gateway by the first refresh';
+            $rec['warnings'][] = 'S/MIME email addresses missing in legacy data; they are read from %%VENDOR%% by the first refresh';
         }
 
         return $rec;
@@ -625,7 +625,7 @@ class GgsReader extends AbstractReader
         $rec['remote_product_id'] = $remote ? (string)$remote->remoteId : (string)(int)Configdata::get($cd, 'product_id', $svc['configoption1']);
         if(!$remote)
         {
-            $rec['warnings'][] = 'Gateway product not found for GoGetSSL product id ' . $rec['remote_product_id'] . ' (sync products in step 4)';
+            $rec['warnings'][] = '%%VENDOR%% product not found for GoGetSSL product id ' . $rec['remote_product_id'] . ' (sync products in step 4)';
         }
 
         $itemId = (int)Configdata::get($cd, 'cs_item_id', 0);
@@ -644,7 +644,7 @@ class GgsReader extends AbstractReader
         }
         if($itemId <= 0)
         {
-            $rec['skip_reason'] = 'Code signing ordered through GoGetSSL API v1 (order ' . $order['remoteid'] . '): not available through the gateway, handle it manually';
+            $rec['skip_reason'] = 'Code signing ordered through GoGetSSL API v1 (order ' . $order['remoteid'] . '): not available in this module, handle it manually';
 
             return $rec;
         }

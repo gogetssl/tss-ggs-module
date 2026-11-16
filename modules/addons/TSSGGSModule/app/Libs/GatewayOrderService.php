@@ -242,7 +242,7 @@ abstract class GatewayOrderService
         $itemId  = (int)($response['items'][0]['id'] ?? 0);
         if($orderId <= 0 || $itemId <= 0)
         {
-            throw new \Exception('The gateway did not return an order ID');
+            throw new \Exception('%%VENDOR%% did not return an order ID');
         }
 
         $stored = static::applyDetails($stored + [

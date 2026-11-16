@@ -54,7 +54,7 @@ class MigrateLegacy extends AbstractCommand
         $this->addOption('keep-legacy-active', null, InputOption::VALUE_NONE, 'do not deactivate the legacy addon after the switch');
         $this->addOption('no-templates', null, InputOption::VALUE_NONE, 'do not copy the legacy e-mail texts');
         $this->addOption('no-store', null, InputOption::VALUE_NONE, 'dry-run: print the report without storing it (pure read)');
-        $this->addOption('map', null, InputOption::VALUE_REQUIRED, 'start: choices for products without a gateway match, "ref=gatewayId,ref=record"');
+        $this->addOption('map', null, InputOption::VALUE_REQUIRED, 'start: choices for products without a %%VENDOR%% product match, "ref=gatewayId,ref=record"');
     }
 
     protected function process(InputInterface $input, OutputInterface $output, SymfonyStyle $io)
@@ -73,7 +73,7 @@ class MigrateLegacy extends AbstractCommand
                 break;
 
             case 'unmatched':
-                // products without a gateway match: each needs --map ref=gatewayId|record at the start
+                // products without a %%VENDOR%% product match: each needs --map ref=gatewayId|record at the start
                 $io->writeln(json_encode((new Engine($this->source($input)))->unmatched(), JSON_PRETTY_PRINT));
                 break;
 
