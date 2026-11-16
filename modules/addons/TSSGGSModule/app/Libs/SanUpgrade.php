@@ -364,7 +364,11 @@ class SanUpgrade
         $rows      = self::optionQuantities($serviceId);
         $configId  = isset($rows[$type]) ? (int)$rows[$type]->configid : 0;
         $paid      = 0.0;
-        foreach(Capsule::table('tblupgrades')->where('orderid', (int)$upgrade->orderid)->where('type', 'configoptions')->get() as $row)
+        // this upgrade, or the other option's upgrade of the same order (both SAN types changed at once)
+        $upgrades  = (int)$upgrade->orderid > 0
+            ? Capsule::table('tblupgrades')->where('orderid', (int)$upgrade->orderid)->where('type', 'configoptions')->get()->all()
+            : [$upgrade];
+        foreach($upgrades as $row)
         {
             if((int)explode('=>', (string)$row->originalvalue)[0] !== $configId)
             {
@@ -390,6 +394,14 @@ class SanUpgrade
      */
     protected static function afterDowngrade($serviceId, array $current, array $purchased, $upgrade = null)
     {
+        // WHMCS runs the hook once per changed option: only this upgrade's SAN type is settled here (and remembered), so
+        // its credit is compared with this upgrade's own WHMCS credit
+        $only = $upgrade ? self::upgradeType($serviceId, $upgrade) : null;
+        if($only)
+        {
+            $other           = $only === 'single' ? 'wildcard' : 'single';
+            $current[$other] = (int)$purchased[$other];
+        }
         $remove = [];
         foreach(['single', 'wildcard'] as $type)
         {
@@ -417,14 +429,26 @@ class SanUpgrade
         GeneralSettings::activity('Service #' . $serviceId . ': ' . $text);
     }
 
+    /** 'single' | 'wildcard': the SAN option an upgrade row changed (null when it is not a SAN option) */
+    protected static function upgradeType($serviceId, $upgrade)
+    {
+        $configId = (int)explode('=>', (string)$upgrade->originalvalue)[0];
+        foreach(self::optionQuantities($serviceId) as $type => $row)
+        {
+            if((int)$row->configid === $configId)
+            {
+                return $type;
+            }
+        }
+
+        return null;
+    }
+
     /** Credits the client the difference between the price paid and WHMCS's prorated downgrade credit */
     protected static function creditDifference($serviceId, $upgrade, $refund)
     {
-        $whmcs = 0.0;
-        foreach(Capsule::table('tblupgrades')->where('orderid', (int)$upgrade->orderid)->where('type', 'configoptions')->pluck('amount') as $amount)
-        {
-            $whmcs += (float)$amount < 0 ? -(float)$amount : 0;
-        }
+        // this upgrade's own credit (the hook runs before WHMCS links the upgrade to its order)
+        $whmcs      = (float)$upgrade->amount < 0 ? -(float)$upgrade->amount : 0.0;
         $difference = round($refund - $whmcs, 2);
         if(abs($difference) < 0.005)
         {
@@ -437,7 +461,7 @@ class SanUpgrade
         Capsule::table('tblcredit')->insert([
             'clientid'    => $clientId,
             'date'        => date('Y-m-d'),
-            'description' => 'Upgrade/Downgrade Credit: additional SANs refunded at the price paid (order #' . (int)$upgrade->orderid . ')',
+            'description' => 'Upgrade/Downgrade Credit: additional SANs refunded at the price paid',
             'amount'      => $difference,
             'relid'       => 0,
         ]);
