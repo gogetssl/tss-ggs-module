@@ -77,9 +77,12 @@ class SSLStepThree
             \ModulesGarden\TSSGGSModule\App\Libs\MainDomain::assertCommonName((int)$params['serviceid'], $commonName);
 
             $san = [];
+            // a CSR without common name (IP certificates): every name is a SAN of the order, the main name too - the
+            // vendor refuses the order without one ("minimum numbers of SAN is 1")
+            $allNamesAreSans = !empty($params['common_name']) && empty($decode['CN']);
             foreach ($params['method'] as $domain_san => $method_san)
             {
-                if($domain_san == $commonName) continue;
+                if($domain_san == $commonName && !$allNamesAreSans) continue;
                 $methodSan = $method_san == 'email' ? $params['approver'][$domain_san] : $method_san;
                 $san[] = ['name' => $domain_san, 'validation_method' => $methodSan];
             }

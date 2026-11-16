@@ -682,7 +682,8 @@ class CertificateService
         $sans = [];
         foreach($methods as $domain => $method)
         {
-            if($domain !== $commonName)
+            // an IP certificate's names are all SANs, the main name too (the vendor needs at least one)
+            if($domain !== $commonName || $ipCertificate)
             {
                 $sans[] = ['name' => $domain, 'validation_method' => $method];
             }
