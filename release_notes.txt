@@ -1,3 +1,16 @@
+1.14.0 (2026-11-16)
+AutoInstall report e-mail to the administrators
+- A daily e-mail to the administrators about AutoInstall (cPanel): the
+  certificates it installed (new orders, renewals, automatic reissues), the
+  ones that failed and must be installed manually (with the reason), and the
+  ones still waiting for validation after 3 days. Each line links to the
+  service in the admin area. Nothing new, no e-mail.
+- New setting Settings > Automated SSL > AutoInstall (cPanel) > "AutoInstall
+  Report E-mail" (on by default). The report keeps its own list of jobs, so it
+  works with the Certificate Log turned off.
+- The package no longer contains the framework's .codeclimate.yml (secret
+  scanners mistook its entry in the release file list for a key).
+
 1.13.1 (2026-11-16)
 Reissue of wildcard certificates, SANs only from the order form
 - Reissue of a wildcard certificate (*.example.com) no longer pre-fills the
