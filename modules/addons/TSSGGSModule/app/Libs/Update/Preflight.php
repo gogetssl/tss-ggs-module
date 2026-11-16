@@ -43,6 +43,11 @@ class Preflight
                 $problems[] = $dir;
             }
         }
+        // the updater's own folder (download, backups) - made by another user (web server / cron) it may be locked
+        foreach(Workdir::notWritable() as $locked)
+        {
+            $problems[] = $locked;
+        }
         foreach([Workdir::addonDir(), Workdir::serverDir()] as $dir)
         {
             $locked = self::firstNotWritable($dir);
