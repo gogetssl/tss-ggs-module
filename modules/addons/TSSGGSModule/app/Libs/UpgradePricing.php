@@ -149,10 +149,11 @@ class UpgradePricing
                 if((string)$option['optionname'] === (string)($upgrade['configname'] ?? ''))
                 {
                     $configId = (int)$option['id'];
-                    if(in_array($configId, $sanIds, true))
+                    // only added SANs: a reduction keeps WHMCS's amount (the invoice side does the same)
+                    if(in_array($configId, $sanIds, true) && (float)$option['selectedrecurring'] - ($oldById[$configId] ?? 0) >= 0.005)
                     {
                         // the full price of the added SANs for the billing cycle
-                        $price   = round(max(0, (float)$option['selectedrecurring'] - ($oldById[$configId] ?? 0)), 2);
+                        $price   = round((float)$option['selectedrecurring'] - ($oldById[$configId] ?? 0), 2);
                         $changed = true;
                         $upgrade['price'] = formatCurrency($price);
                     }
@@ -172,7 +173,7 @@ class UpgradePricing
         }
 
         $net = max(0, round($subtotal - $discount, 2));
-        list($net, $tax, $tax2) = self::tax($net, $vars);
+        list($net, $tax, $tax2) = self::tax($net, $vars, self::taxable($service->packageid, $service->userid));
 
         return [
             'upgrades' => $upgrades,
@@ -185,11 +186,22 @@ class UpgradePricing
         ];
     }
 
-    /** [net, tax, tax2] as WHMCS works them out (exclusive or inclusive, level 2 optionally compound) */
-    protected static function tax($amount, array $vars)
+    /** Whether the upgrade is taxed: tax on in WHMCS, the product taxed, the client not tax exempt (as on the invoice) */
+    protected static function taxable($packageId, $userId)
+    {
+        return \WHMCS\Config\Setting::getValue('TaxEnabled') === 'on'
+            && (int)Capsule::table('tblproducts')->where('id', (int)$packageId)->value('tax')
+            && !(int)Capsule::table('tblclients')->where('id', (int)$userId)->value('taxexempt');
+    }
+
+    /**
+     * [net, tax, tax2] as WHMCS works them out (exclusive or inclusive, level 2 optionally compound); the rates are the
+     * ones WHMCS gives the page for the client ($taxrate, $taxrate2)
+     */
+    protected static function tax($amount, array $vars, $taxable)
     {
         $tax = $tax2 = 0.0;
-        if(empty($vars['taxenabled']))
+        if(!$taxable || (empty($vars['taxrate']) && empty($vars['taxrate2'])))
         {
             return [$amount, 0.0, 0.0];
         }
@@ -306,6 +318,11 @@ class UpgradePricing
                 Capsule::table('tblupgrades')->where('id', $line[3])->update(['amount' => $line[0]]);
             }
         });
+        // totals and tax of the invoice from its lines (not loaded in every WHMCS context: admin area, API)
+        if(!function_exists('updateInvoiceTotal') && defined('ROOTDIR') && is_file(ROOTDIR . '/includes/invoicefunctions.php'))
+        {
+            require_once ROOTDIR . '/includes/invoicefunctions.php';
+        }
         if(function_exists('updateInvoiceTotal'))
         {
             updateInvoiceTotal($invoiceId);

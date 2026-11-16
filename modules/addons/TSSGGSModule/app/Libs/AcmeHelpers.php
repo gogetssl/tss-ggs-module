@@ -149,7 +149,8 @@ class AcmeHelpers
 
         $postData = [
             'userid'           => $service->userid,
-            'sendinvoice'      => true,
+            // a 0.00 renewal is paid at once below: no "please pay" e-mail
+            'sendinvoice'      => (float)$amount > 0,
             'date'             => $dateInvoice,
             // due the payment term after it is created (App\Libs\RenewalPolicy): an unpaid renewal is cancelled at the
             // vendor once overdue, so a term that ends before the renewal day keeps the vendor from charging for it

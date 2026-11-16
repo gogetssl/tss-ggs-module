@@ -11,8 +11,8 @@ use WHMCS\Database\Capsule;
 class ZeroInvoice
 {
     /**
-     * Marks the invoice paid when its total is 0.00 and it is still unpaid; the module's InvoicePaid handlers then
-     * run as for a paid one
+     * Marks the invoice paid when its total is 0.00 and it is still unpaid, processed by WHMCS as a paid one (the
+     * service renews)
      * @return bool whether it was settled
      */
     public static function settle($invoiceId, $reason = '')
@@ -22,16 +22,25 @@ class ZeroInvoice
         {
             return false;
         }
-        // not through UpdateInvoice: WHMCS 9 sets a 0.00 invoice to Paid there but then answers an error ("cannot
-        // modify the subtotal of a Paid invoice") and runs no InvoicePaid hook. The status is set once (the WHERE
-        // guards against a second run), then the module's InvoicePaid handlers run as for any paid invoice.
-        $changed = Capsule::table('tblinvoices')->where('id', (int)$invoiceId)->whereIn('status', ['Unpaid', 'Draft'])
-            ->update(['status' => 'Paid', 'datepaid' => date('Y-m-d H:i:s')]);
-        if(!$changed)
+        // WHMCS's own processing of a paid invoice (what a gateway payment runs): the status, the InvoicePaid hook and
+        // the invoice lines - a "Hosting" line moves the service's due date on and runs the module's Renew, exactly as
+        // when the client pays. Not UpdateInvoice: WHMCS 9 sets a 0.00 invoice to Paid there but answers an error
+        // ("cannot modify the subtotal of a Paid invoice") and processes nothing. No payment confirmation e-mail.
+        if(!function_exists('processPaidInvoice') && defined('ROOTDIR') && is_file(ROOTDIR . '/includes/invoicefunctions.php'))
+        {
+            require_once ROOTDIR . '/includes/invoicefunctions.php';
+        }
+        if(!function_exists('processPaidInvoice'))
+        {
+            GeneralSettings::activity('Invoice #' . (int)$invoiceId . ' totals 0.00 but could not be marked paid (WHMCS function processPaidInvoice is missing) - mark it paid manually');
+
+            return false;
+        }
+        processPaidInvoice((int)$invoiceId, true);
+        if(Capsule::table('tblinvoices')->where('id', (int)$invoiceId)->value('status') !== 'Paid')
         {
             return false;
         }
-        run_hook('InvoicePaid', ['invoiceid' => (int)$invoiceId]);
         GeneralSettings::activity('Invoice #' . (int)$invoiceId . ' totals 0.00 and was marked paid' . ($reason !== '' ? ' (' . $reason . ')' : ''));
 
         return true;
