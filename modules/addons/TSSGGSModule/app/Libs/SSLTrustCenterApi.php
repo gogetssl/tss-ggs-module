@@ -65,6 +65,29 @@ class SSLTrustCenterApi
         return $this->call('/products');
     }
 
+    /**
+     * Connection and credential check: GET /authentication/validate (204, no body) - a fraction of the product list's
+     * time and size. Throws like any call when the credentials are refused. An API without that call (404) is checked
+     * with the product list instead.
+     */
+    public function validate()
+    {
+        try
+        {
+            $this->call('/authentication/validate', [], 'GET');
+        }
+        catch(\Throwable $e)
+        {
+            if(!preg_match('/\b404\b|not found/i', $e->getMessage()))
+            {
+                throw $e;
+            }
+            $this->getProducts();
+        }
+
+        return true;
+    }
+
     public function getProduct($id)
     {
         return $this->call('/products/' . $id);
