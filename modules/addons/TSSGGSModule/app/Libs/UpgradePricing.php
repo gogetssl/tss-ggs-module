@@ -129,12 +129,9 @@ class UpgradePricing
             $oldById[(int)$option['id']] = (float)($option['selectedrecurring'] ?? 0);
         }
 
-        $promo = null;
-        if(!empty($vars['promocode']) && function_exists('validateUpgradePromo'))
-        {
-            $data  = validateUpgradePromo($vars['promocode']);
-            $promo = is_array($data) && !empty($GLOBALS['qualifies']) ? $data : null;
-        }
+        // the code applies when WHMCS gave it a discount on its own prices (it checked dates, uses, client, options);
+        // the discount is then worked out on the full prices, the same way as on the invoice
+        $promo = !empty($vars['promocode']) && abs(self::numeric($vars['discount'] ?? 0)) >= 0.005 ? self::promotion($vars['promocode']) : null;
 
         $changed  = false;
         $subtotal = 0.0;
@@ -232,7 +229,20 @@ class UpgradePricing
             return (float)$price->toNumeric();
         }
 
-        return (float)preg_replace('/[^0-9.\-]/', '', str_replace(',', '.', (string)$price));
+        // a formatted amount ("$1,234.56 USD", "1.234,56 €"): the last separator is the decimal one
+        $text = preg_replace('/[^0-9.,\-]/', '', (string)$price);
+        $dot  = strrpos($text, '.');
+        $comma = strrpos($text, ',');
+        if($dot !== false && $comma !== false)
+        {
+            $text = $dot > $comma ? str_replace(',', '', $text) : str_replace(',', '.', str_replace('.', '', $text));
+        }
+        elseif($comma !== false)
+        {
+            $text = preg_match('/,\d{1,2}$/', $text) ? str_replace(',', '.', $text) : str_replace(',', '', $text);
+        }
+
+        return (float)$text;
     }
 
     /* ---------------------------------------------------------------- invoice */
