@@ -22,15 +22,13 @@ class ZeroInvoice
         {
             return false;
         }
-        if($invoice->status === 'Draft')
+        // not through UpdateInvoice: WHMCS 9 sets a 0.00 invoice to Paid there but then answers an error ("cannot
+        // modify the subtotal of a Paid invoice") and runs no InvoicePaid hook. The status is set once (the WHERE
+        // guards against a second run), then the module's InvoicePaid handlers run as for any paid invoice.
+        $changed = Capsule::table('tblinvoices')->where('id', (int)$invoiceId)->whereIn('status', ['Unpaid', 'Draft'])
+            ->update(['status' => 'Paid', 'datepaid' => date('Y-m-d H:i:s')]);
+        if(!$changed)
         {
-            Capsule::table('tblinvoices')->where('id', (int)$invoiceId)->update(['status' => 'Unpaid']);
-        }
-        $result = localAPI('UpdateInvoice', ['invoiceid' => (int)$invoiceId, 'status' => 'Paid', 'datepaid' => date('Y-m-d H:i:s')]);
-        if(($result['result'] ?? '') !== 'success')
-        {
-            GeneralSettings::activity('Invoice #' . (int)$invoiceId . ' (0.00) could not be marked paid: ' . ($result['message'] ?? 'unknown error'));
-
             return false;
         }
         run_hook('InvoicePaid', ['invoiceid' => (int)$invoiceId]);
