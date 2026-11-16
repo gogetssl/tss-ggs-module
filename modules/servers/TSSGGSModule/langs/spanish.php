@@ -918,3 +918,13 @@ $_LANG['addonCertificate']['admin_label'] = 'Servicio del certificado';
 $_LANG['addonCertificate']['managed_elsewhere'] = 'Este certificado se gestiona en su servicio de certificado :service:.';
 $_LANG['addonCertificate']['service_notice'] = 'Este certificado se factura con el complemento de producto ":addon:" de :service:. Se renueva y se cancela allí.';
 $_LANG['addonCertificate']['upgrade_blocked'] = 'Este certificado se factura con un complemento de producto: no se puede mejorar ni añadirle dominios. Pida en su lugar un certificado con más dominios.';
+
+// CAA DNS record warning (App\Libs\CaaCheck)
+$_LANG['caa_title'] = 'Un registro DNS CAA no permite este certificado';
+$_LANG['caa_intro'] = '%s no emitirá el certificado para estos dominios: su registro DNS CAA solo permite otras autoridades de certificación.';
+$_LANG['caa_inherited'] = 'registro en %s';
+$_LANG['caa_now'] = 'Registro CAA actual';
+$_LANG['caa_add'] = 'Añada este registro';
+$_LANG['caa_fix'] = 'Añada el registro en la zona DNS del dominio (o elimine sus registros CAA). Los cambios de DNS pueden tardar hasta una hora.';
+$_LANG['caa_gateway'] = 'La autoridad de certificación informa de que su comprobación CAA falló para este pedido. Vuelve a comprobarlo cuando el registro CAA lo permita.';
+$_LANG['caa_continue'] = 'Puede continuar: el pedido se realiza ahora y el certificado se emite cuando se corrija el registro.';

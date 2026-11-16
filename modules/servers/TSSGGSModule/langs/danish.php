@@ -918,3 +918,13 @@ $_LANG['addonCertificate']['admin_label'] = 'Certifikattjeneste';
 $_LANG['addonCertificate']['managed_elsewhere'] = 'Dette certifikat administreres på sin certifikattjeneste :service:.';
 $_LANG['addonCertificate']['service_notice'] = 'Dette certifikat faktureres med produkttilføjelsen ":addon:" til :service:. Det fornyes og opsiges dér.';
 $_LANG['addonCertificate']['upgrade_blocked'] = 'Dette certifikat faktureres med en produkttilføjelse: det kan ikke opgraderes, og der kan ikke tilføjes domæner. Bestil i stedet et certifikat med flere domæner.';
+
+// CAA DNS record warning (App\Libs\CaaCheck)
+$_LANG['caa_title'] = 'En CAA DNS-post tillader ikke dette certifikat';
+$_LANG['caa_intro'] = '%s udsteder ikke certifikatet for disse domæner: deres CAA DNS-post tillader kun andre certifikatudstedere.';
+$_LANG['caa_inherited'] = 'post på %s';
+$_LANG['caa_now'] = 'CAA-post nu';
+$_LANG['caa_add'] = 'Tilføj denne post';
+$_LANG['caa_fix'] = 'Tilføj posten i domænets DNS-zone (eller fjern dets CAA-poster). DNS-ændringer kan tage op til en time om at slå igennem.';
+$_LANG['caa_gateway'] = 'Certifikatudstederen melder, at dens CAA-kontrol fejlede for denne ordre. Den kontrollerer igen, når CAA-posten tillader det.';
+$_LANG['caa_continue'] = 'Du kan fortsætte: ordren afgives nu, og certifikatet udstedes, når posten er rettet.';

@@ -918,3 +918,13 @@ $_LANG['addonCertificate']['admin_label'] = 'Služba certifikátu';
 $_LANG['addonCertificate']['managed_elsewhere'] = 'Tento certifikát se spravuje ve své službě certifikátu :service:.';
 $_LANG['addonCertificate']['service_notice'] = 'Tento certifikát se účtuje s doplňkem produktu ":addon:" služby :service:. Prodlužuje se a ruší tam.';
 $_LANG['addonCertificate']['upgrade_blocked'] = 'Tento certifikát se účtuje s doplňkem produktu: nelze jej povýšit ani k němu přidat domény. Objednejte místo toho certifikát s více doménami.';
+
+// CAA DNS record warning (App\Libs\CaaCheck)
+$_LANG['caa_title'] = 'Záznam CAA v DNS tento certifikát nepovoluje';
+$_LANG['caa_intro'] = '%s certifikát pro tyto domény nevydá: jejich záznam CAA v DNS povoluje pouze jiné certifikační autority.';
+$_LANG['caa_inherited'] = 'záznam na %s';
+$_LANG['caa_now'] = 'Současný záznam CAA';
+$_LANG['caa_add'] = 'Přidejte tento záznam';
+$_LANG['caa_fix'] = 'Přidejte záznam do DNS zóny domény (nebo její záznamy CAA odstraňte). Projevení změn v DNS může trvat až hodinu.';
+$_LANG['caa_gateway'] = 'Certifikační autorita hlásí, že kontrola CAA pro tuto objednávku selhala. Zkontroluje ji znovu, jakmile to záznam CAA povolí.';
+$_LANG['caa_continue'] = 'Můžete pokračovat: objednávka se odešle hned a certifikát bude vydán, jakmile bude záznam opraven.';

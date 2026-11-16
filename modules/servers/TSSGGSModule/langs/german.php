@@ -918,3 +918,13 @@ $_LANG['addonCertificate']['admin_label'] = 'Zertifikatsdienst';
 $_LANG['addonCertificate']['managed_elsewhere'] = 'Dieses Zertifikat wird über seinen Zertifikatsdienst :service: verwaltet.';
 $_LANG['addonCertificate']['service_notice'] = 'Dieses Zertifikat wird mit dem Produkt-Addon ":addon:" von :service: abgerechnet. Es wird dort verlängert und gekündigt.';
 $_LANG['addonCertificate']['upgrade_blocked'] = 'Dieses Zertifikat wird mit einem Produkt-Addon abgerechnet: Es kann nicht hochgestuft werden und es lassen sich keine Domains hinzufügen. Bestellen Sie stattdessen ein Zertifikat mit mehr Domains.';
+
+// CAA DNS record warning (App\Libs\CaaCheck)
+$_LANG['caa_title'] = 'Ein CAA-DNS-Eintrag erlaubt dieses Zertifikat nicht';
+$_LANG['caa_intro'] = '%s stellt das Zertifikat für diese Domains nicht aus: ihr CAA-DNS-Eintrag erlaubt nur andere Zertifizierungsstellen.';
+$_LANG['caa_inherited'] = 'Eintrag auf %s';
+$_LANG['caa_now'] = 'CAA-Eintrag jetzt';
+$_LANG['caa_add'] = 'Diesen Eintrag hinzufügen';
+$_LANG['caa_fix'] = 'Fügen Sie den Eintrag in der DNS-Zone der Domain hinzu (oder entfernen Sie ihre CAA-Einträge). DNS-Änderungen können bis zu einer Stunde dauern.';
+$_LANG['caa_gateway'] = 'Die Zertifizierungsstelle meldet, dass ihre CAA-Prüfung für diese Bestellung fehlgeschlagen ist. Sie prüft erneut, sobald der CAA-Eintrag es erlaubt.';
+$_LANG['caa_continue'] = 'Sie können fortfahren: die Bestellung wird jetzt aufgegeben, und das Zertifikat wird ausgestellt, sobald der Eintrag korrigiert ist.';

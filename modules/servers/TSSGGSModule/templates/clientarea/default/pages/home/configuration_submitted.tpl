@@ -1,4 +1,5 @@
 <div class="validate-ssl-unified tssggs-cert">
+    {if $caa_warning}{$caa_warning}{/if}
     {if $processing_guide}
         <div class="alert alert-info tssggs-processing-guide" role="alert">{$processing_guide}</div>
     {/if}

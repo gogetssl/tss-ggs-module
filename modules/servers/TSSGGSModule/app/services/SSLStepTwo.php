@@ -40,6 +40,8 @@ class SSLStepTwo
             $api = SSLTrustCenterApi::forVendor($configProduct['provider'], $configProduct['category']);
             $approvers = $api->getDomainEmails($domains);
             $vars['approvers'] = $this->approversToOptions($approvers);
+            // a CAA record that keeps the CA from issuing: warned here, the client can still continue
+            $vars['caa_warning'] = json_encode(CaaWarning::beforeOrder($params['packageid'], $domains), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP);
 
             $view = Smarty::buildTemplate('configuressl/SSLStepTwo', $vars);
             return ['approveremails' => [$view]];

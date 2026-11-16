@@ -68,6 +68,12 @@ class AdminServicesTabFields
             }
 
             $fields = array_merge($this->getCertificateDetails($params, $sslService), $this->getAutoInstallDetails($params['serviceid'], (int)$params['userid']));
+            $caa    = $this->caaWarning((int)$params['serviceid']);
+            if($caa !== '')
+            {
+                // first, so the admin sees why the order does not move
+                $fields = ['CAA Record' => $caa] + $fields;
+            }
             if(CertificateService::isSectigo($params['packageid']))
             {
                 $override = CertificateService::renewalDaysOverride($params['serviceid']);
@@ -80,6 +86,38 @@ class AdminServicesTabFields
         catch(\Exception $ex)
         {
             return ['Error' => htmlspecialchars($ex->getMessage())];
+        }
+    }
+
+    /** CAA warning of a pending TLS certificate (App\Libs\CaaCheck), '' when nothing blocks it */
+    private function caaWarning($serviceId)
+    {
+        try
+        {
+            $stored  = CertificateService::stored($serviceId);
+            $waiting = [];
+            foreach((array)($stored['orderData']['items'][0]['domains'] ?? []) as $domain)
+            {
+                if(empty($domain['approved']) && !empty($domain['name']))
+                {
+                    $waiting[] = (string)$domain['name'];
+                }
+            }
+            $warning = \ModulesGarden\TSSGGSModule\App\Libs\CaaCheck::forService($serviceId, $waiting);
+
+            return $warning ? \ModulesGarden\TSSGGSModule\App\Libs\CaaCheck::html($warning, [
+                'title'     => 'A CAA DNS record does not allow this certificate',
+                'intro'     => '%s will not issue for these domains: their CAA DNS record allows other certificate authorities only. The client sees the same notice.',
+                'inherited' => 'record set on %s',
+                'now'       => 'CAA record now',
+                'add'       => 'Record to add',
+                'fix'       => 'The domain owner adds the record (or removes the CAA records); the CA then issues without a new order.',
+                'gateway'   => 'The gateway reports that the CA\'s own CAA check failed for this order.',
+            ]) : '';
+        }
+        catch(\Throwable $e)
+        {
+            return '';
         }
     }
 

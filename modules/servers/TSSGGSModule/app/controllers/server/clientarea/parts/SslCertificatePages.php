@@ -198,6 +198,16 @@ trait SslCertificatePages
         $vars['autoinstall']      = AutoInstallHelpers::getStatusForView($service->id);
         $vars['csrfToken']        = \generate_token('plain');
         $vars['processing_guide'] = ProductSettings::message($product->id, 'processingGuide');
+        // a CAA record that keeps the CA from issuing the names still waiting for validation (App\Libs\CaaCheck)
+        $waiting = [];
+        foreach($domains as $domain)
+        {
+            if(empty($domain['approved']))
+            {
+                $waiting[] = (string)$domain['name'];
+            }
+        }
+        $vars['caa_warning'] = \ModulesGarden\Servers\TSSGGSModule\app\services\CaaWarning::pending((int)$service->id, $waiting);
 
         return ['tpl' => 'configuration_submitted', 'vars' => $vars];
     }
