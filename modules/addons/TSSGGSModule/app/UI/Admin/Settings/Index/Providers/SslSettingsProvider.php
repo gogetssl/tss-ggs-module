@@ -40,6 +40,10 @@ class SslSettingsProvider extends CrudProvider
                 $this->data[$key] = 'on';
             }
         }
+        if(empty($this->data['sanUpgradePricing']))
+        {
+            $this->data['sanUpgradePricing'] = \ModulesGarden\TSSGGSModule\App\Libs\SanUpgrade::PRICING_FULL;
+        }
         if(empty($this->data['subscriptionSlotPricing']))
         {
             $this->data['subscriptionSlotPricing'] = \ModulesGarden\TSSGGSModule\App\Libs\SubscriptionBilling::SLOT_PRICING_PRORATED;
@@ -76,6 +80,10 @@ class SslSettingsProvider extends CrudProvider
             $pendingWait[(string)$days] = $this->translate('pendingWait_' . $days);
         }
         $this->availableValues['pendingPaymentWaitSubscription']        = $pendingWait;
+        $this->availableValues['sanUpgradePricing']                     = [
+            \ModulesGarden\TSSGGSModule\App\Libs\SanUpgrade::PRICING_FULL     => $this->translate('sanUpgradePricing_full'),
+            \ModulesGarden\TSSGGSModule\App\Libs\SanUpgrade::PRICING_PRORATED => $this->translate('sanUpgradePricing_prorated'),
+        ];
         $this->availableValues['subscriptionSlotPricing']               = [
             \ModulesGarden\TSSGGSModule\App\Libs\SubscriptionBilling::SLOT_PRICING_PRORATED => $this->translate('subscriptionSlotPricing_prorated'),
             \ModulesGarden\TSSGGSModule\App\Libs\SubscriptionBilling::SLOT_PRICING_FULL     => $this->translate('subscriptionSlotPricing_full'),

@@ -733,6 +733,8 @@ class CertificateService
             'submitted_alternative_names' => $sans,
         ]);
         $itemId = SSLTrustCenterApi::getItemId($reissue, (int)$ssl->remoteid);
+        // SANs bought before a reissue can no longer be given back for a refund
+        SanUpgrade::noteReissue((int)$serviceId);
 
         $requestOrder['csr']               = trim($csr);
         $requestOrder['common_name']       = ['name' => $commonName, 'validation_method' => $methods[$commonName]];

@@ -25,8 +25,14 @@ class UpgradePricing
     /** Invoices already corrected (one tblRequests row each) */
     const DONE = 'upgradeFullPrice';
 
-    /** A certificate service of the module whose SAN upgrades are charged in full */
+    /** A certificate service of the module whose SAN upgrades are charged in full (Settings > SSL, default) */
     public static function eligibleService($serviceId)
+    {
+        return SanUpgrade::pricing() === SanUpgrade::PRICING_FULL && self::certificateService($serviceId);
+    }
+
+    /** An SSL/TLS certificate service of the module (not ACME, not a subscription) */
+    public static function certificateService($serviceId)
     {
         $row = Capsule::table('tblhosting')->join('tblproducts', 'tblproducts.id', '=', 'tblhosting.packageid')
             ->where('tblhosting.id', (int)$serviceId)->first(['tblproducts.id', 'tblproducts.servertype', 'tblproducts.configoption9']);
@@ -106,7 +112,10 @@ class UpgradePricing
             return [];
         }
         $serviceId = (int)($vars['id'] ?? 0);
-        if(!self::eligibleService($serviceId))
+        $full      = self::eligibleService($serviceId);
+        // removed SANs are credited at the price paid (SanUpgrade::afterDowngrade) when WHMCS credits downgrades
+        $refunds   = \WHMCS\Config\Setting::getValue('CreditOnDowngrade') === 'on' && self::certificateService($serviceId) && SanUpgrade::isOrderedCertificate($serviceId);
+        if(!$full && !$refunds)
         {
             return [];
         }
@@ -146,13 +155,27 @@ class UpgradePricing
                 if((string)$option['optionname'] === (string)($upgrade['configname'] ?? ''))
                 {
                     $configId = (int)$option['id'];
-                    // only added SANs: a reduction keeps WHMCS's amount (the invoice side does the same)
-                    if(in_array($configId, $sanIds, true) && (float)$option['selectedrecurring'] - ($oldById[$configId] ?? 0) >= 0.005)
+                    $difference = (float)$option['selectedrecurring'] - ($oldById[$configId] ?? 0);
+                    if($full && in_array($configId, $sanIds, true) && $difference >= 0.005)
                     {
                         // the full price of the added SANs for the billing cycle
-                        $price   = round((float)$option['selectedrecurring'] - ($oldById[$configId] ?? 0), 2);
+                        $price   = round($difference, 2);
                         $changed = true;
                         $upgrade['price'] = formatCurrency($price);
+                    }
+                    elseif($refunds && in_array($configId, $sanIds, true) && $difference <= -0.005)
+                    {
+                        // removed SANs: the price paid for them comes back as credit
+                        $type   = explode('|', (string)Capsule::table('tblproductconfigoptions')->where('id', $configId)->value('optionname'))[0] === 'sans_wildcard' ? 'wildcard' : 'single';
+                        $before = (int)Capsule::table('tblhostingconfigoptions')->where('relid', $serviceId)->where('configid', $configId)->value('qty');
+                        $after  = (int)($vars['configoptions'][$configId] ?? $before);
+                        $refund = $before > $after ? SanUpgrade::refundQuote($serviceId, [$type => $before - $after]) : null;
+                        if($refund !== null)
+                        {
+                            $price   = -1 * $refund;
+                            $changed = true;
+                            $upgrade['price'] = formatCurrency($price);
+                        }
                     }
                     break;
                 }
@@ -169,8 +192,9 @@ class UpgradePricing
             return [];
         }
 
-        $net = max(0, round($subtotal - $discount, 2));
-        list($net, $tax, $tax2) = self::tax($net, $vars, self::taxable($service->packageid, $service->userid));
+        $net = round($subtotal - $discount, 2);
+        // a credit (removed SANs) is shown without tax, as WHMCS credits it
+        list($net, $tax, $tax2) = $net > 0 ? self::tax($net, $vars, self::taxable($service->packageid, $service->userid)) : [$net, 0.0, 0.0];
 
         return [
             'upgrades' => $upgrades,

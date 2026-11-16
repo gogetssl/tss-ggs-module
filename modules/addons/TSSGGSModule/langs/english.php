@@ -1478,6 +1478,10 @@ $_LANG['admin.configuration.content.step2.command_hint'] = 'Run this on the serv
 
 $_LANG['admin.settings.index.forms.ssl_settings_form.terminateUnpaidSubscriptions'] = 'Terminate Unpaid Subscriptions';
 $_LANG['admin.settings.index.forms.ssl_settings_form.terminateUnpaidSubscriptions_description'] = 'When the renewal invoice is still unpaid after its due date, the subscription is cancelled at the vendor before it renews and the service is terminated. The renewal invoice is due the day before the subscription renews.';
+$_LANG['admin.settings.index.forms.ssl_settings_form.sanUpgradePricing'] = 'Additional SANs Bought Later';
+$_LANG['admin.settings.index.forms.ssl_settings_form.sanUpgradePricing_description'] = 'Price of additional domains (SANs) a client adds to an SSL certificate after the order. Full price: the price of the whole billing period (1, 2 or 3 years), as the vendor charges it in full. Prorated: the WHMCS price for the time left until the next due date. Promotion codes for upgrades apply to either. A client can remove domains bought in the last 30 days only while the certificate does not use them and has not been reissued since; when "Credit on Downgrade" is on in WHMCS, the price paid for them is credited.';
+$_LANG['admin.settings.index.providers.ssl_settings_provider.sanUpgradePricing_full'] = 'Full price for the billing period';
+$_LANG['admin.settings.index.providers.ssl_settings_provider.sanUpgradePricing_prorated'] = 'Prorated to the next due date';
 $_LANG['admin.settings.index.forms.ssl_settings_form.subscriptionSlotPricing'] = '"Buy More Domains" Price';
 $_LANG['admin.settings.index.forms.ssl_settings_form.subscriptionSlotPricing_description'] = 'Price of domains (slots) a client buys during the subscription period. Prorated: the yearly price for the days left until the next renewal. Full price: the yearly price, whenever they are bought. The renewal always charges the full yearly price for all domains.';
 $_LANG['admin.settings.index.providers.ssl_settings_provider.subscriptionSlotPricing_prorated'] = 'Prorated to the next renewal';
