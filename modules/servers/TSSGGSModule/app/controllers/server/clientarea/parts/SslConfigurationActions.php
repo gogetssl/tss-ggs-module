@@ -428,21 +428,8 @@ trait SslConfigurationActions
         {
             $wildcardSans[] = strpos($wildcardSan, '*.') === 0 ? $wildcardSan : '*.' . $wildcardSan;
         }
-        // SANs written into the client's own CSR count when the SAN fields are left empty
-        if(!$sanDomains && !$wildcardSans && !empty($ownCsr) && ($settings['sansLimit'] > 0 || $settings['wildcardSansLimit'] > 0))
-        {
-            foreach(CertificateService::csrSans($ownCsr) as $csrSan)
-            {
-                if(strpos($csrSan, '*.') === 0)
-                {
-                    $wildcardSans[] = $csrSan;
-                }
-                else
-                {
-                    $sanDomains[] = $csrSan;
-                }
-            }
-        }
+        // SANs written into the client's own CSR are never used: CSR tools often add the free www. / bare twin of
+        // the common name, which would take a paid SAN slot (or be refused by the certificate authority)
         // a SAN equal to the common name, or listed twice, would use a paid slot for nothing
         $sanDomains   = array_values(array_unique(array_diff($sanDomains, [$mainDomain])));
         $wildcardSans = array_values(array_unique(array_diff($wildcardSans, [$mainDomain])));

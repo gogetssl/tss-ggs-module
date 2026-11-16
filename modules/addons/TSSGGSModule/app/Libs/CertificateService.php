@@ -411,69 +411,6 @@ class CertificateService
     }
 
     /**
-     * DNS names (and IP addresses) of the subjectAltName extension inside a CSR - PHP has no function for CSR
-     * extensions, so the DER is walked: OID 2.5.29.17, its OCTET STRING, the GeneralNames SEQUENCE.
-     */
-    public static function csrSans($csr)
-    {
-        $der = base64_decode(preg_replace('/-----[^-]+-----|\s+/', '', (string)$csr), true);
-        $oid = "\x06\x03\x55\x1d\x11";
-        if($der === false || ($pos = strpos($der, $oid)) === false)
-        {
-            return [];
-        }
-
-        $readLength = function($der, &$i) {
-            $len = ord($der[$i++]);
-            if($len & 0x80)
-            {
-                $bytes = $len & 0x7f;
-                $len   = 0;
-                for($b = 0; $b < $bytes; $b++)
-                {
-                    $len = ($len << 8) | ord($der[$i++]);
-                }
-            }
-
-            return $len;
-        };
-
-        $i = $pos + strlen($oid);
-        if(isset($der[$i]) && $der[$i] === "\x01") // optional "critical" BOOLEAN
-        {
-            $i += 3;
-        }
-        if(!isset($der[$i]) || $der[$i++] !== "\x04") // OCTET STRING
-        {
-            return [];
-        }
-        $readLength($der, $i);
-        if(!isset($der[$i]) || $der[$i++] !== "\x30") // GeneralNames SEQUENCE
-        {
-            return [];
-        }
-        $end   = $readLength($der, $i) + $i;
-        $names = [];
-        while($i < $end && isset($der[$i]))
-        {
-            $tag   = ord($der[$i++]);
-            $len   = $readLength($der, $i);
-            $value = substr($der, $i, $len);
-            $i    += $len;
-            if($tag === 0x82)
-            {
-                $names[] = strtolower(trim($value));
-            }
-            elseif($tag === 0x87 && in_array($len, [4, 16], true))
-            {
-                $names[] = inet_ntop($value);
-            }
-        }
-
-        return array_values(array_unique(array_filter($names)));
-    }
-
-    /**
      * SANs of the current order without the common name (and the free www. / bare twin of it) - what the client
      * paid for and should keep when reissuing: ['single' => [...], 'wildcard' => [...]]
      */
@@ -500,7 +437,19 @@ class CertificateService
             }
         }
 
-        $twin   = strpos($cn, 'www.') === 0 ? substr($cn, 4) : 'www.' . $cn;
+        // the free name of the common name: example.com for *.example.com and www.example.com, www.example.com otherwise
+        if(strpos($cn, '*.') === 0)
+        {
+            $twin = substr($cn, 2);
+        }
+        elseif(strpos($cn, 'www.') === 0)
+        {
+            $twin = substr($cn, 4);
+        }
+        else
+        {
+            $twin = 'www.' . $cn;
+        }
         $result = ['single' => [], 'wildcard' => []];
         foreach(array_unique(array_map('strtolower', array_map('trim', $names))) as $name)
         {
