@@ -243,7 +243,7 @@ class SslSettingsForm extends Form implements AdminAreaInterface, AjaxComponentI
         $this->builder->addFieldInContainer($recurringContainer, (new Dropdown())->setName('recurringPaymentTerm'));
         $recurringContainer->addElement((new Text())->setText($this->renewalCheck(RenewalPolicy::CERTIFICATE)));
         // price of additional SANs bought after the order (App\Libs\UpgradePricing)
-        $this->builder->addFieldInContainer($recurringOrdersWidget, (new Dropdown())->setName('sanUpgradePricing')->setDefaultValueAsFirstOption());
+        $this->builder->addFieldInContainer($recurringOrdersWidget, (new Dropdown())->setName('sanUpgradePricing')->setDefaultValueAsFirstOption(), true);
 
         $oneTimeOrdersWidget = $this->subSection('oneTimeOrders', $widget);
 
