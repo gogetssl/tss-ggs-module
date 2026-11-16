@@ -134,3 +134,22 @@ CREATE TABLE IF NOT EXISTS `#prefix#CatalogueChanges` (
     KEY `created_at` (`created_at`),
     KEY `emailed_at` (`emailed_at`)
     ) ENGINE=InnoDB DEFAULT CHARSET=#charset# DEFAULT COLLATE #collation#;
+--
+-- `#prefix#AutoInstallReport`: AutoInstall jobs for the daily report to the administrators (App\Libs\AutoInstallReport)
+--
+CREATE TABLE IF NOT EXISTS `#prefix#AutoInstallReport` (
+    `id`            int(10) unsigned    NOT NULL AUTO_INCREMENT,
+    `service_id`    int(11)             NOT NULL,
+    `client_id`     int(11)             NOT NULL DEFAULT 0,
+    `domain`        varchar(255)        NOT NULL DEFAULT '',
+    `kind`          varchar(16)         NOT NULL,
+    `status`        varchar(16)         NOT NULL DEFAULT 'pending',
+    `detail`        text                NULL,
+    `started_at`    datetime            NOT NULL,
+    `finished_at`   datetime            NULL,
+    `late_at`       datetime            NULL,
+    `emailed_at`    datetime            NULL,
+    PRIMARY KEY (`id`),
+    KEY `service_id` (`service_id`),
+    KEY `status` (`status`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=#charset# DEFAULT COLLATE #collation#;

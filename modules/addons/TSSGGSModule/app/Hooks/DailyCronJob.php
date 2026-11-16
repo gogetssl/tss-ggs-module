@@ -26,3 +26,18 @@ $hookManager->register(
     },
     100
 );
+
+// the AutoInstall report e-mail to the administrators (App\Libs\AutoInstallReport), once a day
+$hookManager->register(
+    function($args) {
+        try
+        {
+            \ModulesGarden\TSSGGSModule\App\Libs\AutoInstallReport::notify();
+        }
+        catch(\Throwable $e)
+        {
+            logActivity('SSL module: the AutoInstall report could not be sent: ' . $e->getMessage());
+        }
+    },
+    110
+);

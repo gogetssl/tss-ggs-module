@@ -69,6 +69,8 @@ class GeneralSettings
         // Catalogue sync (App\Libs\CatalogueSync): what the daily sync changes by itself, and the e-mail of the changes
         'catalogueSyncMode'        => 'alterations',
         'catalogueChangesEmail'    => true,
+        // AutoInstall report to the administrators (App\Libs\AutoInstallReport), daily, only when there is something new
+        'autoInstallReportEmail'   => true,
         // Finance (App\Libs\FinancePolicy)
         'minProfit'                => 0,
         'termMarginStep'           => 0,
