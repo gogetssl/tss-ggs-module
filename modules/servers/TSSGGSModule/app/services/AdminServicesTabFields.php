@@ -376,9 +376,16 @@ class AdminServicesTabFields
         $allowed = $allowed ?: self::DCV_METHODS;
 
         $html = '<table class="table table-condensed" style="margin:0;max-width:760px;"><tr><th>Domain</th><th>Method</th><th>Status</th></tr>';
+        $listed = [];
         foreach(isset($item['domains']) ? (array)$item['domains'] : [] as $domain)
         {
             $name     = (string)($domain['name'] ?? '');
+            // an IP certificate sends its main name also as a SAN: the vendor lists it twice, shown once
+            if(isset($listed[$name]))
+            {
+                continue;
+            }
+            $listed[$name] = true;
             $method   = (string)($domain['method'] ?? '');
             $approved = !empty($domain['approved']);
             $isEmail  = strpos($method, '@') !== false || $method === 'email';
@@ -439,6 +446,12 @@ class AdminServicesTabFields
 
         if(!$autoInstall)
         {
+            // a certificate for public IPs is not installed on a cPanel account by domain
+            if(\ModulesGarden\TSSGGSModule\App\Libs\IpCertificate::isProduct((int)\WHMCS\Database\Capsule::table('tblhosting')->where('id', (int)$serviceId)->value('packageid')))
+            {
+                return ['SSL Install Type' => 'Manual'];
+            }
+
             return ['SSL Install Type' => 'Manual', 'Install Target' => $target];
         }
 
