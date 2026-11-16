@@ -115,7 +115,7 @@ class Credentials
         $token   = $sandbox ? $block['TestAuthToken'] : $block['AuthToken'];
         try
         {
-            (new SSLTrustCenterApi(strtoupper($source), $code, $token))->getProducts();
+            (new SSLTrustCenterApi(strtoupper($source), $code, $token))->validate();
         }
         catch(\Throwable $e)
         {

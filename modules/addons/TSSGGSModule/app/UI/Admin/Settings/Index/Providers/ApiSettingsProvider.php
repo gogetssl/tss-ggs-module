@@ -123,16 +123,16 @@ class ApiSettingsProvider extends CrudProvider
 
         $errors = [];
 
+        // every configured API is checked (one working API must not hide a failing one)
         foreach($apis as $apiType => $api)
         {
             try
             {
-                $api->getProducts();
-                return true;
+                $api->validate();
             }
             catch(\Throwable $e)
             {
-                $apiDisplay = ($apiType == 'GGS') ? 'GoGetSSL API' : 'The SSL STORE API';
+                $apiDisplay = ($apiType == 'GGS') ? 'GoGetSSL API' : 'TheSSLStore API';
 
                 $errors[] = $apiDisplay . ' - ' . $this->translate('connectionError');
             }
@@ -143,5 +143,7 @@ class ApiSettingsProvider extends CrudProvider
             return (new Response())
                 ->setError(implode("<br>", $errors));
         }
+
+        return true;
     }
 }

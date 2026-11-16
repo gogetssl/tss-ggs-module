@@ -3,7 +3,7 @@
 namespace ModulesGarden\TSSGGSModule\App\Libs;
 
 /**
- * Connectivity check of the configured gateways (products request), cached in the admin session for 10 minutes
+ * Connectivity check of the configured APIs (GET /authentication/validate), cached in the admin session for 10 minutes
  */
 class GatewayHealth
 {
@@ -26,7 +26,7 @@ class GatewayHealth
             $start = microtime(true);
             try
             {
-                $api->getProducts();
+                $api->validate();
                 $result[$vendor] = ['ok' => true, 'error' => ''];
             }
             catch(\Throwable $e)
