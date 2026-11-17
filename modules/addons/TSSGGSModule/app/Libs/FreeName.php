@@ -2,18 +2,20 @@
 
 namespace ModulesGarden\TSSGGSModule\App\Libs;
 
+use ModulesGarden\TSSGGSModule\App\Models\RemoteProduct;
 use WHMCS\Database\Capsule;
 
 /**
  * The free second name of a certificate ("twin" of the common name): www.<cn> for <cn>, <cn> for www.<cn>, and the
  * base domain for *.<cn>.
  *
- * TheSSLStore adds it by itself to every DigiCert, Thawte, GeoTrust, RapidSSL and Sectigo TLS order (gateway answer
- * to GW-030, 2026-11-17). Sent in alternative_names it becomes a paid SAN in TheSSLStore's DNSNames, and a product
- * without SAN slots then refuses the order ("DNSNames count is invalid"). So the module never sends it to the
- * TheSSLStore gateway: not on a new order, a renewal or a reissue, and it does not count against the paid SANs.
- *
- * GoGetSSL adds the free name only to orders without SANs, so a GoGetSSL request is left as it is.
+ * Who adds it (tested 2026-11-17 on the TheSSLStore sandbox and the GoGetSSL test account):
+ *  - a product WITHOUT SAN support (gateway catalogue: san = null, e.g. RapidSSL, PositiveSSL): the vendor adds the
+ *    twin itself. Sent in alternative_names, TheSSLStore takes it as a paid SAN and refuses the order of such a
+ *    product ("DNSNames count is invalid", GW-030), so it is never sent to TheSSLStore for these products.
+ *  - a product WITH SAN support (multi-domain, UCC, DigiCert Flex): nobody adds it. A www name the client chose is
+ *    an ordinary additional domain and is sent as such (both vendors).
+ * GoGetSSL requests are never changed: GoGetSSL takes the twin of a single-name product without an error.
  */
 class FreeName
 {
@@ -40,30 +42,67 @@ class FreeName
         return 'www.' . $commonName;
     }
 
-    /** true when the vendor adds the free name itself (TheSSLStore) */
-    public static function addedByVendor($vendor)
+    /**
+     * true when the gateway product has no SAN support (catalogue san = null or max 0): the vendor then adds the
+     * free name itself. Unknown products count as having SAN support (nothing is removed).
+     */
+    public static function productWithoutSans($vendor, $productId)
     {
-        return strtoupper(trim((string)$vendor)) === 'TSS';
+        try
+        {
+            $remote = RemoteProduct::where('remoteId', (string)$productId)->where('vendor', strtoupper((string)$vendor))->first();
+            if(!$remote)
+            {
+                return false;
+            }
+            $raw = $remote->rawData;
+            $raw = is_array($raw) ? $raw : (json_decode((string)$raw, true) ?: []);
+            if(!array_key_exists('san', $raw))
+            {
+                return false;
+            }
+            $san = $raw['san'];
+
+            return $san === null || (is_array($san) && (int)($san['max'] ?? 0) === 0 && (int)($san['included']['single'] ?? 0) === 0);
+        }
+        catch(\Throwable $e)
+        {
+            return false;
+        }
     }
 
-    /** true when the service's product is sold through TheSSLStore */
-    public static function addedForService($serviceId)
+    /** true when the free name must not be sent: TheSSLStore and a product without SAN support */
+    public static function addedByVendor($vendor, $productId)
+    {
+        return strtoupper(trim((string)$vendor)) === 'TSS' && self::productWithoutSans($vendor, $productId);
+    }
+
+    /** [vendor, gateway product id] of a service, ['', ''] when unknown */
+    public static function productOfService($serviceId)
     {
         try
         {
             $packageId = (int)Capsule::table('tblhosting')->where('id', (int)$serviceId)->value('packageid');
             if(!$packageId)
             {
-                return false;
+                return ['', ''];
             }
             $product = (new \ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\ProductRepository())->getProductConfiguration($packageId);
 
-            return self::addedByVendor($product['provider'] ?? '');
+            return [(string)($product['provider'] ?? ''), (string)($product['product_id'] ?? '')];
         }
         catch(\Throwable $e)
         {
-            return false;
+            return ['', ''];
         }
+    }
+
+    /** addedByVendor() for the service's product */
+    public static function addedForService($serviceId)
+    {
+        list($vendor, $productId) = self::productOfService($serviceId);
+
+        return $vendor !== '' && self::addedByVendor($vendor, $productId);
     }
 
     /** true when $name is the free name of $commonName */
@@ -94,13 +133,15 @@ class FreeName
     }
 
     /**
-     * A TLS request (new order, renewal, reissue) for the vendor without the free name in any SAN list. An emptied
-     * alternative_names is left out, as the module never sends an empty one on a new order.
+     * A TLS request (new order, renewal: product {id} in the request; reissue: $productId) without the free name in
+     * any SAN list, when the vendor adds it itself (addedByVendor). An emptied alternative_names is left out, as the
+     * module never sends an empty one on a new order.
      */
-    public static function stripRequest($vendor, array $data)
+    public static function stripRequest($vendor, array $data, $productId = null)
     {
         $commonName = $data['common_name']['name'] ?? '';
-        if(!self::addedByVendor($vendor) || self::twin($commonName) === '')
+        $productId  = $productId !== null ? $productId : ($data['product']['id'] ?? null);
+        if($productId === null || self::twin($commonName) === '' || !self::addedByVendor($vendor, $productId))
         {
             return $data;
         }

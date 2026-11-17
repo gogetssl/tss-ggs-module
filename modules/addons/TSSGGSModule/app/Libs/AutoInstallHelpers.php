@@ -654,6 +654,12 @@ class AutoInstallHelpers
             }
 
             $alternativeNames = isset($requestOrder['alternative_names']) && is_array($requestOrder['alternative_names']) ? $requestOrder['alternative_names'] : [];
+            // a product without SAN support at TheSSLStore: the free www / base-domain name is added by the vendor and
+            // must not be sent (FreeName; an order stored before 1.15.0 may still list it)
+            if(FreeName::addedForService($serviceId))
+            {
+                $alternativeNames = FreeName::strip($alternativeNames, (string)($requestOrder['common_name']['name'] ?? ''));
+            }
 
             // Same CSR = same private key, so the reissued certificate can be installed automatically
             $reissue = $api->reissueCertificate($remoteId, [
