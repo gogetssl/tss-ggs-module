@@ -60,27 +60,27 @@
                                     </div>
                                     <div class="form-group">
                                         <label class="control-label" for="ST">{$MGLANG->T('reissue_page', 'State or Province')}</label>
-                                        <input {if $use_profile_data}value="{$client.state}"{/if} class="form-control generateCsrInput" id="stateOrProvinceName" placeholder="State or Province" name="ST" type="text">
+                                        <input {if $use_profile_data}value="{$client.state}"{/if} class="form-control generateCsrInput" id="stateOrProvinceName" placeholder="{$MGLANG->T('reissue_page', 'State or Province')}" name="ST" type="text">
                                     </div>
                                     <div class="form-group">
                                         <label class="control-label" for="L">{$MGLANG->T('reissue_page', 'Locality')}</label>
-                                        <input {if $use_profile_data}value="{$client.city}"{/if} class="form-control generateCsrInput" id="localityName" placeholder="Locality" name="L" type="text">
+                                        <input {if $use_profile_data}value="{$client.city}"{/if} class="form-control generateCsrInput" id="localityName" placeholder="{$MGLANG->T('reissue_page', 'Locality')}" name="L" type="text">
                                     </div>
                                     <div class="form-group">
                                         <label class="control-label" for="O">{$MGLANG->T('reissue_page', 'Organization')}</label>
-                                        <input {if $use_profile_data}value="{$client.companyname}"{/if} class="form-control generateCsrInput" id="organizationName" placeholder="Organization" name="O" type="text">
+                                        <input {if $use_profile_data}value="{$client.companyname}"{/if} class="form-control generateCsrInput" id="organizationName" placeholder="{$MGLANG->T('reissue_page', 'Organization')}" name="O" type="text">
                                     </div>
                                     <div class="form-group">
                                         <label class="control-label" for="OU">{$MGLANG->T('reissue_page', 'Organization Unit')}</label>
-                                        <input {if $use_profile_data}value="IT"{/if} class="form-control generateCsrInput" id="organizationalUnitName" placeholder="Organization Unit" type="text">
+                                        <input {if $use_profile_data}value="IT"{/if} class="form-control generateCsrInput" id="organizationalUnitName" placeholder="{$MGLANG->T('reissue_page', 'Organization Unit')}" type="text">
                                     </div>
                                     <div class="form-group"{if $ipProduct} style="display:none;"{/if}>
                                         <label class="control-label" for="CN">{$MGLANG->T('reissue_page', 'Common Name')}</label>
-                                        <input {if $use_profile_data}value="{$domain}"{/if} class="form-control generateCsrInput" autocomplete="off" id="commonName" placeholder="Common Name" name="CN" type="text">
+                                        <input {if $use_profile_data}value="{$domain}"{/if} class="form-control generateCsrInput" autocomplete="off" id="commonName" placeholder="{$MGLANG->T('reissue_page', 'Common Name')}" name="CN" type="text">
                                     </div>
                                     <div class="form-group">
                                         <label class="control-label" for="EA">{$MGLANG->T('reissue_page', 'Email')}</label>
-                                        <input {if $use_profile_data}value="{$client.email}"{/if} class="form-control generateCsrInput" id="emailAddress" placeholder="Email" name="EA" type="text">
+                                        <input {if $use_profile_data}value="{$client.email}"{/if} class="form-control generateCsrInput" id="emailAddress" placeholder="{$MGLANG->T('reissue_page', 'Email')}" name="EA" type="text">
                                     </div>
                                 </div>
                                 <div class="modal-footer">

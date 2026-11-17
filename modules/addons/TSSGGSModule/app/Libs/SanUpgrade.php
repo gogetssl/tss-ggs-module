@@ -487,7 +487,7 @@ class SanUpgrade
         {
             if(isset($postedOptions[$row->configid]) && (int)$row->qty - (int)$postedOptions[$row->configid] > $reducible[$type])
             {
-                return 'You can only remove additional domains bought within the last ' . self::DOWNGRADE_DAYS . ' days that the certificate does not use yet and only if it has not been reissued since they were bought (' . $reducible[$type] . ' can be removed now).';
+                return ClientText::get('sanRemoveLimit', 'You can only remove additional domains bought within the last :days: days that the certificate does not use yet and only if it has not been reissued since they were bought (:count: can be removed now).', ['days' => self::DOWNGRADE_DAYS, 'count' => $reducible[$type]]);
             }
         }
 
@@ -514,11 +514,11 @@ class SanUpgrade
         }
         if($single > $paid['single'])
         {
-            throw new \Exception('This certificate includes ' . $paid['single'] . ' additional domain name(s); ' . $single . ' were submitted.');
+            throw new \Exception(ClientText::get('sanTooManySingle', 'This certificate includes :paid: additional domain name(s); :submitted: were submitted.', ['paid' => $paid['single'], 'submitted' => $single]));
         }
         if($wildcard > $paid['wildcard'])
         {
-            throw new \Exception('This certificate includes ' . $paid['wildcard'] . ' additional wildcard name(s); ' . $wildcard . ' were submitted.');
+            throw new \Exception(ClientText::get('sanTooManyWildcard', 'This certificate includes :paid: additional wildcard name(s); :submitted: were submitted.', ['paid' => $paid['wildcard'], 'submitted' => $wildcard]));
         }
     }
 

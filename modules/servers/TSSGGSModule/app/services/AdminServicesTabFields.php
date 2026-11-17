@@ -3,6 +3,7 @@
 namespace ModulesGarden\Servers\TSSGGSModule\app\services;
 
 use ModulesGarden\Servers\TSSGGSModule\app\models\whmcs\SSL;
+use ModulesGarden\TSSGGSModule\App\Libs\AdminText;
 use ModulesGarden\TSSGGSModule\App\Libs\AutoInstallHelpers;
 use ModulesGarden\TSSGGSModule\App\Libs\AutoInstallQueue;
 use ModulesGarden\TSSGGSModule\App\Libs\CertificateService;
@@ -18,6 +19,28 @@ class AdminServicesTabFields
 {
     const DCV_METHODS = ['email', 'http', 'https', 'dns'];
 
+    /** admin text as HTML (langs/admin/<language>.php, see App\Libs\AdminText) */
+    private static function t($key, $english, array $replace = [])
+    {
+        return AdminText::html($key, $english, $replace);
+    }
+
+    /** "Order #1 | Item #2 | Vendor (CA) order #3" line of the gateway / vendor order */
+    private static function orderLine($orderId, $itemId, $vendorId = '', $itemKey = 'item_number', $itemEnglish = 'Item #:id:', $vendorKey = 'vendor_order_number', $vendorEnglish = 'Vendor (CA) order #:id:')
+    {
+        return self::t('order_number', 'Order #:id:', ['id' => (int)$orderId]) . ' | ' . self::t($itemKey, $itemEnglish, ['id' => (int)$itemId])
+            . (!empty($vendorId) ? ' | ' . self::t($vendorKey, $vendorEnglish, ['id' => $vendorId]) : '');
+    }
+
+    /** status label + "ordered ..." + "last refresh ..." */
+    private static function vendorStatus($status, array $labels, $orderedAt, $refreshedAt, $extra = '')
+    {
+        return '<span class="label ' . ($labels[$status] ?? 'label-default') . '">' . htmlspecialchars(ucfirst($status ?: AdminText::get('unknown', 'unknown'))) . '</span>'
+            . $extra
+            . (!empty($orderedAt) ? ' &nbsp;' . self::t('ordered_at', 'ordered :date:', ['date' => $orderedAt]) : '')
+            . (!empty($refreshedAt) ? ' &nbsp;<small class="text-muted">' . self::t('last_refresh', 'last refresh :date:', ['date' => $refreshedAt]) . '</small>' : '');
+    }
+
     public function run($params)
     {
         try
@@ -25,12 +48,12 @@ class AdminServicesTabFields
             $sslService = SSL::getByServiceId($params['serviceid']);
             if(is_null($sslService))
             {
-                throw new \Exception('The create action has not been initialized');
+                throw new \Exception(AdminText::get('error_not_initialized', 'The create action has not been initialized'));
             }
 
             if($sslService->status === 'Awaiting Configuration')
             {
-                $fields = ['Configuration Status' => '<span class="label label-warning">Awaiting Configuration</span>'];
+                $fields = [AdminText::get('configuration_status', 'Configuration Status') => '<span class="label label-warning">' . self::t('status_awaiting_configuration', 'Awaiting Configuration') . '</span>'];
                 // S/MIME after a renewal: the orders placed before
                 $gatewayType = \ModulesGarden\TSSGGSModule\App\Libs\GatewayOrderService::typeOfService((int)$params['serviceid']);
                 if($gatewayType)
@@ -43,7 +66,7 @@ class AdminServicesTabFields
 
             if(empty($sslService->remoteid))
             {
-                throw new \Exception('The id not exist in this SSL order');
+                throw new \Exception(AdminText::get('error_no_remote_id', 'The SSL order has no %%VENDOR%% item ID yet'));
             }
 
             if(CertificateService::category($params['serviceid']) === CertificateService::CATEGORY_SMIME)
@@ -64,7 +87,7 @@ class AdminServicesTabFields
             }
             if(CertificateService::category($params['serviceid']) !== CertificateService::CATEGORY_TLS)
             {
-                return ['%%VENDOR%% Item ID' => (int)$sslService->remoteid];
+                return [AdminText::get('vendor_item_id', '%%VENDOR%% Item ID') => (int)$sslService->remoteid];
             }
 
             $fields = array_merge($this->getCertificateDetails($params, $sslService), $this->getAutoInstallDetails($params['serviceid'], (int)$params['userid']));
@@ -72,20 +95,20 @@ class AdminServicesTabFields
             if($caa !== '')
             {
                 // first, so the admin sees why the order does not move
-                $fields = ['CAA Record' => $caa] + $fields;
+                $fields = [AdminText::get('caa_record', 'CAA Record') => $caa] + $fields;
             }
             if(CertificateService::isSectigo($params['packageid']))
             {
                 $override = CertificateService::renewalDaysOverride($params['serviceid']);
-                $fields['Renewal Additional Days'] = '<input name="tssggs_renewal_days" class="form-control input-sm" style="display:inline-block;width:80px;" value="' . ($override === null ? '' : (int)$override) . '" placeholder="auto">'
-                    . ' <small class="text-muted">0-' . CertificateService::RENEWAL_DAYS_MAX . ' days carried over to the renewal order (Sectigo). Empty = the global setting, or the days left on the certificate.</small>';
+                $fields[AdminText::get('renewal_additional_days', 'Renewal Additional Days')] = '<input name="tssggs_renewal_days" class="form-control input-sm" style="display:inline-block;width:80px;" value="' . ($override === null ? '' : (int)$override) . '" placeholder="' . self::t('renewal_days_auto', 'auto') . '">'
+                    . ' <small class="text-muted">' . self::t('renewal_days_hint', '0-:max: days carried over to the renewal order (Sectigo). Empty = the global setting, or the days left on the certificate.', ['max' => CertificateService::RENEWAL_DAYS_MAX]) . '</small>';
             }
 
             return $fields;
         }
         catch(\Exception $ex)
         {
-            return ['Error' => htmlspecialchars($ex->getMessage())];
+            return [AdminText::get('error', 'Error') => htmlspecialchars($ex->getMessage())];
         }
     }
 
@@ -106,14 +129,14 @@ class AdminServicesTabFields
             $warning = \ModulesGarden\TSSGGSModule\App\Libs\CaaCheck::forService($serviceId, $waiting);
 
             return $warning ? \ModulesGarden\TSSGGSModule\App\Libs\CaaCheck::html($warning, [
-                'title'     => 'A CAA DNS record does not allow this certificate',
-                'intro'     => '%s will not issue for these domains: their CAA DNS record allows other certificate authorities only. The client sees the same notice.',
-                'inherited' => 'record set on %s',
-                'now'       => 'CAA record now',
-                'add'       => 'Record to add',
-                'fix'         => 'The domain owner adds the record (or removes the CAA records); the CA then issues without a new order.',
-                'gateway'     => 'The certificate authority reports that its CAA check failed for this order (the client sees the same notice).',
-                'gateway_fix' => 'Fix: the domain owner adds %s to the domain\'s DNS (or removes its CAA records); the CA then issues without a new order.',
+                'title'       => AdminText::get('caa_title', 'A CAA DNS record does not allow this certificate'),
+                'intro'       => AdminText::get('caa_intro', '%s will not issue for these domains: their CAA DNS record allows other certificate authorities only. The client sees the same notice.'),
+                'inherited'   => AdminText::get('caa_inherited', 'record set on %s'),
+                'now'         => AdminText::get('caa_now', 'CAA record now'),
+                'add'         => AdminText::get('caa_add', 'Record to add'),
+                'fix'         => AdminText::get('caa_fix', 'The domain owner adds the record (or removes the CAA records); the CA then issues without a new order.'),
+                'gateway'     => AdminText::get('caa_gateway', 'The certificate authority reports that its CAA check failed for this order (the client sees the same notice).'),
+                'gateway_fix' => AdminText::get('caa_gateway_fix', 'Fix: the domain owner adds %s to the domain\'s DNS (or removes its CAA records); the CA then issues without a new order.'),
             ]) : '';
         }
         catch(\Throwable $e)
@@ -136,27 +159,25 @@ class AdminServicesTabFields
         foreach((array)($stored['emails'] ?? []) as $entry)
         {
             $confirmed = !empty($entry['approved']) || $status === 'active';
-            $emails[]  = htmlspecialchars($entry['email']) . ' <span class="label ' . ($confirmed ? 'label-success' : 'label-warning') . '">' . ($confirmed ? 'confirmed' : 'not confirmed') . '</span>';
+            $emails[]  = htmlspecialchars($entry['email']) . ' <span class="label ' . ($confirmed ? 'label-success' : 'label-warning') . '">' . ($confirmed ? self::t('email_confirmed', 'confirmed') : self::t('email_not_confirmed', 'not confirmed')) . '</span>';
         }
 
         $fields = [];
-        $fields['Configuration Status'] = htmlspecialchars($sslService->status);
-        $fields['%%VENDOR%% Order']        = 'Order #' . (int)($stored['orderId'] ?? 0) . ' | Item #' . (int)($stored['itemId'] ?? 0)
-            . (!empty($stored['vendorOrderId']) ? ' | Vendor (CA) order #' . htmlspecialchars($stored['vendorOrderId']) : '');
-        $fields['Vendor Status']        = '<span class="label ' . ($labels[$status] ?? 'label-default') . '">' . htmlspecialchars(ucfirst($status ?: 'unknown')) . '</span>'
-            . (!empty($stored['orderedAt']) ? ' &nbsp;ordered ' . htmlspecialchars($stored['orderedAt']) : '')
-            . (!empty($stored['refreshedAt']) ? ' &nbsp;<small class="text-muted">last refresh ' . htmlspecialchars($stored['refreshedAt']) . '</small>' : '');
-        $fields['Email Addresses']      = $emails ? implode('<br>', $emails) : '-';
-        $fields['Validity']             = (!empty($stored['validFrom']) ? htmlspecialchars(substr($stored['validFrom'], 0, 10)) : '-') . ' &rarr; '
+        $fields[AdminText::get('configuration_status', 'Configuration Status')] = htmlspecialchars($sslService->status);
+        $fields[AdminText::get('vendor_order', '%%VENDOR%% Order')] = self::orderLine($stored['orderId'] ?? 0, $stored['itemId'] ?? 0, $stored['vendorOrderId'] ?? '');
+        $fields[AdminText::get('vendor_status', 'Vendor Status')]   = self::vendorStatus($status, $labels, $stored['orderedAt'] ?? '', $stored['refreshedAt'] ?? '');
+        $fields[AdminText::get('email_addresses', 'Email Addresses')] = $emails ? implode('<br>', $emails) : '-';
+        $fields[AdminText::get('validity', 'Validity')] = (!empty($stored['validFrom']) ? htmlspecialchars(substr($stored['validFrom'], 0, 10)) : '-') . ' &rarr; '
             . (!empty($stored['validTill']) ? htmlspecialchars(substr($stored['validTill'], 0, 10)) : '-');
-        $fields['CSR']                  = !empty($stored['csrProvided']) ? 'Sent by the client' : 'Not sent: the certificate authority emails the client how to collect the certificate';
+        $fields[AdminText::get('csr', 'CSR')] = !empty($stored['csrProvided']) ? self::t('csr_sent', 'Sent by the client') : self::t('csr_not_sent', 'Not sent: the certificate authority emails the client how to collect the certificate');
         if(!empty($stored['enrollmentLink']) && empty($stored['emails']))
         {
-            $fields['Enrolment'] = 'Migrated invite order: the client has not enrolled yet. <a href="' . htmlspecialchars($stored['enrollmentLink']) . '" target="_blank" rel="noopener">Enrolment link</a>';
+            $fields[AdminText::get('enrolment', 'Enrolment')] = self::t('enrolment_pending', 'Migrated invite order: the client has not enrolled yet.')
+                . ' <a href="' . htmlspecialchars($stored['enrollmentLink']) . '" target="_blank" rel="noopener">' . self::t('enrolment_link', 'Enrolment link') . '</a>';
         }
         if(!empty($stored['migrated']))
         {
-            $fields['Migrated'] = 'Yes, from the legacy module';
+            $fields[AdminText::get('migrated', 'Migrated')] = self::t('migrated_yes', 'Yes, from the legacy module');
         }
 
         return $fields + $this->getSmimePreviousOrders($stored);
@@ -175,21 +196,18 @@ class AdminServicesTabFields
         $model  = strtoupper((string)($stored['tokenModel'] ?? ''));
 
         $fields = [];
-        $fields['Configuration Status'] = htmlspecialchars($sslService->status);
-        $fields['%%VENDOR%% Order']        = 'Order #' . (int)($stored['orderId'] ?? 0) . ' | Item #' . (int)($stored['itemId'] ?? 0)
-            . (!empty($stored['vendorOrderId']) ? ' | Vendor (CA) order #' . htmlspecialchars($stored['vendorOrderId']) : '');
-        $fields['Vendor Status']        = '<span class="label ' . ($labels[$status] ?? 'label-default') . '">' . htmlspecialchars(ucfirst($status ?: 'unknown')) . '</span>'
-            . (!empty($stored['orderedAt']) ? ' &nbsp;ordered ' . htmlspecialchars($stored['orderedAt']) : '')
-            . (!empty($stored['refreshedAt']) ? ' &nbsp;<small class="text-muted">last refresh ' . htmlspecialchars($stored['refreshedAt']) . '</small>' : '');
-        $fields['Organization']         = htmlspecialchars((string)($stored['organization'] ?? '-'));
-        $fields['Delivery']             = htmlspecialchars((string)($stored['method'] ?? '-'))
+        $fields[AdminText::get('configuration_status', 'Configuration Status')] = htmlspecialchars($sslService->status);
+        $fields[AdminText::get('vendor_order', '%%VENDOR%% Order')] = self::orderLine($stored['orderId'] ?? 0, $stored['itemId'] ?? 0, $stored['vendorOrderId'] ?? '');
+        $fields[AdminText::get('vendor_status', 'Vendor Status')]   = self::vendorStatus($status, $labels, $stored['orderedAt'] ?? '', $stored['refreshedAt'] ?? '');
+        $fields[AdminText::get('organization', 'Organization')]     = htmlspecialchars((string)($stored['organization'] ?? '-'));
+        $fields[AdminText::get('delivery', 'Delivery')]             = htmlspecialchars((string)($stored['method'] ?? '-'))
             . (!empty($stored['shipping']) ? ' (' . htmlspecialchars($stored['shipping']) . ')' : '')
             . (isset($ds::TOKEN_MODELS[$model]) ? ' (' . htmlspecialchars($ds::TOKEN_MODELS[$model]) . ')' : '');
-        $fields['Validity']             = (!empty($stored['validFrom']) ? htmlspecialchars(substr($stored['validFrom'], 0, 10)) : '-') . ' &rarr; '
+        $fields[AdminText::get('validity', 'Validity')] = (!empty($stored['validFrom']) ? htmlspecialchars(substr($stored['validFrom'], 0, 10)) : '-') . ' &rarr; '
             . (!empty($stored['validTill']) ? htmlspecialchars(substr($stored['validTill'], 0, 10)) : '-');
         if(!empty($stored['tokenSetupLink']))
         {
-            $fields['Token set-up'] = '<a href="' . htmlspecialchars($stored['tokenSetupLink']) . '" target="_blank" rel="noopener">Token set-up page</a>';
+            $fields[AdminText::get('token_setup', 'Token set-up')] = '<a href="' . htmlspecialchars($stored['tokenSetupLink']) . '" target="_blank" rel="noopener">' . self::t('token_setup_page', 'Token set-up page') . '</a>';
         }
 
         return $fields + $this->getSmimePreviousOrders($stored);
@@ -209,17 +227,15 @@ class AdminServicesTabFields
         $period  = $cg::period($serviceId);
 
         $fields = [];
-        $fields['Configuration Status'] = htmlspecialchars($sslService->status);
-        $fields['%%VENDOR%% Order']        = 'Order #' . (int)($stored['orderId'] ?? 0) . ' | Licence #' . (int)($stored['itemId'] ?? 0)
-            . (!empty($stored['vendorOrderId']) ? ' | Vendor licence ' . htmlspecialchars($stored['vendorOrderId']) : '');
-        $fields['Vendor Status']        = '<span class="label ' . ($labels[$status] ?? 'label-default') . '">' . htmlspecialchars(ucfirst($status ?: 'unknown')) . '</span>'
-            . (!empty($stored['orderedAt']) ? ' &nbsp;ordered ' . htmlspecialchars($stored['orderedAt']) : '')
-            . (!empty($stored['refreshedAt']) ? ' &nbsp;<small class="text-muted">last refresh ' . htmlspecialchars($stored['refreshedAt']) . '</small>' : '');
-        $fields['Contact']              = $contact
+        $fields[AdminText::get('configuration_status', 'Configuration Status')] = htmlspecialchars($sslService->status);
+        $fields[AdminText::get('vendor_order', '%%VENDOR%% Order')] = self::orderLine($stored['orderId'] ?? 0, $stored['itemId'] ?? 0, $stored['vendorOrderId'] ?? '',
+            'licence_number', 'Licence #:id:', 'vendor_licence', 'Vendor licence :id:');
+        $fields[AdminText::get('vendor_status', 'Vendor Status')]   = self::vendorStatus($status, $labels, $stored['orderedAt'] ?? '', $stored['refreshedAt'] ?? '');
+        $fields[AdminText::get('contact', 'Contact')] = $contact
             ? htmlspecialchars(trim(($contact['first_name'] ?? '') . ' ' . ($contact['last_name'] ?? ''))) . ' &lt;' . htmlspecialchars($contact['email'] ?? '') . '&gt;'
             : '-';
-        $fields['Period']               = $period ? htmlspecialchars($period['start']) . ' &rarr; ' . htmlspecialchars($period['end'])
-            . ' <small class="text-muted">(' . (int)($stored['term'] ?? 0) . ' months from the order date)</small>' : '-';
+        $fields[AdminText::get('period', 'Period')] = $period ? htmlspecialchars($period['start']) . ' &rarr; ' . htmlspecialchars($period['end'])
+            . ' <small class="text-muted">(' . self::t('period_months', ':months: months from the order date', ['months' => (int)($stored['term'] ?? 0)]) . ')</small>' : '-';
 
         $license = $cg::licenseInfo($serviceId);
         if($license)
@@ -229,7 +245,7 @@ class AdminServicesTabFields
             {
                 $rows[] = htmlspecialchars(ucfirst(str_replace('_', ' ', (string)$key))) . ': ' . htmlspecialchars(is_scalar($value) ? (string)$value : json_encode($value));
             }
-            $fields['Licence'] = implode('<br>', $rows);
+            $fields[AdminText::get('licence', 'Licence')] = implode('<br>', $rows);
         }
 
         return $fields + $this->getSmimePreviousOrders($stored);
@@ -253,20 +269,17 @@ class AdminServicesTabFields
         ]);
 
         $fields = [];
-        $fields['Configuration Status'] = htmlspecialchars($sslService->status);
-        $fields['%%VENDOR%% Order']        = 'Order #' . (int)($stored['orderId'] ?? 0) . ' | Item #' . (int)($stored['itemId'] ?? 0)
-            . (!empty($stored['vendorOrderId']) ? ' | Vendor (CA) order #' . htmlspecialchars($stored['vendorOrderId']) : '');
-        $fields['Vendor Status']        = '<span class="label ' . ($labels[$status] ?? 'label-default') . '">' . htmlspecialchars(ucfirst($status ?: 'unknown')) . '</span>'
-            . (!empty($stored['vendorStatus']) ? ' &nbsp;CA: ' . htmlspecialchars($stored['vendorStatus']) : '')
-            . (!empty($stored['orderedAt']) ? ' &nbsp;ordered ' . htmlspecialchars($stored['orderedAt']) : '')
-            . (!empty($stored['refreshedAt']) ? ' &nbsp;<small class="text-muted">last refresh ' . htmlspecialchars($stored['refreshedAt']) . '</small>' : '');
-        $fields['Organization']         = htmlspecialchars((string)($stored['organization'] ?? '-'));
-        $fields['Delivery']             = htmlspecialchars($delivery);
+        $fields[AdminText::get('configuration_status', 'Configuration Status')] = htmlspecialchars($sslService->status);
+        $fields[AdminText::get('vendor_order', '%%VENDOR%% Order')] = self::orderLine($stored['orderId'] ?? 0, $stored['itemId'] ?? 0, $stored['vendorOrderId'] ?? '');
+        $fields[AdminText::get('vendor_status', 'Vendor Status')]   = self::vendorStatus($status, $labels, $stored['orderedAt'] ?? '', $stored['refreshedAt'] ?? '',
+            !empty($stored['vendorStatus']) ? ' &nbsp;' . self::t('ca_status', 'CA: :status:', ['status' => $stored['vendorStatus']]) : '');
+        $fields[AdminText::get('organization', 'Organization')] = htmlspecialchars((string)($stored['organization'] ?? '-'));
+        $fields[AdminText::get('delivery', 'Delivery')]         = htmlspecialchars($delivery);
         if(!empty($stored['tokenInitCode']))
         {
-            $fields['Token Initialization Code'] = '<code>' . htmlspecialchars($stored['tokenInitCode']) . '</code> <small class="text-muted">also shown to the client</small>';
+            $fields[AdminText::get('token_init_code', 'Token Initialization Code')] = '<code>' . htmlspecialchars($stored['tokenInitCode']) . '</code> <small class="text-muted">' . self::t('token_init_code_hint', 'also shown to the client') . '</small>';
         }
-        $fields['Validity']             = (!empty($stored['validFrom']) ? htmlspecialchars(substr($stored['validFrom'], 0, 10)) : '-') . ' &rarr; '
+        $fields[AdminText::get('validity', 'Validity')] = (!empty($stored['validFrom']) ? htmlspecialchars(substr($stored['validFrom'], 0, 10)) : '-') . ' &rarr; '
             . (!empty($stored['validTill']) ? htmlspecialchars(substr($stored['validTill'], 0, 10)) : '-');
 
         return $fields + $this->getSmimePreviousOrders($stored);
@@ -285,13 +298,13 @@ class AdminServicesTabFields
         $previous = [];
         foreach(array_reverse((array)$stored['previous']) as $order)
         {
-            $previous[] = 'Order #' . (int)($order['orderId'] ?? 0) . ' (' . htmlspecialchars((string)($order['status'] ?? ''))
-                . (!empty($order['validTill']) ? ', valid till ' . htmlspecialchars(substr($order['validTill'], 0, 10)) : '')
+            $previous[] = self::t('order_number', 'Order #:id:', ['id' => (int)($order['orderId'] ?? 0)]) . ' (' . htmlspecialchars((string)($order['status'] ?? ''))
+                . (!empty($order['validTill']) ? ', ' . self::t('valid_till', 'valid till :date:', ['date' => substr($order['validTill'], 0, 10)]) : '')
                 . (!empty($order['emails']) ? ', ' . htmlspecialchars(implode(', ', (array)$order['emails'])) : '')
                 . (!empty($order['organization']) ? ', ' . htmlspecialchars((string)$order['organization']) : '') . ')';
         }
 
-        return ['Previous Orders' => implode('<br>', $previous)];
+        return [AdminText::get('previous_orders', 'Previous Orders') => implode('<br>', $previous)];
     }
 
     private function getCertificateDetails($params, $sslService)
@@ -307,41 +320,39 @@ class AdminServicesTabFields
         $synced    = Request::where('serviceid', $serviceId)->where('name', 'certificate')->value('updated_at');
 
         $fields = [];
-        $fields['Configuration Status'] = htmlspecialchars($sslService->status);
-        $fields['%%VENDOR%% Order']        = 'Order #' . (int)($order['order']['id'] ?? 0) . ' | Item #' . (int)$sslService->remoteid
-            . (!empty($item['vendor']['id']) ? ' | Vendor (CA) order #' . htmlspecialchars($item['vendor']['id']) : '')
+        $fields[AdminText::get('configuration_status', 'Configuration Status')] = htmlspecialchars($sslService->status);
+        $fields[AdminText::get('vendor_order', '%%VENDOR%% Order')] = self::orderLine($order['order']['id'] ?? 0, $sslService->remoteid, $item['vendor']['id'] ?? '')
             . ' | ' . htmlspecialchars(Helpers::vendorToDisplay($params['configoption1']));
-        $fields['Vendor Status']        = '<span class="label ' . ($labels[$status] ?? 'label-default') . '">' . htmlspecialchars(ucfirst($status ?: 'unknown')) . '</span>'
-            . (!empty($order['order']['date']) ? ' &nbsp;ordered ' . htmlspecialchars($order['order']['date']) : '')
-            . ($synced ? ' &nbsp;| last synchronized ' . htmlspecialchars($synced) : '');
+        $fields[AdminText::get('vendor_status', 'Vendor Status')] = self::vendorStatus($status, $labels, $order['order']['date'] ?? '', '')
+            . ($synced ? ' &nbsp;| ' . self::t('last_synchronized', 'last synchronized :date:', ['date' => $synced]) : '');
 
         $validity = isset($stored['orderFiles']['validity']) ? $stored['orderFiles']['validity'] : [];
         if(!empty($validity['begin']) || !empty($item['subscription']['end']))
         {
-            $fields['Validity'] = (!empty($validity['begin']) ? 'Certificate ' . htmlspecialchars(substr($validity['begin'], 0, 10)) . ' - ' . htmlspecialchars(substr((string)($validity['end'] ?? ''), 0, 10)) : '')
-                . (!empty($item['subscription']['end']) ? ' &nbsp;| Subscription ' . htmlspecialchars(substr((string)$item['subscription']['begin'], 0, 10)) . ' - ' . htmlspecialchars(substr($item['subscription']['end'], 0, 10)) : '');
+            $fields[AdminText::get('validity', 'Validity')] = (!empty($validity['begin']) ? self::t('validity_certificate', 'Certificate :from: - :to:', ['from' => substr($validity['begin'], 0, 10), 'to' => substr((string)($validity['end'] ?? ''), 0, 10)]) : '')
+                . (!empty($item['subscription']['end']) ? ' &nbsp;| ' . self::t('validity_subscription', 'Subscription :from: - :to:', ['from' => substr((string)$item['subscription']['begin'], 0, 10), 'to' => substr($item['subscription']['end'], 0, 10)]) : '');
         }
 
-        $fields['Domain Validation'] = $this->validationTable($params, $item, $status);
+        $fields[AdminText::get('domain_validation', 'Domain Validation')] = $this->validationTable($params, $item, $status);
 
         // downloads as plain links (served by the AdminAreaPage hook) - WHMCS module buttons cannot deliver files
         $downloadUrl = 'clientsservices.php?userid=' . (int)$params['userid'] . '&id=' . $serviceId . '&token=' . urlencode(\generate_token('plain')) . '&tssggs_download=';
         $downloads   = [];
         if($status === 'active')
         {
-            $downloads[] = '<a class="btn btn-default btn-sm" href="' . htmlspecialchars($downloadUrl . 'certificate') . '"><i class="fas fa-download"></i> Certificate (ZIP, all formats)</a>';
+            $downloads[] = '<a class="btn btn-default btn-sm" href="' . htmlspecialchars($downloadUrl . 'certificate') . '"><i class="fas fa-download"></i> ' . self::t('download_certificate_zip', 'Certificate (ZIP, all formats)') . '</a>';
         }
         foreach(isset($item['domains']) ? (array)$item['domains'] : [] as $domain)
         {
             if(in_array($domain['method'] ?? '', ['http', 'https'], true) && !empty($domain['validation']['file_name']) && empty($domain['approved']))
             {
-                $downloads[] = '<a class="btn btn-default btn-sm" href="' . htmlspecialchars($downloadUrl . 'authfile') . '"><i class="fas fa-file-download"></i> Validation file (' . htmlspecialchars(basename($domain['validation']['file_name'])) . ')</a>';
+                $downloads[] = '<a class="btn btn-default btn-sm" href="' . htmlspecialchars($downloadUrl . 'authfile') . '"><i class="fas fa-file-download"></i> ' . self::t('download_validation_file', 'Validation file (:file:)', ['file' => basename($domain['validation']['file_name'])]) . '</a>';
                 break;
             }
         }
         if($downloads)
         {
-            $fields['Downloads'] = implode(' ', $downloads);
+            $fields[AdminText::get('downloads', 'Downloads')] = implode(' ', $downloads);
         }
 
         if($status === 'active')
@@ -349,7 +360,7 @@ class AdminServicesTabFields
             try
             {
                 $bundle                = CertificateService::bundle($serviceId);
-                $fields['Certificate'] = '<details><summary style="cursor:pointer;">View CRT / CA bundle</summary>'
+                $fields[AdminText::get('certificate', 'Certificate')] = '<details><summary style="cursor:pointer;">' . self::t('view_crt_bundle', 'View CRT / CA bundle') . '</summary>'
                     . '<textarea readonly rows="8" class="form-control" style="font-family:monospace;font-size:11px;margin-top:6px;">' . htmlspecialchars($bundle->crt()) . '</textarea>'
                     . ($bundle->ca() !== '' ? '<textarea readonly rows="8" class="form-control" style="font-family:monospace;font-size:11px;margin-top:6px;">' . htmlspecialchars($bundle->ca()) . '</textarea>' : '')
                     . '</details>';
@@ -358,8 +369,8 @@ class AdminServicesTabFields
             {
             }
 
-            $fields['Reissue'] = '<textarea name="tssggs_reissue_csr" rows="4" class="form-control" style="font-family:monospace;font-size:11px;" placeholder="-----BEGIN CERTIFICATE REQUEST-----"></textarea>'
-                . '<small class="text-muted">Paste a new CSR and save to reissue the certificate with the current domains and validation methods.</small>';
+            $fields[AdminText::get('reissue', 'Reissue')] = '<textarea name="tssggs_reissue_csr" rows="4" class="form-control" style="font-family:monospace;font-size:11px;" placeholder="-----BEGIN CERTIFICATE REQUEST-----"></textarea>'
+                . '<small class="text-muted">' . self::t('reissue_hint', 'Paste a new CSR and save to reissue the certificate with the current domains and validation methods.') . '</small>';
         }
 
         return $fields;
@@ -375,7 +386,7 @@ class AdminServicesTabFields
         }, explode(',', strtolower((string)$params['configoption5'])))));
         $allowed = $allowed ?: self::DCV_METHODS;
 
-        $html = '<table class="table table-condensed" style="margin:0;max-width:760px;"><tr><th>Domain</th><th>Method</th><th>Status</th></tr>';
+        $html = '<table class="table table-condensed" style="margin:0;max-width:760px;"><tr><th>' . self::t('domain', 'Domain') . '</th><th>' . self::t('method', 'Method') . '</th><th>' . self::t('status', 'Status') . '</th></tr>';
         $listed = [];
         foreach(isset($item['domains']) ? (array)$item['domains'] : [] as $domain)
         {
@@ -401,13 +412,13 @@ class AdminServicesTabFields
                     {
                         continue;
                     }
-                    $methodCell .= '<option value="' . $option . '">change to ' . $option . '</option>';
+                    $methodCell .= '<option value="' . $option . '">' . self::t('change_to', 'change to :method:', ['method' => $option]) . '</option>';
                 }
-                $methodCell .= '</select> <input name="tssggs_approver[' . $key . ']" class="form-control input-sm" style="display:inline-block;width:200px;" placeholder="approver email (email method)">';
+                $methodCell .= '</select> <input name="tssggs_approver[' . $key . ']" class="form-control input-sm" style="display:inline-block;width:200px;" placeholder="' . self::t('approver_email_placeholder', 'approver email (email method)') . '">';
             }
 
             $html .= '<tr><td>' . htmlspecialchars($name) . '</td><td>' . $methodCell . '</td><td>'
-                . ($approved ? '<span class="label label-success">Validated</span>' : '<span class="label label-warning">Pending</span>') . '</td></tr>';
+                . ($approved ? '<span class="label label-success">' . self::t('validated', 'Validated') . '</span>' : '<span class="label label-warning">' . self::t('pending', 'Pending') . '</span>') . '</td></tr>';
         }
 
         return $html . '</table>';
@@ -438,21 +449,25 @@ class AdminServicesTabFields
         }
 
         $current = $autoInstall ? $autoInstall['domain'] : (string)CertificateService::installTarget($serviceId);
-        $target  = '<input name="tssggs_install_domain" list="tssggs-install-targets" class="form-control input-sm" style="display:inline-block;width:260px;" value="' . htmlspecialchars($current) . '" placeholder="domain on the client\'s cPanel account">'
+        $target  = '<input name="tssggs_install_domain" list="tssggs-install-targets" class="form-control input-sm" style="display:inline-block;width:260px;" value="' . htmlspecialchars($current) . '" placeholder="' . self::t('install_target_placeholder', 'domain on the client\'s cPanel account') . '">'
             . '<datalist id="tssggs-install-targets">' . $options . '</datalist>'
             . ' <small class="text-muted">' . ($autoInstall
-                ? 'Domain the certificate is installed on (AutoInstall). Changing it re-queues the installation.'
-                : 'Default domain for "Install on server" in the client area' . ($options === '' ? ' - the client has no active cPanel account' : '') . '.') . '</small>';
+                ? self::t('install_target_hint_ais', 'Domain the certificate is installed on (AutoInstall). Changing it re-queues the installation.')
+                : ($options === ''
+                    ? self::t('install_target_hint_no_cpanel', 'Default domain for "Install on server" in the client area - the client has no active cPanel account.')
+                    : self::t('install_target_hint', 'Default domain for "Install on server" in the client area.'))) . '</small>';
 
+        $installType   = AdminText::get('ssl_install_type', 'SSL Install Type');
+        $installTarget = AdminText::get('install_target', 'Install Target');
         if(!$autoInstall)
         {
             // a certificate for public IPs is not installed on a cPanel account by domain
             if(\ModulesGarden\TSSGGSModule\App\Libs\IpCertificate::isProduct((int)\WHMCS\Database\Capsule::table('tblhosting')->where('id', (int)$serviceId)->value('packageid')))
             {
-                return ['SSL Install Type' => 'Manual'];
+                return [$installType => self::t('install_type_manual', 'Manual')];
             }
 
-            return ['SSL Install Type' => 'Manual', 'Install Target' => $target];
+            return [$installType => self::t('install_type_manual', 'Manual'), $installTarget => $target];
         }
 
         $labels = [
@@ -464,21 +479,21 @@ class AdminServicesTabFields
         $label = isset($labels[$autoInstall['status']]) ? $labels[$autoInstall['status']] : 'label-default';
 
         $status = '<span class="label ' . $label . '">' . htmlspecialchars(ucwords(str_replace('_', ' ', $autoInstall['status']))) . '</span>'
-            . ' on <strong>' . htmlspecialchars($autoInstall['domain']) . '</strong>';
+            . ' ' . self::t('installed_on', 'on') . ' <strong>' . htmlspecialchars($autoInstall['domain']) . '</strong>';
         if($autoInstall['installed_at'])
         {
-            $status .= ' | installed: ' . htmlspecialchars($autoInstall['installed_at']);
+            $status .= ' | ' . self::t('installed_at', 'installed: :date:', ['date' => $autoInstall['installed_at']]);
         }
         if($autoInstall['valid_till'])
         {
-            $status .= ' | valid till: ' . htmlspecialchars($autoInstall['valid_till']);
+            $status .= ' | ' . self::t('valid_till_colon', 'valid till: :date:', ['date' => $autoInstall['valid_till']]);
         }
         if($autoInstall['last_error'])
         {
-            $status .= '<br><span style="color:#c0392b;">Last error: ' . htmlspecialchars($autoInstall['last_error']) . '</span>';
+            $status .= '<br><span style="color:#c0392b;">' . self::t('last_error', 'Last error: :error:', ['error' => $autoInstall['last_error']]) . '</span>';
         }
 
-        $return = ['SSL Install Type' => 'AutoInstall (cPanel)', 'AutoInstall Status' => $status, 'Install Target' => $target];
+        $return = [$installType => self::t('install_type_autoinstall', 'AutoInstall (cPanel)'), AdminText::get('autoinstall_status', 'AutoInstall Status') => $status, $installTarget => $target];
 
         if(!empty($autoInstall['logs']))
         {
@@ -489,7 +504,7 @@ class AdminServicesTabFields
                 $logs  .= '<div style="color:' . $color . ';">' . htmlspecialchars($log['date']) . ' - ' . htmlspecialchars($log['message']) . '</div>';
             }
             $logs                     .= '</div>';
-            $return['Certificate Log'] = $logs;
+            $return[AdminText::get('certificate_log', 'Certificate Log')] = $logs;
         }
 
         return $return;

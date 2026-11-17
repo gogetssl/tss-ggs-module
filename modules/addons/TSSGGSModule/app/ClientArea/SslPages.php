@@ -90,6 +90,7 @@ class SslPages
             'result'    => null,
             'error'     => '',
             'active'    => '',
+            't'         => self::toolTexts(),
         ];
 
         // the tools work for a signed-in client only: a visitor must not make the server generate keys or open connections
@@ -102,7 +103,7 @@ class SslPages
             {
                 if(!\ModulesGarden\TSSGGSModule\App\Libs\CsrfToken::valid(isset($_POST['token']) ? $_POST['token'] : ''))
                 {
-                    throw new \Exception('The page expired - reload it and try again.');
+                    throw new \Exception(\ModulesGarden\TSSGGSModule\App\Libs\ClientText::get('toolsPageExpired', 'The page expired - reload it and try again.'));
                 }
                 $tools = '\ModulesGarden\TSSGGSModule\App\Libs\SslTools';
                 switch($action)
@@ -137,7 +138,7 @@ class SslPages
                         echo $converted['content'];
                         exit;
                     default:
-                        throw new \Exception('Choose a tool.');
+                        throw new \Exception(\ModulesGarden\TSSGGSModule\App\Libs\ClientText::get('toolsChooseTool', 'Choose a tool.'));
                 }
             }
             catch(\Exception $e)
@@ -149,8 +150,8 @@ class SslPages
         }
 
         return [
-            'pagetitle'    => 'SSL Tools',
-            'breadcrumb'   => [self::MODULE_URL . '&page=tools' => 'SSL Tools'],
+            'pagetitle'    => html_entity_decode($vars['t']['title'], ENT_QUOTES, 'UTF-8'),
+            'breadcrumb'   => [self::MODULE_URL . '&page=tools' => html_entity_decode($vars['t']['title'], ENT_QUOTES, 'UTF-8')],
             'templatefile' => 'templates/clientarea/tools',
             'requirelogin' => true,
             'forcessl'     => false,
@@ -169,7 +170,7 @@ class SslPages
                   'domain', 'product', 'status', 'validTill', 'nextDueDate', 'manage', 'payInvoice', 'noCertificates', 'search',
                   'searchPlaceholder', 'allStatuses', 'activeOnly', 'inactiveOnly', 'history', 'ordered', 'validFrom', 'noDomains',
                   'byDomain', 'listView', 'certificate', 'status_active', 'status_processing', 'status_pending', 'status_cancelled',
-                  'status_expired', 'status_rejected', 'status_revoked', 'status_awaiting'];
+                  'status_expired', 'status_rejected', 'status_revoked', 'status_awaiting', 'sslTools'];
         $texts = [];
         foreach($keys as $key)
         {
@@ -178,6 +179,30 @@ class SslPages
 
         return $texts;
     }
+
+    /**
+     * Texts of the SSL Tools page ($_LANG['sslTools'] of the server module language files, incl. langs/overrides),
+     * HTML-encoded like every other Lang text
+     */
+    public static function toolTexts()
+    {
+        self::bootLang();
+
+        $texts = [];
+        foreach(self::TOOL_TEXTS as $key)
+        {
+            $texts[$key] = Lang::absoluteT('sslTools', $key);
+        }
+
+        return $texts;
+    }
+
+    const TOOL_TEXTS = ['title', 'intro', 'csrDecoder', 'decode', 'sans', 'key', 'bit', 'certDecoder', 'subject', 'issuer', 'names',
+                        'valid', 'daysLeft', 'keySignature', 'serial', 'keyMatch', 'keyMatchIntro', 'certificatePem', 'csrPem',
+                        'keyPem', 'compare', 'match', 'noMatch', 'converter', 'pem2der', 'der2pem', 'pem2pfx', 'pfx2pem', 'file',
+                        'chainPem', 'keyPfx', 'pfxPassword', 'convert', 'generator', 'generatorIntro', 'commonName', 'organization',
+                        'department', 'city', 'state', 'country', 'email', 'keySize', 'generate', 'csr', 'privateKeySave', 'checker',
+                        'check', 'covers', 'notCovers', 'serverCertificate', 'chainCertificate'];
 
     protected static function bootLang()
     {

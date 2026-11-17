@@ -1,0 +1,104 @@
+<?php
+
+/**
+ * Admin area texts of the server module (service tab, module buttons) - see App\Libs\AdminText.
+ * Separate from the client area language files in the folder above. Own changes go into
+ * langs/admin/overrides/german.php (same format, only the keys you change); they survive module updates.
+ * :name: placeholders are filled in by the module.
+ */
+
+$_LANG['configuration_status']          = 'Konfigurationsstatus';
+$_LANG['vendor_item_id']                = '%%VENDOR%% Artikel-ID';
+$_LANG['vendor_order']                  = '%%VENDOR%% Bestellung';
+$_LANG['vendor_status']                 = 'Anbieterstatus';
+$_LANG['caa_record']                    = 'CAA-Eintrag';
+$_LANG['renewal_additional_days']       = 'Zusätzliche Tage bei Verlängerung';
+$_LANG['error']                         = 'Fehler';
+$_LANG['email_addresses']               = 'E-Mail-Adressen';
+$_LANG['validity']                      = 'Gültigkeit';
+$_LANG['csr']                           = 'CSR';
+$_LANG['enrolment']                     = 'Registrierung';
+$_LANG['migrated']                      = 'Migriert';
+$_LANG['organization']                  = 'Organisation';
+$_LANG['delivery']                      = 'Lieferung';
+$_LANG['token_setup']                   = 'Token-Einrichtung';
+$_LANG['contact']                       = 'Kontakt';
+$_LANG['period']                        = 'Zeitraum';
+$_LANG['licence']                       = 'Lizenz';
+$_LANG['token_init_code']               = 'Token-Initialisierungscode';
+$_LANG['previous_orders']               = 'Frühere Bestellungen';
+$_LANG['domain_validation']             = 'Domainvalidierung';
+$_LANG['downloads']                     = 'Downloads';
+$_LANG['certificate']                   = 'Zertifikat';
+$_LANG['reissue']                       = 'Neuausstellung';
+$_LANG['ssl_install_type']              = 'SSL-Installationsart';
+$_LANG['install_target']                = 'Installationsziel';
+$_LANG['autoinstall_status']            = 'AutoInstall-Status';
+$_LANG['certificate_log']               = 'Zertifikatsprotokoll';
+$_LANG['status_awaiting_configuration'] = 'Wartet auf Konfiguration';
+$_LANG['error_not_initialized']         = 'Die Anlegen-Aktion wurde nicht ausgeführt';
+$_LANG['error_no_remote_id']            = 'Die SSL-Bestellung hat noch keine %%VENDOR%% Artikel-ID';
+$_LANG['unknown']                       = 'unbekannt';
+$_LANG['order_number']                  = 'Bestellung Nr. :id:';
+$_LANG['item_number']                   = 'Artikel Nr. :id:';
+$_LANG['licence_number']                = 'Lizenz Nr. :id:';
+$_LANG['vendor_order_number']           = 'CA-Bestellung Nr. :id:';
+$_LANG['vendor_licence']                = 'Anbieterlizenz :id:';
+$_LANG['ordered_at']                    = 'bestellt am :date:';
+$_LANG['last_refresh']                  = 'zuletzt aktualisiert :date:';
+$_LANG['last_synchronized']             = 'zuletzt synchronisiert :date:';
+$_LANG['ca_status']                     = 'CA: :status:';
+$_LANG['renewal_days_auto']             = 'auto';
+$_LANG['renewal_days_hint']             = '0–:max: Tage, die in die Verlängerungsbestellung übernommen werden (Sectigo). Leer = globale Einstellung oder die Resttage des Zertifikats.';
+$_LANG['caa_title']                     = 'Ein CAA-DNS-Eintrag erlaubt dieses Zertifikat nicht';
+$_LANG['caa_intro']                     = '%s stellt für diese Domains nicht aus: Ihr CAA-Eintrag erlaubt nur andere Zertifizierungsstellen. Der Kunde sieht denselben Hinweis.';
+$_LANG['caa_inherited']                 = 'Eintrag gesetzt auf %s';
+$_LANG['caa_now']                       = 'Aktueller CAA-Eintrag';
+$_LANG['caa_add']                       = 'Hinzuzufügender Eintrag';
+$_LANG['caa_fix']                       = 'Der Domaininhaber fügt den Eintrag hinzu (oder entfernt die CAA-Einträge); die CA stellt dann ohne neue Bestellung aus.';
+$_LANG['caa_gateway']                   = 'Die Zertifizierungsstelle meldet, dass ihre CAA-Prüfung für diese Bestellung fehlgeschlagen ist (der Kunde sieht denselben Hinweis).';
+$_LANG['caa_gateway_fix']               = 'Lösung: Der Domaininhaber fügt %s zum DNS der Domain hinzu (oder entfernt ihre CAA-Einträge); die CA stellt dann ohne neue Bestellung aus.';
+$_LANG['email_confirmed']               = 'bestätigt';
+$_LANG['email_not_confirmed']           = 'nicht bestätigt';
+$_LANG['csr_sent']                      = 'Vom Kunden gesendet';
+$_LANG['csr_not_sent']                  = 'Nicht gesendet: Die Zertifizierungsstelle teilt dem Kunden per E-Mail mit, wie er das Zertifikat abholt';
+$_LANG['enrolment_pending']             = 'Migrierte Einladungsbestellung: Der Kunde hat sich noch nicht registriert.';
+$_LANG['enrolment_link']                = 'Registrierungslink';
+$_LANG['migrated_yes']                  = 'Ja, aus dem alten Modul';
+$_LANG['token_setup_page']              = 'Seite zur Token-Einrichtung';
+$_LANG['period_months']                 = ':months: Monate ab Bestelldatum';
+$_LANG['token_init_code_hint']          = 'wird auch dem Kunden angezeigt';
+$_LANG['valid_till']                    = 'gültig bis :date:';
+$_LANG['valid_till_colon']              = 'gültig bis: :date:';
+$_LANG['validity_certificate']          = 'Zertifikat :from: – :to:';
+$_LANG['validity_subscription']         = 'Abonnement :from: – :to:';
+$_LANG['download_certificate_zip']      = 'Zertifikat (ZIP, alle Formate)';
+$_LANG['download_validation_file']      = 'Validierungsdatei (:file:)';
+$_LANG['view_crt_bundle']               = 'CRT / CA-Bundle anzeigen';
+$_LANG['reissue_hint']                  = 'Fügen Sie einen neuen CSR ein und speichern Sie, um das Zertifikat mit den aktuellen Domains und Validierungsmethoden neu auszustellen.';
+$_LANG['domain']                        = 'Domain';
+$_LANG['method']                        = 'Methode';
+$_LANG['status']                        = 'Status';
+$_LANG['change_to']                     = 'ändern in :method:';
+$_LANG['approver_email_placeholder']    = 'E-Mail des Genehmigers (E-Mail-Methode)';
+$_LANG['validated']                     = 'Validiert';
+$_LANG['pending']                       = 'Ausstehend';
+$_LANG['install_target_placeholder']    = 'Domain im cPanel-Konto des Kunden';
+$_LANG['install_target_hint_ais']       = 'Domain, auf der das Zertifikat installiert ist (AutoInstall). Eine Änderung stellt die Installation erneut in die Warteschlange.';
+$_LANG['install_target_hint']           = 'Standarddomain für „Auf Server installieren“ im Kundenbereich.';
+$_LANG['install_target_hint_no_cpanel'] = 'Standarddomain für „Auf Server installieren“ im Kundenbereich – der Kunde hat kein aktives cPanel-Konto.';
+$_LANG['install_type_manual']           = 'Manuell';
+$_LANG['install_type_autoinstall']      = 'AutoInstall (cPanel)';
+$_LANG['installed_on']                  = 'auf';
+$_LANG['installed_at']                  = 'installiert: :date:';
+$_LANG['last_error']                    = 'Letzter Fehler: :error:';
+$_LANG['button_sync_certificate']       = 'Zertifikat synchronisieren';
+$_LANG['button_recheck_validation']     = 'Validierung erneut prüfen';
+$_LANG['button_resend_approver_email']  = 'Genehmiger-E-Mail erneut senden';
+$_LANG['button_resend_certificate']     = 'Zertifikat erneut senden';
+$_LANG['button_cancel_order']           = 'Bestellung stornieren';
+$_LANG['button_refresh_status']         = ':product:-Status aktualisieren';
+$_LANG['error_no_open_order']           = 'Es gibt keine offene Anbieterbestellung zum Stornieren';
+$_LANG['error_no_file_validation']      = 'Die Bestellung verwendet keine Dateivalidierung (HTTP/HTTPS)';
+$_LANG['module_information']            = 'Modulinformationen';
+$_LANG['module_managed_in_addon']       = 'Dieses Modul kann nur über das Addon-Modul :addon: verwaltet werden.';

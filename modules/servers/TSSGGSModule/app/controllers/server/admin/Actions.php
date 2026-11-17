@@ -10,8 +10,10 @@ use ModulesGarden\Servers\TSSGGSModule\app\services\SSLStepOne;
 use ModulesGarden\Servers\TSSGGSModule\app\services\SSLStepTwo;
 use ModulesGarden\Servers\TSSGGSModule\app\services\SSLStepThree;
 use ModulesGarden\Servers\TSSGGSModule\app\services\SyncCertificate;
+use ModulesGarden\TSSGGSModule\App\Libs\AdminText;
 use ModulesGarden\TSSGGSModule\App\Libs\CertificateBundle;
 use ModulesGarden\TSSGGSModule\App\Libs\CertificateService;
+use ModulesGarden\TSSGGSModule\App\Libs\ClientText;
 use ModulesGarden\TSSGGSModule\App\Libs\GeneralSettings;
 use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
 
@@ -25,7 +27,7 @@ class Actions {
         }
 
         $data['mode'] = "advanced";
-        $data['content'] = '<div class="errorbox"><strong><span class="title">Module Information</span></strong><br>This module can only be managed from the TSSGGSModule addon module.</div>';
+        $data['content'] = '<div class="errorbox"><strong><span class="title">' . AdminText::html('module_information', 'Module Information') . '</span></strong><br>' . AdminText::html('module_managed_in_addon', 'This module can only be managed from the :addon: addon module.', ['addon' => 'TSSGGSModule']) . '</div>';
         ob_clean();
         header('Content-Type: application/json');
 
@@ -137,7 +139,7 @@ class Actions {
         return $this->run(function() use ($params) {
             if(!CertificateService::cancel($params['serviceid'], 'Cancelled by administrator'))
             {
-                throw new \Exception('There is no open vendor order to cancel');
+                throw new \Exception(AdminText::get('error_no_open_order', 'There is no open vendor order to cancel'));
             }
             // the certificate no longer exists - stop renewal invoices and client actions (same as the client's cancel)
             \WHMCS\Database\Capsule::table('tblhosting')->where('id', (int)$params['serviceid'])
@@ -169,7 +171,7 @@ class Actions {
                     CertificateBundle::output(['filename' => basename($domain['validation']['file_name']), 'mime' => 'text/plain', 'content' => (string)$domain['validation']['value']]);
                 }
             }
-            throw new \Exception('The order does not use file (HTTP/HTTPS) validation');
+            throw new \Exception(ClientText::get('noFileValidation', 'The order does not use file (HTTP/HTTPS) validation'));
         });
     }
 
@@ -180,11 +182,11 @@ class Actions {
     {
         if(!CertificateService::serviceOpen($params['serviceid']))
         {
-            return 'The certificate is not available: the service has been cancelled or terminated.';
+            return ClientText::get('certificateNotAvailable', 'The certificate is not available: the service has been cancelled or terminated.');
         }
         if(CertificateService::status($params['serviceid']) !== 'active')
         {
-            return 'The certificate can be reissued once it has been issued';
+            return ClientText::get('reissueAfterIssue', 'The certificate can be reissued once it has been issued');
         }
 
         header('Location: clientarea.php?action=productdetails&id=' . (int)$params['serviceid'] . '&mg-action=reissueSSL');
@@ -196,7 +198,7 @@ class Actions {
     {
         if(!CertificateService::usable($params['serviceid']))
         {
-            return 'The certificate is not available: the service has been cancelled or terminated.';
+            return ClientText::get('certificateNotAvailable', 'The certificate is not available: the service has been cancelled or terminated.');
         }
 
         return $this->GetCertificate($params);
@@ -208,17 +210,39 @@ class Actions {
     public function ContactDetails($params)
     {
         $labels = [
-            'administrator' => 'Administrative contact',
-            'technical'     => 'Technical contact',
-            'organization'  => 'Organization',
+            'administrator' => ClientText::get('contactAdministrator', 'Administrative contact'),
+            'technical'     => ClientText::get('contactTechnical', 'Technical contact'),
+            'organization'  => ClientText::get('contactOrganization', 'Organization'),
+        ];
+
+        // field names of the order's contacts (SSLStepThree) => client language
+        $fieldLabels = [
+            'first_name'     => ClientText::get('contactFirstName', 'First name'),
+            'last_name'      => ClientText::get('contactLastName', 'Last name'),
+            'title'          => ClientText::get('contactJobTitle', 'Job title'),
+            'email'          => ClientText::get('contactEmail', 'Email'),
+            'phone'          => ClientText::get('contactPhone', 'Phone'),
+            'name'           => ClientText::get('contactName', 'Name'),
+            'address_line_1' => ClientText::get('contactAddress1', 'Address line 1'),
+            'address_line_2' => ClientText::get('contactAddress2', 'Address line 2'),
+            'city'           => ClientText::get('contactCity', 'City'),
+            'region'         => ClientText::get('contactRegion', 'State / region'),
+            'country'        => ClientText::get('contactCountry', 'Country'),
+            'postal_code'    => ClientText::get('contactPostalCode', 'Postal code'),
         ];
 
         $contacts = [];
         foreach(CertificateService::contacts($params['serviceid']) as $type => $contact)
         {
-            $contacts[] = ['title' => isset($labels[$type]) ? $labels[$type] : ucfirst($type), 'fields' => array_filter((array)$contact, function($value) {
-                return is_scalar($value) && trim((string)$value) !== '';
-            })];
+            $fields = [];
+            foreach((array)$contact as $field => $value)
+            {
+                if(is_scalar($value) && trim((string)$value) !== '')
+                {
+                    $fields[isset($fieldLabels[$field]) ? $fieldLabels[$field] : ucfirst(str_replace('_', ' ', (string)$field))] = $value;
+                }
+            }
+            $contacts[] = ['title' => isset($labels[$type]) ? $labels[$type] : ucfirst($type), 'fields' => $fields];
         }
 
         return [
@@ -247,7 +271,7 @@ class Actions {
                         CertificateBundle::output(['filename' => basename($domain['validation']['file_name']), 'mime' => 'text/plain', 'content' => (string)$domain['validation']['value']]);
                     }
                 }
-                throw new \Exception('The order does not use file (HTTP/HTTPS) validation');
+                throw new \Exception(AdminText::get('error_no_file_validation', 'The order does not use file (HTTP/HTTPS) validation'));
             }
 
             CertificateBundle::output(CertificateService::bundle($serviceId)->get('zip'));
@@ -290,7 +314,7 @@ class Actions {
         // Reissue and Download are already in the sidebar (hooks.php) - no second entry under another name
         if(CertificateService::contacts($serviceId))
         {
-            $buttons['Contact Details'] = 'ClientAreaCustomContactDetails';
+            $buttons[ClientText::get('contactDetails', 'Contact Details')] = 'ClientAreaCustomContactDetails';
         }
 
         return $buttons;
@@ -379,33 +403,33 @@ class Actions {
         {
             // nothing to refresh or cancel before the client orders the certificate
             return $gatewayType::isOrdered($serviceId)
-                ? ['Refresh ' . $gatewayType::LABEL . ' Status' => 'SyncCertificate', 'Cancel Order' => 'CancelOrder']
+                ? [AdminText::get('button_refresh_status', 'Refresh :product: Status', ['product' => $gatewayType::LABEL]) => 'SyncCertificate', AdminText::get('button_cancel_order', 'Cancel Order') => 'CancelOrder']
                 : [];
         }
         if($serviceId && CertificateService::category($serviceId) !== CertificateService::CATEGORY_TLS)
         {
-            return ['Cancel Order' => 'CancelOrder'];
+            return [AdminText::get('button_cancel_order', 'Cancel Order') => 'CancelOrder'];
         }
 
         $status  = $serviceId ? CertificateService::status($serviceId) : '';
-        $buttons = ['Sync Certificate' => 'SyncCertificate'];
+        $buttons = [AdminText::get('button_sync_certificate', 'Sync Certificate') => 'SyncCertificate'];
 
         if(!$serviceId || in_array($status, ['processing', 'pending'], true))
         {
-            $buttons['Recheck Validation'] = 'RecheckValidation';
+            $buttons[AdminText::get('button_recheck_validation', 'Recheck Validation')] = 'RecheckValidation';
             if(!$serviceId || self::usesEmailValidation($serviceId))
             {
-                $buttons['Resend Approver Email'] = 'SSLAdminResendApproverEmail';
+                $buttons[AdminText::get('button_resend_approver_email', 'Resend Approver Email')] = 'SSLAdminResendApproverEmail';
             }
             // the validation file and the certificate are download links in the module tab (AdminServicesTabFields)
         }
         if(!$serviceId || $status === 'active')
         {
-            $buttons['Resend Certificate'] = 'SSLAdminResendCertificate';
+            $buttons[AdminText::get('button_resend_certificate', 'Resend Certificate')] = 'SSLAdminResendCertificate';
         }
         if(!$serviceId || ($status !== '' && !in_array($status, ['cancelled', 'expired', 'rejected', 'revoked', 'refunded'], true)))
         {
-            $buttons['Cancel Order'] = 'CancelOrder';
+            $buttons[AdminText::get('button_cancel_order', 'Cancel Order')] = 'CancelOrder';
         }
 
         return $buttons;

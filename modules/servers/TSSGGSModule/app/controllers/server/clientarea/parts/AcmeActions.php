@@ -427,7 +427,7 @@ trait AcmeActions
 
         return [
             'success' => true,
-            'message' => 'Subscription configuration submitted successfully.',
+            'message' => Lang::absoluteT('serverCA', 'home', 'acmeConfigurationSubmitted'),
         ];
     }
 
@@ -541,7 +541,7 @@ trait AcmeActions
 
         return [
             'success' => true,
-            'message' => 'Domains added successfully.',
+            'message' => Lang::absoluteT('serverCA', 'home', 'acmeDomainsAdded'),
         ];
     }
 

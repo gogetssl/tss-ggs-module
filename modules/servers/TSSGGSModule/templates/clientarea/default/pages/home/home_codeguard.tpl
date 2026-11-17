@@ -179,7 +179,7 @@
                     if (link) {
                         window.open(link, '_blank', 'noopener');
                     } else {
-                        $('#MGAlerts').alerts('error', 'No dashboard link was returned');
+                        $('#MGAlerts').alerts('error', '{$MGLANG->T('codeGuardNoDashboardLink')}');
                     }
                 }
             });
