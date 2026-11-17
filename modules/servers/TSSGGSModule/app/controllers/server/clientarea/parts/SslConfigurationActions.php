@@ -236,6 +236,24 @@ trait SslConfigurationActions
         $vars['enableCsrGenerator'] = $settings['enableCsrGenerator'];
         $vars['adminFormHidden']    = $settings['adminFormHidden'];
         $vars['productDomain']      = isset($params['domain']) ? $params['domain'] : '';
+        // the free www name of the main domain (www.example.com / example.com): TheSSLStore adds it to every order,
+        // GoGetSSL only to orders without additional domains - so on a GoGetSSL multi-domain product the www names
+        // can be picked as additional domains (App\Libs\FreeName)
+        $vars['wwwAlwaysFree']      = \ModulesGarden\TSSGGSModule\App\Libs\FreeName::addedForService($serviceId);
+        $vars['wwwInSanList']       = !$vars['wwwAlwaysFree'] && $settings['sansLimit'] > 0;
+        if($vars['wwwInSanList'])
+        {
+            foreach($vars['domainGroups'] as $i => $group)
+            {
+                foreach($group['domains'] as $domain)
+                {
+                    if(stripos($domain, 'www.') !== 0 && !in_array('www.' . $domain, $group['domains'], true))
+                    {
+                        $vars['domainGroups'][$i]['www'][$domain] = 'www.' . $domain;
+                    }
+                }
+            }
+        }
         $vars['csrfToken']          = \generate_token('plain');
         $vars['agreement']          = CertificateService::agreement($params['packageid']);
 
@@ -375,7 +393,6 @@ trait SslConfigurationActions
             $installType = 'manual';
         }
         $dcvMethod   = isset($input['dcv_method']) ? strtolower(trim($input['dcv_method'])) : '';
-        $includeWww  = !empty($input['include_www']);
         $ownCsr      = ($installType === 'manual') ? trim(isset($input['own_csr']) ? $input['own_csr'] : '') : '';
 
         if(!in_array($dcvMethod, $installType === 'manual' ? $settings['dcvMethodsManual'] : $settings['dcvMethods'], true))
@@ -508,10 +525,6 @@ trait SslConfigurationActions
         else
         {
             $commonName = $mainDomain;
-            if(!$isWildcardCn && $installType === 'autoinstall' && $includeWww && strpos($commonName, 'www.') !== 0)
-            {
-                $commonName = 'www.' . $commonName;
-            }
 
             $privKey = openssl_pkey_new([
                 'private_key_bits' => 2048,
