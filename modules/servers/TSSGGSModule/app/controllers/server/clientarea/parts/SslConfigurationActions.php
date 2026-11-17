@@ -236,6 +236,24 @@ trait SslConfigurationActions
         $vars['enableCsrGenerator'] = $settings['enableCsrGenerator'];
         $vars['adminFormHidden']    = $settings['adminFormHidden'];
         $vars['productDomain']      = isset($params['domain']) ? $params['domain'] : '';
+        // the free www name of the main domain (www.example.com / example.com), tested 2026-11-17: a product without
+        // SAN support gets it from the vendor; a SAN-capable product does not - there the www names can be picked as
+        // additional domains (App\Libs\FreeName)
+        $vars['wwwAlwaysFree']      = $this->productWithoutSans($params['packageid']);
+        $vars['wwwInSanList']       = !$vars['wwwAlwaysFree'] && $settings['sansLimit'] > 0;
+        if($vars['wwwInSanList'])
+        {
+            foreach($vars['domainGroups'] as $i => $group)
+            {
+                foreach($group['domains'] as $domain)
+                {
+                    if(stripos($domain, 'www.') !== 0 && !in_array('www.' . $domain, $group['domains'], true))
+                    {
+                        $vars['domainGroups'][$i]['www'][$domain] = 'www.' . $domain;
+                    }
+                }
+            }
+        }
         $vars['csrfToken']          = \generate_token('plain');
         $vars['agreement']          = CertificateService::agreement($params['packageid']);
 
@@ -318,6 +336,17 @@ trait SslConfigurationActions
         }, $items))));
     }
 
+    /** The gateway product has no SAN support (catalogue san = null): the vendor adds the free www name itself */
+    private function productWithoutSans($packageId)
+    {
+        $config = (new ProductRepository())->getProductConfiguration((int)$packageId);
+        $remote = RemoteProduct::where('remoteId', (string)($config['product_id'] ?? ''))->where('vendor', (string)($config['provider'] ?? ''))->first();
+        $raw    = $remote ? $remote->rawData : null;
+        $raw    = is_array($raw) ? $raw : (json_decode((string)$raw, true) ?: []);
+
+        return $remote !== null && array_key_exists('san', $raw) && $raw['san'] === null;
+    }
+
     /** The gateway product accepts IP addresses as SANs (san.ip_allowed) */
     private function sanIpAllowed($packageId)
     {
@@ -375,7 +404,6 @@ trait SslConfigurationActions
             $installType = 'manual';
         }
         $dcvMethod   = isset($input['dcv_method']) ? strtolower(trim($input['dcv_method'])) : '';
-        $includeWww  = !empty($input['include_www']);
         $ownCsr      = ($installType === 'manual') ? trim(isset($input['own_csr']) ? $input['own_csr'] : '') : '';
 
         if(!in_array($dcvMethod, $installType === 'manual' ? $settings['dcvMethodsManual'] : $settings['dcvMethods'], true))
@@ -508,10 +536,6 @@ trait SslConfigurationActions
         else
         {
             $commonName = $mainDomain;
-            if(!$isWildcardCn && $installType === 'autoinstall' && $includeWww && strpos($commonName, 'www.') !== 0)
-            {
-                $commonName = 'www.' . $commonName;
-            }
 
             $privKey = openssl_pkey_new([
                 'private_key_bits' => 2048,

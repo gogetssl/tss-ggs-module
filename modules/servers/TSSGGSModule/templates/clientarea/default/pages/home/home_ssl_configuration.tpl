@@ -156,12 +156,7 @@
             </label>
         </div>
         {else}
-        <div class="form-group">
-            <label class="normal">
-                <input type="checkbox" id="include_www" value="1">
-                {$MGLANG->T('sslConfigIncludeWww')}
-            </label>
-        </div>
+        {if $wwwAlwaysFree}<p class="san-note" id="www-note">{$MGLANG->T('sslConfigWwwIncluded')}</p>{elseif $wwwInSanList}<p class="san-note" id="www-note">{$MGLANG->T('sslConfigWwwChoose')}</p>{/if}
         {/if}
 
         {if $sansLimit > 0}
@@ -472,6 +467,8 @@
         <optgroup label="{$group.label|escape}">
             {foreach $group.domains as $domain}
                 <option value="{$domain|escape}">{$domain|escape}</option>
+                {* a SAN-capable product gets no free www name: offer it as an additional domain *}
+                {if isset($group.www[$domain])}<option value="{$group.www[$domain]|escape}">{$group.www[$domain]|escape}</option>{/if}
             {/foreach}
         </optgroup>
     {/foreach}
@@ -788,7 +785,6 @@
             'install_type':       installType,
             'dcv_method':         dcvMethod,
             'approver_email':     approverEmail,
-            'include_www':        $('#include_www').is(':checked') ? 1 : 0,
             'csr_country':        $('#csr_country').val(),
             'csr_state':          $('#csr_state').val(),
             'csr_city':           $('#csr_city').val(),
