@@ -67,16 +67,22 @@ class SSLStepThree
 
             $api = SSLTrustCenterApi::forVendor($configProduct['provider'], $configProduct['category']);
             $decode = openssl_csr_get_subject($params['csr']);
-            $mainMethod = $params['method'][$decode['CN']] == 'email' ? $params['approver'][$decode['CN']] : $params['method'][$decode['CN']];
+            // the order's main name: the CSR's common name, or - for a CSR without one (IP certificates,
+            // App\Libs\IpCertificate) - the name the configuration gave
+            $commonName = !empty($params['common_name']) ? (string)$params['common_name'] : (string)($decode['CN'] ?? '');
+            $mainMethod = $params['method'][$commonName] == 'email' ? $params['approver'][$commonName] : $params['method'][$commonName];
 
-            SanUpgrade::assertWithinLimits($params['serviceid'], $decode['CN'], array_keys($params['method']), SanUpgrade::paidQuantities($params));
+            SanUpgrade::assertWithinLimits($params['serviceid'], $commonName, array_keys($params['method']), SanUpgrade::paidQuantities($params));
             // *. only on a wildcard product, or a FLEX product with the Wildcard choice paid
-            \ModulesGarden\TSSGGSModule\App\Libs\MainDomain::assertCommonName((int)$params['serviceid'], (string)$decode['CN']);
+            \ModulesGarden\TSSGGSModule\App\Libs\MainDomain::assertCommonName((int)$params['serviceid'], $commonName);
 
             $san = [];
+            // a CSR without common name (IP certificates): every name is a SAN of the order, the main name too - the
+            // vendor refuses the order without one ("minimum numbers of SAN is 1")
+            $allNamesAreSans = !empty($params['common_name']) && empty($decode['CN']);
             foreach ($params['method'] as $domain_san => $method_san)
             {
-                if($domain_san == $decode['CN']) continue;
+                if($domain_san == $commonName && !$allNamesAreSans) continue;
                 $methodSan = $method_san == 'email' ? $params['approver'][$domain_san] : $method_san;
                 $san[] = ['name' => $domain_san, 'validation_method' => $methodSan];
             }
@@ -88,7 +94,7 @@ class SSLStepThree
                 ],
                 'csr' => trim($params['csr']),
                 'common_name' => [
-                    'name' => $decode['CN'],
+                    'name' => $commonName,
                     'validation_method' => $mainMethod,
                 ],
                 'contacts' => [
@@ -145,7 +151,7 @@ class SSLStepThree
             }
             $itemId   = SSLTrustCenterApi::getItemId($newOrder);
             SSL::where('serviceid', $params['serviceid'])->update(['remoteid' => $itemId]);
-            Service::where('id', $params['serviceid'])->update(['domain' => $decode['CN']]);
+            Service::where('id', $params['serviceid'])->update(['domain' => $commonName]);
 
             $apiPrice = $newOrder['order']['total_amount'];
 
@@ -194,7 +200,7 @@ class SSLStepThree
             // SANs paid with this order - an upgrade of the SAN options orders only the difference (see SanUpgrade)
             SanUpgrade::rememberPurchased($params['serviceid'], SanUpgrade::paidQuantities($params));
 
-            CertificateService::event($params['serviceid'], 'success', '[Order] SSL order placed for domain: ' . $decode['CN']
+            CertificateService::event($params['serviceid'], 'success', '[Order] SSL order placed for domain: ' . $commonName
                 . ' (order #' . $newOrder['order']['id'] . ', ' . (count($san) + 1) . ' domain(s))', $params['userid']);
 
             // OV / EV: tell the client the certificate authority now verifies the organization

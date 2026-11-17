@@ -233,7 +233,7 @@
             <label>{$MGLANG->T('sslConfigOwnCsrLabel')} <span class="text-danger">*</span></label>
             <textarea class="form-control" id="manual_own_csr" rows="8"
                 placeholder="-----BEGIN CERTIFICATE REQUEST-----&#10;...&#10;-----END CERTIFICATE REQUEST-----"></textarea>
-            <span class="help-block" style="font-size:12px;color:#888;">{$MGLANG->T('sslConfigOwnCsrHint')}</span>
+            <span class="help-block" style="font-size:12px;color:#888;">{if $ipProduct}{$MGLANG->T('sslConfigIpCsrHint')}{else}{$MGLANG->T('sslConfigOwnCsrHint')}{/if}</span>
         </div>
 
         {if $enableCsrGenerator}
@@ -243,6 +243,7 @@
                 {$MGLANG->T('sslConfigAutoGenerateCsr')}
             </label>
         </div>
+        {if !$ipProduct}
         <div class="form-group" id="manual-domain-group" style="display:none;">
             <label>{$MGLANG->T('sslConfigCsrCommonName')} <span class="text-danger">*</span></label>
             <input type="text" class="form-control" id="manual_domain" placeholder="{$productDomain|escape}" value="{$productDomain|escape}">
@@ -258,14 +259,22 @@
         </div>
         {/if}
         {/if}
+        {/if}
 
-        {if $sansLimit > 0}
+        {if $ipProduct}
+        {* a certificate for public IPs: every name is entered here, the first one becomes the main name *}
+        <div class="form-group">
+            <label>{$MGLANG->T('sslConfigIpNames')} (max {if $sansLimit > 0}{$sansLimit|escape}{else}1{/if}) <span class="text-danger">*</span></label>
+            <textarea class="form-control" id="san_domains_manual" rows="4" placeholder="203.0.113.10&#10;example.com"></textarea>
+            <span class="help-block" style="font-size:12px;color:#888;">{$MGLANG->T('sslConfigIpNamesHint')}</span>
+        </div>
+        {elseif $sansLimit > 0}
         <div class="form-group">
             <label>{$MGLANG->T('sslConfigSanSingle')} (max {$sansLimit|escape})</label>
             <textarea class="form-control" id="san_domains_manual" rows="4" placeholder="domain1.com&#10;domain2.com"></textarea>
         </div>
         {/if}
-        {if $wildcardSansLimit > 0}
+        {if $wildcardSansLimit > 0 && !$ipProduct}
         <div class="form-group">
             <label>{$MGLANG->T('sslConfigSanWildcard')} (max {$wildcardSansLimit|escape})</label>
             <textarea class="form-control" id="wildcard_san_manual" rows="4" placeholder="*.domain1.com&#10;*.domain2.com"></textarea>
@@ -485,6 +494,7 @@
     var wildcardSanLimit = {$wildcardSansLimit|intval};
     var hasCpanel        = {if $hasCpanel}true{else}false{/if};
     var hasCsrGenerator  = {if $enableCsrGenerator}true{else}false{/if};
+    var ipProduct        = {if $ipProduct}true{else}false{/if};
     var lang = {
         loading:          '{$MGLANG->T('sslConfigLoading')|escape:'javascript'}',
         firstSelect:      '{$MGLANG->T('sslConfigFirstSelectDomain')|escape:'javascript'}',
@@ -493,6 +503,7 @@
         needsCn:          '{$MGLANG->T('sslConfigEmailDcvNeedsCn')|escape:'javascript'}',
         ownCsrRequired:   '{$MGLANG->T('sslConfigOwnCsrRequired')|escape:'javascript'}',
         domainRequired:   '{$MGLANG->T('sslConfigDomainRequired')|escape:'javascript'}',
+        ipNamesRequired:  '{$MGLANG->T('sslConfigIpNamesRequired')|escape:'javascript'}',
         approverRequired: '{$MGLANG->T('sslConfigApproverEmailRequired')|escape:'javascript'}',
         error:            '{$MGLANG->T('sslConfigAnErrorOccurred')|escape:'javascript'}',
         dnsFallbackAuto:  '{$MGLANG->T('sslConfigDnsFallbackAutoSelect')|escape:'javascript'}'
@@ -826,7 +837,13 @@
                 postData['dns_fallback_email'] = $('#dns_fallback_email').val() || '';
             }
         } else {
-            if (isManualCsrGenerated()) {
+            if (ipProduct && !$.trim($('#san_domains_manual').val())) {
+                showError(lang.ipNamesRequired);
+                return;
+            }
+            if (isManualCsrGenerated() && ipProduct) {
+                // the generated CSR of an IP certificate has no common name: the names are the list above
+            } else if (isManualCsrGenerated()) {
                 var manualDomain = $.trim($('#manual_domain').val());
                 if (!manualDomain) {
                     showError(lang.domainRequired);

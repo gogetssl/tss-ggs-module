@@ -422,6 +422,16 @@ trait SslCertificatePages
         $vars['sans_wildcard']     += (int)$params['configoption8'];
         $vars['serviceid']         = $input['id'];
 
+        // a certificate for public IPs (App\Libs\IpCertificate): CSR without common name, the main name stays and
+        // uses one of the product's SANs - the field takes the other names only
+        $vars['ipProduct'] = \ModulesGarden\TSSGGSModule\App\Libs\IpCertificate::isProduct($params['packageid']);
+        if($vars['ipProduct'])
+        {
+            $vars['sans']          = max(0, (int)$vars['sans'] - 1);
+            $vars['sans_wildcard'] = 0;
+            $vars['ip_csr_hint']   = sprintf(Lang::absoluteT('reissueIpCsrHint'), (string)$input['params']['domain']);
+        }
+
         // Reissue with the AutoInstall key keeps the automatic installation; more SANs can be bought before the reissue
         $autoInstall             = AutoInstallHelpers::get($serviceId);
         $vars['autoinstall_key'] = !empty($autoInstall['private_key']) && $autoInstall['status'] !== AutoInstallHelpers::STATUS_DISABLED;
@@ -491,7 +501,25 @@ trait SslCertificatePages
             unset($_POST['fields']);
 
             $decode  = $this->decodeCSR($input['csr']);
-            $domains = $this->validateDomains($decode['CN'], $fields, $input['params']);
+            $mainName = (string)($decode['CN'] ?? '');
+            // a certificate for public IPs (App\Libs\IpCertificate): CSR without common name, the main name stays
+            $ipCertificate = \ModulesGarden\TSSGGSModule\App\Libs\IpCertificate::isProduct($input['params']['packageid']);
+            if($ipCertificate)
+            {
+                if($mainName !== '')
+                {
+                    throw new \Exception(Lang::absoluteT('reissueIpCsrHasCn'));
+                }
+                $mainName = strtolower(trim((string)$input['params']['domain']));
+                // every name uses a SAN of the product, the main name too
+                $count = count(array_filter(preg_split('/[\s,;]+/', (string)$fields['sans_domains'])));
+                $limit = (int)($input['params']['configoptions']['sans'] ?? 0) + (int)$input['params']['configoption7'];
+                if($count + 1 > max(1, $limit))
+                {
+                    throw new \Exception(sprintf(Lang::absoluteT('using_max_san'), max(0, $limit - 1)));
+                }
+            }
+            $domains = $this->validateDomains($mainName, $fields, $input['params']);
 
             $configProduct = (new ProductRepository())->getProductConfiguration($input['params']['packageid']);
             $addonConfig   = (new AddonModuleRepository())->getModuleConfiguration();
@@ -510,9 +538,21 @@ trait SslCertificatePages
                 $available_method_validation = $temp_available_method_validation;
             }
             $vars['available_method_validation'] = json_encode($available_method_validation);
+            // the methods offered on the page: the product's (dns-cname / dns-txt shown as DNS), file validation only
+            // for IP certificates
+            $dcvMethods = array_values(array_intersect(['email', 'http', 'https', 'dns'], array_map(function($method) {
+                $method = strtolower(trim((string)$method));
+                return in_array($method, ['dns-cname', 'dns-txt']) ? 'dns' : $method;
+            }, $available_method_validation)));
+            if($ipCertificate)
+            {
+                $dcvMethods = array_values(array_intersect($dcvMethods ?: ['http', 'https'], ['http', 'https'])) ?: ['http', 'https'];
+            }
+            $vars['dcv_methods'] = $dcvMethods ?: ['email', 'http', 'https', 'dns'];
 
             $api               = SSLTrustCenterApi::forVendor($configProduct['provider'], $configProduct['category']);
-            $approvers         = $api->getDomainEmails($domains);
+            // IP addresses have no approver mailboxes (file validation only)
+            $approvers         = $ipCertificate ? array_map(function($name) { return ['domain' => $name, 'emails' => []]; }, $domains) : $api->getDomainEmails($domains);
             $vars['approvers'] = $this->approversToOptions($approvers);
 
             if(isset($input['customAction']) && $input['customAction'] == 'sendReissue')
@@ -550,8 +590,12 @@ trait SslCertificatePages
                 $methods[$domain] = $method == 'email' ? $input['approver'][$domain] : $method;
             }
 
-            // CN first
-            $commonName = openssl_csr_get_subject($input['csr'])['CN'];
+            // CN first - for a certificate for public IPs (CSR without CN) the current main name
+            $commonName = (string)(openssl_csr_get_subject($input['csr'])['CN'] ?? '');
+            if($commonName === '' && \ModulesGarden\TSSGGSModule\App\Libs\IpCertificate::isProduct($input['params']['packageid']))
+            {
+                $commonName = strtolower(trim((string)$input['params']['domain']));
+            }
             if(isset($methods[$commonName]))
             {
                 $methods = [$commonName => $methods[$commonName]] + $methods;
@@ -805,7 +849,9 @@ trait SslCertificatePages
         // the client pastes the key only when none of the stored keys belongs to this certificate (own CSR)
         $vars['install_key_stored']  = CertificateService::privateKeyForCertificate($params['service']->id) !== '';
         $vars['install_domain']      = !empty($aiState['domain']) ? $aiState['domain'] : (CertificateService::installTarget($params['service']->id) ?: ltrim((string)$params['service']->domain, '*.'));
-        $vars['install_available']   = !empty($vars['cpanel_services']) && (empty($vars['autoinstall']) || $vars['autoinstall']['status'] !== 'installed');
+        // a certificate for public IPs is not installed on a cPanel account by domain
+        $vars['install_available']   = !empty($vars['cpanel_services']) && (empty($vars['autoinstall']) || $vars['autoinstall']['status'] !== 'installed')
+            && !\ModulesGarden\TSSGGSModule\App\Libs\IpCertificate::isProduct((int)$params['service']->packageid);
 
         // Subscription status bar at the top of the page (same rules as the my.gogetssl.com SSL page)
         $vars['progress'] = $vars['certificateUsable'] ? self::subscriptionProgress(
@@ -1024,15 +1070,17 @@ trait SslCertificatePages
             $privateKey = openssl_pkey_new(["private_key_bits" => 2048, "private_key_type" => OPENSSL_KEYTYPE_RSA]);
             openssl_pkey_export($privateKey, $pKeyOut);
 
-            $csr = openssl_csr_new([
-                'countryName' => strtoupper($input['country']),
-                'stateOrProvinceName' => $input['state'],
-                'localityName' => $input['locality'],
-                'organizationName' => $input['organization'],
-                'organizationalUnitName' => $input['unit_name'],
-                'commonName' => $input['common_name'],
-                'emailAddress' => $input['email_address'],
-            ], $privateKey);
+            // a certificate for public IPs (App\Libs\IpCertificate): the CSR has no common name
+            $ipProduct = \ModulesGarden\TSSGGSModule\App\Libs\IpCertificate::isProduct($input['params']['packageid'] ?? 0);
+            $csr = openssl_csr_new(array_filter([
+                'countryName' => strtoupper((string)$input['country']),
+                'stateOrProvinceName' => (string)$input['state'],
+                'localityName' => (string)$input['locality'],
+                'organizationName' => (string)$input['organization'],
+                'organizationalUnitName' => (string)$input['unit_name'],
+                'commonName' => $ipProduct ? '' : (string)$input['common_name'],
+                'emailAddress' => (string)$input['email_address'],
+            ], function($v) { return $v !== ''; }), $privateKey);
 
             if(!$csr)
             {
@@ -1365,7 +1413,10 @@ trait SslCertificatePages
             return strpos($method, 'dns') === 0 && !in_array($method, $available_method_validation, true) ? 'dns' : $method;
         }, $current);
 
-        $approvers         = $api->getDomainEmails($domains);
+        // IP addresses have no approver mailboxes (IP certificates validate by file only)
+        $approvers         = \ModulesGarden\TSSGGSModule\App\Libs\IpCertificate::isProduct((int)\WHMCS\Database\Capsule::table('tblhosting')->where('id', (int)$serviceId)->value('packageid'))
+            ? array_map(function($name) { return ['domain' => $name, 'emails' => []]; }, $domains)
+            : $api->getDomainEmails($domains);
         $vars['approvers'] = $this->approversToOptions($approvers);
 
         return ['tpl' => 'change_approval_method', 'vars' => $vars];
