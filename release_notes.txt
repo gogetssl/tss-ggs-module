@@ -1,3 +1,30 @@
+1.15.0 (2026-11-17)
+Public IP certificates, translations, sandbox gateway, Automated SSL fixes
+- Public IP SSL (GoGetSSL): certificates for public IP addresses, with or
+  without extra domain names. The CSR has no common name; the set-up form,
+  the order, the reissue (client and admin) and the validation work with it.
+  IP addresses are validated by file (HTTP / HTTPS) only.
+- Reissue: the validation methods offered are the ones of the product.
+- Translations: the ACME page, the SSL Tools page, Contact Details, and the
+  error messages a client can see are translated (Czech, Danish, English,
+  French, German, Spanish). Any text can be changed in langs/overrides.
+- Admin area: the module tab of a service and the module buttons have their
+  own language files (langs/admin/<language>.php, overrides in
+  langs/admin/overrides/) and follow the administrator's language.
+- TheSSLStore orders no longer send the free second name of the main domain
+  (www.example.com for example.com, or the base domain of a wildcard) as an
+  additional domain: TheSSLStore adds it by itself. It takes no paid SAN slot
+  and orders of products without SANs no longer fail with "DNSNames count is
+  invalid" (new orders, renewals and reissues).
+- TheSSLStore Sandbox mode now uses the sandbox service; sandbox credentials
+  were refused before.
+- Automated SSL (ACME and Plan + Automate) orders send the client's e-mail
+  address as contact; TheSSLStore orders failed with the full contact.
+- Module update: the work folder is shared by the web server and the cron
+  user, and the pre-flight check tests it.
+- Texts: the setup wizard points to the current renewal settings, and
+  "Organization" is spelled correctly in the CSR generator.
+
 1.14.0 (2026-11-16)
 AutoInstall report e-mail to the administrators
 - A daily e-mail to the administrators about AutoInstall (cPanel): the
