@@ -113,7 +113,8 @@ class ApiSettingsProvider extends CrudProvider
         {
             if($operationMode == 'sandbox')
             {
-                $apis['TSS'] = new SSLTrustCenterApi('TSS', $sslStoreTestPartnerCode, $sslStoreTestAuthToken);
+                // the sandbox pair is tested against the sandbox gateway, the one the module then uses
+                $apis['TSS'] = new SSLTrustCenterApi('TSS', $sslStoreTestPartnerCode, $sslStoreTestAuthToken, 'tls', true);
             }
             else
             {
