@@ -67,7 +67,7 @@
                                         <input {if $use_profile_data}value="{$client.city}"{/if} class="form-control generateCsrInput" id="localityName" placeholder="Locality" name="L" type="text">
                                     </div>
                                     <div class="form-group">
-                                        <label class="control-label" for="O">{$MGLANG->T('reissue_page', 'Orgarnization')}</label>
+                                        <label class="control-label" for="O">{$MGLANG->T('reissue_page', 'Organization')}</label>
                                         <input {if $use_profile_data}value="{$client.companyname}"{/if} class="form-control generateCsrInput" id="organizationName" placeholder="Organization" name="O" type="text">
                                     </div>
                                     <div class="form-group">

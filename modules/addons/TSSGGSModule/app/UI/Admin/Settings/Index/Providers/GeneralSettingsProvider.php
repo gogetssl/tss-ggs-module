@@ -39,9 +39,6 @@ class GeneralSettingsProvider extends CrudProvider
         $this->availableValues['apiLogMode'] = self::apiModeOptions($this);
         $this->availableValues['debugHours'] = self::debugHourOptions($this);
         $this->availableValues['expiresSoonDays'] = ['10' => '10', '15' => '15', '30' => '30', '60' => '60', '90' => '90'];
-        $offsets = ['0' => '0', '3' => '3', '7' => '7', '15' => '15', '30' => '30'];
-        $this->availableValues['dueDateOffsetRegular']      = $offsets;
-        $this->availableValues['dueDateOffsetSubscription'] = $offsets;
 
         // General e-mail templates; empty = the module's own "Send Certificate" template
         $templates = ['' => $this->translate('moduleTemplate')];
