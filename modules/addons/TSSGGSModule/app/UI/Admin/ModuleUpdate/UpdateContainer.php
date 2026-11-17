@@ -110,6 +110,12 @@ class UpdateContainer extends Container implements AdminAreaInterface
             else
             {
                 $html .= '<p class="tssggs-upd__manual">' . $this->t('manual_only') . (!empty($state['page']) ? ' <a href="' . Card::e($state['page']) . '" target="_blank" rel="noopener">' . $this->t('download', [':version' => (string)$state['version']]) . '</a>' : '') . '</p>';
+                // only the self-check failed (a password-protected site, a firewall): the command line can do it all
+                $failed = array_values(array_filter($checks, function($check) { return !$check['ok'] && $check['blocking']; }));
+                if(count($failed) === 1 && $failed[0]['key'] === 'loopback')
+                {
+                    $html .= '<p class="tssggs-upd__muted">' . $this->t('cli_hint') . ' <code>php ' . Card::e(\ModulesGarden\TSSGGSModule\App\Libs\Update\Workdir::addonDir()) . '/cron/cron.php ModuleUpdate --install</code></p>';
+                }
             }
             $html .= '</div>';
         }

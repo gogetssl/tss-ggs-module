@@ -1657,6 +1657,7 @@ $_LANG['admin.module_update.install'] = 'Install version :version';
 $_LANG['admin.module_update.install_confirm'] = 'Install version :version now? The module pauses for a few seconds.';
 $_LANG['admin.module_update.full_admin_only'] = 'Only a full administrator can start the update.';
 $_LANG['admin.module_update.manual_only'] = 'Automatic update is not possible on this server (see the checks above). Update by hand:';
+$_LANG['admin.module_update.cli_hint'] = 'Or update from the command line on the server: it checks the new version itself.';
 $_LANG['admin.module_update.download'] = 'download version :version';
 $_LANG['admin.module_update.up_to_date'] = 'The module is up to date.';
 $_LANG['admin.module_update.rollback_title'] = 'Previous version';

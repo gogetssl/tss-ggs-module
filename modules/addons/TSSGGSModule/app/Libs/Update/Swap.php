@@ -30,6 +30,7 @@ class Swap
         $file            = Workdir::path('journal.json');
         file_put_contents($file . '.tmp', json_encode($data));
         rename($file . '.tmp', $file);
+        Workdir::share($file);
     }
 
     /** The folder triples [live, old, new] of the addon and the server module */

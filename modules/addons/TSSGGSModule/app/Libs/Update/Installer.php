@@ -78,6 +78,7 @@ class Installer
                     throw new \RuntimeException('Downloaded file does not match the signed release');
                 }
                 rename($part, $zip);
+                Workdir::share($zip);
             }
             finally
             {
@@ -263,6 +264,7 @@ class Installer
             @unlink($file);
             throw new \RuntimeException('Cannot write the backup');
         }
+        Workdir::share($file);
 
         // the last few are kept
         $backups = glob(Workdir::path('backups') . '/' . Edition::folder() . '-*.zip') ?: [];

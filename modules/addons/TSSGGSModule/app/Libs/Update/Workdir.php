@@ -19,6 +19,43 @@ use ModulesGarden\TSSGGSModule\App\Libs\Edition;
  */
 class Workdir
 {
+    /** sub-folders that only hold files of the update in progress (safe to set aside and make again) */
+    const TEMPORARY = ['download', 'new'];
+
+    /**
+     * Group-writable, like the folders: the web server and the cron (command line) may run as different users of one
+     * group, and each must be able to replace what the other wrote
+     */
+    public static function share($path)
+    {
+        @chmod($path, is_dir($path) ? 0775 : 0664);
+    }
+
+    /**
+     * Work folder entries this user can not write to and can not replace: the folder itself, the backups folder, and
+     * stored files whose folder is not writable either (a file in a writable folder is replaced, see saveManifest).
+     * The temporary folders are set aside by ensure().
+     * @return string[]
+     */
+    public static function notWritable()
+    {
+        $locked = [];
+        if(!is_dir(self::path()))
+        {
+            return $locked;
+        }
+        foreach(['', 'backups'] as $entry)
+        {
+            $path = $entry === '' ? self::path() : self::path($entry);
+            if(is_dir($path) && !is_writable($path))
+            {
+                $locked[] = $path;
+            }
+        }
+
+        return $locked;
+    }
+
     public static function modulesDir()
     {
         return dirname(__DIR__, 5); // .../modules
@@ -58,6 +95,13 @@ class Workdir
             @file_put_contents($base . '/index.html', '');
         }
         $dir = self::path(...$parts);
+        // a temporary folder left by another user (the web server or the cron, made by an older version without group
+        // write) can not be written into: it is set aside (a rename needs only the parent folder) and made again
+        if($parts && in_array($parts[0], self::TEMPORARY, true) && is_dir(self::path($parts[0])) && !is_writable(self::path($parts[0])))
+        {
+            @rename(self::path($parts[0]), self::path($parts[0] . '.stale-' . date('YmdHis')));
+            clearstatcache();
+        }
         if($parts && !is_dir($dir))
         {
             // group-writable like the folder itself: the web server and the cron may run as different users
@@ -103,8 +147,17 @@ class Workdir
     public static function saveManifest($body, $signature)
     {
         self::ensure();
-        file_put_contents(self::path('release.json'), $body);
-        file_put_contents(self::path('release.json.sig'), $signature);
+        foreach(['release.json' => $body, 'release.json.sig' => $signature] as $name => $content)
+        {
+            $file = self::path($name);
+            // written by another user without group write: replaced (needs only the folder) instead of rewritten
+            if(is_file($file) && !is_writable($file))
+            {
+                @unlink($file);
+            }
+            file_put_contents($file, $content);
+            self::share($file);
+        }
     }
 
     /** The stored release, verified again (null when there is none or it no longer verifies) */
