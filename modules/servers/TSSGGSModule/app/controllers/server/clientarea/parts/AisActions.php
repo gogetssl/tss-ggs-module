@@ -313,20 +313,15 @@ trait AisActions
         return ['success' => true, 'message' => Lang::absoluteT('aisInstallMethodChanged')];
     }
 
-    /** contacts of a subscription order: the client (GoGetSSL takes the e-mail only, TheSSLStore the full contact) */
+    /**
+     * Contacts of a subscription order: the client's e-mail as primary and technical contact. Both vendors take the
+     * e-mail only - any other contact field is refused ("This field was not expected", TheSSLStore sandbox 2026-11-17).
+     * $vendor is kept for the callers.
+     */
     private function aisContacts(array $params, $vendor)
     {
         $c       = isset($params['clientsdetails']) && is_array($params['clientsdetails']) ? $params['clientsdetails'] : [];
         $contact = ['email' => (string)($c['email'] ?? '')];
-        if(strtoupper($vendor) === 'TSS')
-        {
-            $contact = [
-                'first_name' => (string)($c['firstname'] ?? ''),
-                'last_name'  => (string)($c['lastname'] ?? ''),
-                'email'      => (string)($c['email'] ?? ''),
-                'phone'      => (string)($c['phonenumberformatted'] ?? ($c['phonenumber'] ?? '')),
-            ];
-        }
 
         return ['primary' => $contact, 'technical' => $contact];
     }
