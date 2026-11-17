@@ -824,7 +824,8 @@ trait AcmeActions
         }
 
         $api = Helpers::getApiByServiceId($serviceId);
-        $api->disableSubscriptionAutoRenewal((int)$subscription->acme_id);
+        // the gateway dropped DELETE .../subscription (2026-11-17): auto renewal is switched off with PATCH {auto_renew: false}
+        $api->changeSubscriptionAutoRenewal('caas', (int)$subscription->acme_id, false);
         $subscription->auto_renew = 0;
         $subscription->save();
 

@@ -673,11 +673,6 @@ class SSLTrustCenterApi
         return $this->call('/certificates/' . rawurlencode((string)$category) . '/' . (int)$itemId . '/subscription', ['auto_renew' => (bool)$autoRenew], 'PATCH');
     }
 
-    public function disableSubscriptionAutoRenewal($itemId)
-    {
-        return $this->call('/certificates/caas/' . (int)$itemId . '/subscription', [], 'DELETE');
-    }
-
     /**
      * S/MIME order: product {id, term}, emails (first = subject), optional csr and contacts (OV products)
      */
