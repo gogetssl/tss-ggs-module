@@ -1,3 +1,17 @@
+1.15.1 (2026-11-17)
+Free www name only where the vendor adds it; AutoInstall www note
+- Fix to 1.15.0: the free www name of the main domain (www.example.com for
+  example.com, or the base domain of a wildcard) is left out of TheSSLStore
+  orders only for products without additional domains (for example RapidSSL),
+  where TheSSLStore adds it by itself. On multi-domain products (both
+  vendors) a www name the client chooses is ordered as an additional domain
+  again; 1.15.0 dropped it, so the certificate did not cover it.
+- AutoInstall set-up: the "Include www version of the domain" checkbox is
+  removed (it only swapped the main name). A note says whether the www name is
+  included automatically (products without additional domains), or, on
+  multi-domain products, that it can be chosen as an additional domain; the
+  list of additional domains now offers the www names of the cPanel domains.
+
 1.15.0 (2026-11-17)
 Public IP certificates, translations, sandbox gateway, Automated SSL fixes
 - Public IP SSL (GoGetSSL): certificates for public IP addresses, with or
