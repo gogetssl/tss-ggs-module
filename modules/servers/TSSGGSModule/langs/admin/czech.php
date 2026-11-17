@@ -1,0 +1,104 @@
+<?php
+
+/**
+ * Admin area texts of the server module (service tab, module buttons) - see App\Libs\AdminText.
+ * Separate from the client area language files in the folder above. Own changes go into
+ * langs/admin/overrides/czech.php (same format, only the keys you change); they survive module updates.
+ * :name: placeholders are filled in by the module.
+ */
+
+$_LANG['configuration_status']          = 'Stav konfigurace';
+$_LANG['vendor_item_id']                = 'ID položky %%VENDOR%%';
+$_LANG['vendor_order']                  = 'Objednávka %%VENDOR%%';
+$_LANG['vendor_status']                 = 'Stav u dodavatele';
+$_LANG['caa_record']                    = 'Záznam CAA';
+$_LANG['renewal_additional_days']       = 'Dny navíc při obnově';
+$_LANG['error']                         = 'Chyba';
+$_LANG['email_addresses']               = 'E-mailové adresy';
+$_LANG['validity']                      = 'Platnost';
+$_LANG['csr']                           = 'CSR';
+$_LANG['enrolment']                     = 'Registrace';
+$_LANG['migrated']                      = 'Migrováno';
+$_LANG['organization']                  = 'Organizace';
+$_LANG['delivery']                      = 'Doručení';
+$_LANG['token_setup']                   = 'Nastavení tokenu';
+$_LANG['contact']                       = 'Kontakt';
+$_LANG['period']                        = 'Období';
+$_LANG['licence']                       = 'Licence';
+$_LANG['token_init_code']               = 'Inicializační kód tokenu';
+$_LANG['previous_orders']               = 'Předchozí objednávky';
+$_LANG['domain_validation']             = 'Ověření domény';
+$_LANG['downloads']                     = 'Ke stažení';
+$_LANG['certificate']                   = 'Certifikát';
+$_LANG['reissue']                       = 'Opětovné vystavení';
+$_LANG['ssl_install_type']              = 'Způsob instalace SSL';
+$_LANG['install_target']                = 'Cíl instalace';
+$_LANG['autoinstall_status']            = 'Stav AutoInstall';
+$_LANG['certificate_log']               = 'Protokol certifikátu';
+$_LANG['status_awaiting_configuration'] = 'Čeká na konfiguraci';
+$_LANG['error_not_initialized']         = 'Akce vytvoření nebyla spuštěna';
+$_LANG['error_no_remote_id']            = 'Objednávka SSL zatím nemá ID položky %%VENDOR%%';
+$_LANG['unknown']                       = 'neznámý';
+$_LANG['order_number']                  = 'Objednávka č. :id:';
+$_LANG['item_number']                   = 'Položka č. :id:';
+$_LANG['licence_number']                = 'Licence č. :id:';
+$_LANG['vendor_order_number']           = 'Objednávka u CA č. :id:';
+$_LANG['vendor_licence']                = 'Licence dodavatele :id:';
+$_LANG['ordered_at']                    = 'objednáno :date:';
+$_LANG['last_refresh']                  = 'poslední aktualizace :date:';
+$_LANG['last_synchronized']             = 'naposledy synchronizováno :date:';
+$_LANG['ca_status']                     = 'CA: :status:';
+$_LANG['renewal_days_auto']             = 'auto';
+$_LANG['renewal_days_hint']             = '0–:max: dní převedených do objednávky obnovy (Sectigo). Prázdné = globální nastavení nebo zbývající dny certifikátu.';
+$_LANG['caa_title']                     = 'Záznam CAA v DNS nepovoluje tento certifikát';
+$_LANG['caa_intro']                     = '%s pro tyto domény nevydá certifikát: jejich záznam CAA povoluje jen jiné certifikační autority. Klient vidí stejné upozornění.';
+$_LANG['caa_inherited']                 = 'záznam nastaven na %s';
+$_LANG['caa_now']                       = 'Aktuální záznam CAA';
+$_LANG['caa_add']                       = 'Záznam k přidání';
+$_LANG['caa_fix']                       = 'Vlastník domény přidá záznam (nebo odstraní záznamy CAA); CA pak vydá certifikát bez nové objednávky.';
+$_LANG['caa_gateway']                   = 'Certifikační autorita hlásí, že kontrola CAA u této objednávky selhala (klient vidí stejné upozornění).';
+$_LANG['caa_gateway_fix']               = 'Řešení: vlastník domény přidá %s do DNS domény (nebo odstraní její záznamy CAA); CA pak vydá certifikát bez nové objednávky.';
+$_LANG['email_confirmed']               = 'potvrzeno';
+$_LANG['email_not_confirmed']           = 'nepotvrzeno';
+$_LANG['csr_sent']                      = 'Odeslal klient';
+$_LANG['csr_not_sent']                  = 'Neodesláno: certifikační autorita klientovi pošle e-mailem, jak certifikát získat';
+$_LANG['enrolment_pending']             = 'Migrovaná objednávka s pozvánkou: klient se zatím nezaregistroval.';
+$_LANG['enrolment_link']                = 'Odkaz k registraci';
+$_LANG['migrated_yes']                  = 'Ano, ze starého modulu';
+$_LANG['token_setup_page']              = 'Stránka nastavení tokenu';
+$_LANG['period_months']                 = ':months: měsíců od data objednávky';
+$_LANG['token_init_code_hint']          = 'zobrazuje se i klientovi';
+$_LANG['valid_till']                    = 'platný do :date:';
+$_LANG['valid_till_colon']              = 'platný do: :date:';
+$_LANG['validity_certificate']          = 'Certifikát :from: – :to:';
+$_LANG['validity_subscription']         = 'Předplatné :from: – :to:';
+$_LANG['download_certificate_zip']      = 'Certifikát (ZIP, všechny formáty)';
+$_LANG['download_validation_file']      = 'Ověřovací soubor (:file:)';
+$_LANG['view_crt_bundle']               = 'Zobrazit CRT / balík CA';
+$_LANG['reissue_hint']                  = 'Vložte nový CSR a uložte – certifikát se znovu vystaví se současnými doménami a metodami ověření.';
+$_LANG['domain']                        = 'Doména';
+$_LANG['method']                        = 'Metoda';
+$_LANG['status']                        = 'Stav';
+$_LANG['change_to']                     = 'změnit na :method:';
+$_LANG['approver_email_placeholder']    = 'e-mail schvalovatele (metoda e-mail)';
+$_LANG['validated']                     = 'Ověřeno';
+$_LANG['pending']                       = 'Čeká';
+$_LANG['install_target_placeholder']    = 'doména na účtu cPanel klienta';
+$_LANG['install_target_hint_ais']       = 'Doména, na které je certifikát nainstalován (AutoInstall). Změna znovu zařadí instalaci do fronty.';
+$_LANG['install_target_hint']           = 'Výchozí doména pro „Instalovat na server“ v klientské zóně.';
+$_LANG['install_target_hint_no_cpanel'] = 'Výchozí doména pro „Instalovat na server“ v klientské zóně – klient nemá aktivní účet cPanel.';
+$_LANG['install_type_manual']           = 'Ručně';
+$_LANG['install_type_autoinstall']      = 'AutoInstall (cPanel)';
+$_LANG['installed_on']                  = 'na';
+$_LANG['installed_at']                  = 'nainstalováno: :date:';
+$_LANG['last_error']                    = 'Poslední chyba: :error:';
+$_LANG['button_sync_certificate']       = 'Synchronizovat certifikát';
+$_LANG['button_recheck_validation']     = 'Znovu zkontrolovat ověření';
+$_LANG['button_resend_approver_email']  = 'Znovu odeslat e-mail schvalovateli';
+$_LANG['button_resend_certificate']     = 'Znovu odeslat certifikát';
+$_LANG['button_cancel_order']           = 'Zrušit objednávku';
+$_LANG['button_refresh_status']         = 'Obnovit stav :product:';
+$_LANG['error_no_open_order']           = 'Neexistuje žádná otevřená objednávka u dodavatele, kterou by šlo zrušit';
+$_LANG['error_no_file_validation']      = 'Objednávka nepoužívá ověření souborem (HTTP/HTTPS)';
+$_LANG['module_information']            = 'Informace o modulu';
+$_LANG['module_managed_in_addon']       = 'Tento modul lze spravovat jen z doplňkového modulu :addon:.';

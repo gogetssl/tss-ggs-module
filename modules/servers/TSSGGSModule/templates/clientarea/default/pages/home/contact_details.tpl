@@ -7,7 +7,7 @@
             </h4>
             <dl class="tssggs-dl">
                 {foreach $contact.fields as $field => $value}
-                    <dt>{$field|replace:'_':' '|capitalize|escape}</dt><dd>{$value|escape}</dd>
+                    <dt>{$field|escape}</dt><dd>{$value|escape}</dd>
                 {/foreach}
             </dl>
         </section>

@@ -1,0 +1,104 @@
+<?php
+
+/**
+ * Admin area texts of the server module (service tab, module buttons) - see App\Libs\AdminText.
+ * Separate from the client area language files in the folder above. Own changes go into
+ * langs/admin/overrides/danish.php (same format, only the keys you change); they survive module updates.
+ * :name: placeholders are filled in by the module.
+ */
+
+$_LANG['configuration_status']          = 'Konfigurationsstatus';
+$_LANG['vendor_item_id']                = '%%VENDOR%% vare-ID';
+$_LANG['vendor_order']                  = '%%VENDOR%% ordre';
+$_LANG['vendor_status']                 = 'Leverandørstatus';
+$_LANG['caa_record']                    = 'CAA-post';
+$_LANG['renewal_additional_days']       = 'Ekstra dage ved fornyelse';
+$_LANG['error']                         = 'Fejl';
+$_LANG['email_addresses']               = 'E-mailadresser';
+$_LANG['validity']                      = 'Gyldighed';
+$_LANG['csr']                           = 'CSR';
+$_LANG['enrolment']                     = 'Tilmelding';
+$_LANG['migrated']                      = 'Migreret';
+$_LANG['organization']                  = 'Organisation';
+$_LANG['delivery']                      = 'Levering';
+$_LANG['token_setup']                   = 'Opsætning af token';
+$_LANG['contact']                       = 'Kontakt';
+$_LANG['period']                        = 'Periode';
+$_LANG['licence']                       = 'Licens';
+$_LANG['token_init_code']               = 'Initialiseringskode til token';
+$_LANG['previous_orders']               = 'Tidligere ordrer';
+$_LANG['domain_validation']             = 'Domænevalidering';
+$_LANG['downloads']                     = 'Downloads';
+$_LANG['certificate']                   = 'Certifikat';
+$_LANG['reissue']                       = 'Genudstedelse';
+$_LANG['ssl_install_type']              = 'SSL-installationstype';
+$_LANG['install_target']                = 'Installationsmål';
+$_LANG['autoinstall_status']            = 'AutoInstall-status';
+$_LANG['certificate_log']               = 'Certifikatlog';
+$_LANG['status_awaiting_configuration'] = 'Afventer konfiguration';
+$_LANG['error_not_initialized']         = 'Opret-handlingen er ikke startet';
+$_LANG['error_no_remote_id']            = 'SSL-ordren har endnu ikke et %%VENDOR%% vare-ID';
+$_LANG['unknown']                       = 'ukendt';
+$_LANG['order_number']                  = 'Ordre nr. :id:';
+$_LANG['item_number']                   = 'Vare nr. :id:';
+$_LANG['licence_number']                = 'Licens nr. :id:';
+$_LANG['vendor_order_number']           = 'CA-ordre nr. :id:';
+$_LANG['vendor_licence']                = 'Leverandørlicens :id:';
+$_LANG['ordered_at']                    = 'bestilt :date:';
+$_LANG['last_refresh']                  = 'senest opdateret :date:';
+$_LANG['last_synchronized']             = 'senest synkroniseret :date:';
+$_LANG['ca_status']                     = 'CA: :status:';
+$_LANG['renewal_days_auto']             = 'auto';
+$_LANG['renewal_days_hint']             = '0-:max: dage overført til fornyelsesordren (Sectigo). Tom = den globale indstilling eller certifikatets resterende dage.';
+$_LANG['caa_title']                     = 'En CAA-post i DNS tillader ikke dette certifikat';
+$_LANG['caa_intro']                     = '%s udsteder ikke for disse domæner: deres CAA-post tillader kun andre certifikatudstedere. Kunden ser den samme besked.';
+$_LANG['caa_inherited']                 = 'post sat på %s';
+$_LANG['caa_now']                       = 'CAA-post nu';
+$_LANG['caa_add']                       = 'Post der skal tilføjes';
+$_LANG['caa_fix']                       = 'Domæneejeren tilføjer posten (eller fjerner CAA-posterne); CA\'en udsteder derefter uden en ny ordre.';
+$_LANG['caa_gateway']                   = 'Certifikatudstederen melder, at CAA-kontrollen mislykkedes for denne ordre (kunden ser den samme besked).';
+$_LANG['caa_gateway_fix']               = 'Løsning: domæneejeren tilføjer %s til domænets DNS (eller fjerner dets CAA-poster); CA\'en udsteder derefter uden en ny ordre.';
+$_LANG['email_confirmed']               = 'bekræftet';
+$_LANG['email_not_confirmed']           = 'ikke bekræftet';
+$_LANG['csr_sent']                      = 'Sendt af kunden';
+$_LANG['csr_not_sent']                  = 'Ikke sendt: certifikatudstederen sender kunden en e-mail om, hvordan certifikatet hentes';
+$_LANG['enrolment_pending']             = 'Migreret invitationsordre: kunden er endnu ikke tilmeldt.';
+$_LANG['enrolment_link']                = 'Tilmeldingslink';
+$_LANG['migrated_yes']                  = 'Ja, fra det tidligere modul';
+$_LANG['token_setup_page']              = 'Side til opsætning af token';
+$_LANG['period_months']                 = ':months: måneder fra ordredatoen';
+$_LANG['token_init_code_hint']          = 'vises også for kunden';
+$_LANG['valid_till']                    = 'gyldig til :date:';
+$_LANG['valid_till_colon']              = 'gyldig til: :date:';
+$_LANG['validity_certificate']          = 'Certifikat :from: - :to:';
+$_LANG['validity_subscription']         = 'Abonnement :from: - :to:';
+$_LANG['download_certificate_zip']      = 'Certifikat (ZIP, alle formater)';
+$_LANG['download_validation_file']      = 'Valideringsfil (:file:)';
+$_LANG['view_crt_bundle']               = 'Vis CRT / CA-bundt';
+$_LANG['reissue_hint']                  = 'Indsæt en ny CSR, og gem for at genudstede certifikatet med de nuværende domæner og valideringsmetoder.';
+$_LANG['domain']                        = 'Domæne';
+$_LANG['method']                        = 'Metode';
+$_LANG['status']                        = 'Status';
+$_LANG['change_to']                     = 'skift til :method:';
+$_LANG['approver_email_placeholder']    = 'godkenderens e-mail (e-mailmetode)';
+$_LANG['validated']                     = 'Valideret';
+$_LANG['pending']                       = 'Afventer';
+$_LANG['install_target_placeholder']    = 'domæne på kundens cPanel-konto';
+$_LANG['install_target_hint_ais']       = 'Domænet, som certifikatet er installeret på (AutoInstall). En ændring sætter installationen i kø igen.';
+$_LANG['install_target_hint']           = 'Standarddomæne for "Installer på server" i kundeområdet.';
+$_LANG['install_target_hint_no_cpanel'] = 'Standarddomæne for "Installer på server" i kundeområdet - kunden har ingen aktiv cPanel-konto.';
+$_LANG['install_type_manual']           = 'Manuel';
+$_LANG['install_type_autoinstall']      = 'AutoInstall (cPanel)';
+$_LANG['installed_on']                  = 'på';
+$_LANG['installed_at']                  = 'installeret: :date:';
+$_LANG['last_error']                    = 'Seneste fejl: :error:';
+$_LANG['button_sync_certificate']       = 'Synkroniser certifikat';
+$_LANG['button_recheck_validation']     = 'Kontroller validering igen';
+$_LANG['button_resend_approver_email']  = 'Send godkender-e-mail igen';
+$_LANG['button_resend_certificate']     = 'Send certifikat igen';
+$_LANG['button_cancel_order']           = 'Annuller ordre';
+$_LANG['button_refresh_status']         = 'Opdater :product:-status';
+$_LANG['error_no_open_order']           = 'Der er ingen åben leverandørordre at annullere';
+$_LANG['error_no_file_validation']      = 'Ordren bruger ikke filvalidering (HTTP/HTTPS)';
+$_LANG['module_information']            = 'Moduloplysninger';
+$_LANG['module_managed_in_addon']       = 'Dette modul kan kun administreres fra tilføjelsesmodulet :addon:.';

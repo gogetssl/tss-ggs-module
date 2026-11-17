@@ -260,6 +260,7 @@
 
     </div>
 
+<span id="acmeTexts" hidden data-error="{$MGLANG->T('anErrorOccurred')}" data-done="{$MGLANG->T('acmeDone')}" data-cancel-confirm="{$MGLANG->T('acmeCancelConfirm')}"></span>
 <script type="text/javascript">
     $(document).ready(function () {
         var clone = $('.validate-ssl-unified').clone();
@@ -273,6 +274,7 @@
 
         $(document).ready(function () {
             var serviceUrl = 'clientarea.php?action=productdetails&id={$serviceid}&json=1';
+            var acmeTexts = $('#acmeTexts');
             var selectedDomainToRemove = null;
 
             function runAction(action, data, options) {
@@ -284,7 +286,7 @@
                     // the JSON answer comes with an application/json header, so jQuery may already have parsed it
                     var payload = typeof ret === 'object' ? ret : JSON.parse(String(ret).replace("<JSONRESPONSE#", "").replace("#ENDJSONRESPONSE>", ""));
                     if (payload.result === 'error') {
-                        var errorMessage = payload.error || 'Error';
+                        var errorMessage = payload.error || acmeTexts.data('error');
                         if (typeof options.onError === 'function') {
                             options.onError(errorMessage, payload);
                         } else {
@@ -292,7 +294,7 @@
                         }
                         return;
                     }
-                    var msg = (payload.data && payload.data.message) ? payload.data.message : 'Done';
+                    var msg = (payload.data && payload.data.message) ? payload.data.message : acmeTexts.data('done');
                     if (typeof options.onSuccess === 'function') {
                         options.onSuccess(payload);
                     }
@@ -327,7 +329,7 @@
                     return;
                 }
                 if (action === 'cancelSubscription') {
-                    if (confirm('{$MGLANG->T('acmeCancelConfirm')|escape:'javascript'}')) {
+                    if (confirm(acmeTexts.data('cancelConfirm'))) {
                         runAction('cancelSubscription', {});
                     }
                     return;

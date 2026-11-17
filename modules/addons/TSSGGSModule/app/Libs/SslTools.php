@@ -22,7 +22,7 @@ class SslTools
         $csr = @openssl_csr_get_subject($pem, false);
         if(!$csr)
         {
-            throw new \Exception('This is not a valid CSR (PEM, -----BEGIN CERTIFICATE REQUEST-----).');
+            throw new \Exception(ClientText::get('toolsNotCsr', 'This is not a valid CSR (PEM, -----BEGIN CERTIFICATE REQUEST-----).'));
         }
 
         $key     = @openssl_csr_get_public_key($pem);
@@ -46,7 +46,7 @@ class SslTools
         $info = @openssl_x509_parse($pem);
         if(!$info)
         {
-            throw new \Exception('This is not a valid certificate (PEM, -----BEGIN CERTIFICATE-----).');
+            throw new \Exception(ClientText::get('toolsNotCertificate', 'This is not a valid certificate (PEM, -----BEGIN CERTIFICATE-----).'));
         }
 
         $key     = @openssl_pkey_get_public($pem);
@@ -95,31 +95,31 @@ class SslTools
             $key = @openssl_pkey_get_public(self::pem($certificate, 'CERTIFICATE'));
             if(!$key)
             {
-                throw new \Exception('The certificate is not valid.');
+                throw new \Exception(ClientText::get('toolsCertificateInvalid', 'The certificate is not valid.'));
             }
-            $items['Certificate'] = self::fingerprint($key);
+            $items[ClientText::get('toolsItemCertificate', 'Certificate')] = self::fingerprint($key);
         }
         if(trim((string)$csr) !== '')
         {
             $key = @openssl_csr_get_public_key(self::pem($csr, 'CERTIFICATE REQUEST'));
             if(!$key)
             {
-                throw new \Exception('The CSR is not valid.');
+                throw new \Exception(ClientText::get('toolsCsrInvalid', 'The CSR is not valid.'));
             }
-            $items['CSR'] = self::fingerprint($key);
+            $items[ClientText::get('toolsItemCsr', 'CSR')] = self::fingerprint($key);
         }
         if(trim((string)$privateKey) !== '')
         {
             $key = @openssl_pkey_get_private(trim($privateKey));
             if(!$key)
             {
-                throw new \Exception('The private key is not valid (encrypted keys are not supported).');
+                throw new \Exception(ClientText::get('toolsKeyInvalid', 'The private key is not valid (encrypted keys are not supported).'));
             }
-            $items['Private key'] = self::fingerprint($key);
+            $items[ClientText::get('toolsItemKey', 'Private key')] = self::fingerprint($key);
         }
         if(count($items) < 2)
         {
-            throw new \Exception('Enter at least two of: certificate, CSR, private key.');
+            throw new \Exception(ClientText::get('toolsEnterTwo', 'Enter at least two of: certificate, CSR, private key.'));
         }
 
         return ['items' => $items, 'match' => count(array_unique($items)) === 1];
@@ -140,7 +140,7 @@ class SslTools
                 $pem = self::pem($certificate, 'CERTIFICATE');
                 if(!@openssl_x509_read($pem))
                 {
-                    throw new \Exception('The certificate is not valid.');
+                    throw new \Exception(ClientText::get('toolsCertificateInvalid', 'The certificate is not valid.'));
                 }
                 $der = base64_decode(preg_replace('/-----[^-]+-----|\s+/', '', $pem));
 
@@ -149,7 +149,7 @@ class SslTools
             case 'der2pem':
                 if($certificate === '' || !@openssl_x509_read(self::derToPem($certificate)))
                 {
-                    throw new \Exception('The file is not a DER certificate.');
+                    throw new \Exception(ClientText::get('toolsNotDer', 'The file is not a DER certificate.'));
                 }
 
                 return ['filename' => 'certificate.pem', 'mime' => 'application/x-pem-file', 'content' => self::derToPem($certificate)];
@@ -157,17 +157,17 @@ class SslTools
             case 'pem2pfx':
                 if(trim((string)$privateKey) === '')
                 {
-                    throw new \Exception('A PFX needs the private key.');
+                    throw new \Exception(ClientText::get('toolsPfxNeedsKey', 'A PFX needs the private key.'));
                 }
                 $key = @openssl_pkey_get_private(trim($privateKey));
                 if(!$key)
                 {
-                    throw new \Exception('The private key is not valid (encrypted keys are not supported).');
+                    throw new \Exception(ClientText::get('toolsKeyInvalid', 'The private key is not valid (encrypted keys are not supported).'));
                 }
                 $cert = self::pem($certificate, 'CERTIFICATE');
                 if(!@openssl_x509_check_private_key($cert, $key))
                 {
-                    throw new \Exception('The private key does not belong to the certificate.');
+                    throw new \Exception(ClientText::get('toolsKeyMismatch', 'The private key does not belong to the certificate.'));
                 }
                 $options = [];
                 if(trim((string)$chain) !== '')
@@ -178,7 +178,7 @@ class SslTools
                 }
                 if(!openssl_pkcs12_export($cert, $pfx, $key, (string)$password, $options))
                 {
-                    throw new \Exception('The PFX could not be created.');
+                    throw new \Exception(ClientText::get('toolsPfxCreate', 'The PFX could not be created.'));
                 }
 
                 return ['filename' => 'certificate.pfx', 'mime' => 'application/x-pkcs12', 'content' => $pfx];
@@ -187,7 +187,7 @@ class SslTools
                 $certs = [];
                 if($certificate === '' || !@openssl_pkcs12_read($certificate, $certs, (string)$password))
                 {
-                    throw new \Exception('The PFX could not be read - wrong password or not a PFX file.');
+                    throw new \Exception(ClientText::get('toolsPfxRead', 'The PFX could not be read - wrong password or not a PFX file.'));
                 }
                 $pem = (isset($certs['cert']) ? $certs['cert'] : '') . (isset($certs['pkey']) ? $certs['pkey'] : '');
                 foreach(isset($certs['extracerts']) ? (array)$certs['extracerts'] : [] as $extra)
@@ -198,7 +198,7 @@ class SslTools
                 return ['filename' => 'certificate.pem', 'mime' => 'application/x-pem-file', 'content' => $pem];
         }
 
-        throw new \Exception('Choose a conversion.');
+        throw new \Exception(ClientText::get('toolsChooseConversion', 'Choose a conversion.'));
     }
 
     // ---- CSR generator ---- //
@@ -223,12 +223,12 @@ class SslTools
 
         if(empty($name['commonName']) || !preg_match('/^(\*\.)?([a-z0-9]([a-z0-9-]*[a-z0-9])?\.)+[a-z0-9-]{2,}$/', $name['commonName']))
         {
-            throw new \Exception('Enter a valid domain name as the common name.');
+            throw new \Exception(ClientText::get('toolsCommonName', 'Enter a valid domain name as the common name.'));
         }
         $key = openssl_pkey_new(['private_key_bits' => $bits, 'private_key_type' => OPENSSL_KEYTYPE_RSA]);
         if(!$key || !($csr = openssl_csr_new($name, $key, ['digest_alg' => 'sha256'])) || !openssl_csr_export($csr, $csrPem) || !openssl_pkey_export($key, $keyPem))
         {
-            throw new \Exception('The CSR could not be generated.');
+            throw new \Exception(ClientText::get('toolsCsrGenerate', 'The CSR could not be generated.'));
         }
 
         return ['csr' => $csrPem, 'key' => $keyPem];
@@ -247,11 +247,11 @@ class SslTools
         $port = (int)$port;
         if(!preg_match('/^([a-z0-9]([a-z0-9-]*[a-z0-9])?\.)+[a-z0-9-]{2,}$/', $host))
         {
-            throw new \Exception('Enter a host name such as www.example.com.');
+            throw new \Exception(ClientText::get('toolsHostName', 'Enter a host name such as www.example.com.'));
         }
         if(!in_array($port, self::CHECK_PORTS, true))
         {
-            throw new \Exception('Port ' . $port . ' can not be checked.');
+            throw new \Exception(ClientText::get('toolsPort', 'Port :port: can not be checked.', ['port' => $port]));
         }
 
         $address = null;
@@ -265,7 +265,7 @@ class SslTools
         }
         if($address === null)
         {
-            throw new \Exception('The host name does not resolve to a public address.');
+            throw new \Exception(ClientText::get('toolsNotPublic', 'The host name does not resolve to a public address.'));
         }
 
         $context = stream_context_create(['ssl' => [
@@ -279,7 +279,7 @@ class SslTools
         $socket = @stream_socket_client('ssl://' . $address . ':' . $port, $errno, $errstr, 8, STREAM_CLIENT_CONNECT, $context);
         if(!$socket)
         {
-            throw new \Exception('Could not connect to ' . $host . ':' . $port . ' (' . ($errstr ?: 'no answer') . ').');
+            throw new \Exception(ClientText::get('toolsConnect', 'Could not connect to :host:::port: (:error:).', ['host' => $host, 'port' => $port, 'error' => $errstr ?: ClientText::get('toolsNoAnswer', 'no answer')]));
         }
         $params = stream_context_get_params($socket);
         fclose($socket);
@@ -292,7 +292,7 @@ class SslTools
         }
         if(!$chain)
         {
-            throw new \Exception('The server did not present a certificate.');
+            throw new \Exception(ClientText::get('toolsNoCertificate', 'The server did not present a certificate.'));
         }
 
         $names   = array_merge($chain[0]['sans'], isset($chain[0]['subject']['CN']) ? [$chain[0]['subject']['CN']] : []);

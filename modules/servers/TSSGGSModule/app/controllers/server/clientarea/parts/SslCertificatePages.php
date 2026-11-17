@@ -22,6 +22,7 @@ use ModulesGarden\TSSGGSModule\App\Libs\AutoInstallHelpers;
 use ModulesGarden\TSSGGSModule\App\Libs\CertificateBundle;
 use ModulesGarden\TSSGGSModule\App\Libs\CertificateService;
 use ModulesGarden\TSSGGSModule\App\Libs\CertificateSyncHelpers;
+use ModulesGarden\TSSGGSModule\App\Libs\ClientText;
 use ModulesGarden\TSSGGSModule\App\Libs\Cpanel;
 use ModulesGarden\TSSGGSModule\App\Libs\GeneralSettings;
 use ModulesGarden\TSSGGSModule\App\Libs\ProductSettings;
@@ -1098,7 +1099,7 @@ trait SslCertificatePages
         {
             if(!CertificateService::serviceOpen((int)$input['id']))
             {
-                throw new \Exception('The certificate is not available: the service has been cancelled or terminated.');
+                throw new \Exception(ClientText::get('certificateNotAvailable', 'The certificate is not available: the service has been cancelled or terminated.'));
             }
             CertificateService::cancel((int)$input['id'], 'Cancelled by customer');
             Service::where('id', (int)$input['id'])->update(['domainstatus' => 'Cancelled']);
@@ -1224,7 +1225,7 @@ trait SslCertificatePages
         $serviceId   = $input['id'];
         if(!CertificateService::serviceOpen((int)$serviceId))
         {
-            return ['tpl' => 'error', 'vars' => ['error' => 'The certificate is not available: the service has been cancelled or terminated.']];
+            return ['tpl' => 'error', 'vars' => ['error' => ClientText::get('certificateNotAvailable', 'The certificate is not available: the service has been cancelled or terminated.')]];
         }
         $certificate = Request::getOrder($serviceId);
         $service     = Service::where('id', $serviceId)->first();

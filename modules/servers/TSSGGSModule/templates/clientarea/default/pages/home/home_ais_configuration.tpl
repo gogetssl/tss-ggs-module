@@ -82,7 +82,7 @@
                 // the JSON answer comes with an application/json header, so jQuery may already have parsed it
                 var payload = typeof ret === 'object' ? ret : JSON.parse(String(ret).replace('<JSONRESPONSE#', '').replace('#ENDJSONRESPONSE>', ''));
                 if (payload.result === 'error') {
-                    $('#MGAlerts').alerts('error', payload.error || 'An error occurred.');
+                    $('#MGAlerts').alerts('error', payload.error || '{$MGLANG->T('anErrorOccurred')}');
                     btn.prop('disabled', false).text('{$MGLANG->T('aisSubmitConfiguration')}');
                 } else {
                     var msg = (payload.data && payload.data.message) ? payload.data.message : '{$MGLANG->T('aisCreatedSuccessfully')}';
