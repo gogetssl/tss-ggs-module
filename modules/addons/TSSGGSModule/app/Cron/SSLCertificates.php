@@ -78,7 +78,8 @@ class SSLCertificates extends AbstractCommand
             try {
 
                 $provider = strtolower($vendor);
-                if($provider == 'tss' && $credential['OperationMode'] == 'sandbox')
+                $sandbox  = $provider == 'tss' && $credential['OperationMode'] == 'sandbox';
+                if($sandbox)
                 {
                     $credential['PartnerCode'] = $credential['TestPartnerCode'];
                     $credential['AuthToken'] =  $credential['TestAuthToken'];
@@ -86,7 +87,8 @@ class SSLCertificates extends AbstractCommand
 
                 if(empty($credential['PartnerCode']) || empty($credential['AuthToken'])) continue;
 
-                $api = new SSLTrustCenterApi($vendor, $credential['PartnerCode'], $credential['AuthToken']);
+                // sandbox credentials only work on the sandbox gateway
+                $api = new SSLTrustCenterApi($vendor, $credential['PartnerCode'], $credential['AuthToken'], 'tls', $sandbox);
                 $updates = $api->ordersUpdate($since);
 
                 foreach ($updates as $update)

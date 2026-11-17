@@ -11,6 +11,8 @@ class SSLTrustCenterApi
 {
 
     const API_URL = 'https://my.gogetssl.com/whmcs/v2';
+    // the gateway's sandbox: the sandbox credentials are only accepted there (the live host answers 401 AUX-1)
+    const SANDBOX_URL = 'https://sandbox.gogetssl.com/whmcs/v2';
 
     // A hung gateway must not stall the crons or the client area pages (seconds)
     const CONNECT_TIMEOUT = 10;
@@ -23,17 +25,33 @@ class SSLTrustCenterApi
     protected $category;
     protected $serviceHint = null;
 
-    public function __construct($type, $code, $key, $category = 'tls')
+    /**
+     * @param bool $sandbox true: the sandbox credentials, sent to the sandbox gateway (SANDBOX_URL)
+     */
+    public function __construct($type, $code, $key, $category = 'tls', $sandbox = false)
     {
         $this->type     = $type;
         $this->code     = $code;
         $this->key      = $key;
         $this->category = $category;
+        $this->apiUrl   = $sandbox ? self::SANDBOX_URL : self::API_URL;
+    }
+
+    /** true when this client talks to the sandbox gateway */
+    public function isSandbox()
+    {
+        return $this->apiUrl === self::SANDBOX_URL;
+    }
+
+    /** the gateway URL for a mode */
+    public static function urlFor($sandbox)
+    {
+        return $sandbox ? self::SANDBOX_URL : self::API_URL;
     }
 
     /**
-     * [partner code, auth token] of a vendor as stored in the module settings (TheSSLStore: the sandbox pair while the
-     * sandbox mode is on); null when the vendor has no credentials
+     * [partner code, auth token, sandbox] of a vendor as stored in the module settings (TheSSLStore: the sandbox pair
+     * while the sandbox mode is on, used with the sandbox gateway); null when the vendor has no credentials
      */
     public static function credentialsOf($vendor)
     {
@@ -43,7 +61,7 @@ class SSLTrustCenterApi
         $code        = trim((string)($credentials[$sandbox ? 'TestPartnerCode' : 'PartnerCode'] ?? ''));
         $token       = (string)($credentials[$sandbox ? 'TestAuthToken' : 'AuthToken'] ?? '');
 
-        return $code !== '' ? [$code, $token] : null;
+        return $code !== '' ? [$code, $token, $sandbox] : null;
     }
 
     /**
@@ -57,7 +75,7 @@ class SSLTrustCenterApi
             throw new \Exception('No API credentials configured for ' . Helpers::vendorToDisplay($vendor));
         }
 
-        return new self($vendor, $credentials[0], $credentials[1], $category ?: 'tls');
+        return new self($vendor, $credentials[0], $credentials[1], $category ?: 'tls', $credentials[2]);
     }
 
     public function getProducts()
@@ -828,7 +846,7 @@ class SSLTrustCenterApi
             $data['api'] = [
                 'provider'  => $this->type,
                 'method'    => $method,
-                'url'       => Edition::get() === Edition::GGS ? $this->apiUrl . $uri : '/whmcs/v2' . $uri,
+                'url'       => (Edition::get() === Edition::GGS ? $this->apiUrl . $uri : '/whmcs/v2' . $uri) . ($this->isSandbox() && Edition::get() !== Edition::GGS ? ' (sandbox)' : ''),
                 'http_code' => $httpCode ?: 'no response',
                 'duration'  => round($seconds, 2) . ' s',
                 'request'   => self::logBody($requestBody),
