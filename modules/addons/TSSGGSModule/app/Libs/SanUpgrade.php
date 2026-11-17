@@ -502,11 +502,13 @@ class SanUpgrade
     {
         $paid   = $paid ?: self::currentQuantities($serviceId);
         $base   = strpos($commonName, '*.') === 0 ? substr($commonName, 2) : null;
+        // TheSSLStore adds the www / base-domain twin of the common name itself, free (FreeName): no paid slot for it
+        $twin   = FreeName::addedForService($serviceId) ? FreeName::twin($commonName) : '';
         $single = $wildcard = 0;
         foreach($names as $name)
         {
             $name = strtolower(trim((string)$name));
-            if($name === '' || $name === strtolower($commonName) || $name === $base)
+            if($name === '' || $name === strtolower($commonName) || $name === $base || ($twin !== '' && $name === $twin))
             {
                 continue;
             }

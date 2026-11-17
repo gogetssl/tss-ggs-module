@@ -697,6 +697,12 @@ class CertificateService
             }
         }
 
+        // TheSSLStore adds the free www / base-domain name itself: it is neither sent nor stored as a SAN (FreeName)
+        if(FreeName::addedForService($serviceId))
+        {
+            $sans = FreeName::strip($sans, $commonName);
+        }
+
         $api     = self::api($serviceId);
         $reissue = $api->reissueCertificate((int)$ssl->remoteid, [
             'csr'                         => trim($csr),

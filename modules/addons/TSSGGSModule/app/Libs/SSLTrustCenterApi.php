@@ -152,7 +152,16 @@ class SSLTrustCenterApi
 
     public function reissueCertificate($itemId, $data)
     {
-        return $this->call('/certificates/' . $this->category . '/' . (int)$itemId, $data);
+        return $this->call('/certificates/' . $this->category . '/' . (int)$itemId, $this->withoutFreeName($data));
+    }
+
+    /**
+     * A TLS request without the free www / base-domain name in its SAN lists when the vendor adds it itself
+     * (TheSSLStore, see FreeName)
+     */
+    protected function withoutFreeName($data)
+    {
+        return is_array($data) && $this->category === 'tls' ? FreeName::stripRequest($this->type, $data) : $data;
     }
 
     /**
@@ -170,6 +179,7 @@ class SSLTrustCenterApi
     public function addOrder($data, $serviceId)
     {
         $this->serviceHint = $serviceId;
+        $data              = $this->withoutFreeName($data);
         $order             = $this->call('/certificates/' . $this->category, $data);
         Request::insert([
                             'serviceid'  => $serviceId,
@@ -184,6 +194,7 @@ class SSLTrustCenterApi
     public function renewOrder($serviceId, $data)
     {
         $this->serviceHint = $serviceId;
+        $data              = $this->withoutFreeName($data);
         $order             = $this->call('/certificates/' . $this->category, $data);
         Request::insert([
                             'serviceid'  => $serviceId,
