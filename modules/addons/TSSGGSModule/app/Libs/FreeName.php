@@ -43,7 +43,7 @@ class FreeName
     }
 
     /**
-     * true when the gateway product has no SAN support (catalogue san = null or max 0): the vendor then adds the
+     * true when the gateway product has no SAN support (catalogue san missing, null or max 0): the vendor then adds the
      * free name itself. Unknown products count as having SAN support (nothing is removed).
      */
     public static function productWithoutSans($vendor, $productId)
@@ -57,11 +57,8 @@ class FreeName
             }
             $raw = $remote->rawData;
             $raw = is_array($raw) ? $raw : (json_decode((string)$raw, true) ?: []);
-            if(!array_key_exists('san', $raw))
-            {
-                return false;
-            }
-            $san = $raw['san'];
+            // the catalogue leaves san out (or null) for a product without SAN support
+            $san = $raw['san'] ?? null;
 
             return $san === null || (is_array($san) && (int)($san['max'] ?? 0) === 0 && (int)($san['included']['single'] ?? 0) === 0);
         }

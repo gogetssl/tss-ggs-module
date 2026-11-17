@@ -336,7 +336,7 @@ trait SslConfigurationActions
         }, $items))));
     }
 
-    /** The gateway product has no SAN support (catalogue san = null): the vendor adds the free www name itself */
+    /** The gateway product has no SAN support (catalogue san missing or null): the vendor adds the free www name itself */
     private function productWithoutSans($packageId)
     {
         $config = (new ProductRepository())->getProductConfiguration((int)$packageId);
@@ -344,7 +344,8 @@ trait SslConfigurationActions
         $raw    = $remote ? $remote->rawData : null;
         $raw    = is_array($raw) ? $raw : (json_decode((string)$raw, true) ?: []);
 
-        return $remote !== null && array_key_exists('san', $raw) && $raw['san'] === null;
+        // the catalogue leaves san out (or null) for a product without SAN support
+        return $remote !== null && ($raw['san'] ?? null) === null;
     }
 
     /** The gateway product accepts IP addresses as SANs (san.ip_allowed) */
