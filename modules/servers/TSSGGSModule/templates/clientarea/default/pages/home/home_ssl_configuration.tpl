@@ -156,7 +156,7 @@
             </label>
         </div>
         {else}
-        <p class="san-note" id="www-note">{if $wwwInSanList}{$MGLANG->T('sslConfigWwwIncludedNoSans')}{else}{$MGLANG->T('sslConfigWwwIncluded')}{/if}</p>
+        {if $wwwAlwaysFree}<p class="san-note" id="www-note">{$MGLANG->T('sslConfigWwwIncluded')}</p>{elseif $wwwInSanList}<p class="san-note" id="www-note">{$MGLANG->T('sslConfigWwwChoose')}</p>{/if}
         {/if}
 
         {if $sansLimit > 0}
@@ -467,7 +467,7 @@
         <optgroup label="{$group.label|escape}">
             {foreach $group.domains as $domain}
                 <option value="{$domain|escape}">{$domain|escape}</option>
-                {* GoGetSSL adds the free www name only to orders without additional domains: offer it here *}
+                {* a SAN-capable product gets no free www name: offer it as an additional domain *}
                 {if isset($group.www[$domain])}<option value="{$group.www[$domain]|escape}">{$group.www[$domain]|escape}</option>{/if}
             {/foreach}
         </optgroup>

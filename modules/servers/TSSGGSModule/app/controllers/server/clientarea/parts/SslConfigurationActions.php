@@ -236,10 +236,10 @@ trait SslConfigurationActions
         $vars['enableCsrGenerator'] = $settings['enableCsrGenerator'];
         $vars['adminFormHidden']    = $settings['adminFormHidden'];
         $vars['productDomain']      = isset($params['domain']) ? $params['domain'] : '';
-        // the free www name of the main domain (www.example.com / example.com): TheSSLStore adds it to every order,
-        // GoGetSSL only to orders without additional domains - so on a GoGetSSL multi-domain product the www names
-        // can be picked as additional domains (App\Libs\FreeName)
-        $vars['wwwAlwaysFree']      = \ModulesGarden\TSSGGSModule\App\Libs\FreeName::addedForService($serviceId);
+        // the free www name of the main domain (www.example.com / example.com), tested 2026-11-17: a product without
+        // SAN support gets it from the vendor; a SAN-capable product does not - there the www names can be picked as
+        // additional domains (App\Libs\FreeName)
+        $vars['wwwAlwaysFree']      = $this->productWithoutSans($params['packageid']);
         $vars['wwwInSanList']       = !$vars['wwwAlwaysFree'] && $settings['sansLimit'] > 0;
         if($vars['wwwInSanList'])
         {
@@ -334,6 +334,17 @@ trait SslConfigurationActions
         return array_values(array_unique(array_filter(array_map(function($item) {
             return strtolower(Domain::toAscii(trim($item)));
         }, $items))));
+    }
+
+    /** The gateway product has no SAN support (catalogue san = null): the vendor adds the free www name itself */
+    private function productWithoutSans($packageId)
+    {
+        $config = (new ProductRepository())->getProductConfiguration((int)$packageId);
+        $remote = RemoteProduct::where('remoteId', (string)($config['product_id'] ?? ''))->where('vendor', (string)($config['provider'] ?? ''))->first();
+        $raw    = $remote ? $remote->rawData : null;
+        $raw    = is_array($raw) ? $raw : (json_decode((string)$raw, true) ?: []);
+
+        return $remote !== null && array_key_exists('san', $raw) && $raw['san'] === null;
     }
 
     /** The gateway product accepts IP addresses as SANs (san.ip_allowed) */
