@@ -338,7 +338,7 @@ class SslSettingsForm extends Form implements AdminAreaInterface, AjaxComponentI
             $options .= '<option value="issuedMessage_' . $family . '">' . htmlspecialchars($this->translate('issuedMessageFor_' . $family)) . '</option>';
         }
         $widget->addElement((new Text())->setText(
-            '<div class="tssggs-issued-for lu-form-group"><label class="lu-form-label">' . htmlspecialchars($this->translate('issuedMessageFor')) . '</label>'
+            '<div class="tssggs-issued-for lu-form-group" data-savebar-ignore><label class="lu-form-label">' . htmlspecialchars($this->translate('issuedMessageFor')) . '</label>'
             . '<select class="lu-form-control tssggs-issued-for__select">' . $options . '</select></div>'
         ));
         $this->builder->addFieldInContainer($widget, (new TextArea())->setName('issuedMessage'), true);
