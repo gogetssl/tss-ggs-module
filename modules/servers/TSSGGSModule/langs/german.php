@@ -280,6 +280,7 @@ $_LANG['serverCA']['home']['acmeCheckCertificateDetails'] = 'Zertifikatsdetails 
 $_LANG['serverCA']['home']['acmeRemoveDomain'] = 'Entfernen';
 $_LANG['serverCA']['home']['acmeCancelSubscription'] = 'Abonnement kündigen';
 $_LANG['serverCA']['home']['acmeStopAutoRenewal'] = 'Automatische Verlängerung beenden';
+$_LANG['serverCA']['home']['acmeEndsAtPeriodEnd'] = 'Die automatische Verlängerung ist gestoppt: Das Abonnement endet am :date: und kann vorher nicht gekündigt werden.';
 $_LANG['serverCA']['home']['acmeNoDomains'] = 'Keine Domains im Abonnement';
 $_LANG['serverCA']['home']['acmeSubscriptionConfigurationTitle'] = 'Abonnementkonfiguration';
 $_LANG['serverCA']['home']['acmeSubscriptionConfigurationInfo'] = 'Hier können Sie die Domains verwalten, die Ihrem aktuellen ACME-Abonnement zugeordnet sind. Aktive Domains sind bereit für die Installation auf Ihrem Server. Bitte beachten Sie, dass für Domains, die 30 Tage nach dem Kaufdatum entfernt werden, keine Erstattung möglich ist.';
@@ -772,6 +773,7 @@ $_LANG['serverCA']['home']['aisSwitchConfirm'] = 'Installationsmethode wechseln?
 $_LANG['aisInstallMethodChanged'] = 'Die Installationsmethode wurde geändert.';
 $_LANG['aisInvalidInstallMethod'] = 'Wählen Sie AutoInstall SSL oder ACME.';
 $_LANG['subscriptionAlreadyCancelled'] = 'Das Abonnement ist bereits gekündigt.';
+$_LANG['acmeCancelledAtPeriodEnd'] = 'Die automatische Verlängerung ist bereits gestoppt: Das Abonnement endet mit Ablauf seines Zeitraums und kann vorher nicht gekündigt werden.';
 $_LANG['acme_slots_invoice_created'] = 'Eine Rechnung für die zusätzlichen Domains wurde erstellt. Die Domains werden hinzugefügt, sobald sie bezahlt ist.';
 
 // CodeGuard (website backup, TheSSLStore)

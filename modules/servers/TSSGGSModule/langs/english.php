@@ -280,6 +280,7 @@ $_LANG['serverCA']['home']['acmeCheckCertificateDetails']        = 'Check certif
 $_LANG['serverCA']['home']['acmeRemoveDomain']                   = 'Remove';
 $_LANG['serverCA']['home']['acmeCancelSubscription']             = 'Cancel subscription';
 $_LANG['serverCA']['home']['acmeStopAutoRenewal']                = 'Stop auto-renewal';
+$_LANG['serverCA']['home']['acmeEndsAtPeriodEnd'] = 'Auto-renewal is stopped: the subscription ends on :date: and cannot be cancelled before that.';
 $_LANG['serverCA']['home']['acmeNoDomains']                      = 'No domains in subscription';
 $_LANG['serverCA']['home']['acmeSubscriptionConfigurationTitle'] = 'Subscription configuration';
 $_LANG['serverCA']['home']['acmeSubscriptionConfigurationInfo']  = 'Here, you can manage the domains associated with your current ACME subscription. Active domains are ready to be installed on your server. Just so you know, no refund is available for domains removed 30 days after the purchase date.';
@@ -772,6 +773,7 @@ $_LANG['serverCA']['home']['aisSwitchConfirm'] = 'Switch the installation method
 $_LANG['aisInstallMethodChanged'] = 'The installation method was changed.';
 $_LANG['aisInvalidInstallMethod'] = 'Choose AutoInstall SSL or ACME.';
 $_LANG['subscriptionAlreadyCancelled'] = 'The subscription is already cancelled.';
+$_LANG['acmeCancelledAtPeriodEnd'] = 'Auto-renewal is already stopped: the subscription ends at the end of its period and cannot be cancelled before that.';
 $_LANG['acme_slots_invoice_created'] = 'An invoice for the additional domains was created. The domains are added as soon as it is paid.';
 
 // CodeGuard (website backup, TheSSLStore)
