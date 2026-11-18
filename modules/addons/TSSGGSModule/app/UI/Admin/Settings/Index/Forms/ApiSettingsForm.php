@@ -42,18 +42,31 @@ class ApiSettingsForm extends Form implements AdminAreaInterface, AjaxComponentI
         $this->setId('SettingsForm');
 
         $moduleConfiguration = (new AddonModuleRepository())->getModuleConfiguration();
+        // a stored token is never sent back to the page (ApiSettingsProvider::read), so its field shows a mask as the
+        // placeholder: the admin sees that a token is saved, and the placeholder is not a value - an empty field is still
+        // submitted empty, which Save and Test connection read as "keep the stored token"
+        $stored = $moduleConfiguration['credentials'] ?? [];
+        $mask   = function($vendor, $field) use ($stored) {
+            $input = (new FormInputPassword())->setName($field === 'TestAuthToken' ? $vendor . 'TestAuthToken' : $vendor . 'LiveAuthToken');
+            if(trim((string)($stored[$vendor][$field] ?? '')) !== '')
+            {
+                $input->setPlaceholder('************');
+            }
+
+            return $input;
+        };
 
         foreach($moduleConfiguration['vendors'] as $vendor)
         {
             $widget = $this->section($vendor, 'key-outline');
 
             $this->builder->addFieldInContainer($widget, (new FormInputText())->setName($vendor . 'LivePartnerCode'));
-            $this->builder->addFieldInContainer($widget, (new FormInputPassword())->setName($vendor . 'LiveAuthToken'));
+            $this->builder->addFieldInContainer($widget, $mask($vendor, 'AuthToken'));
 
             if($vendor == 'tss')
             {
                 $this->builder->addFieldInContainer($widget, (new FormInputText())->setName($vendor . 'TestPartnerCode'));
-                $this->builder->addFieldInContainer($widget, (new FormInputPassword())->setName($vendor . 'TestAuthToken'));
+                $this->builder->addFieldInContainer($widget, $mask($vendor, 'TestAuthToken'));
                 $this->builder->addFieldInContainer($widget, (new Dropdown())->setName('OperationMode')->setOptions(['live' => 'Live', 'sandbox' => 'Sandbox'])->setDefaultValueAsFirstOption());
             }
         }
