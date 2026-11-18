@@ -27,6 +27,8 @@ class GeneralSettings
         // Messages
         'processingGuide'          => '',
         'issuedMessage'            => '',
+        'issuedMessage_sectigo'    => '',     // SSL of the Sectigo family (App\Libs\IssuedMessage)
+        'issuedMessage_digicert'   => '',     // SSL of the DigiCert family
         'certificateEmailTemplate' => '',
         'requireAgreement'         => true,
         'agreementText'            => '',    // other certificate authorities (and the fallback text)

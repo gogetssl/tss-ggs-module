@@ -774,6 +774,7 @@ $_LANG['aisInstallMethodChanged'] = 'Způsob instalace byl změněn.';
 $_LANG['aisInvalidInstallMethod'] = 'Zvolte AutoInstall SSL nebo ACME.';
 $_LANG['subscriptionAlreadyCancelled'] = 'Předplatné je již zrušeno.';
 $_LANG['acmeCancelledAtPeriodEnd'] = 'Automatické obnovení je již zastaveno: předplatné končí na konci svého období a dříve ho nelze zrušit.';
+$_LANG['issuedMessageDefault'] = 'Váš SSL certifikát je vydán a připraven k instalaci. Stáhněte certifikát (CRT) a nainstalujte ho spolu se soukromým klíčem vytvořeným s vaším CSR. Návody k instalaci od :brand:: :link:';
 $_LANG['acme_slots_invoice_created'] = 'Byla vytvořena faktura za další domény. Domény budou přidány, jakmile bude zaplacena.';
 
 // CodeGuard (website backup, TheSSLStore)

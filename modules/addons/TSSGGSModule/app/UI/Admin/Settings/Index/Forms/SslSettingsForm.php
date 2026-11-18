@@ -330,7 +330,22 @@ class SslSettingsForm extends Form implements AdminAreaInterface, AjaxComponentI
     protected function messageFields($widget)
     {
         $this->builder->addFieldInContainer($widget, (new TextArea())->setName('processingGuide'), true);
+        // "Issued SSL Message for": General or one certificate family (App\Libs\IssuedMessage). Only the chosen box is
+        // shown (resources/assets/js/custom/issuedMessageFor.js); the selector has no name, so it is never saved
+        $options = '<option value="issuedMessage">' . htmlspecialchars($this->translate('issuedMessageForGeneral')) . '</option>';
+        foreach(\ModulesGarden\TSSGGSModule\App\Libs\IssuedMessage::FAMILIES as $family => $info)
+        {
+            $options .= '<option value="issuedMessage_' . $family . '">' . htmlspecialchars($this->translate('issuedMessageFor_' . $family)) . '</option>';
+        }
+        $widget->addElement((new Text())->setText(
+            '<div class="tssggs-issued-for lu-form-group"><label class="lu-form-label">' . htmlspecialchars($this->translate('issuedMessageFor')) . '</label>'
+            . '<select class="lu-form-control tssggs-issued-for__select">' . $options . '</select></div>'
+        ));
         $this->builder->addFieldInContainer($widget, (new TextArea())->setName('issuedMessage'), true);
+        foreach(array_keys(\ModulesGarden\TSSGGSModule\App\Libs\IssuedMessage::FAMILIES) as $family)
+        {
+            $this->builder->addFieldInContainer($widget, (new TextArea())->setName('issuedMessage_' . $family), true);
+        }
         $this->builder->addFieldInContainer($widget, (new Dropdown())->setName('certificateEmailTemplate'), true);
     }
 

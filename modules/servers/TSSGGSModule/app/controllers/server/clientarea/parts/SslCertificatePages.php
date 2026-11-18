@@ -25,6 +25,7 @@ use ModulesGarden\TSSGGSModule\App\Libs\CertificateSyncHelpers;
 use ModulesGarden\TSSGGSModule\App\Libs\ClientText;
 use ModulesGarden\TSSGGSModule\App\Libs\Cpanel;
 use ModulesGarden\TSSGGSModule\App\Libs\GeneralSettings;
+use ModulesGarden\TSSGGSModule\App\Libs\IssuedMessage;
 use ModulesGarden\TSSGGSModule\App\Libs\ProductSettings;
 use ModulesGarden\TSSGGSModule\App\Libs\SmimeService;
 use ModulesGarden\TSSGGSModule\App\Libs\CodeSigningService;
@@ -818,7 +819,7 @@ trait SslCertificatePages
             strpos((string)$name, '*.') === 0 ? $vars['countSANWildcard']++ : $vars['countSAN']++;
         }
 
-        $vars['issued_message']   = ProductSettings::message($params['product']->id, 'issuedMessage');
+        $vars['issued_message']   = $this->issuedMessage((int)$params['product']->id);
         $vars['organization']     = isset($params['order']['orderData']['contacts']['organization']) ? array_filter((array)$params['order']['orderData']['contacts']['organization'], 'is_scalar') : [];
         $vars['download_formats'] = CertificateBundle::enabledFormats();
         try
@@ -1421,5 +1422,24 @@ trait SslCertificatePages
         $vars['approvers'] = $this->approversToOptions($approvers);
 
         return ['tpl' => 'change_approval_method', 'vars' => $vars];
+    }
+
+    /**
+     * Message shown once the certificate is issued (App\Libs\IssuedMessage): the administrator's text, else the built-in
+     * one of the certificate family in the client's language, with the installation guide of the authority
+     */
+    private function issuedMessage($productId)
+    {
+        $family = IssuedMessage::family($productId);
+        $text   = IssuedMessage::configured($productId, $family);
+        if($text !== '' || !$family)
+        {
+            return $text;
+        }
+        $guide = IssuedMessage::guide($family);
+        $link  = $guide !== '' ? '<a href="' . htmlspecialchars($guide) . '" target="_blank" rel="noopener noreferrer">' . htmlspecialchars(IssuedMessage::authorityName($family)) . '</a>' : '';
+
+        // the language text comes HTML-encoded from Lang, the link is added after
+        return str_replace([':brand:', ':link:'], [htmlspecialchars(IssuedMessage::authorityName($family)), $link], Lang::absoluteT('issuedMessageDefault'));
     }
 }

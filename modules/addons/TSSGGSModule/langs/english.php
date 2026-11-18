@@ -1029,6 +1029,14 @@ $_LANG['admin.settings.index.forms.ssl_settings_form.processingGuide']          
 $_LANG['admin.settings.index.forms.ssl_settings_form.processingGuide_description']       = 'Shown to the client while the certificate is being validated (HTML allowed). Can be overridden per product';
 $_LANG['admin.settings.index.forms.ssl_settings_form.issuedMessage']                     = 'Issued SSL Message';
 $_LANG['admin.settings.index.forms.ssl_settings_form.issuedMessage_description']         = 'Shown to the client once the certificate is issued, e.g. installation instructions (HTML allowed). Can be overridden per product';
+$_LANG['admin.settings.index.forms.ssl_settings_form.issuedMessageFor']                    = 'Issued SSL Message for';
+$_LANG['admin.settings.index.forms.ssl_settings_form.issuedMessageForGeneral']             = 'General (all certificates)';
+$_LANG['admin.settings.index.forms.ssl_settings_form.issuedMessageFor_sectigo']            = 'Sectigo SSL (incl. GoGetSSL DV)';
+$_LANG['admin.settings.index.forms.ssl_settings_form.issuedMessageFor_digicert']           = 'DigiCert SSL (GeoTrust, RapidSSL, Thawte, GoGetSSL OV/EV)';
+$_LANG['admin.settings.index.forms.ssl_settings_form.issuedMessage_sectigo']               = 'Issued SSL Message - Sectigo';
+$_LANG['admin.settings.index.forms.ssl_settings_form.issuedMessage_sectigo_description']   = 'Shown when a Sectigo SSL certificate is issued (HTML allowed). Empty: the General message; when that is empty too, a built-in text in the client\'s language with the Sectigo installation guide';
+$_LANG['admin.settings.index.forms.ssl_settings_form.issuedMessage_digicert']              = 'Issued SSL Message - DigiCert';
+$_LANG['admin.settings.index.forms.ssl_settings_form.issuedMessage_digicert_description']  = 'Shown when a DigiCert SSL certificate is issued (HTML allowed). Empty: the General message; when that is empty too, a built-in text in the client\'s language with the DigiCert installation guide';
 $_LANG['admin.settings.index.forms.ssl_settings_form.certificateEmailTemplate']          = 'Certificate Email Template';
 $_LANG['admin.settings.index.forms.ssl_settings_form.certificateEmailTemplate_description'] = 'Template used when the certificate is sent to the client';
 $_LANG['admin.settings.index.forms.ssl_settings_form.requireAgreement']                  = 'Require Agreement';
