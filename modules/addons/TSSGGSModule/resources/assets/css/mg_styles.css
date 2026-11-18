@@ -2506,3 +2506,30 @@ html:has(#layers2-body) {
     font-family: inherit;
     font-weight: inherit;
 }
+/* Log Insights (logs "Show details" window): dark code panel */
+#layers2 pre.pretty-print.tssggs-json {
+    background: #0f172a;
+    border: 1px solid #1e293b;
+    border-radius: 8px;
+    color: #64748b;
+    padding: 18px 20px;
+    font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+    font-size: 13px;
+    line-height: 1.65;
+    max-height: 65vh;
+    overflow: auto;
+}
+#layers2 pre.pretty-print.tssggs-json .key { color: #7dd3fc; }
+#layers2 pre.pretty-print.tssggs-json .punct { color: #64748b; }
+#layers2 pre.pretty-print.tssggs-json .string { color: #a7f3d0; }
+#layers2 pre.pretty-print.tssggs-json .number { color: #fcd34d; }
+#layers2 pre.pretty-print.tssggs-json .boolean { color: #c4b5fd; }
+#layers2 pre.pretty-print.tssggs-json .null { color: #94a3b8; font-style: italic; }
+#layers2 pre.pretty-print.tssggs-json .string.alert {
+    color: #fca5a5;
+    background: rgba(248, 113, 113, 0.14);
+    border-radius: 3px;
+    padding: 1px 3px;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+}
