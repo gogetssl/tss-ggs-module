@@ -2533,3 +2533,15 @@ html:has(#layers2-body) {
     -webkit-box-decoration-break: clone;
     box-decoration-break: clone;
 }
+#layers2 pre.pretty-print.tssggs-json {
+    white-space: pre-wrap;
+    word-break: normal;
+    overflow-wrap: anywhere;
+    overflow-x: hidden;
+}
+#layers2 pre.pretty-print.tssggs-json span {
+    font-family: inherit;
+    font-size: inherit;
+    word-break: normal;
+    overflow-wrap: anywhere;
+}
