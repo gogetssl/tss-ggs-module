@@ -774,7 +774,7 @@ $_LANG['aisInstallMethodChanged'] = 'Installationsmetoden blev ændret.';
 $_LANG['aisInvalidInstallMethod'] = 'Vælg AutoInstall SSL eller ACME.';
 $_LANG['subscriptionAlreadyCancelled'] = 'Abonnementet er allerede opsagt.';
 $_LANG['acmeCancelledAtPeriodEnd'] = 'Automatisk fornyelse er allerede stoppet: abonnementet slutter ved periodens udløb og kan ikke opsiges før.';
-$_LANG['issuedMessageDefault'] = 'Dit SSL-certifikat er udstedt og klar til installation. Download certifikatet (CRT) og installer det sammen med den private nøgle, der blev oprettet med din CSR. Installationsvejledninger fra :brand:: :link:';
+$_LANG['issuedMessageDefault'] = 'Dit SSL-certifikat er udstedt og klar til installation. Download certifikatet (CRT) og installer det sammen med den private nøgle, der blev oprettet med din CSR. Følg :link_start::brand:s officielle installationsvejledninger:link_end:.';
 $_LANG['acme_slots_invoice_created'] = 'Der er oprettet en faktura for de ekstra domæner. Domænerne tilføjes, så snart den er betalt.';
 
 // CodeGuard (website backup, TheSSLStore)

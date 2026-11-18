@@ -1437,9 +1437,12 @@ trait SslCertificatePages
             return $text;
         }
         $guide = IssuedMessage::guide($family);
-        $link  = $guide !== '' ? '<a href="' . htmlspecialchars($guide) . '" target="_blank" rel="noopener noreferrer">' . htmlspecialchars(IssuedMessage::authorityName($family)) . '</a>' : '';
 
-        // the language text comes HTML-encoded from Lang, the link is added after
-        return str_replace([':brand:', ':link:'], [htmlspecialchars(IssuedMessage::authorityName($family)), $link], Lang::absoluteT('issuedMessageDefault'));
+        // the language text comes HTML-encoded from Lang; :link_start: / :link_end: wrap the translated words of the link
+        return str_replace(
+            [':brand:', ':link_start:', ':link_end:'],
+            [htmlspecialchars(IssuedMessage::authorityName($family)), $guide !== '' ? '<a href="' . htmlspecialchars($guide) . '" target="_blank" rel="noopener noreferrer">' : '', $guide !== '' ? '</a>' : ''],
+            Lang::absoluteT('issuedMessageDefault')
+        );
     }
 }
