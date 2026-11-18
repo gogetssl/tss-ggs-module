@@ -194,6 +194,16 @@ trait AcmeActions
         $vars['availableSingleSlots']   = $availableSingleSlots;
         $vars['availableWildcardSlots'] = $availableWildcardSlots;
         $vars['canAddDomains']          = $canAddDomains;
+        // TheSSLStore: stopping auto renewal already cancels the subscription at the end of its period, a later cancel
+        // is refused (gateway GGS-3, 2026-11-17) - the page shows the end date instead of the Cancel button
+        $vars['endsAtPeriodEnd']        = $this->endsAtPeriodEnd($serviceId, $subscription);
+        $vars['endsAtPeriodEndNote']    = '';
+        if($vars['endsAtPeriodEnd'])
+        {
+            $end  = (string)($subscription->period_end ?: $subscription->renewal_date);
+            $time = $end !== '' && strpos($end, '0000-00-00') !== 0 ? strtotime($end) : false;
+            $vars['endsAtPeriodEndNote'] = str_replace(':date:', $time ? date('F j, Y', $time) : '-', Lang::absoluteT('serverCA', 'home', 'acmeEndsAtPeriodEnd'));
+        }
         $vars['configurationStatus']    = $sslService ? $sslService->status : null;
         $vars['configurationURL']       = 'clientarea.php?action=productdetails&id=' . $serviceId . '&acmeconfig=1';
 
@@ -782,6 +792,10 @@ trait AcmeActions
         {
             throw new \Exception(Lang::absoluteT('subscriptionAlreadyCancelled'));
         }
+        if($this->endsAtPeriodEnd($serviceId, $subscription))
+        {
+            throw new \Exception(Lang::absoluteT('acmeCancelledAtPeriodEnd'));
+        }
 
         // acme_id is the CaaS item ID (items[0].id), not the order ID; within the refund window the vendor refunds the order
         $refundable = \ModulesGarden\TSSGGSModule\App\Libs\SubscriptionBilling::orderRefundable($serviceId);
@@ -824,7 +838,8 @@ trait AcmeActions
         }
 
         $api = Helpers::getApiByServiceId($serviceId);
-        $api->disableSubscriptionAutoRenewal((int)$subscription->acme_id);
+        // the gateway dropped DELETE .../subscription (2026-11-17): auto renewal is switched off with PATCH {auto_renew: false}
+        $api->changeSubscriptionAutoRenewal('caas', (int)$subscription->acme_id, false);
         $subscription->auto_renew = 0;
         $subscription->save();
 
@@ -832,6 +847,22 @@ trait AcmeActions
             'success' => true,
             'message' => Lang::absoluteT('acme_auto_renewal_disabled'),
         ];
+    }
+
+    /**
+     * TheSSLStore subscription whose auto renewal is stopped: TheSSLStore treats that as the cancellation at the end of
+     * the period and refuses any later cancel. GoGetSSL has no such limit.
+     */
+    private function endsAtPeriodEnd($serviceId, $subscription)
+    {
+        if(!$subscription || (int)$subscription->api_order_id <= 0 || (int)$subscription->auto_renew === 1
+           || in_array(strtolower((string)$subscription->status), ['cancelled', 'terminated'], true))
+        {
+            return false;
+        }
+        list($vendor) = \ModulesGarden\TSSGGSModule\App\Libs\FreeName::productOfService($serviceId);
+
+        return strtoupper(trim($vendor)) === 'TSS';
     }
 
     /**

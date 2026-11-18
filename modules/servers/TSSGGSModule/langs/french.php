@@ -280,6 +280,7 @@ $_LANG['serverCA']['home']['acmeCheckCertificateDetails']        = 'Vérifier le
 $_LANG['serverCA']['home']['acmeRemoveDomain']                   = 'Supprimer';
 $_LANG['serverCA']['home']['acmeCancelSubscription']             = 'Annuler l\'abonnement';
 $_LANG['serverCA']['home']['acmeStopAutoRenewal']                = 'Arrêter le renouvellement automatique';
+$_LANG['serverCA']['home']['acmeEndsAtPeriodEnd'] = 'Le renouvellement automatique est arrêté : l\'abonnement prend fin le :date: et ne peut pas être annulé avant.';
 $_LANG['serverCA']['home']['acmeNoDomains']                      = 'Aucun domaine dans l\'abonnement';
 $_LANG['serverCA']['home']['acmeSubscriptionConfigurationTitle'] = 'Configuration de l\'abonnement';
 $_LANG['serverCA']['home']['acmeSubscriptionConfigurationInfo']  = 'Ici, vous pouvez gérer les domaines associés à votre abonnement ACME actuel. Les domaines actifs sont prêts à être installés sur votre serveur. À noter : aucun remboursement n\'est possible pour les domaines supprimés plus de 30 jours après la date d\'achat.';
@@ -772,6 +773,7 @@ $_LANG['serverCA']['home']['aisSwitchConfirm'] = 'Changer la méthode d’instal
 $_LANG['aisInstallMethodChanged'] = 'La méthode d’installation a été modifiée.';
 $_LANG['aisInvalidInstallMethod'] = 'Choisissez AutoInstall SSL ou ACME.';
 $_LANG['subscriptionAlreadyCancelled'] = 'L\'abonnement est déjà annulé.';
+$_LANG['acmeCancelledAtPeriodEnd'] = 'Le renouvellement automatique est déjà arrêté : l\'abonnement prend fin à la fin de sa période et ne peut pas être annulé avant.';
 $_LANG['acme_slots_invoice_created'] = 'Une facture pour les domaines supplémentaires a été créée. Les domaines sont ajoutés dès qu\'elle est payée.';
 
 // CodeGuard (website backup, TheSSLStore)

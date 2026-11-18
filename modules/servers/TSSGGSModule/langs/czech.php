@@ -280,6 +280,7 @@ $_LANG['serverCA']['home']['acmeCheckCertificateDetails'] = 'Zkontrolovat údaje
 $_LANG['serverCA']['home']['acmeRemoveDomain'] = 'Odebrat';
 $_LANG['serverCA']['home']['acmeCancelSubscription'] = 'Zrušit předplatné';
 $_LANG['serverCA']['home']['acmeStopAutoRenewal'] = 'Zastavit automatické obnovení';
+$_LANG['serverCA']['home']['acmeEndsAtPeriodEnd'] = 'Automatické obnovení je zastaveno: předplatné končí :date: a dříve ho nelze zrušit.';
 $_LANG['serverCA']['home']['acmeNoDomains'] = 'V předplatném nejsou žádné domény';
 $_LANG['serverCA']['home']['acmeSubscriptionConfigurationTitle'] = 'Konfigurace předplatného';
 $_LANG['serverCA']['home']['acmeSubscriptionConfigurationInfo'] = 'Zde můžete spravovat domény spojené s Vaším aktuálním předplatným ACME. Aktivní domény jsou připraveny k instalaci na Váš server. Upozorňujeme, že za domény odebrané po uplynutí 30 dnů od data nákupu nelze vrátit peníze.';
@@ -772,6 +773,7 @@ $_LANG['serverCA']['home']['aisSwitchConfirm'] = 'Změnit způsob instalace? Ji�
 $_LANG['aisInstallMethodChanged'] = 'Způsob instalace byl změněn.';
 $_LANG['aisInvalidInstallMethod'] = 'Zvolte AutoInstall SSL nebo ACME.';
 $_LANG['subscriptionAlreadyCancelled'] = 'Předplatné je již zrušeno.';
+$_LANG['acmeCancelledAtPeriodEnd'] = 'Automatické obnovení je již zastaveno: předplatné končí na konci svého období a dříve ho nelze zrušit.';
 $_LANG['acme_slots_invoice_created'] = 'Byla vytvořena faktura za další domény. Domény budou přidány, jakmile bude zaplacena.';
 
 // CodeGuard (website backup, TheSSLStore)

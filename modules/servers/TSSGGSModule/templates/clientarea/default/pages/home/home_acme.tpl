@@ -39,10 +39,15 @@
                     {if !$subscription->status || $subscription->status|lower != 'active'}
                         <button class="tssggs-btn acme-action" data-action="checkCertificateDetails">{$MGLANG->T('acmeCheckCertificateDetails')}</button>
                     {/if}
-                    <button class="tssggs-btn acme-action" data-action="stopAutoRenewal">{$MGLANG->T('acmeStopAutoRenewal')}</button>
-                    <button class="tssggs-btn tssggs-btn--danger acme-action" data-action="cancelSubscription">{$MGLANG->T('acmeCancelSubscription')}</button>
+                    {if $subscription->auto_renew}
+                        <button class="tssggs-btn acme-action" data-action="stopAutoRenewal">{$MGLANG->T('acmeStopAutoRenewal')}</button>
+                    {/if}
+                    {if !$endsAtPeriodEnd}
+                        <button class="tssggs-btn tssggs-btn--danger acme-action" data-action="cancelSubscription">{$MGLANG->T('acmeCancelSubscription')}</button>
+                    {/if}
                 {/if}
             </div>
+            {if $endsAtPeriodEnd}<p class="tssggs-note" id="acme-ends-note">{$endsAtPeriodEndNote}</p>{/if}
         </div>
     </section>
 
@@ -160,8 +165,14 @@
                         {if !$subscription->status || $subscription->status|lower != 'active'}
                             <button style="margin-bottom: 10px;" class="btn btn-default acme-action" data-action="checkCertificateDetails">{$MGLANG->T('acmeCheckCertificateDetails')}</button>
                         {/if}
-                        <button style="margin-bottom: 10px;" class="btn btn-default acme-action" data-action="stopAutoRenewal">{$MGLANG->T('acmeStopAutoRenewal')}</button>
-                        <button style="margin-bottom: 10px;" class="btn btn-danger acme-action" data-action="cancelSubscription">{$MGLANG->T('acmeCancelSubscription')}</button>
+                        {if $subscription->auto_renew}
+                            <button style="margin-bottom: 10px;" class="btn btn-default acme-action" data-action="stopAutoRenewal">{$MGLANG->T('acmeStopAutoRenewal')}</button>
+                        {/if}
+                        {if !$endsAtPeriodEnd}
+                            <button style="margin-bottom: 10px;" class="btn btn-danger acme-action" data-action="cancelSubscription">{$MGLANG->T('acmeCancelSubscription')}</button>
+                        {else}
+                            <p>{$endsAtPeriodEndNote}</p>
+                        {/if}
                     {/if}
                 </td>
             </tr>

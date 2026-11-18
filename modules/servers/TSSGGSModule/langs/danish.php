@@ -280,6 +280,7 @@ $_LANG['serverCA']['home']['acmeCheckCertificateDetails']        = 'Kontroller c
 $_LANG['serverCA']['home']['acmeRemoveDomain']                   = 'Fjern';
 $_LANG['serverCA']['home']['acmeCancelSubscription']             = 'Opsig abonnement';
 $_LANG['serverCA']['home']['acmeStopAutoRenewal']                = 'Stop automatisk fornyelse';
+$_LANG['serverCA']['home']['acmeEndsAtPeriodEnd'] = 'Automatisk fornyelse er stoppet: abonnementet slutter :date: og kan ikke opsiges før.';
 $_LANG['serverCA']['home']['acmeNoDomains']                      = 'Ingen domæner i abonnementet';
 $_LANG['serverCA']['home']['acmeSubscriptionConfigurationTitle'] = 'Abonnementskonfiguration';
 $_LANG['serverCA']['home']['acmeSubscriptionConfigurationInfo']  = 'Her kan du administrere de domæner, der er knyttet til dit nuværende ACME-abonnement. Aktive domæner er klar til at blive installeret på din server. Bemærk, at der ikke ydes refundering for domæner, der fjernes 30 dage efter købsdatoen.';
@@ -772,6 +773,7 @@ $_LANG['serverCA']['home']['aisSwitchConfirm'] = 'Skift installationsmetode? Cer
 $_LANG['aisInstallMethodChanged'] = 'Installationsmetoden blev ændret.';
 $_LANG['aisInvalidInstallMethod'] = 'Vælg AutoInstall SSL eller ACME.';
 $_LANG['subscriptionAlreadyCancelled'] = 'Abonnementet er allerede opsagt.';
+$_LANG['acmeCancelledAtPeriodEnd'] = 'Automatisk fornyelse er allerede stoppet: abonnementet slutter ved periodens udløb og kan ikke opsiges før.';
 $_LANG['acme_slots_invoice_created'] = 'Der er oprettet en faktura for de ekstra domæner. Domænerne tilføjes, så snart den er betalt.';
 
 // CodeGuard (website backup, TheSSLStore)

@@ -280,6 +280,7 @@ $_LANG['serverCA']['home']['acmeCheckCertificateDetails'] = 'Consultar detalles 
 $_LANG['serverCA']['home']['acmeRemoveDomain'] = 'Eliminar';
 $_LANG['serverCA']['home']['acmeCancelSubscription'] = 'Cancelar suscripción';
 $_LANG['serverCA']['home']['acmeStopAutoRenewal'] = 'Detener la renovación automática';
+$_LANG['serverCA']['home']['acmeEndsAtPeriodEnd'] = 'La renovación automática está detenida: la suscripción finaliza el :date: y no se puede cancelar antes.';
 $_LANG['serverCA']['home']['acmeNoDomains'] = 'No hay dominios en la suscripción';
 $_LANG['serverCA']['home']['acmeSubscriptionConfigurationTitle'] = 'Configuración de la suscripción';
 $_LANG['serverCA']['home']['acmeSubscriptionConfigurationInfo'] = 'Aquí puede administrar los dominios asociados a su suscripción ACME actual. Los dominios activos están listos para instalarse en su servidor. Tenga en cuenta que no se realizan reembolsos por los dominios eliminados transcurridos 30 días desde la fecha de compra.';
@@ -772,6 +773,7 @@ $_LANG['serverCA']['home']['aisSwitchConfirm'] = '¿Cambiar el método de instal
 $_LANG['aisInstallMethodChanged'] = 'Se ha cambiado el método de instalación.';
 $_LANG['aisInvalidInstallMethod'] = 'Elija AutoInstall SSL o ACME.';
 $_LANG['subscriptionAlreadyCancelled'] = 'La suscripción ya está cancelada.';
+$_LANG['acmeCancelledAtPeriodEnd'] = 'La renovación automática ya está detenida: la suscripción finaliza al término de su periodo y no se puede cancelar antes.';
 $_LANG['acme_slots_invoice_created'] = 'Se ha creado una factura por los dominios adicionales. Los dominios se añaden en cuanto se pague.';
 
 // CodeGuard (website backup, TheSSLStore)
