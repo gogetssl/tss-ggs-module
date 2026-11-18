@@ -47,7 +47,7 @@
                     {/if}
                 {/if}
             </div>
-            {if $endsAtPeriodEnd}<p class="tssggs-note" id="acme-ends-note">{$endsAtPeriodEndNote|escape}</p>{/if}
+            {if $endsAtPeriodEnd}<p class="tssggs-note" id="acme-ends-note">{$endsAtPeriodEndNote}</p>{/if}
         </div>
     </section>
 
@@ -171,7 +171,7 @@
                         {if !$endsAtPeriodEnd}
                             <button style="margin-bottom: 10px;" class="btn btn-danger acme-action" data-action="cancelSubscription">{$MGLANG->T('acmeCancelSubscription')}</button>
                         {else}
-                            <p>{$endsAtPeriodEndNote|escape}</p>
+                            <p>{$endsAtPeriodEndNote}</p>
                         {/if}
                     {/if}
                 </td>
