@@ -2506,3 +2506,6 @@ html:has(#layers2-body) {
     font-family: inherit;
     font-weight: inherit;
 }
+/* Settings > SSL certificates > Client Messages: "Issued SSL Message for" and "Language" side by side */
+.tssggs-issued-for { display: flex; flex-wrap: wrap; gap: 0 16px; }
+.tssggs-issued-for__field { flex: 1 1 220px; max-width: 320px; }

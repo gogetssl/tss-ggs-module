@@ -27,8 +27,10 @@ class GeneralSettings
         // Messages
         'processingGuide'          => '',
         'issuedMessage'            => '',
-        'issuedMessage_sectigo'    => '',     // SSL of the Sectigo family (App\Libs\IssuedMessage)
-        'issuedMessage_digicert'   => '',     // SSL of the DigiCert family
+        // "Show this message" of the SSL families (App\Libs\IssuedMessage::enabled); their texts are stored per
+        // language as issuedMessage_<family>_<language> (App\Libs\IssuedMessage::isTextKey)
+        'issuedMessageOn_sectigo'  => null,
+        'issuedMessageOn_digicert' => null,
         'certificateEmailTemplate' => '',
         'requireAgreement'         => true,
         'agreementText'            => '',    // other certificate authorities (and the fallback text)
@@ -112,12 +114,29 @@ class GeneralSettings
         return $value === true || $value === 1 || $value === '1' || $value === 'on' || $value === 'true';
     }
 
+    /**
+     * The settings of this store among posted data: the DEFAULTS keys and the per language texts of the issued message
+     */
+    public static function pick(array $data)
+    {
+        $picked = array_intersect_key($data, self::DEFAULTS);
+        foreach($data as $key => $value)
+        {
+            if(IssuedMessage::isTextKey($key))
+            {
+                $picked[$key] = $value;
+            }
+        }
+
+        return $picked;
+    }
+
     public static function save(array $data)
     {
         // merged into the stored settings: the settings are spread over several pages, each saves its own part
         $configuration = (new AddonModuleRepository())->getModuleConfiguration();
         $stored        = isset($configuration['generalSettings']) && is_array($configuration['generalSettings']) ? $configuration['generalSettings'] : [];
-        (new AddonModuleRepository())->saveGeneralSettings(array_merge($stored, array_intersect_key($data, self::DEFAULTS)));
+        (new AddonModuleRepository())->saveGeneralSettings(array_merge($stored, self::pick($data)));
         self::$settings = null;
     }
 

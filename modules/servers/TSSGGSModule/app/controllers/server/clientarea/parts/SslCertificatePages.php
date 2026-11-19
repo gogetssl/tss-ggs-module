@@ -1430,19 +1430,6 @@ trait SslCertificatePages
      */
     private function issuedMessage($productId)
     {
-        $family = IssuedMessage::family($productId);
-        $text   = IssuedMessage::configured($productId, $family);
-        if($text !== '' || !$family)
-        {
-            return $text;
-        }
-        $guide = IssuedMessage::guide($family);
-
-        // the language text comes HTML-encoded from Lang; :link_start: / :link_end: wrap the translated words of the link
-        return str_replace(
-            [':brand:', ':link_start:', ':link_end:'],
-            [htmlspecialchars(IssuedMessage::authorityName($family)), $guide !== '' ? '<a href="' . htmlspecialchars($guide) . '" target="_blank" rel="noopener noreferrer">' : '', $guide !== '' ? '</a>' : ''],
-            Lang::absoluteT('issuedMessageDefault')
-        );
+        return IssuedMessage::forClient($productId, Lang::getLang());
     }
 }
