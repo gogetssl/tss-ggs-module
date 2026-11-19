@@ -158,16 +158,22 @@ class SubscriptionRenewals
     }
 
     /**
-     * Cancels the subscription at the vendor (no refund: it ends with the paid period) and closes the service. When the
-     * vendor can not be reached the service stays open and it is tried again on the next run; after 14 days the
-     * administrator is told to cancel it by hand.
+     * Cancels the subscription at the vendor (no refund: it ends with the paid period; with auto-renewal stopped the vendor
+     * ends it by itself) and closes the service. When the vendor can not be reached the service stays open and it is
+     * tried again on the next run; after 14 days the administrator is told to cancel it by hand.
      */
     protected static function close($category, $subscription, $itemColumn, $serviceStatus, $reason)
     {
         $serviceId = (int)$subscription->service_id;
+        $atVendor  = (bool)(int)$subscription->auto_renew;
         try
         {
-            CertificateService::api($serviceId)->cancelItem((int)$subscription->{$itemColumn}, $reason, $category, false);
+            // auto-renewal stopped: the vendor ends the subscription with its period by itself and refuses a cancellation
+            // (GGS-3), so there is nothing to cancel there
+            if($atVendor)
+            {
+                CertificateService::api($serviceId)->cancelItem((int)$subscription->{$itemColumn}, $reason, $category, false);
+            }
         }
         catch(\Throwable $e)
         {
@@ -184,7 +190,7 @@ class SubscriptionRenewals
         $subscription->auto_renew   = 0;
         $subscription->save();
         Capsule::table('tblhosting')->where('id', $serviceId)->update(['domainstatus' => $serviceStatus] + ($serviceStatus === 'Terminated' ? ['termination_date' => date('Y-m-d')] : []));
-        CertificateService::event($serviceId, 'info', '[Subscription] ' . $reason . ': cancelled at the vendor, service ' . strtolower($serviceStatus));
+        CertificateService::event($serviceId, 'info', '[Subscription] ' . $reason . ': ' . ($atVendor ? 'cancelled at the vendor' : 'ended at the vendor with its period') . ', service ' . strtolower($serviceStatus));
 
         // the renewal was not paid: domains already paid for the year that does not come are credited back
         if($serviceStatus === 'Terminated' && $subscription->renewal_date)
