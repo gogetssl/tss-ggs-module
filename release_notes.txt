@@ -1,3 +1,27 @@
+1.16.0 (2026-11-19)
+Issued SSL message per brand and language, CodeGuard licence details
+- Issued SSL message (Settings > SSL): a message of its own for Sectigo and
+  for DigiCert certificates, on by default, with a text per WHMCS language.
+  Each box starts with the built-in translated text (with the link to the
+  installation guide); only a changed text is saved, so an unchanged one keeps
+  following the module's translation. Languages without a built-in
+  translation show the English text. The General message is used for the
+  other certificates and for a brand that is switched off. Upgrading
+  installs that already have a General message keep showing it until a brand
+  is switched on.
+- Client messages (processing guide, issued SSL message, also per product)
+  keep their HTML as written: WHMCS encoded it when the form was saved, so
+  links showed as text. Messages saved encoded before are shown as HTML.
+- CodeGuard: reads the vendor's current licence answer. The licence period is
+  the subscription's own (start - next renewal); the licence figures are
+  readable (storage in KB / MB / GB, backup period in days, last backup
+  date, "Payment overdue" / "Over quota" only when they apply), in the
+  client's language. Prices and terms follow the vendor's price list.
+- API settings: a token field that has a saved token shows a mask
+  placeholder, so it is clear a token is stored.
+- Logs: "Show details" (Log Insights) shows the data in a dark code panel,
+  error values are marked, long lines wrap.
+
 1.15.2 (2026-11-18)
 Automated SSL (ACME): stop auto-renewal fixed, end date after a stop
 - Fix: "Stop auto-renewal" on an ACME (Certificate-as-a-Service) subscription
