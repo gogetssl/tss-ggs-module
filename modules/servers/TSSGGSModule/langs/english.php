@@ -805,6 +805,9 @@ $_LANG['serverCA']['home']['codeGuardLicense_size_used']           = 'Storage us
 $_LANG['serverCA']['home']['codeGuardLicense_size_limit']          = 'Storage included';
 $_LANG['serverCA']['home']['codeGuardLicense_backup_period']       = 'Backup period';
 $_LANG['serverCA']['home']['codeGuardLicense_last_backup_date']    = 'Last backup';
+$_LANG['serverCA']['home']['codeGuardLicense_past_due']              = 'Payment overdue';
+$_LANG['serverCA']['home']['codeGuardLicense_over_quota']            = 'Over quota';
+$_LANG['serverCA']['home']['codeGuardDays']                          = ':days: days';
 
 // Document signing (TheSSLStore): derived from the code signing texts
 $_LANG['serverCA']['home']['dsConfigurationIntro'] = 'Enter your organization, the administrator contact and how you want to receive the certificate.';

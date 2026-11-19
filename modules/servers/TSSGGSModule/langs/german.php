@@ -805,6 +805,9 @@ $_LANG['serverCA']['home']['codeGuardLicense_size_used']           = 'Genutzter 
 $_LANG['serverCA']['home']['codeGuardLicense_size_limit']          = 'Enthaltener Speicher';
 $_LANG['serverCA']['home']['codeGuardLicense_backup_period']       = 'Sicherungsintervall';
 $_LANG['serverCA']['home']['codeGuardLicense_last_backup_date']    = 'Letzte Sicherung';
+$_LANG['serverCA']['home']['codeGuardLicense_past_due']              = 'Zahlung überfällig';
+$_LANG['serverCA']['home']['codeGuardLicense_over_quota']            = 'Kontingent überschritten';
+$_LANG['serverCA']['home']['codeGuardDays']                          = ':days: Tage';
 
 // Document signing (TheSSLStore): derived from the code signing texts
 $_LANG['serverCA']['home']['dsConfigurationIntro'] = 'Geben Sie Ihre Organisation, den administrativen Kontakt und die gewünschte Zustellung des Zertifikats ein.';

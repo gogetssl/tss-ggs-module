@@ -59,7 +59,8 @@ trait CodeGuardActions
         $vars['codeGuardEnd']       = $period ? $this->codeGuardDate($period['end']) : '';
         $vars['codeGuardTerm']      = (int)($stored['term'] ?? 0);
         // the figures of the licence (quotas, backups): shown only for what the gateway actually fills in
-        $vars['codeGuardLicense']   = $this->codeGuardLicenseRows(CodeGuardService::licenseInfo($serviceId));
+        $days = html_entity_decode((string)Lang::absoluteT('serverCA', 'home', 'codeGuardDays'), ENT_QUOTES, 'UTF-8');
+        $vars['codeGuardLicense']   = $this->codeGuardLicenseRows(CodeGuardService::licenseFigures(CodeGuardService::licenseInfo($serviceId), strpos($days, ':days:') !== false ? $days : ':days: days'));
         // the licence can be opened and changed while it is active or suspended, not once it is gone
         $vars['codeGuardUsable']    = $vars['codeGuardOrdered'] && !in_array($status, ['cancelled', 'refunded', 'expired'], true);
 

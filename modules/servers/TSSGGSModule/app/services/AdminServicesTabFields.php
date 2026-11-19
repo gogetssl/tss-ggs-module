@@ -235,15 +235,15 @@ class AdminServicesTabFields
             ? htmlspecialchars(trim(($contact['first_name'] ?? '') . ' ' . ($contact['last_name'] ?? ''))) . ' &lt;' . htmlspecialchars($contact['email'] ?? '') . '&gt;'
             : '-';
         $fields[AdminText::get('period', 'Period')] = $period ? htmlspecialchars($period['start']) . ' &rarr; ' . htmlspecialchars($period['end'])
-            . ' <small class="text-muted">(' . self::t('period_months', ':months: months from the order date', ['months' => (int)($stored['term'] ?? 0)]) . ')</small>' : '-';
+            . (empty($stored['subscriptionBegin']) ? ' <small class="text-muted">(' . self::t('period_months', ':months: months from the order date', ['months' => (int)($stored['term'] ?? 0)]) . ')</small>' : '') : '-';
 
         $license = $cg::licenseInfo($serviceId);
         if($license)
         {
             $rows = [];
-            foreach($license as $key => $value)
+            foreach($cg::licenseFigures($license) as $key => $value)
             {
-                $rows[] = htmlspecialchars(ucfirst(str_replace('_', ' ', (string)$key))) . ': ' . htmlspecialchars(is_scalar($value) ? (string)$value : json_encode($value));
+                $rows[] = htmlspecialchars(ucfirst(str_replace('_', ' ', (string)$key))) . ': ' . htmlspecialchars($value === true ? 'Yes' : (string)$value);
             }
             $fields[AdminText::get('licence', 'Licence')] = implode('<br>', $rows);
         }

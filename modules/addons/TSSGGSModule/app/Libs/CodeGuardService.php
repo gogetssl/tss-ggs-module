@@ -17,11 +17,16 @@ use WHMCS\Database\Capsule;
  * tblhosting.domain = the administrator's e-mail address (the licence has no domain of its own; the websites are
  * added by the client inside the dashboard).
  *
- * Gateway defects worked around here (reported 2026-11-13, gateway-issues-codeguard-2026-11-13.md):
- * - the details call reports both subscription dates a year ahead and equal to each other, so the period is computed
- *   from the order date and the term instead;
- * - the whole "license" block comes back null, so the figures are shown only when the gateway fills them in;
- * - GET /websites answers 500 while the licence has no website yet, which is treated as an empty list.
+ * The gateway answers like for a certificate since 2026-11-19: {order, items[0]} with items[0].subscription
+ * {begin, next_renewal while active | end once cancelled} and items[0].license (quotas, contact). Answers in the
+ * earlier flat shape (status, vendor_id, order_date, license at the top) are still read.
+ *
+ * Gateway / vendor issues worked around here (gateway-issues-codeguard-2026-11-13.md):
+ * - until the gateway dates are known (or for the flat shape, whose dates were wrong) the period is the order date
+ *   plus the term;
+ * - an empty or null "license" block does not erase what an earlier refresh found;
+ * - TheSSLStore prices 24 months at the 1 month price for most plans (CG-4): a term priced below a shorter one is not
+ *   offered (availableTerms, PricingService::remoteCost).
  */
 class CodeGuardService extends GatewayOrderService
 {
@@ -176,8 +181,8 @@ class CodeGuardService extends GatewayOrderService
     // ------------------------------------------------------------------ details
 
     /**
-     * The details call answers with its own shape - status, vendor_id, order_date, subscription and license at the
-     * top level - instead of the order / items of a certificate, so both are mapped here.
+     * Details answer: {order, items[0]} (since 2026-11-19, applyItem reads the licence and the dates), or the earlier
+     * flat shape - status, vendor_id, order_date and license at the top level.
      */
     protected static function applyDetails(array $stored, $response)
     {
@@ -212,15 +217,45 @@ class CodeGuardService extends GatewayOrderService
     }
 
     /**
-     * The order answer carries the gateway's subscription dates, which are wrong for CodeGuard (both a year ahead and
-     * equal to each other, reported 2026-11-13). They are dropped so nothing downstream shows them; the period comes
-     * from the order date and the term instead (period()).
+     * items[0] of the answer: the licence figures and the subscription dates (begin; next_renewal while the licence
+     * runs, end once it is cancelled). They are kept as subscriptionBegin / subscriptionEnd for period(); validFrom /
+     * validTill (certificate dates) are not used for a licence.
      */
     protected static function applyItem(array $stored, array $item)
     {
         unset($stored['validFrom'], $stored['validTill']);
 
+        // an empty answer must not erase what an earlier refresh found
+        $license = isset($item['license']) ? array_filter((array)$item['license'], function($value) { return $value !== null && $value !== ''; }) : [];
+        if($license)
+        {
+            $stored['license'] = $license;
+        }
+
+        $subscription = isset($item['subscription']) ? (array)$item['subscription'] : [];
+        $begin        = (string)($subscription['begin'] ?? '');
+        $end          = (string)($subscription['next_renewal'] ?? ($subscription['end'] ?? ''));
+        if($begin !== '' && strtotime($begin) && $end !== '' && strtotime($end) > strtotime($begin))
+        {
+            $stored['subscriptionBegin'] = date('Y-m-d', strtotime($begin));
+            $stored['subscriptionEnd']   = date('Y-m-d', strtotime($end));
+        }
+
         return $stored;
+    }
+
+    /**
+     * Terms the gateway sells, without one priced below a shorter term: TheSSLStore lists 24 months at the 1 month
+     * price for most CodeGuard plans (CG-4, 2026-11-19), which would sell two years for the price of one month.
+     */
+    public static function availableTerms($whmcsProductId)
+    {
+        $remote = static::remoteProduct($whmcsProductId);
+        $prices = ($remote && is_array($remote->rawData['prices'] ?? null)) ? $remote->rawData['prices'] : [];
+
+        return array_values(array_filter(parent::availableTerms($whmcsProductId), function($term) use ($prices) {
+            return !PricingService::underpricedTerm($prices, $term);
+        }));
     }
 
     /**
@@ -246,23 +281,35 @@ class CodeGuardService extends GatewayOrderService
     }
 
     /**
-     * Period of the licence as the client is shown it. The gateway's own subscription dates cannot be used (both are
-     * reported a year ahead and equal to each other), so the period is the order date plus the term that was bought.
+     * Period of the licence as the client is shown it: the gateway's subscription dates (begin - next renewal), else
+     * the order date plus the term that was bought. A paid renewal (renewal()) moves the end on before the vendor
+     * does: the later of the two ends is shown.
      *
      * @return array ['start' => Y-m-d, 'end' => Y-m-d] or [] while nothing is ordered
      */
     public static function period($serviceId)
     {
         $stored = static::stored($serviceId);
-        $start  = (string)($stored['orderedAt'] ?? '');
-        $term   = (int)($stored['term'] ?? 0);
-        if($start === '' || $term <= 0)
+        if(!empty($stored['subscriptionBegin']) && !empty($stored['subscriptionEnd']))
         {
-            return [];
+            $start = (string)$stored['subscriptionBegin'];
+            $end   = (string)$stored['subscriptionEnd'];
         }
-        $start = date('Y-m-d', strtotime($start));
-        // a paid renewal moves the end on without touching the licence (renewal())
-        $end   = !empty($stored['periodEnd']) ? (string)$stored['periodEnd'] : date('Y-m-d', strtotime('+' . $term . ' months', strtotime($start)));
+        else
+        {
+            $ordered = (string)($stored['orderedAt'] ?? '');
+            $term    = (int)($stored['term'] ?? 0);
+            if($ordered === '' || $term <= 0)
+            {
+                return [];
+            }
+            $start = date('Y-m-d', strtotime($ordered));
+            $end   = date('Y-m-d', strtotime('+' . $term . ' months', strtotime($start)));
+        }
+        if(!empty($stored['periodEnd']) && (string)$stored['periodEnd'] > $end)
+        {
+            $end = (string)$stored['periodEnd'];
+        }
 
         return ['start' => $start, 'end' => $end];
     }
@@ -274,6 +321,68 @@ class CodeGuardService extends GatewayOrderService
     public static function licenseInfo($serviceId)
     {
         return (array)(static::stored($serviceId)['license'] ?? []);
+    }
+
+    /** licence figures shown, in this order (the contact, time zone and locale of the block are not) */
+    const LICENSE_FIGURES = ['website_count_used', 'website_count_limit', 'size_used', 'size_limit', 'backup_period', 'last_backup_date', 'past_due', 'over_quota'];
+
+    /**
+     * The licence figures readable: storage in KB / MB / GB, the backup period in days, the last backup as a date;
+     * "past due" and "over quota" only when they are true.
+     *
+     * @param string $daysText ':days: days' in the reader's language
+     * @return array key => string (true for past_due / over_quota)
+     */
+    public static function licenseFigures(array $license, $daysText = ':days: days')
+    {
+        $figures = [];
+        foreach(self::LICENSE_FIGURES as $key)
+        {
+            if(!array_key_exists($key, $license) || $license[$key] === null || $license[$key] === '')
+            {
+                continue;
+            }
+            $value = $license[$key];
+            if($key === 'past_due' || $key === 'over_quota')
+            {
+                if($value === true || $value === 1 || $value === '1' || $value === 'true')
+                {
+                    $figures[$key] = true;
+                }
+                continue;
+            }
+            if($key === 'size_used' || $key === 'size_limit')
+            {
+                $figures[$key] = self::bytes((float)$value);
+            }
+            elseif($key === 'backup_period')
+            {
+                $figures[$key] = str_replace(':days:', (string)(int)round((float)$value / 86400), $daysText);
+            }
+            elseif($key === 'last_backup_date')
+            {
+                $figures[$key] = strtotime((string)$value) ? date('Y-m-d H:i', strtotime((string)$value)) : (string)$value;
+            }
+            else
+            {
+                $figures[$key] = (string)(int)$value;
+            }
+        }
+
+        return $figures;
+    }
+
+    private static function bytes($bytes)
+    {
+        $units = ['B', 'KB', 'MB', 'GB', 'TB'];
+        $unit  = 0;
+        while($bytes >= 1024 && $unit < count($units) - 1)
+        {
+            $bytes /= 1024;
+            $unit++;
+        }
+
+        return rtrim(rtrim(number_format($bytes, 1, '.', ''), '0'), '.') . ' ' . $units[$unit];
     }
 
     // ------------------------------------------------------------------ client actions
@@ -295,8 +404,8 @@ class CodeGuardService extends GatewayOrderService
     }
 
     /**
-     * Websites the licence backs up. The gateway answers 500 while the licence has none (defect reported
-     * 2026-11-13), which is indistinguishable from an empty list here, so both give an empty list.
+     * Websites the licence backs up ([] when none). An error gives an empty list too (gateways before the CG-1 fix
+     * answered 500 for a licence without websites).
      */
     public static function websites($serviceId)
     {

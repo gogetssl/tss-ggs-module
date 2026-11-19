@@ -180,8 +180,42 @@ class PricingService
         return null;
     }
 
+    /**
+     * Whether the gateway prices a term below a shorter one of the same product - a price list error, the term is not
+     * offered. Seen for TheSSLStore CodeGuard (CG-4, 2026-11-19): 24 months at the 1 month price.
+     */
+    public static function underpricedTerm(array $prices, $term)
+    {
+        $own     = null;
+        $shorter = 0.0;
+        foreach($prices as $price)
+        {
+            $months = (int)($price['term'] ?? 0);
+            $value  = $price['base']['single']['selling'] ?? ($price['base']['wildcard']['selling'] ?? ($price['selling'] ?? null));
+            if($value === null || $months <= 0)
+            {
+                continue;
+            }
+            if($months === (int)$term)
+            {
+                $own = (float)$value;
+            }
+            elseif($months < (int)$term)
+            {
+                $shorter = max($shorter, (float)$value);
+            }
+        }
+
+        return $own !== null && $own < $shorter;
+    }
+
     public function remoteCost(?array $remote, $item, $term)
     {
+        // CodeGuard: a term priced below a shorter one is a price list error (underpricedTerm), not sold
+        if(($remote['category'] ?? '') === CodeGuardService::CATEGORY && self::underpricedTerm((array)($remote['prices'] ?? []), $term))
+        {
+            return null;
+        }
         if($item === MainDomain::PRICE_ITEM)
         {
             return MainDomain::wildcardCost($remote, (int)$term);

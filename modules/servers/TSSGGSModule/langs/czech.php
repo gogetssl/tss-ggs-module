@@ -805,6 +805,9 @@ $_LANG['serverCA']['home']['codeGuardLicense_size_used']           = 'Využité 
 $_LANG['serverCA']['home']['codeGuardLicense_size_limit']          = 'Zahrnuté úložiště';
 $_LANG['serverCA']['home']['codeGuardLicense_backup_period']       = 'Interval zálohování';
 $_LANG['serverCA']['home']['codeGuardLicense_last_backup_date']    = 'Poslední záloha';
+$_LANG['serverCA']['home']['codeGuardLicense_past_due']              = 'Platba po splatnosti';
+$_LANG['serverCA']['home']['codeGuardLicense_over_quota']            = 'Překročena kvóta';
+$_LANG['serverCA']['home']['codeGuardDays']                          = ':days: dní';
 
 // Document signing (TheSSLStore): derived from the code signing texts
 $_LANG['serverCA']['home']['dsConfigurationIntro'] = 'Zadejte organizaci, administrativní kontakt a způsob doručení certifikátu.';
