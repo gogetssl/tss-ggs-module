@@ -29,7 +29,8 @@ class ProductSettings
             {
                 $stored['margin'] = $stored['commission'];
             }
-            self::$cache[$productId] = array_merge(self::DEFAULTS, array_intersect_key($stored, self::DEFAULTS));
+            // the client messages: HTML, also when stored encoded before 1.15.3 (App\Libs\MessageHtml)
+            self::$cache[$productId] = MessageHtml::read(array_merge(self::DEFAULTS, array_intersect_key($stored, self::DEFAULTS)));
         }
 
         return self::$cache[$productId];
@@ -41,6 +42,10 @@ class ProductSettings
 
         $data['months']     = in_array((int)$data['months'], self::MONTHS, true) ? (int)$data['months'] : 0;
         $data['margin']     = trim((string)$data['margin']) === '' ? '' : (string)(float)$data['margin'];
+        foreach(MessageHtml::KEYS as $key)
+        {
+            $data[$key] = MessageHtml::posted($data[$key]);
+        }
 
         AddonModule::updateOrInsert(
             ['module' => 'configuration_TSSGGSModule', 'setting' => 'product_' . (int)$productId],

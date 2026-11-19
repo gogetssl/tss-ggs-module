@@ -191,10 +191,10 @@ class SslSettingsProvider extends CrudProvider
         // an issued message box left with the built-in text stores nothing: the install follows the module's wording
         foreach($general as $key => $value)
         {
-            // WHMCS posts the fields HTML-encoded; these messages allow HTML and are shown as written
-            if($key === 'issuedMessage' || IssuedMessage::isTextKey($key))
+            // WHMCS posts the fields HTML-encoded; the client messages allow HTML and are shown as written
+            if(in_array($key, \ModulesGarden\TSSGGSModule\App\Libs\MessageHtml::KEYS, true) || IssuedMessage::isTextKey($key))
             {
-                $general[$key] = $value = html_entity_decode((string)$value, ENT_QUOTES, 'UTF-8');
+                $general[$key] = $value = \ModulesGarden\TSSGGSModule\App\Libs\MessageHtml::posted($value);
             }
             if(IssuedMessage::isTextKey($key) && preg_match('/^issuedMessage_([a-z]+)_(.+)$/', $key, $match))
             {

@@ -94,7 +94,8 @@ class GeneralSettings
         {
             $configuration  = (new AddonModuleRepository())->getModuleConfiguration();
             $saved          = isset($configuration['generalSettings']) && is_array($configuration['generalSettings']) ? $configuration['generalSettings'] : [];
-            self::$settings = array_merge(self::DEFAULTS, $saved);
+            // the client messages: HTML, also when stored encoded before 1.15.3 (App\Libs\MessageHtml)
+            self::$settings = MessageHtml::read(array_merge(self::DEFAULTS, $saved));
         }
 
         return self::$settings;
