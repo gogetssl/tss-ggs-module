@@ -1,3 +1,23 @@
+1.16.1 (2026-11-19)
+Automated SSL subscriptions: current gateway rules
+- Certificate renewals send the previous certificate as prior_certificate_id
+  only; the old field name is no longer part of the API.
+- ACME and Plan + Automate (ACME method): the EAB keys are shown once the
+  ACME account is active - the ACME server accepts them only then. Until
+  then the page says the account is being set up and reads the state again
+  on the next visit.
+- A subscription renewal the vendor could not charge (GoGetSSL: account
+  balance / card) is recognised: the client page says the renewal is being
+  processed, and the administrator gets an activity log entry - no new
+  certificates are issued until it is paid at the vendor.
+- Auto-renewal is shown as off when the vendor reports an end date instead of
+  a renewal date, and for cancelled subscriptions.
+- After "Stop auto-renewal" the subscription runs to its end date and the
+  vendor refuses a cancellation: both vendors now show the end date instead
+  of the Cancel button (TheSSLStore since 1.15.2), also on Plan + Automate.
+  The renewal task closes such a subscription at its end date without
+  trying to cancel it at the vendor.
+
 1.16.0 (2026-11-19)
 Issued SSL message per brand and language, CodeGuard licence details
 - Issued SSL message (Settings > SSL): a message of its own for Sectigo and
