@@ -330,6 +330,41 @@ class SslSettingsForm extends Form implements AdminAreaInterface, AjaxComponentI
     protected function messageFields($widget)
     {
         $this->builder->addFieldInContainer($widget, (new TextArea())->setName('processingGuide'), true);
+        // "Issued SSL Message for": a certificate family (App\Libs\IssuedMessage) and a language, or General. Only the
+        // chosen boxes are shown (resources/assets/js/custom/issuedMessageFor.js); the selectors have no name, so they
+        // are never saved. Each family / language box is prefilled with the built-in text (SslSettingsProvider::read)
+        $issued    = \ModulesGarden\TSSGGSModule\App\Libs\IssuedMessage::class;
+        $languages = $issued::languages();
+        $options   = '';
+        foreach($issued::FAMILIES as $family => $info)
+        {
+            $options .= '<option value="' . $family . '">' . htmlspecialchars($this->translate('issuedMessageFor_' . $family)) . '</option>';
+        }
+        $options  .= '<option value="general">' . htmlspecialchars($this->translate('issuedMessageForGeneral')) . '</option>';
+        $languageOptions = '';
+        foreach($languages as $language)
+        {
+            $languageOptions .= '<option value="' . htmlspecialchars($language) . '">' . htmlspecialchars(ucfirst($language)) . '</option>';
+        }
+        $widget->addElement((new Text())->setText(
+            '<div class="tssggs-issued-for lu-form-group" data-savebar-ignore>'
+            . '<div class="tssggs-issued-for__field"><label class="lu-form-label">' . htmlspecialchars($this->translate('issuedMessageFor')) . '</label>'
+            . '<select class="lu-form-control tssggs-issued-for__select">' . $options . '</select></div>'
+            . '<div class="tssggs-issued-for__field tssggs-issued-for__language"><label class="lu-form-label">' . htmlspecialchars($this->translate('issuedMessageLanguage')) . '</label>'
+            . '<select class="lu-form-control tssggs-issued-for__language-select">' . $languageOptions . '</select></div></div>'
+        ));
+        foreach(array_keys($issued::FAMILIES) as $family)
+        {
+            $this->builder->addFieldInContainer($widget, (new Switcher())->setName($issued::SWITCH_PREFIX . $family)->addClass('switcher-revert'), true);
+            $brand = $this->translate('issuedMessageFor_' . $family);
+            foreach($languages as $language)
+            {
+                $hint = $issued::translated($language) ? 'issuedMessageText_description' : 'issuedMessageTextEnglish_description';
+                $this->builder->addFieldInContainer($widget, (new TextArea())->setName($issued::textKey($family, $language))
+                    ->setTitle(str_replace(['{brand}', '{language}'], [$brand, ucfirst($language)], $this->translate('issuedMessageText')))
+                    ->setDescription($this->translate($hint)), true);
+            }
+        }
         $this->builder->addFieldInContainer($widget, (new TextArea())->setName('issuedMessage'), true);
         $this->builder->addFieldInContainer($widget, (new Dropdown())->setName('certificateEmailTemplate'), true);
     }

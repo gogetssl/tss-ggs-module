@@ -53,7 +53,8 @@
 
     ['input', 'change'].forEach(function (type) {
         document.addEventListener(type, function (e) {
-            if (inScreen(e.target) && !(e.target.closest && e.target.closest('.tssggs-savebar'))) {
+            // [data-savebar-ignore]: view controls that are not saved (e.g. the Issued SSL Message selector)
+            if (inScreen(e.target) && !(e.target.closest && e.target.closest('.tssggs-savebar, [data-savebar-ignore]'))) {
                 setState('dirty');
             }
         }, true);
@@ -62,7 +63,7 @@
     // the selects are selectize widgets: they announce a change with a jQuery event, which a native listener does not see
     if (window.jQuery) {
         window.jQuery(document).on('change', 'form select', function () {
-            if (inScreen(this)) {
+            if (inScreen(this) && !this.closest('[data-savebar-ignore]')) {
                 setState('dirty');
             }
         });

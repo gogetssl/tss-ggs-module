@@ -4,6 +4,7 @@ namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Providers;
 
 use ModulesGarden\TSSGGSModule\App\Libs\AutoInstallHelpers;
 use ModulesGarden\TSSGGSModule\App\Libs\GeneralSettings;
+use ModulesGarden\TSSGGSModule\App\Libs\IssuedMessage;
 use ModulesGarden\TSSGGSModule\App\Libs\RenewalPolicy;
 use ModulesGarden\TSSGGSModule\App\Libs\Helpers;
 use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
@@ -97,6 +98,16 @@ class SslSettingsProvider extends CrudProvider
         {
             $this->data[$key] = in_array($key, GeneralSettingsProvider::SWITCHES, true) ? GeneralSettings::enabled($key) : $value;
         }
+        // issued SSL message of each family: what applies, and each language box with the text the client would get
+        foreach(array_keys(IssuedMessage::FAMILIES) as $family)
+        {
+            $this->data[IssuedMessage::SWITCH_PREFIX . $family] = IssuedMessage::enabled($family);
+            foreach(IssuedMessage::languages() as $language)
+            {
+                $stored = IssuedMessage::stored($family, $language);
+                $this->data[IssuedMessage::textKey($family, $language)] = $stored !== '' ? $stored : IssuedMessage::builtin($family, $language);
+            }
+        }
         // what applies: an install that never saved it keeps the choice it made for SSL before 1.5.0
         $this->data['renewReuseOrderDetails'] = RenewalPolicy::reuseDetails();
         // as a string: the dropdown takes a numeric 0 for "nothing chosen"
@@ -176,12 +187,25 @@ class SslSettingsProvider extends CrudProvider
 
         // fields of the general store (downloads, messages, due dates ...) go there, the rest into the SSL settings; both
         // are merged into what is stored, so a page that shows only part of the settings keeps the others
-        $general = array_intersect_key($data, GeneralSettings::DEFAULTS);
+        $general = GeneralSettings::pick($data);
+        // an issued message box left with the built-in text stores nothing: the install follows the module's wording
+        foreach($general as $key => $value)
+        {
+            // WHMCS posts the fields HTML-encoded; the client messages allow HTML and are shown as written
+            if(in_array($key, \ModulesGarden\TSSGGSModule\App\Libs\MessageHtml::KEYS, true) || IssuedMessage::isTextKey($key))
+            {
+                $general[$key] = $value = \ModulesGarden\TSSGGSModule\App\Libs\MessageHtml::posted($value);
+            }
+            if(IssuedMessage::isTextKey($key) && preg_match('/^issuedMessage_([a-z]+)_(.+)$/', $key, $match))
+            {
+                $general[$key] = IssuedMessage::toStore($match[1], $match[2], $value);
+            }
+        }
         if($general)
         {
             GeneralSettingsProvider::saveGeneral($general);
         }
-        (new AddonModuleRepository)->saveSslSettings(array_diff_key($data, GeneralSettings::DEFAULTS));
+        (new AddonModuleRepository)->saveSslSettings(array_diff_key($data, $general));
         // the dashboard's "Check renewal settings" step
         NextStepsWidget::markDone(NextStepsWidget::STEP_RENEWALS);
     }

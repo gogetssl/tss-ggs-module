@@ -774,6 +774,7 @@ $_LANG['aisInstallMethodChanged'] = 'Se ha cambiado el método de instalación.'
 $_LANG['aisInvalidInstallMethod'] = 'Elija AutoInstall SSL o ACME.';
 $_LANG['subscriptionAlreadyCancelled'] = 'La suscripción ya está cancelada.';
 $_LANG['acmeCancelledAtPeriodEnd'] = 'La renovación automática ya está detenida: la suscripción finaliza al término de su periodo y no se puede cancelar antes.';
+$_LANG['issuedMessageDefault'] = 'Su certificado SSL se ha emitido y está listo para instalar. Descargue el certificado (CRT) e instálelo junto con la clave privada creada con su CSR. Siga las :link_start:guías de instalación oficiales de :brand::link_end:.';
 $_LANG['acme_slots_invoice_created'] = 'Se ha creado una factura por los dominios adicionales. Los dominios se añaden en cuanto se pague.';
 
 // CodeGuard (website backup, TheSSLStore)
