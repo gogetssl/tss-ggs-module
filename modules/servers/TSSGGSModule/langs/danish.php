@@ -806,6 +806,9 @@ $_LANG['serverCA']['home']['codeGuardLicense_size_used']           = 'Anvendt la
 $_LANG['serverCA']['home']['codeGuardLicense_size_limit']          = 'Inkluderet lagerplads';
 $_LANG['serverCA']['home']['codeGuardLicense_backup_period']       = 'Sikkerhedskopieringsinterval';
 $_LANG['serverCA']['home']['codeGuardLicense_last_backup_date']    = 'Seneste sikkerhedskopi';
+$_LANG['serverCA']['home']['codeGuardLicense_past_due']              = 'Betaling forfalden';
+$_LANG['serverCA']['home']['codeGuardLicense_over_quota']            = 'Kvote overskredet';
+$_LANG['serverCA']['home']['codeGuardDays']                          = ':days: dage';
 
 // Document signing (TheSSLStore): derived from the code signing texts
 $_LANG['serverCA']['home']['dsConfigurationIntro'] = 'Angiv din organisation, den administrative kontakt og hvordan du vil modtage certifikatet.';
