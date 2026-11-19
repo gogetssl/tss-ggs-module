@@ -48,6 +48,7 @@
                 {/if}
             </div>
             {if $endsAtPeriodEnd}<p class="tssggs-note" id="acme-ends-note">{$endsAtPeriodEndNote}</p>{/if}
+            {if $renewalUnpaid}<p class="tssggs-note" id="acme-renewal-unpaid">{$MGLANG->T('subscriptionRenewalUnpaid')}</p>{/if}
         </div>
     </section>
 
@@ -81,8 +82,12 @@
             </h4>
             <dl class="tssggs-dl">
                 <dt>{$MGLANG->T('acmeAccountId')}</dt><dd class="tssggs-mono">{$subscription->acme_account_id|escape}</dd>
+                {if $acmeKeysUsable}
                 <dt>{$MGLANG->T('acmeEabKid')}</dt><dd class="tssggs-mono">{$subscription->eab_kid|escape}</dd>
                 <dt>{$MGLANG->T('acmeEabHmacKey')}</dt><dd class="tssggs-mono" style="word-break:break-all;">{$subscription->eab_hmac_key|escape}</dd>
+                {else}
+                <dt>{$MGLANG->T('acmeEabKid')}</dt><dd>{$MGLANG->T('acmeKeysPending')}</dd>
+                {/if}
                 <dt>{$MGLANG->T('acmeServerUrl')}</dt><dd class="tssggs-mono" style="word-break:break-all;">{$subscription->server_url|escape}</dd>
             </dl>
         </section>

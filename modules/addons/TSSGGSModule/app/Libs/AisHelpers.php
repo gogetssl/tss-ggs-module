@@ -40,6 +40,7 @@ class AisHelpers
      */
     public static function ensureColumns()
     {
+        SubscriptionState::ensureColumns();
         if(self::$columnsChecked)
         {
             return;
@@ -73,8 +74,9 @@ class AisHelpers
             return;
         }
 
-        $api     = Helpers::getApiByServiceId($serviceId);
-        $details = $api->getAisDetails((int)$subscription->ais_item_id);
+        $wasUnpaid = SubscriptionState::renewalUnpaid($subscription);
+        $api       = Helpers::getApiByServiceId($serviceId);
+        $details   = $api->getAisDetails((int)$subscription->ais_item_id);
 
         $orderStatus = isset($details['order']['status']) ? $details['order']['status'] : $subscription->status;
         $items       = isset($details['items']) && is_array($details['items']) ? $details['items'] : [];
@@ -95,6 +97,10 @@ class AisHelpers
             $subscription->period_end = $subData['end'];
             $subscription->auto_renew = 0;
         }
+        if(in_array(strtolower((string)$orderStatus), SubscriptionState::CLOSED, true))
+        {
+            $subscription->auto_renew = 0;
+        }
         // the method the vendor reports (none reported: AutoInstall SSL, the default)
         $method = strtolower((string)($firstItem['install_method'] ?? ($autoinstall['installation_method'] ?? '')));
         $subscription->install_method = strpos($method, 'acme') !== false ? self::METHOD_ACME : self::METHOD_AUTOINSTALL;
@@ -106,8 +112,11 @@ class AisHelpers
             $subscription->eab_kid         = isset($account['eab_mac_id']) ? (string)$account['eab_mac_id'] : $subscription->eab_kid;
             $subscription->eab_hmac_key    = isset($account['eab_mac_key']) ? (string)$account['eab_mac_key'] : $subscription->eab_hmac_key;
             $subscription->server_url      = isset($account['server_url']) ? (string)$account['server_url'] : $subscription->server_url;
+            $accountStatus                 = SubscriptionState::accountStatus($firstItem);
+            $subscription->account_status  = $accountStatus !== '' ? $accountStatus : $subscription->account_status;
         }
         $subscription->save();
+        SubscriptionState::reportUnpaidRenewal($serviceId, $wasUnpaid, $subscription);
 
         $sslOrder = SSL::getByServiceId($serviceId);
         if($sslOrder)

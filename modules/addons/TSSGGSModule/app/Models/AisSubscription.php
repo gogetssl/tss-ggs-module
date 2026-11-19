@@ -30,6 +30,7 @@ class AisSubscription extends ExtendedEloquentModel
         'eab_kid',
         'eab_hmac_key',
         'server_url',
+        'account_status',
     ];
 
     protected $casts = [

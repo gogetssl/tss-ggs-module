@@ -203,7 +203,7 @@ class Renew
         // (refused: the caller asks the client for new details instead)
         \ModulesGarden\TSSGGSModule\App\Libs\MainDomain::assertCommonName((int)$serviceId, (string)($requestRenew['common_name']['name'] ?? ''));
 
-        $requestRenew['renewal']['prior_order_id'] = $requestRenew['renewal']['prior_certificate_id'] = $sslOrder->remoteid;
+        $requestRenew['renewal']['prior_certificate_id'] = $sslOrder->remoteid;
         $requestRenew['renewal']['remaining_days'] = CertificateService::renewalDays($serviceId, $days > 0 ? $days + 1 : 0);
 
         try

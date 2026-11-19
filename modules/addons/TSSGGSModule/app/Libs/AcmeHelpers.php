@@ -194,6 +194,8 @@ class AcmeHelpers
             throw new \Exception(Lang::absoluteT('subscription_was_not_created_yet'));
         }
 
+        SubscriptionState::ensureColumns();
+        $wasUnpaid  = SubscriptionState::renewalUnpaid($subscription);
         $apiOrderId = (int)$subscription->api_order_id;
         $api        = Helpers::getApiByServiceId($serviceId);
 
@@ -209,7 +211,17 @@ class AcmeHelpers
         $periodStart      = isset($subscriptionData['begin']) ? $subscriptionData['begin'] : $subscription->period_start;
         $periodEnd        = isset($subscriptionData['end']) ? $subscriptionData['end'] : $subscription->period_end;
         $renewalDate      = isset($subscriptionData['next_renewal']) ? $subscriptionData['next_renewal'] : $subscription->renewal_date;
-        $autoRenew        = isset($subscriptionData['next_renewal']) ? 1 : (int)$subscription->auto_renew;
+        // next_renewal while auto-renewal is on, end once it is off; no block at all = no period now (before the first
+        // one, or a renewal the vendor could not charge): the stored dates stay
+        if($subscriptionData)
+        {
+            $autoRenew = isset($subscriptionData['next_renewal']) ? 1 : 0;
+        }
+        else
+        {
+            $autoRenew = in_array(strtolower((string)$orderStatus), SubscriptionState::CLOSED, true) ? 0 : (int)$subscription->auto_renew;
+        }
+        $accountStatus    = SubscriptionState::accountStatus($firstItem);
 
         $subscription->status          = $orderStatus;
         $subscription->acme_id         = $acmeId > 0 ? $acmeId : null;
@@ -217,11 +229,13 @@ class AcmeHelpers
         $subscription->eab_kid         = isset($account['eab_mac_id']) ? (string)$account['eab_mac_id'] : (string)$subscription->eab_kid;
         $subscription->eab_hmac_key    = isset($account['eab_mac_key']) ? (string)$account['eab_mac_key'] : (string)$subscription->eab_hmac_key;
         $subscription->server_url      = isset($account['server_url']) ? (string)$account['server_url'] : (string)$subscription->server_url;
+        $subscription->account_status  = $accountStatus !== '' ? $accountStatus : $subscription->account_status;
         $subscription->period_start    = $periodStart;
         $subscription->period_end      = $periodEnd;
         $subscription->renewal_date    = $renewalDate;
         $subscription->auto_renew      = $autoRenew;
         $subscription->save();
+        SubscriptionState::reportUnpaidRenewal($serviceId, $wasUnpaid, $subscription);
 
         $sslOrder = SSL::getByServiceId($serviceId);
 

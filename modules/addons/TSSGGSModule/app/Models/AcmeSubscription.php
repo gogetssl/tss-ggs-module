@@ -21,6 +21,7 @@ class AcmeSubscription extends ExtendedEloquentModel
         'eab_kid',
         'eab_hmac_key',
         'server_url',
+        'account_status',
         'period_start',
         'period_end',
         'renewal_date',

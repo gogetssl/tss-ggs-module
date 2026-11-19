@@ -131,9 +131,12 @@ trait AcmeActions
         $userId       = (int)$input['params']['userid'];
         $sslService   = SSL::getByServiceId($serviceId);
         $product      = Product::find((int)$input['params']['pid']);
+        \ModulesGarden\TSSGGSModule\App\Libs\SubscriptionState::ensureColumns();
         $subscription = AcmeSubscription::where('service_id', $serviceId)->first();
 
-        if($subscription && (int)$subscription->api_order_id > 0 && strtolower((string)$subscription->status) !== 'active')
+        // not active yet, or its ACME account not active yet (the keys work only then): read the current state
+        if($subscription && (int)$subscription->api_order_id > 0 && (strtolower((string)$subscription->status) !== 'active'
+            || ((string)$subscription->eab_kid !== '' && strtolower((string)$subscription->account_status) !== 'active')))
         {
             try
             {
@@ -194,16 +197,13 @@ trait AcmeActions
         $vars['availableSingleSlots']   = $availableSingleSlots;
         $vars['availableWildcardSlots'] = $availableWildcardSlots;
         $vars['canAddDomains']          = $canAddDomains;
-        // TheSSLStore: stopping auto renewal already cancels the subscription at the end of its period, a later cancel
-        // is refused (gateway GGS-3, 2026-11-17) - the page shows the end date instead of the Cancel button
+        // auto renewal stopped: the subscription ends with its period and a cancel is refused (GGS-3, both vendors) -
+        // the page shows the end date instead of the Cancel button
         $vars['endsAtPeriodEnd']        = $this->endsAtPeriodEnd($serviceId, $subscription);
-        $vars['endsAtPeriodEndNote']    = '';
-        if($vars['endsAtPeriodEnd'])
-        {
-            $end  = (string)($subscription->period_end ?: $subscription->renewal_date);
-            $time = $end !== '' && strpos($end, '0000-00-00') !== 0 ? strtotime($end) : false;
-            $vars['endsAtPeriodEndNote'] = str_replace(':date:', $time ? date('F j, Y', $time) : '-', Lang::absoluteT('serverCA', 'home', 'acmeEndsAtPeriodEnd'));
-        }
+        $vars['endsAtPeriodEndNote']    = $vars['endsAtPeriodEnd'] ? str_replace(':date:', \ModulesGarden\TSSGGSModule\App\Libs\SubscriptionState::periodEndText($subscription), Lang::absoluteT('serverCA', 'home', 'acmeEndsAtPeriodEnd')) : '';
+        // the EAB keys work only once the ACME account is active; a renewal the vendor could not charge stops new certificates
+        $vars['acmeKeysUsable']         = \ModulesGarden\TSSGGSModule\App\Libs\SubscriptionState::keysUsable($subscription);
+        $vars['renewalUnpaid']          = \ModulesGarden\TSSGGSModule\App\Libs\SubscriptionState::renewalUnpaid($subscription);
         $vars['configurationStatus']    = $sslService ? $sslService->status : null;
         $vars['configurationURL']       = 'clientarea.php?action=productdetails&id=' . $serviceId . '&acmeconfig=1';
 
@@ -850,19 +850,12 @@ trait AcmeActions
     }
 
     /**
-     * TheSSLStore subscription whose auto renewal is stopped: TheSSLStore treats that as the cancellation at the end of
-     * the period and refuses any later cancel. GoGetSSL has no such limit.
+     * Subscription whose auto renewal is stopped: it runs to the end of its period and the gateway refuses a cancel
+     * (GGS-3) - TheSSLStore since 2026-11-17, documented for both vendors since 2026-11-19.
      */
     private function endsAtPeriodEnd($serviceId, $subscription)
     {
-        if(!$subscription || (int)$subscription->api_order_id <= 0 || (int)$subscription->auto_renew === 1
-           || in_array(strtolower((string)$subscription->status), ['cancelled', 'terminated'], true))
-        {
-            return false;
-        }
-        list($vendor) = \ModulesGarden\TSSGGSModule\App\Libs\FreeName::productOfService($serviceId);
-
-        return strtoupper(trim($vendor)) === 'TSS';
+        return \ModulesGarden\TSSGGSModule\App\Libs\SubscriptionState::endsAtPeriodEnd($subscription);
     }
 
     /**

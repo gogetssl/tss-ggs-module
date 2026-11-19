@@ -57,7 +57,9 @@ trait AisActions
         AisHelpers::ensureColumns();
         $subscription = AisSubscription::getByServiceId($serviceId);
 
-        if($subscription && (int)$subscription->api_order_id > 0 && strtolower((string)$subscription->status) !== 'active')
+        // not active yet, or switched to ACME with an ACME account not active yet (the keys work only then)
+        if($subscription && (int)$subscription->api_order_id > 0 && (strtolower((string)$subscription->status) !== 'active'
+            || ((string)$subscription->eab_kid !== '' && strtolower((string)$subscription->account_status) !== 'active')))
         {
             try
             {
@@ -82,6 +84,11 @@ trait AisActions
         $vars['aisCanSwitch']       = AisHelpers::METHOD_SWITCH_AVAILABLE;
         $vars['configurationStatus'] = $sslService ? $sslService->status : null;
         $vars['configurationURL']   = 'clientarea.php?action=productdetails&id=' . $serviceId . '&aisconfig=1';
+        // auto renewal stopped: the subscription ends with its period, a cancel is refused (GGS-3) - the end date is shown
+        $vars['endsAtPeriodEnd']     = \ModulesGarden\TSSGGSModule\App\Libs\SubscriptionState::endsAtPeriodEnd($subscription);
+        $vars['endsAtPeriodEndNote'] = $vars['endsAtPeriodEnd'] ? str_replace(':date:', \ModulesGarden\TSSGGSModule\App\Libs\SubscriptionState::periodEndText($subscription), Lang::absoluteT('serverCA', 'home', 'acmeEndsAtPeriodEnd')) : '';
+        $vars['acmeKeysUsable']      = \ModulesGarden\TSSGGSModule\App\Libs\SubscriptionState::keysUsable($subscription);
+        $vars['renewalUnpaid']       = \ModulesGarden\TSSGGSModule\App\Libs\SubscriptionState::renewalUnpaid($subscription);
 
         if($vars['configurationStatus'] === 'Awaiting Configuration')
         {
@@ -242,6 +249,10 @@ trait AisActions
         if(in_array(strtolower((string)$subscription->status), ['cancelled', 'terminated'], true))
         {
             throw new \Exception(Lang::absoluteT('subscriptionAlreadyCancelled'));
+        }
+        if(\ModulesGarden\TSSGGSModule\App\Libs\SubscriptionState::endsAtPeriodEnd($subscription))
+        {
+            throw new \Exception(Lang::absoluteT('acmeCancelledAtPeriodEnd'));
         }
 
         // without the vendor's item ID nothing can be cancelled there: never report a cancellation

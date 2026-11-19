@@ -219,7 +219,6 @@ class RenewalPolicy
         $left = !empty($data['prior_end']) ? (int)floor((strtotime((string)$data['prior_end']) - time()) / 86400) : 0;
 
         return [
-            'prior_order_id'       => (string)$data['prior_item'],
             'prior_certificate_id' => (string)$data['prior_item'],
             'remaining_days'       => CertificateService::renewalDays((int)($data['prior_service'] ?? $serviceId), $left > 0 ? $left + 1 : 0),
         ];
