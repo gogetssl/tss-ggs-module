@@ -24,9 +24,7 @@ use WHMCS\Database\Capsule;
  * Gateway / vendor issues worked around here (gateway-issues-codeguard-2026-11-13.md):
  * - until the gateway dates are known (or for the flat shape, whose dates were wrong) the period is the order date
  *   plus the term;
- * - an empty or null "license" block does not erase what an earlier refresh found;
- * - TheSSLStore prices 24 months at the 1 month price for most plans (CG-4): a term priced below a shorter one is not
- *   offered (availableTerms, PricingService::remoteCost).
+ * - an empty or null "license" block does not erase what an earlier refresh found.
  */
 class CodeGuardService extends GatewayOrderService
 {
@@ -242,20 +240,6 @@ class CodeGuardService extends GatewayOrderService
         }
 
         return $stored;
-    }
-
-    /**
-     * Terms the gateway sells, without one priced below a shorter term: TheSSLStore lists 24 months at the 1 month
-     * price for most CodeGuard plans (CG-4, 2026-11-19), which would sell two years for the price of one month.
-     */
-    public static function availableTerms($whmcsProductId)
-    {
-        $remote = static::remoteProduct($whmcsProductId);
-        $prices = ($remote && is_array($remote->rawData['prices'] ?? null)) ? $remote->rawData['prices'] : [];
-
-        return array_values(array_filter(parent::availableTerms($whmcsProductId), function($term) use ($prices) {
-            return !PricingService::underpricedTerm($prices, $term);
-        }));
     }
 
     /**
