@@ -1,3 +1,11 @@
+1.16.2 (2026-11-20)
+TheSSLStore X9 PKI held back
+- TheSSLStore X9 PKI (x9_pki) is no longer offered for import and is not
+  imported automatically by the catalogue sync: TheSSLStore refuses an X9
+  order with additional domains (SANs), although the product lists them.
+  It returns once TheSSLStore accepts SANs. A WHMCS product imported
+  earlier stays as it is. GoGetSSL X9 PKI is not affected.
+
 1.16.1 (2026-11-19)
 Automated SSL subscriptions: current gateway rules
 - Certificate renewals send the previous certificate as prior_certificate_id
