@@ -154,6 +154,19 @@ class AddonModuleRepository
         return time() - strtotime((string)$cronCheck->last_run) >= $interval - 60;
     }
 
+    /**
+     * Every stored credential, also of a vendor that is not connected (getModuleConfiguration() hides those): the
+     * settings form shows its partner code and keeps its token, so connecting needs no retyping
+     *
+     * @return array vendor => fields
+     */
+    public function storedCredentials()
+    {
+        $stored = AddonModule::where('module', 'configuration_TSSGGSModule')->where('setting', 'credentials')->value('value');
+
+        return $stored ? (json_decode(\decrypt($stored), true) ?: []) : [];
+    }
+
     public function saveCredentials($sslStoreLivePartnerCode, $sslStoreLiveAuthToken, $goGetSslLivePartnerCode, $goGetSslLiveAuthToken,$sslStoreTestPartnerCode, $sslStoreTestAuthToken, $operationMode)
     {
         $sslStoreLivePartnerCode = trim($sslStoreLivePartnerCode);

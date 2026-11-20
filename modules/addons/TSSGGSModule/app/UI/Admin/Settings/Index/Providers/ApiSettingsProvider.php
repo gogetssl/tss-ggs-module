@@ -29,7 +29,7 @@ class ApiSettingsProvider extends CrudProvider
     {
         // empty vendor blocks are prefilled from the legacy modules chosen for migration (nothing stored until saved)
         [$credentials] = Credentials::prefilled();
-        $stored        = (new AddonModuleRepository())->getModuleConfiguration()['credentials'] ?? [];
+        $stored        = (new AddonModuleRepository())->storedCredentials();
 
         $show = function($vendor, $field) use ($credentials, $stored) {
             $value = (string)($credentials[$vendor][$field] ?? '');
@@ -45,6 +45,19 @@ class ApiSettingsProvider extends CrudProvider
         $this->data['OperationMode']      = $credentials['tss']['OperationMode'];
 
         $this->data['ggsLivePartnerCode'] = $credentials['ggs']['PartnerCode'];
+
+        // a vendor that is not connected keeps its stored credentials: its partner code is shown, so the admin only
+        // switches Connect to Yes (the stored token is kept, see token())
+        foreach(['ggs' => ['ggsLivePartnerCode' => 'PartnerCode'], 'tss' => ['tssLivePartnerCode' => 'PartnerCode', 'tssTestPartnerCode' => 'TestPartnerCode', 'OperationMode' => 'OperationMode']] as $vendor => $fields)
+        {
+            foreach($fields as $field => $storedField)
+            {
+                if((string)($this->data[$field] ?? '') === '' && (string)($stored[$vendor][$storedField] ?? '') !== '')
+                {
+                    $this->data[$field] = $stored[$vendor][$storedField];
+                }
+            }
+        }
         $this->data['ggsLiveAuthToken']   = $show('ggs', 'AuthToken');
 
         // the other vendor's products (Settings > API, "Connect ... products")
@@ -80,7 +93,7 @@ class ApiSettingsProvider extends CrudProvider
         {
             return $value;
         }
-        $credentials = (new AddonModuleRepository())->getModuleConfiguration()['credentials'] ?? [];
+        $credentials = (new AddonModuleRepository())->storedCredentials();
 
         return (string)($credentials[$vendor][$storedField] ?? '');
     }
