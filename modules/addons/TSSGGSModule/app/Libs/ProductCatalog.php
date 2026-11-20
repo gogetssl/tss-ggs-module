@@ -26,6 +26,13 @@ class ProductCatalog
     const NOT_SSL_NAMES = '/docsign|document\s+signing|\b(common|verified)\s+mark\b|\b(cmc|vmc)\b/i';
 
     /**
+     * Gateway products held back until a vendor / gateway defect is fixed (vendor => remote ids): not offered for
+     * import, not imported automatically. TheSSLStore X9 PKI (x9_pki): the catalogue lists up to 250 SANs, but an order
+     * with SANs is refused with TSS-9005 "Product is not supporting SAN" (sandbox 2026-11-19, tracker X9-1).
+     */
+    const HELD_BACK = ['TSS' => ['x9_pki']];
+
+    /**
      * The module can sell the gateway product: SSL/TLS, ACME, AutoInstall SSL, S/MIME, GoGetSSL hardware code signing
      * and TheSSLStore CodeGuard. Cloud code signing, document signing, mark certificates and the other website
      * security services (SiteLock, cWatch) are not supported.
@@ -34,6 +41,10 @@ class ProductCatalog
     {
         $category = strtolower((string)$remoteProduct->category);
         if(!in_array($category, self::SUPPORTED_CATEGORIES, true))
+        {
+            return false;
+        }
+        if(in_array(strtolower((string)$remoteProduct->remoteId), self::HELD_BACK[strtoupper((string)$remoteProduct->vendor)] ?? [], true))
         {
             return false;
         }
