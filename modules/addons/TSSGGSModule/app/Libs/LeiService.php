@@ -257,7 +257,8 @@ class LeiService extends GatewayOrderService
 
     protected static function clean($value)
     {
-        return trim(preg_replace('/\s+/u', ' ', (string)$value));
+        // WHMCS hands request data HTML-encoded (" arrives as &quot;): the gateway gets the plain text
+        return trim(preg_replace('/\s+/u', ' ', html_entity_decode((string)$value, ENT_QUOTES | ENT_HTML5, 'UTF-8')));
     }
 
     protected static function allowed($value)
