@@ -154,7 +154,7 @@
                 payload = {ldelim}result: 'error'{rdelim};
             }
             if (payload.result === 'error') {
-                alerts.html($('<div class="alert alert-danger" role="alert"></div>').text(payload.error || '{$MGLANG->T('smimeErrorOccurred')|escape:'javascript'}'));
+                alerts.html($('<div class="alert alert-danger" role="alert"></div>').html(payload.error || '{$MGLANG->T('smimeErrorOccurred')|escape:'javascript'}'));
                 btn.prop('disabled', false);
                 return;
             }

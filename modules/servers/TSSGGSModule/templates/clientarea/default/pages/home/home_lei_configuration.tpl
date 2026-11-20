@@ -234,7 +234,7 @@
             box.append(list);
         }, function (message) {
             btn.prop('disabled', false);
-            box.html($('<div class="alert alert-danger" role="alert"></div>').text(message));
+            box.html($('<div class="alert alert-danger" role="alert"></div>').html(message));
         });
     });
     $(document).on('click', '[data-tssggs-lei-pick]', function () {
@@ -279,7 +279,7 @@
         data.push({ldelim}name: 'token', value: '{$csrfToken}'{rdelim});
 
         function fail(message) {
-            alerts.html($('<div class="alert alert-danger" role="alert"></div>').text(message));
+            alerts.html($('<div class="alert alert-danger" role="alert"></div>').html(message));
             btn.prop('disabled', false);
             label.text(text);
             window.scrollTo(0, alerts.offset().top - 90);
