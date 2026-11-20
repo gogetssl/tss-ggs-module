@@ -21,7 +21,7 @@
             <div class="tssggs-hero__title">
                 <span class="tssggs-badge tssggs-badge--{$aisTone}">{$aisStatus|capitalize|escape}</span>
                 <h3>{$productName|escape}</h3>
-                {if $subscription && $subscription->autoinstall_status}
+                {if $subscription && $subscription->autoinstall_status && $aisInstallMethod != 'acme'}
                     <p class="tssggs-hero__domain">{$MGLANG->T('aisAutoinstallStatus')}: {$subscription->autoinstall_status|capitalize|escape}</p>
                 {/if}
             </div>
