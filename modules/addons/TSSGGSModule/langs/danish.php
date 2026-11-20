@@ -1504,6 +1504,10 @@ $_LANG['admin.emails.name_document_signing_certificate_issued'] = 'Dokumentsigne
 $_LANG['admin.emails.when_document_signing_certificate_issued'] = 'Sendes, når certifikatudstederen udsteder dokumentsigneringscertifikatet.';
 $_LANG['admin.emails.name_codeguard_licence_ready'] = 'CodeGuard-licens klar';
 $_LANG['admin.emails.when_codeguard_licence_ready'] = 'Sendes, når en CodeGuard-licens er sat op, med vejen til dens dashboard.';
+$_LANG['admin.emails.name_hackerguardian_pci_configuration_required'] = 'HackerGuardian PCI: bestillingsoplysninger påkrævet';
+$_LANG['admin.emails.when_hackerguardian_pci_configuration_required'] = 'Sendes, når en HackerGuardian PCI-tjeneste oprettes: kunden indtaster organisationen og administratoren af scanningskontoen.';
+$_LANG['admin.emails.name_hackerguardian_pci_scan_account_ready'] = 'HackerGuardian PCI-scanningskonto klar';
+$_LANG['admin.emails.when_hackerguardian_pci_scan_account_ready'] = 'Sendes, når scanningskontoen er oprettet, med brugernavn og login-side (adgangskoden står kun på tjenestesiden).';
 
 // certificate revoked / expired e-mails
 $_LANG['admin.emails.name_certificate_revoked'] = 'Certifikat tilbagekaldt';

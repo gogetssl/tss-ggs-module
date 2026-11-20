@@ -85,6 +85,10 @@ class AdminServicesTabFields
             {
                 return $this->getDocumentSigningDetails((int)$params['serviceid'], $sslService);
             }
+            if(CertificateService::category($params['serviceid']) === CertificateService::CATEGORY_PCI)
+            {
+                return $this->getPciDetails((int)$params['serviceid'], $sslService);
+            }
             if(CertificateService::category($params['serviceid']) !== CertificateService::CATEGORY_TLS)
             {
                 return [AdminText::get('vendor_item_id', '%%VENDOR%% Item ID') => (int)$sslService->remoteid];
@@ -209,6 +213,39 @@ class AdminServicesTabFields
         {
             $fields[AdminText::get('token_setup', 'Token set-up')] = '<a href="' . htmlspecialchars($stored['tokenSetupLink']) . '" target="_blank" rel="noopener">' . self::t('token_setup_page', 'Token set-up page') . '</a>';
         }
+
+        return $fields + $this->getSmimePreviousOrders($stored);
+    }
+
+    /**
+     * HackerGuardian PCI scan account on the module tab: status, order, organization, scanning period and the login of
+     * the scan control centre (TheSSLStore sends it only once, with the order)
+     */
+    private function getPciDetails($serviceId, $sslService)
+    {
+        $pci    = \ModulesGarden\TSSGGSModule\App\Libs\PciService::class;
+        $stored = $pci::stored($serviceId);
+        $status = (string)($stored['status'] ?? '');
+        $labels = ['active' => 'label-success', 'processing' => 'label-info', 'pending' => 'label-info', 'incomplete' => 'label-warning',
+                   'cancelled' => 'label-danger', 'rejected' => 'label-danger', 'failed' => 'label-danger', 'expired' => 'label-default'];
+        $login  = $pci::login($serviceId);
+        $admin  = (array)($stored['contacts']['administrator'] ?? []);
+
+        $fields = [];
+        $fields[AdminText::get('configuration_status', 'Configuration Status')] = htmlspecialchars($sslService->status);
+        $fields[AdminText::get('vendor_order', '%%VENDOR%% Order')] = self::orderLine($stored['orderId'] ?? 0, $stored['itemId'] ?? 0, $stored['vendorOrderId'] ?? '');
+        $fields[AdminText::get('vendor_status', 'Vendor Status')]   = self::vendorStatus($status, $labels, $stored['orderedAt'] ?? '', $stored['refreshedAt'] ?? '');
+        $fields[AdminText::get('organization', 'Organization')]     = htmlspecialchars((string)($stored['organization'] ?? '-'));
+        $fields[AdminText::get('pci_administrator', 'Administrator')] = $admin
+            ? htmlspecialchars(trim(($admin['first_name'] ?? '') . ' ' . ($admin['last_name'] ?? ''))) . ' &lt;' . htmlspecialchars((string)($admin['email'] ?? '')) . '&gt;'
+            : '-';
+        $fields[AdminText::get('pci_period', 'Scanning Period')] = (!empty($stored['validFrom']) ? htmlspecialchars(substr($stored['validFrom'], 0, 10)) : '-') . ' &rarr; '
+            . (!empty($stored['validTill']) ? htmlspecialchars(substr($stored['validTill'], 0, 10)) : '-');
+        $fields[AdminText::get('pci_login', 'Scan Control Centre Login')] = $login
+            ? '<code>' . htmlspecialchars($login['username']) . '</code> / <code class="tssggs-secret" style="cursor:pointer" title="' . htmlspecialchars(self::t('pci_click_to_show', 'Click to show')) . '" data-secret="'
+                . htmlspecialchars($login['password']) . '" onclick="this.textContent=this.getAttribute(\'data-secret\')">&bull;&bull;&bull;&bull;&bull;&bull;</code>'
+                . ' <a href="' . htmlspecialchars($pci::LOGIN_URL) . '" target="_blank" rel="noopener">' . htmlspecialchars($pci::LOGIN_URL) . '</a>'
+            : '-';
 
         return $fields + $this->getSmimePreviousOrders($stored);
     }
