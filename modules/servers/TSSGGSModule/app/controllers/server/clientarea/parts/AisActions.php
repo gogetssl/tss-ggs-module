@@ -112,7 +112,7 @@ trait AisActions
         $vars['isAisSubscription'] = true;
         $vars['productName']       = isset($product->name) ? $product->name : '';
         $vars['serviceDomain']     = $service ? $service->domain : '';
-        $vars['aisCanSwitch']      = AisHelpers::METHOD_SWITCH_AVAILABLE;
+        $vars['aisCanSwitch']      = AisHelpers::METHOD_ON_ORDER;
 
         return ['tpl' => 'home_ais_configuration', 'vars' => $vars];
     }
@@ -149,8 +149,8 @@ trait AisActions
             'domains'  => [$domain],
             'contacts' => $this->aisContacts($input['params'], (string)$input['params']['configoption1']),
         ];
-        // the method is sent once the gateway takes it (see AisHelpers::METHOD_SWITCH_AVAILABLE)
-        if(AisHelpers::METHOD_SWITCH_AVAILABLE && isset($input['install_method']) && $input['install_method'] === AisHelpers::METHOD_ACME)
+        // the method is sent once the gateway takes it on a new order (see AisHelpers::METHOD_ON_ORDER)
+        if(AisHelpers::METHOD_ON_ORDER && isset($input['install_method']) && $input['install_method'] === AisHelpers::METHOD_ACME)
         {
             $order['install_method'] = AisHelpers::METHOD_ACME;
         }
@@ -300,15 +300,31 @@ trait AisActions
         {
             throw new \Exception(Lang::absoluteT('aisSubscriptionNotCreatedYet'));
         }
+        if($subscription->install_method === $method)
+        {
+            return ['success' => true, 'message' => Lang::absoluteT('aisInstallMethodChanged')];
+        }
         if(!$this->acquireServiceLock($serviceId))
         {
             throw new \Exception(Lang::absoluteT('requestInProgress'));
         }
-
-        CertificateService::api($serviceId)->changeAisInstallMethod((int)$subscription->ais_item_id, $method);
-        AisHelpers::ensureColumns();
-        $subscription->install_method = $method;
-        $subscription->save();
+        try
+        {
+            CertificateService::api($serviceId)->changeAisInstallMethod((int)$subscription->ais_item_id, $method);
+            AisHelpers::ensureColumns();
+            $subscription->install_method = $method;
+            // the ACME account of an earlier switch is not this one: the details bring the new account (GoGetSSL: once it is
+            // registered, a few minutes later - the page shows it as being set up until then)
+            $subscription->acme_account_id = null;
+            $subscription->eab_kid         = null;
+            $subscription->eab_hmac_key    = null;
+            $subscription->server_url      = null;
+            $subscription->save();
+        }
+        finally
+        {
+            $this->releaseServiceLock($serviceId);
+        }
         CertificateService::event($serviceId, 'info', '[Subscription] Install method changed by the client: ' . $method);
 
         try

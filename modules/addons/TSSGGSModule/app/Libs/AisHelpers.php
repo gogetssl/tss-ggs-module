@@ -27,10 +27,21 @@ class AisHelpers
     const METHOD_ACME        = 'acme';
 
     /**
-     * The gateway does not switch the install method yet (requested from the gateway team, 2026-11-13): it ignores the
-     * method on a new order and has no switch call. While false the client sees neither the choice nor the switch.
+     * The client can switch the method of a placed subscription: PUT /certificates/ais/{item}/installation-method
+     * (gateway, 2026-11-20). TheSSLStore switches at once; GoGetSSL applies it within a few minutes - until then the
+     * details report the requested method with autoinstall.status "pending", and the ACME account appears once it is
+     * registered.
      */
-    const METHOD_SWITCH_AVAILABLE = false;
+    const METHOD_SWITCH_AVAILABLE = true;
+
+    /**
+     * The method chosen on the order form: the gateway still ignores a method on a new order (2026-11-20), so the form
+     * offers no choice - the client switches after the order instead.
+     */
+    const METHOD_ON_ORDER = false;
+
+    /** the module's method => the gateway's installation_method */
+    const GATEWAY_METHODS = [self::METHOD_AUTOINSTALL => 'ais', self::METHOD_ACME => 'acme'];
 
     protected static $columnsChecked = false;
 
