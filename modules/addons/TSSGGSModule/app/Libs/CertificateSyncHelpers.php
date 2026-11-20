@@ -46,7 +46,7 @@ class CertificateSyncHelpers
         // an empty answer must never replace what is stored
         if(empty($orderData['order']['status']))
         {
-            throw new Exception('%%VENDOR%% returned no status for order ' . $certificate['remoteid']);
+            throw new Exception(Edition::brandOf($certificate['configoption1'] ?? '') . ' returned no status for order ' . $certificate['remoteid']);
         }
 
         // Services configured before 1.2.4 store the API order ID in tblsslorders.remoteid; since 1.2.4 it is the

@@ -651,6 +651,11 @@ $_LANG['admin.automation_queue.index.data_tables.queue.forms.reset_task_form.upd
 $_LANG['admin.products.index.products_container.productsInfo'] = 'To import a product, please select it and click the Import button.';
 $_LANG['admin.products.about_title'] = 'What you will find here';
 $_LANG['admin.products.about_intro'] = 'The products of your %%VENDOR%% account. Import one to sell it in WHMCS; the Status column shows what state it is in.';
+$_LANG['admin.products.connect_title_ggs'] = 'Also sell GoGetSSL products';
+$_LANG['admin.products.connect_text_ggs'] = 'Connect your GoGetSSL account to offer GoGetSSL-brand DV, OV and EV certificates, GoGetSSL code signing and LEI codes. Products TheSSLStore also sells stay hidden, so nothing is imported twice.';
+$_LANG['admin.products.connect_title_tss'] = 'Also sell TheSSLStore products';
+$_LANG['admin.products.connect_text_tss'] = 'Connect your TheSSLStore account to offer SiteLock, cWatch and CodeGuard. Products GoGetSSL also sells stay hidden, so nothing is imported twice.';
+$_LANG['admin.products.connect_link'] = 'Connect in Settings > API';
 $_LANG['admin.products.about_import_name'] = 'Import';
 $_LANG['admin.products.about_import'] = 'Select products and click Import to create them in WHMCS.';
 $_LANG['admin.products.about_hide_name'] = 'Hide';
@@ -1244,6 +1249,13 @@ $_LANG['admin.settings.index.widgets.logs_settings_widget.subtitle']      = 'Cho
 
 $_LANG['admin.settings.index.forms.api_settings_form.tss_desc'] = 'Partner code and auth token of your The SSL Store account. Sandbox values are used in test mode.';
 $_LANG['admin.settings.index.forms.api_settings_form.ggs_desc'] = 'Partner code and auth token of your GoGetSSL account.';
+$_LANG['admin.settings.index.forms.api_settings_form.connect_ggs'] = 'Connect GoGetSSL products';
+$_LANG['admin.settings.index.forms.api_settings_form.connect_ggs_desc'] = 'Also sell GoGetSSL-brand DV, OV and EV certificates, GoGetSSL code signing and LEI codes with your GoGetSSL account. Products TheSSLStore also sells are not offered, so nothing is imported twice.';
+$_LANG['admin.settings.index.forms.api_settings_form.connect_tss'] = 'Connect TheSSLStore products';
+$_LANG['admin.settings.index.forms.api_settings_form.connect_tss_desc'] = 'Also sell SiteLock, cWatch and CodeGuard with your TheSSLStore account. Products GoGetSSL also sells are not offered, so nothing is imported twice.';
+$_LANG['admin.settings.index.forms.api_settings_form.connectOther'] = 'Connect';
+$_LANG['admin.settings.index.forms.api_settings_form.connectOther_description'] = 'On: the products above appear on the Products page for import. Off: they are hidden again (only possible while none of them is a WHMCS product).';
+$_LANG['admin.settings.index.providers.api_settings_provider.disconnectHasProducts'] = '%1$s can not be disconnected: %2$d WHMCS product(s) still use it. Delete or retire them first.';
 
 $_LANG['admin.settings.index.forms.general_settings_form.clientArea_desc'] = 'What clients see on their certificate pages.';
 $_LANG['admin.settings.index.forms.general_settings_form.interface_desc']  = 'How the module looks for administrators.';

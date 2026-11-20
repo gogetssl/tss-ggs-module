@@ -21,25 +21,29 @@ class GatewayWidget extends Card
 
     public function loadHtml(): void
     {
-        $vendor  = self::vendor();
+        // the edition's own vendor, and the connected one (Settings > API, "Connect ... products")
         $results = GatewayHealth::check(isset($_GET['recheck']));
-        $row     = $results[$vendor] ?? null;
         $api     = 'addonmodules.php?module=TSSGGSModule&mg-page=settings&settings-page=apiSettings';
-        $this->start('power-plug-outline', $this->translate('title'), '', $row && $row['ok'] ? 'ok' : 'bad');
-
-        if($row === null)
+        $allOk   = true;
+        $html    = '';
+        foreach(Edition::vendors() as $key)
         {
-            // the credentials of this edition's gateway are not entered
-            $html = Card::row('web', Helpers::vendorToDisplay($vendor), $this->translate('not_configured_detail'), Card::status('bad', $this->translate('not_configured'), 'alert-outline'));
-        }
-        else
-        {
+            $vendor = strtoupper($key);
+            $row    = $results[$vendor] ?? null;
+            $allOk  = $allOk && $row && $row['ok'];
+            if($row === null)
+            {
+                // the credentials of this vendor are not entered
+                $html .= Card::row('web', Helpers::vendorToDisplay($vendor), $this->translate('not_configured_detail'), Card::status('bad', $this->translate('not_configured'), 'alert-outline'));
+                continue;
+            }
             $state = $row['ok']
                 ? Card::status('ok', $this->translate('connected'), 'check')
                 : Card::status('bad', $this->translate('unreachable'), 'close', $row['error']);
-            $html  = Card::row('web', Helpers::vendorToDisplay($vendor), $row['ok'] ? '' : $row['error'], $state);
+            $html .= Card::row('web', Helpers::vendorToDisplay($vendor), $row['ok'] ? '' : $row['error'], $state);
             $html .= Card::row('clock-outline', $this->translate('response'), '', '<b>' . Card::e(number_format(((int)$row['ms']) / 1000, 1) . ' s') . '</b>');
         }
+        $this->start('power-plug-outline', $this->translate('title'), '', $allOk ? 'ok' : 'bad');
         $html .= Card::row('lock-outline', $this->translate('credentials'), $this->translate('credentials_detail'), Card::button($api, $this->translate('manage')));
         $this->addElement(Card::html('<div class="tssggs-dcard__rows">' . $html . '</div>'));
 

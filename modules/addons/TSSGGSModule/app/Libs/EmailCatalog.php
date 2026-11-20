@@ -89,9 +89,13 @@ class EmailCatalog
             {
                 continue;
             }
-            // document signing and CodeGuard are sold through TheSSLStore only
-            if(in_array($key, [EmailTemplates::DS_CONFIGURATION_TEMPLATE, EmailTemplates::DS_ISSUED_TEMPLATE, EmailTemplates::CODE_GUARD_READY_TEMPLATE], true)
-                && !in_array('tss', Edition::vendors(), true))
+            // document signing and CodeGuard are sold through TheSSLStore only; a connected TheSSLStore offers CodeGuard
+            // but not document signing (App\Libs\CrossVendor)
+            if(in_array($key, [EmailTemplates::DS_CONFIGURATION_TEMPLATE, EmailTemplates::DS_ISSUED_TEMPLATE], true) && Edition::primaryVendor() !== Edition::TSS)
+            {
+                continue;
+            }
+            if($key === EmailTemplates::CODE_GUARD_READY_TEMPLATE && !in_array('tss', Edition::vendors(), true))
             {
                 continue;
             }

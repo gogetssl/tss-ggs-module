@@ -41,7 +41,31 @@ class AdminServicesTabFields
             . (!empty($refreshedAt) ? ' &nbsp;<small class="text-muted">' . self::t('last_refresh', 'last refresh :date:', ['date' => $refreshedAt]) . '</small>' : '');
     }
 
+    /**
+     * The tab's fields. A service of the connected second vendor (App\Libs\CrossVendor) names its own vendor in the
+     * labels: "GoGetSSL Order" in TheSSLStore Plugin, not "TheSSLStore Order".
+     */
     public function run($params)
+    {
+        $fields = $this->fields($params);
+        $vendor = \ModulesGarden\TSSGGSModule\App\Libs\CrossVendor::vendorOfService((int)$params['serviceid']);
+        if(!is_array($fields) || $vendor === \ModulesGarden\TSSGGSModule\App\Libs\Edition::primaryVendor())
+        {
+            return $fields;
+        }
+
+        $own    = \ModulesGarden\TSSGGSModule\App\Libs\Edition::brand();
+        $theirs = \ModulesGarden\TSSGGSModule\App\Libs\Edition::brandOf($vendor);
+        $result = [];
+        foreach($fields as $label => $value)
+        {
+            $result[str_replace($own, $theirs, (string)$label)] = is_string($value) ? str_replace($own, $theirs, $value) : $value;
+        }
+
+        return $result;
+    }
+
+    private function fields($params)
     {
         try
         {

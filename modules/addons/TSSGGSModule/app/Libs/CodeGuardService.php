@@ -381,7 +381,7 @@ class CodeGuardService extends GatewayOrderService
         $link   = (string)($answer['sso_link'] ?? '');
         if($link === '')
         {
-            throw new \Exception('%%VENDOR%% did not return a CodeGuard dashboard link');
+            throw new \Exception(Edition::brandOf('tss') . ' did not return a CodeGuard dashboard link');
         }
 
         return $link;
@@ -545,7 +545,7 @@ class CodeGuardService extends GatewayOrderService
         $productId = (string)Capsule::table('tblproducts')->where('id', (int)$whmcsProductId)->value('configoption2');
         if($productId === '')
         {
-            throw new \Exception('The CodeGuard product has no %%VENDOR%% product');
+            throw new \Exception('The CodeGuard product has no ' . Edition::brandOf('tss') . ' product');
         }
 
         $response = (array)CertificateService::api($serviceId)->upgradeCodeGuardProduct((int)$stored['itemId'], $productId);
@@ -553,7 +553,7 @@ class CodeGuardService extends GatewayOrderService
         $itemId   = (int)($response['items'][0]['id'] ?? 0);
         if($orderId <= 0 || $itemId <= 0)
         {
-            throw new \Exception('%%VENDOR%% did not return the order of the new plan');
+            throw new \Exception(Edition::brandOf('tss') . ' did not return the order of the new plan');
         }
 
         $previous   = (array)($stored['previous'] ?? []);

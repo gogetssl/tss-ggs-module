@@ -2,6 +2,8 @@
 
 namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Providers;
 
+use ModulesGarden\TSSGGSModule\App\Libs\CrossVendor;
+use ModulesGarden\TSSGGSModule\App\Libs\Edition;
 use ModulesGarden\TSSGGSModule\App\Libs\SSLTrustCenterApi;
 use ModulesGarden\TSSGGSModule\App\Migration\Credentials;
 use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
@@ -44,6 +46,27 @@ class ApiSettingsProvider extends CrudProvider
 
         $this->data['ggsLivePartnerCode'] = $credentials['ggs']['PartnerCode'];
         $this->data['ggsLiveAuthToken']   = $show('ggs', 'AuthToken');
+
+        // the other vendor's products (Settings > API, "Connect ... products")
+        $this->data['connectOther'] = Edition::connectedVendor() !== '';
+    }
+
+    /** Whether the form asks for the other vendor to be connected (no switch on the page: as it is now) */
+    protected function connectChosen()
+    {
+        if(!array_key_exists('connectOther', $this->formData->toArray()))
+        {
+            return Edition::connectedVendor() !== '';
+        }
+        $value = $this->formData['connectOther'];
+
+        return !empty($value) && !in_array($value, ['off', 'false', '0'], true);
+    }
+
+    /** Vendors the saved credentials are for: the edition's own, plus the other one when it is connected */
+    protected function chosenVendors()
+    {
+        return $this->connectChosen() ? [Edition::primaryVendor(), Edition::otherVendor()] : [Edition::primaryVendor()];
     }
 
     /**
@@ -73,8 +96,18 @@ class ApiSettingsProvider extends CrudProvider
         $goGetSslLiveAuthToken   = $this->token('ggsLiveAuthToken', 'ggs', 'AuthToken');
         $operationMode           = $this->formData['OperationMode'];
 
+        // a connected vendor that still sells products in WHMCS can not be disconnected: its services need its API
+        $connect = $this->connectChosen();
+        if(!$connect && Edition::connectedVendor() !== '' && CrossVendor::productCount(Edition::connectedVendor()) > 0)
+        {
+            return (new Response())->setError(sprintf($this->translate('disconnectHasProducts'), Edition::brandOf(Edition::connectedVendor()), CrossVendor::productCount(Edition::connectedVendor())));
+        }
+
         $test = $this->testConnection();
         if($test !== true) return $test;
+
+        // connected first, so the other vendor's credentials are saved with the edition's own ones
+        Edition::setConnectedVendor($connect ? Edition::otherVendor() : '');
 
         $moduleRepository->saveCredentials($sslStoreLivePartnerCode, $sslStoreLiveAuthToken, $goGetSslLivePartnerCode, $goGetSslLiveAuthToken, $sslStoreTestPartnerCode, $sslStoreTestAuthToken, $operationMode);
 
@@ -104,12 +137,12 @@ class ApiSettingsProvider extends CrudProvider
 
         $apis = [];
 
-        if(in_array('ggs', $moduleConfiguration['vendors']))
+        if(in_array('ggs', $this->chosenVendors(), true))
         {
             $apis['GGS'] = new SSLTrustCenterApi('GGS', $goGetSslLivePartnerCode, $goGetSslLiveAuthToken);
         }
 
-        if(in_array('tss', $moduleConfiguration['vendors']))
+        if(in_array('tss', $this->chosenVendors(), true))
         {
             if($operationMode == 'sandbox')
             {

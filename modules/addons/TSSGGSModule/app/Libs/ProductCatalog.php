@@ -48,6 +48,11 @@ class ProductCatalog
         {
             return false;
         }
+        // a connected second vendor: only its exclusive products (no RapidSSL from both vendors)
+        if(!CrossVendor::offered($remoteProduct))
+        {
+            return false;
+        }
         if($category === SmimeService::CATEGORY)
         {
             return SmimeService::isSupportedRemoteProduct($remoteProduct->vendor, $category);
@@ -147,7 +152,7 @@ class ProductCatalog
             return false;
         }
 
-        $text = 'The product of this service is discontinued at %%VENDOR%%: renewal under the same product may be refused - arrange a replacement certificate';
+        $text = 'The product of this service is discontinued at ' . CrossVendor::brandOfService($serviceId) . ': renewal under the same product may be refused - arrange a replacement certificate';
         GeneralSettings::activity('Service #' . (int)$serviceId . ': ' . $text);
         CertificateService::event((int)$serviceId, 'warning', $text);
         try
@@ -194,6 +199,7 @@ class ProductCatalog
     {
         $existing = self::sanOptions($productId);
         $problems = [];
+        $product  = Capsule::table('tblproducts')->where('id', (int)$productId)->first(['configoption1']);
         foreach(self::OPTIONS as $remote => list($name))
         {
             $allowed = !empty($remoteRaw['san'][$remote . '_allowed']);
@@ -207,11 +213,10 @@ class ProductCatalog
             }
             elseif(!empty($existing[$name]) && !$allowed && !$existing[$name]->hidden)
             {
-                $problems[] = $name . ' not offered by %%VENDOR%%';
+                $problems[] = $name . ' not offered by ' . Edition::brandOf($product->configoption1 ?? '');
             }
         }
 
-        $product = Capsule::table('tblproducts')->where('id', (int)$productId)->first(['configoption1']);
         if($product && MainDomain::isChoice($remoteRaw, (string)$product->configoption1)
             && !Capsule::table('tblproductconfiglinks')->join('tblproductconfigoptions', 'tblproductconfigoptions.gid', '=', 'tblproductconfiglinks.gid')
                 ->where('tblproductconfiglinks.pid', (int)$productId)->where('tblproductconfigoptions.optionname', 'like', MainDomain::OPTION . '|%')->exists())

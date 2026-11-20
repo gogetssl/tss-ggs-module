@@ -34,6 +34,19 @@ class ProductsContainer extends Container implements AdminAreaInterface
 
         $productsTab = new Tab();
         $productsTab->setTitle($this->translate('productsTab', [], ['admin.products']));
+        // the other vendor's exclusive products (App\Libs\CrossVendor): the banner shows until it is connected
+        if(\ModulesGarden\TSSGGSModule\App\Libs\Edition::connectedVendor() === '')
+        {
+            $other  = \ModulesGarden\TSSGGSModule\App\Libs\Edition::otherVendor();
+            $banner = new Text();
+            $banner->setCss('tssggs-html');
+            $banner->setText('<div class="tssggs-explain tssggs-explain--connect"><span class="tssggs-explain__icon">' . Icons::svg('package-variant-closed') . '</span><div>'
+                . '<h3>' . htmlspecialchars((string)$this->translate('connect_title_' . $other, [], ['admin.products']), ENT_QUOTES) . '</h3>'
+                . '<p>' . htmlspecialchars((string)$this->translate('connect_text_' . $other, [], ['admin.products']), ENT_QUOTES)
+                . ' <a href="addonmodules.php?module=TSSGGSModule&amp;mg-page=settings&amp;settings-page=apiSettings">'
+                . htmlspecialchars((string)$this->translate('connect_link', [], ['admin.products']), ENT_QUOTES) . '</a></p></div></div>');
+            $productsTab->addElement($banner);
+        }
         if(!\ModulesGarden\TSSGGSModule\App\Libs\GeneralSettings::enabled('hideInfoMessages'))
         {
             $text = new Text();

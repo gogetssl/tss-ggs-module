@@ -48,7 +48,10 @@ class AddonModuleRepository
             }
         }
 
-        // credentials of vendors outside the edition stay stored but are not used
+        // the edition's own vendor, plus the connected one (Settings > API, "Connect ... products")
+        $result['vendors'] = \ModulesGarden\TSSGGSModule\App\Libs\Edition::vendors();
+
+        // credentials of a vendor that is not used (not connected) stay stored but are not used
         if(isset($result['credentials']) && is_array($result['credentials']))
         {
             $result['credentials'] = array_intersect_key($result['credentials'], array_flip(\ModulesGarden\TSSGGSModule\App\Libs\Edition::vendors()));
