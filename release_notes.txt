@@ -1,3 +1,28 @@
+1.17.0 (2026-11-20)
+HackerGuardian PCI scanning, Plan + Automate method switch
+- TheSSLStore HackerGuardian PCI scanning (Scan Control Center, Enterprise
+  Edition) can be imported and sold. After paying, the client enters the
+  organization and the administrator; the scan account is created at once
+  and its login to the scan control centre is shown on the service page
+  (password hidden until the client shows or copies it) and on the admin
+  tab. TheSSLStore sends the login only once, so the module keeps it
+  encrypted. The next due date follows the scanning period; Terminate
+  cancels the order. New e-mails: order details required, scan account
+  ready (username only, no password).
+- An organization name can have only one scan account at the scanning
+  service, also after a refund: a second order for the same name is refused
+  with a clear message and the service stays orderable.
+- A paid PCI renewal is not ordered automatically yet: the account is kept
+  and the module logs an error so the administrator renews it by hand,
+  until TheSSLStore confirms how a scan account is renewed.
+- Plan + Automate: the client can switch a placed subscription between the
+  AutoInstall SSL agent and their own ACME client (both vendors).
+  TheSSLStore switches at once; GoGetSSL within a few minutes - until the
+  new ACME account is registered the page says it is being set up. Each
+  switch to ACME brings a new ACME account (EAB keys). The method is still
+  not offered on the order form: the gateway does not take it on a new
+  order yet.
+
 1.16.2 (2026-11-20)
 TheSSLStore X9 PKI held back
 - TheSSLStore X9 PKI (x9_pki) is no longer offered for import and is not
