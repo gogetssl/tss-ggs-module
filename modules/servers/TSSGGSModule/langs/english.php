@@ -860,6 +860,7 @@ $_LANG['serverCA']['home']['pciNotPciProduct'] = 'This service is not a HackerGu
 $_LANG['serverCA']['home']['pciAlreadyOrdered'] = 'The scan account has already been ordered.';
 $_LANG['serverCA']['home']['pciNotOrderedYet'] = 'The scan account has not been ordered yet.';
 $_LANG['serverCA']['home']['pciNameTaken'] = 'An organization with this name already has a scan account at the scanning service, and a name can be used only once. Check the name, or contact support.';
+$_LANG['serverCA']['home']['pciStatusActive'] = 'Active';
 $_LANG['serverCA']['home']['dsInfoPending'] = 'The certificate authority is validating your organization. It contacts the administrator by email and phone; please respond promptly. The status updates automatically.';
 $_LANG['serverCA']['home']['dsInfoActiveShipToken'] = 'Your document signing certificate is issued. The certificate authority ships the hardware token with the certificate to the shipping address.';
 $_LANG['serverCA']['home']['dsInfoActiveExistingToken'] = 'Your document signing certificate is issued. The certificate authority emails the administrator instructions to install it on your token.';

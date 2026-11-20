@@ -860,6 +860,7 @@ $_LANG['serverCA']['home']['pciNotPciProduct'] = 'Dieser Dienst ist kein HackerG
 $_LANG['serverCA']['home']['pciAlreadyOrdered'] = 'Das Scan-Konto wurde bereits bestellt.';
 $_LANG['serverCA']['home']['pciNotOrderedYet'] = 'Das Scan-Konto wurde noch nicht bestellt.';
 $_LANG['serverCA']['home']['pciNameTaken'] = 'Eine Organisation mit diesem Namen hat bereits ein Scan-Konto beim Scan-Dienst, und ein Name kann nur einmal verwendet werden. Prüfen Sie den Namen oder wenden Sie sich an den Support.';
+$_LANG['serverCA']['home']['pciStatusActive'] = 'Aktiv';
 $_LANG['serverCA']['home']['dsInfoPending'] = 'Die Zertifizierungsstelle prüft Ihre Organisation. Sie kontaktiert den Administrator per E-Mail und Telefon; bitte antworten Sie zeitnah. Der Status wird automatisch aktualisiert.';
 $_LANG['serverCA']['home']['dsInfoActiveShipToken'] = 'Ihr Code-Signing-Zertifikat ist ausgestellt. Die Zertifizierungsstelle versendet den Hardware-Token mit dem Zertifikat an die Versandadresse.';
 $_LANG['serverCA']['home']['dsInfoActiveExistingToken'] = 'Ihr Code-Signing-Zertifikat ist ausgestellt. Die Zertifizierungsstelle sendet dem Administrator per E-Mail Anweisungen zur Installation auf Ihrem Token.';

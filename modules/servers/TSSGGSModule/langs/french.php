@@ -860,6 +860,7 @@ $_LANG['serverCA']['home']['pciNotPciProduct'] = 'Ce service n\'est pas une anal
 $_LANG['serverCA']['home']['pciAlreadyOrdered'] = 'Le compte d\'analyse a déjà été commandé.';
 $_LANG['serverCA']['home']['pciNotOrderedYet'] = 'Le compte d\'analyse n\'a pas encore été commandé.';
 $_LANG['serverCA']['home']['pciNameTaken'] = 'Une organisation portant ce nom possède déjà un compte auprès du service d\'analyse, et un nom ne peut être utilisé qu\'une fois. Vérifiez le nom ou contactez le support.';
+$_LANG['serverCA']['home']['pciStatusActive'] = 'Actif';
 $_LANG['serverCA']['home']['dsInfoPending'] = 'L\'autorité de certification valide votre organisation. Elle contacte l\'administrateur par e-mail et téléphone ; merci de répondre rapidement. Le statut se met à jour automatiquement.';
 $_LANG['serverCA']['home']['dsInfoActiveShipToken'] = 'Votre certificat de signature de code est émis. L\'autorité de certification expédie le jeton matériel avec le certificat à l\'adresse d\'expédition.';
 $_LANG['serverCA']['home']['dsInfoActiveExistingToken'] = 'Votre certificat de signature de code est émis. L\'autorité de certification envoie à l\'administrateur les instructions pour l\'installer sur votre jeton.';

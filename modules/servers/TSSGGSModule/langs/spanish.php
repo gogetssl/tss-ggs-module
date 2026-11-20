@@ -860,6 +860,7 @@ $_LANG['serverCA']['home']['pciNotPciProduct'] = 'Este servicio no es un anális
 $_LANG['serverCA']['home']['pciAlreadyOrdered'] = 'La cuenta de análisis ya se ha pedido.';
 $_LANG['serverCA']['home']['pciNotOrderedYet'] = 'La cuenta de análisis aún no se ha pedido.';
 $_LANG['serverCA']['home']['pciNameTaken'] = 'Una organización con este nombre ya tiene una cuenta en el servicio de análisis, y un nombre solo puede usarse una vez. Compruebe el nombre o póngase en contacto con soporte.';
+$_LANG['serverCA']['home']['pciStatusActive'] = 'Activa';
 $_LANG['serverCA']['home']['dsInfoPending'] = 'La autoridad de certificación está validando su organización. Contacta con el administrador por correo y teléfono; responda cuanto antes. El estado se actualiza automáticamente.';
 $_LANG['serverCA']['home']['dsInfoActiveShipToken'] = 'Su certificado de firma de código está emitido. La autoridad de certificación envía el token de hardware con el certificado a la dirección de envío.';
 $_LANG['serverCA']['home']['dsInfoActiveExistingToken'] = 'Su certificado de firma de código está emitido. La autoridad de certificación envía al administrador instrucciones para instalarlo en su token.';

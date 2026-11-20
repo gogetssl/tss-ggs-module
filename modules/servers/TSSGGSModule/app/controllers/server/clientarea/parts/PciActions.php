@@ -53,7 +53,8 @@ trait PciActions
         $admin  = (array)($stored['contacts']['administrator'] ?? []);
 
         $vars['pciStatus']        = $status;
-        $vars['pciStatusText']    = $this->smimeStatusText($status);
+        // a scan account is active, not issued like a certificate
+        $vars['pciStatusText']    = $status === 'active' ? $this->pciText('pciStatusActive', 'Active') : $this->smimeStatusText($status);
         $vars['pciTone']          = $tones[$status] ?? 'wait';
         $vars['pciOrganization']  = (string)($stored['organization'] ?? Capsule::table('tblhosting')->where('id', $serviceId)->value('domain'));
         $vars['pciAdministrator'] = $admin ? trim(($admin['first_name'] ?? '') . ' ' . ($admin['last_name'] ?? '')) . (!empty($admin['email']) ? ' (' . $admin['email'] . ')' : '') : '';

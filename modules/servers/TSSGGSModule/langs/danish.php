@@ -860,6 +860,7 @@ $_LANG['serverCA']['home']['pciNotPciProduct'] = 'Denne tjeneste er ikke en Hack
 $_LANG['serverCA']['home']['pciAlreadyOrdered'] = 'Scanningskontoen er allerede bestilt.';
 $_LANG['serverCA']['home']['pciNotOrderedYet'] = 'Scanningskontoen er ikke bestilt endnu.';
 $_LANG['serverCA']['home']['pciNameTaken'] = 'En organisation med dette navn har allerede en konto hos scanningstjenesten, og et navn kan kun bruges én gang. Kontrollér navnet, eller kontakt support.';
+$_LANG['serverCA']['home']['pciStatusActive'] = 'Aktiv';
 $_LANG['serverCA']['home']['dsInfoPending'] = 'Certifikatudstederen validerer din organisation. Den kontakter administratoren på e-mail og telefon; svar venligst hurtigt. Status opdateres automatisk.';
 $_LANG['serverCA']['home']['dsInfoActiveShipToken'] = 'Dit kodesigneringscertifikat er udstedt. Certifikatudstederen sender hardware-tokenet med certifikatet til leveringsadressen.';
 $_LANG['serverCA']['home']['dsInfoActiveExistingToken'] = 'Dit kodesigneringscertifikat er udstedt. Certifikatudstederen sender administratoren en vejledning til at installere det på dit token.';

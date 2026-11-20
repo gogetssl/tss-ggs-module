@@ -860,6 +860,7 @@ $_LANG['serverCA']['home']['pciNotPciProduct'] = 'Tato služba není sken Hacker
 $_LANG['serverCA']['home']['pciAlreadyOrdered'] = 'Účet pro skenování již byl objednán.';
 $_LANG['serverCA']['home']['pciNotOrderedYet'] = 'Účet pro skenování ještě nebyl objednán.';
 $_LANG['serverCA']['home']['pciNameTaken'] = 'Organizace s tímto názvem už má účet u služby skenování a název lze použít jen jednou. Zkontrolujte název nebo kontaktujte podporu.';
+$_LANG['serverCA']['home']['pciStatusActive'] = 'Aktivní';
 $_LANG['serverCA']['home']['dsInfoPending'] = 'Certifikační autorita ověřuje vaši organizaci. Kontaktuje administrátora e-mailem a telefonicky; odpovězte prosím co nejdříve. Stav se aktualizuje automaticky.';
 $_LANG['serverCA']['home']['dsInfoActiveShipToken'] = 'Váš certifikát pro podepisování kódu je vystavený. Certifikační autorita zašle hardwarový token s certifikátem na doručovací adresu.';
 $_LANG['serverCA']['home']['dsInfoActiveExistingToken'] = 'Váš certifikát pro podepisování kódu je vystavený. Certifikační autorita pošle administrátorovi pokyny k instalaci na váš token.';

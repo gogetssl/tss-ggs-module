@@ -58,7 +58,7 @@
             {$MGLANG->T('pciLoginSection')}
         </h4>
         {if $pciLogin}
-            <p class="tssggs-note tssggs-note--plain">{$MGLANG->T('pciLoginHint')}</p>
+            <div class="tssggs-form"><p class="tssggs-note tssggs-note--plain">{$MGLANG->T('pciLoginHint')}</p></div>
             <dl class="tssggs-dl">
                 <dt>{$MGLANG->T('pciLoginPage')}</dt><dd><a href="{$pciLoginUrl|escape}" target="_blank" rel="noopener">{$pciLoginUrl|escape}</a></dd>
                 <dt>{$MGLANG->T('pciUsername')}</dt>
@@ -70,7 +70,7 @@
                     <button type="button" class="tssggs-btn tssggs-btn--sm" data-tssggs-copy="#tssggs-pci-pass">{$MGLANG->T('pciCopy')}</button></dd>
             </dl>
         {else}
-            <p class="tssggs-note tssggs-note--plain">{$MGLANG->T('pciNoLogin')}</p>
+            <div class="tssggs-form"><p class="tssggs-note tssggs-note--plain">{$MGLANG->T('pciNoLogin')}</p></div>
         {/if}
     </section>
     {/if}
