@@ -247,6 +247,37 @@ class EmailTemplates
                              <p>Order details: {$order_url}</p>
                              <p>{$signature}</p>';
 
+    const LEI_CONFIGURATION_TEMPLATE = 'LEI Configuration Required';
+    const LEI_CONFIGURATION_SUBJECT  = 'LEI code - legal entity details required';
+    const LEI_CONFIGURATION_MESSAGE  = '<p>Dear {$client_name},</p>
+                             <p>
+                                Your LEI code ({$service_product_name}) is ready to be ordered. Enter the legal entity
+                                (registered name, registration number, jurisdiction and addresses) and the person who signs
+                                the application at the URL below.
+                             </p>
+                             <p>{$ssl_configuration_link}</p>
+                             <p>
+                                After you submit the order, the LEI issuer checks the data with the business register.
+                                If it needs you to confirm what it found, it emails you. If you have any questions,
+                                please open a ticket for assistance.
+                             </p>
+                             <p>{$signature}</p>';
+
+    const LEI_ISSUED_TEMPLATE = 'LEI Issued';
+    const LEI_ISSUED_SUBJECT  = 'Your LEI code - {$lei_legal_name}';
+    const LEI_ISSUED_MESSAGE  = '<p>Dear {$client_name},</p>
+                             <p>
+                                {if $lei_is_renewal}The LEI code of {$lei_legal_name} is renewed.{else}The LEI code of
+                                {$lei_legal_name} is issued.{/if}
+                             </p>
+                             <p>LEI: <strong>{$lei_number}</strong><br>Registered until: {$lei_valid_till}</p>
+                             <p>
+                                The record is public in the global LEI index (GLEIF) and can be checked at
+                                https://search.gleif.org/#/record/{$lei_number}
+                             </p>
+                             <p>Order details: {$order_url}</p>
+                             <p>{$signature}</p>';
+
     /**
      * Sent when an OV / EV order (SSL, S/MIME, code signing, document signing) has been placed: the certificate
      * authority now verifies the organization and contacts the administrator - see App\Libs\OrganizationValidation
@@ -320,7 +351,7 @@ class EmailTemplates
                              <p>{$ssl_configuration_link}</p>
                              <p>{$signature}</p>';
 
-    const TEMPLATE_NAMES = ['CONFIGURATION', 'SMIME_CONFIGURATION', 'SMIME_REMINDER', 'SMIME_ISSUED', 'SMIME_EXPIRATION', 'CS_CONFIGURATION', 'CS_ISSUED', 'CS_EXPIRATION', 'EXPIRATION', 'SEND_CERTIFICATE', 'RENEWAL_DETAILS', 'REISSUE', 'SUBSCRIPTION', 'SUBSCRIPTION_EXPIRATION', 'SUBSCRIPTION_RENEWAL', 'RENEWAL_INVOICE', 'DISCONTINUED', 'CODE_GUARD_READY', 'DS_CONFIGURATION', 'DS_ISSUED', 'ORG_VALIDATION', 'CERT_REVOKED', 'CERT_EXPIRED'];
+    const TEMPLATE_NAMES = ['CONFIGURATION', 'SMIME_CONFIGURATION', 'SMIME_REMINDER', 'SMIME_ISSUED', 'SMIME_EXPIRATION', 'CS_CONFIGURATION', 'CS_ISSUED', 'CS_EXPIRATION', 'EXPIRATION', 'SEND_CERTIFICATE', 'RENEWAL_DETAILS', 'REISSUE', 'SUBSCRIPTION', 'SUBSCRIPTION_EXPIRATION', 'SUBSCRIPTION_RENEWAL', 'RENEWAL_INVOICE', 'DISCONTINUED', 'CODE_GUARD_READY', 'DS_CONFIGURATION', 'DS_ISSUED', 'LEI_CONFIGURATION', 'LEI_ISSUED', 'ORG_VALIDATION', 'CERT_REVOKED', 'CERT_EXPIRED'];
 
     /** S/MIME e-mails */
     const SMIME_TEMPLATES = [self::SMIME_CONFIGURATION_TEMPLATE, self::SMIME_REMINDER_TEMPLATE, self::SMIME_ISSUED_TEMPLATE, self::SMIME_EXPIRATION_TEMPLATE];

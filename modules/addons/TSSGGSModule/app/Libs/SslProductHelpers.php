@@ -21,7 +21,8 @@ class SslProductHelpers
     {
         $items     = isset($orderData['items']) && is_array($orderData['items']) ? $orderData['items'] : [];
         $item      = reset($items);
-        $end       = isset($item['subscription']['end']) ? (string)$item['subscription']['end'] : '';
+        // certificates: the subscription end; LEI codes: the end of the registration period
+        $end       = isset($item['subscription']['end']) ? (string)$item['subscription']['end'] : (string)($item['valid_till'] ?? '');
         $timestamp = $end !== '' ? strtotime($end) : false;
 
         return $timestamp && $timestamp > 0 ? date('Y-m-d', $timestamp) : null;

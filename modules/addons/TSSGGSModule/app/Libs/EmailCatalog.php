@@ -21,6 +21,7 @@ class EmailCatalog
         'ACME Subscription Configuration'   => ['order', ['ssl_configuration_link'], true],
         'Document Signing Configuration Required' => ['order', ['ssl_configuration_link'], true],
         'CodeGuard Licence Ready'           => ['order', ['ssl_configuration_link'], true],
+        'LEI Configuration Required'        => ['order', ['ssl_configuration_link'], true],
         'DNS Validation Switched to Email'  => ['validation', ['domain', 'dcv_email', 'order_url'], true],
         'S/MIME Mailbox Not Confirmed'      => ['validation', ['smime_pending_emails', 'smime_ordered_date', 'order_url'], true],
         'Validation Warning'                => ['validation', ['domain', 'dcv_method', 'order_url'], true],
@@ -30,6 +31,7 @@ class EmailCatalog
         'S/MIME Certificate Issued'         => ['issued', ['smime_emails', 'smime_valid_till', 'smime_csr_provided', 'order_url'], true],
         'Code Signing Certificate Issued'   => ['issued', ['cs_organization', 'cs_valid_till', 'cs_method', 'order_url'], true],
         'Document Signing Certificate Issued' => ['issued', ['ds_organization', 'ds_valid_till', 'ds_method', 'order_url'], true],
+        'LEI Issued'                        => ['issued', ['lei_number', 'lei_legal_name', 'lei_valid_till', 'lei_is_renewal', 'order_url'], true],
         'Service Expiration'                => ['renewals', ['expireDaysLeft'], true],
         'S/MIME Expiration'                 => ['renewals', ['expireDaysLeft'], true],
         'Code Signing Expiration'           => ['renewals', ['expireDaysLeft'], true],
@@ -86,6 +88,11 @@ class EmailCatalog
             }
             // code signing is sold through GoGetSSL only
             if(in_array($key, EmailTemplates::CS_TEMPLATES, true) && !in_array('ggs', Edition::vendors(), true))
+            {
+                continue;
+            }
+            // LEI codes are sold through GoGetSSL only (for now)
+            if(in_array($key, [EmailTemplates::LEI_CONFIGURATION_TEMPLATE, EmailTemplates::LEI_ISSUED_TEMPLATE], true) && !in_array('ggs', Edition::vendors(), true))
             {
                 continue;
             }
@@ -153,6 +160,10 @@ class EmailCatalog
             'ds_organization'        => 'Example Ltd',
             'ds_valid_till'          => date('Y-m-d', strtotime('+1 year')),
             'ds_method'              => 'ship-token',
+            'lei_number'             => '529900T8BM49AURSDO55',
+            'lei_legal_name'         => 'Example SIA',
+            'lei_valid_till'         => date('Y-m-d', strtotime('+1 year')),
+            'lei_is_renewal'         => 0,
             'validation_type'        => 'OV',
             'is_renewal'             => 0,
             'ssl_configuration_link' => $orderUrl . '&configssl=1',

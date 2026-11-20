@@ -23,6 +23,7 @@ class CertificateService
     const CATEGORY_CS    = 'cs';
     const CATEGORY_CODE_GUARD = CodeGuardService::CATEGORY;
     const CATEGORY_DS         = DocumentSigningService::CATEGORY;
+    const CATEGORY_LEI        = LeiService::CATEGORY;
 
     /**
      * Gateway client for the service's vendor and product category
@@ -66,6 +67,10 @@ class CertificateService
         if(DocumentSigningService::isDocumentSigningWhmcsProduct($packageId))
         {
             return self::CATEGORY_DS;
+        }
+        if(LeiService::isLeiWhmcsProduct($packageId))
+        {
+            return self::CATEGORY_LEI;
         }
 
         return self::CATEGORY_TLS;
@@ -560,6 +565,13 @@ class CertificateService
 
             case self::CATEGORY_DS:
                 if(!DocumentSigningService::cancel($serviceId, $reason))
+                {
+                    return false;
+                }
+                break;
+
+            case self::CATEGORY_LEI:
+                if(!LeiService::cancel($serviceId, $reason))
                 {
                     return false;
                 }

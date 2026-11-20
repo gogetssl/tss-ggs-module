@@ -1248,6 +1248,10 @@ $_LANG['admin.settings.index.forms.api_settings_form.ggs_desc'] = 'Partner code 
 $_LANG['admin.settings.index.forms.general_settings_form.clientArea_desc'] = 'What clients see on their certificate pages.';
 $_LANG['admin.settings.index.forms.general_settings_form.interface_desc']  = 'How the module looks for administrators.';
 $_LANG['admin.settings.index.forms.general_settings_form.lifecycle_desc']  = 'What happens to a service when it is terminated or not paid.';
+$_LANG['admin.settings.index.forms.general_settings_form.lei'] = 'LEI Codes';
+$_LANG['admin.settings.index.forms.general_settings_form.lei_desc'] = 'Company search of the LEI order form.';
+$_LANG['admin.settings.index.forms.general_settings_form.openCorporatesToken'] = 'OpenCorporates API Token';
+$_LANG['admin.settings.index.forms.general_settings_form.openCorporatesToken_description'] = 'Optional. With a token the order form searches the company registers of most countries (OpenCorporates); without one it finds only entities that have or had an LEI (GLEIF, free). Leave empty to keep the saved token, enter - to remove it.';
 
 $_LANG['admin.settings.index.forms.logs_settings_form.moduleLogs_desc'] = 'Kept in the module and shown on its own pages. Switching one off stops new entries; stored entries stay until you clear them.';
 $_LANG['admin.settings.index.forms.logs_settings_form.whmcsLogs_desc']  = 'Written into WHMCS itself and read there, not in this module.';
@@ -1509,6 +1513,10 @@ $_LANG['admin.emails.name_document_signing_configuration_required'] = 'Document 
 $_LANG['admin.emails.when_document_signing_configuration_required'] = 'Sent when a document signing service is created: the client enters the organization, administrator and token choice.';
 $_LANG['admin.emails.name_document_signing_certificate_issued'] = 'Document signing certificate issued';
 $_LANG['admin.emails.when_document_signing_certificate_issued'] = 'Sent when the certificate authority issues the document signing certificate.';
+$_LANG['admin.emails.name_lei_configuration_required'] = 'LEI: order details required';
+$_LANG['admin.emails.when_lei_configuration_required'] = 'Sent when an LEI service is created or its renewal needs the client: the client enters the legal entity and the signing person.';
+$_LANG['admin.emails.name_lei_issued'] = 'LEI issued';
+$_LANG['admin.emails.when_lei_issued'] = 'Sent when the LEI issuer issues or renews the LEI code.';
 $_LANG['admin.emails.name_codeguard_licence_ready'] = 'CodeGuard licence ready';
 $_LANG['admin.emails.when_codeguard_licence_ready'] = 'Sent when a CodeGuard licence is set up, with the way to its dashboard.';
 
