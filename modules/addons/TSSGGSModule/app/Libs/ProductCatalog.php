@@ -18,7 +18,7 @@ class ProductCatalog
     const OLD_LABELS = ["Additional Single domain SAN's", "Additional Wildcard domain SAN's"];
 
     /** Gateway product categories the module can sell */
-    const SUPPORTED_CATEGORIES = ['tls', 'caas', 'ais', 'smime', 'cs', 'code-guard', 'ds'];
+    const SUPPORTED_CATEGORIES = ['tls', 'caas', 'ais', 'smime', 'cs', 'code-guard', 'ds', 'pci'];
 
     /**
      * Products GoGetSSL lists in the "tls" category that are not SSL certificates (document signing, mark certificates)
@@ -34,7 +34,7 @@ class ProductCatalog
 
     /**
      * The module can sell the gateway product: SSL/TLS, ACME, AutoInstall SSL, S/MIME, GoGetSSL hardware code signing
-     * and TheSSLStore CodeGuard. Cloud code signing, document signing, mark certificates and the other website
+     * and TheSSLStore CodeGuard and HackerGuardian PCI scanning. Cloud code signing, document signing, mark certificates and the other website
      * security services (SiteLock, cWatch) are not supported.
      */
     public static function importable($remoteProduct)
@@ -63,6 +63,10 @@ class ProductCatalog
         if($category === DocumentSigningService::CATEGORY)
         {
             return DocumentSigningService::isSupportedRemoteProduct($remoteProduct->vendor, $category, $remoteProduct->remoteId);
+        }
+        if($category === PciService::CATEGORY)
+        {
+            return PciService::isSupportedRemoteProduct($remoteProduct->vendor, $category, $remoteProduct->remoteId);
         }
         if($category === 'tls' && preg_match(self::NOT_SSL_NAMES, (string)$remoteProduct->name))
         {

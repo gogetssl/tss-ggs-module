@@ -577,6 +577,10 @@ class SSLTrustCenterApi
         {
             return $this->getCodeGuardDetails($orderId);
         }
+        if((string)$category === PciService::CATEGORY)
+        {
+            return $this->call('/pci/' . (int)$orderId, [], 'GET');
+        }
 
         return $this->call('/certificates/' . rawurlencode((string)$category) . '/' . (int)$orderId, [], 'GET');
     }
@@ -700,6 +704,14 @@ class SSLTrustCenterApi
     public function createDocumentSigning(array $data)
     {
         return $this->call('/certificates/' . DocumentSigningService::CATEGORY, $data);
+    }
+
+    // ------------------------------------------------------------------ HackerGuardian PCI (TheSSLStore only)
+
+    /** POST /pci: the scan account, active at once; the answer carries its login (items[0].login), the only time it is sent */
+    public function createPci(array $data)
+    {
+        return $this->call('/pci', $data);
     }
 
     // ------------------------------------------------------------------ CodeGuard (website backup, TheSSLStore only)

@@ -1511,6 +1511,10 @@ $_LANG['admin.emails.name_document_signing_certificate_issued'] = 'Document sign
 $_LANG['admin.emails.when_document_signing_certificate_issued'] = 'Sent when the certificate authority issues the document signing certificate.';
 $_LANG['admin.emails.name_codeguard_licence_ready'] = 'CodeGuard licence ready';
 $_LANG['admin.emails.when_codeguard_licence_ready'] = 'Sent when a CodeGuard licence is set up, with the way to its dashboard.';
+$_LANG['admin.emails.name_hackerguardian_pci_configuration_required'] = 'HackerGuardian PCI: order details required';
+$_LANG['admin.emails.when_hackerguardian_pci_configuration_required'] = 'Sent when a HackerGuardian PCI service is created: the client enters the organization and the administrator of the scan account.';
+$_LANG['admin.emails.name_hackerguardian_pci_scan_account_ready'] = 'HackerGuardian PCI scan account ready';
+$_LANG['admin.emails.when_hackerguardian_pci_scan_account_ready'] = 'Sent when the scan account is created, with its username and the sign-in page (the password is on the service page only).';
 
 // certificate revoked / expired e-mails
 $_LANG['admin.emails.name_certificate_revoked'] = 'Certificate revoked';

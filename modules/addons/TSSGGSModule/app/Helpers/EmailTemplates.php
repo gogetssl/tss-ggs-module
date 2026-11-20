@@ -320,7 +320,36 @@ class EmailTemplates
                              <p>{$ssl_configuration_link}</p>
                              <p>{$signature}</p>';
 
-    const TEMPLATE_NAMES = ['CONFIGURATION', 'SMIME_CONFIGURATION', 'SMIME_REMINDER', 'SMIME_ISSUED', 'SMIME_EXPIRATION', 'CS_CONFIGURATION', 'CS_ISSUED', 'CS_EXPIRATION', 'EXPIRATION', 'SEND_CERTIFICATE', 'RENEWAL_DETAILS', 'REISSUE', 'SUBSCRIPTION', 'SUBSCRIPTION_EXPIRATION', 'SUBSCRIPTION_RENEWAL', 'RENEWAL_INVOICE', 'DISCONTINUED', 'CODE_GUARD_READY', 'DS_CONFIGURATION', 'DS_ISSUED', 'ORG_VALIDATION', 'CERT_REVOKED', 'CERT_EXPIRED'];
+    const PCI_CONFIGURATION_TEMPLATE = 'HackerGuardian PCI Configuration Required';
+    const PCI_CONFIGURATION_SUBJECT  = 'HackerGuardian PCI scanning - organization details required';
+    const PCI_CONFIGURATION_MESSAGE  = '<p>Dear {$client_name},</p>
+                             <p>
+                                Your PCI scanning service ({$service_product_name}) is ready to be set up. Enter the
+                                organization and the administrator of the scan account at the URL below.
+                             </p>
+                             <p>{$ssl_configuration_link}</p>
+                             <p>
+                                The scan account is created at once and its login is shown on the same page. If you have
+                                any questions, please open a ticket for assistance.
+                             </p>
+                             <p>{$signature}</p>';
+
+    const PCI_READY_TEMPLATE = 'HackerGuardian PCI Scan Account Ready';
+    const PCI_READY_SUBJECT  = 'Your HackerGuardian PCI scan account is ready';
+    const PCI_READY_MESSAGE  = '<p>Dear {$client_name},</p>
+                             <p>
+                                The PCI scan account of {$pci_organization} is ready. Sign in to the scan control centre
+                                at {$pci_login_url} with the username <strong>{$pci_username}</strong>. The password is shown
+                                on your service page in the client area.
+                             </p>
+                             <p>
+                                In the scan control centre you add the IP addresses to scan, run the scans and get the
+                                PCI compliance reports.
+                             </p>
+                             <p>Service details: {$order_url}</p>
+                             <p>{$signature}</p>';
+
+    const TEMPLATE_NAMES = ['CONFIGURATION', 'SMIME_CONFIGURATION', 'SMIME_REMINDER', 'SMIME_ISSUED', 'SMIME_EXPIRATION', 'CS_CONFIGURATION', 'CS_ISSUED', 'CS_EXPIRATION', 'EXPIRATION', 'SEND_CERTIFICATE', 'RENEWAL_DETAILS', 'REISSUE', 'SUBSCRIPTION', 'SUBSCRIPTION_EXPIRATION', 'SUBSCRIPTION_RENEWAL', 'RENEWAL_INVOICE', 'DISCONTINUED', 'CODE_GUARD_READY', 'DS_CONFIGURATION', 'DS_ISSUED', 'PCI_CONFIGURATION', 'PCI_READY', 'ORG_VALIDATION', 'CERT_REVOKED', 'CERT_EXPIRED'];
 
     /** S/MIME e-mails */
     const SMIME_TEMPLATES = [self::SMIME_CONFIGURATION_TEMPLATE, self::SMIME_REMINDER_TEMPLATE, self::SMIME_ISSUED_TEMPLATE, self::SMIME_EXPIRATION_TEMPLATE];
