@@ -34,14 +34,13 @@ class LeiService extends GatewayOrderService
     /** terms the gateway sells (months) */
     const TERMS = [12, 24, 36, 48, 60];
 
-    /** the gateway's text rules: no field may hold these, names and addresses not the second set either */
+    /** the gateway's text rule: no field may hold these (quotes are fine: names go to the issuer as registered) */
     const FORBIDDEN_TEXT = '/[<>{}%*;=\x00-\x1F\x7F]/u';
-    const FORBIDDEN_NAME = '/[()\[\]|&@:"\/]/u';
 
     /** field => max length */
     const ENTITY_LENGTHS  = ['legal_name' => 150, 'registration_authority_entity_id' => 50];
     const ADDRESS_LENGTHS = ['address_line_1' => 100, 'city' => 50, 'region' => 50, 'postal_code' => 50];
-    const ADDRESS_REQUIRED = ['address_line_1', 'city', 'postal_code', 'country'];
+    const ADDRESS_REQUIRED = ['address_line_1', 'city', 'region', 'postal_code', 'country'];
     const NAME_LENGTH      = 50;
 
     public static function configurationTemplate()
@@ -88,7 +87,7 @@ class LeiService extends GatewayOrderService
 
                 return null;
             }
-            if(!self::allowed($value, $field === 'legal_name') || mb_strlen($value) > $length)
+            if(!self::allowed($value) || mb_strlen($value) > $length)
             {
                 $error = ['leiFieldInvalid', $field];
 
@@ -136,11 +135,59 @@ class LeiService extends GatewayOrderService
             $entity['headquarters_address'] = $headquarters;
         }
 
-        $entity['level2_data'] = [
-            'available'    => !empty($input['level2_available']),
-            'consolidated' => !empty($input['level2_available']) && !empty($input['level2_consolidated']),
-            'ultimate'     => !empty($input['level2_available']) && !empty($input['level2_ultimate']),
+        $entity['parents'] = [
+            'direct'   => !empty($input['level2_available']) && !empty($input['level2_consolidated']),
+            'ultimate' => !empty($input['level2_available']) && !empty($input['level2_ultimate']),
         ];
+
+        return $entity;
+    }
+
+    /** the module's legal entity as the gateway's organization object */
+    public static function toOrganization(array $entity)
+    {
+        $organization = [
+            'name'                => (string)($entity['legal_name'] ?? ''),
+            'registration_number' => (string)($entity['registration_authority_entity_id'] ?? ''),
+            'jurisdiction'        => (string)($entity['legal_jurisdiction'] ?? ''),
+        ];
+        if(!empty($entity['incorporation_date']))
+        {
+            $organization['incorporation_date'] = $entity['incorporation_date'];
+        }
+        $organization['legal_address'] = $entity['legal_address'] ?? null;
+        if(!empty($entity['headquarters_address']))
+        {
+            $organization['headquarters_address'] = $entity['headquarters_address'];
+        }
+        $parents = (array)($entity['parents'] ?? []);
+        if(!empty($parents['direct']) || !empty($parents['ultimate']))
+        {
+            $organization['parents'] = ['direct' => !empty($parents['direct']), 'ultimate' => !empty($parents['ultimate'])];
+        }
+
+        return $organization;
+    }
+
+    /** the gateway's organization object (or the older legal_entity) as the module's legal entity */
+    public static function fromOrganization(array $organization)
+    {
+        if(isset($organization['legal_name']))
+        {
+            return $organization;
+        }
+        $entity = [
+            'legal_name'                       => (string)($organization['name'] ?? ''),
+            'registration_authority_entity_id' => (string)($organization['registration_number'] ?? ''),
+            'legal_jurisdiction'               => (string)($organization['jurisdiction'] ?? ''),
+        ];
+        foreach(['incorporation_date', 'legal_address', 'headquarters_address', 'parents'] as $field)
+        {
+            if(array_key_exists($field, $organization))
+            {
+                $entity[$field] = $organization[$field];
+            }
+        }
 
         return $entity;
     }
@@ -169,7 +216,7 @@ class LeiService extends GatewayOrderService
             }
             $invalid = $field === 'country'
                 ? !preg_match('/^[A-Z]{2}$/', $value)
-                : (!self::allowed($value, true) || mb_strlen($value) > self::ADDRESS_LENGTHS[$field]);
+                : (!self::allowed($value) || mb_strlen($value) > self::ADDRESS_LENGTHS[$field]);
             if($invalid)
             {
                 $error = ['leiFieldInvalid', $prefix . '_' . $field];
@@ -196,7 +243,7 @@ class LeiService extends GatewayOrderService
 
                 return null;
             }
-            if(!self::allowed($value, true) || mb_strlen($value) > self::NAME_LENGTH)
+            if(!self::allowed($value) || mb_strlen($value) > self::NAME_LENGTH)
             {
                 $error = ['leiFieldInvalid', 'signing_' . $field];
 
@@ -213,9 +260,9 @@ class LeiService extends GatewayOrderService
         return trim(preg_replace('/\s+/u', ' ', (string)$value));
     }
 
-    protected static function allowed($value, $name)
+    protected static function allowed($value)
     {
-        return !preg_match(self::FORBIDDEN_TEXT, $value) && (!$name || !preg_match(self::FORBIDDEN_NAME, $value));
+        return !preg_match(self::FORBIDDEN_TEXT, $value);
     }
 
     // ------------------------------------------------------------------ orders
@@ -256,8 +303,8 @@ class LeiService extends GatewayOrderService
         $term      = static::term($serviceId, $service->packageid);
         $payload   = [
             'product'           => ['id' => SSLTrustCenterApi::productId($productId), 'term' => $term],
-            'legal_entity'      => $legalEntity,
-            'signing_authority' => $signingAuthority,
+            'organization' => static::toOrganization($legalEntity),
+            'signatory'    => $signingAuthority,
         ];
 
         $response = static::placeLocked($serviceId, $ssl, function() use ($serviceId, $payload) {
@@ -289,10 +336,10 @@ class LeiService extends GatewayOrderService
         }
 
         $term    = static::term($serviceId, $service->packageid);
-        $payload = ['level1_data_same' => (bool)$level1Same, 'term' => $term];
+        $payload = ['organization_changed' => !$level1Same, 'term' => $term];
         if($signingAuthority)
         {
-            $payload['signing_authority'] = $signingAuthority;
+            $payload['signatory'] = $signingAuthority;
         }
 
         $response = static::placeLocked($serviceId, $ssl, function() use ($serviceId, $renewal, $payload) {
@@ -382,14 +429,16 @@ class LeiService extends GatewayOrderService
                 $stored[$to] = (string)$item[$from];
             }
         }
-        if(!empty($item['legal_entity']['legal_name']))
+        $organization = $item['organization'] ?? ($item['legal_entity'] ?? null);
+        if(is_array($organization) && (!empty($organization['name']) || !empty($organization['legal_name'])))
         {
-            $stored['legalName']   = (string)$item['legal_entity']['legal_name'];
-            $stored['legalEntity'] = (array)$item['legal_entity'];
+            $stored['legalEntity'] = static::fromOrganization($organization);
+            $stored['legalName']   = $stored['legalEntity']['legal_name'];
         }
-        if(!empty($item['signing_authority']) && is_array($item['signing_authority']))
+        $signatory = $item['signatory'] ?? ($item['signing_authority'] ?? null);
+        if(!empty($signatory) && is_array($signatory))
         {
-            $stored['signingAuthority'] = $item['signing_authority'];
+            $stored['signingAuthority'] = $signatory;
         }
         foreach(['registered_legal_address' => 'registeredLegalAddress', 'registered_headquarters_address' => 'registeredHeadquartersAddress'] as $from => $to)
         {

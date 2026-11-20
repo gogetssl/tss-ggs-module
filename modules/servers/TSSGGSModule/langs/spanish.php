@@ -1140,7 +1140,7 @@ $_LANG['serverCA']['home']['leiField_hq_country'] = 'País de la sede';
 $_LANG['serverCA']['home']['leiField_signing_first_name'] = 'Nombre';
 $_LANG['serverCA']['home']['leiField_signing_last_name'] = 'Apellidos';
 $_LANG['serverCA']['home']['leiFieldRequired'] = '%s: este campo es obligatorio.';
-$_LANG['serverCA']['home']['leiFieldInvalid'] = '%s: el valor no es válido (compruebe su longitud y omita caracteres como < > ; = " / & @).';
+$_LANG['serverCA']['home']['leiFieldInvalid'] = '%s: el valor no es válido (compruebe su longitud y omita los caracteres < > { } % * ; =).';
 $_LANG['serverCA']['home']['leiNotLeiProduct'] = 'Este servicio no es un código LEI';
 $_LANG['serverCA']['home']['leiConfirmRequired'] = 'Confirme que está autorizado para solicitar el LEI de esta entidad jurídica.';
 $_LANG['serverCA']['home']['leiAlreadyOrdered'] = 'El LEI ya se ha solicitado';

@@ -165,7 +165,7 @@ class LeiCompanySearch
      */
     public static function plain($value)
     {
-        $value = preg_replace([LeiService::FORBIDDEN_TEXT, LeiService::FORBIDDEN_NAME], ' ', (string)$value);
+        $value = preg_replace(LeiService::FORBIDDEN_TEXT, ' ', (string)$value);
 
         return trim(preg_replace('/\s+/u', ' ', $value));
     }

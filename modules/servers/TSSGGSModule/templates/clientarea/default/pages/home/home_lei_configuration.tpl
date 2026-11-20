@@ -85,7 +85,7 @@
                 <div class="tssggs-fields">
                     <div class="tssggs-field"><label for="tssggs-lei-a1">{$MGLANG->T('leiField_legal_address_line_1')} <span class="tssggs-req">*</span></label><input type="text" id="tssggs-lei-a1" name="entity[legal_address][address_line_1]" class="form-control" required maxlength="100" value="{$leiForm.address_line_1|escape:'htmlall'}"></div>
                     <div class="tssggs-field"><label for="tssggs-lei-city">{$MGLANG->T('leiField_legal_city')} <span class="tssggs-req">*</span></label><input type="text" id="tssggs-lei-city" name="entity[legal_address][city]" class="form-control" required maxlength="50" value="{$leiForm.city|escape:'htmlall'}"></div>
-                    <div class="tssggs-field"><label for="tssggs-lei-region">{$MGLANG->T('leiField_legal_region')}</label><input type="text" id="tssggs-lei-region" name="entity[legal_address][region]" class="form-control" maxlength="50" value="{$leiForm.region|escape:'htmlall'}"></div>
+                    <div class="tssggs-field"><label for="tssggs-lei-region">{$MGLANG->T('leiField_legal_region')} <span class="tssggs-req">*</span></label><input type="text" id="tssggs-lei-region" name="entity[legal_address][region]" class="form-control" required maxlength="50" value="{$leiForm.region|escape:'htmlall'}"></div>
                     <div class="tssggs-field"><label for="tssggs-lei-postal">{$MGLANG->T('leiField_legal_postal_code')} <span class="tssggs-req">*</span></label><input type="text" id="tssggs-lei-postal" name="entity[legal_address][postal_code]" class="form-control" required maxlength="50" value="{$leiForm.postal_code|escape:'htmlall'}"></div>
                     <div class="tssggs-field"><label for="tssggs-lei-country">{$MGLANG->T('leiField_legal_country')} <span class="tssggs-req">*</span></label>
                         {if $smimeCountries}
@@ -104,7 +104,7 @@
                 <div class="tssggs-fields" data-tssggs-lei-block="hq" hidden>
                     <div class="tssggs-field"><label>{$MGLANG->T('leiField_hq_address_line_1')} <span class="tssggs-req">*</span></label><input type="text" name="entity[headquarters_address][address_line_1]" class="form-control" required maxlength="100"></div>
                     <div class="tssggs-field"><label>{$MGLANG->T('leiField_hq_city')} <span class="tssggs-req">*</span></label><input type="text" name="entity[headquarters_address][city]" class="form-control" required maxlength="50"></div>
-                    <div class="tssggs-field"><label>{$MGLANG->T('leiField_hq_region')}</label><input type="text" name="entity[headquarters_address][region]" class="form-control" maxlength="50"></div>
+                    <div class="tssggs-field"><label>{$MGLANG->T('leiField_hq_region')} <span class="tssggs-req">*</span></label><input type="text" name="entity[headquarters_address][region]" class="form-control" maxlength="50"></div>
                     <div class="tssggs-field"><label>{$MGLANG->T('leiField_hq_postal_code')} <span class="tssggs-req">*</span></label><input type="text" name="entity[headquarters_address][postal_code]" class="form-control" required maxlength="50"></div>
                     <div class="tssggs-field"><label>{$MGLANG->T('leiField_hq_country')} <span class="tssggs-req">*</span></label>
                         {if $smimeCountries}
@@ -253,7 +253,7 @@
         set('entity[incorporation_date]', r.incorporation_date);
         set('entity[legal_address][address_line_1]', r.address.address_line_1);
         set('entity[legal_address][city]', r.address.city);
-        $('#tssggs-lei-form [name="entity[legal_address][region]"]').val(r.address.region || '');
+        $('#tssggs-lei-form [name="entity[legal_address][region]"]').val(r.address.region || r.address.city || '');
         set('entity[legal_address][postal_code]', r.address.postal_code);
         set('entity[legal_address][country]', r.address.country);
         $('[data-tssggs-lei-pick]').removeClass('active');
