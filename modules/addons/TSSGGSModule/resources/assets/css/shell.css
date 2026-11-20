@@ -848,6 +848,8 @@
 
 /* info banners */
 #layers2 .lu-app-main .lu-alert { border-radius: var(--tw-radius); font-size: 13px; line-height: 20px; }
+/* alert and toast icons are 16px boxes (icons.css), the framework centres a 24px one: centre them again */
+#layers2-body .lu-alert.lu-has-icon[class]:before, #layers2 .lu-alert.lu-has-icon[class]:before { margin-top: -8px; }
 
 /* footer line */
 #layers2 .lu-app-main__footer { margin-top: var(--sp-6); }
