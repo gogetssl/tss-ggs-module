@@ -1140,7 +1140,7 @@ $_LANG['serverCA']['home']['leiField_hq_country'] = 'Hovedkontorets land';
 $_LANG['serverCA']['home']['leiField_signing_first_name'] = 'Fornavn';
 $_LANG['serverCA']['home']['leiField_signing_last_name'] = 'Efternavn';
 $_LANG['serverCA']['home']['leiFieldRequired'] = '%s: feltet skal udfyldes.';
-$_LANG['serverCA']['home']['leiFieldInvalid'] = '%s: værdien er ikke gyldig (kontrollér længden, og udelad tegnene < > { } % * ; =).';
+$_LANG['serverCA']['home']['leiFieldInvalid'] = '%s: værdien er ikke gyldig (kontrollér længden, og udelad tegnene < > { } %% * ; =).';
 $_LANG['serverCA']['home']['leiNotLeiProduct'] = 'Denne tjeneste er ikke en LEI-kode';
 $_LANG['serverCA']['home']['leiConfirmRequired'] = 'Bekræft, at du har ret til at ansøge om LEI for denne juridiske enhed.';
 $_LANG['serverCA']['home']['leiAlreadyOrdered'] = 'LEI\'en er allerede bestilt';

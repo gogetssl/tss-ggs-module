@@ -1140,7 +1140,7 @@ $_LANG['serverCA']['home']['leiField_hq_country'] = 'Země ústředí';
 $_LANG['serverCA']['home']['leiField_signing_first_name'] = 'Jméno';
 $_LANG['serverCA']['home']['leiField_signing_last_name'] = 'Příjmení';
 $_LANG['serverCA']['home']['leiFieldRequired'] = '%s: toto pole je povinné.';
-$_LANG['serverCA']['home']['leiFieldInvalid'] = '%s: hodnota není platná (zkontrolujte délku a vynechte znaky < > { } % * ; =).';
+$_LANG['serverCA']['home']['leiFieldInvalid'] = '%s: hodnota není platná (zkontrolujte délku a vynechte znaky < > { } %% * ; =).';
 $_LANG['serverCA']['home']['leiNotLeiProduct'] = 'Tato služba není kód LEI';
 $_LANG['serverCA']['home']['leiConfirmRequired'] = 'Potvrďte, že jste oprávněn požádat o LEI této právnické osoby.';
 $_LANG['serverCA']['home']['leiAlreadyOrdered'] = 'LEI už byl objednán';
