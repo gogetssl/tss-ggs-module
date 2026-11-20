@@ -116,7 +116,7 @@ class ApiSettingsProvider extends CrudProvider
             return (new Response())->setError(sprintf($this->translate('disconnectHasProducts'), Edition::brandOf(Edition::connectedVendor()), CrossVendor::productCount(Edition::connectedVendor())));
         }
 
-        $test = $this->testConnection();
+        $test = $this->testConnection(true);
         if($test !== true) return $test;
 
         // connected first, so the other vendor's credentials are saved with the edition's own ones
@@ -134,7 +134,11 @@ class ApiSettingsProvider extends CrudProvider
 
     }
 
-    public function testConnection()
+    /**
+     * @param bool $saving true when update() calls it; the Test Connection button (false) tells the admin when the
+     *                    form holds changes that are not saved yet (Connect switched, a token typed)
+     */
+    public function testConnection($saving = false)
     {
         $moduleRepository    = new AddonModuleRepository();
         $moduleConfiguration = $moduleRepository->getModuleConfiguration();
@@ -191,6 +195,29 @@ class ApiSettingsProvider extends CrudProvider
                 ->setError(implode("<br>", $errors));
         }
 
+        if(!$saving && $this->unsaved())
+        {
+            return (new Response())->setSuccess($this->translate('testUnsaved'));
+        }
+
         return true;
+    }
+
+    /** Whether the form differs from what is stored: Connect switched or a token typed */
+    protected function unsaved()
+    {
+        if($this->connectChosen() !== (Edition::connectedVendor() !== ''))
+        {
+            return true;
+        }
+        foreach(['tssLiveAuthToken', 'tssTestAuthToken', 'ggsLiveAuthToken'] as $field)
+        {
+            if(trim((string)($this->formData[$field] ?? '')) !== '')
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

@@ -488,6 +488,7 @@ $_LANG['admin.settings.index.forms.api_settings_form.testConnection']          =
 $_LANG['admin.settings.index.forms.api_settings_form.update_success']          = 'Settings updated successfully';
 $_LANG['admin.settings.index.forms.api_settings_form.testconnection_success']  = 'Successfully connected';
 $_LANG['admin.settings.index.providers.api_settings_provider.connectionError'] = 'Connection Error';
+$_LANG['admin.settings.index.providers.api_settings_provider.testUnsaved'] = 'Connection successful. Nothing is saved yet: click Save changes to store the settings.';
 $_LANG['admin.settings.index.providers.api_settings_provider.successAPI']      = 'The connection was successful';
 
 
@@ -664,6 +665,8 @@ $_LANG['admin.products.about_retire_name'] = 'Retire';
 $_LANG['admin.products.about_retire'] = 'The product is discontinued: nobody can order it, and clients with it get a "Product discontinued" notice on renewal invoices. Un-retire reverses it.';
 $_LANG['admin.products.about_fix_name'] = 'Fix options';
 $_LANG['admin.products.about_fix'] = 'Shown only when the status says "Check options": updates the configurable options of the product to match what %%VENDOR%% allows.';
+$_LANG['admin.products.about_intro_connected'] = 'The products of your %%VENDOR%% account, plus the :brand products %%VENDOR%% does not sell (connected in Settings > API). Import one to sell it in WHMCS; the Status column shows what state it is in.';
+$_LANG['admin.products.about_fix_connected'] = 'Shown only when the status says "Check options": updates the configurable options of the product to match what its provider allows.';
 $_LANG['admin.products.about_cancel_name'] = 'Cancel all renewals';
 $_LANG['admin.products.about_cancel'] = 'Sends a cancellation request at the end of the billing period for every active service of the product, so none renews.';
 $_LANG['admin.configuration.content.step5.productsInfo']       = 'To import a product, please select it and click the Import button.';

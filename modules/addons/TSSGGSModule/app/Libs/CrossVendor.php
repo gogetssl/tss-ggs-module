@@ -38,7 +38,19 @@ class CrossVendor
             return false;
         }
 
+        // trial certificates of the connected vendor are never offered (Vlad, 2026-11-20)
+        if(self::isTrial((string)$remoteProduct->name))
+        {
+            return false;
+        }
+
         return self::exclusive($vendor, (string)$remoteProduct->category, (string)$remoteProduct->brand);
+    }
+
+    /** Whether the product is a free trial certificate (GoGetSSL 90-day Trial SSL) */
+    public static function isTrial($name)
+    {
+        return (bool)preg_match('/\btrial\b/i', (string)$name);
     }
 
     /** Whether the vendor's product of this category and brand is on its exclusive list */

@@ -480,6 +480,7 @@ $_LANG['admin.settings.index.forms.api_settings_form.testConnection']          =
 $_LANG['admin.settings.index.forms.api_settings_form.update_success']          = 'Indstillingerne blev opdateret';
 $_LANG['admin.settings.index.forms.api_settings_form.testconnection_success']  = 'Forbindelsen blev oprettet';
 $_LANG['admin.settings.index.providers.api_settings_provider.connectionError'] = 'Forbindelsesfejl';
+$_LANG['admin.settings.index.providers.api_settings_provider.testUnsaved'] = 'Forbindelsen lykkedes. Intet er gemt endnu: klik på Gem ændringer for at gemme indstillingerne.';
 $_LANG['admin.settings.index.providers.api_settings_provider.successAPI']      = 'Forbindelsen lykkedes';
 
 
@@ -1026,6 +1027,8 @@ $_LANG['admin.products.about_retire_name'] = 'Udgå';
 $_LANG['admin.products.about_retire'] = 'Produktet er udgået: ingen kan bestille det, og kunder, der har det, får meddelelsen "Produkt udgået" på fornyelsesfakturaer. Genaktiver ophæver det.';
 $_LANG['admin.products.about_fix_name'] = 'Ret indstillinger';
 $_LANG['admin.products.about_fix'] = 'Vises kun, når status er "Kontroller indstillinger": opdaterer produktets konfigurerbare indstillinger, så de svarer til det, %%VENDOR%% tillader.';
+$_LANG['admin.products.about_intro_connected'] = 'Produkterne på din %%VENDOR%%-konto samt de :brand-produkter, som %%VENDOR%% ikke sælger (forbundet under Indstillinger > API). Importer et produkt for at sælge det i WHMCS; kolonnen Status viser, hvilken tilstand det er i.';
+$_LANG['admin.products.about_fix_connected'] = 'Vises kun, når status er "Kontroller indstillinger": opdaterer produktets konfigurerbare indstillinger, så de svarer til det, dets udbyder tillader.';
 $_LANG['admin.products.about_cancel_name'] = 'Annuller alle fornyelser';
 $_LANG['admin.products.about_cancel'] = 'Sender en anmodning om annullering ved udgangen af faktureringsperioden for hver aktiv tjeneste med produktet, så ingen fornyes.';
 $_LANG['admin.products.index.data_tables.products.array_data_provider.data_table.billing'] = 'Faktureringstype';

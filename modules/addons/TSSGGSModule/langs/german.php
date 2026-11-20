@@ -479,6 +479,7 @@ $_LANG['admin.settings.index.forms.api_settings_form.testConnection'] = 'Verbind
 $_LANG['admin.settings.index.forms.api_settings_form.update_success'] = 'Einstellungen erfolgreich aktualisiert';
 $_LANG['admin.settings.index.forms.api_settings_form.testconnection_success'] = 'Erfolgreich verbunden';
 $_LANG['admin.settings.index.providers.api_settings_provider.connectionError'] = 'Verbindungsfehler';
+$_LANG['admin.settings.index.providers.api_settings_provider.testUnsaved'] = 'Verbindung erfolgreich. Noch nichts gespeichert: Klicken Sie auf Änderungen speichern, um die Einstellungen zu speichern.';
 $_LANG['admin.settings.index.providers.api_settings_provider.successAPI'] = 'Die Verbindung war erfolgreich';
 
 
@@ -1024,6 +1025,8 @@ $_LANG['admin.products.about_retire_name'] = 'Einstellen';
 $_LANG['admin.products.about_retire'] = 'Das Produkt wird nicht mehr angeboten: Niemand kann es bestellen, und Kunden, die es nutzen, erhalten auf Verlängerungsrechnungen den Hinweis "Produkt eingestellt". Wieder aufnehmen macht dies rückgängig.';
 $_LANG['admin.products.about_fix_name'] = 'Optionen korrigieren';
 $_LANG['admin.products.about_fix'] = 'Wird nur angezeigt, wenn der Status "Optionen prüfen" lautet: Aktualisiert die konfigurierbaren Optionen des Produkts so, dass sie dem entsprechen, was %%VENDOR%% zulässt.';
+$_LANG['admin.products.about_intro_connected'] = 'Die Produkte Ihres %%VENDOR%%-Kontos sowie die :brand-Produkte, die %%VENDOR%% nicht verkauft (verbunden unter Einstellungen > API). Importieren Sie ein Produkt, um es in WHMCS zu verkaufen; die Spalte Status zeigt, in welchem Zustand es sich befindet.';
+$_LANG['admin.products.about_fix_connected'] = 'Wird nur angezeigt, wenn der Status "Optionen prüfen" lautet: Aktualisiert die konfigurierbaren Optionen des Produkts so, dass sie dem entsprechen, was sein Anbieter zulässt.';
 $_LANG['admin.products.about_cancel_name'] = 'Alle Verlängerungen stornieren';
 $_LANG['admin.products.about_cancel'] = 'Erstellt für jeden aktiven Service des Produkts eine Kündigungsanfrage zum Ende des Abrechnungszeitraums, sodass keiner verlängert wird.';
 $_LANG['admin.products.index.data_tables.products.array_data_provider.data_table.billing'] = 'Abrechnungsart';

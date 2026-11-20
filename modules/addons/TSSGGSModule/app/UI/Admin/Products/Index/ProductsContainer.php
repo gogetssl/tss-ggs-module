@@ -115,13 +115,17 @@ class ProductsContainer extends Container implements AdminAreaInterface
     /** What the page is for and what the actions in the Manage column do */
     protected function explanation(): string
     {
-        $t    = function($key) { return htmlspecialchars((string)$this->translate($key, [], ['admin.products']), ENT_QUOTES); };
-        $item = function($key) use ($t) { return '<li><b>' . $t($key . '_name') . '</b>: ' . $t($key) . '</li>'; };
+        $t    = function($key, array $vars = []) { return htmlspecialchars((string)$this->translate($key, $vars, ['admin.products']), ENT_QUOTES); };
+        $item = function($key, $text = null) use ($t) { return '<li><b>' . $t($key . '_name') . '</b>: ' . $t($text ?? $key) . '</li>'; };
+
+        // with the other vendor connected (App\Libs\CrossVendor) the list holds the products of both vendors
+        $connected = \ModulesGarden\TSSGGSModule\App\Libs\Edition::connectedVendor();
+        $intro     = $connected !== '' ? $t('about_intro_connected', [':brand' => \ModulesGarden\TSSGGSModule\App\Libs\Edition::brandOf($connected)]) : $t('about_intro');
 
         return '<div class="tssggs-explain"><span class="tssggs-explain__icon">' . Icons::svg('information-outline') . '</span><div>'
             . '<h3>' . $t('about_title') . '</h3>'
-            . '<p>' . $t('about_intro') . '</p>'
-            . '<ul>' . $item('about_import') . $item('about_hide') . $item('about_retire') . $item('about_fix') . $item('about_cancel') . '</ul>'
+            . '<p>' . $intro . '</p>'
+            . '<ul>' . $item('about_import') . $item('about_hide') . $item('about_retire') . $item('about_fix', $connected !== '' ? 'about_fix_connected' : null) . $item('about_cancel') . '</ul>'
             . '</div></div>';
     }
 }
