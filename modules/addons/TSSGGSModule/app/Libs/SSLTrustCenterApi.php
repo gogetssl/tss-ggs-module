@@ -572,7 +572,7 @@ class SSLTrustCenterApi
 
     public function getCertificateDetails($category, $orderId)
     {
-        // the web security products are not certificates: they have their own path
+        // the web security products and LEI codes are not certificates: they have their own path
         if((string)$category === self::CODE_GUARD_CATEGORY)
         {
             return $this->getCodeGuardDetails($orderId);
@@ -580,6 +580,10 @@ class SSLTrustCenterApi
         if((string)$category === PciService::CATEGORY)
         {
             return $this->call('/pci/' . (int)$orderId, [], 'GET');
+        }
+        if((string)$category === LeiService::CATEGORY)
+        {
+            return $this->call('/lei/' . (int)$orderId, [], 'GET');
         }
 
         return $this->call('/certificates/' . rawurlencode((string)$category) . '/' . (int)$orderId, [], 'GET');
@@ -715,6 +719,20 @@ class SSLTrustCenterApi
     public function createPci(array $data)
     {
         return $this->call('/pci', $data);
+    }
+
+    // ------------------------------------------------------------------ LEI codes (GoGetSSL only for now)
+
+    /** POST /lei: a new LEI registration, paid at once */
+    public function createLei(array $data)
+    {
+        return $this->call('/lei', $data);
+    }
+
+    /** POST /lei/{id}/renew: the renewal order of an issued LEI; the answer is the new LEI record */
+    public function renewLei($leiId, array $data)
+    {
+        return $this->call('/lei/' . (int)$leiId . '/renew', $data);
     }
 
     // ------------------------------------------------------------------ CodeGuard (website backup, TheSSLStore only)

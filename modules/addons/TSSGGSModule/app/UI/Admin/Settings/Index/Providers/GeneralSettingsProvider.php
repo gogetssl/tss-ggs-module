@@ -34,6 +34,8 @@ class GeneralSettingsProvider extends CrudProvider
         }
         $this->availableValues['sidebarTemplates'] = $pages;
 
+        // the OpenCorporates token is never sent to the page
+        $this->data['openCorporatesToken'] = '';
         $this->data['debugServices'] = implode(', ', \ModulesGarden\TSSGGSModule\App\Libs\LogPolicy::debugServices());
         $this->data['debugHours']    = 4;
         $this->availableValues['apiLogMode'] = self::apiModeOptions($this);
@@ -76,6 +78,20 @@ class GeneralSettingsProvider extends CrudProvider
             $data['sidebarTemplates'] = implode(',', array_unique(array_filter(array_map(function($page) {
                 return preg_replace('/[^a-z0-9_-]/i', '', (string)$page);
             }, $pages))));
+        }
+
+        // OpenCorporates token: empty keeps the saved one, "-" removes it, anything else is saved encrypted
+        if(array_key_exists('openCorporatesToken', $data))
+        {
+            $token = trim((string)$data['openCorporatesToken']);
+            if($token === '')
+            {
+                unset($data['openCorporatesToken']);
+            }
+            else
+            {
+                $data['openCorporatesToken'] = $token === '-' ? '' : \encrypt($token);
+            }
         }
 
         // debug mode: the service list and for how long (the hours are not stored, only the end time)

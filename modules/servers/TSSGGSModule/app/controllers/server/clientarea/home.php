@@ -51,6 +51,7 @@ class home extends AbstractController
     use parts\CodeGuardActions;
     use parts\DocumentSigningActions;
     use parts\PciActions;
+    use parts\LeiActions;
     use parts\GatewayRenewalActions;
     use parts\SmimeActions;
     use parts\AisActions;
@@ -91,6 +92,10 @@ class home extends AbstractController
             if(\ModulesGarden\TSSGGSModule\App\Libs\PciService::isPciWhmcsProduct($service->packageid))
             {
                 return $this->indexPciHTML($input, $vars);
+            }
+            if(\ModulesGarden\TSSGGSModule\App\Libs\LeiService::isLeiWhmcsProduct($service->packageid))
+            {
+                return $this->indexLeiHTML($input, $vars);
             }
 
             if(AisHelpers::isAisWhmcsProduct($service->packageid))

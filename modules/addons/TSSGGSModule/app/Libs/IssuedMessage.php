@@ -41,7 +41,7 @@ class IssuedMessage
     ];
 
     /** catalogue categories that are not SSL certificates */
-    const NOT_SSL = ['smime', 'cs', 'ds', 'code-guard', 'mc', 'pci'];
+    const NOT_SSL = ['smime', 'cs', 'ds', 'code-guard', 'mc', 'pci', 'lei'];
 
     /**
      * 'sectigo' | 'digicert' | null. GoGetSSL-brand DV certificates are issued by Sectigo, OV / EV ones by DigiCert.

@@ -84,6 +84,8 @@ class GeneralSettings
         'currencyBuffer'           => 0,
         'balanceAlert'             => true,
         'balanceAlertSent'         => 0,
+
+        'openCorporatesToken'      => '',     // LEI order form company search (stored encrypted, App\Libs\LeiCompanySearch)
     ];
 
     protected static $settings;
