@@ -48,7 +48,10 @@ class AddonModuleRepository
             }
         }
 
-        // credentials of vendors outside the edition stay stored but are not used
+        // the edition's own vendor, plus the connected one (Settings > API, "Connect ... products")
+        $result['vendors'] = \ModulesGarden\TSSGGSModule\App\Libs\Edition::vendors();
+
+        // credentials of a vendor that is not used (not connected) stay stored but are not used
         if(isset($result['credentials']) && is_array($result['credentials']))
         {
             $result['credentials'] = array_intersect_key($result['credentials'], array_flip(\ModulesGarden\TSSGGSModule\App\Libs\Edition::vendors()));
@@ -149,6 +152,19 @@ class AddonModuleRepository
 
         // a little less than the interval: a cron line that fires every 5 minutes must not skip a run by seconds
         return time() - strtotime((string)$cronCheck->last_run) >= $interval - 60;
+    }
+
+    /**
+     * Every stored credential, also of a vendor that is not connected (getModuleConfiguration() hides those): the
+     * settings form shows its partner code and keeps its token, so connecting needs no retyping
+     *
+     * @return array vendor => fields
+     */
+    public function storedCredentials()
+    {
+        $stored = AddonModule::where('module', 'configuration_TSSGGSModule')->where('setting', 'credentials')->value('value');
+
+        return $stored ? (json_decode(\decrypt($stored), true) ?: []) : [];
     }
 
     public function saveCredentials($sslStoreLivePartnerCode, $sslStoreLiveAuthToken, $goGetSslLivePartnerCode, $goGetSslLiveAuthToken,$sslStoreTestPartnerCode, $sslStoreTestAuthToken, $operationMode)

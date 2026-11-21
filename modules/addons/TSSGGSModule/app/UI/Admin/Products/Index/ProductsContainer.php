@@ -34,6 +34,19 @@ class ProductsContainer extends Container implements AdminAreaInterface
 
         $productsTab = new Tab();
         $productsTab->setTitle($this->translate('productsTab', [], ['admin.products']));
+        // the other vendor's exclusive products (App\Libs\CrossVendor): the banner shows until it is connected
+        if(\ModulesGarden\TSSGGSModule\App\Libs\Edition::connectedVendor() === '')
+        {
+            $other  = \ModulesGarden\TSSGGSModule\App\Libs\Edition::otherVendor();
+            $banner = new Text();
+            $banner->setCss('tssggs-html');
+            $banner->setText('<div class="tssggs-explain tssggs-explain--connect"><span class="tssggs-explain__icon">' . Icons::svg('package-variant-closed') . '</span><div>'
+                . '<h3>' . htmlspecialchars((string)$this->translate('connect_title_' . $other, [], ['admin.products']), ENT_QUOTES) . '</h3>'
+                . '<p>' . htmlspecialchars((string)$this->translate('connect_text_' . $other, [], ['admin.products']), ENT_QUOTES)
+                . ' <a href="addonmodules.php?module=TSSGGSModule&amp;mg-page=settings&amp;settings-page=apiSettings">'
+                . htmlspecialchars((string)$this->translate('connect_link', [], ['admin.products']), ENT_QUOTES) . '</a></p></div></div>');
+            $productsTab->addElement($banner);
+        }
         if(!\ModulesGarden\TSSGGSModule\App\Libs\GeneralSettings::enabled('hideInfoMessages'))
         {
             $text = new Text();
@@ -102,13 +115,17 @@ class ProductsContainer extends Container implements AdminAreaInterface
     /** What the page is for and what the actions in the Manage column do */
     protected function explanation(): string
     {
-        $t    = function($key) { return htmlspecialchars((string)$this->translate($key, [], ['admin.products']), ENT_QUOTES); };
-        $item = function($key) use ($t) { return '<li><b>' . $t($key . '_name') . '</b>: ' . $t($key) . '</li>'; };
+        $t    = function($key, array $vars = []) { return htmlspecialchars((string)$this->translate($key, $vars, ['admin.products']), ENT_QUOTES); };
+        $item = function($key, $text = null) use ($t) { return '<li><b>' . $t($key . '_name') . '</b>: ' . $t($text ?? $key) . '</li>'; };
+
+        // with the other vendor connected (App\Libs\CrossVendor) the list holds the products of both vendors
+        $connected = \ModulesGarden\TSSGGSModule\App\Libs\Edition::connectedVendor();
+        $intro     = $connected !== '' ? $t('about_intro_connected', [':brand' => \ModulesGarden\TSSGGSModule\App\Libs\Edition::brandOf($connected)]) : $t('about_intro');
 
         return '<div class="tssggs-explain"><span class="tssggs-explain__icon">' . Icons::svg('information-outline') . '</span><div>'
             . '<h3>' . $t('about_title') . '</h3>'
-            . '<p>' . $t('about_intro') . '</p>'
-            . '<ul>' . $item('about_import') . $item('about_hide') . $item('about_retire') . $item('about_fix') . $item('about_cancel') . '</ul>'
+            . '<p>' . $intro . '</p>'
+            . '<ul>' . $item('about_import') . $item('about_hide') . $item('about_retire') . $item('about_fix', $connected !== '' ? 'about_fix_connected' : null) . $item('about_cancel') . '</ul>'
             . '</div></div>';
     }
 }

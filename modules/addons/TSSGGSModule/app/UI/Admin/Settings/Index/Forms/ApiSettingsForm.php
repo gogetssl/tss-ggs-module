@@ -14,6 +14,7 @@ use ModulesGarden\TSSGGSModule\Components\Form\Form;
 use ModulesGarden\TSSGGSModule\Components\FormInputPassword\FormInputPassword;
 use ModulesGarden\TSSGGSModule\Components\FormInputText\FormInputText;
 use ModulesGarden\TSSGGSModule\Components\Grid\Grid;
+use ModulesGarden\TSSGGSModule\Components\Switcher\Switcher;
 use ModulesGarden\TSSGGSModule\Components\Toolbar\Toolbar;
 use ModulesGarden\TSSGGSModule\Components\Widget\Widget;
 use ModulesGarden\TSSGGSModule\Core\Components\Actions\FormSubmit;
@@ -56,9 +57,25 @@ class ApiSettingsForm extends Form implements AdminAreaInterface, AjaxComponentI
             return $input;
         };
 
-        foreach($moduleConfiguration['vendors'] as $vendor)
+        // the edition's own vendor, then (not in the setup wizard) the other vendor the administrator can connect:
+        // a switch plus its credentials - only its exclusive products are offered then (App\Libs\CrossVendor)
+        $vendors = [\ModulesGarden\TSSGGSModule\App\Libs\Edition::primaryVendor()];
+        if($this->configuration !== true)
         {
-            $widget = $this->section($vendor, 'key-outline');
+            $vendors[] = \ModulesGarden\TSSGGSModule\App\Libs\Edition::otherVendor();
+        }
+
+        foreach($vendors as $vendor)
+        {
+            if($vendor === \ModulesGarden\TSSGGSModule\App\Libs\Edition::primaryVendor())
+            {
+                $widget = $this->section($vendor, 'key-outline');
+            }
+            else
+            {
+                $widget = $this->section('connect_' . $vendor, 'power-plug-outline');
+                $this->builder->addFieldInContainer($widget, (new Switcher())->setName('connectOther')->addClass('switcher-revert'));
+            }
 
             $this->builder->addFieldInContainer($widget, (new FormInputText())->setName($vendor . 'LivePartnerCode'));
             $this->builder->addFieldInContainer($widget, $mask($vendor, 'AuthToken'));

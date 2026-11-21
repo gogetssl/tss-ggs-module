@@ -93,15 +93,19 @@ class EmailCatalog
             {
                 continue;
             }
-            // LEI codes are sold through GoGetSSL only (for now)
+            // LEI codes are sold through GoGetSSL only (for now): the GoGetSSL Module, or TheSSLStore Plugin with GoGetSSL connected
             if(in_array($key, [EmailTemplates::LEI_CONFIGURATION_TEMPLATE, EmailTemplates::LEI_ISSUED_TEMPLATE], true) && !in_array('ggs', Edition::vendors(), true))
             {
                 continue;
             }
-            // document signing, CodeGuard and HackerGuardian PCI are sold through TheSSLStore only
-            if(in_array($key, [EmailTemplates::DS_CONFIGURATION_TEMPLATE, EmailTemplates::DS_ISSUED_TEMPLATE, EmailTemplates::CODE_GUARD_READY_TEMPLATE,
-                    EmailTemplates::PCI_CONFIGURATION_TEMPLATE, EmailTemplates::PCI_READY_TEMPLATE], true)
-                && !in_array('tss', Edition::vendors(), true))
+            // document signing, CodeGuard and HackerGuardian PCI are sold through TheSSLStore only; a connected TheSSLStore
+            // offers CodeGuard but not document signing or PCI (App\Libs\CrossVendor)
+            if(in_array($key, [EmailTemplates::DS_CONFIGURATION_TEMPLATE, EmailTemplates::DS_ISSUED_TEMPLATE,
+                    EmailTemplates::PCI_CONFIGURATION_TEMPLATE, EmailTemplates::PCI_READY_TEMPLATE], true) && Edition::primaryVendor() !== Edition::TSS)
+            {
+                continue;
+            }
+            if($key === EmailTemplates::CODE_GUARD_READY_TEMPLATE && !in_array('tss', Edition::vendors(), true))
             {
                 continue;
             }

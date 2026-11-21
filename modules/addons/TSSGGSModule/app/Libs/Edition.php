@@ -82,13 +82,85 @@ class Edition
         return array_values(array_unique($names));
     }
 
+    /** Brand of each vendor, for texts about a vendor's own orders and products */
+    const BRANDS = [self::GGS => 'GoGetSSL', self::TSS => 'TheSSLStore'];
+
+    /** tbladdonmodules setting that holds the connected second vendor ('' / none) */
+    const CONNECTED_SETTING = 'connected_vendor';
+
+    /** @var string|null the connected vendor, read once per request */
+    protected static $connected = null;
+
     /**
-     * Certificate vendor (API credentials) of the edition: each edition works with its own account only -
-     * TheSSLStore Plugin with TheSSLStore, the GoGetSSL Module with GoGetSSL
+     * Certificate vendors (API credentials) the module works with: the edition's own vendor (TheSSLStore Plugin:
+     * TheSSLStore, GoGetSSL Module: GoGetSSL), plus the other vendor when the administrator connected it
+     * (Settings > API, "Connect ... products") - then only that vendor's exclusive products are offered (CrossVendor).
      */
     public static function vendors()
     {
-        return self::get() === self::TSS ? ['tss'] : ['ggs'];
+        $vendors = [self::primaryVendor()];
+        if(self::connectedVendor() !== '')
+        {
+            $vendors[] = self::connectedVendor();
+        }
+
+        return $vendors;
+    }
+
+    /** The edition's own vendor: 'tss' | 'ggs' */
+    public static function primaryVendor()
+    {
+        return self::get() === self::TSS ? self::TSS : self::GGS;
+    }
+
+    /** The vendor that can be connected besides the edition's own one */
+    public static function otherVendor()
+    {
+        return self::primaryVendor() === self::TSS ? self::GGS : self::TSS;
+    }
+
+    /** The connected second vendor, '' when none */
+    public static function connectedVendor()
+    {
+        if(self::$connected === null)
+        {
+            self::$connected = '';
+            try
+            {
+                $value = strtolower(trim((string)\WHMCS\Database\Capsule::table('tbladdonmodules')
+                    ->where('module', 'configuration_TSSGGSModule')->where('setting', self::CONNECTED_SETTING)->value('value')));
+                self::$connected = $value === self::otherVendor() ? $value : '';
+            }
+            catch(\Throwable $e)
+            {
+                // no database yet (early boot): the edition's own vendor only
+            }
+        }
+
+        return self::$connected;
+    }
+
+    /** Connects the other vendor ('' disconnects it) */
+    public static function setConnectedVendor($vendor)
+    {
+        $vendor = strtolower(trim((string)$vendor)) === self::otherVendor() ? self::otherVendor() : '';
+        \WHMCS\Database\Capsule::table('tbladdonmodules')->updateOrInsert(
+            ['module' => 'configuration_TSSGGSModule', 'setting' => self::CONNECTED_SETTING],
+            ['value' => $vendor]
+        );
+        self::$connected = $vendor;
+    }
+
+    /** Whether $vendor ('tss' / 'GGS' ...) is the connected second vendor */
+    public static function isConnected($vendor)
+    {
+        return self::connectedVendor() !== '' && strtolower((string)$vendor) === self::connectedVendor();
+    }
+
+    /** 'GoGetSSL' / 'TheSSLStore' for a vendor key ('ggs', 'TSS' ...); the edition's brand for an unknown one */
+    public static function brandOf($vendor)
+    {
+        return self::BRANDS[strtolower((string)$vendor)] ?? self::brand();
     }
 
     /**

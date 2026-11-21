@@ -60,7 +60,7 @@ class Products extends AbstractController implements AdminAreaInterface
             $remote  = $product ? Capsule::table(Edition::table('RemoteProducts'))->where('vendor', $product->configoption1)->where('remoteId', $product->configoption2)->value('rawData') : null;
             if(!$remote)
             {
-                throw new \RuntimeException('The %%VENDOR%% product of this product is not synchronized');
+                throw new \RuntimeException('The ' . \ModulesGarden\TSSGGSModule\App\Libs\Edition::brandOf($product->configoption1 ?? '') . ' product of this product is not synchronized');
             }
 
             return ProductCatalog::fixConfigurableOptions($pid, json_decode($remote, true) ?: []);

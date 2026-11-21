@@ -874,7 +874,7 @@ class SSLTrustCenterApi
             $data['api'] = [
                 'provider'  => $this->type,
                 'method'    => $method,
-                'url'       => (Edition::get() === Edition::GGS ? $this->apiUrl . $uri : '/whmcs/v2' . $uri) . ($this->isSandbox() && Edition::get() !== Edition::GGS ? ' (sandbox)' : ''),
+                'url'       => (strtoupper($this->type) === 'GGS' ? $this->apiUrl . $uri : '/whmcs/v2' . $uri) . ($this->isSandbox() && strtoupper($this->type) !== 'GGS' ? ' (sandbox)' : ''),
                 'http_code' => $httpCode ?: 'no response',
                 'duration'  => round($seconds, 2) . ' s',
                 'request'   => self::logBody($requestBody),
@@ -981,7 +981,7 @@ class SSLTrustCenterApi
             $error = curl_error($c);
             curl_close($c);
             $this->logCall($method, $uri, $queryData, 0, '', microtime(true) - $started, $error, ['Time: ' . $info['total_time'] . ' ' . $uri, $queryData, $error]);
-            throw new \Exception('%%VENDOR%% API request failed: ' . $error);
+            throw new \Exception(Edition::brandOf($this->type) . ' API request failed: ' . $error);
         }
 
         $result = substr($data, $info['header_size']);
@@ -1030,7 +1030,7 @@ class SSLTrustCenterApi
             {
                 try
                 {
-                    FinancePolicy::balanceAlert($response['message'], $hint);
+                    FinancePolicy::balanceAlert($response['message'], $hint, $this->type);
                 }
                 catch(\Throwable $e)
                 {

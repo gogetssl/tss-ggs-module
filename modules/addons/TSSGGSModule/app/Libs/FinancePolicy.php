@@ -234,7 +234,7 @@ class FinancePolicy
     }
 
     /** E-mails the administrators that an order failed for lack of funds (at most every 6 hours) */
-    public static function balanceAlert($message, $serviceId = null)
+    public static function balanceAlert($message, $serviceId = null, $vendor = null)
     {
         if(!GeneralSettings::enabled('balanceAlert') || time() - (int)GeneralSettings::get('balanceAlertSent') < self::BALANCE_ALERT_EVERY)
         {
@@ -242,7 +242,7 @@ class FinancePolicy
         }
         GeneralSettings::save(['balanceAlertSent' => time()]);
 
-        $text = '<p>%%VENDOR%% refused an order' . ($serviceId ? ' (service #' . (int)$serviceId . ')' : '')
+        $text = '<p>' . Edition::brandOf($vendor ?: Edition::primaryVendor()) . ' refused an order' . ($serviceId ? ' (service #' . (int)$serviceId . ')' : '')
             . ' because your reseller balance is too low:</p><p><i>' . htmlspecialchars((string)$message) . '</i></p>'
             . '<p>Top up your reseller account. Paid orders are not sent to the certificate authority until the balance covers them: '
             . 'open each failed service and run "Create" again (or let the client retry) once the balance is topped up.</p>';
