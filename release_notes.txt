@@ -1,3 +1,30 @@
+1.18.0 (2026-11-21)
+LEI codes, connect the other vendor's products
+- GoGetSSL LEI codes (1 to 5 years) can be imported and sold. After
+  paying, the client searches the company (GLEIF, plus OpenCorporates when
+  an API token is set in Settings > General) or enters it by hand: legal
+  entity, addresses, parent companies (level 2 data) and the signing
+  authority. Renewal (also with the same details), status sync, Terminate
+  cancels the order; the LEI number links to the GLEIF record on the
+  service page and the admin tab. New e-mails: order details required, LEI
+  issued. LEI transfers are not offered.
+- Connect the other vendor (Settings > API, "Connect ... products"):
+  TheSSLStore Plugin can also sell GoGetSSL-brand DV, OV and EV
+  certificates, GoGetSSL code signing and LEI codes; the GoGetSSL Module
+  can also sell CodeGuard from TheSSLStore (SiteLock and cWatch follow
+  once the module supports them). Products both vendors sell are not
+  offered from the connected vendor, so nothing is imported twice; trial
+  certificates are not offered either. The stored credentials of the other
+  vendor are reused, so connecting only needs the switch (and a token when
+  it changed). A vendor can not be disconnected while WHMCS products still
+  use it.
+- Order texts, API errors and the low balance e-mail name the vendor of
+  the service; the dashboard checks the connection and the balance of both
+  vendors. The Products page explains what is listed when a vendor is
+  connected.
+- Test Connection says when the form is not saved yet.
+- Alert and notification icons are centred again.
+
 1.17.0 (2026-11-20)
 HackerGuardian PCI scanning, Plan + Automate method switch
 - TheSSLStore HackerGuardian PCI scanning (Scan Control Center, Enterprise
