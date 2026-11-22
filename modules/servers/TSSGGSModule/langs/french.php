@@ -713,6 +713,7 @@ $_LANG['clientPages']['status_active']      = 'Émis';
 $_LANG['clientPages']['status_processing']  = 'En cours de traitement';
 $_LANG['clientPages']['status_pending']     = 'En attente';
 $_LANG['clientPages']['status_cancelled']   = 'Annulé';
+$_LANG['clientPages']['status_terminated'] = 'Résilié';
 $_LANG['clientPages']['status_expired']     = 'Expiré';
 $_LANG['clientPages']['status_rejected']    = 'Rejeté';
 $_LANG['clientPages']['status_revoked']     = 'Révoqué';

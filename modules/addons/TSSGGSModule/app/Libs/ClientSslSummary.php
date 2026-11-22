@@ -130,7 +130,7 @@ class ClientSslSummary
                 'nextduedate'    => (string)$row->nextduedate,
                 'unpaid_invoice' => isset($unpaid[$row->id]) ? (int)$unpaid[$row->id] : 0,
                 'status_key'     => $key,
-                'status_text'    => $status !== '' ? $status : ((string)$row->ssl_status ?: (string)$row->domainstatus),
+                'status_text'    => ucfirst(str_replace('_', ' ', $key)),
                 'status_class'   => self::statusClass($key),
                 'types'          => array_keys(array_filter([
                     'total'        => $live,

@@ -713,6 +713,7 @@ $_LANG['clientPages']['status_active']      = 'Udstedt';
 $_LANG['clientPages']['status_processing']  = 'Behandles';
 $_LANG['clientPages']['status_pending']     = 'Afventer';
 $_LANG['clientPages']['status_cancelled']   = 'Annulleret';
+$_LANG['clientPages']['status_terminated'] = 'Opsagt';
 $_LANG['clientPages']['status_expired']     = 'Udløbet';
 $_LANG['clientPages']['status_rejected']    = 'Afvist';
 $_LANG['clientPages']['status_revoked']     = 'Tilbagekaldt';

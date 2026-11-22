@@ -713,6 +713,7 @@ $_LANG['clientPages']['status_active'] = 'Vydáno';
 $_LANG['clientPages']['status_processing'] = 'Zpracovává se';
 $_LANG['clientPages']['status_pending'] = 'Čeká na vyřízení';
 $_LANG['clientPages']['status_cancelled'] = 'Zrušeno';
+$_LANG['clientPages']['status_terminated'] = 'Ukončeno';
 $_LANG['clientPages']['status_expired'] = 'Vypršelo';
 $_LANG['clientPages']['status_rejected'] = 'Zamítnuto';
 $_LANG['clientPages']['status_revoked'] = 'Odvoláno';

@@ -170,7 +170,7 @@ class SslPages
                   'domain', 'product', 'status', 'validTill', 'nextDueDate', 'manage', 'payInvoice', 'noCertificates', 'search',
                   'searchPlaceholder', 'allStatuses', 'activeOnly', 'inactiveOnly', 'history', 'ordered', 'validFrom', 'noDomains',
                   'byDomain', 'listView', 'certificate', 'status_active', 'status_processing', 'status_pending', 'status_cancelled',
-                  'status_expired', 'status_rejected', 'status_revoked', 'status_awaiting', 'sslTools'];
+                  'status_expired', 'status_rejected', 'status_revoked', 'status_awaiting', 'status_terminated', 'sslTools'];
         $texts = [];
         foreach($keys as $key)
         {

@@ -713,6 +713,7 @@ $_LANG['clientPages']['status_active'] = 'Ausgestellt';
 $_LANG['clientPages']['status_processing'] = 'In Bearbeitung';
 $_LANG['clientPages']['status_pending'] = 'Ausstehend';
 $_LANG['clientPages']['status_cancelled'] = 'Storniert';
+$_LANG['clientPages']['status_terminated'] = 'Beendet';
 $_LANG['clientPages']['status_expired'] = 'Abgelaufen';
 $_LANG['clientPages']['status_rejected'] = 'Abgelehnt';
 $_LANG['clientPages']['status_revoked'] = 'Widerrufen';
