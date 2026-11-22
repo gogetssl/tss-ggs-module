@@ -804,6 +804,8 @@ $_LANG['admin.products.index.data_tables.products.providers.configuration_provid
 $_LANG['admin.products.index.data_tables.products.providers.configuration_provider.payTypeFree']       = 'Free';
 $_LANG['admin.products.index.data_tables.products.providers.configuration_provider.monthsBillingCycle'] = 'From the billing cycle';
 $_LANG['admin.products.index.data_tables.products.providers.configuration_provider.monthsValue']      = ':months months';
+$_LANG['admin.products.index.data_tables.products.providers.configuration_provider.monthsValueOneTime'] = ':months months (one-time payment only)';
+$_LANG['admin.products.index.data_tables.products.providers.configuration_provider.monthsRecurringTooLong'] = 'Recurring products are billed at most every :max months (Triennially), so the certificate term can be up to :max months. Choose a shorter term, or set the Payment Type to One Time.';
 
 //certificate log
 $_LANG['admin.menu.certificateLog']                   = 'Certificate Log';

@@ -771,6 +771,8 @@ $_LANG['admin.products.index.data_tables.products.providers.configuration_provid
 $_LANG['admin.products.index.data_tables.products.providers.configuration_provider.payTypeFree'] = 'Kostenlos';
 $_LANG['admin.products.index.data_tables.products.providers.configuration_provider.monthsBillingCycle'] = 'Aus dem Abrechnungszyklus';
 $_LANG['admin.products.index.data_tables.products.providers.configuration_provider.monthsValue'] = ':months Monate';
+$_LANG['admin.products.index.data_tables.products.providers.configuration_provider.monthsValueOneTime'] = ':months Monate (nur Einmalzahlung)';
+$_LANG['admin.products.index.data_tables.products.providers.configuration_provider.monthsRecurringTooLong'] = 'Wiederkehrende Produkte werden höchstens alle :max Monate abgerechnet (dreijährlich), daher kann die Zertifikatslaufzeit höchstens :max Monate betragen. Wählen Sie eine kürzere Laufzeit oder stellen Sie die Zahlungsart auf Einmalig.';
 
 //certificate log
 $_LANG['admin.menu.certificateLog'] = 'Zertifikatsprotokoll';

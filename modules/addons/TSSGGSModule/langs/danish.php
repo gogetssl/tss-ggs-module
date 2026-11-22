@@ -773,6 +773,8 @@ $_LANG['admin.products.index.data_tables.products.providers.configuration_provid
 $_LANG['admin.products.index.data_tables.products.providers.configuration_provider.payTypeFree']       = 'Gratis';
 $_LANG['admin.products.index.data_tables.products.providers.configuration_provider.monthsBillingCycle'] = 'Fra faktureringsperioden';
 $_LANG['admin.products.index.data_tables.products.providers.configuration_provider.monthsValue']      = ':months måneder';
+$_LANG['admin.products.index.data_tables.products.providers.configuration_provider.monthsValueOneTime'] = ':months måneder (kun engangsbetaling)';
+$_LANG['admin.products.index.data_tables.products.providers.configuration_provider.monthsRecurringTooLong'] = 'Tilbagevendende produkter faktureres højst hver :max. måned (hvert 3. år), så certifikatperioden kan højst være :max måneder. Vælg en kortere periode, eller sæt betalingstypen til Engangs.';
 
 //certificate log
 $_LANG['admin.menu.certificateLog']                   = 'Certifikatlog';
