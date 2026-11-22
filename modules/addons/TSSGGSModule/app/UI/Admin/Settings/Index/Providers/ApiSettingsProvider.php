@@ -116,8 +116,9 @@ class ApiSettingsProvider extends CrudProvider
             return (new Response())->setError(sprintf($this->translate('disconnectHasProducts'), Edition::brandOf(Edition::connectedVendor()), CrossVendor::productCount(Edition::connectedVendor())));
         }
 
+        // every API in use is tested first; nothing is saved while one of them fails
         $test = $this->testConnection(true);
-        if($test !== true) return $test;
+        if($test instanceof Response) return $test;
 
         // connected first, so the other vendor's credentials are saved with the edition's own ones
         Edition::setConnectedVendor($connect ? Edition::otherVendor() : '');
@@ -127,16 +128,22 @@ class ApiSettingsProvider extends CrudProvider
         $page = Request::get('mg-page');
         if($page === 'configuration')
         {
-            return (new Response())->setSuccess($this->translate('successAPI'))->setActions([new Redirect(Url::route('',
+            return (new Response())->setSuccess($this->translate('successAPI') . '<br>' . implode('<br>', $test))->setActions([new Redirect(Url::route('',
                 ['module' => 'TSSGGSModule', 'mg-page' => 'configuration', 'mg-action' => 'step5']
             ))]);
         }
 
+        return (new Response())->setSuccess($this->translate('savedAPI') . '<br>' . implode('<br>', $test));
     }
 
     /**
-     * @param bool $saving true when update() calls it; the Test Connection button (false) tells the admin when the
+     * Tests every API in use (the edition's own, plus the other vendor while Connect is on) and reports each one on
+     * its own line, e.g. "TheSSLStore API (sandbox): connected" / "GoGetSSL API: connection failed ...".
+     *
+     * @param bool $saving true when update() calls it: the result lines (array) when all APIs work, else the error
+     *                    Response; the Test Connection button (false) always gets a Response and is also told when the
      *                    form holds changes that are not saved yet (Connect switched, a token typed)
+     * @return Response|string[]
      */
     public function testConnection($saving = false)
     {
@@ -152,55 +159,50 @@ class ApiSettingsProvider extends CrudProvider
         $goGetSslLivePartnerCode = $this->formData['ggsLivePartnerCode'];
         $goGetSslLiveAuthToken   = $this->token('ggsLiveAuthToken', 'ggs', 'AuthToken');
 
-        $apis = [];
-
-        if(in_array('ggs', $this->chosenVendors(), true))
+        // the edition's own vendor first
+        $lines  = [];
+        $failed = false;
+        foreach($this->chosenVendors() as $vendor)
         {
-            $apis['GGS'] = new SSLTrustCenterApi('GGS', $goGetSslLivePartnerCode, $goGetSslLiveAuthToken);
-        }
-
-        if(in_array('tss', $this->chosenVendors(), true))
-        {
-            if($operationMode == 'sandbox')
+            $label = Edition::brandOf($vendor) . ' API';
+            if($vendor === 'tss' && $operationMode == 'sandbox')
             {
                 // the sandbox pair is tested against the sandbox gateway, the one the module then uses
-                $apis['TSS'] = new SSLTrustCenterApi('TSS', $sslStoreTestPartnerCode, $sslStoreTestAuthToken, 'tls', true);
+                $api    = new SSLTrustCenterApi('TSS', $sslStoreTestPartnerCode, $sslStoreTestAuthToken, 'tls', true);
+                $label .= ' (' . $this->translate('apiSandbox') . ')';
+            }
+            elseif($vendor === 'tss')
+            {
+                $api = new SSLTrustCenterApi('TSS', $sslStoreLivePartnerCode, $sslStoreLiveAuthToken);
             }
             else
             {
-                $apis['TSS'] = new SSLTrustCenterApi('TSS', $sslStoreLivePartnerCode, $sslStoreLiveAuthToken);
+                $api = new SSLTrustCenterApi('GGS', $goGetSslLivePartnerCode, $goGetSslLiveAuthToken);
             }
-        }
 
-        $errors = [];
-
-        // every configured API is checked (one working API must not hide a failing one)
-        foreach($apis as $apiType => $api)
-        {
+            // every API is checked (one working API must not hide a failing one)
             try
             {
                 $api->validate();
+                $lines[] = '&#10004; ' . $label . ': ' . $this->translate('apiConnected');
             }
             catch(\Throwable $e)
             {
-                $apiDisplay = ($apiType == 'GGS') ? 'GoGetSSL API' : 'TheSSLStore API';
-
-                $errors[] = $apiDisplay . ' - ' . $this->translate('connectionError');
+                $failed  = true;
+                $lines[] = '&#10008; ' . $label . ': ' . $this->translate('apiFailed');
             }
         }
 
-        if($errors)
+        if($failed)
         {
-            return (new Response())
-                ->setError(implode("<br>", $errors));
+            return (new Response())->setError(implode('<br>', $lines) . ($saving ? '<br>' . $this->translate('notSavedAPI') : ''));
+        }
+        if($saving)
+        {
+            return $lines;
         }
 
-        if(!$saving && $this->unsaved())
-        {
-            return (new Response())->setSuccess($this->translate('testUnsaved'));
-        }
-
-        return true;
+        return (new Response())->setSuccess(implode('<br>', $lines) . ($this->unsaved() ? '<br>' . $this->translate('testUnsaved') : ''));
     }
 
     /** Whether the form differs from what is stored: Connect switched or a token typed */

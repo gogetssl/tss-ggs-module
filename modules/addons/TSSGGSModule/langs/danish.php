@@ -485,7 +485,12 @@ $_LANG['admin.settings.index.forms.api_settings_form.testConnection']          =
 $_LANG['admin.settings.index.forms.api_settings_form.update_success']          = 'Indstillingerne blev opdateret';
 $_LANG['admin.settings.index.forms.api_settings_form.testconnection_success']  = 'Forbindelsen blev oprettet';
 $_LANG['admin.settings.index.providers.api_settings_provider.connectionError'] = 'Forbindelsesfejl';
-$_LANG['admin.settings.index.providers.api_settings_provider.testUnsaved'] = 'Forbindelsen lykkedes. Intet er gemt endnu: klik på Gem ændringer for at gemme indstillingerne.';
+$_LANG['admin.settings.index.providers.api_settings_provider.testUnsaved'] = 'Intet er gemt endnu: klik på Gem ændringer for at gemme indstillingerne.';
+$_LANG['admin.settings.index.providers.api_settings_provider.apiConnected'] = 'forbundet';
+$_LANG['admin.settings.index.providers.api_settings_provider.apiFailed'] = 'forbindelsen mislykkedes, kontrollér partnerkode og auth-token';
+$_LANG['admin.settings.index.providers.api_settings_provider.apiSandbox'] = 'sandbox';
+$_LANG['admin.settings.index.providers.api_settings_provider.savedAPI'] = 'Indstillingerne er gemt.';
+$_LANG['admin.settings.index.providers.api_settings_provider.notSavedAPI'] = 'Intet blev gemt: ret kontoen, der fejlede, og gem igen.';
 $_LANG['admin.settings.index.providers.api_settings_provider.successAPI']      = 'Forbindelsen lykkedes';
 
 
@@ -1274,6 +1279,7 @@ $_LANG['admin.settings.index.forms.api_settings_form.connect_tss'] = 'Forbind Th
 $_LANG['admin.settings.index.forms.api_settings_form.connect_tss_desc'] = 'Sælg også SiteLock, cWatch og CodeGuard med din TheSSLStore-konto. Produkter, som GoGetSSL også sælger, tilbydes ikke, så intet importeres to gange.';
 $_LANG['admin.settings.index.forms.api_settings_form.connectOther'] = 'Forbind';
 $_LANG['admin.settings.index.forms.api_settings_form.connectOther_description'] = 'Til: produkterne ovenfor vises på siden Produkter til import. Fra: de skjules igen (kun muligt, mens ingen af dem er et WHMCS-produkt).';
+$_LANG['admin.settings.index.forms.api_settings_form.buttonsScope'] = 'Gem ændringer og Test forbindelse gælder begge konti på denne side: :primary og, så længe Forbind er slået til, :other. Resultatet viser hver API for sig.';
 $_LANG['admin.settings.index.providers.api_settings_provider.disconnectHasProducts'] = '%1$s kan ikke afbrydes: %2$d WHMCS-produkt(er) bruger det stadig. Slet eller pensioner dem først.';
 $_LANG['admin.settings.index.forms.general_settings_form.clientArea_desc'] = 'Hvad kunderne ser på deres certifikatsider.';
 $_LANG['admin.settings.index.forms.general_settings_form.interface_desc'] = 'Hvordan modulet ser ud for administratorer.';

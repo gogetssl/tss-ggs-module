@@ -484,7 +484,12 @@ $_LANG['admin.settings.index.forms.api_settings_form.testConnection'] = 'Verbind
 $_LANG['admin.settings.index.forms.api_settings_form.update_success'] = 'Einstellungen erfolgreich aktualisiert';
 $_LANG['admin.settings.index.forms.api_settings_form.testconnection_success'] = 'Erfolgreich verbunden';
 $_LANG['admin.settings.index.providers.api_settings_provider.connectionError'] = 'Verbindungsfehler';
-$_LANG['admin.settings.index.providers.api_settings_provider.testUnsaved'] = 'Verbindung erfolgreich. Noch nichts gespeichert: Klicken Sie auf Änderungen speichern, um die Einstellungen zu speichern.';
+$_LANG['admin.settings.index.providers.api_settings_provider.testUnsaved'] = 'Noch nichts gespeichert: Klicken Sie auf Änderungen speichern, um die Einstellungen zu speichern.';
+$_LANG['admin.settings.index.providers.api_settings_provider.apiConnected'] = 'verbunden';
+$_LANG['admin.settings.index.providers.api_settings_provider.apiFailed'] = 'Verbindung fehlgeschlagen, prüfen Sie Partnercode und Auth-Token';
+$_LANG['admin.settings.index.providers.api_settings_provider.apiSandbox'] = 'Sandbox';
+$_LANG['admin.settings.index.providers.api_settings_provider.savedAPI'] = 'Einstellungen gespeichert.';
+$_LANG['admin.settings.index.providers.api_settings_provider.notSavedAPI'] = 'Nichts wurde gespeichert: Korrigieren Sie das fehlgeschlagene Konto und speichern Sie erneut.';
 $_LANG['admin.settings.index.providers.api_settings_provider.successAPI'] = 'Die Verbindung war erfolgreich';
 
 
@@ -1272,6 +1277,7 @@ $_LANG['admin.settings.index.forms.api_settings_form.connect_tss'] = 'TheSSLStor
 $_LANG['admin.settings.index.forms.api_settings_form.connect_tss_desc'] = 'Verkaufen Sie zusätzlich SiteLock, cWatch und CodeGuard über Ihr TheSSLStore-Konto. Produkte, die auch GoGetSSL verkauft, werden nicht angeboten, damit nichts doppelt importiert wird.';
 $_LANG['admin.settings.index.forms.api_settings_form.connectOther'] = 'Verbinden';
 $_LANG['admin.settings.index.forms.api_settings_form.connectOther_description'] = 'Ein: Die Produkte oben erscheinen auf der Produktseite zum Import. Aus: Sie werden wieder ausgeblendet (nur möglich, solange keines davon ein WHMCS-Produkt ist).';
+$_LANG['admin.settings.index.forms.api_settings_form.buttonsScope'] = 'Änderungen speichern und Verbindung testen gelten für beide Konten auf dieser Seite: :primary und, solange Verbinden aktiv ist, :other. Das Ergebnis zeigt jede API einzeln.';
 $_LANG['admin.settings.index.providers.api_settings_provider.disconnectHasProducts'] = '%1$s kann nicht getrennt werden: %2$d WHMCS-Produkt(e) nutzen es noch. Löschen oder deaktivieren Sie diese zuerst.';
 $_LANG['admin.settings.index.forms.general_settings_form.clientArea_desc'] = 'Was Kunden auf ihren Zertifikatsseiten sehen.';
 $_LANG['admin.settings.index.forms.general_settings_form.interface_desc'] = 'Wie das Modul für Administratoren aussieht.';

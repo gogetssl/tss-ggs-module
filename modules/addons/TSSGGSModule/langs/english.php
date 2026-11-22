@@ -493,7 +493,12 @@ $_LANG['admin.settings.index.forms.api_settings_form.testConnection']          =
 $_LANG['admin.settings.index.forms.api_settings_form.update_success']          = 'Settings updated successfully';
 $_LANG['admin.settings.index.forms.api_settings_form.testconnection_success']  = 'Successfully connected';
 $_LANG['admin.settings.index.providers.api_settings_provider.connectionError'] = 'Connection Error';
-$_LANG['admin.settings.index.providers.api_settings_provider.testUnsaved'] = 'Connection successful. Nothing is saved yet: click Save changes to store the settings.';
+$_LANG['admin.settings.index.providers.api_settings_provider.testUnsaved'] = 'Nothing is saved yet: click Save changes to store the settings.';
+$_LANG['admin.settings.index.providers.api_settings_provider.apiConnected'] = 'connected';
+$_LANG['admin.settings.index.providers.api_settings_provider.apiFailed'] = 'connection failed, check the partner code and auth token';
+$_LANG['admin.settings.index.providers.api_settings_provider.apiSandbox'] = 'sandbox';
+$_LANG['admin.settings.index.providers.api_settings_provider.savedAPI'] = 'Settings saved.';
+$_LANG['admin.settings.index.providers.api_settings_provider.notSavedAPI'] = 'Nothing was saved: correct the account that failed and save again.';
 $_LANG['admin.settings.index.providers.api_settings_provider.successAPI']      = 'The connection was successful';
 
 
@@ -1269,6 +1274,7 @@ $_LANG['admin.settings.index.forms.api_settings_form.connect_tss'] = 'Connect Th
 $_LANG['admin.settings.index.forms.api_settings_form.connect_tss_desc'] = 'Also sell SiteLock, cWatch and CodeGuard with your TheSSLStore account. Products GoGetSSL also sells are not offered, so nothing is imported twice.';
 $_LANG['admin.settings.index.forms.api_settings_form.connectOther'] = 'Connect';
 $_LANG['admin.settings.index.forms.api_settings_form.connectOther_description'] = 'On: the products above appear on the Products page for import. Off: they are hidden again (only possible while none of them is a WHMCS product).';
+$_LANG['admin.settings.index.forms.api_settings_form.buttonsScope'] = 'Save changes and Test Connection work on both accounts on this page: :primary, and :other while Connect is on. The result shows each API separately.';
 $_LANG['admin.settings.index.providers.api_settings_provider.disconnectHasProducts'] = '%1$s can not be disconnected: %2$d WHMCS product(s) still use it. Delete or retire them first.';
 
 $_LANG['admin.settings.index.forms.general_settings_form.clientArea_desc'] = 'What clients see on their certificate pages.';
