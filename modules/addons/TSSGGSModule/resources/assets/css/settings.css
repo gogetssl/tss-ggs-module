@@ -163,7 +163,9 @@
     border-bottom: 1px solid var(--tw-border);
 }
 
-#layers2 .tssggs-settings form .tssggs-sec .lu-form-group:last-child {
+#layers2 .tssggs-settings form .tssggs-sec .lu-form-group:last-child,
+/* the last row still shown: the rows after it are hidden by their switch (resources/assets/js/custom/switchFields.js) */
+#layers2 .tssggs-settings form .tssggs-sec .lu-form-group:not(:has(~ .lu-form-group:not([style*="display: none"]))) {
     border-bottom: 0;
 }
 
