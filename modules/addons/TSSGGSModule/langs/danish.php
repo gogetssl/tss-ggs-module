@@ -1092,7 +1092,7 @@ $_LANG['admin.settings.index.forms.ssl_settings_form.issuedMessageText']        
 $_LANG['admin.settings.index.forms.ssl_settings_form.issuedMessageText_description']       = 'Indbygget tekst, ret den som du vil (HTML tilladt). Lader du den være, følger den modulets formulering i fremtidige opdateringer';
 $_LANG['admin.settings.index.forms.ssl_settings_form.issuedMessageTextEnglish_description'] = 'Modulet har ingen oversættelse til dette sprog: oversæt den engelske tekst til dine kunder (HTML tilladt). Lader du den være, får kunderne din engelske tekst';
 $_LANG['admin.settings.index.forms.ssl_settings_form.certificateEmailTemplate'] = 'E-mailskabelon til certifikat';
-$_LANG['admin.settings.index.forms.ssl_settings_form.certificateEmailTemplate_description'] = 'Skabelon, der bruges, når certifikatet sendes til kunden';
+$_LANG['admin.settings.index.forms.ssl_settings_form.certificateEmailTemplate_description'] = 'E-mailen, der sender det udstedte certifikat (vedhæftet som filer). Ud over modulskabelonen kan du vælge din egen: opret en e-mailskabelon af typen Produkt/Service i WHMCS (Systemindstillinger > E-mailskabeloner), og brug {$crt_code} til certifikatet og {$ssl_certyficate} til CA-bundtet. En skabelon af en anden type bruges ikke.';
 $_LANG['admin.settings.index.forms.ssl_settings_form.requireAgreement'] = 'Kræv aftale';
 $_LANG['admin.home.index.widgets.next_steps_widget.title'] = 'Næste trin efter modulinstallationen';
 $_LANG['admin.home.index.widgets.next_steps_widget.chip'] = 'Afslut opsætningen';

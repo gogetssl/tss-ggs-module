@@ -50,11 +50,17 @@ class GeneralSettingsProvider extends CrudProvider
         }
         $this->availableValues['dashboardPeriod'] = $periods;
 
-        // General e-mail templates; empty = the module's own "Send Certificate" template
+        // the module template, the administrator's own Product/Service templates (CertificateService::certificateTemplates)
+        // and the saved one, so a choice made before stays visible
         $templates = ['' => $this->translate('moduleTemplate')];
-        foreach(Capsule::table('tblemailtemplates')->where('type', 'general')->where('language', '')->orderBy('name')->pluck('name') as $name)
+        foreach(\ModulesGarden\TSSGGSModule\App\Libs\CertificateService::certificateTemplates() as $name)
         {
             $templates[$name] = $name;
+        }
+        $saved = trim((string)\ModulesGarden\TSSGGSModule\App\Libs\GeneralSettings::get('certificateEmailTemplate'));
+        if($saved !== '' && !isset($templates[$saved]))
+        {
+            $templates[$saved] = $saved;
         }
         $this->availableValues['certificateEmailTemplate'] = $templates;
     }

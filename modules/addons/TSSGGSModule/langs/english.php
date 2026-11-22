@@ -1070,7 +1070,7 @@ $_LANG['admin.settings.index.forms.ssl_settings_form.issuedMessageText']        
 $_LANG['admin.settings.index.forms.ssl_settings_form.issuedMessageText_description']       = 'Built-in text, change it as you like (HTML allowed). Left as it is, it follows the module\'s wording in future updates';
 $_LANG['admin.settings.index.forms.ssl_settings_form.issuedMessageTextEnglish_description'] = 'The module has no translation for this language: translate this English text for your clients (HTML allowed). Left as it is, clients get your English text';
 $_LANG['admin.settings.index.forms.ssl_settings_form.certificateEmailTemplate']          = 'Certificate Email Template';
-$_LANG['admin.settings.index.forms.ssl_settings_form.certificateEmailTemplate_description'] = 'Template used when the certificate is sent to the client';
+$_LANG['admin.settings.index.forms.ssl_settings_form.certificateEmailTemplate_description'] = 'The e-mail that sends the issued certificate (attached as files). Besides the module template you can choose your own: create a Product/Service e-mail template in WHMCS (System Settings > Email Templates) and use {$crt_code} for the certificate and {$ssl_certyficate} for the CA bundle. A template that is not a Product/Service one is not used.';
 $_LANG['admin.settings.index.forms.ssl_settings_form.requireAgreement']                  = 'Require Agreement';
 $_LANG['admin.home.index.widgets.next_steps_widget.title']           = 'Next steps after module installation';
 $_LANG['admin.home.index.widgets.next_steps_widget.chip']            = 'Finish setup';

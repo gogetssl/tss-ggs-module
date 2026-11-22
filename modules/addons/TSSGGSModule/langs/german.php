@@ -1090,7 +1090,7 @@ $_LANG['admin.settings.index.forms.ssl_settings_form.issuedMessageText']        
 $_LANG['admin.settings.index.forms.ssl_settings_form.issuedMessageText_description']       = 'Integrierter Text, ändern Sie ihn nach Belieben (HTML erlaubt). Unverändert folgt er der Formulierung des Moduls in künftigen Updates';
 $_LANG['admin.settings.index.forms.ssl_settings_form.issuedMessageTextEnglish_description'] = 'Das Modul hat keine Übersetzung für diese Sprache: Übersetzen Sie den englischen Text für Ihre Kunden (HTML erlaubt). Unverändert erhalten Kunden Ihren englischen Text';
 $_LANG['admin.settings.index.forms.ssl_settings_form.certificateEmailTemplate'] = 'E-Mail-Vorlage für Zertifikat';
-$_LANG['admin.settings.index.forms.ssl_settings_form.certificateEmailTemplate_description'] = 'Vorlage, die beim Versand des Zertifikats an den Kunden verwendet wird';
+$_LANG['admin.settings.index.forms.ssl_settings_form.certificateEmailTemplate_description'] = 'Die E-Mail, die das ausgestellte Zertifikat sendet (als Dateien angehängt). Neben der Modulvorlage können Sie eine eigene wählen: Erstellen Sie in WHMCS eine E-Mail-Vorlage vom Typ Produkt/Service (Systemeinstellungen > E-Mail-Vorlagen) und verwenden Sie {$crt_code} für das Zertifikat und {$ssl_certyficate} für das CA-Bundle. Eine Vorlage eines anderen Typs wird nicht verwendet.';
 $_LANG['admin.settings.index.forms.ssl_settings_form.requireAgreement'] = 'Zustimmung erforderlich';
 $_LANG['admin.home.index.widgets.next_steps_widget.title'] = 'Nächste Schritte nach der Modulinstallation';
 $_LANG['admin.home.index.widgets.next_steps_widget.chip'] = 'Einrichtung abschließen';
