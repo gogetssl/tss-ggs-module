@@ -16,5 +16,8 @@ class FormInputPassword extends FormInputText
         parent::__construct();
 
         $this->setType('password');
+        // module password fields hold API tokens, never the administrator's login: without this the browser fills in
+        // the saved WHMCS password, which a save would then store as the token
+        $this->setAutocomplete('new-password');
     }
 }
