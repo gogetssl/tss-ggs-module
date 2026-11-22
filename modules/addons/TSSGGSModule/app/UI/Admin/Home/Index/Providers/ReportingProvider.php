@@ -36,8 +36,8 @@ class ReportingProvider extends CrudProvider
         $this->data['sendTo']        = self::supportAddress();
         $this->data['whmcsUrl']      = $CONFIG['SystemURL'];
         $this->data['moduleVersion'] = Config::get('configuration.version');
-        $this->data['tssPartnerId']  = trim($moduleConfiguration['credentials']['tss']['PartnerCode']);
-        $this->data['ggsPartnerId']  = trim($moduleConfiguration['credentials']['ggs']['PartnerCode']);
+        $this->data['tssPartnerId']  = trim((string)($moduleConfiguration['credentials']['tss']['PartnerCode'] ?? ''));
+        $this->data['ggsPartnerId']  = trim((string)($moduleConfiguration['credentials']['ggs']['PartnerCode'] ?? ''));
         $this->data['phpVersion']    = phpversion();
         $this->data['fromDate']      = date('Y-m-d', strtotime("-7 days"));
         $this->data['toDate']        = date('Y-m-d');
@@ -66,7 +66,9 @@ class ReportingProvider extends CrudProvider
         $data['moduleVersion'] = (string)Config::get('configuration.version');
         $data['phpVersion']    = phpversion();
         $data['cronStatus']    = LogProvider::cronStatus();
+        $data['issueDetails']  = html_entity_decode((string)($data['issueDetails'] ?? ''), ENT_QUOTES | ENT_HTML5, 'UTF-8');
 
+        // the issue text is decoded above (WHMCS hands request data HTML-encoded)
         $e    = function($text) { return nl2br(htmlspecialchars((string)$text, ENT_QUOTES, 'UTF-8')); };
         $rows = [
             'Company'        => (string)$CONFIG['CompanyName'],
