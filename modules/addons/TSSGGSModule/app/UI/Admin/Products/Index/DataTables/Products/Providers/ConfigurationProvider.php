@@ -90,8 +90,10 @@ class ConfigurationProvider extends CrudProvider
         $productRepository    = new ProductRepository();
         $productConfiguration = $productRepository->getProductConfiguration($whmcsProduct->id);
 
-        $whmcsProduct->name        = $this->formData['productName'];
-        $whmcsProduct->description = $this->formData['description'];
+        // WHMCS hands request data HTML-encoded (' arrives as &#039;): stored as typed, or every save would encode it again
+        $decode                    = function($value) { return html_entity_decode((string)$value, ENT_QUOTES | ENT_HTML5, 'UTF-8'); };
+        $whmcsProduct->name        = $decode($this->formData['productName']);
+        $whmcsProduct->description = $decode($this->formData['description']);
         $whmcsProduct->autosetup   = ($this->formData['autoSetup'] == 'off') ? '' : $this->formData['autoSetup'];
         $whmcsProduct->hidden      = $this->formData['hidden'] ? 1 : 0;
         if(in_array($this->formData['payType'], ['recurring', 'onetime', 'free'], true))
