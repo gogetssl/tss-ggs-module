@@ -560,7 +560,8 @@ $_LANG['admin.settings.index.forms.ssl_settings_form.visibleRenewButtonBeforeExp
 $_LANG['admin.settings.index.forms.ssl_settings_form.visibleRenewButtonAfterExpiration'] = 'Schaltfläche "Verlängern" nach Ablauf sichtbar';
 $_LANG['admin.settings.index.forms.ssl_settings_form.visibleRenewButtonAfterExpiration_description'] = 'Kunden sehen eine Schaltfläche Verlängern, nachdem die Bestellung abgelaufen ist.';
 $_LANG['admin.settings.index.forms.ssl_settings_form.renewOrderViaExistingOrder'] = 'Bestellung über bestehende Bestellung verlängern';
-$_LANG['admin.settings.index.forms.ssl_settings_form.setTheUnpaidStatusForRenewalInvoices'] = 'Status "Unbezahlt" für Verlängerungsrechnungen setzen';
+$_LANG['admin.settings.index.forms.ssl_settings_form.renewalsWiki'] = 'Ausführliche Beschreibungen der Verlängerungseinstellungen mit Beispielen finden Sie in unserem Wiki auf GitHub.';
+$_LANG['admin.settings.index.forms.ssl_settings_form.wikiLink'] = 'Wiki öffnen';
 $_LANG['admin.settings.index.forms.ssl_settings_form.additionalDaysForRenewalOrder'] = 'Zusätzliche Tage für Verlängerungsbestellung (Sectigo)';
 $_LANG['admin.settings.index.forms.ssl_settings_form.additionalDaysForRenewalOrder_description'] = 'Tage des alten Sectigo-Zertifikats, die dem verlängerten hinzugefügt werden (Sectigo erlaubt bis zu 30). Nicht gesetzt: die tatsächlich verbleibenden Tage, bis zu 30.';
 $_LANG['admin.settings.index.forms.ssl_settings_form.autoReissueDaysBeforeExpire'] = 'Automatische Neuausstellung (Tage vor Ablauf)';

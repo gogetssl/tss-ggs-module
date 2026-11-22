@@ -561,7 +561,8 @@ $_LANG['admin.settings.index.forms.ssl_settings_form.visibleRenewButtonBeforeExp
 $_LANG['admin.settings.index.forms.ssl_settings_form.visibleRenewButtonAfterExpiration']                        = 'Vis knappen "Forny" efter udløb';
 $_LANG['admin.settings.index.forms.ssl_settings_form.visibleRenewButtonAfterExpiration_description'] = 'Kunder ser en Forny-knap, efter at ordren er udløbet.';
 $_LANG['admin.settings.index.forms.ssl_settings_form.renewOrderViaExistingOrder']                               = 'Forny ordre via eksisterende ordre';
-$_LANG['admin.settings.index.forms.ssl_settings_form.setTheUnpaidStatusForRenewalInvoices']                     = 'Sæt status ubetalt på fornyelsesfakturaer';
+$_LANG['admin.settings.index.forms.ssl_settings_form.renewalsWiki'] = 'Detaljerede beskrivelser af fornyelsesindstillingerne med eksempler finder du i vores Wiki på GitHub.';
+$_LANG['admin.settings.index.forms.ssl_settings_form.wikiLink'] = 'Åbn Wiki';
 $_LANG['admin.settings.index.forms.ssl_settings_form.additionalDaysForRenewalOrder']                            = 'Ekstra dage til fornyelsesordre (Sectigo)';
 $_LANG['admin.settings.index.forms.ssl_settings_form.additionalDaysForRenewalOrder_description'] = 'Dage fra det gamle Sectigo-certifikat, der lægges til det fornyede (Sectigo tillader op til 30). Ikke angivet: de dage, der faktisk er tilbage, op til 30.';
 $_LANG['admin.settings.index.forms.ssl_settings_form.autoReissueDaysBeforeExpire']                              = 'Automatisk genudstedelse, dage før udløb';

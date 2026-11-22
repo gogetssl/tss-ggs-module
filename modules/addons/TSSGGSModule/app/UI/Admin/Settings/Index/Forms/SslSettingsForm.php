@@ -196,10 +196,11 @@ class SslSettingsForm extends Form implements AdminAreaInterface, AjaxComponentI
 
     protected function renewalFields($widget, $withReissue)
     {
-        foreach(['visibleRenewButtonBeforeExpiration', 'visibleRenewButtonAfterExpiration', 'renewOrderViaExistingOrder', 'renewReuseOrderDetails', 'setTheUnpaidStatusForRenewalInvoices'] as $name)
+        // no "Set The Unpaid Status For Renewal Invoices": renewal invoices are always Unpaid (the setting of the earlier
+        // GoGetSSL module was never read here)
+        foreach(['visibleRenewButtonBeforeExpiration', 'visibleRenewButtonAfterExpiration', 'renewOrderViaExistingOrder', 'renewReuseOrderDetails'] as $name)
         {
-            // with a hint ("<name>_description"); setTheUnpaidStatusForRenewalInvoices has none
-            $this->builder->addFieldInContainer($widget, (new Switcher())->setName($name)->addClass('switcher-revert'), $name !== 'setTheUnpaidStatusForRenewalInvoices');
+            $this->builder->addFieldInContainer($widget, (new Switcher())->setName($name)->addClass('switcher-revert'), true);
         }
 
         $this->builder->addFieldInContainer($widget, (new Dropdown())->setName('additionalDaysForRenewalOrder')->setDefaultValueAsFirstOption(), true);
@@ -208,6 +209,12 @@ class SslSettingsForm extends Form implements AdminAreaInterface, AjaxComponentI
         {
             $this->builder->addFieldInContainer($widget, (new Dropdown())->setName('autoReissueDaysBeforeExpire'), true);
         }
+
+        // the detailed descriptions with examples: the edition's Wiki
+        $widget->addElement((new Text())->setText(
+            '<div class="tssggs-note">' . htmlspecialchars($this->translate('renewalsWiki')) . ' <a href="' . htmlspecialchars(\ModulesGarden\TSSGGSModule\App\Libs\Edition::wiki()) . '" target="_blank" rel="noopener">'
+            . htmlspecialchars($this->translate('wikiLink')) . '</a></div>'
+        ));
 
     }
 

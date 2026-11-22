@@ -569,7 +569,8 @@ $_LANG['admin.settings.index.forms.ssl_settings_form.visibleRenewButtonBeforeExp
 $_LANG['admin.settings.index.forms.ssl_settings_form.visibleRenewButtonAfterExpiration']                        = 'Visible "Renew" Button After Expiration';
 $_LANG['admin.settings.index.forms.ssl_settings_form.visibleRenewButtonAfterExpiration_description'] = 'Clients see a Renew button after the order has ended.';
 $_LANG['admin.settings.index.forms.ssl_settings_form.renewOrderViaExistingOrder']                               = 'Renew Order Via Existing Order';
-$_LANG['admin.settings.index.forms.ssl_settings_form.setTheUnpaidStatusForRenewalInvoices']                     = 'Set The Unpaid Status For Renewal Invoices';
+$_LANG['admin.settings.index.forms.ssl_settings_form.renewalsWiki'] = 'For detailed descriptions of the renewal settings with examples, read our Wiki on GitHub.';
+$_LANG['admin.settings.index.forms.ssl_settings_form.wikiLink'] = 'Open the Wiki';
 $_LANG['admin.settings.index.forms.ssl_settings_form.additionalDaysForRenewalOrder']                            = 'Additional Days For Renewal Order (Sectigo)';
 $_LANG['admin.settings.index.forms.ssl_settings_form.additionalDaysForRenewalOrder_description'] = 'Days of the old Sectigo certificate added to the renewed one (Sectigo allows up to 30). Not set: the days actually left, up to 30.';
 $_LANG['admin.settings.index.forms.ssl_settings_form.autoReissueDaysBeforeExpire']                              = 'Auto Reissue Days Before Expiration';
