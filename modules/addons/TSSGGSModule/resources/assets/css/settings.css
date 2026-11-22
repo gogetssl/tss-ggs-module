@@ -147,7 +147,12 @@
 }
 
 #layers2 .tssggs-settings form .lu-widget.tssggs-sec--sub > .lu-widget__header .lu-top__title {
-    font-size: 12.5px !important;
+    padding-left: 10px;
+    border-left: 3px solid var(--tw-primary);
+    color: var(--tw-fg);
+    font-size: 15px !important;
+    font-weight: 600 !important;
+    line-height: 20px !important;
 }
 
 /* rows: the label on the left, the control on the right, a divider between rows */

@@ -554,6 +554,7 @@ $_LANG['admin.settings.index.forms.ssl_settings_form.defaultCsrCountry_descripti
 
 
 $_LANG['admin.settings.index.forms.ssl_settings_form.renewals']                                                 = 'Fornyelser (standardfakturering)';
+$_LANG['admin.settings.index.forms.ssl_settings_form.allOrders'] = 'Alle ordrer';
 $_LANG['admin.settings.index.forms.ssl_settings_form.recurringOrders']                                          = 'Tilbagevendende ordrer';
 $_LANG['admin.settings.index.forms.ssl_settings_form.oneTimeOrders']                                            = 'Engangsordrer';
 $_LANG['admin.settings.index.forms.ssl_settings_form.visibleRenewButtonBeforeExpiration']                       = 'Vis knappen "Forny" før udløb';
@@ -1307,7 +1308,7 @@ $_LANG['admin.settings.index.forms.ssl_settings_form.clientMessages'] = 'Meddele
 $_LANG['admin.settings.index.forms.ssl_settings_form.clientMessages_desc'] = 'Administrer de vejledninger og meddelelser, der vises for kunderne.';
 $_LANG['admin.settings.index.forms.ssl_settings_form.renewals_desc'] = 'Styr, hvornår fornyelse er mulig, og hvordan ordrer behandles.';
 $_LANG['admin.settings.index.forms.ssl_settings_form.recurringAndOneTime'] = 'Tilbagevendende ordrer og engangsordrer';
-$_LANG['admin.settings.index.forms.ssl_settings_form.recurringAndOneTime_desc'] = 'Konfigurer fornyelsesfakturaer og udløbspåmindelser hver for sig.';
+$_LANG['admin.settings.index.forms.ssl_settings_form.recurringAndOneTime_desc'] = 'Pris for ekstra SAN ved alle ordrer, derefter fornyelsesfakturaer og udløbspåmindelser for tilbagevendende og engangsordrer.';
 $_LANG['admin.settings.index.forms.ssl_settings_form.autoInstall_desc'] = 'DNS-ventetid, TLS-kontrol af cPanel-serverne og automatisk genudstedelse.';
 $_LANG['admin.settings.index.forms.ssl_settings_form.renewalsSubscription_desc'] = 'Fornyelsesfakturaer og påmindelser for ACME- og planabonnementer.';
 $_LANG['admin.log_policy.apiMode_off'] = 'Log ikke';
@@ -1454,8 +1455,8 @@ $_LANG['admin.configuration.content.step2.command_hint'] = 'Kør dette på serve
 
 $_LANG['admin.settings.index.forms.ssl_settings_form.terminateUnpaidSubscriptions'] = 'Afslut ubetalte abonnementer';
 $_LANG['admin.settings.index.forms.ssl_settings_form.terminateUnpaidSubscriptions_description'] = 'Er fornyelsesfakturaen stadig ubetalt efter forfaldsdatoen, opsiges abonnementet hos leverandøren, før det fornyes, og tjenesten afsluttes. Fornyelsesfakturaen forfalder dagen før abonnementet fornyes.';
-$_LANG['admin.settings.index.forms.ssl_settings_form.sanUpgradePricing'] = 'Ekstra SAN-navne købt senere';
-$_LANG['admin.settings.index.forms.ssl_settings_form.sanUpgradePricing_description'] = 'Pris for ekstra domæner (SAN), som en kunde tilføjer et SSL-certifikat efter bestillingen. Fuld pris: prisen for hele faktureringsperioden (1, 2 eller 3 år), da leverandøren opkræver den fuldt ud. Forholdsmæssig: WHMCS-prisen for den tid, der er tilbage til næste forfaldsdato. Kampagnekoder for opgraderinger gælder i begge tilfælde. En kunde kan kun fjerne domæner købt inden for de sidste 30 dage, så længe certifikatet ikke bruger dem og ikke er genudstedt siden; når "Credit on Downgrade" er slået til i WHMCS, krediteres den betalte pris.';
+$_LANG['admin.settings.index.forms.ssl_settings_form.sanUpgradePricing'] = 'Pris for ekstra SAN';
+$_LANG['admin.settings.index.forms.ssl_settings_form.sanUpgradePricing_description'] = 'Pris for SAN, som en kunde tilføjer efter bestillingen. Fuld pris: SAN-prisen for hele faktureringsperioden. Forholdsmæssig: kun tiden til næste forfaldsdato.';
 $_LANG['admin.settings.index.providers.ssl_settings_provider.sanUpgradePricing_full'] = 'Fuld pris for faktureringsperioden';
 $_LANG['admin.settings.index.providers.ssl_settings_provider.sanUpgradePricing_prorated'] = 'Forholdsmæssigt til næste forfaldsdato';
 $_LANG['admin.settings.index.forms.ssl_settings_form.autoInstallReportEmail'] = 'AutoInstall-rapport pr. e-mail';

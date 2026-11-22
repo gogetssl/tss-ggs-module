@@ -553,6 +553,7 @@ $_LANG['admin.settings.index.forms.ssl_settings_form.defaultCsrCountry_descripti
 
 
 $_LANG['admin.settings.index.forms.ssl_settings_form.renewals'] = 'Verlängerungen (Standardabrechnung)';
+$_LANG['admin.settings.index.forms.ssl_settings_form.allOrders'] = 'Alle Bestellungen';
 $_LANG['admin.settings.index.forms.ssl_settings_form.recurringOrders'] = 'Wiederkehrende Bestellungen';
 $_LANG['admin.settings.index.forms.ssl_settings_form.oneTimeOrders'] = 'Einmalige Bestellungen';
 $_LANG['admin.settings.index.forms.ssl_settings_form.visibleRenewButtonBeforeExpiration'] = 'Schaltfläche "Verlängern" vor Ablauf sichtbar';
@@ -1305,7 +1306,7 @@ $_LANG['admin.settings.index.forms.ssl_settings_form.clientMessages'] = 'Kundenm
 $_LANG['admin.settings.index.forms.ssl_settings_form.clientMessages_desc'] = 'Verwalten Sie die Hinweise und Meldungen, die Kunden angezeigt werden.';
 $_LANG['admin.settings.index.forms.ssl_settings_form.renewals_desc'] = 'Steuern Sie die Verfügbarkeit von Verlängerungen und die Bestellverarbeitung.';
 $_LANG['admin.settings.index.forms.ssl_settings_form.recurringAndOneTime'] = 'Wiederkehrende und einmalige Bestellungen';
-$_LANG['admin.settings.index.forms.ssl_settings_form.recurringAndOneTime_desc'] = 'Konfigurieren Sie Verlängerungsrechnungen und Ablauferinnerungen getrennt.';
+$_LANG['admin.settings.index.forms.ssl_settings_form.recurringAndOneTime_desc'] = 'Preis für zusätzliche SANs bei jeder Bestellung, dann Verlängerungsrechnungen und Ablauferinnerungen für wiederkehrende und einmalige Bestellungen.';
 $_LANG['admin.settings.index.forms.ssl_settings_form.autoInstall_desc'] = 'DNS-Wartezeit, TLS-Prüfung der cPanel-Server und automatische Neuausstellung.';
 $_LANG['admin.settings.index.forms.ssl_settings_form.renewalsSubscription_desc'] = 'Verlängerungsrechnungen und Erinnerungen für ACME- und Plan-Abonnements.';
 $_LANG['admin.log_policy.apiMode_off'] = 'Nicht protokollieren';
@@ -1452,8 +1453,8 @@ $_LANG['admin.configuration.content.step2.command_hint'] = 'Führen Sie dies auf
 
 $_LANG['admin.settings.index.forms.ssl_settings_form.terminateUnpaidSubscriptions'] = 'Unbezahlte Abonnements beenden';
 $_LANG['admin.settings.index.forms.ssl_settings_form.terminateUnpaidSubscriptions_description'] = 'Ist die Verlängerungsrechnung nach ihrem Fälligkeitsdatum noch unbezahlt, wird das Abonnement beim Anbieter vor der Verlängerung gekündigt und der Dienst beendet. Die Verlängerungsrechnung ist am Tag vor der Verlängerung des Abonnements fällig.';
-$_LANG['admin.settings.index.forms.ssl_settings_form.sanUpgradePricing'] = 'Später gekaufte zusätzliche SANs';
-$_LANG['admin.settings.index.forms.ssl_settings_form.sanUpgradePricing_description'] = 'Preis zusätzlicher Domains (SANs), die ein Kunde nach der Bestellung zu einem SSL-Zertifikat hinzufügt. Voller Preis: der Preis des gesamten Abrechnungszeitraums (1, 2 oder 3 Jahre), da der Anbieter ihn voll berechnet. Anteilig: der WHMCS-Preis für die Zeit bis zum nächsten Fälligkeitsdatum. Aktionscodes für Upgrades gelten in beiden Fällen. Ein Kunde kann in den letzten 30 Tagen gekaufte Domains nur entfernen, solange das Zertifikat sie nicht verwendet und seitdem nicht neu ausgestellt wurde; ist in WHMCS „Credit on Downgrade“ aktiv, wird der gezahlte Preis gutgeschrieben.';
+$_LANG['admin.settings.index.forms.ssl_settings_form.sanUpgradePricing'] = 'Preis für zusätzliche SANs';
+$_LANG['admin.settings.index.forms.ssl_settings_form.sanUpgradePricing_description'] = 'Preis für SANs, die ein Kunde nach der Bestellung hinzufügt. Voller Preis: der SAN-Preis für den gesamten Abrechnungszeitraum. Anteilig: nur die Zeit bis zum nächsten Fälligkeitsdatum.';
 $_LANG['admin.settings.index.providers.ssl_settings_provider.sanUpgradePricing_full'] = 'Voller Preis für den Abrechnungszeitraum';
 $_LANG['admin.settings.index.providers.ssl_settings_provider.sanUpgradePricing_prorated'] = 'Anteilig bis zum nächsten Fälligkeitsdatum';
 $_LANG['admin.settings.index.forms.ssl_settings_form.autoInstallReportEmail'] = 'AutoInstall-Bericht per E-Mail';

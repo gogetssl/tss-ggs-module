@@ -223,6 +223,11 @@ class SslSettingsForm extends Form implements AdminAreaInterface, AjaxComponentI
      */
     protected function orderFields($widget)
     {
+        // price of additional SANs bought after the order (App\Libs\UpgradePricing): every billing type, so a heading
+        // of its own before the recurring / one-time ones
+        $allOrdersWidget = $this->subSection('allOrders', $widget);
+        $this->builder->addFieldInContainer($allOrdersWidget, (new Dropdown())->setName('sanUpgradePricing')->setDefaultValueAsFirstOption(), true);
+
         $recurringOrdersWidget = $this->subSection('recurringOrders', $widget);
 
         $recurringSwitcher = $this->builder->addFieldInContainer(
@@ -254,8 +259,6 @@ class SslSettingsForm extends Form implements AdminAreaInterface, AjaxComponentI
         );
         $this->builder->addFieldInContainer($recurringContainer, (new Dropdown())->setName('recurringPaymentTerm'));
         $recurringContainer->addElement((new Text())->setText($this->renewalCheck(RenewalPolicy::CERTIFICATE)));
-        // price of additional SANs bought after the order (App\Libs\UpgradePricing)
-        $this->builder->addFieldInContainer($recurringOrdersWidget, (new Dropdown())->setName('sanUpgradePricing')->setDefaultValueAsFirstOption(), true);
 
         $oneTimeOrdersWidget = $this->subSection('oneTimeOrders', $widget);
 
