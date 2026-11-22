@@ -394,6 +394,14 @@ trait SslCertificatePages
         $configuration = (new AddonModuleRepository())->getModuleConfiguration();
 
         $clientData = $input['params']['model']->client->toArray();
+
+        // Default CSR Country: the fixed one from the settings, else the client's own country
+        $defaultCountry = strtoupper(trim((string)($configuration['sslSettings']['defaultCsrCountry'] ?? '')));
+        if(!preg_match('/^[A-Z]{2}$/', $defaultCountry))
+        {
+            $defaultCountry = strtoupper(trim((string)($clientData['country'] ?? '')));
+        }
+        $configuration['sslSettings']['defaultCsrCountry'] = $defaultCountry;
         if(!isset($configuration['sslSettings']['useProfileDetailsForCsr']) || empty($configuration['sslSettings']['useProfileDetailsForCsr']))
         {
             foreach($clientData as $key => $value)
