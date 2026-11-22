@@ -508,6 +508,8 @@
 #layers2 .tssggs-note.is-ok   { --notice-color: var(--nt-success); --notice-bg: var(--nt-success-soft); --notice-icon: var(--nt-icon-ok); }
 #layers2 .tssggs-note.is-warn { --notice-color: var(--nt-warning); --notice-bg: var(--nt-warning-soft); --notice-icon: var(--nt-icon-warn); }
 #layers2 .tssggs-note.is-bad  { --notice-color: var(--nt-error);   --notice-bg: var(--nt-error-soft);   --notice-icon: var(--nt-icon-warn); }
+/* the plain (blue) info notice: background only, no border - the coloured states keep theirs */
+#layers2 .tssggs-note:not(.is-ok):not(.is-warn):not(.is-bad) { border: 0; }
 #layers2 .tssggs-note a { color: var(--notice-color); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
 #layers2 .tssggs-note a:focus-visible, #layers2 .tssggs-explain a:focus-visible { outline: 2px solid var(--notice-color, var(--nt-info)); outline-offset: 3px; }
 
