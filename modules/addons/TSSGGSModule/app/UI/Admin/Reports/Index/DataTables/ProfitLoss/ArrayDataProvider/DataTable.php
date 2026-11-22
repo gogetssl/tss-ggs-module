@@ -2,6 +2,7 @@
 
 namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Reports\Index\DataTables\ProfitLoss\ArrayDataProvider;
 
+use ModulesGarden\TSSGGSModule\App\UI\Admin\Reports\Index\DataTables\Shared\StatusLabel;
 
 use ModulesGarden\TSSGGSModule\App\Libs\Helpers;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Reports\Index\DataTables\ProfitLoss\Forms\DownloadForm;
@@ -87,23 +88,7 @@ class DataTable extends \ModulesGarden\TSSGGSModule\Components\DataTable\DataTab
     protected function parseDataSetRecords(): void
     {
         $this->dataSet->setFieldModifier('paymentStatus', function($fieldName, $row, $fieldValue) {
-
-            if($fieldValue == 'Paid')
-            {
-                $label = new LabelSuccess();
-            }
-            elseif($fieldValue == 'Pending')
-            {
-                $label = new LabelWarning();
-            }
-            else
-            {
-                $label = new LabelDanger();
-            }
-
-            $label->setText($fieldValue);
-
-            return $label;
+            return StatusLabel::payment($fieldValue);
         });
 
         $this->dataSet->setFieldModifier('salesAmount', function($fieldName, $row, $fieldValue) {
