@@ -1285,7 +1285,10 @@ $_LANG['admin.settings.index.forms.general_settings_form.lifecycle_desc']  = 'Wh
 $_LANG['admin.settings.index.forms.general_settings_form.lei'] = 'LEI Codes';
 $_LANG['admin.settings.index.forms.general_settings_form.lei_desc'] = 'Company search of the LEI order form.';
 $_LANG['admin.settings.index.forms.general_settings_form.openCorporatesToken'] = 'OpenCorporates API Token';
-$_LANG['admin.settings.index.forms.general_settings_form.openCorporatesToken_description'] = 'Optional. With a token the order form searches the company registers of most countries (OpenCorporates); without one it finds only entities that have or had an LEI (GLEIF, free). Leave empty to keep the saved token, enter - to remove it.';
+$_LANG['admin.settings.index.forms.general_settings_form.openCorporates'] = 'Company Register Search';
+$_LANG['admin.settings.index.forms.general_settings_form.openCorporates_description'] = 'Yes: the LEI order form also searches the company registers of most countries (OpenCorporates, needs an API token). No: it finds only entities that have or had an LEI (GLEIF, free); a saved token is removed.';
+$_LANG['admin.settings.index.forms.general_settings_form.openCorporatesToken_description'] = 'Leave empty to keep the saved token.';
+$_LANG['admin.settings.index.providers.general_settings_provider.openCorporatesTokenMissing'] = 'Enter the OpenCorporates API token, or switch Company Register Search off.';
 
 $_LANG['admin.settings.index.forms.logs_settings_form.moduleLogs_desc'] = 'Kept in the module and shown on its own pages. Switching one off stops new entries; stored entries stay until you clear them.';
 $_LANG['admin.settings.index.forms.logs_settings_form.whmcsLogs_desc']  = 'Written into WHMCS itself and read there, not in this module.';

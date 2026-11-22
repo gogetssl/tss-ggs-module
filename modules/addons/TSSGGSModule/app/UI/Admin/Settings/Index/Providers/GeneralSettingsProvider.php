@@ -34,7 +34,8 @@ class GeneralSettingsProvider extends CrudProvider
         }
         $this->availableValues['sidebarTemplates'] = $pages;
 
-        // the OpenCorporates token is never sent to the page
+        // the OpenCorporates token is never sent to the page; the switch is on while a token is saved
+        $this->data['openCorporates']      = (string)GeneralSettings::get('openCorporatesToken') !== '';
         $this->data['openCorporatesToken'] = '';
         $this->data['debugServices'] = implode(', ', \ModulesGarden\TSSGGSModule\App\Libs\LogPolicy::debugServices());
         $this->data['debugHours']    = 4;
@@ -60,7 +61,19 @@ class GeneralSettingsProvider extends CrudProvider
 
     public function update()
     {
-        self::saveGeneral($this->formData->toArray());
+        $data = $this->formData->toArray();
+        // Company Register Search switched on needs a token: the one typed now or the saved one
+        if(array_key_exists('openCorporates', $data) && self::on($data['openCorporates'])
+            && trim((string)($data['openCorporatesToken'] ?? '')) === '' && (string)GeneralSettings::get('openCorporatesToken') === '')
+        {
+            return (new \ModulesGarden\TSSGGSModule\Core\Components\Response\Response())->setError($this->translate('openCorporatesTokenMissing'));
+        }
+        self::saveGeneral($data);
+    }
+
+    protected static function on($value)
+    {
+        return !empty($value) && !in_array($value, ['off', 'false', '0'], true);
     }
 
     /**
@@ -91,6 +104,15 @@ class GeneralSettingsProvider extends CrudProvider
             }, $pages))));
         }
 
+        // Company Register Search off: the saved token is removed (no unused secret stays stored)
+        if(array_key_exists('openCorporates', $data))
+        {
+            if(!self::on($data['openCorporates']))
+            {
+                $data['openCorporatesToken'] = '-';
+            }
+            unset($data['openCorporates']);
+        }
         // OpenCorporates token: empty keeps the saved one, "-" removes it, anything else is saved encrypted
         if(array_key_exists('openCorporatesToken', $data))
         {

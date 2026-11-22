@@ -58,6 +58,9 @@ class GeneralSettingsForm extends Form implements AdminAreaInterface, AjaxCompon
         if(in_array('ggs', \ModulesGarden\TSSGGSModule\App\Libs\Edition::vendors(), true))
         {
             $lei   = $this->section('lei', 'getlei');
+            // Company Register Search on: the token field appears (resources/assets/js/custom/switchFields.js)
+            $this->builder->addFieldInContainer($lei, (new Switcher())->setName('openCorporates')->addClass('switcher-revert'), true);
+            $lei->addElement((new \ModulesGarden\TSSGGSModule\Components\Text\Text())->setText('<span class="tssggs-depends" data-switch="openCorporates" data-fields="openCorporatesToken" hidden></span>'));
             $token = (new FormInputPassword())->setName('openCorporatesToken');
             if(\ModulesGarden\TSSGGSModule\App\Libs\GeneralSettings::get('openCorporatesToken'))
             {
