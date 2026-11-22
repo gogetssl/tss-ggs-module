@@ -61,7 +61,7 @@ class SslSettingsForm extends Form implements AdminAreaInterface, AjaxComponentI
 
         if($ssl)
         {
-            $this->validationFields($this->section('sslValidation', 'shield-check-outline'), $this->scope === self::SCOPE_ALL);
+            $this->validationFields($this->section('sslValidation', 'check-circle-outline'), $this->scope === self::SCOPE_ALL);
             $this->csrFields($this->section('csrGenerator', 'key-variant'));
         }
 
