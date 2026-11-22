@@ -9,7 +9,7 @@ class Sidebar extends \ModulesGarden\TSSGGSModule\Components\Sidebar\Sidebar
 {
     /** page => Material Design icon */
     const ICONS = [
-        'apiSettings'       => 'key-outline',
+        'apiSettings'       => 'api',
         'generalSettings'   => 'web',
         'sslSettings'       => 'shield-check-outline',
         'automatedSettings' => 'sync',
