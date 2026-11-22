@@ -278,6 +278,7 @@ add_hook('ClientAreaPageUpgrade', 1, function($vars) {
 add_hook('InvoiceCreation', 1, function($vars) {
     try
     {
+        \ModulesGarden\TSSGGSModule\App\Libs\UpgradePricing::cleanOneTimePeriods(isset($vars['invoiceid']) ? (int)$vars['invoiceid'] : 0);
         \ModulesGarden\TSSGGSModule\App\Libs\UpgradePricing::fixInvoice(isset($vars['invoiceid']) ? (int)$vars['invoiceid'] : 0);
     }
     catch(\Throwable $e)
