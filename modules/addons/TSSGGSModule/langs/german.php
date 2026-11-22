@@ -764,6 +764,8 @@ $_LANG['admin.products.index.data_tables.products.forms.configuration_form.margi
 $_LANG['admin.products.index.data_tables.products.forms.configuration_form.margin_placeholder'] = 'Globale Marge aus den Finanzeinstellungen';
 $_LANG['admin.products.index.data_tables.products.forms.configuration_form.processingGuide'] = 'Bearbeitungshinweis';
 $_LANG['admin.products.index.data_tables.products.forms.configuration_form.issuedMessage'] = 'Meldung für ausgestelltes SSL';
+$_LANG['admin.products.index.data_tables.products.forms.configuration_form.processingGuide_description'] = 'Leer lassen, um den Bearbeitungshinweis aus Einstellungen > SSL-Einstellungen zu verwenden. Ein hier eingegebener Text ersetzt ihn für dieses Produkt.';
+$_LANG['admin.products.index.data_tables.products.forms.configuration_form.issuedMessage_description'] = 'Leer lassen, um die Nachricht aus den Einstellungen zu verwenden (die Nachricht der Zertifizierungsstelle, wenn sie aktiviert ist, sonst die allgemeine). Ein hier eingegebener Text ersetzt sie für dieses Produkt.';
 $_LANG['admin.products.index.data_tables.products.providers.configuration_provider.payTypeRecurring'] = 'Wiederkehrend';
 $_LANG['admin.products.index.data_tables.products.providers.configuration_provider.payTypeOnetime'] = 'Einmalig';
 $_LANG['admin.products.index.data_tables.products.providers.configuration_provider.payTypeFree'] = 'Kostenlos';

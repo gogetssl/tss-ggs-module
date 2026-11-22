@@ -797,6 +797,8 @@ $_LANG['admin.products.index.data_tables.products.forms.configuration_form.margi
 $_LANG['admin.products.index.data_tables.products.forms.configuration_form.margin_placeholder']   = 'Global margin from Finance Settings';
 $_LANG['admin.products.index.data_tables.products.forms.configuration_form.processingGuide']          = 'Processing Guide';
 $_LANG['admin.products.index.data_tables.products.forms.configuration_form.issuedMessage']            = 'Issued SSL Message';
+$_LANG['admin.products.index.data_tables.products.forms.configuration_form.processingGuide_description'] = 'Leave empty to use the Processing Guide from Settings > SSL Certificates. Text entered here replaces it for this product.';
+$_LANG['admin.products.index.data_tables.products.forms.configuration_form.issuedMessage_description'] = 'Leave empty to use the message from Settings (the certificate authority message when it is switched on, otherwise the general one). Text entered here replaces it for this product.';
 $_LANG['admin.products.index.data_tables.products.providers.configuration_provider.payTypeRecurring'] = 'Recurring';
 $_LANG['admin.products.index.data_tables.products.providers.configuration_provider.payTypeOnetime']   = 'One Time';
 $_LANG['admin.products.index.data_tables.products.providers.configuration_provider.payTypeFree']       = 'Free';

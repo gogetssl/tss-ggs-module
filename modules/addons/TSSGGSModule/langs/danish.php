@@ -766,6 +766,8 @@ $_LANG['admin.products.index.data_tables.products.forms.configuration_form.margi
 $_LANG['admin.products.index.data_tables.products.forms.configuration_form.margin_placeholder']   = 'Global margen fra Økonomiindstillinger';
 $_LANG['admin.products.index.data_tables.products.forms.configuration_form.processingGuide']          = 'Behandlingsvejledning';
 $_LANG['admin.products.index.data_tables.products.forms.configuration_form.issuedMessage']            = 'Meddelelse om udstedt SSL';
+$_LANG['admin.products.index.data_tables.products.forms.configuration_form.processingGuide_description'] = 'Lad feltet stå tomt for at bruge behandlingsvejledningen fra Indstillinger > SSL-indstillinger. Tekst, der indtastes her, erstatter den for dette produkt.';
+$_LANG['admin.products.index.data_tables.products.forms.configuration_form.issuedMessage_description'] = 'Lad feltet stå tomt for at bruge beskeden fra Indstillinger (certifikatudstederens besked, når den er slået til, ellers den generelle). Tekst, der indtastes her, erstatter den for dette produkt.';
 $_LANG['admin.products.index.data_tables.products.providers.configuration_provider.payTypeRecurring'] = 'Tilbagevendende';
 $_LANG['admin.products.index.data_tables.products.providers.configuration_provider.payTypeOnetime']   = 'Engangs';
 $_LANG['admin.products.index.data_tables.products.providers.configuration_provider.payTypeFree']       = 'Gratis';
