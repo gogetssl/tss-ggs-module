@@ -41,11 +41,13 @@ class GeneralSettingsProvider extends CrudProvider
         $this->availableValues['apiLogMode'] = self::apiModeOptions($this);
         $this->availableValues['debugHours'] = self::debugHourOptions($this);
         $this->availableValues['expiresSoonDays'] = ['10' => '10', '15' => '15', '30' => '30', '60' => '60', '90' => '90'];
-        $this->availableValues['dashboardPeriod'] = [];
+        // availableValues is an ArrayAccess container: the options are built first, then set at once
+        $periods = [];
         foreach(array_keys(\ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Shared\SalesSummary::PERIODS) as $period)
         {
-            $this->availableValues['dashboardPeriod'][$period] = \ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Shared\SalesSummary::periodLabel($period);
+            $periods[$period] = \ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Shared\SalesSummary::periodLabel($period);
         }
+        $this->availableValues['dashboardPeriod'] = $periods;
 
         // General e-mail templates; empty = the module's own "Send Certificate" template
         $templates = ['' => $this->translate('moduleTemplate')];
