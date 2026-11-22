@@ -55,10 +55,11 @@ class ReportingProvider extends CrudProvider
 
         $data  = $this->formData->toArray();
         $admin = self::currentAdmin();
-        $from  = trim((string)\WHMCS\Config\Setting::getValue('SystemEmailsFromEmail')) ?: trim((string)\WHMCS\Config\Setting::getValue('Email'));
+        // General Settings > Email Address is the sender of WHMCS mail (SystemEmailsFromEmail is an older key without a field)
+        $from  = trim((string)\WHMCS\Config\Setting::getValue('Email')) ?: trim((string)\WHMCS\Config\Setting::getValue('SystemEmailsFromEmail'));
         if($from === '')
         {
-            throw new \Exception('Set the system e-mail address in WHMCS (Configuration > System Settings > General Settings > Mail) to send the report.');
+            throw new \Exception('Set the e-mail address in WHMCS (Configuration > System Settings > General Settings > Email Address) to send the report.');
         }
 
         // the read-only fields are not posted: the report always carries the values of this moment
@@ -98,7 +99,7 @@ class ReportingProvider extends CrudProvider
         $message->addRecipient('to', self::supportAddress());
         // mail providers such as Mailgun refuse a message without a sender address
         $message->setFromEmail($from);
-        $message->setFromName((string)(\WHMCS\Config\Setting::getValue('SystemEmailsFromName') ?: $CONFIG['CompanyName']));
+        $message->setFromName((string)$CONFIG['CompanyName']);
         // support answers the administrator who sent the report
         if($admin['email'] !== '')
         {
