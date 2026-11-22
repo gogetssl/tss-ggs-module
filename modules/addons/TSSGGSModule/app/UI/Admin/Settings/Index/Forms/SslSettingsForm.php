@@ -317,8 +317,8 @@ class SslSettingsForm extends Form implements AdminAreaInterface, AjaxComponentI
             $this->builder->addFieldInContainer($sub, (new FormInputText())->setName('agreementUrl_' . $authority), true);
             $this->builder->addFieldInContainer($sub, (new TextArea())->setName('agreementText_' . $authority), true);
         }
-        $other = $this->subSection('agreement_other', $widget);
-        $this->builder->addFieldInContainer($other, (new TextArea())->setName('agreementText'), true);
+        // no "other certificate authorities" agreement: every product sold is Sectigo, DigiCert or GoGetSSL (an agreement
+        // text saved there earlier still fills an empty one of these, CertificateService::agreement)
     }
 
     protected function deliveryFields($widget)
