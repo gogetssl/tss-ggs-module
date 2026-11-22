@@ -78,27 +78,55 @@ class ProductsContainer extends Container implements AdminAreaInterface
         $this->addElement($tabs);
     }
 
-    /** All / Imported / Not imported with their counts: links to the page with show= (DataTable::show) */
+    /**
+     * The list filters as links (DataTable::show / ::type): All / Imported / Not imported and All types / DV / OV / EV /
+     * Other; each count follows the other group's current choice
+     */
     protected function showFilter(): Text
     {
-        $counts = ['' => 0, 'imported' => 0, 'not_imported' => 0];
+        $show    = DataTable::show();
+        $type    = DataTable::type();
+        $groups  = [
+            'show' => ['' => 'show_all', 'imported' => 'show_imported', 'not_imported' => 'show_not_imported'],
+            'type' => ['' => 'type_all', 'dv' => 'type_dv', 'ov' => 'type_ov', 'ev' => 'type_ev', 'other' => 'type_other'],
+        ];
+        $counts  = ['show' => array_fill_keys(array_keys($groups['show']), 0), 'type' => array_fill_keys(array_keys($groups['type']), 0)];
         foreach(DataTable::catalogue() as [$remoteProduct, $whmcsProduct])
         {
-            $counts['']++;
-            $counts[$whmcsProduct ? 'imported' : 'not_imported']++;
+            foreach(array_keys($groups['show']) as $value)
+            {
+                $counts['show'][$value] += DataTable::passes($remoteProduct, $whmcsProduct, (string)$value, $type) ? 1 : 0;
+            }
+            foreach(array_keys($groups['type']) as $value)
+            {
+                $counts['type'][$value] += DataTable::passes($remoteProduct, $whmcsProduct, $show, (string)$value) ? 1 : 0;
+            }
         }
-        $current = DataTable::show();
-        $html    = '<div class="tssggs-show" role="group" aria-label="' . htmlspecialchars((string)$this->translate('show_label', [], ['admin.products']), ENT_QUOTES) . '">';
-        foreach(['' => 'show_all', 'imported' => 'show_imported', 'not_imported' => 'show_not_imported'] as $show => $key)
+
+        $html = '';
+        foreach($groups as $group => $choices)
         {
-            $url   = 'addonmodules.php?module=TSSGGSModule&amp;mg-page=products' . ($show !== '' ? '&amp;show=' . $show : '');
-            $html .= '<a class="lu-btn lu-btn--sm ' . ($show === $current ? 'lu-btn--primary' : 'lu-btn--default lu-btn--outline') . '" href="' . $url . '"'
-                . ($show === $current ? ' aria-current="page"' : '') . '>'
-                . htmlspecialchars((string)$this->translate($key, [], ['admin.products']), ENT_QUOTES) . ' <b>' . $counts[$show] . '</b></a>';
+            $html .= '<div class="tssggs-show" role="group" aria-label="' . htmlspecialchars((string)$this->translate($group . '_label', [], ['admin.products']), ENT_QUOTES) . '">';
+            foreach($choices as $value => $key)
+            {
+                $value   = (string)$value;
+                $current = $value === ($group === 'show' ? $show : $type);
+                if($value === 'other' && !$counts[$group][$value] && !$current)
+                {
+                    continue;
+                }
+                // a link keeps the other group's choice
+                $params  = array_filter(['show' => $group === 'show' ? $value : $show, 'type' => $group === 'type' ? $value : $type]);
+                $url     = 'addonmodules.php?module=TSSGGSModule&amp;mg-page=products' . ($params ? '&amp;' . http_build_query($params, '', '&amp;') : '');
+                $html   .= '<a class="lu-btn lu-btn--sm ' . ($current ? 'lu-btn--primary' : 'lu-btn--default lu-btn--outline') . '" href="' . $url . '"'
+                    . ($current ? ' aria-current="page"' : '') . '>'
+                    . htmlspecialchars((string)$this->translate($key, [], ['admin.products']), ENT_QUOTES) . ' <b>' . $counts[$group][$value] . '</b></a>';
+            }
+            $html .= '</div>';
         }
         $text = new Text();
         $text->setCss('tssggs-html');
-        $text->setText($html . '</div>');
+        $text->setText('<div class="tssggs-filters">' . $html . '</div>');
 
         return $text;
     }

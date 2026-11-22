@@ -101,6 +101,35 @@ class DataTable extends \ModulesGarden\TSSGGSModule\Components\DataTable\DataTab
         return in_array($show, self::SHOW, true) ? $show : '';
     }
 
+    /** the validation filter: '' (all), 'dv', 'ov', 'ev' or 'other' (no validation level: code signing, S/MIME, LEI...) */
+    const TYPES = ['dv', 'ov', 'ev', 'other'];
+
+    public static function type(): string
+    {
+        $type = (string)($_GET['type'] ?? '');
+
+        return in_array($type, self::TYPES, true) ? $type : '';
+    }
+
+    /** dv / ov / ev / other for a remote product */
+    public static function typeOf($remoteProduct): string
+    {
+        $validation = strtolower(trim((string)$remoteProduct->validation));
+
+        return in_array($validation, ['dv', 'ov', 'ev'], true) ? $validation : 'other';
+    }
+
+    /** true when a product passes the show / type filters ('' = no filter) */
+    public static function passes($remoteProduct, $whmcsProduct, string $show, string $type): bool
+    {
+        if(($show === 'imported' && !$whmcsProduct) || ($show === 'not_imported' && $whmcsProduct))
+        {
+            return false;
+        }
+
+        return $type === '' || self::typeOf($remoteProduct) === $type;
+    }
+
     /**
      * The products the page lists: [[remote product, WHMCS product or null], ...] in the display order - the edition's
      * own vendor; a product the module can not sell yet only when it was imported earlier
@@ -143,10 +172,11 @@ class DataTable extends \ModulesGarden\TSSGGSModule\Components\DataTable\DataTab
     {
         $rows = [];
         $show = self::show();
+        $type = self::type();
 
         foreach(self::catalogue() as [$remoteProduct, $whmcsProduct])
         {
-            if(($show === 'imported' && !$whmcsProduct) || ($show === 'not_imported' && $whmcsProduct))
+            if(!self::passes($remoteProduct, $whmcsProduct, $show, $type))
             {
                 continue;
             }
