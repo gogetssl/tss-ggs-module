@@ -35,7 +35,7 @@
                 <tr>
                     <td><strong>{$row.domain|escape}</strong></td>
                     <td>{$row.current.product|escape} <small class="text-muted">#{$row.current.service_id}</small></td>
-                    <td><span class="label status status-{$row.current.status|escape}">{$t.$statusKey|default:$row.current.status|escape}</span></td>
+                    <td><span class="label {$row.current.status_class}">{$t.$statusKey|default:$row.current.status_text|escape}</span></td>
                     <td>{$row.current.valid_till|default:'-'}</td>
                     <td class="text-right">
                         {if $row.history}
@@ -56,7 +56,7 @@
                                         <td>{$old.ordered|escape}</td>
                                         <td>{$old.valid_from|default:'-'}</td>
                                         <td>{$old.valid_till|default:'-'}</td>
-                                        <td>{$t.$oldStatusKey|default:$old.status|escape}</td>
+                                        <td><span class="label {$old.status_class}">{$t.$oldStatusKey|default:$old.status_text|escape}</span></td>
                                     </tr>
                                 {/foreach}
                             </table>
