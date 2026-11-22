@@ -52,7 +52,7 @@ class GeneralSettingsForm extends Form implements AdminAreaInterface, AjaxCompon
         // field shows a mask as its placeholder, and an empty field keeps the saved token
         if(in_array('ggs', \ModulesGarden\TSSGGSModule\App\Libs\Edition::vendors(), true))
         {
-            $lei   = $this->section('lei', 'card-account-details-outline');
+            $lei   = $this->section('lei', 'getlei');
             $token = (new FormInputPassword())->setName('openCorporatesToken');
             if(\ModulesGarden\TSSGGSModule\App\Libs\GeneralSettings::get('openCorporatesToken'))
             {
