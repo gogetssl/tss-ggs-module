@@ -102,7 +102,6 @@ class HomeContainer extends Container implements AdminAreaInterface
         return '<div class="tssggs-dash__head"><div>'
             . '<div class="tssggs-dash__crumb">' . Card::e(Edition::name()) . Card::icon('chevron-right') . Card::e($this->translate('title')) . '</div>'
             . '<h2>' . Card::e($this->translate('title')) . '</h2></div>'
-            . '<span class="tssggs-dash__period">' . Card::icon('calendar-month-outline') . Card::e($this->translate('period')) . '</span>'
             . '</div>';
     }
 

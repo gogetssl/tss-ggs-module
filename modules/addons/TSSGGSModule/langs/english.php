@@ -14,7 +14,6 @@ $_LANG['admin.menu.more']            = 'More';
 $_LANG['admin.breadcrumbs.Migration_index'] = 'Migration';
 
 $_LANG['admin.home.index.home_container.title']                 = 'Dashboard';
-$_LANG['admin.home.index.home_container.period']                = 'Last month';
 $_LANG['admin.home.index.home_container.attention_title']       = 'Automation needs attention';
 $_LANG['admin.home.index.home_container.attention_body']        = 'Cron jobs are not running. Certificate processing and price updates may be affected.';
 $_LANG['admin.home.index.home_container.attention_button']      = 'Review system';

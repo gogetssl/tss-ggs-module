@@ -14,7 +14,6 @@ $_LANG['admin.menu.more'] = 'Mere';
 $_LANG['admin.breadcrumbs.Migration_index'] = 'Migrering';
 
 $_LANG['admin.home.index.home_container.title']                 = 'Dashboard';
-$_LANG['admin.home.index.home_container.period']                = 'Sidste måned';
 $_LANG['admin.home.index.home_container.attention_title']       = 'Automatiseringen kræver opmærksomhed';
 $_LANG['admin.home.index.home_container.attention_body']        = 'Cron-job kører ikke. Certifikatbehandling og prisopdateringer kan blive påvirket.';
 $_LANG['admin.home.index.home_container.attention_button']      = 'Gennemgå system';

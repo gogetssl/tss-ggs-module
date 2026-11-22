@@ -173,7 +173,6 @@
 #layers2 .tssggs-dash__alert > .mdi { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 6px; background: var(--tw-danger-soft); color: var(--tw-danger); font-size: 16px; }
 
 /* period chip next to the heading */
-#layers2 .tssggs-dash__period { height: 32px; padding: 0 12px; border: 1px solid var(--tw-border); border-radius: 6px; background: var(--tw-surface); color: var(--tw-fg); font-size: 13px; }
 
 /* migration stat tiles: plain-case labels like the KPI tiles */
 #layers2 .tssggs-card__label { color: var(--tw-fg-soft); font-size: 12px; letter-spacing: 0; text-transform: none; }
@@ -350,7 +349,6 @@
 #layers2 .tssggs-stage__top svg.tssggs-ico,
 #layers2 .tssggs-pipe__more svg.tssggs-ico,
 #layers2 .tssggs-setup__step > svg.tssggs-ico,
-#layers2 .tssggs-dash__period svg.tssggs-ico,
 #layers2 .tssggs-dcard__sub svg.tssggs-ico,
 #layers2 .tssggs-cronjob__freq svg.tssggs-ico,
 #layers2 .tssggs-cronone__title svg.tssggs-ico { width: 16px; height: 16px; }
@@ -384,7 +382,6 @@
 #layers2 .tssggs-badge,
 #layers2 .tssggs-copy,
 #layers2 .tssggs-dash__crumb,
-#layers2 .tssggs-dash__period,
 #layers2 .tssggs-dash__foot span,
 #layers2 .tssggs-cronjob__freq,
 #layers2 .tssggs-cronone__title,
