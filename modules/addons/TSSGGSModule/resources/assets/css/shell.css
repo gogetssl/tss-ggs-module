@@ -41,14 +41,14 @@
 #layers2 .tssggs-head__logo {
     display: grid;
     place-items: center;
-    width: 68px;
-    height: 91px;
+    height: 60px;
 }
 
+/* at most 60px high, the width follows each logo's own proportions */
 #layers2 .tssggs-head__mark {
     display: block;
-    width: 68px;
-    height: 91px;
+    width: auto;
+    height: 60px;
 }
 
 #layers2 .tssggs-head__text strong {
