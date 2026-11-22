@@ -10,7 +10,7 @@ use WHMCS\Database\Capsule;
  */
 class ClientSslSummary
 {
-    const TYPES = ['total', 'unpaid', 'processing', 'expires_soon'];
+    const TYPES = ['total', 'unpaid', 'awaiting', 'processing', 'expires_soon'];
 
     /**
      * Label colour per status key (Bootstrap label classes of the client area theme), the same scheme as the admin
@@ -135,6 +135,8 @@ class ClientSslSummary
                 'types'          => array_keys(array_filter([
                     'total'        => $live,
                     'unpaid'       => $live && isset($unpaid[$row->id]),
+                    // paid, but the client has not sent the CSR / details yet
+                    'awaiting'     => $row->domainstatus === 'Active' && $key === 'awaiting',
                     'processing'   => $row->domainstatus === 'Active' && $working,
                     'expires_soon' => $expiring,
                 ])),

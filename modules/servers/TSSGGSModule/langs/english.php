@@ -687,6 +687,7 @@ $_LANG['clientPages']['summaryTitle']       = 'SSL Certificates';
 $_LANG['clientPages']['viewAll']            = 'View All';
 $_LANG['clientPages']['total']              = 'All';
 $_LANG['clientPages']['unpaid']             = 'Unpaid';
+$_LANG['clientPages']['awaiting'] = 'Awaiting Configuration';
 $_LANG['clientPages']['processing']         = 'Processing';
 $_LANG['clientPages']['expires_soon']       = 'Expires Soon';
 $_LANG['clientPages']['domain']             = 'Domain';

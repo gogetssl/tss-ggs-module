@@ -687,6 +687,7 @@ $_LANG['clientPages']['summaryTitle'] = 'SSL certifikáty';
 $_LANG['clientPages']['viewAll'] = 'Zobrazit vše';
 $_LANG['clientPages']['total'] = 'Vše';
 $_LANG['clientPages']['unpaid'] = 'Neuhrazeno';
+$_LANG['clientPages']['awaiting'] = 'Čeká na konfiguraci';
 $_LANG['clientPages']['processing'] = 'Zpracovává se';
 $_LANG['clientPages']['expires_soon'] = 'Brzy vyprší';
 $_LANG['clientPages']['domain'] = 'Doména';

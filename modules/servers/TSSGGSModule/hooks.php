@@ -323,11 +323,11 @@ add_hook('ClientAreaHomepagePanels', 1, function($homePagePanels) {
         }
 
         $t     = \ModulesGarden\TSSGGSModule\App\ClientArea\SslPages::texts();
-        $icons = ['unpaid' => 'fa-credit-card', 'processing' => 'fa-cogs', 'expires_soon' => 'fa-hourglass-half'];
+        $icons = ['unpaid' => 'fa-credit-card', 'awaiting' => 'fa-edit', 'processing' => 'fa-cogs', 'expires_soon' => 'fa-hourglass-half'];
         $body  = '<div class="tssggs-summary" style="display:flex;flex-wrap:wrap;text-align:center;">';
         foreach($icons as $type => $icon)
         {
-            $body .= '<a href="index.php?m=TSSGGSModule&amp;type=' . $type . '" style="flex:1 1 33%;padding:15px 5px;text-decoration:none;">'
+            $body .= '<a href="index.php?m=TSSGGSModule&amp;type=' . $type . '" style="flex:1 1 25%;padding:15px 5px;text-decoration:none;">'
                 . '<i class="fas ' . $icon . '" style="font-size:22px;display:block;margin-bottom:6px;"></i>'
                 . '<span style="display:block;">' . $t[$type] . '</span><strong style="font-size:20px;">' . (int)$counts[$type] . '</strong></a>';
         }

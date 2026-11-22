@@ -7,7 +7,7 @@
     {/if}
 
     <ul class="nav nav-tabs tssggs-filters" role="tablist">
-        {foreach ['total', 'unpaid', 'processing', 'expires_soon'] as $filter}
+        {foreach ['total', 'unpaid', 'awaiting', 'processing', 'expires_soon'] as $filter}
             <li class="nav-item{if $type == $filter} active{/if}">
                 <a class="nav-link{if $type == $filter} active{/if}" href="{$moduleUrl}&amp;type={$filter}">{$t.$filter} <span class="badge">{$counts.$filter}</span></a>
             </li>
