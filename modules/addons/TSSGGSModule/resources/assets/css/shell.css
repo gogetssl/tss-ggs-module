@@ -32,7 +32,7 @@
 #layers2 .tssggs-head__brand {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 9px;
     color: var(--tw-fg);
     text-decoration: none;
 }
@@ -41,14 +41,19 @@
 #layers2 .tssggs-head__logo {
     display: grid;
     place-items: center;
-    height: 60px;
 }
 
-/* at most 60px high, the width follows each logo's own proportions */
+/* TheSSLStore: at most 60px high, the width follows the logo's proportions */
 #layers2 .tssggs-head__mark {
     display: block;
     width: auto;
     height: 60px;
+}
+
+/* GoGetSSL */
+#layers2 .tssggs-head__mark--ggs {
+    width: 33px;
+    height: 40px;
 }
 
 #layers2 .tssggs-head__text strong {
@@ -60,7 +65,6 @@
 
 #layers2 .tssggs-head__text small {
     display: block;
-    margin-top: 2px;
     color: var(--tw-muted);
     font-size: 14px;
 }
