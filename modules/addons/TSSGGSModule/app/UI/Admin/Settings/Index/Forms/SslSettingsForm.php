@@ -332,7 +332,7 @@ class SslSettingsForm extends Form implements AdminAreaInterface, AjaxComponentI
     protected function messageFields($widget)
     {
         $this->builder->addFieldInContainer($widget, (new TextArea())->setName('processingGuide'), true);
-        // "Issued SSL Message for": a certificate family (App\Libs\IssuedMessage) and a language, or General. Only the
+        // "Issued SSL Message for": a certificate family (App\Libs\IssuedMessage) and a language. Only the
         // chosen boxes are shown (resources/assets/js/custom/issuedMessageFor.js); the selectors have no name, so they
         // are never saved. Each family / language box is prefilled with the built-in text (SslSettingsProvider::read)
         $issued    = \ModulesGarden\TSSGGSModule\App\Libs\IssuedMessage::class;
@@ -342,7 +342,8 @@ class SslSettingsForm extends Form implements AdminAreaInterface, AjaxComponentI
         {
             $options .= '<option value="' . $family . '">' . htmlspecialchars($this->translate('issuedMessageFor_' . $family)) . '</option>';
         }
-        $options  .= '<option value="general">' . htmlspecialchars($this->translate('issuedMessageForGeneral')) . '</option>';
+        // no "General (other certificates)": every SSL product sold is Sectigo or DigiCert (GoGetSSL-brand ones too), so
+        // a family message always applies; a General message saved earlier still shows when a family's is switched off
         $languageOptions = '';
         foreach($languages as $language)
         {
@@ -367,7 +368,6 @@ class SslSettingsForm extends Form implements AdminAreaInterface, AjaxComponentI
                     ->setDescription($this->translate($hint)), true);
             }
         }
-        $this->builder->addFieldInContainer($widget, (new TextArea())->setName('issuedMessage'), true);
         $this->builder->addFieldInContainer($widget, (new Dropdown())->setName('certificateEmailTemplate'), true);
     }
 

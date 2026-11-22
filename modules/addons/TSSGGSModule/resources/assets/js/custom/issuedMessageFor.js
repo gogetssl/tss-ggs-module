@@ -1,7 +1,7 @@
 /**
  * Settings > SSL certificates > Client Messages: "Issued SSL Message for" + "Language" show only the boxes of the chosen
- * certificate family (its "Show this message" switch and its text in that language - App\Libs\IssuedMessage) or the
- * General message. The selectors have no name, so they are not saved.
+ * certificate family (its "Show this message" switch and its text in that language - App\Libs\IssuedMessage).
+ * The selectors have no name, so they are not saved.
  */
 // leading semicolon: the module joins every script into one bundle
 ;(function () {
@@ -16,18 +16,14 @@
         var form     = wrap.closest('form') || document;
         var family   = wrap.querySelector('.tssggs-issued-for__select').value;
         var language = wrap.querySelector('.tssggs-issued-for__language-select').value;
-        var general  = family === 'general';
 
-        wrap.querySelector('.tssggs-issued-for__language').style.display = general ? 'none' : '';
         form.querySelectorAll('[name^="issuedMessage"]').forEach(function (field) {
             var name  = field.getAttribute('name');
             var group = box(form, name);
             if (!group) {
                 return;
             }
-            var show = general
-                ? name === 'issuedMessage'
-                : name === 'issuedMessageOn_' + family || name === 'issuedMessage_' + family + '_' + language;
+            var show = name === 'issuedMessageOn_' + family || name === 'issuedMessage_' + family + '_' + language;
             group.style.display = show ? '' : 'none';
         });
     }
@@ -38,8 +34,9 @@
                 return;
             }
             // the text boxes are drawn by the page script after this element: wait until they are there
-            var form = wrap.closest('form') || document;
-            if (!box(form, 'issuedMessage')) {
+            var form  = wrap.closest('form') || document;
+            var first = wrap.querySelector('.tssggs-issued-for__select').value;
+            if (!box(form, 'issuedMessageOn_' + first)) {
                 return;
             }
             wrap.setAttribute('data-ready', '1');
