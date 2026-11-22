@@ -109,6 +109,7 @@ class HomeContainer extends Container implements AdminAreaInterface
     {
         $sales    = SalesSummary::get();
         $currency = (string)Helpers::getDefaultCurrencyCode();
+        $period   = SalesSummary::periodLabel();
         $tiles    = [
             ['kpi_sales', Helpers::formatDefaultCurrency($sales['paid']), 'currency-usd', 'ok', 'credit-card-outline'],
             ['kpi_profit', Helpers::formatDefaultCurrency($sales['profit']), 'trending-up', 'info', 'chart-line'],
@@ -116,12 +117,12 @@ class HomeContainer extends Container implements AdminAreaInterface
             ['kpi_expiring', (string)$sales['expiring'], 'timer-sand', 'warn', 'check-circle-outline'],
         ];
 
-        $html = '<section class="tssggs-dash__kpis" aria-label="' . Card::e($this->translate('period')) . '">';
+        $html = '<section class="tssggs-dash__kpis" aria-label="' . Card::e($period) . '">';
         foreach($tiles as [$key, $value, $icon, $tone, $detailIcon])
         {
             $html .= '<article class="tssggs-kpi"><div class="tssggs-kpi__top"><h3>' . Card::e($this->translate($key)) . '</h3>' . Card::tile($icon, $tone) . '</div>'
                 . '<p class="tssggs-kpi__value">' . Card::e($value) . '</p>'
-                . '<p class="tssggs-kpi__detail">' . Card::icon($detailIcon) . Card::e($this->translate($key . '_detail', ['currency' => $currency])) . '</p></article>';
+                . '<p class="tssggs-kpi__detail">' . Card::icon($detailIcon) . Card::e($this->translate($key . '_detail', ['currency' => $currency, 'period' => $period])) . '</p></article>';
         }
 
         return $html . '</section>';

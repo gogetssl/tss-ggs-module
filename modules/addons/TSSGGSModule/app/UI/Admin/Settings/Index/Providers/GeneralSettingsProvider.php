@@ -41,6 +41,11 @@ class GeneralSettingsProvider extends CrudProvider
         $this->availableValues['apiLogMode'] = self::apiModeOptions($this);
         $this->availableValues['debugHours'] = self::debugHourOptions($this);
         $this->availableValues['expiresSoonDays'] = ['10' => '10', '15' => '15', '30' => '30', '60' => '60', '90' => '90'];
+        $this->availableValues['dashboardPeriod'] = [];
+        foreach(array_keys(\ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Shared\SalesSummary::PERIODS) as $period)
+        {
+            $this->availableValues['dashboardPeriod'][$period] = \ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Shared\SalesSummary::periodLabel($period);
+        }
 
         // General e-mail templates; empty = the module's own "Send Certificate" template
         $templates = ['' => $this->translate('moduleTemplate')];
@@ -67,6 +72,10 @@ class GeneralSettingsProvider extends CrudProvider
             {
                 $data[$key] = !empty($data[$key]) && !in_array($data[$key], ['off', 'false', '0'], true);
             }
+        }
+        if(array_key_exists('dashboardPeriod', $data) && !array_key_exists((string)$data['dashboardPeriod'], \ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Shared\SalesSummary::PERIODS))
+        {
+            unset($data['dashboardPeriod']);
         }
         if(array_key_exists('expiresSoonDays', $data))
         {

@@ -56,6 +56,7 @@ class GeneralSettings
         'terminateUnpaidOnExpiry'  => true,
         // Interface
         'hideInfoMessages'         => false,
+        'dashboardPeriod'          => 'month',   // App\UI\Admin\Home\Index\Shared\SalesSummary::PERIODS
         // Orders
         'defaultWebServer'         => '',     // legacy free text (migrated TSS setting), still sent when set
         'useDefaultWebServer'      => true,   // true: clients are not asked for their web server

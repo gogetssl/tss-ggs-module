@@ -42,6 +42,7 @@ class GeneralSettingsForm extends Form implements AdminAreaInterface, AjaxCompon
 
         $interface = $this->section('interface', 'view-dashboard-outline');
         $this->builder->addFieldInContainer($interface, (new Switcher())->setName('hideInfoMessages')->addClass('switcher-revert'), true);
+        $this->builder->addFieldInContainer($interface, (new Dropdown())->setName('dashboardPeriod'), true);
 
         $lifecycle = $this->section('lifecycle', 'sync');
         $this->builder->addFieldInContainer($lifecycle, (new Switcher())->setName('terminateCancelsOrder')->addClass('switcher-revert'), true);
