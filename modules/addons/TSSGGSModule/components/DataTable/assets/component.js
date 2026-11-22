@@ -431,10 +431,11 @@ var component = {
             }
         },
 
-        // the header checkbox is ticked when every row of this page is selected
+        // the header checkbox is ticked while rows of this page are selected (a page may hold rows that cannot be
+        // selected, e.g. imported products), so the next click clears the page
         syncPageSelection_: function () {
             var ids = this.massActionIds_;
-            this.massActionOpen_ = this.records_.length > 0 && this.records_.every(val => ids.indexOf(val[this.uniqueColumnName_]) !== -1);
+            this.massActionOpen_ = this.records_.some(val => ids.indexOf(val[this.uniqueColumnName_]) !== -1);
         },
 
         getSortedClass(column)
