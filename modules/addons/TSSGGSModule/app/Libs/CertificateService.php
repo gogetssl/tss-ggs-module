@@ -413,8 +413,9 @@ class CertificateService
      */
     public static function certificateTemplates()
     {
-        // without the templates of this module under any of its names (both editions, the earlier modules)
-        $modules = array_map(function($module) { return $module . ' - '; }, Edition::knownNames());
+        // without the templates of this module under any of its names (both editions, the earlier names) and of the
+        // legacy GoGetSSL module ("SSLCenter - ...", imported by App\Libs\LegacyEmailImport)
+        $modules = array_map(function($module) { return $module . ' - '; }, array_merge(Edition::knownNames(), ['SSLCenter']));
         $names   = [];
         foreach(Capsule::table('tblemailtemplates')->where('type', 'product')->where('language', '')->where('custom', 1)->orderBy('name')->pluck('name') as $name)
         {
