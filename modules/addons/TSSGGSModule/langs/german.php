@@ -262,6 +262,9 @@ $_LANG['admin.breadcrumbs.Home'] = 'Dashboard';
 
 //reporting
 $_LANG['admin.home.index.modals.reporting_modal.sendReport'] = 'Bericht senden';
+$_LANG['admin.home.index.forms.reporting_form.sendTo'] = 'Gesendet an';
+$_LANG['admin.home.index.forms.reporting_form.sendTo_description'] = 'Der Bericht wird per E-Mail an diese Support-Adresse gesendet. Antworten gehen an Ihre Administrator-E-Mail.';
+$_LANG['admin.home.index.providers.reporting_provider.reportSent'] = 'Der Bericht wurde an :address gesendet. Der Support antwortet an Ihre Administrator-E-Mail.';
 $_LANG['admin.home.index.forms.reporting_form.whmcsUrl'] = 'WHMCS-URL';
 $_LANG['admin.home.index.forms.reporting_form.moduleVersion'] = 'Modulversion';
 $_LANG['admin.home.index.forms.reporting_form.tssPartnerId'] = 'TheSSLSTORE-Partner-ID';
