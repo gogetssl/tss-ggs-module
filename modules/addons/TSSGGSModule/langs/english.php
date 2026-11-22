@@ -1582,6 +1582,10 @@ $_LANG['admin.settings.index.providers.finance_settings_provider.catalogueSync_a
 $_LANG['admin.settings.index.providers.finance_settings_provider.catalogueSync_all'] = 'All (also import new products)';
 $_LANG['admin.products.productsTab'] = 'Products';
 $_LANG['admin.products.catalogueTab'] = 'Catalogue changes';
+$_LANG['admin.products.show_label'] = 'Show';
+$_LANG['admin.products.show_all'] = 'All';
+$_LANG['admin.products.show_imported'] = 'Imported';
+$_LANG['admin.products.show_not_imported'] = 'Not imported';
 $_LANG['admin.products.catalogue_intro'] = 'Changes in the provider\'s product list over the last :days days, newest first, and what the module did about them.';
 $_LANG['admin.products.catalogue_mode'] = 'Sync mode: :mode.';
 $_LANG['admin.products.catalogue_settings'] = 'Change the sync mode';

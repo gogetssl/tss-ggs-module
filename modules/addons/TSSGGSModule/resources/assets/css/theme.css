@@ -590,3 +590,6 @@
 #layers2 .tssggs-upd-banner svg { width: 20px; height: 20px; color: var(--tw-primary); flex: none; }
 #layers2 .tssggs-upd-banner a { margin-left: auto; font-weight: 600; color: var(--tw-primary); white-space: nowrap; }
 @media (max-width: 640px) { #layers2 .tssggs-upd__facts { grid-template-columns: 1fr; } }
+/* Products: All / Imported / Not imported */
+#layers2 .tssggs-show { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 12px; }
+#layers2 .tssggs-show .lu-btn b { margin-left: 4px; font-weight: 600; }

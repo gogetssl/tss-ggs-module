@@ -1573,6 +1573,10 @@ $_LANG['admin.settings.index.providers.finance_settings_provider.catalogueSync_a
 $_LANG['admin.settings.index.providers.finance_settings_provider.catalogueSync_all'] = 'Alles (auch neue Produkte importieren)';
 $_LANG['admin.products.productsTab'] = 'Produkte';
 $_LANG['admin.products.catalogueTab'] = 'Katalogänderungen';
+$_LANG['admin.products.show_label'] = 'Anzeigen';
+$_LANG['admin.products.show_all'] = 'Alle';
+$_LANG['admin.products.show_imported'] = 'Importiert';
+$_LANG['admin.products.show_not_imported'] = 'Nicht importiert';
 $_LANG['admin.products.catalogue_intro'] = 'Änderungen in der Produktliste des Anbieters in den letzten :days Tagen, die neuesten zuerst, und was das Modul daraufhin getan hat.';
 $_LANG['admin.products.catalogue_mode'] = 'Synchronisierungsmodus: :mode.';
 $_LANG['admin.products.catalogue_settings'] = 'Synchronisierungsmodus ändern';

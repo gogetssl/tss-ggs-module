@@ -91,10 +91,22 @@ class DataTable extends \ModulesGarden\TSSGGSModule\Components\DataTable\DataTab
 
     }
 
-    public function loadData(): void
-    {
-        $rows = [];
+    /** the filter of the list: '' (all), 'imported' or 'not_imported' (the show= parameter of the page) */
+    const SHOW = ['imported', 'not_imported'];
 
+    public static function show(): string
+    {
+        $show = (string)($_GET['show'] ?? '');
+
+        return in_array($show, self::SHOW, true) ? $show : '';
+    }
+
+    /**
+     * The products the page lists: [[remote product, WHMCS product or null], ...] in the display order - the edition's
+     * own vendor; a product the module can not sell yet only when it was imported earlier
+     */
+    public static function catalogue(): array
+    {
         if(!RemoteProduct::isSynchronized())
         {
             RemoteProduct::synchronize();
@@ -113,12 +125,28 @@ class DataTable extends \ModulesGarden\TSSGGSModule\Components\DataTable\DataTab
             return ($brandWeights[$product->brand] ?? 50) . $product->name;
         });
 
+        $list = [];
         foreach($remoteProducts as $remoteProduct)
         {
             $whmcsProduct = $remoteProduct->getWhmcsProduct();
-
-            // products the module can not sell yet are not offered for import (one imported earlier stays listed)
             if(!$whmcsProduct && !\ModulesGarden\TSSGGSModule\App\Libs\ProductCatalog::importable($remoteProduct))
+            {
+                continue;
+            }
+            $list[] = [$remoteProduct, $whmcsProduct];
+        }
+
+        return $list;
+    }
+
+    public function loadData(): void
+    {
+        $rows = [];
+        $show = self::show();
+
+        foreach(self::catalogue() as [$remoteProduct, $whmcsProduct])
+        {
+            if(($show === 'imported' && !$whmcsProduct) || ($show === 'not_imported' && $whmcsProduct))
             {
                 continue;
             }

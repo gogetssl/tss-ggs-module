@@ -1575,6 +1575,10 @@ $_LANG['admin.settings.index.providers.finance_settings_provider.catalogueSync_a
 $_LANG['admin.settings.index.providers.finance_settings_provider.catalogueSync_all'] = 'Alt (importer også nye produkter)';
 $_LANG['admin.products.productsTab'] = 'Produkter';
 $_LANG['admin.products.catalogueTab'] = 'Katalogændringer';
+$_LANG['admin.products.show_label'] = 'Vis';
+$_LANG['admin.products.show_all'] = 'Alle';
+$_LANG['admin.products.show_imported'] = 'Importeret';
+$_LANG['admin.products.show_not_imported'] = 'Ikke importeret';
 $_LANG['admin.products.catalogue_intro'] = 'Ændringer i udbyderens produktliste de seneste :days dage, nyeste først, og hvad modulet gjorde ved dem.';
 $_LANG['admin.products.catalogue_mode'] = 'Synkroniseringstilstand: :mode.';
 $_LANG['admin.products.catalogue_settings'] = 'Skift synkroniseringstilstand';

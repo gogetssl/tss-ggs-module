@@ -54,6 +54,7 @@ class ProductsContainer extends Container implements AdminAreaInterface
             $text->setText($this->explanation());
             $productsTab->addElement($text);
         }
+        $productsTab->addElement($this->showFilter());
         $productsTab->addElement(new DataTable());
 
         // what changed in the provider's catalogue (M-16)
@@ -75,6 +76,31 @@ class ProductsContainer extends Container implements AdminAreaInterface
         $tabs->addTab($productsTab);
         $tabs->addTab($changesTab);
         $this->addElement($tabs);
+    }
+
+    /** All / Imported / Not imported with their counts: links to the page with show= (DataTable::show) */
+    protected function showFilter(): Text
+    {
+        $counts = ['' => 0, 'imported' => 0, 'not_imported' => 0];
+        foreach(DataTable::catalogue() as [$remoteProduct, $whmcsProduct])
+        {
+            $counts['']++;
+            $counts[$whmcsProduct ? 'imported' : 'not_imported']++;
+        }
+        $current = DataTable::show();
+        $html    = '<div class="tssggs-show" role="group" aria-label="' . htmlspecialchars((string)$this->translate('show_label', [], ['admin.products']), ENT_QUOTES) . '">';
+        foreach(['' => 'show_all', 'imported' => 'show_imported', 'not_imported' => 'show_not_imported'] as $show => $key)
+        {
+            $url   = 'addonmodules.php?module=TSSGGSModule&amp;mg-page=products' . ($show !== '' ? '&amp;show=' . $show : '');
+            $html .= '<a class="lu-btn lu-btn--sm ' . ($show === $current ? 'lu-btn--primary' : 'lu-btn--default lu-btn--outline') . '" href="' . $url . '"'
+                . ($show === $current ? ' aria-current="page"' : '') . '>'
+                . htmlspecialchars((string)$this->translate($key, [], ['admin.products']), ENT_QUOTES) . ' <b>' . $counts[$show] . '</b></a>';
+        }
+        $text = new Text();
+        $text->setCss('tssggs-html');
+        $text->setText($html . '</div>');
+
+        return $text;
     }
 
     /** The catalogue changes of the last 90 days, newest first */
