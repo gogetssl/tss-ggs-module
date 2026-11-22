@@ -110,7 +110,10 @@ class ReportingProvider extends CrudProvider
 
         \WHMCS\Module\Mail::factory()->send($message);
 
-        return (new Response())->setSuccess($this->translate('reportSent', ['address' => self::supportAddress()]));
+        // the dialog closes once the report is sent
+        return (new Response())
+            ->setSuccess($this->translate('reportSent', ['address' => self::supportAddress()]))
+            ->setActions([new \ModulesGarden\TSSGGSModule\Core\Components\Actions\ModalClose(new \ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Modals\ReportingModal())]);
     }
 
     /** a value for the Smarty body: HTML escaped, line breaks kept, braces as entities so Smarty leaves them alone */
