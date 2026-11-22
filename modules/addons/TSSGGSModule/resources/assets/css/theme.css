@@ -254,7 +254,7 @@
 #layers2 .tssggs-alertrow time { color: var(--th-quiet); font-size: 12px; white-space: nowrap; }
 
 /* setup strip */
-#layers2 .tssggs-setup { margin-top: 0; padding: 12px 18px; border: 1px solid var(--tw-border); border-radius: 8px; background: var(--tw-surface); }
+#layers2 .tssggs-setup { margin-top: 16px; padding: 12px 18px; border: 1px solid var(--tw-border); border-radius: 8px; background: var(--tw-surface); }
 #layers2 .tssggs-setup > .tssggs-html { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
 #layers2 .tssggs-setup__lead { display: flex; align-items: center; gap: 10px; padding-right: 16px; border-right: 1px solid var(--tw-border); color: var(--tw-fg); font-weight: 500; white-space: nowrap; }
 #layers2 .tssggs-setup__step { display: flex; flex: 1 1 200px; align-items: center; gap: 10px; padding: 8px 12px; border: 1px solid var(--tw-border); border-radius: 6px; color: var(--tw-fg) !important; text-decoration: none; transition: border-color .2s; }
