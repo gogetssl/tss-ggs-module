@@ -43,17 +43,15 @@
     place-items: center;
 }
 
-/* TheSSLStore: at most 60px high, the width follows the logo's proportions */
+/* TheSSLStore 30x40, GoGetSSL 33x40 */
 #layers2 .tssggs-head__mark {
     display: block;
-    width: auto;
-    height: 60px;
+    width: 30px;
+    height: 40px;
 }
 
-/* GoGetSSL */
 #layers2 .tssggs-head__mark--ggs {
     width: 33px;
-    height: 40px;
 }
 
 #layers2 .tssggs-head__text strong {
