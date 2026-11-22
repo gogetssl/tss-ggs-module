@@ -404,7 +404,8 @@ class CertificateService
 
     /**
      * Templates the certificate e-mail can use besides the module's own "Send Certificate": Product/Service templates
-     * (sendMessage() sends them to the service's client) that an administrator created, without the module's own ones.
+     * (sendMessage() sends them to the service's client) that an administrator created, without the module's own ones
+     * (a choice saved before, e.g. migrated from the earlier module, stays selectable - see the settings providers).
      * A General template is never offered: WHMCS addresses it to a client ID, and a service ID there reaches another
      * client.
      *
@@ -412,14 +413,19 @@ class CertificateService
      */
     public static function certificateTemplates()
     {
-        $own   = Edition::name() . ' - ';
-        $names = [];
+        // without the templates of this module under any of its names (both editions, the earlier modules)
+        $modules = array_map(function($module) { return $module . ' - '; }, Edition::knownNames());
+        $names   = [];
         foreach(Capsule::table('tblemailtemplates')->where('type', 'product')->where('language', '')->where('custom', 1)->orderBy('name')->pluck('name') as $name)
         {
-            if(strpos((string)$name, $own) !== 0)
+            foreach($modules as $prefix)
             {
-                $names[] = (string)$name;
+                if(strpos((string)$name, $prefix) === 0)
+                {
+                    continue 2;
+                }
             }
+            $names[] = (string)$name;
         }
 
         return $names;
