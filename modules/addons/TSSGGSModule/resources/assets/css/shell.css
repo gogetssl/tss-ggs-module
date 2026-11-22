@@ -37,15 +37,18 @@
     text-decoration: none;
 }
 
+/* the edition's logo (AppNavBar), in its own colours */
 #layers2 .tssggs-head__logo {
     display: grid;
     place-items: center;
-    width: 40px;
-    height: 40px;
-    border-radius: 8px;
-    background: var(--tw-primary);
-    color: #fff;
-    font-size: 24px;
+    width: 68px;
+    height: 91px;
+}
+
+#layers2 .tssggs-head__mark {
+    display: block;
+    width: 68px;
+    height: 91px;
 }
 
 #layers2 .tssggs-head__text strong {

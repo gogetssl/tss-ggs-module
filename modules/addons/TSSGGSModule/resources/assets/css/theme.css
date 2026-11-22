@@ -52,7 +52,6 @@
 
 /* module header + nav: one bordered block */
 #layers2 .tssggs-head { border-color: var(--tw-border); }
-#layers2 .tssggs-head__logo { background: var(--tw-primary); }
 #layers2 .tssggs-head__text strong { display: block; color: var(--tw-fg); font-size: 20px; font-weight: 600; line-height: 1; }
 #layers2 .lu-app-navbar { border-color: var(--tw-border); }
 #layers2 .lu-navbar { min-height: 0; }
