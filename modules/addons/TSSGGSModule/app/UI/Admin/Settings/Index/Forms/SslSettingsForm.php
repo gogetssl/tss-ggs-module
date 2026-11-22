@@ -150,7 +150,7 @@ class SslSettingsForm extends Form implements AdminAreaInterface, AjaxComponentI
 
         if($withReissue)
         {
-            $this->builder->addFieldInContainer($widget, (new Dropdown())->setName('autoReissueDaysBeforeExpire'));
+            $this->builder->addFieldInContainer($widget, (new Dropdown())->setName('autoReissueDaysBeforeExpire'), true);
         }
         // daily e-mail to the administrators: installed, failed and long-waiting AutoInstall jobs (App\Libs\AutoInstallReport)
         $this->builder->addFieldInContainer($widget, (new Switcher())->setName('autoInstallReportEmail')->addClass('switcher-revert'), true);
@@ -198,14 +198,15 @@ class SslSettingsForm extends Form implements AdminAreaInterface, AjaxComponentI
     {
         foreach(['visibleRenewButtonBeforeExpiration', 'visibleRenewButtonAfterExpiration', 'renewOrderViaExistingOrder', 'renewReuseOrderDetails', 'setTheUnpaidStatusForRenewalInvoices'] as $name)
         {
-            $this->builder->addFieldInContainer($widget, (new Switcher())->setName($name)->addClass('switcher-revert'));
+            // with a hint ("<name>_description"); setTheUnpaidStatusForRenewalInvoices has none
+            $this->builder->addFieldInContainer($widget, (new Switcher())->setName($name)->addClass('switcher-revert'), $name !== 'setTheUnpaidStatusForRenewalInvoices');
         }
 
-        $this->builder->addFieldInContainer($widget, (new Dropdown())->setName('additionalDaysForRenewalOrder')->setDefaultValueAsFirstOption());
+        $this->builder->addFieldInContainer($widget, (new Dropdown())->setName('additionalDaysForRenewalOrder')->setDefaultValueAsFirstOption(), true);
 
         if($withReissue)
         {
-            $this->builder->addFieldInContainer($widget, (new Dropdown())->setName('autoReissueDaysBeforeExpire'));
+            $this->builder->addFieldInContainer($widget, (new Dropdown())->setName('autoReissueDaysBeforeExpire'), true);
         }
 
     }

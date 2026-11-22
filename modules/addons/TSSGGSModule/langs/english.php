@@ -565,10 +565,13 @@ $_LANG['admin.settings.index.forms.ssl_settings_form.renewals']                 
 $_LANG['admin.settings.index.forms.ssl_settings_form.recurringOrders']                                          = 'Recurring Orders';
 $_LANG['admin.settings.index.forms.ssl_settings_form.oneTimeOrders']                                            = 'One-time Orders';
 $_LANG['admin.settings.index.forms.ssl_settings_form.visibleRenewButtonBeforeExpiration']                       = 'Visible "Renew" Button Before Expiration';
+$_LANG['admin.settings.index.forms.ssl_settings_form.visibleRenewButtonBeforeExpiration_description'] = 'Clients see a Renew button while the order is still running.';
 $_LANG['admin.settings.index.forms.ssl_settings_form.visibleRenewButtonAfterExpiration']                        = 'Visible "Renew" Button After Expiration';
+$_LANG['admin.settings.index.forms.ssl_settings_form.visibleRenewButtonAfterExpiration_description'] = 'Clients see a Renew button after the order has ended.';
 $_LANG['admin.settings.index.forms.ssl_settings_form.renewOrderViaExistingOrder']                               = 'Renew Order Via Existing Order';
 $_LANG['admin.settings.index.forms.ssl_settings_form.setTheUnpaidStatusForRenewalInvoices']                     = 'Set The Unpaid Status For Renewal Invoices';
 $_LANG['admin.settings.index.forms.ssl_settings_form.additionalDaysForRenewalOrder']                            = 'Additional Days For Renewal Order (Sectigo)';
+$_LANG['admin.settings.index.forms.ssl_settings_form.additionalDaysForRenewalOrder_description'] = 'Days of the old Sectigo certificate added to the renewed one (Sectigo allows up to 30). Not set: the days actually left, up to 30.';
 $_LANG['admin.settings.index.forms.ssl_settings_form.autoReissueDaysBeforeExpire']                              = 'Auto Reissue Days Before Expiration';
 $_LANG['admin.settings.index.forms.ssl_settings_form.autoReissueDaysBeforeExpire_description']                  = 'AutoInstall (cPanel) certificates are reissued automatically this many days before the certificate expires, as long as the subscription continues. 0 disables automatic reissue. Default: 7';
 $_LANG['admin.settings.index.forms.ssl_settings_form.recurringCreateAutomaticRenewalInvoice']                   = 'Create Automatic Renewal Invoice';
@@ -1475,9 +1478,9 @@ $_LANG['admin.settings.index.forms.ssl_settings_form.recurringPaymentTerm_descri
 $_LANG['admin.settings.index.forms.ssl_settings_form.recurringDaysBeforeExpirySubscription_description'] = 'The renewal invoice is created this many days before the vendor renews the subscription (at most 30).';
 $_LANG['admin.settings.index.forms.ssl_settings_form.recurringPaymentTermSubscription'] = 'Payment Term (Days)';
 $_LANG['admin.settings.index.forms.ssl_settings_form.recurringPaymentTermSubscription_description'] = 'The renewal invoice falls due this many days after it is created. An unpaid renewal is cancelled at the vendor the day before it would renew, so the client keeps the year already paid and you are not charged for the next one.';
-$_LANG['admin.settings.index.forms.ssl_settings_form.renewOrderViaExistingOrder_description'] = 'On: a paid renewal stays on the same WHMCS service, which gets the new certificate (the expiring one stays downloadable until it expires) - one service per domain. Off: the renewal gets a new WHMCS service and the expiring one is closed. Invoicing is the same either way.';
+$_LANG['admin.settings.index.forms.ssl_settings_form.renewOrderViaExistingOrder_description'] = 'On: the renewal stays on the same WHMCS service. Off: it gets a new service and the old one is closed.';
 $_LANG['admin.settings.index.forms.ssl_settings_form.renewReuseOrderDetails'] = 'Renew With The Same Order Details';
-$_LANG['admin.settings.index.forms.ssl_settings_form.renewReuseOrderDetails_description'] = 'On: a paid renewal is sent to the vendor at once with the previous CSR, domains and contacts, and the client gets a "renewed automatically" e-mail. Off: the client is asked by e-mail to submit them again. Applies to every product. When the vendor refuses the previous details, the client is asked for new ones.';
+$_LANG['admin.settings.index.forms.ssl_settings_form.renewReuseOrderDetails_description'] = 'On: a paid renewal is ordered at once with the previous CSR, domains and contacts. Off: the client is asked to send them again.';
 $_LANG['admin.settings.index.forms.ssl_settings_form.renewalCheckCertificateBefore'] = 'Invoice created :lead days before the order ends and due :term days later: :days days before the end.';
 $_LANG['admin.settings.index.forms.ssl_settings_form.renewalCheckCertificateOn'] = 'Invoice created :lead days before the order ends and due :term days later: on the day the order ends.';
 $_LANG['admin.settings.index.forms.ssl_settings_form.renewalCheckCertificateAfter'] = 'Invoice created :lead days before the order ends and due :term days later: :days days after the end.';
