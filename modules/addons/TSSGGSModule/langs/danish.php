@@ -549,6 +549,8 @@ $_LANG['admin.settings.index.forms.ssl_settings_form.csrGenerator']            =
 $_LANG['admin.settings.index.forms.ssl_settings_form.enableCsrGenerator']      = 'Aktiver CSR-generator';
 $_LANG['admin.settings.index.forms.ssl_settings_form.useProfileDetailsForCsr'] = 'Brug profiloplysninger til CSR';
 $_LANG['admin.settings.index.forms.ssl_settings_form.defaultCsrCountry']       = 'Standardland for CSR';
+$_LANG['admin.settings.index.forms.ssl_settings_form.useProfileDetailsForCsr_description'] = 'Til: CSR-generatoren i kundeområdet er udfyldt med kundens profiloplysninger (land, region, by, firma og e-mail), ordrens domæne som common name og "IT" som afdeling. Kunden kan ændre alle felter, før CSR\'en genereres. Fra: Formularen er tom, kun standardlandet for CSR er valgt.';
+$_LANG['admin.settings.index.forms.ssl_settings_form.defaultCsrCountry_description'] = 'Det land, CSR-generatoren i kundeområdet vælger først, mens Brug profiloplysninger til CSR er slået fra (når den er slået til, bruges kundens eget land).';
 
 
 $_LANG['admin.settings.index.forms.ssl_settings_form.renewals']                                                 = 'Fornyelser (standardfakturering)';

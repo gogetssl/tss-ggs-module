@@ -548,6 +548,8 @@ $_LANG['admin.settings.index.forms.ssl_settings_form.csrGenerator'] = 'CSR-Gener
 $_LANG['admin.settings.index.forms.ssl_settings_form.enableCsrGenerator'] = 'CSR-Generator aktivieren';
 $_LANG['admin.settings.index.forms.ssl_settings_form.useProfileDetailsForCsr'] = 'Profildaten für CSR verwenden';
 $_LANG['admin.settings.index.forms.ssl_settings_form.defaultCsrCountry'] = 'Standardland für CSR';
+$_LANG['admin.settings.index.forms.ssl_settings_form.useProfileDetailsForCsr_description'] = 'Ein: Der CSR-Generator im Kundenbereich ist mit den Profildaten des Kunden vorausgefüllt (Land, Bundesland, Stadt, Firma und E-Mail), mit der Domain der Bestellung als Common Name und "IT" als Abteilung. Der Kunde kann jedes Feld vor dem Erzeugen des CSR ändern. Aus: Das Formular ist leer, nur das Standardland für CSR ist ausgewählt.';
+$_LANG['admin.settings.index.forms.ssl_settings_form.defaultCsrCountry_description'] = 'Das Land, das der CSR-Generator im Kundenbereich zuerst auswählt, solange Profildaten für CSR verwenden aus ist (wenn es an ist, wird das Land des Kunden verwendet).';
 
 
 $_LANG['admin.settings.index.forms.ssl_settings_form.renewals'] = 'Verlängerungen (Standardabrechnung)';

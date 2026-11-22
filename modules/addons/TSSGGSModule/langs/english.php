@@ -557,6 +557,8 @@ $_LANG['admin.settings.index.forms.ssl_settings_form.csrGenerator']            =
 $_LANG['admin.settings.index.forms.ssl_settings_form.enableCsrGenerator']      = 'Enable CSR Generator';
 $_LANG['admin.settings.index.forms.ssl_settings_form.useProfileDetailsForCsr'] = 'Use Profile Details For CSR';
 $_LANG['admin.settings.index.forms.ssl_settings_form.defaultCsrCountry']       = 'Default CSR Country';
+$_LANG['admin.settings.index.forms.ssl_settings_form.useProfileDetailsForCsr_description'] = 'On: the CSR generator in the client area starts filled in with the client\'s profile details (country, state, city, company and e-mail), the order\'s domain as the common name and "IT" as the department. The client can change every field before generating the CSR. Off: the form starts empty, with only the Default CSR Country selected.';
+$_LANG['admin.settings.index.forms.ssl_settings_form.defaultCsrCountry_description'] = 'The country the client area CSR generator selects first while Use Profile Details For CSR is off (when it is on, the client\'s own country is used).';
 
 
 $_LANG['admin.settings.index.forms.ssl_settings_form.renewals']                                                 = 'Renewals (Standard Billing)';

@@ -79,7 +79,7 @@ class SslSettingsForm extends Form implements AdminAreaInterface, AjaxComponentI
 
         if($ssl)
         {
-            $this->renewalFields($this->section('renewals', 'sync'), $this->scope === self::SCOPE_ALL);
+            $this->renewalFields($this->section('renewals', 'calendar-month-outline'), $this->scope === self::SCOPE_ALL);
             $this->orderFields($this->section('recurringAndOneTime', 'credit-card-clock-outline'));
         }
 
@@ -87,7 +87,7 @@ class SslSettingsForm extends Form implements AdminAreaInterface, AjaxComponentI
 
         if($this->scope === self::SCOPE_ALL || $this->scope === self::SCOPE_AUTOMATED)
         {
-            $this->subscriptionFields($this->section('renewalsSubscription', 'sync'));
+            $this->subscriptionFields($this->section('renewalsSubscription', 'calendar-month-outline'));
         }
 
         $this->saveBar(null, $this->scope === self::SCOPE_ALL);
@@ -175,7 +175,8 @@ class SslSettingsForm extends Form implements AdminAreaInterface, AjaxComponentI
             $csrGeneratorContainer,
             (new Switcher())
                 ->setName('useProfileDetailsForCsr')
-                ->addClass('switcher-revert')
+                ->addClass('switcher-revert'),
+            true
         );
 
         $countryContainer = new Container();
@@ -188,7 +189,8 @@ class SslSettingsForm extends Form implements AdminAreaInterface, AjaxComponentI
             $countryContainer,
             (new Dropdown())
                 ->setName('defaultCsrCountry')
-                ->setDefaultValueAsFirstOption()
+                ->setDefaultValueAsFirstOption(),
+            true
         );
     }
 
