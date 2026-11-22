@@ -43,6 +43,7 @@ class StatusLabel
     const PAYMENT = [
         'paid'            => LabelSuccess::class,
         'pending'         => LabelWarning::class,
+        'unpaid'          => LabelWarning::class,
         'payment pending' => LabelWarning::class,
         'draft'           => Label::class,
     ];
@@ -53,7 +54,7 @@ class StatusLabel
         return self::make(self::ORDER, $value, Label::class);
     }
 
-    /** an invoice status (unpaid, overdue, cancelled, refunded, collections are red) */
+    /** an invoice status (overdue, cancelled, refunded, collections are red) */
     public static function payment($value): Label
     {
         return self::make(self::PAYMENT, $value, LabelDanger::class);
