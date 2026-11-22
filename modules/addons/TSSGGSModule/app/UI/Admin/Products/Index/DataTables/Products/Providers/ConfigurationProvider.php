@@ -64,11 +64,13 @@ class ConfigurationProvider extends CrudProvider
             'onetime'   => $this->translate('payTypeOnetime'),
             'free'      => $this->translate('payTypeFree'),
         ];
-        $this->availableValues['months'] = [];
+        // availableValues is an ArrayAccess container: the options are built first, then set at once
+        $terms = [];
         foreach(ProductSettings::MONTHS as $months)
         {
-            $this->availableValues['months'][$months] = $months ? $this->translate('monthsValue', ['months' => $months]) : $this->translate('monthsBillingCycle');
+            $terms[$months] = $months ? $this->translate('monthsValue', ['months' => $months]) : $this->translate('monthsBillingCycle');
         }
+        $this->availableValues['months'] = $terms;
 
         $this->availableValues['autoSetup'] =
             [
