@@ -184,6 +184,11 @@ class SSLCertificates extends AbstractCommand
         {
             $failed[$serviceId] = $message;
         }
+        // orders migrated from the legacy TheSSLStore module that were bought at payment: their token is read once
+        foreach(\ModulesGarden\TSSGGSModule\App\Libs\IncompleteOrder::claimMigratedBatch() as $serviceId => $message)
+        {
+            $failed[$serviceId] = $message;
+        }
 
         // S/MIME and code signing orders (own order data, not in the /services/updates handling above)
         foreach(\ModulesGarden\TSSGGSModule\App\Libs\GatewayOrderService::TYPES as $type)

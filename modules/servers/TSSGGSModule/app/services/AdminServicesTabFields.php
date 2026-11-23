@@ -70,6 +70,11 @@ class AdminServicesTabFields
         try
         {
             $sslService = SSL::getByServiceId($params['serviceid']);
+            // a migrated order bought at payment: its token is read once (it may turn out completed meanwhile)
+            if($sslService && $sslService->status === 'Awaiting Configuration' && \ModulesGarden\TSSGGSModule\App\Libs\IncompleteOrder::claimMigrated((int)$params['serviceid']))
+            {
+                $sslService = SSL::getByServiceId($params['serviceid']);
+            }
             if(is_null($sslService))
             {
                 throw new \Exception(AdminText::get('error_not_initialized', 'The create action has not been initialized'));
@@ -87,6 +92,14 @@ class AdminServicesTabFields
                     $fields[AdminText::get('certificate_token', 'Certificate Token')] = '<input type="text" class="form-control input-sm" style="max-width:760px;font-family:monospace;" readonly onclick="this.select()" value="'
                         . htmlspecialchars((string)$incomplete['token'], ENT_QUOTES) . '">'
                         . '<small class="text-muted">' . self::t('certificate_token_hint', 'Completes the order: the client can use it in the cPanel, Plesk and other plugins, or submit the details on the configuration page.') . '</small>';
+                }
+                // a migrated order bought at payment whose token could not be read (tried again an hour later)
+                $record = \ModulesGarden\TSSGGSModule\App\Libs\IncompleteOrder::get((int)$params['serviceid']);
+                if(!$incomplete && $record && $record['status'] === \ModulesGarden\TSSGGSModule\App\Libs\IncompleteOrder::STATUS_UNREAD)
+                {
+                    $fields[AdminText::get('vendor_order', '%%VENDOR%% Order')] = htmlspecialchars((string)($record['migrated'] ?? ''), ENT_QUOTES);
+                    $fields[AdminText::get('certificate_token', 'Certificate Token')] = '<span class="text-warning">'
+                        . self::t('certificate_token_unread', 'Not read yet from %%VENDOR%%, tried again within an hour') . ': ' . htmlspecialchars((string)($record['error'] ?? ''), ENT_QUOTES) . '</span>';
                 }
                 // S/MIME after a renewal: the orders placed before
                 $gatewayType = \ModulesGarden\TSSGGSModule\App\Libs\GatewayOrderService::typeOfService((int)$params['serviceid']);

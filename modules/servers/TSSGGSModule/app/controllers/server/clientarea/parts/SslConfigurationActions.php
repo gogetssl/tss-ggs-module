@@ -385,6 +385,8 @@ trait SslConfigurationActions
         $serviceId = (int)$params['serviceid'];
         $userId    = (int)$params['userid'];
 
+        // a migrated order bought at payment: completed with its token (read once)
+        \ModulesGarden\TSSGGSModule\App\Libs\IncompleteOrder::claimMigrated($serviceId);
         $ssl = SSL::getByServiceId($serviceId);
         if(!$ssl || $ssl->status !== 'Awaiting Configuration' || !empty($ssl->remoteid))
         {

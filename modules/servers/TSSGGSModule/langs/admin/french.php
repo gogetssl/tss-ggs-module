@@ -50,6 +50,7 @@ $_LANG['last_synchronized']             = 'dernière synchronisation :date:';
 $_LANG['incomplete_bought'] = 'acheté, en attente des informations';
 $_LANG['certificate_token'] = 'Jeton du certificat';
 $_LANG['certificate_token_hint'] = 'Complète la commande : le client peut l’utiliser dans cPanel, Plesk et d’autres plugins, ou envoyer les informations sur la page de configuration.';
+$_LANG['certificate_token_unread'] = 'Pas encore lu depuis %%VENDOR%%, nouvel essai dans l’heure';
 $_LANG['vendor_notice_failed'] = 'Un problème est survenu avec cette commande chez %%VENDOR%% : elle n’a pas pu être traitée. Contactez l’assistance %%VENDOR%% pour en vérifier la raison. Le client est invité à contacter votre assistance.';
 $_LANG['vendor_notice_unpaid'] = 'La commande n’est toujours pas payée chez %%VENDOR%%. Vérifiez le solde de votre compte %%VENDOR%% ou contactez l’assistance %%VENDOR%%. Le client est invité à contacter votre assistance.';
 $_LANG['vendor_notice_new_order'] = 'La commande est en cours d’envoi à l’autorité de certification. Elle devrait être acceptée d’ici quelques minutes.';

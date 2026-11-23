@@ -25,6 +25,12 @@ class IncompleteOrder
     const STATUS_INCOMPLETE = 'incomplete';
     const STATUS_COMPLETED  = 'completed';
 
+    /** a migrated order whose token could not be read yet (claimMigrated() tries again an hour later) */
+    const STATUS_UNREAD = 'unread';
+
+    /** migrated orders claimed per cron run */
+    const CLAIM_BATCH = 50;
+
     /**
      * Whether the product's certificate is bought at payment with a token: TLS products of the module (not the
      * subscriptions, S/MIME, code signing and the other gateway products)
@@ -296,6 +302,150 @@ class IncompleteOrder
             {
                 $failed[(int)$row->serviceid] = $e->getMessage();
                 Logger::error('Incomplete order: ' . $e->getMessage(), LogContext::exception($e, ['service' => (int)$row->serviceid]));
+            }
+        }
+
+        return $failed;
+    }
+
+    /**
+     * A TLS order migrated from the legacy TheSSLStore module that was bought at payment there (Awaiting Configuration,
+     * the store's order ID in tblsslorders.remoteid). Its order details carry the certificate token until the order is
+     * completed: the token is read once and the order becomes an incomplete order like one bought here (remoteid empty
+     * again, so the configuration page completes it with the token). An order completed meanwhile (with the token, in
+     * a plugin) is taken over. A failed read is tried again an hour later.
+     *
+     * @return bool whether the service holds an incomplete order or took the order over now
+     */
+    public static function claimMigrated($serviceId)
+    {
+        $serviceId = (int)$serviceId;
+        $ssl       = Capsule::table('tblsslorders')->where('serviceid', $serviceId)->first(['status', 'remoteid']);
+        $remoteId  = $ssl ? trim((string)$ssl->remoteid) : '';
+        if(!$ssl || $ssl->status !== 'Awaiting Configuration' || $remoteId === '' || $remoteId === '0')
+        {
+            return false;
+        }
+        $record = self::get($serviceId);
+        if($record && ($record['status'] !== self::STATUS_UNREAD || self::readRecently($record)))
+        {
+            return false;
+        }
+        if(!self::appliesTo((int)Capsule::table('tblhosting')->where('id', $serviceId)->value('packageid')))
+        {
+            return false;
+        }
+
+        try
+        {
+            $orderData = CertificateService::api($serviceId)->getOrder($remoteId, $serviceId);
+            $items     = isset($orderData['items']) && is_array($orderData['items']) ? $orderData['items'] : [];
+            $item      = $items ? reset($items) : [];
+            $itemId    = (int)($item['id'] ?? 0);
+            $token     = trim((string)($item['token'] ?? ''));
+            if($itemId <= 0)
+            {
+                throw new \Exception('the order details name no certificate');
+            }
+            $sans   = SanUpgrade::currentQuantities($serviceId);
+            $record = [
+                'item_id'    => $itemId,
+                'order_id'   => (int)($orderData['order']['id'] ?? 0),
+                'token'      => $token,
+                'single'     => (int)($sans['single'] ?? 0),
+                'wildcard'   => (int)($sans['wildcard'] ?? 0),
+                'created_at' => date('Y-m-d H:i:s'),
+                'migrated'   => $remoteId,
+            ];
+
+            if(self::isCompleted($orderData))
+            {
+                self::takeOver($serviceId, $record, $orderData);
+                CertificateService::event($serviceId, 'info', '[Order] The migrated order was completed outside WHMCS (with its certificate token): the service follows the order now');
+
+                return true;
+            }
+            if($token === '')
+            {
+                throw new \Exception('the order details hold no certificate token');
+            }
+
+            Request::updateOrInsert(
+                ['serviceid' => $serviceId, 'name' => self::REQUEST],
+                ['request' => json_encode($record), 'status' => self::STATUS_INCOMPLETE, 'created_at' => date('Y-m-d H:i:s'), 'updated_at' => date('Y-m-d H:i:s')]
+            );
+            // the purchase made by the legacy module: the order reports and prices read this row
+            if(!Request::where('serviceid', $serviceId)->where('name', 'addOrder')->exists())
+            {
+                Request::insert([
+                    'serviceid'  => $serviceId,
+                    'name'       => 'addOrder',
+                    'request'    => \encrypt(json_encode(['migrated' => $remoteId])),
+                    'api_price'  => (float)($orderData['order']['total_amount'] ?? 0),
+                    'status'     => (string)($orderData['order']['status'] ?? self::STATUS_INCOMPLETE),
+                    'created_at' => date('Y-m-d H:i:s'),
+                    'updated_at' => date('Y-m-d H:i:s'),
+                ]);
+            }
+            Capsule::table('tblsslorders')->where('serviceid', $serviceId)->update(['remoteid' => '']);
+            CertificateService::event($serviceId, 'info', '[Order] Migrated order bought at payment: its certificate token was read (certificate #' . $itemId . ')');
+
+            return true;
+        }
+        catch(\Throwable $e)
+        {
+            Request::updateOrInsert(
+                ['serviceid' => $serviceId, 'name' => self::REQUEST],
+                ['request' => json_encode(['migrated' => $remoteId, 'checked_at' => date('Y-m-d H:i:s'), 'error' => $e->getMessage()]),
+                 'status' => self::STATUS_UNREAD, 'created_at' => date('Y-m-d H:i:s'), 'updated_at' => date('Y-m-d H:i:s')]
+            );
+            Logger::error('Migrated order ' . $remoteId . ': the certificate token could not be read: ' . $e->getMessage(), LogContext::exception($e, ['service' => $serviceId]));
+
+            return false;
+        }
+    }
+
+    /** a failed token read of a migrated order is tried again an hour later */
+    protected static function readRecently(array $record)
+    {
+        return !empty($record['checked_at']) && strtotime((string)$record['checked_at']) > time() - 3600;
+    }
+
+    /**
+     * Migrated orders bought at payment whose token is not read yet (cron): claimMigrated() for a batch per run
+     *
+     * @return array service ID => error message of the ones that could not be read
+     */
+    public static function claimMigratedBatch()
+    {
+        $failed     = [];
+        $serviceIds = Capsule::table('tblsslorders')
+            ->join('tblhosting', 'tblhosting.id', '=', 'tblsslorders.serviceid')
+            ->join('tblproducts', 'tblproducts.id', '=', 'tblhosting.packageid')
+            ->where('tblproducts.servertype', 'TSSGGSModule')
+            ->where('tblhosting.domainstatus', 'Active')
+            ->where('tblsslorders.status', 'Awaiting Configuration')
+            ->whereNotNull('tblsslorders.remoteid')
+            ->whereNotIn('tblsslorders.remoteid', ['', '0'])
+            ->orderBy('tblsslorders.id')
+            ->pluck('tblsslorders.serviceid');
+
+        $read = 0;
+        foreach($serviceIds as $serviceId)
+        {
+            $record = self::get((int)$serviceId);
+            if($read >= self::CLAIM_BATCH || ($record && ($record['status'] !== self::STATUS_UNREAD || self::readRecently($record))))
+            {
+                continue;
+            }
+            $read++;
+            if(!self::claimMigrated((int)$serviceId))
+            {
+                $after = self::get((int)$serviceId);
+                if($after && $after['status'] === self::STATUS_UNREAD && !empty($after['error']))
+                {
+                    $failed[(int)$serviceId] = 'Certificate token of the migrated order not read: ' . $after['error'];
+                }
             }
         }
 

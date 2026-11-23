@@ -50,6 +50,7 @@ $_LANG['last_synchronized']             = 'última sincronización :date:';
 $_LANG['incomplete_bought'] = 'comprado, a la espera de sus datos';
 $_LANG['certificate_token'] = 'Token del certificado';
 $_LANG['certificate_token_hint'] = 'Completa el pedido: el cliente puede usarlo en cPanel, Plesk y otros plugins, o enviar los datos en la página de configuración.';
+$_LANG['certificate_token_unread'] = 'Aún no leído de %%VENDOR%%, se reintenta en una hora';
 $_LANG['vendor_notice_failed'] = 'Algo va mal con este pedido en %%VENDOR%%: no se ha podido procesar. Contacte con el soporte de %%VENDOR%% para comprobar el motivo. Se pide al cliente que contacte con su soporte.';
 $_LANG['vendor_notice_unpaid'] = 'El pedido sigue sin pagar en %%VENDOR%%. Compruebe el saldo de su cuenta de %%VENDOR%% o contacte con el soporte de %%VENDOR%%. Se pide al cliente que contacte con su soporte.';
 $_LANG['vendor_notice_new_order'] = 'El pedido se está enviando a la autoridad de certificación. Debería aceptarse en unos minutos.';

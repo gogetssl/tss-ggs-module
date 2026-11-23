@@ -834,7 +834,7 @@ class TssReader extends AbstractReader
             $rec['request_status'] = 'pending';
             if($rec['preordered'])
             {
-                $rec['warnings'][] = 'Pre-ordered at TheSSLStore (order ' . $remoteId . '); needs the enrol-existing-order flow when configured';
+                $rec['warnings'][] = 'Pre-ordered at TheSSLStore (order ' . $remoteId . '); its certificate token is read after the migration and completes the order';
             }
 
             return $rec;

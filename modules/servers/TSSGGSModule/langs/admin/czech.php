@@ -50,6 +50,7 @@ $_LANG['last_synchronized']             = 'naposledy synchronizováno :date:';
 $_LANG['incomplete_bought'] = 'zakoupeno, čeká na údaje';
 $_LANG['certificate_token'] = 'Token certifikátu';
 $_LANG['certificate_token_hint'] = 'Dokončuje objednávku: klient jej může použít v cPanelu, Plesku a dalších pluginech nebo odeslat údaje na stránce konfigurace.';
+$_LANG['certificate_token_unread'] = 'Zatím nenačteno z %%VENDOR%%, nový pokus do hodiny';
 $_LANG['vendor_notice_failed'] = 'S touto objednávkou u %%VENDOR%% je něco v nepořádku: nepodařilo se ji zpracovat. Kontaktujte podporu %%VENDOR%% a zjistěte příčinu. Klient je vyzván, aby kontaktoval vaši podporu.';
 $_LANG['vendor_notice_unpaid'] = 'Objednávka u %%VENDOR%% stále není zaplacena. Zkontrolujte zůstatek svého účtu %%VENDOR%% nebo kontaktujte podporu %%VENDOR%%. Klient je vyzván, aby kontaktoval vaši podporu.';
 $_LANG['vendor_notice_new_order'] = 'Objednávka se odesílá certifikační autoritě. Měla by být přijata během několika minut.';
