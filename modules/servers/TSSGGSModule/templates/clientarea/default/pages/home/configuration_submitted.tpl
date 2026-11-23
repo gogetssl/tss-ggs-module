@@ -38,7 +38,8 @@
             </div>
         </div>
         <div class="tssggs-hero__foot">
-            <p>{$product_title}</p>
+            {* a failed order can not be validated: only cancelled *}
+            {if $status != 'failed'}<p>{$product_title}</p>{/if}
             <div class="tssggs-actions">
                 {if $serviceOpen}
                     <button type="button" data-toggle="modal" data-target="#myModalCancel" class="tssggs-btn">

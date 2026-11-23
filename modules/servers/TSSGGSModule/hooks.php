@@ -127,7 +127,8 @@ add_hook('ClientAreaPrimarySidebar', 1, function($primarySidebar) {
             }
         }
 
-        if($serviceOpen && isset($orderData['orderData']['order']['status']) && $orderData['orderData']['order']['status'] == 'pending')
+        // the validation actions while the vendor processes the order ("pending" is the same as "processing")
+        if($serviceOpen && isset($orderData['orderData']['order']['status']) && in_array($orderData['orderData']['order']['status'], ['pending', 'processing'], true))
         {
             $myAccount = $primarySidebar->getChild('Service Details Actions');
             if($myAccount)
