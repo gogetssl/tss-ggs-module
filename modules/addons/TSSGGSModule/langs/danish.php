@@ -615,7 +615,7 @@ $_LANG['admin.settings.index.widgets.cron_settings_widget.cronCommandTitle_SSLAu
 
 //cron settings descriptions
 $_LANG['admin.settings.index.widgets.cron_settings_widget.cronCommand_ProductPricingUpdate']      = 'Opsæt følgende cron-linje for at aktivere automatiske daglige opdateringer af produktpriser.';
-$_LANG['admin.settings.index.widgets.cron_settings_widget.cronCommand_SSLCertificates']           = 'Opsæt følgende cron-job for at aktivere automatisk daglig synkronisering af certifikater.';
+$_LANG['admin.settings.index.widgets.cron_settings_widget.cronCommand_SSLCertificates'] = 'Den vigtigste synkronisering af ordrestatus. Spørger %%VENDOR%%, hvilke ordrer der er ændret siden sidste kørsel, og opdaterer kun de pågældende tjenester. Anbefalet: hvert 5. minut.';
 $_LANG['admin.settings.index.widgets.cron_settings_widget.cronCommand_RenewalNotifyCertificate']  = 'Opsæt følgende cron-linje for at aktivere automatiske fornyelsesmeddelelser.';
 $_LANG['admin.settings.index.widgets.cron_settings_widget.cronCommand_SSLCertificatesProcessing'] = 'Opsæt følgende cron-linje for at aktivere opdateringer af ordrer under behandling.';
 $_LANG['admin.settings.index.widgets.cron_settings_widget.cronCommand_ReSyncProducts']            = 'Opsæt følgende cron-linje for at gensynkronisere produktkonfigurationer.';
@@ -1115,7 +1115,7 @@ $_LANG['admin.home.index.widgets.system_check_widget.name_RenewalNotifyCertifica
 $_LANG['admin.home.index.widgets.system_check_widget.name_SSLAutoInstall'] = 'AutoInstall-kø (cPanel)';
 $_LANG['admin.home.index.widgets.system_check_widget.name_cronScript'] = 'Modulets planlægger';
 $_LANG['admin.settings.index.forms.cron_configuration_form.cron1_description'] = 'Anbefalet: hver dag.';
-$_LANG['admin.settings.index.forms.cron_configuration_form.cron2_description'] = 'Anbefalet: hver dag.';
+$_LANG['admin.settings.index.forms.cron_configuration_form.cron2_description'] = 'Anbefalet: hvert 5. minut.';
 $_LANG['admin.settings.index.forms.cron_configuration_form.cron3_description'] = 'Anbefalet: hver dag.';
 $_LANG['admin.settings.index.forms.cron_configuration_form.cron4_description'] = 'Opdaterer produktkonfigurationen (konfigurerbare indstillinger, SAN-grænser), meddelelserne på dashboardet og oplysningerne om din kontoansvarlige. Anbefalet: én gang om dagen.';
 $_LANG['admin.settings.index.forms.cron_configuration_form.cron5_description'] = 'Anbefalet: hvert 5. minut.';
@@ -1139,7 +1139,7 @@ $_LANG['admin.settings.index.forms.cron_configuration_form.about_ProductPricingU
 $_LANG['admin.settings.index.forms.cron_configuration_form.name_SSLCertificatesProcessing'] = 'Kontrol af afventende ordrer';
 $_LANG['admin.settings.index.forms.cron_configuration_form.about_SSLCertificatesProcessing'] = 'Følger de ordrer, der er afgivet og venter på certifikatudstederen. Når et certifikat er udstedt, gemmes det, forfaldsdatoen sættes, og certifikat-e-mailen sendes. Udstedte ordrer kontrolleres ikke igen her. Anbefalet: hvert 5. minut, så kunderne hurtigt får deres certifikat.';
 $_LANG['admin.settings.index.forms.cron_configuration_form.name_SSLCertificates'] = 'Synkronisering af udstedte ordrer';
-$_LANG['admin.settings.index.forms.cron_configuration_form.about_SSLCertificates'] = 'Spørger %%VENDOR%%, hvilke ordrer der er ændret siden sidste kørsel (fornyet, udløbet, annulleret, valideret igen), og opdaterer de pågældende tjenester; den kontrollerer også op til 50 ordrer, der ikke er opdateret i et døgn. Én gang om dagen er nok: et udstedt certifikat ændrer sig sjældent.';
+$_LANG['admin.settings.index.forms.cron_configuration_form.about_SSLCertificates'] = 'Den vigtigste synkronisering af ordrestatus. Spørger %%VENDOR%%, hvilke ordrer der er ændret siden sidste kørsel (udstedt, fornyet, genudstedt, udløbet, annulleret, tilbagekaldt), og opdaterer kun de pågældende tjenester. Den kontrollerer også ordrer, der ikke er opdateret i et døgn, højst 50 pr. kørsel. Anbefalet: hvert 5. minut.';
 $_LANG['admin.settings.index.forms.cron_configuration_form.name_RenewalNotifyCertificate'] = 'Fornyelser, påmindelser og udløb';
 $_LANG['admin.settings.index.forms.cron_configuration_form.about_RenewalNotifyCertificate'] = 'Én gang om dagen: påmindelses-e-mails om udløb og genudstedelse, automatiske fornyelsesfakturaer, abonnementsfakturaer for ACME / AutoInstall og opsigelse (med annullering hos leverandøren) af tjenester, der ikke var betalt på udløbsdatoen. Deaktiver det ikke, hvis du fakturerer fornyelser automatisk.';
 $_LANG['admin.settings.index.forms.cron_configuration_form.name_SSLAutoInstall'] = 'AutoInstall-kø (cPanel)';

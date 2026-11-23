@@ -614,7 +614,7 @@ $_LANG['admin.settings.index.widgets.cron_settings_widget.cronCommandTitle_SSLAu
 
 //cron settings descriptions
 $_LANG['admin.settings.index.widgets.cron_settings_widget.cronCommand_ProductPricingUpdate'] = 'Richten Sie die folgende Cron-Zeile ein, um die automatische tägliche Aktualisierung der Produktpreise zu aktivieren.';
-$_LANG['admin.settings.index.widgets.cron_settings_widget.cronCommand_SSLCertificates'] = 'Richten Sie den folgenden Cron-Job ein, um die automatische tägliche Synchronisierung der Zertifikate zu aktivieren.';
+$_LANG['admin.settings.index.widgets.cron_settings_widget.cronCommand_SSLCertificates'] = 'Die wichtigste Synchronisierung des Bestellstatus. Fragt %%VENDOR%%, welche Bestellungen sich seit dem letzten Lauf geändert haben, und aktualisiert nur diese Services. Empfohlen: alle 5 Minuten.';
 $_LANG['admin.settings.index.widgets.cron_settings_widget.cronCommand_RenewalNotifyCertificate'] = 'Richten Sie die folgende Cron-Zeile ein, um automatische Verlängerungsbenachrichtigungen zu aktivieren.';
 $_LANG['admin.settings.index.widgets.cron_settings_widget.cronCommand_SSLCertificatesProcessing'] = 'Richten Sie die folgende Cron-Zeile ein, um Aktualisierungen für Bestellungen in Bearbeitung zu aktivieren.';
 $_LANG['admin.settings.index.widgets.cron_settings_widget.cronCommand_ReSyncProducts'] = 'Richten Sie die folgende Cron-Zeile ein, um die Produktkonfigurationen neu zu synchronisieren.';
@@ -1113,7 +1113,7 @@ $_LANG['admin.home.index.widgets.system_check_widget.name_RenewalNotifyCertifica
 $_LANG['admin.home.index.widgets.system_check_widget.name_SSLAutoInstall'] = 'AutoInstall-Warteschlange (cPanel)';
 $_LANG['admin.home.index.widgets.system_check_widget.name_cronScript'] = 'Modul-Scheduler';
 $_LANG['admin.settings.index.forms.cron_configuration_form.cron1_description'] = 'Empfohlen: täglich.';
-$_LANG['admin.settings.index.forms.cron_configuration_form.cron2_description'] = 'Empfohlen: täglich.';
+$_LANG['admin.settings.index.forms.cron_configuration_form.cron2_description'] = 'Empfohlen: alle 5 Minuten.';
 $_LANG['admin.settings.index.forms.cron_configuration_form.cron3_description'] = 'Empfohlen: täglich.';
 $_LANG['admin.settings.index.forms.cron_configuration_form.cron4_description'] = 'Aktualisiert die Produktkonfiguration (konfigurierbare Optionen, SAN-Limits), die im Dashboard angezeigten Ankündigungen und die Angaben zu Ihrem Account Manager. Empfohlen: einmal täglich.';
 $_LANG['admin.settings.index.forms.cron_configuration_form.cron5_description'] = 'Empfohlen: alle 5 Minuten.';
@@ -1137,7 +1137,7 @@ $_LANG['admin.settings.index.forms.cron_configuration_form.about_ProductPricingU
 $_LANG['admin.settings.index.forms.cron_configuration_form.name_SSLCertificatesProcessing'] = 'Prüfung ausstehender Bestellungen';
 $_LANG['admin.settings.index.forms.cron_configuration_form.about_SSLCertificatesProcessing'] = 'Verfolgt die Bestellungen, die übermittelt wurden und auf die Zertifizierungsstelle warten. Sobald ein Zertifikat ausgestellt ist, wird es gespeichert, das Fälligkeitsdatum gesetzt und die Zertifikats-E-Mail gesendet. Ausgestellte Bestellungen werden hier nicht erneut geprüft. Empfohlen: alle 5 Minuten, damit Kunden ihr Zertifikat schnell erhalten.';
 $_LANG['admin.settings.index.forms.cron_configuration_form.name_SSLCertificates'] = 'Synchronisierung ausgestellter Bestellungen';
-$_LANG['admin.settings.index.forms.cron_configuration_form.about_SSLCertificates'] = 'Fragt %%VENDOR%%, welche Bestellungen sich seit dem letzten Lauf geändert haben (verlängert, abgelaufen, storniert, erneut validiert), und aktualisiert diese Services; außerdem werden bis zu 50 Bestellungen erneut geprüft, die seit einem Tag nicht aktualisiert wurden. Einmal täglich genügt: Ein ausgestelltes Zertifikat ändert sich nicht oft.';
+$_LANG['admin.settings.index.forms.cron_configuration_form.about_SSLCertificates'] = 'Die wichtigste Synchronisierung des Bestellstatus. Fragt %%VENDOR%%, welche Bestellungen sich seit dem letzten Lauf geändert haben (ausgestellt, verlängert, neu ausgestellt, abgelaufen, storniert, widerrufen), und aktualisiert nur diese Services. Außerdem werden Bestellungen erneut geprüft, die seit einem Tag nicht aktualisiert wurden, höchstens 50 pro Lauf. Empfohlen: alle 5 Minuten.';
 $_LANG['admin.settings.index.forms.cron_configuration_form.name_RenewalNotifyCertificate'] = 'Verlängerungen, Erinnerungen und Ablauf';
 $_LANG['admin.settings.index.forms.cron_configuration_form.about_RenewalNotifyCertificate'] = 'Einmal täglich: Erinnerungs-E-Mails zu Ablauf und Neuausstellung, automatische Verlängerungsrechnungen, Rechnungen für ACME- / AutoInstall-Abonnements sowie die Kündigung (mit Stornierung beim Anbieter) von Services, die bis zu ihrem Ablaufdatum nicht bezahlt wurden. Deaktivieren Sie diesen Job nicht, wenn Sie Verlängerungen automatisch abrechnen.';
 $_LANG['admin.settings.index.forms.cron_configuration_form.name_SSLAutoInstall'] = 'AutoInstall-Warteschlange (cPanel)';
