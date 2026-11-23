@@ -10,7 +10,7 @@ use WHMCS\Database\Capsule;
  * read differs from the one stored before, so each end is handled once:
  *  - revoked: service Cancelled (no more invoices, reissue / renew gone), "Certificate Revoked" e-mail, activity log
  *  - refunded: service Cancelled, activity log (the refund was arranged with the client: no e-mail)
- *  - expired (and filed): service Terminated with today's date, "Certificate Expired" e-mail (expired only)
+ *  - expired: service Terminated with today's date, "Certificate Expired" e-mail (expired only)
  *  - cancelled / rejected: service Cancelled ($withCancelled: the SSL sync always did this, the other types do not)
  * Only a service that is still running (Pending, Active, Suspended) changes, and only then is the client told: one
  * that was renewed, ended or cancelled by an admin meanwhile is left as it is.
@@ -56,7 +56,7 @@ class CertificateEnd
             return;
         }
 
-        if(in_array($status, ['expired', 'filed'], true))
+        if($status === 'expired')
         {
             $changed = Capsule::table('tblhosting')->where('id', $serviceId)->whereIn('domainstatus', self::RUNNING)->update([
                 'domainstatus'     => 'Terminated',
@@ -66,7 +66,7 @@ class CertificateEnd
             {
                 AddonCertificates::followEnd($serviceId, 'Terminated');
             }
-            if($changed && $status === 'expired')
+            if($changed)
             {
                 \logActivity('Service #' . $serviceId . ' terminated: the certificate expired', self::userId($serviceId));
                 self::send(EmailTemplates::CERT_EXPIRED_TEMPLATE, $serviceId);

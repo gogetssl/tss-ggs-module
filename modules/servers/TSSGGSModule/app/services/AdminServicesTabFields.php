@@ -414,7 +414,8 @@ class AdminServicesTabFields
         $item      = (array)reset($items);
         $status    = isset($order['order']['status']) ? (string)$order['order']['status'] : '';
         $labels    = ['active' => 'label-success', 'processing' => 'label-info', 'pending' => 'label-info', 'cancelled' => 'label-danger',
-                      'rejected' => 'label-danger', 'revoked' => 'label-danger', 'expired' => 'label-default'];
+                      'rejected' => 'label-danger', 'revoked' => 'label-danger', 'refunded' => 'label-danger', 'expired' => 'label-default',
+                      'failed' => 'label-warning', 'unpaid' => 'label-warning', 'new_order' => 'label-warning'];
         $synced    = Request::where('serviceid', $serviceId)->where('name', 'certificate')->value('updated_at');
 
         $fields = [];
@@ -423,6 +424,18 @@ class AdminServicesTabFields
             . ' | ' . htmlspecialchars(Helpers::vendorToDisplay($params['configoption1']));
         $fields[AdminText::get('vendor_status', 'Vendor Status')] = self::vendorStatus($status, $labels, $order['order']['date'] ?? '', '')
             . ($synced ? ' &nbsp;| ' . self::t('last_synchronized', 'last synchronized :date:', ['date' => $synced]) : '');
+        // the order waits at the vendor side: the client sees an orange message too (CertificateSyncHelpers::NOTICE_STATUSES)
+        $noticeStatus = \ModulesGarden\TSSGGSModule\App\Libs\CertificateSyncHelpers::normalizeStatus($status);
+        if(in_array($noticeStatus, \ModulesGarden\TSSGGSModule\App\Libs\CertificateSyncHelpers::NOTICE_STATUSES, true))
+        {
+            $english = [
+                'failed'    => 'Something is wrong with this order at %%VENDOR%%: it could not be processed. Contact %%VENDOR%% support to check the reason. The client is asked to contact your support.',
+                'unpaid'    => 'The order is still unpaid at %%VENDOR%%. Check the balance of your %%VENDOR%% account or contact %%VENDOR%% support. The client is asked to contact your support.',
+                'new_order' => 'The order is being sent to the certificate authority. It should be accepted within minutes.',
+            ];
+            $fields[AdminText::get('vendor_status', 'Vendor Status')] .= '<div class="alert alert-warning" style="margin:6px 0 0;padding:6px 10px;max-width:760px;">'
+                . self::t('vendor_notice_' . $noticeStatus, $english[$noticeStatus]) . '</div>';
+        }
 
         $validity = isset($stored['orderFiles']['validity']) ? $stored['orderFiles']['validity'] : [];
         if(!empty($validity['begin']) || !empty($item['subscription']['end']))

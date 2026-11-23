@@ -194,7 +194,7 @@ class SSLStepThree
                 ]
             );
 
-            // (a "processing" order is picked up by the SSLCertificatesProcessing cron; the client's session id is
+            // (the order status sync picks the order up when the vendor reports it; the client's session id is
             // no longer stored for a task runner that never ran)
 
             // SANs paid with this order - an upgrade of the SAN options orders only the difference (see SanUpgrade)

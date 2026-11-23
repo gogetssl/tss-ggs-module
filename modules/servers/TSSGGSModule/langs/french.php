@@ -737,6 +737,12 @@ $_LANG['serverCA']['home']['validation_page']['DNS Record Type'] = 'Type d\'enre
 $_LANG['serverCA']['home']['validation_page']['DNS Host'] = 'Hôte DNS (nom)';
 $_LANG['serverCA']['home']['validation_page']['DNS value pending'] = 'Pas encore reçu de l\'autorité de certification - apparaîtra ici après la prochaine vérification (Revalider ou rechargez plus tard)';
 $_LANG['serverCA']['home']['validation_page']['Validation details preparing'] = 'L’autorité de certification prépare les informations de validation de vos domaines. Cette page se recharge d’elle-même ; si rien n’apparaît d’ici quelques minutes, rechargez-la plus tard.';
+$_LANG['vendor_notice_failed'] = 'Un problème est survenu avec cette commande : elle n’a pas pu être traitée. Veuillez contacter notre équipe d’assistance pour en vérifier la raison et résoudre le problème.';
+$_LANG['vendor_notice_unpaid'] = 'La commande n’est toujours pas payée auprès du fournisseur. Veuillez contacter notre équipe d’assistance.';
+$_LANG['vendor_notice_new_order'] = 'Nous envoyons votre commande au fournisseur. Elle devrait être acceptée d’ici quelques minutes.';
+$_LANG['vendor_status_failed'] = 'Échec';
+$_LANG['vendor_status_unpaid'] = 'Impayée';
+$_LANG['vendor_status_new_order'] = 'Nouvelle commande';
 $_LANG['serverCA']['home']['validation_page']['Certificate not available'] = 'Ce certificat n’est plus disponible, car le service a été annulé ou résilié. Les téléchargements, la réémission et la validation sont désactivés.';
 
 // Issued certificate page (status bar, cards, tabs)

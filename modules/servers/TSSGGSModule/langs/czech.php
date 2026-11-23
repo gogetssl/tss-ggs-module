@@ -737,6 +737,12 @@ $_LANG['serverCA']['home']['validation_page']['DNS Record Type'] = 'Typ DNS záz
 $_LANG['serverCA']['home']['validation_page']['DNS Host'] = 'DNS hostitel (název)';
 $_LANG['serverCA']['home']['validation_page']['DNS value pending'] = 'Zatím nepřijato od certifikační autority - zobrazí se zde po další kontrole stavu (Revalidovat nebo načtěte později)';
 $_LANG['serverCA']['home']['validation_page']['Validation details preparing'] = 'Certifikační autorita připravuje údaje pro ověření vašich domén. Stránka se sama znovu načte; pokud se nic nezobrazí do několika minut, načtěte ji později.';
+$_LANG['vendor_notice_failed'] = 'S touto objednávkou je něco v nepořádku: nepodařilo se ji zpracovat, je s ní problém. Kontaktujte prosím náš tým podpory, který zjistí příčinu a problém vyřeší.';
+$_LANG['vendor_notice_unpaid'] = 'Objednávka u dodavatele stále není zaplacena. Kontaktujte prosím náš tým podpory.';
+$_LANG['vendor_notice_new_order'] = 'Vaši objednávku odesíláme dodavateli. Měla by být přijata během několika minut.';
+$_LANG['vendor_status_failed'] = 'Selhala';
+$_LANG['vendor_status_unpaid'] = 'Nezaplacena';
+$_LANG['vendor_status_new_order'] = 'Nová objednávka';
 $_LANG['serverCA']['home']['validation_page']['Certificate not available'] = 'Tento certifikát již není k dispozici, protože služba byla zrušena nebo ukončena. Stahování, převydání a ověření jsou vypnuté.';
 
 // Issued certificate page (status bar, cards, tabs)

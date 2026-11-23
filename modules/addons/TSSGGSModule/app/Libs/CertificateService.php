@@ -243,7 +243,9 @@ class CertificateService
     public static function validationDataMissing(array $stored)
     {
         $status = isset($stored['orderData']['order']['status']) ? (string)$stored['orderData']['order']['status'] : '';
-        if(in_array($status, ['active', 'cancelled', 'rejected', 'expired', 'filed'], true))
+        // only an order the vendor is processing has validation details to wait for: any other status (issued,
+        // ended, or waiting at the vendor side: new_order, unpaid, failed) is not read again from the client page
+        if(!in_array(\ModulesGarden\TSSGGSModule\App\Libs\CertificateSyncHelpers::normalizeStatus($status), ['', 'pending', 'processing'], true))
         {
             return false;
         }

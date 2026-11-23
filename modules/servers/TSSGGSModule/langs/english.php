@@ -737,6 +737,12 @@ $_LANG['serverCA']['home']['validation_page']['DNS Record Type'] = 'DNS Record T
 $_LANG['serverCA']['home']['validation_page']['DNS Host'] = 'DNS Host (name)';
 $_LANG['serverCA']['home']['validation_page']['DNS value pending'] = 'Not received from the certificate authority yet - it appears here after the next status check (use Revalidate or reload later)';
 $_LANG['serverCA']['home']['validation_page']['Validation details preparing'] = 'The certificate authority is preparing the validation details for your domains. This page reloads by itself; if nothing appears within a few minutes, reload it later.';
+$_LANG['vendor_notice_failed'] = 'Something is wrong with this order: it could not be processed, there is a problem with it. Please contact our Support team to check the reason and solve the problem.';
+$_LANG['vendor_notice_unpaid'] = 'The order is still unpaid on the vendor\'s side. Please contact our Support team.';
+$_LANG['vendor_notice_new_order'] = 'We are sending your order to the vendor. It should be accepted within minutes.';
+$_LANG['vendor_status_failed'] = 'Failed';
+$_LANG['vendor_status_unpaid'] = 'Unpaid';
+$_LANG['vendor_status_new_order'] = 'New order';
 $_LANG['serverCA']['home']['validation_page']['Certificate not available'] = 'This certificate is no longer available because the service has been cancelled or terminated. Downloads, reissue and validation are turned off.';
 
 // Issued certificate page (status bar, cards, tabs)

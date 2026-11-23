@@ -737,6 +737,12 @@ $_LANG['serverCA']['home']['validation_page']['DNS Record Type'] = 'DNS-Eintrags
 $_LANG['serverCA']['home']['validation_page']['DNS Host'] = 'DNS-Host (Name)';
 $_LANG['serverCA']['home']['validation_page']['DNS value pending'] = 'Noch nicht von der Zertifizierungsstelle erhalten - erscheint hier nach der nächsten Statusprüfung (Erneut validieren oder später neu laden)';
 $_LANG['serverCA']['home']['validation_page']['Validation details preparing'] = 'Die Zertifizierungsstelle bereitet die Validierungsdaten für Ihre Domains vor. Diese Seite lädt sich selbst neu; erscheint nach einigen Minuten nichts, laden Sie sie später neu.';
+$_LANG['vendor_notice_failed'] = 'Mit dieser Bestellung stimmt etwas nicht: Sie konnte nicht bearbeitet werden, es gibt ein Problem damit. Bitte wenden Sie sich an unser Support-Team, um die Ursache zu prüfen und das Problem zu lösen.';
+$_LANG['vendor_notice_unpaid'] = 'Die Bestellung ist beim Anbieter noch nicht bezahlt. Bitte wenden Sie sich an unser Support-Team.';
+$_LANG['vendor_notice_new_order'] = 'Wir senden Ihre Bestellung an den Anbieter. Sie sollte innerhalb weniger Minuten angenommen werden.';
+$_LANG['vendor_status_failed'] = 'Fehlgeschlagen';
+$_LANG['vendor_status_unpaid'] = 'Unbezahlt';
+$_LANG['vendor_status_new_order'] = 'Neue Bestellung';
 $_LANG['serverCA']['home']['validation_page']['Certificate not available'] = 'Dieses Zertifikat ist nicht mehr verfügbar, da der Dienst gekündigt oder beendet wurde. Downloads, Neuausstellung und Validierung sind deaktiviert.';
 
 // Issued certificate page (status bar, cards, tabs)

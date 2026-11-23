@@ -64,7 +64,8 @@ class SSLCertificates extends AbstractCommand
 
         $timestamp = time();
         $errors = false;
-        $certificatesWhere = [];
+        // certificate (item) ID => status reported by the vendor
+        $reported = [];
 
         $lastSync = (new AddonModuleRepository())->getLastCertificatesSync();
         // /services/updates?since=<unix time>: changes since the last successful run, 5 minutes overlap for changes
@@ -93,7 +94,12 @@ class SSLCertificates extends AbstractCommand
 
                 foreach ($updates as $update)
                 {
-                    $certificatesWhere[] = $update['id'];
+                    // TLS only: S/MIME, code / document signing and the other orders have their own refresh below
+                    if(empty($update['id']) || (isset($update['category']) && $update['category'] !== 'tls'))
+                    {
+                        continue;
+                    }
+                    $reported[(string)$update['id']] = isset($update['status']) ? (string)$update['status'] : '';
                 }
 
             } catch (Exception $e) {
@@ -125,18 +131,25 @@ class SSLCertificates extends AbstractCommand
         }
 
         $certificatesQuery = CertificateSyncHelpers::getCertificatesQuery()
-            ->whereIn('tblsslorders.remoteid', $certificatesWhere);
+            ->whereIn('tblsslorders.remoteid', array_map('strval', array_keys($reported)) ?: ['0']);
 
-        // /services/updates reports certificate (item) IDs. Services configured before 1.2.4 still hold the API
-        // order ID in remoteid and would never match - sync a few of the longest unsynced ones per run; the sync
-        // itself migrates remoteid to the item ID (CertificateSyncHelpers::syncCertificate).
-        $legacyCertificates = CertificateSyncHelpers::getCertificatesQuery()
-            ->whereNotIn('tblsslorders.remoteid', $certificatesWhere ?: [0])
-            ->where('tblsslorders.updated_at', '<', date('Y-m-d H:i:s', strtotime('-1 day')))
-            ->orderBy('tblsslorders.updated_at', 'asc')
-            ->limit(50)
-            ->get()
-            ->toArray();
+        // Safety net, once a day: /services/updates reports certificate (item) IDs. Services configured before 1.2.4
+        // still hold the API order ID in remoteid and would never match, and a change the endpoint did not report
+        // would never arrive - the 50 orders not updated for the longest time (over a day) are read one by one; the
+        // sync itself migrates remoteid to the item ID (CertificateSyncHelpers::syncCertificate).
+        $legacyCertificates = [];
+        $safetyNet          = CronCheck::where('type', 'SSLCertificatesSafetyNet')->first();
+        if(!$safetyNet || empty($safetyNet->last_run) || strtotime((string)$safetyNet->last_run) <= time() - 86400 + 60)
+        {
+            $legacyCertificates = CertificateSyncHelpers::getCertificatesQuery()
+                ->whereNotIn('tblsslorders.remoteid', array_map('strval', array_keys($reported)) ?: ['0'])
+                ->where('tblsslorders.updated_at', '<', date('Y-m-d H:i:s', strtotime('-1 day')))
+                ->orderBy('tblsslorders.updated_at', 'asc')
+                ->limit(50)
+                ->get()
+                ->toArray();
+            CronCheck::updateOrCreate(['type' => 'SSLCertificatesSafetyNet'], ['last_run' => date('Y-m-d H:i:s'), 'last_error' => '']);
+        }
 
 
         $output->write('Start checking certificates...') .
@@ -152,7 +165,16 @@ class SSLCertificates extends AbstractCommand
 
             try {
 
-                CertificateSyncHelpers::syncCertificate($certificate, $addonConfig);
+                // a reported order: its status decides whether the order is read (CertificateSyncHelpers);
+                // a safety-net order is always read
+                if(array_key_exists((string)$certificate['remoteid'], $reported))
+                {
+                    CertificateSyncHelpers::applyReportedStatus($certificate, $reported[(string)$certificate['remoteid']], $addonConfig);
+                }
+                else
+                {
+                    CertificateSyncHelpers::syncCertificate($certificate, $addonConfig);
+                }
 
             } catch (\Throwable $e) {
 
@@ -191,6 +213,29 @@ class SSLCertificates extends AbstractCommand
         if($failed)
         {
             $errorToDB = \ModulesGarden\TSSGGSModule\App\Libs\CronErrors::summary($failed, count($toCheck));
+        }
+
+        // ACME subscriptions waiting for their certificate (were refreshed by the retired SSLCertificatesProcessing)
+        foreach(\ModulesGarden\TSSGGSModule\App\Models\AcmeSubscription::where('status', 'pending')->get() as $subscription)
+        {
+            try
+            {
+                \ModulesGarden\TSSGGSModule\App\Libs\AcmeHelpers::refreshAcmeCertificateDetails($subscription->service_id);
+            }
+            catch(\Throwable $e)
+            {
+                $errorToDB = $errorToDB ?: $e->getMessage();
+            }
+        }
+
+        // legacy migration housekeeping: expired backup tables, log rows older than 30 days
+        try
+        {
+            \ModulesGarden\TSSGGSModule\App\Migration\Engine::housekeeping();
+        }
+        catch(\Throwable $e)
+        {
+            $errorToDB = $errorToDB ?: $e->getMessage();
         }
 
         CronCheck::updateOrCreate(

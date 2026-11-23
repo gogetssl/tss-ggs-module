@@ -125,6 +125,10 @@ trait SslCertificatePages
         $vars['vendor_order_id']                     = is_array($order['items']) ? reset($order['items'])['vendor']['id'] : "";
         $vars['domain']                              = $service->domain;
         $vars['status']                              = $order['order']['status'];
+        // the order waits at the vendor side (failed, unpaid, new order): an orange message, no API call
+        $vars['vendorNotice']                        = in_array(\ModulesGarden\TSSGGSModule\App\Libs\CertificateSyncHelpers::normalizeStatus($vars['status']), \ModulesGarden\TSSGGSModule\App\Libs\CertificateSyncHelpers::NOTICE_STATUSES, true)
+            ? Lang::absoluteT('vendor_notice_' . \ModulesGarden\TSSGGSModule\App\Libs\CertificateSyncHelpers::normalizeStatus($vars['status'])) : '';
+        $vars['statusLabel']                         = $vars['vendorNotice'] !== '' ? Lang::absoluteT('vendor_status_' . \ModulesGarden\TSSGGSModule\App\Libs\CertificateSyncHelpers::normalizeStatus($vars['status'])) : '';
         $vars['valid_from']                          = '';
         $vars['valid_till']                          = '';
         $vars['subscribtion_starts']                 = '';

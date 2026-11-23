@@ -27,7 +27,7 @@
                 <svg class="tssggs-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="M12 8v4M12 16h.01"/></svg>
             </span>
             <div class="tssggs-hero__title">
-                <span class="tssggs-badge tssggs-badge--wait">{if $status == 'pending' || $status == 'processing'}{$MGLANG->T('validation_page', 'Validating')}{else}{$status|escape|capitalize}{/if}</span>
+                <span class="tssggs-badge tssggs-badge--wait">{if $status == 'pending' || $status == 'processing'}{$MGLANG->T('validation_page', 'Validating')}{elseif $statusLabel}{$statusLabel|escape}{else}{$status|replace:'_':' '|escape|capitalize}{/if}</span>
                 <h3>{$product_name|escape}</h3>
                 {if $domain}
                     <p class="tssggs-hero__domain">
@@ -52,6 +52,11 @@
             {/if}
         </div>
     </section>
+
+    {* the order waits at the vendor side: failed, unpaid or not sent yet (CertificateSyncHelpers::NOTICE_STATUSES) *}
+    {if $vendorNotice}
+        <div class="alert alert-warning tssggs-vendor-notice" role="alert">{$vendorNotice|escape}</div>
+    {/if}
 
     {* a CAA DNS record keeps the certificate authority from issuing (App\Libs\CaaCheck) *}
     {if $caa_warning}{$caa_warning}{/if}

@@ -737,6 +737,12 @@ $_LANG['serverCA']['home']['validation_page']['DNS Record Type'] = 'DNS-posttype
 $_LANG['serverCA']['home']['validation_page']['DNS Host'] = 'DNS-vært (navn)';
 $_LANG['serverCA']['home']['validation_page']['DNS value pending'] = 'Endnu ikke modtaget fra certifikatudstederen - vises her efter næste statuskontrol (brug Revalider eller genindlæs senere)';
 $_LANG['serverCA']['home']['validation_page']['Validation details preparing'] = 'Certifikatudstederen forbereder valideringsoplysningerne for dine domæner. Siden genindlæses af sig selv; hvis intet vises inden for et par minutter, så genindlæs den senere.';
+$_LANG['vendor_notice_failed'] = 'Der er noget galt med denne ordre: den kunne ikke behandles, der er et problem med den. Kontakt vores supportteam, så de kan finde årsagen og løse problemet.';
+$_LANG['vendor_notice_unpaid'] = 'Ordren er stadig ikke betalt hos leverandøren. Kontakt vores supportteam.';
+$_LANG['vendor_notice_new_order'] = 'Vi sender din ordre til leverandøren. Den bør blive accepteret inden for få minutter.';
+$_LANG['vendor_status_failed'] = 'Mislykket';
+$_LANG['vendor_status_unpaid'] = 'Ubetalt';
+$_LANG['vendor_status_new_order'] = 'Ny ordre';
 $_LANG['serverCA']['home']['validation_page']['Certificate not available'] = 'Dette certifikat er ikke længere tilgængeligt, fordi tjenesten er annulleret eller afsluttet. Downloads, genudstedelse og validering er slået fra.';
 
 // Issued certificate page (status bar, cards, tabs)

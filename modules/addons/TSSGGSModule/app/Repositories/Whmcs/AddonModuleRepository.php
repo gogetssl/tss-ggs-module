@@ -101,7 +101,6 @@ class AddonModuleRepository
         'cron1' => ['ProductPricingUpdate', '1d'],
         'cron2' => ['SSLCertificates', '5m'],
         'cron3' => ['RenewalNotifyCertificate', '1d'],
-        'cron5' => ['SSLCertificatesProcessing', '5m'],
     ];
 
     /** frequencies a job no longer offers: a saved one runs as the job's default */

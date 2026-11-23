@@ -14,6 +14,74 @@ use WHMCS\Database\Capsule;
  */
 class CertificateSyncHelpers
 {
+    /** statuses reported by /services/updates that need the order details: read with getOrder (+ files when active) */
+    const FETCH_STATUSES = ['pending', 'processing', 'active'];
+
+    /** statuses with no details to read: the order waits at the vendor side, the client page shows a warning */
+    const NOTICE_STATUSES = ['failed', 'unpaid', 'new_order'];
+
+    /** one spelling for a status the API may write in two ways */
+    public static function normalizeStatus($status)
+    {
+        $status = strtolower(trim((string)$status));
+
+        return $status === 'canceled' ? 'cancelled' : $status;
+    }
+
+    /**
+     * A TLS order reported by /services/updates with its new status: only "pending", "processing" and "active" are
+     * read from the API (getOrder, and the certificate files when active); any other status is applied as it is
+     *
+     * @param array $certificate row from getCertificatesQuery()
+     * @return string the status applied
+     * @throws Exception
+     */
+    public static function applyReportedStatus(array $certificate, $status, array $addonConfig)
+    {
+        $status = self::normalizeStatus($status);
+        if($status === '' || in_array($status, self::FETCH_STATUSES, true))
+        {
+            return self::syncCertificate($certificate, $addonConfig);
+        }
+
+        self::storeStatus((int)$certificate['id'], $status);
+
+        return $status;
+    }
+
+    /**
+     * Saves a status without reading the order: the stored order details stay, only their status changes. An order
+     * that ended is handled like any sync does it (CertificateEnd: Cancelled / Terminated, e-mails).
+     */
+    public static function storeStatus($serviceId, $status)
+    {
+        $serviceId      = (int)$serviceId;
+        $status         = self::normalizeStatus($status);
+        $row            = Request::where('serviceid', $serviceId)->where('name', 'certificate')->first();
+        $previousStatus = $row ? (string)$row->status : '';
+        if($status === '' || $status === $previousStatus)
+        {
+            return;
+        }
+
+        Request::where('serviceid', $serviceId)->where('name', 'addOrder')->update(['status' => $status]);
+        if($row)
+        {
+            $stored = !empty($row->request) ? (json_decode(\decrypt($row->request), true) ?: []) : [];
+            $stored['orderData']['order']['status'] = $status;
+            Request::where('serviceid', $serviceId)->where('name', 'certificate')->update([
+                'request'    => \encrypt(json_encode($stored)),
+                'status'     => $status,
+                'updated_at' => date('Y-m-d H:i:s'),
+            ]);
+        }
+        Capsule::table('tblsslorders')->where('serviceid', $serviceId)->update(['updated_at' => date('Y-m-d H:i:s')]);
+
+        CertificateEnd::apply($serviceId, $previousStatus, $status);
+
+        Logger::info('Certificate status: ' . ($previousStatus ?: 'new') . ' -> ' . $status . ' (reported by the vendor, order not read)', ['service' => $serviceId, 'from' => $previousStatus, 'to' => $status]);
+    }
+
     /**
      * Services which can be synchronized: active, module TSSGGSModule, order submitted to the API
      */
