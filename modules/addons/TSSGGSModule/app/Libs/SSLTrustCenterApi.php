@@ -209,6 +209,31 @@ class SSLTrustCenterApi
         return $order;
     }
 
+    /**
+     * Buys a TLS certificate without its details (POST /certificates/tls/incomplete): product {id, term} and the
+     * number of alternative names {single, wildcard}. The answer's items[].token completes it (completeOrder()).
+     */
+    public function createIncomplete(array $data, $serviceId)
+    {
+        $this->serviceHint = $serviceId;
+
+        return $this->call('/certificates/' . $this->category . '/incomplete', $data);
+    }
+
+    /**
+     * Sends the details of a certificate bought with createIncomplete() (POST /certificates/tls/{token}): the CSR, the
+     * common name, the alternative names, the contacts and an optional renewal - the fields of addOrder() without
+     * product. Answers with the order details (as getOrder()).
+     */
+    public function completeOrder($token, array $data, $serviceId)
+    {
+        $this->serviceHint = $serviceId;
+        unset($data['product']);
+        $data = $this->withoutFreeName($data);
+
+        return $this->call('/certificates/' . $this->category . '/' . rawurlencode((string)$token), $data);
+    }
+
     public function renewOrder($serviceId, $data)
     {
         $this->serviceHint = $serviceId;

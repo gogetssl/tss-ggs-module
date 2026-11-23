@@ -231,10 +231,16 @@ add_hook('ClientAreaPage', 1, function($params) {
             exit;
         }
 
+        // a certificate bought at payment is bought with its number of SANs: more can be added once it is enrolled
+        // (its details submitted), not while it waits for them
+        $notEnrolled = \ModulesGarden\TSSGGSModule\App\Libs\IncompleteOrder::pending($serviceId)
+            ? \ModulesGarden\TSSGGSModule\App\Libs\ClientText::get('sanUpgradeNotEnrolled', 'Additional domains can be added after the certificate details are submitted.')
+            : '';
+
         // SANs of an ordered certificate can only be added; the main domain type of a FLEX certificate is fixed
         if(isset($_POST['step']) && $_POST['step'] == '2' && isset($_POST['configoption']) && is_array($_POST['configoption']))
         {
-            $error = \ModulesGarden\TSSGGSModule\App\Libs\SanUpgrade::downgradeError($serviceId, $_POST['configoption']);
+            $error = $notEnrolled !== '' ? $notEnrolled : \ModulesGarden\TSSGGSModule\App\Libs\SanUpgrade::downgradeError($serviceId, $_POST['configoption']);
             if($error === '')
             {
                 $error = \ModulesGarden\TSSGGSModule\App\Libs\MainDomain::changeError((int)$serviceId, $_POST['configoption']);
@@ -253,6 +259,10 @@ add_hook('ClientAreaPage', 1, function($params) {
             unset($_SESSION['tssggs_upgrade_error']);
 
             return ['errormessage' => '<li>' . htmlspecialchars($error) . '</li>'];
+        }
+        if($notEnrolled !== '')
+        {
+            return ['errormessage' => '<li>' . htmlspecialchars($notEnrolled) . '</li>'];
         }
     }
 

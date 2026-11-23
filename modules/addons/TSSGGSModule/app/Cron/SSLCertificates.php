@@ -178,6 +178,13 @@ class SSLCertificates extends AbstractCommand
 
         }
 
+        // certificates bought at payment and completed with their token outside WHMCS (a hosting panel plugin): the
+        // services waiting for their details take those orders over (App\Libs\IncompleteOrder)
+        foreach(\ModulesGarden\TSSGGSModule\App\Libs\IncompleteOrder::adoptReported(array_keys($reported)) as $serviceId => $message)
+        {
+            $failed[$serviceId] = $message;
+        }
+
         // S/MIME and code signing orders (own order data, not in the /services/updates handling above)
         foreach(\ModulesGarden\TSSGGSModule\App\Libs\GatewayOrderService::TYPES as $type)
         {

@@ -644,6 +644,12 @@ class CertificateService
                 break;
 
             default:
+                // bought at payment, details never submitted: that order is cancelled (IncompleteOrder)
+                if(IncompleteOrder::cancel($serviceId, $reason))
+                {
+                    Capsule::table('tblsslorders')->where('serviceid', (int)$serviceId)->update(['status' => 'Cancelled']);
+                    break;
+                }
                 $ssl = self::sslOrder($serviceId);
                 if(!$ssl || empty($ssl->remoteid) || in_array(self::status($serviceId), AutoInstallHelpers::FINAL_ORDER_STATUSES, true))
                 {

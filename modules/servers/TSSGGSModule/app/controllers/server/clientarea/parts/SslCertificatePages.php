@@ -74,6 +74,10 @@ trait SslCertificatePages
         $renewalUntil         = \ModulesGarden\TSSGGSModule\App\Libs\RenewalPolicy::pendingRenewalUntil((int)$serviceId);
         $vars['renewalNotice'] = $renewalUntil !== '' ? sprintf(Lang::absoluteT('sslRenewalPendingNotice'), $this->smimeDate($renewalUntil)) : '';
 
+        // the certificate is bought already: its token completes the order here or in a hosting panel plugin
+        $vars['certificateToken'] = \ModulesGarden\TSSGGSModule\App\Libs\IncompleteOrder::token((int)$serviceId);
+        $vars['serviceid']        = (int)$serviceId;
+
         return ['tpl' => 'awaiting_configuration', 'vars' => $vars];
     }
 

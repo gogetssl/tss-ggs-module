@@ -78,6 +78,16 @@ class AdminServicesTabFields
             if($sslService->status === 'Awaiting Configuration')
             {
                 $fields = [AdminText::get('configuration_status', 'Configuration Status') => '<span class="label label-warning">' . self::t('status_awaiting_configuration', 'Awaiting Configuration') . '</span>'];
+                // a certificate bought at payment: its order and the token that completes it (IncompleteOrder)
+                $incomplete = \ModulesGarden\TSSGGSModule\App\Libs\IncompleteOrder::pending((int)$params['serviceid']);
+                if($incomplete)
+                {
+                    $fields[AdminText::get('vendor_order', '%%VENDOR%% Order')] = self::orderLine($incomplete['order_id'] ?? 0, $incomplete['item_id'])
+                        . ' &nbsp;<span class="label label-default">' . self::t('incomplete_bought', 'bought, waiting for its details') . '</span>';
+                    $fields[AdminText::get('certificate_token', 'Certificate Token')] = '<input type="text" class="form-control input-sm" style="max-width:760px;font-family:monospace;" readonly onclick="this.select()" value="'
+                        . htmlspecialchars((string)$incomplete['token'], ENT_QUOTES) . '">'
+                        . '<small class="text-muted">' . self::t('certificate_token_hint', 'Completes the order: the client can use it in the cPanel, Plesk and other plugins, or submit the details on the configuration page.') . '</small>';
+                }
                 // S/MIME after a renewal: the orders placed before
                 $gatewayType = \ModulesGarden\TSSGGSModule\App\Libs\GatewayOrderService::typeOfService((int)$params['serviceid']);
                 if($gatewayType)

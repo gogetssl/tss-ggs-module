@@ -143,6 +143,10 @@ class Renew
      */
     protected function askForDetails(int $serviceId, int $target): void
     {
+        // the renewal certificate is bought now (its token is shown on the configuration page); refused by the gateway,
+        // nothing changes and the renewal reports the error
+        $this->buyIncomplete($serviceId, $target);
+
         $sslOrder  = SSL::getByServiceId($serviceId);
         $priorItem = $sslOrder ? (string)$sslOrder->remoteid : '';
         $priorEnd  = (string)(CertificateService::stored($serviceId)['orderFiles']['validity']['end'] ?? '');
@@ -159,6 +163,22 @@ class Renew
             'ssl_configuration_link' => (new \ModulesGarden\Servers\TSSGGSModule\app\repository\whmcs\Config())->getConfigureSSLUrl($targetOrder ? $targetOrder->id : 0, $target),
         ]);
         CertificateService::event($target, 'info', '[Renewal] Paid: waiting for the client to submit the renewal details');
+    }
+
+    /**
+     * The incomplete order that carries the renewal (IncompleteOrder), bought now unless the service has one waiting
+     * (a renewal service gets its own when WHMCS sets it up). Null for the products bought without a token.
+     */
+    protected function buyIncomplete(int $serviceId, int $target)
+    {
+        $service = Service::find($target);
+        if(!$service || !\ModulesGarden\TSSGGSModule\App\Libs\IncompleteOrder::appliesTo($service->packageid))
+        {
+            return null;
+        }
+
+        return \ModulesGarden\TSSGGSModule\App\Libs\IncompleteOrder::ensure($target, $service->packageid, $service->billingcycle,
+            \ModulesGarden\TSSGGSModule\App\Libs\SanUpgrade::currentQuantities($serviceId), $serviceId === $target ? 'renewOrder' : 'addOrder');
     }
 
     /**
@@ -206,9 +226,18 @@ class Renew
         $requestRenew['renewal']['prior_certificate_id'] = $sslOrder->remoteid;
         $requestRenew['renewal']['remaining_days'] = CertificateService::renewalDays($serviceId, $days > 0 ? $days + 1 : 0);
 
+        // a certificate bought at payment (IncompleteOrder): the renewal buys it first, the previous details and the
+        // renewal complete it
+        $incomplete = $this->buyIncomplete($serviceId, $targetServiceId);
+        $place      = function(array $request) use ($api, $targetServiceId, $incomplete) {
+            return $incomplete
+                ? $api->completeOrder($incomplete['token'], $request, $targetServiceId)
+                : $api->renewOrder($targetServiceId, $request);
+        };
+
         try
         {
-            $newOrder = $api->renewOrder($targetServiceId, $requestRenew);
+            $newOrder = $place($requestRenew);
         }
         catch(\Throwable $e)
         {
@@ -216,10 +245,14 @@ class Renew
             // paid long before the end): the paid renewal is then ordered as a new certificate with the same details;
             // only the carried-over days are lost. When that is refused too, the caller asks the client for new details.
             unset($requestRenew['renewal']);
-            $newOrder = $api->renewOrder($targetServiceId, $requestRenew);
+            $newOrder = $place($requestRenew);
             CertificateService::event($serviceId, 'info', '[Renewal] The vendor did not take it as a renewal of the previous order (' . $e->getMessage() . '): ordered as a new certificate with the same details');
         }
-        $newItemId = SSLTrustCenterApi::getItemId($newOrder);
+        $newItemId = SSLTrustCenterApi::getItemId($newOrder, $incomplete ? $incomplete['item_id'] : null);
+        if($incomplete)
+        {
+            \ModulesGarden\TSSGGSModule\App\Libs\IncompleteOrder::markCompleted($targetServiceId);
+        }
 
         // from here the order exists at the vendor: what follows is stored on a best effort, a failure never reports the
         // renewal as failed (a second attempt would order a second certificate) - the certificates sync fills in the rest
