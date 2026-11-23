@@ -133,23 +133,9 @@ class SSLCertificates extends AbstractCommand
         $certificatesQuery = CertificateSyncHelpers::getCertificatesQuery()
             ->whereIn('tblsslorders.remoteid', array_map('strval', array_keys($reported)) ?: ['0']);
 
-        // Safety net, once a day: /services/updates reports certificate (item) IDs. Services configured before 1.2.4
-        // still hold the API order ID in remoteid and would never match, and a change the endpoint did not report
-        // would never arrive - the 50 orders not updated for the longest time (over a day) are read one by one; the
-        // sync itself migrates remoteid to the item ID (CertificateSyncHelpers::syncCertificate).
-        $legacyCertificates = [];
-        $safetyNet          = CronCheck::where('type', 'SSLCertificatesSafetyNet')->first();
-        if(!$safetyNet || empty($safetyNet->last_run) || strtotime((string)$safetyNet->last_run) <= time() - 86400 + 60)
-        {
-            $legacyCertificates = CertificateSyncHelpers::getCertificatesQuery()
-                ->whereNotIn('tblsslorders.remoteid', array_map('strval', array_keys($reported)) ?: ['0'])
-                ->where('tblsslorders.updated_at', '<', date('Y-m-d H:i:s', strtotime('-1 day')))
-                ->orderBy('tblsslorders.updated_at', 'asc')
-                ->limit(50)
-                ->get()
-                ->toArray();
-            CronCheck::updateOrCreate(['type' => 'SSLCertificatesSafetyNet'], ['last_run' => date('Y-m-d H:i:s'), 'last_error' => '']);
-        }
+        // one-time conversion: orders that still hold the order ID instead of the certificate (item) ID are never
+        // reported by /services/updates - each is read once and its item ID stored (CertificateSyncHelpers)
+        $legacyCertificates = CertificateSyncHelpers::itemIdConversionBatch(array_map('strval', array_keys($reported)));
 
 
         $output->write('Start checking certificates...') .
@@ -166,7 +152,7 @@ class SSLCertificates extends AbstractCommand
             try {
 
                 // a reported order: its status decides whether the order is read (CertificateSyncHelpers);
-                // a safety-net order is always read
+                // an order of the item ID conversion is always read
                 if(array_key_exists((string)$certificate['remoteid'], $reported))
                 {
                     CertificateSyncHelpers::applyReportedStatus($certificate, $reported[(string)$certificate['remoteid']], $addonConfig);

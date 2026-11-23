@@ -20,6 +20,73 @@ class CertificateSyncHelpers
     /** statuses with no details to read: the order waits at the vendor side, the client page shows a warning */
     const NOTICE_STATUSES = ['failed', 'unpaid', 'new_order'];
 
+    /** setting: every open order holds its certificate (item) ID, the one-time conversion is done */
+    const ITEM_IDS_CONFIRMED = 'item_ids_confirmed';
+
+    /** orders read per run by the conversion */
+    const ITEM_ID_BATCH = 100;
+
+    /**
+     * One-time conversion to certificate (item) IDs. /services/updates reports item IDs; a service created before
+     * 1.2.4, or moved over from an old module when only the order ID was known, holds the order ID in
+     * tblsslorders.remoteid and is never matched. Such an order is read once (getOrder accepts both IDs) and the sync
+     * stores its item ID. An order counts as converted when its stored order details name the same item ID.
+     * When no open order is left to convert, the conversion stops for good (a migration starts it again).
+     *
+     * @param array $exclude remote IDs read in this run already
+     * @return array rows from getCertificatesQuery() to read now
+     */
+    public static function itemIdConversionBatch(array $exclude)
+    {
+        $confirmed = Capsule::table('tbladdonmodules')->where('module', 'configuration_TSSGGSModule')->where('setting', self::ITEM_IDS_CONFIRMED)->value('value');
+        if($confirmed === '1')
+        {
+            return [];
+        }
+
+        $left  = 0;
+        $batch = [];
+        // read again at most once an hour: an order that can not be read is not asked for on every run
+        $retry = date('Y-m-d H:i:s', time() - 3600);
+        foreach(self::getCertificatesQuery()->orderBy('tblsslorders.updated_at', 'asc')->get()->toArray() as $certificate)
+        {
+            if(in_array((string)$certificate['remoteid'], $exclude, true) || !self::itemIdUnconfirmed($certificate))
+            {
+                continue;
+            }
+            $left++;
+            $updatedAt = (string)Capsule::table('tblsslorders')->where('serviceid', (int)$certificate['id'])->value('updated_at');
+            if(count($batch) < self::ITEM_ID_BATCH && ($updatedAt === '' || $updatedAt < $retry))
+            {
+                $batch[] = $certificate;
+            }
+        }
+
+        if($left === 0)
+        {
+            Capsule::table('tbladdonmodules')->updateOrInsert(['module' => 'configuration_TSSGGSModule', 'setting' => self::ITEM_IDS_CONFIRMED], ['value' => '1']);
+        }
+
+        return $batch;
+    }
+
+    /** a migration (or anything else that stores order IDs) starts the conversion again */
+    public static function itemIdConversionRestart()
+    {
+        Capsule::table('tbladdonmodules')->where('module', 'configuration_TSSGGSModule')->where('setting', self::ITEM_IDS_CONFIRMED)->delete();
+    }
+
+    /** whether the stored order details do not confirm remoteid as the certificate (item) ID */
+    protected static function itemIdUnconfirmed(array $certificate)
+    {
+        $stored = CertificateService::stored((int)$certificate['id']);
+        $items  = isset($stored['orderData']['items']) && is_array($stored['orderData']['items']) ? $stored['orderData']['items'] : [];
+        $item   = $items ? reset($items) : [];
+        $itemId = (int)($item['id'] ?? 0);
+
+        return $itemId <= 0 || (string)$itemId !== trim((string)$certificate['remoteid']);
+    }
+
     /** one spelling for a status the API may write in two ways */
     public static function normalizeStatus($status)
     {
