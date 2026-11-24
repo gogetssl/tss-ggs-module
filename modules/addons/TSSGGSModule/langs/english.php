@@ -1256,6 +1256,8 @@ $_LANG['admin.settings.index.forms.logs_settings_form.whmcsActivityLog'] = 'WHMC
 $_LANG['admin.settings.index.forms.logs_settings_form.whmcsActivityLog_description'] = 'Write certificate events (order placed, reissue, validation, installation, cancellation) to the WHMCS activity log';
 $_LANG['admin.settings.index.forms.logs_settings_form.moduleLog'] = 'WHMCS Module Log';
 $_LANG['admin.settings.index.forms.logs_settings_form.moduleLog_description'] = 'Write the requests to %%VENDOR%% and cPanel and their responses to the WHMCS module log (Utilities > Logs > Module Log). It also has to be enabled in WHMCS. Which requests are written follows the API requests setting above. Passwords, keys and private keys are never written';
+$_LANG['admin.settings.index.forms.logs_settings_form.whmcsModuleLogOff'] = 'The Module Log is switched off in WHMCS, so WHMCS writes nothing there, even with this switch on. Turn on debug logging on the WHMCS Module Log page to record the requests.';
+$_LANG['admin.settings.index.forms.logs_settings_form.whmcsModuleLogOpen'] = 'Open WHMCS Module Log';
 $_LANG['admin.settings.index.forms.logs_settings_form.save'] = 'Save';
 $_LANG['admin.settings.index.forms.logs_settings_form.update_success'] = 'Settings updated successfully';
 
