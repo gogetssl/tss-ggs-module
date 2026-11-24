@@ -138,13 +138,21 @@ class FinanceSettingsForm extends Form implements AdminAreaInterface, AjaxCompon
             $text .= ' ' . $this->translate('balanceInactive', $vars);
         }
 
-        return $this->balanceBox($text, $inactive || !empty($info['low']) || !empty($info['error']));
+        if($inactive || !empty($info['low']) || !empty($info['error']))
+        {
+            return $this->balanceBox($text, true);
+        }
+
+        // a credit line that is not running low: green, the reseller can order on credit
+        return $this->balanceBox($text, false, $key === 'balanceNowCredit');
     }
 
-    protected function balanceBox(string $text, bool $warn): string
+    protected function balanceBox(string $text, bool $warn, bool $ok = false): string
     {
-        return '<div class="tssggs-renewal-check"><p class="' . ($warn ? 'tssggs-renewal-check__warning tssggs-renewal-check__warning--amber' : 'tssggs-renewal-check__summary') . '">'
-            . htmlspecialchars($text) . '</p></div>';
+        $class = $warn ? 'tssggs-renewal-check__warning tssggs-renewal-check__warning--amber'
+            : ($ok ? 'tssggs-renewal-check__warning tssggs-renewal-check__warning--green' : 'tssggs-renewal-check__summary');
+
+        return '<div class="tssggs-renewal-check"><p class="' . $class . '">' . htmlspecialchars($text) . '</p></div>';
     }
 
     /**

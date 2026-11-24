@@ -1394,7 +1394,7 @@ $_LANG['admin.settings.index.forms.finance_settings_form.balanceThreshold'] = 'W
 $_LANG['admin.settings.index.forms.finance_settings_form.balanceThresholdBrand'] = ':brand account: warn me when the money left is below (:currency)';
 $_LANG['admin.settings.index.forms.finance_settings_form.balanceThreshold_description'] = 'The balance is read every hour. Below this amount the WHMCS administrators get an e-mail, at most one a day while it stays low. Prepaid accounts: the balance counts; credit accounts: the credit left (balance + credit limit); monthly invoice accounts are never stopped by the balance. You also get an e-mail when the account is no longer active. 0 = off';
 $_LANG['admin.settings.index.forms.finance_settings_form.balanceNow'] = ':brand account: balance :balance (prepaid). Read :time.';
-$_LANG['admin.settings.index.forms.finance_settings_form.balanceNowCredit'] = ':brand account: :left of credit left (balance :balance, credit limit :limit). Read :time.';
+$_LANG['admin.settings.index.forms.finance_settings_form.balanceNowCredit'] = ':brand account: you have a credit line available: :left (credit limit :limit, balance :balance). Read :time.';
 $_LANG['admin.settings.index.forms.finance_settings_form.balanceNowCreditNoLimit'] = ':brand account: balance :balance, credit without a limit - nothing to warn about. Read :time.';
 $_LANG['admin.settings.index.forms.finance_settings_form.balanceNowInvoice'] = ':brand account: balance :balance, paid by monthly invoice - a low balance does not stop orders, so there is no warning. Read :time.';
 $_LANG['admin.settings.index.forms.finance_settings_form.balanceNotChecked'] = ':brand account: the balance has not been read yet. It is read when you save this page and then every hour.';

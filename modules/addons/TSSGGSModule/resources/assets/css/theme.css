@@ -539,6 +539,8 @@
 }
 #layers2 .tssggs-renewal-check__warning--amber { --notice-color: var(--nt-warning); --notice-bg: var(--nt-warning-soft); }
 #layers2 .tssggs-renewal-check__warning--red   { --notice-color: var(--nt-error);   --notice-bg: var(--nt-error-soft); }
+#layers2 .tssggs-renewal-check__warning--green { --notice-color: var(--nt-success); --notice-bg: var(--nt-success-soft); }
+#layers2 .tssggs-renewal-check__warning--green::before { -webkit-mask-image: var(--nt-icon-ok); mask-image: var(--nt-icon-ok); }
 
 /* Products > Catalogue changes (M-16) */
 #layers2 .tssggs-changes__intro { margin: 0 0 14px; color: var(--tw-fg-soft); font-size: 13px; line-height: 20px; }
