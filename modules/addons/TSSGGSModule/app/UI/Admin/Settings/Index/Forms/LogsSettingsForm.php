@@ -13,9 +13,11 @@ use ModulesGarden\TSSGGSModule\Core\Contracts\Components\AdminAreaInterface;
 use ModulesGarden\TSSGGSModule\Core\Contracts\Components\AjaxComponentInterface;
 
 /**
- * Every log the module offers, one switch each. The values live in the general settings (App\Libs\GeneralSettings).
- *   In the module: Certificate Log (page) and Module Log (Logs page)
- *   In WHMCS:      Activity Log and Module Log (Utilities > Logs)
+ * Every log in one group, one switch each (values in App\Libs\GeneralSettings), then "Debug one order":
+ *   Certificate Log, Technical log (Logs page), Events, API requests - kept in the module
+ *   WHMCS Module Log - shows YES only while WHMCS has its Module Log on too; YES switches it on in WHMCS
+ *                      (GeneralSettingsProvider, App\Libs\WhmcsModuleLog)
+ *   WHMCS Activity Log - certificate events in the WHMCS activity log (WHMCS has no switch of its own for that log)
  */
 class LogsSettingsForm extends Form implements AdminAreaInterface, AjaxComponentInterface
 {
@@ -34,19 +36,17 @@ class LogsSettingsForm extends Form implements AdminAreaInterface, AjaxComponent
         $this->builder = BuilderCreator::oneColumn($this);
         $this->setId('LogsSettingsForm');
 
-        $module = $this->section('moduleLogs', 'text-box-outline');
-        $this->builder->addFieldInContainer($module, (new Switcher())->setName('certificateLog')->addClass('switcher-revert'), true);
-        $this->builder->addFieldInContainer($module, (new Switcher())->setName('internalLog')->addClass('switcher-revert'), true);
-        $this->builder->addFieldInContainer($module, (new Dropdown())->setName('apiLogMode'), true);
-        $this->builder->addFieldInContainer($module, (new Switcher())->setName('eventLog')->addClass('switcher-revert'), true);
+        $logs = $this->section('logs', 'text-box-outline');
+        $this->builder->addFieldInContainer($logs, (new Switcher())->setName('certificateLog')->addClass('switcher-revert'), true);
+        $this->builder->addFieldInContainer($logs, (new Switcher())->setName('internalLog')->addClass('switcher-revert'), true);
+        $this->builder->addFieldInContainer($logs, (new Switcher())->setName('eventLog')->addClass('switcher-revert'), true);
+        $this->builder->addFieldInContainer($logs, (new Dropdown())->setName('apiLogMode'), true);
+        $this->builder->addFieldInContainer($logs, (new Switcher())->setName('moduleLog')->addClass('switcher-revert'), true);
+        $this->builder->addFieldInContainer($logs, (new Switcher())->setName('whmcsActivityLog')->addClass('switcher-revert'), true);
 
         $debug = $this->section('debugLogs', 'bug');
         $this->builder->addFieldInContainer($debug, (new FormInputText())->setName('debugServices'), true);
         $this->builder->addFieldInContainer($debug, (new Dropdown())->setName('debugHours'), true);
-
-        $whmcs = $this->section('whmcsLogs', 'clipboard-text');
-        $this->builder->addFieldInContainer($whmcs, (new Switcher())->setName('whmcsActivityLog')->addClass('switcher-revert'), true);
-        $this->builder->addFieldInContainer($whmcs, (new Switcher())->setName('moduleLog')->addClass('switcher-revert'), true);
 
         $this->saveBar();
     }
