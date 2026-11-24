@@ -47,9 +47,9 @@ class FinanceSettingsForm extends Form implements AdminAreaInterface, AjaxCompon
 
         $pricing = $this->section('pricing', 'trending-up');
         $pricing->addElement((new Text())->setText($this->otherPriceRules()));
-        $this->builder->addFieldInContainer($pricing, (new Number())->setName('profitMargin')->setMin(0)->setMax(1000)->required()->numeric()->between(0, 1000), true);
+        $this->builder->addFieldInContainer($pricing, (new Number())->setName('profitMargin')->addClass('tssggs-percent')->setMin(0)->setMax(1000)->required()->numeric()->between(0, 1000), true);
         $this->builder->addFieldInContainer($pricing, (new FormInputText())->setName('minProfit')->numeric()->between(0, 100000), true);
-        $this->builder->addFieldInContainer($pricing, (new Number())->setName('termMarginStep')->setMin(0)->setMax(100)->numeric()->between(0, 100), true);
+        $this->builder->addFieldInContainer($pricing, (new Number())->setName('termMarginStep')->addClass('tssggs-percent')->setMin(0)->setMax(100)->numeric()->between(0, 100), true);
         $this->builder->addFieldInContainer($pricing, (new Dropdown())->setName('priceRounding'), true);
         $this->builder->addFieldInContainer($pricing, (new Switcher())->setName('keepMarginOnSync')->addClass('switcher-revert'), true);
 
@@ -72,7 +72,7 @@ class FinanceSettingsForm extends Form implements AdminAreaInterface, AjaxCompon
             $this->builder->addFieldInContainer($currency, (new Dropdown())->setName('rateSource'), true);
             $this->builder->addFieldInContainer($currency, (new FormInputText())->setName('rate')->required()->numeric(), true);
         }
-        $this->builder->addFieldInContainer($currency, (new FormInputText())->setName('currencyBuffer')->numeric()->between(0, 50), true);
+        $this->builder->addFieldInContainer($currency, (new FormInputText())->setName('currencyBuffer')->addClass('tssggs-percent')->numeric()->between(0, 50), true);
 
         $billing = $this->section('billing', 'credit-card-clock-outline');
         $this->builder->addFieldInContainer($billing, (new Switcher())->setName('terminateUnpaidOnExpiry')->addClass('switcher-revert'), true);

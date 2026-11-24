@@ -198,6 +198,34 @@
     grid-column: 2;
 }
 
+/* percent fields (Finance Settings): the number on the right with a "%" after it, "1 %" - no spinner under the sign */
+#layers2 .tssggs-settings form .tssggs-sec .lu-form-group:has(> .tssggs-percent) {
+    position: relative;
+}
+
+#layers2 .tssggs-settings form .tssggs-sec .lu-form-group:has(> .tssggs-percent)::after {
+    content: "%";
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--tw-fg);
+    font-size: 13px;
+    pointer-events: none;
+}
+
+#layers2 .tssggs-settings form .tssggs-sec .lu-form-group > input.tssggs-percent {
+    padding-right: 30px !important;
+    text-align: right;
+    -moz-appearance: textfield;
+}
+
+#layers2 .tssggs-settings form .tssggs-sec .lu-form-group > input.tssggs-percent::-webkit-outer-spin-button,
+#layers2 .tssggs-settings form .tssggs-sec .lu-form-group > input.tssggs-percent::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
 #layers2 .tssggs-settings form .tssggs-sec .lu-form-group:has(textarea) {
     align-items: start;
 }
