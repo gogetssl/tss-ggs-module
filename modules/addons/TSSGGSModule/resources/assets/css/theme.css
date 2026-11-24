@@ -595,3 +595,6 @@
 #layers2 .tssggs-filters { display: flex; flex-wrap: wrap; gap: 8px 24px; margin: 0 0 12px; }
 #layers2 .tssggs-show { display: flex; flex-wrap: wrap; gap: 8px; }
 #layers2 .tssggs-show .lu-btn b { margin-left: 4px; font-weight: 600; }
+
+/* Settings > CRON: what starts the module's jobs right now (CronSettingsWidget::status) */
+#layers2 .tssggs-cronone .tssggs-cronone__status { margin: 12px 0 0; font-size: 13px; line-height: 20px; }
