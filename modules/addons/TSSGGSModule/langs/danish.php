@@ -1573,24 +1573,24 @@ $_LANG['admin.products.index.data_tables.products.array_data_provider.data_table
 $_LANG['admin.products.index.data_tables.products.array_data_provider.data_table.product_addon'] = 'Produkttilføjelse #:id';
 
 // Katalogsynkronisering (M-16)
-$_LANG['admin.settings.index.forms.finance_settings_form.catalogueSync'] = 'Katalogsynkronisering';
-$_LANG['admin.settings.index.forms.finance_settings_form.catalogueSync_desc'] = 'Hver nat sammenligner modulet udbyderens produktliste med den forrige. Hver ændring vises på siden Produkter (fanen "Katalogændringer"). Tilstanden bestemmer, hvad modulet selv ændrer:';
-$_LANG['admin.settings.index.forms.finance_settings_form.catalogueMode_manual'] = 'Manuelt:';
-$_LANG['admin.settings.index.forms.finance_settings_form.catalogueMode_manual_text'] = 'intet ændres, hver ændring rapporteres kun.';
-$_LANG['admin.settings.index.forms.finance_settings_form.catalogueMode_alterations'] = 'Kun tilpasninger:';
-$_LANG['admin.settings.index.forms.finance_settings_form.catalogueMode_alterations_text'] = 'ændrede produkter opdateres (SAN-indstillinger, produktindstillinger); nye og udgåede produkter rapporteres kun.';
-$_LANG['admin.settings.index.forms.finance_settings_form.catalogueMode_alterations_removal'] = 'Tilpasninger og fjernelse:';
-$_LANG['admin.settings.index.forms.finance_settings_form.catalogueMode_alterations_removal_text'] = 'pensionerer også produkter, som udbyderen ikke længere sælger (mangler på to forskellige dage). Et produkt med aktive services skjules kun på bestillingsformularen; dets services virker fortsat.';
-$_LANG['admin.settings.index.forms.finance_settings_form.catalogueMode_all'] = 'Alt:';
-$_LANG['admin.settings.index.forms.finance_settings_form.catalogueMode_all_text'] = 'importerer også nye produkter, skjult og med standardmargenen, i en skjult gruppe, så du kan gennemgå dem, før de sælges.';
-$_LANG['admin.settings.index.forms.finance_settings_form.catalogueSyncMode'] = 'Synkroniseringstilstand';
-$_LANG['admin.settings.index.forms.finance_settings_form.catalogueSyncMode_description'] = 'Hvad den natlige synkronisering selv må ændre. Knappen Synkroniser igen på siden Produkter opdaterer altid produkterne.';
-$_LANG['admin.settings.index.forms.finance_settings_form.catalogueChangesEmail'] = 'Send e-mail til administratorerne';
-$_LANG['admin.settings.index.forms.finance_settings_form.catalogueChangesEmail_description'] = 'Et resumé af ændringerne og af, hvad modulet gjorde, sendt efter den natlige synkronisering. Ingen ændringer, ingen e-mail';
-$_LANG['admin.settings.index.providers.finance_settings_provider.catalogueSync_manual'] = 'Manuelt';
-$_LANG['admin.settings.index.providers.finance_settings_provider.catalogueSync_alterations'] = 'Kun tilpasninger';
-$_LANG['admin.settings.index.providers.finance_settings_provider.catalogueSync_alterations_removal'] = 'Tilpasninger og fjernelse';
-$_LANG['admin.settings.index.providers.finance_settings_provider.catalogueSync_all'] = 'Alt (importer også nye produkter)';
+$_LANG['admin.settings.index.forms.products_settings_form.catalogueSync'] = 'Katalogsynkronisering';
+$_LANG['admin.settings.index.forms.products_settings_form.catalogueSync_desc'] = 'Hver nat sammenligner modulet udbyderens produktliste med den forrige. Hver ændring vises på siden Produkter (fanen "Katalogændringer"). Tilstanden bestemmer, hvad modulet selv ændrer:';
+$_LANG['admin.settings.index.forms.products_settings_form.catalogueMode_manual'] = 'Manuelt:';
+$_LANG['admin.settings.index.forms.products_settings_form.catalogueMode_manual_text'] = 'intet ændres, hver ændring rapporteres kun.';
+$_LANG['admin.settings.index.forms.products_settings_form.catalogueMode_alterations'] = 'Kun tilpasninger:';
+$_LANG['admin.settings.index.forms.products_settings_form.catalogueMode_alterations_text'] = 'ændrede produkter opdateres (SAN-indstillinger, produktindstillinger); nye og udgåede produkter rapporteres kun.';
+$_LANG['admin.settings.index.forms.products_settings_form.catalogueMode_alterations_removal'] = 'Tilpasninger og fjernelse:';
+$_LANG['admin.settings.index.forms.products_settings_form.catalogueMode_alterations_removal_text'] = 'pensionerer også produkter, som udbyderen ikke længere sælger (mangler på to forskellige dage). Et produkt med aktive services skjules kun på bestillingsformularen; dets services virker fortsat.';
+$_LANG['admin.settings.index.forms.products_settings_form.catalogueMode_all'] = 'Alt:';
+$_LANG['admin.settings.index.forms.products_settings_form.catalogueMode_all_text'] = 'importerer også nye produkter, skjult og med standardmargenen, i en skjult gruppe, så du kan gennemgå dem, før de sælges.';
+$_LANG['admin.settings.index.forms.products_settings_form.catalogueSyncMode'] = 'Synkroniseringstilstand';
+$_LANG['admin.settings.index.forms.products_settings_form.catalogueSyncMode_description'] = 'Hvad den natlige synkronisering selv må ændre. Knappen Synkroniser igen på siden Produkter opdaterer altid produkterne.';
+$_LANG['admin.settings.index.forms.products_settings_form.catalogueChangesEmail'] = 'Send e-mail til administratorerne';
+$_LANG['admin.settings.index.forms.products_settings_form.catalogueChangesEmail_description'] = 'Et resumé af ændringerne og af, hvad modulet gjorde, sendt efter den natlige synkronisering. Ingen ændringer, ingen e-mail';
+$_LANG['admin.settings.index.providers.products_settings_provider.catalogueSync_manual'] = 'Manuelt';
+$_LANG['admin.settings.index.providers.products_settings_provider.catalogueSync_alterations'] = 'Kun tilpasninger';
+$_LANG['admin.settings.index.providers.products_settings_provider.catalogueSync_alterations_removal'] = 'Tilpasninger og fjernelse';
+$_LANG['admin.settings.index.providers.products_settings_provider.catalogueSync_all'] = 'Alt (importer også nye produkter)';
 $_LANG['admin.products.productsTab'] = 'Produkter';
 $_LANG['admin.products.catalogueTab'] = 'Katalogændringer';
 $_LANG['admin.products.show_label'] = 'Vis';
@@ -1671,3 +1671,8 @@ $_LANG['admin.breadcrumbs.ModuleUpdate'] = 'Modulopdatering';
 $_LANG['admin.breadcrumbs.ModuleUpdate_index'] = 'Modulopdatering';
 $_LANG['admin.module_update.rollback_cli'] = 'Tilbagerulning er ikke mulig fra denne side på denne server (se serverkontrollerne). Kør på serveren: :command';
 $_LANG['admin.module_update.continue'] = 'Fortsæt';
+
+// Settings > Products (catalogue sync moved here from Finance)
+$_LANG['admin.settings.index.widgets.sidebar.productsSettings'] = 'Produkter';
+$_LANG['admin.settings.index.widgets.products_settings_widget.title'] = 'Produkter';
+$_LANG['admin.settings.index.widgets.products_settings_widget.subtitle'] = 'Hvordan din produktliste følger udbyderens katalog';

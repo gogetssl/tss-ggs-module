@@ -1571,24 +1571,24 @@ $_LANG['admin.products.index.data_tables.products.array_data_provider.data_table
 $_LANG['admin.products.index.data_tables.products.array_data_provider.data_table.product_addon'] = 'Produkt-Addon #:id';
 
 // Katalog-Synchronisierung (M-16)
-$_LANG['admin.settings.index.forms.finance_settings_form.catalogueSync'] = 'Katalog-Synchronisierung';
-$_LANG['admin.settings.index.forms.finance_settings_form.catalogueSync_desc'] = 'Jede Nacht vergleicht das Modul die Produktliste des Anbieters mit der vorherigen. Jede Änderung wird auf der Seite Produkte aufgeführt (Reiter "Katalogänderungen"). Der Modus legt fest, was das Modul selbst ändert:';
-$_LANG['admin.settings.index.forms.finance_settings_form.catalogueMode_manual'] = 'Manuell:';
-$_LANG['admin.settings.index.forms.finance_settings_form.catalogueMode_manual_text'] = 'nichts wird geändert, jede Änderung wird nur gemeldet.';
-$_LANG['admin.settings.index.forms.finance_settings_form.catalogueMode_alterations'] = 'Nur Anpassungen:';
-$_LANG['admin.settings.index.forms.finance_settings_form.catalogueMode_alterations_text'] = 'geänderte Produkte werden aktualisiert (SAN-Optionen, Produkteinstellungen); neue und eingestellte Produkte werden nur gemeldet.';
-$_LANG['admin.settings.index.forms.finance_settings_form.catalogueMode_alterations_removal'] = 'Anpassungen und Entfernen:';
-$_LANG['admin.settings.index.forms.finance_settings_form.catalogueMode_alterations_removal_text'] = 'setzt außerdem Produkte in den Ruhestand, die der Anbieter nicht mehr verkauft (an zwei verschiedenen Tagen fehlend). Ein Produkt mit aktiven Services wird nur im Bestellformular ausgeblendet; seine Services funktionieren weiter.';
-$_LANG['admin.settings.index.forms.finance_settings_form.catalogueMode_all'] = 'Alles:';
-$_LANG['admin.settings.index.forms.finance_settings_form.catalogueMode_all_text'] = 'importiert außerdem neue Produkte, ausgeblendet und mit der Standardmarge, in eine ausgeblendete Gruppe, damit Sie sie vor dem Verkauf prüfen.';
-$_LANG['admin.settings.index.forms.finance_settings_form.catalogueSyncMode'] = 'Synchronisierungsmodus';
-$_LANG['admin.settings.index.forms.finance_settings_form.catalogueSyncMode_description'] = 'Was die nächtliche Synchronisierung selbst ändern darf. Die Schaltfläche Neu synchronisieren auf der Seite Produkte aktualisiert die Produkte immer.';
-$_LANG['admin.settings.index.forms.finance_settings_form.catalogueChangesEmail'] = 'Administratoren per E-Mail informieren';
-$_LANG['admin.settings.index.forms.finance_settings_form.catalogueChangesEmail_description'] = 'Eine Zusammenfassung der Änderungen und dessen, was das Modul getan hat, nach der nächtlichen Synchronisierung. Keine Änderungen, keine E-Mail';
-$_LANG['admin.settings.index.providers.finance_settings_provider.catalogueSync_manual'] = 'Manuell';
-$_LANG['admin.settings.index.providers.finance_settings_provider.catalogueSync_alterations'] = 'Nur Anpassungen';
-$_LANG['admin.settings.index.providers.finance_settings_provider.catalogueSync_alterations_removal'] = 'Anpassungen und Entfernen';
-$_LANG['admin.settings.index.providers.finance_settings_provider.catalogueSync_all'] = 'Alles (auch neue Produkte importieren)';
+$_LANG['admin.settings.index.forms.products_settings_form.catalogueSync'] = 'Katalog-Synchronisierung';
+$_LANG['admin.settings.index.forms.products_settings_form.catalogueSync_desc'] = 'Jede Nacht vergleicht das Modul die Produktliste des Anbieters mit der vorherigen. Jede Änderung wird auf der Seite Produkte aufgeführt (Reiter "Katalogänderungen"). Der Modus legt fest, was das Modul selbst ändert:';
+$_LANG['admin.settings.index.forms.products_settings_form.catalogueMode_manual'] = 'Manuell:';
+$_LANG['admin.settings.index.forms.products_settings_form.catalogueMode_manual_text'] = 'nichts wird geändert, jede Änderung wird nur gemeldet.';
+$_LANG['admin.settings.index.forms.products_settings_form.catalogueMode_alterations'] = 'Nur Anpassungen:';
+$_LANG['admin.settings.index.forms.products_settings_form.catalogueMode_alterations_text'] = 'geänderte Produkte werden aktualisiert (SAN-Optionen, Produkteinstellungen); neue und eingestellte Produkte werden nur gemeldet.';
+$_LANG['admin.settings.index.forms.products_settings_form.catalogueMode_alterations_removal'] = 'Anpassungen und Entfernen:';
+$_LANG['admin.settings.index.forms.products_settings_form.catalogueMode_alterations_removal_text'] = 'setzt außerdem Produkte in den Ruhestand, die der Anbieter nicht mehr verkauft (an zwei verschiedenen Tagen fehlend). Ein Produkt mit aktiven Services wird nur im Bestellformular ausgeblendet; seine Services funktionieren weiter.';
+$_LANG['admin.settings.index.forms.products_settings_form.catalogueMode_all'] = 'Alles:';
+$_LANG['admin.settings.index.forms.products_settings_form.catalogueMode_all_text'] = 'importiert außerdem neue Produkte, ausgeblendet und mit der Standardmarge, in eine ausgeblendete Gruppe, damit Sie sie vor dem Verkauf prüfen.';
+$_LANG['admin.settings.index.forms.products_settings_form.catalogueSyncMode'] = 'Synchronisierungsmodus';
+$_LANG['admin.settings.index.forms.products_settings_form.catalogueSyncMode_description'] = 'Was die nächtliche Synchronisierung selbst ändern darf. Die Schaltfläche Neu synchronisieren auf der Seite Produkte aktualisiert die Produkte immer.';
+$_LANG['admin.settings.index.forms.products_settings_form.catalogueChangesEmail'] = 'Administratoren per E-Mail informieren';
+$_LANG['admin.settings.index.forms.products_settings_form.catalogueChangesEmail_description'] = 'Eine Zusammenfassung der Änderungen und dessen, was das Modul getan hat, nach der nächtlichen Synchronisierung. Keine Änderungen, keine E-Mail';
+$_LANG['admin.settings.index.providers.products_settings_provider.catalogueSync_manual'] = 'Manuell';
+$_LANG['admin.settings.index.providers.products_settings_provider.catalogueSync_alterations'] = 'Nur Anpassungen';
+$_LANG['admin.settings.index.providers.products_settings_provider.catalogueSync_alterations_removal'] = 'Anpassungen und Entfernen';
+$_LANG['admin.settings.index.providers.products_settings_provider.catalogueSync_all'] = 'Alles (auch neue Produkte importieren)';
 $_LANG['admin.products.productsTab'] = 'Produkte';
 $_LANG['admin.products.catalogueTab'] = 'Katalogänderungen';
 $_LANG['admin.products.show_label'] = 'Anzeigen';
@@ -1669,3 +1669,8 @@ $_LANG['admin.breadcrumbs.ModuleUpdate'] = 'Modul-Update';
 $_LANG['admin.breadcrumbs.ModuleUpdate_index'] = 'Modul-Update';
 $_LANG['admin.module_update.rollback_cli'] = 'Das Zurücksetzen ist auf diesem Server nicht über diese Seite möglich (siehe Serverprüfungen). Auf dem Server ausführen: :command';
 $_LANG['admin.module_update.continue'] = 'Weiter';
+
+// Settings > Products (catalogue sync moved here from Finance)
+$_LANG['admin.settings.index.widgets.sidebar.productsSettings'] = 'Produkte';
+$_LANG['admin.settings.index.widgets.products_settings_widget.title'] = 'Produkte';
+$_LANG['admin.settings.index.widgets.products_settings_widget.subtitle'] = 'Wie Ihre Produktliste dem Katalog des Anbieters folgt';

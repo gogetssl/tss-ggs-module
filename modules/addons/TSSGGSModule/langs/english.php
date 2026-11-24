@@ -1580,24 +1580,24 @@ $_LANG['admin.products.index.data_tables.products.array_data_provider.data_table
 $_LANG['admin.products.index.data_tables.products.array_data_provider.data_table.product_addon'] = 'Product addon #:id';
 
 // Catalogue sync (M-16)
-$_LANG['admin.settings.index.forms.finance_settings_form.catalogueSync'] = 'Catalogue sync';
-$_LANG['admin.settings.index.forms.finance_settings_form.catalogueSync_desc'] = 'Every night the module compares the provider\'s product list with the previous one. Every change is listed on the Products page (tab "Catalogue changes"). The mode decides what the module changes by itself:';
-$_LANG['admin.settings.index.forms.finance_settings_form.catalogueMode_manual'] = 'Manually:';
-$_LANG['admin.settings.index.forms.finance_settings_form.catalogueMode_manual_text'] = 'nothing is changed, every change is only reported.';
-$_LANG['admin.settings.index.forms.finance_settings_form.catalogueMode_alterations'] = 'Only alterations:';
-$_LANG['admin.settings.index.forms.finance_settings_form.catalogueMode_alterations_text'] = 'products that changed are updated (SAN options, product settings); new and discontinued products are only reported.';
-$_LANG['admin.settings.index.forms.finance_settings_form.catalogueMode_alterations_removal'] = 'Alterations and removal:';
-$_LANG['admin.settings.index.forms.finance_settings_form.catalogueMode_alterations_removal_text'] = 'also retires products the provider stopped selling (missing on two different days). A product with active services is only hidden from the order form; its services keep working.';
-$_LANG['admin.settings.index.forms.finance_settings_form.catalogueMode_all'] = 'All:';
-$_LANG['admin.settings.index.forms.finance_settings_form.catalogueMode_all_text'] = 'also imports new products, hidden and with the default margin, into a hidden group for you to review before they go on sale.';
-$_LANG['admin.settings.index.forms.finance_settings_form.catalogueSyncMode'] = 'Sync mode';
-$_LANG['admin.settings.index.forms.finance_settings_form.catalogueSyncMode_description'] = 'What the nightly sync may change by itself. The Re-sync button on the Products page always updates the products.';
-$_LANG['admin.settings.index.forms.finance_settings_form.catalogueChangesEmail'] = 'E-mail the administrators';
-$_LANG['admin.settings.index.forms.finance_settings_form.catalogueChangesEmail_description'] = 'A summary of the changes and of what the module did, sent after the nightly sync. No changes, no e-mail';
-$_LANG['admin.settings.index.providers.finance_settings_provider.catalogueSync_manual'] = 'Manually';
-$_LANG['admin.settings.index.providers.finance_settings_provider.catalogueSync_alterations'] = 'Only alterations';
-$_LANG['admin.settings.index.providers.finance_settings_provider.catalogueSync_alterations_removal'] = 'Alterations and removal';
-$_LANG['admin.settings.index.providers.finance_settings_provider.catalogueSync_all'] = 'All (also import new products)';
+$_LANG['admin.settings.index.forms.products_settings_form.catalogueSync'] = 'Catalogue sync';
+$_LANG['admin.settings.index.forms.products_settings_form.catalogueSync_desc'] = 'Every night the module compares the provider\'s product list with the previous one. Every change is listed on the Products page (tab "Catalogue changes"). The mode decides what the module changes by itself:';
+$_LANG['admin.settings.index.forms.products_settings_form.catalogueMode_manual'] = 'Manually:';
+$_LANG['admin.settings.index.forms.products_settings_form.catalogueMode_manual_text'] = 'nothing is changed, every change is only reported.';
+$_LANG['admin.settings.index.forms.products_settings_form.catalogueMode_alterations'] = 'Only alterations:';
+$_LANG['admin.settings.index.forms.products_settings_form.catalogueMode_alterations_text'] = 'products that changed are updated (SAN options, product settings); new and discontinued products are only reported.';
+$_LANG['admin.settings.index.forms.products_settings_form.catalogueMode_alterations_removal'] = 'Alterations and removal:';
+$_LANG['admin.settings.index.forms.products_settings_form.catalogueMode_alterations_removal_text'] = 'also retires products the provider stopped selling (missing on two different days). A product with active services is only hidden from the order form; its services keep working.';
+$_LANG['admin.settings.index.forms.products_settings_form.catalogueMode_all'] = 'All:';
+$_LANG['admin.settings.index.forms.products_settings_form.catalogueMode_all_text'] = 'also imports new products, hidden and with the default margin, into a hidden group for you to review before they go on sale.';
+$_LANG['admin.settings.index.forms.products_settings_form.catalogueSyncMode'] = 'Sync mode';
+$_LANG['admin.settings.index.forms.products_settings_form.catalogueSyncMode_description'] = 'What the nightly sync may change by itself. The Re-sync button on the Products page always updates the products.';
+$_LANG['admin.settings.index.forms.products_settings_form.catalogueChangesEmail'] = 'E-mail the administrators';
+$_LANG['admin.settings.index.forms.products_settings_form.catalogueChangesEmail_description'] = 'A summary of the changes and of what the module did, sent after the nightly sync. No changes, no e-mail';
+$_LANG['admin.settings.index.providers.products_settings_provider.catalogueSync_manual'] = 'Manually';
+$_LANG['admin.settings.index.providers.products_settings_provider.catalogueSync_alterations'] = 'Only alterations';
+$_LANG['admin.settings.index.providers.products_settings_provider.catalogueSync_alterations_removal'] = 'Alterations and removal';
+$_LANG['admin.settings.index.providers.products_settings_provider.catalogueSync_all'] = 'All (also import new products)';
 $_LANG['admin.products.productsTab'] = 'Products';
 $_LANG['admin.products.catalogueTab'] = 'Catalogue changes';
 $_LANG['admin.products.show_label'] = 'Show';
@@ -1678,3 +1678,8 @@ $_LANG['admin.breadcrumbs.ModuleUpdate'] = 'Module update';
 $_LANG['admin.breadcrumbs.ModuleUpdate_index'] = 'Module update';
 $_LANG['admin.module_update.rollback_cli'] = 'Rolling back is not possible from this page here (see the server checks). Run on the server: :command';
 $_LANG['admin.module_update.continue'] = 'Continue';
+
+// Settings > Products (catalogue sync moved here from Finance)
+$_LANG['admin.settings.index.widgets.sidebar.productsSettings'] = 'Products';
+$_LANG['admin.settings.index.widgets.products_settings_widget.title'] = 'Products';
+$_LANG['admin.settings.index.widgets.products_settings_widget.subtitle'] = 'How your product list follows the provider\'s catalogue';
