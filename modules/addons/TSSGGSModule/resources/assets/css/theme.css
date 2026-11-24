@@ -596,5 +596,38 @@
 #layers2 .tssggs-show { display: flex; flex-wrap: wrap; gap: 8px; }
 #layers2 .tssggs-show .lu-btn b { margin-left: 4px; font-weight: 600; }
 
-/* Settings > CRON: what starts the module's jobs right now (CronSettingsWidget::status) */
-#layers2 .tssggs-cronone .tssggs-cronone__status { margin: 12px 0 0; font-size: 13px; line-height: 20px; background: #fff; }
+/* Settings > CRON: live panel - is the cron running, what starts it, one lamp per job (CronSettingsWidget::live).
+   Colours of the Automated SSL banner (.ssl-promo); the lamps flash one by one from left to right while the cron runs. */
+#layers2 .tssggs-cronlive {
+  --cl-bg: oklch(0.31 0.055 152); --cl-text: oklch(0.96 0.02 152); --cl-muted: oklch(0.78 0.03 152); --cl-line: oklch(0.44 0.07 152);
+  --cl-ok: oklch(0.78 0.17 152); --cl-warn: oklch(0.82 0.15 85); --cl-bad: oklch(0.7 0.19 27); --cl-idle: oklch(0.55 0.03 152);
+  margin: 0 0 24px; border: 1px solid var(--cl-line); border-radius: 8px; background: var(--cl-bg); color: var(--cl-text); overflow: hidden;
+}
+#layers2 .tssggs-cronlive__top { display: flex; align-items: center; gap: 16px; padding: 18px 24px; }
+#layers2 .tssggs-cronlive__dot { flex: 0 0 14px; width: 14px; height: 14px; border-radius: 50%; background: var(--cl-ok); box-shadow: 0 0 0 4px color-mix(in oklch, var(--cl-ok) 25%, transparent); }
+#layers2 .tssggs-cronlive.is-warn .tssggs-cronlive__dot { background: var(--cl-warn); box-shadow: 0 0 0 4px color-mix(in oklch, var(--cl-warn) 25%, transparent); }
+#layers2 .tssggs-cronlive.is-bad .tssggs-cronlive__dot { background: var(--cl-bad); box-shadow: 0 0 0 4px color-mix(in oklch, var(--cl-bad) 25%, transparent); }
+#layers2 .tssggs-cronlive.is-ok .tssggs-cronlive__dot { animation: tssggs-cl-pulse 2s ease-in-out infinite; }
+#layers2 .tssggs-cronlive__copy { flex: 1 1 auto; min-width: 0; }
+#layers2 .tssggs-cronlive__title { font-size: 16px; font-weight: 700; line-height: 22px; color: var(--cl-text); }
+#layers2 .tssggs-cronlive__sub { margin-top: 2px; font-size: 13px; line-height: 20px; color: var(--cl-muted); }
+#layers2 .tssggs-cronlive__sub code, #layers2 .tssggs-cronlive__next b { padding: 0; background: none; color: var(--cl-text); font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+#layers2 .tssggs-cronlive__next { flex: 0 0 auto; font-size: 13px; color: var(--cl-muted); white-space: nowrap; }
+#layers2 .tssggs-cronlive__next b { font-size: 16px; font-weight: 700; }
+#layers2 .tssggs-cronlive__jobs { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 24px; padding: 12px 24px; border-top: 1px solid var(--cl-line); }
+#layers2 .tssggs-cronlive__jobs ul { display: flex; flex-wrap: wrap; gap: 8px 24px; margin: 0; padding: 0; list-style: none; }
+#layers2 .tssggs-cronlive__jobs li { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; color: var(--cl-text); }
+#layers2 .tssggs-cronlive__jobs li span { width: 10px; height: 10px; border-radius: 50%; background: var(--cl-ok); opacity: .55; }
+#layers2 .tssggs-cronlive__jobs li.is-bad span { background: var(--cl-bad); opacity: 1; }
+#layers2 .tssggs-cronlive__jobs li.is-idle span { background: var(--cl-idle); opacity: 1; }
+#layers2 .tssggs-cronlive.is-ok li span { animation: tssggs-cl-lamp calc(var(--n, 4) * .6s + 1.2s) ease-in-out infinite; animation-delay: calc(var(--i, 0) * .6s); }
+#layers2 .tssggs-cronlive__sum { margin-left: auto; font-size: 14px; color: var(--cl-muted); }
+#layers2 .tssggs-cronlive__sum b { margin-left: 16px; color: var(--cl-bad); font-weight: 700; }
+@keyframes tssggs-cl-pulse { 0%, 100% { box-shadow: 0 0 0 3px color-mix(in oklch, var(--cl-ok) 30%, transparent); } 50% { box-shadow: 0 0 0 7px color-mix(in oklch, var(--cl-ok) 10%, transparent); } }
+@keyframes tssggs-cl-lamp { 0%, 30%, 100% { opacity: .55; box-shadow: none; } 12% { opacity: 1; box-shadow: 0 0 8px 2px currentColor; } }
+#layers2 .tssggs-cronlive__jobs li.is-ok { --lamp: var(--cl-ok); }
+#layers2 .tssggs-cronlive__jobs li span { color: var(--cl-ok); }
+#layers2 .tssggs-cronlive__jobs li.is-bad span { color: var(--cl-bad); }
+#layers2 .tssggs-cronlive__jobs li.is-idle span { color: var(--cl-idle); }
+@media (max-width: 640px) { #layers2 .tssggs-cronlive__top { flex-wrap: wrap; padding: 16px; } #layers2 .tssggs-cronlive__next { flex-basis: 100%; padding-left: 30px; } #layers2 .tssggs-cronlive__jobs { padding: 12px 16px; } #layers2 .tssggs-cronlive__sum { margin-left: 0; } }
+@media (prefers-reduced-motion: reduce) { #layers2 .tssggs-cronlive__dot, #layers2 .tssggs-cronlive li span { animation: none !important; } }
