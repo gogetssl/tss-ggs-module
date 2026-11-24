@@ -198,13 +198,15 @@
     grid-column: 2;
 }
 
-/* percent fields (Finance Settings): the number on the right with a "%" after it, "1 %" - no spinner under the sign */
-#layers2 .tssggs-settings form .tssggs-sec .lu-form-group:has(> .tssggs-percent) {
+/* unit fields (Finance Settings): the number on the right with its unit after it - "1 %", "0 USD" (another base
+   currency: FinanceSettingsForm sets the text); no number spinner under the unit */
+#layers2 .tssggs-settings form .tssggs-sec .lu-form-group:has(> .tssggs-percent),
+#layers2 .tssggs-settings form .tssggs-sec .lu-form-group:has(> .tssggs-money) {
     position: relative;
 }
 
-#layers2 .tssggs-settings form .tssggs-sec .lu-form-group:has(> .tssggs-percent)::after {
-    content: "%";
+#layers2 .tssggs-settings form .tssggs-sec .lu-form-group:has(> .tssggs-percent)::after,
+#layers2 .tssggs-settings form .tssggs-sec .lu-form-group:has(> .tssggs-money)::after {
     position: absolute;
     right: 14px;
     top: 50%;
@@ -214,10 +216,26 @@
     pointer-events: none;
 }
 
-#layers2 .tssggs-settings form .tssggs-sec .lu-form-group > input.tssggs-percent {
-    padding-right: 30px !important;
+#layers2 .tssggs-settings form .tssggs-sec .lu-form-group:has(> .tssggs-percent)::after {
+    content: "%";
+}
+
+#layers2 .tssggs-settings form .tssggs-sec .lu-form-group:has(> .tssggs-money)::after {
+    content: "USD";
+}
+
+#layers2 .tssggs-settings form .tssggs-sec .lu-form-group > input.tssggs-percent,
+#layers2 .tssggs-settings form .tssggs-sec .lu-form-group > input.tssggs-money {
     text-align: right;
     -moz-appearance: textfield;
+}
+
+#layers2 .tssggs-settings form .tssggs-sec .lu-form-group > input.tssggs-percent {
+    padding-right: 30px !important;
+}
+
+#layers2 .tssggs-settings form .tssggs-sec .lu-form-group > input.tssggs-money {
+    padding-right: 50px !important;
 }
 
 #layers2 .tssggs-settings form .tssggs-sec .lu-form-group > input.tssggs-percent::-webkit-outer-spin-button,

@@ -3,6 +3,7 @@
 namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Forms;
 
 
+use ModulesGarden\TSSGGSModule\App\Libs\FinancePolicy;
 use ModulesGarden\TSSGGSModule\App\Libs\Markups;
 use ModulesGarden\TSSGGSModule\App\Libs\Helpers;
 use ModulesGarden\TSSGGSModule\App\Libs\PricingService;
@@ -48,7 +49,14 @@ class FinanceSettingsForm extends Form implements AdminAreaInterface, AjaxCompon
         $pricing = $this->section('pricing', 'trending-up');
         $pricing->addElement((new Text())->setText($this->otherPriceRules()));
         $this->builder->addFieldInContainer($pricing, (new Number())->setName('profitMargin')->addClass('tssggs-percent')->setMin(0)->setMax(1000)->required()->numeric()->between(0, 1000), true);
-        $this->builder->addFieldInContainer($pricing, (new FormInputText())->setName('minProfit')->numeric()->between(0, 100000), true);
+        $currency = preg_replace('/[^A-Z]/', '', FinancePolicy::baseCurrencyCode());
+        if($currency !== '' && $currency !== 'USD')
+        {
+            // the amount field shows the currency after the number: USD in settings.css, another base currency here
+            $pricing->addElement((new Text())->setText('<style>#layers2 .tssggs-settings form .tssggs-sec .lu-form-group:has(> .tssggs-money)::after { content: "'
+                . $currency . '"; }</style>'));
+        }
+        $this->builder->addFieldInContainer($pricing, (new FormInputText())->setName('minProfit')->addClass('tssggs-money')->numeric()->between(0, 100000), true);
         $this->builder->addFieldInContainer($pricing, (new Number())->setName('termMarginStep')->addClass('tssggs-percent')->setMin(0)->setMax(100)->numeric()->between(0, 100), true);
         $this->builder->addFieldInContainer($pricing, (new Dropdown())->setName('priceRounding'), true);
         $this->builder->addFieldInContainer($pricing, (new Switcher())->setName('keepMarginOnSync')->addClass('switcher-revert'), true);

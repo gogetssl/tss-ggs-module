@@ -1333,10 +1333,10 @@ $_LANG['admin.settings.index.forms.logs_settings_form.debugHours_description'] =
 // Settings > Finance (FinancePolicy, RenewalPrices)
 $_LANG['admin.settings.index.widgets.finance_settings_widget.subtitle'] = 'Prices, margins, renewals, currency and billing rules';
 $_LANG['admin.settings.index.forms.finance_settings_form.pricing'] = 'Pricing';
-$_LANG['admin.settings.index.forms.finance_settings_form.profitMargin'] = 'Default margin %';
+$_LANG['admin.settings.index.forms.finance_settings_form.profitMargin'] = 'Default margin';
 $_LANG['admin.settings.index.forms.finance_settings_form.minProfit'] = 'Minimum profit per certificate';
 $_LANG['admin.settings.index.forms.finance_settings_form.minProfit_description'] = 'In USD (or your default currency when WHMCS has no USD). A certificate always earns at least this much over its cost, whatever the margin says: 30% of a 6.00 certificate is only 1.80. Not applied to SAN options. 0 = off';
-$_LANG['admin.settings.index.forms.finance_settings_form.termMarginStep'] = 'Lower margin per extra year %';
+$_LANG['admin.settings.index.forms.finance_settings_form.termMarginStep'] = 'Lower margin per extra year';
 $_LANG['admin.settings.index.forms.finance_settings_form.termMarginStep_description'] = 'The margin of 2 and 3 year terms is lowered by this much per extra year (margin 30, step 5: 1 year 30%, 2 years 25%, 3 years 20%), so long terms stay competitive. Never below 0. 0 = the same margin for every term';
 $_LANG['admin.settings.index.forms.finance_settings_form.priceRounding'] = 'Price rounding';
 $_LANG['admin.settings.index.forms.finance_settings_form.priceRounding_description'] = 'Rounds every calculated price up to a clean ending. Rounding never lowers a price';
@@ -1367,7 +1367,7 @@ $_LANG['admin.settings.index.forms.finance_settings_form.rateSource'] = 'Exchang
 $_LANG['admin.settings.index.forms.finance_settings_form.rateSource_description'] = 'WHMCS has no USD currency, so the module converts the cost itself. Daily rate: updated from the European Central Bank before every price update';
 $_LANG['admin.settings.index.forms.finance_settings_form.rate'] = 'Rate';
 $_LANG['admin.settings.index.forms.finance_settings_form.rate_description'] = '1 USD = this many units of your default currency. With the daily rate it is filled in automatically';
-$_LANG['admin.settings.index.forms.finance_settings_form.currencyBuffer'] = 'Currency safety buffer %';
+$_LANG['admin.settings.index.forms.finance_settings_form.currencyBuffer'] = 'Currency safety buffer';
 $_LANG['admin.settings.index.forms.finance_settings_form.currencyBuffer_description'] = 'Added to prices in currencies other than USD, so an exchange rate move between two price updates does not eat your margin. 0 = off';
 $_LANG['admin.settings.index.providers.finance_settings_provider.rateSource_manual'] = 'Fixed rate (entered below)';
 $_LANG['admin.settings.index.providers.finance_settings_provider.rateSource_ecb'] = 'Daily rate (European Central Bank)';

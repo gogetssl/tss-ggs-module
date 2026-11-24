@@ -1332,7 +1332,7 @@ $_LANG['admin.settings.index.widgets.finance_settings_widget.subtitle'] = 'Preis
 $_LANG['admin.settings.index.forms.finance_settings_form.pricing'] = 'Preisgestaltung';
 $_LANG['admin.settings.index.forms.finance_settings_form.minProfit'] = 'Mindestgewinn pro Zertifikat';
 $_LANG['admin.settings.index.forms.finance_settings_form.minProfit_description'] = 'In USD (oder in Ihrer Standardwährung, wenn WHMCS kein USD hat). Ein Zertifikat bringt immer mindestens diesen Betrag über seinem Einkaufspreis ein, unabhängig von der Marge: 30% eines Zertifikats für 6.00 sind nur 1.80. Gilt nicht für SAN-Optionen. 0 = aus';
-$_LANG['admin.settings.index.forms.finance_settings_form.termMarginStep'] = 'Geringere Marge pro zusätzlichem Jahr %';
+$_LANG['admin.settings.index.forms.finance_settings_form.termMarginStep'] = 'Geringere Marge pro zusätzlichem Jahr';
 $_LANG['admin.settings.index.forms.finance_settings_form.termMarginStep_description'] = 'Die Marge für Laufzeiten von 2 und 3 Jahren wird pro zusätzlichem Jahr um diesen Wert gesenkt (Marge 30, Schritt 5: 1 Jahr 30%, 2 Jahre 25%, 3 Jahre 20%), damit lange Laufzeiten wettbewerbsfähig bleiben. Nie unter 0. 0 = dieselbe Marge für jede Laufzeit';
 $_LANG['admin.settings.index.forms.finance_settings_form.priceRounding'] = 'Preisrundung';
 $_LANG['admin.settings.index.forms.finance_settings_form.priceRounding_description'] = 'Rundet jeden berechneten Preis auf eine glatte Endung auf. Die Rundung senkt nie einen Preis';
@@ -1361,7 +1361,7 @@ $_LANG['admin.settings.index.forms.finance_settings_form.currency_desc'] = 'Der 
 $_LANG['admin.settings.index.forms.finance_settings_form.rateSource'] = 'Wechselkurs USD in Ihre Standardwährung';
 $_LANG['admin.settings.index.forms.finance_settings_form.rateSource_description'] = 'WHMCS hat keine USD-Währung, daher rechnet das Modul den Einkaufspreis selbst um. Tageskurs: wird vor jeder Preisaktualisierung von der Europäischen Zentralbank abgerufen';
 $_LANG['admin.settings.index.forms.finance_settings_form.rate_description'] = '1 USD = so viele Einheiten Ihrer Standardwährung. Beim Tageskurs wird der Wert automatisch eingetragen';
-$_LANG['admin.settings.index.forms.finance_settings_form.currencyBuffer'] = 'Währungs-Sicherheitspuffer %';
+$_LANG['admin.settings.index.forms.finance_settings_form.currencyBuffer'] = 'Währungs-Sicherheitspuffer';
 $_LANG['admin.settings.index.forms.finance_settings_form.currencyBuffer_description'] = 'Wird auf Preise in anderen Währungen als USD aufgeschlagen, damit eine Wechselkursänderung zwischen zwei Preisaktualisierungen Ihre Marge nicht aufzehrt. 0 = aus';
 $_LANG['admin.settings.index.providers.finance_settings_provider.rateSource_manual'] = 'Fester Kurs (unten eingegeben)';
 $_LANG['admin.settings.index.providers.finance_settings_provider.rateSource_ecb'] = 'Tageskurs (Europäische Zentralbank)';

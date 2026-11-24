@@ -1334,7 +1334,7 @@ $_LANG['admin.settings.index.widgets.finance_settings_widget.subtitle'] = 'Prise
 $_LANG['admin.settings.index.forms.finance_settings_form.pricing'] = 'Prissætning';
 $_LANG['admin.settings.index.forms.finance_settings_form.minProfit'] = 'Mindste fortjeneste pr. certifikat';
 $_LANG['admin.settings.index.forms.finance_settings_form.minProfit_description'] = 'I USD (eller din standardvaluta, hvis WHMCS ikke har USD). Et certifikat giver altid mindst dette beløb ud over omkostningen, uanset margenen: 30% af et certifikat til 6.00 er kun 1.80. Gælder ikke for SAN-tilvalg. 0 = slået fra';
-$_LANG['admin.settings.index.forms.finance_settings_form.termMarginStep'] = 'Lavere margen pr. ekstra år %';
+$_LANG['admin.settings.index.forms.finance_settings_form.termMarginStep'] = 'Lavere margen pr. ekstra år';
 $_LANG['admin.settings.index.forms.finance_settings_form.termMarginStep_description'] = 'Margenen for perioder på 2 og 3 år sænkes med denne værdi pr. ekstra år (margen 30, trin 5: 1 år 30%, 2 år 25%, 3 år 20%), så lange perioder forbliver konkurrencedygtige. Aldrig under 0. 0 = samme margen for alle perioder';
 $_LANG['admin.settings.index.forms.finance_settings_form.priceRounding'] = 'Prisafrunding';
 $_LANG['admin.settings.index.forms.finance_settings_form.priceRounding_description'] = 'Runder hver beregnet pris op til en pæn slutværdi. Afrunding sænker aldrig en pris';
@@ -1363,7 +1363,7 @@ $_LANG['admin.settings.index.forms.finance_settings_form.currency_desc'] = 'Forh
 $_LANG['admin.settings.index.forms.finance_settings_form.rateSource'] = 'Valutakurs fra USD til din standardvaluta';
 $_LANG['admin.settings.index.forms.finance_settings_form.rateSource_description'] = 'WHMCS har ingen USD-valuta, så modulet omregner selv omkostningen. Dagskurs: opdateres fra Den Europæiske Centralbank før hver prisopdatering';
 $_LANG['admin.settings.index.forms.finance_settings_form.rate_description'] = '1 USD = dette antal enheder af din standardvaluta. Med dagskursen udfyldes feltet automatisk';
-$_LANG['admin.settings.index.forms.finance_settings_form.currencyBuffer'] = 'Sikkerhedsbuffer for valuta %';
+$_LANG['admin.settings.index.forms.finance_settings_form.currencyBuffer'] = 'Sikkerhedsbuffer for valuta';
 $_LANG['admin.settings.index.forms.finance_settings_form.currencyBuffer_description'] = 'Lægges til priser i andre valutaer end USD, så en kursændring mellem to prisopdateringer ikke æder din margen. 0 = slået fra';
 $_LANG['admin.settings.index.providers.finance_settings_provider.rateSource_manual'] = 'Fast kurs (angives nedenfor)';
 $_LANG['admin.settings.index.providers.finance_settings_provider.rateSource_ecb'] = 'Dagskurs (Den Europæiske Centralbank)';
