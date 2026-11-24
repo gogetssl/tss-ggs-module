@@ -1387,10 +1387,11 @@ $_LANG['admin.settings.index.forms.finance_settings_form.balanceAlert_descriptio
 $_LANG['admin.settings.index.forms.finance_settings_form.balanceThreshold'] = 'Warnen, wenn das verbleibende Guthaben unter diesem Betrag liegt (:currency)';
 $_LANG['admin.settings.index.forms.finance_settings_form.balanceThresholdBrand'] = ':brand-Konto: warnen, wenn das verbleibende Guthaben unter diesem Betrag liegt (:currency)';
 $_LANG['admin.settings.index.forms.finance_settings_form.balanceThreshold_description'] = 'Das Guthaben wird stündlich gelesen. Unter diesem Betrag erhalten die WHMCS-Administratoren eine E-Mail, höchstens eine pro Tag, solange es niedrig bleibt. Prepaid-Konten: es zählt das Guthaben; Kreditkonten: der verbleibende Kredit (Guthaben + Kreditlimit); Konten mit Monatsrechnung werden nie durch das Guthaben gestoppt. Sie erhalten auch eine E-Mail, wenn das Konto nicht mehr aktiv ist. 0 = aus';
-$_LANG['admin.settings.index.forms.finance_settings_form.balanceNow'] = ':brand-Konto: Guthaben :balance (Prepaid). Aktualisiert am :time.';
-$_LANG['admin.settings.index.forms.finance_settings_form.balanceNowCredit'] = ':brand-Konto: Ihnen steht eine Kreditlinie zur Verfügung: :left (Kreditlimit :limit, Guthaben :balance). Aktualisiert am :time.';
-$_LANG['admin.settings.index.forms.finance_settings_form.balanceNowCreditNoLimit'] = ':brand-Konto: Guthaben :balance, Kredit ohne Limit - keine Warnung nötig. Aktualisiert am :time.';
-$_LANG['admin.settings.index.forms.finance_settings_form.balanceNowInvoice'] = ':brand-Konto: Guthaben :balance, Zahlung per Monatsrechnung - ein niedriges Guthaben stoppt keine Bestellungen, daher keine Warnung. Aktualisiert am :time.';
+$_LANG['admin.settings.index.forms.finance_settings_form.balanceNow'] = ':brand-Konto: Guthaben :balance (Prepaid).';
+$_LANG['admin.settings.index.forms.finance_settings_form.balanceNowCredit'] = ':brand-Konto: Ihnen steht eine Kreditlinie zur Verfügung: :left (Kreditlimit :limit, Guthaben :balance).';
+$_LANG['admin.settings.index.forms.finance_settings_form.balanceNowCreditNoLimit'] = ':brand-Konto: Guthaben :balance, Kredit ohne Limit - keine Warnung nötig.';
+$_LANG['admin.settings.index.forms.finance_settings_form.balanceNowInvoice'] = ':brand-Konto: Guthaben :balance, Zahlung per Monatsrechnung - ein niedriges Guthaben stoppt keine Bestellungen, daher keine Warnung.';
+$_LANG['admin.settings.index.forms.finance_settings_form.balanceUpdated'] = 'Aktualisiert am :time';
 $_LANG['admin.settings.index.forms.finance_settings_form.balanceNotChecked'] = ':brand-Konto: Das Guthaben wurde noch nicht gelesen. Es wird beim Speichern dieser Seite und danach stündlich gelesen.';
 $_LANG['admin.settings.index.forms.finance_settings_form.balanceError'] = ':brand-Konto: Das Guthaben konnte nicht gelesen werden: :error';
 $_LANG['admin.settings.index.forms.finance_settings_form.balanceErrorLast'] = 'Das letzte Lesen ist fehlgeschlagen: :error';

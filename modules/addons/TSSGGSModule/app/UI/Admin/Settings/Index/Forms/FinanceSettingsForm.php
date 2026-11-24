@@ -145,6 +145,8 @@ class FinanceSettingsForm extends Form implements AdminAreaInterface, AjaxCompon
         {
             $text .= ' ' . $this->translate('balanceInactive', $vars);
         }
+        // when it was read: a second, quieter line
+        $text .= '<span class="tssggs-renewal-check__meta">' . $this->translate('balanceUpdated', $vars) . '</span>';
 
         if($inactive || !empty($info['low']) || !empty($info['error']))
         {
