@@ -2,6 +2,7 @@
 
 namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Reports\Index\DataTables\Renewal\ArrayDataProvider;
 
+use ModulesGarden\TSSGGSModule\App\UI\Admin\Reports\Index\DataTables\Shared\StatusLabel;
 
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Reports\Index\DataTables\Renewal\Forms\DownloadForm;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Reports\Index\DataTables\Renewal\Forms\GetCsvForm;
@@ -88,27 +89,7 @@ class DataTable extends \ModulesGarden\TSSGGSModule\Components\DataTable\DataTab
     protected function parseDataSetRecords(): void
     {
         $this->dataSet->setFieldModifier('status', function($fieldName, $row, $fieldValue) {
-
-            if($fieldValue == 'Active')
-            {
-                $label = new LabelSuccess();
-            }
-            elseif($fieldValue == 'Pending')
-            {
-                $label = new LabelWarning();
-            }
-            elseif($fieldValue == 'Awaiting Configuration')
-            {
-                $label = new Label();
-            }
-            else
-            {
-                $label = new LabelDanger();
-            }
-
-            $label->setText($fieldValue);
-
-            return $label;
+            return StatusLabel::order($fieldValue);
         });
 
         $this->dataSet->modifyRecords();

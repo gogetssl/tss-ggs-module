@@ -169,7 +169,7 @@ class CaaCheck
         $stored    = CertificateService::stored($serviceId);
         $orderData = (array)($stored['orderData'] ?? []);
         // only while the certificate waits for issuance
-        if(in_array(strtolower((string)($orderData['order']['status'] ?? '')), ['active', 'cancelled', 'canceled', 'rejected', 'revoked', 'refunded', 'expired', 'filed'], true))
+        if(in_array(strtolower((string)($orderData['order']['status'] ?? '')), ['active', 'cancelled', 'canceled', 'rejected', 'revoked', 'refunded', 'expired'], true))
         {
             return null;
         }

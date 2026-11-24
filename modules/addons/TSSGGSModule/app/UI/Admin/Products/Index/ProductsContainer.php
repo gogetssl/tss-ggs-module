@@ -54,6 +54,7 @@ class ProductsContainer extends Container implements AdminAreaInterface
             $text->setText($this->explanation());
             $productsTab->addElement($text);
         }
+        $productsTab->addElement($this->showFilter());
         $productsTab->addElement(new DataTable());
 
         // what changed in the provider's catalogue (M-16)
@@ -75,6 +76,59 @@ class ProductsContainer extends Container implements AdminAreaInterface
         $tabs->addTab($productsTab);
         $tabs->addTab($changesTab);
         $this->addElement($tabs);
+    }
+
+    /**
+     * The list filters as links (DataTable::show / ::type): All / Imported / Not imported and All types / DV / OV / EV /
+     * Other; each count follows the other group's current choice
+     */
+    protected function showFilter(): Text
+    {
+        $show    = DataTable::show();
+        $type    = DataTable::type();
+        $groups  = [
+            'show' => ['' => 'show_all', 'imported' => 'show_imported', 'not_imported' => 'show_not_imported'],
+            'type' => ['' => 'type_all', 'dv' => 'type_dv', 'ov' => 'type_ov', 'ev' => 'type_ev', 'other' => 'type_other'],
+        ];
+        $counts  = ['show' => array_fill_keys(array_keys($groups['show']), 0), 'type' => array_fill_keys(array_keys($groups['type']), 0)];
+        foreach(DataTable::catalogue() as [$remoteProduct, $whmcsProduct])
+        {
+            foreach(array_keys($groups['show']) as $value)
+            {
+                $counts['show'][$value] += DataTable::passes($remoteProduct, $whmcsProduct, (string)$value, $type) ? 1 : 0;
+            }
+            foreach(array_keys($groups['type']) as $value)
+            {
+                $counts['type'][$value] += DataTable::passes($remoteProduct, $whmcsProduct, $show, (string)$value) ? 1 : 0;
+            }
+        }
+
+        $html = '';
+        foreach($groups as $group => $choices)
+        {
+            $html .= '<div class="tssggs-show" role="group" aria-label="' . htmlspecialchars((string)$this->translate($group . '_label', [], ['admin.products']), ENT_QUOTES) . '">';
+            foreach($choices as $value => $key)
+            {
+                $value   = (string)$value;
+                $current = $value === ($group === 'show' ? $show : $type);
+                if($value === 'other' && !$counts[$group][$value] && !$current)
+                {
+                    continue;
+                }
+                // a link keeps the other group's choice
+                $params  = array_filter(['show' => $group === 'show' ? $value : $show, 'type' => $group === 'type' ? $value : $type]);
+                $url     = 'addonmodules.php?module=TSSGGSModule&amp;mg-page=products' . ($params ? '&amp;' . http_build_query($params, '', '&amp;') : '');
+                $html   .= '<a class="lu-btn lu-btn--sm ' . ($current ? 'lu-btn--primary' : 'lu-btn--default lu-btn--outline') . '" href="' . $url . '"'
+                    . ($current ? ' aria-current="page"' : '') . '>'
+                    . htmlspecialchars((string)$this->translate($key, [], ['admin.products']), ENT_QUOTES) . ' <b>' . $counts[$group][$value] . '</b></a>';
+            }
+            $html .= '</div>';
+        }
+        $text = new Text();
+        $text->setCss('tssggs-html');
+        $text->setText('<div class="tssggs-filters">' . $html . '</div>');
+
+        return $text;
     }
 
     /** The catalogue changes of the last 90 days, newest first */

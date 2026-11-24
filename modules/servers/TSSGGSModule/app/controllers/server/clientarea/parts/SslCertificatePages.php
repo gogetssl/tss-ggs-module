@@ -74,6 +74,12 @@ trait SslCertificatePages
         $renewalUntil         = \ModulesGarden\TSSGGSModule\App\Libs\RenewalPolicy::pendingRenewalUntil((int)$serviceId);
         $vars['renewalNotice'] = $renewalUntil !== '' ? sprintf(Lang::absoluteT('sslRenewalPendingNotice'), $this->smimeDate($renewalUntil)) : '';
 
+        // the certificate is bought already: its token completes the order here or in a hosting panel plugin (a
+        // migrated order bought at payment: the token is read once)
+        \ModulesGarden\TSSGGSModule\App\Libs\IncompleteOrder::claimMigrated((int)$serviceId);
+        $vars['certificateToken'] = \ModulesGarden\TSSGGSModule\App\Libs\IncompleteOrder::token((int)$serviceId);
+        $vars['serviceid']        = (int)$serviceId;
+
         return ['tpl' => 'awaiting_configuration', 'vars' => $vars];
     }
 
@@ -125,6 +131,10 @@ trait SslCertificatePages
         $vars['vendor_order_id']                     = is_array($order['items']) ? reset($order['items'])['vendor']['id'] : "";
         $vars['domain']                              = $service->domain;
         $vars['status']                              = $order['order']['status'];
+        // the order waits at the vendor side (failed, unpaid, new order): an orange message, no API call
+        $vars['vendorNotice']                        = in_array(\ModulesGarden\TSSGGSModule\App\Libs\CertificateSyncHelpers::normalizeStatus($vars['status']), \ModulesGarden\TSSGGSModule\App\Libs\CertificateSyncHelpers::NOTICE_STATUSES, true)
+            ? Lang::absoluteT('vendor_notice_' . \ModulesGarden\TSSGGSModule\App\Libs\CertificateSyncHelpers::normalizeStatus($vars['status'])) : '';
+        $vars['statusLabel']                         = $vars['vendorNotice'] !== '' ? Lang::absoluteT('vendor_status_' . \ModulesGarden\TSSGGSModule\App\Libs\CertificateSyncHelpers::normalizeStatus($vars['status'])) : '';
         $vars['valid_from']                          = '';
         $vars['valid_till']                          = '';
         $vars['subscribtion_starts']                 = '';
@@ -394,6 +404,14 @@ trait SslCertificatePages
         $configuration = (new AddonModuleRepository())->getModuleConfiguration();
 
         $clientData = $input['params']['model']->client->toArray();
+
+        // Default CSR Country: the fixed one from the settings, else the client's own country
+        $defaultCountry = strtoupper(trim((string)($configuration['sslSettings']['defaultCsrCountry'] ?? '')));
+        if(!preg_match('/^[A-Z]{2}$/', $defaultCountry))
+        {
+            $defaultCountry = strtoupper(trim((string)($clientData['country'] ?? '')));
+        }
+        $configuration['sslSettings']['defaultCsrCountry'] = $defaultCountry;
         if(!isset($configuration['sslSettings']['useProfileDetailsForCsr']) || empty($configuration['sslSettings']['useProfileDetailsForCsr']))
         {
             foreach($clientData as $key => $value)

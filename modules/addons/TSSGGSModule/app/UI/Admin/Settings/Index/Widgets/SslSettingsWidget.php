@@ -11,7 +11,7 @@ class SslSettingsWidget extends Widget
     public function loadHtml(): void
     {
         $this->setTitle($this->translate('title'));
-$this->setIcon('shield-check-outline');
+        $this->setIcon('shield-check-outline');
         $this->setSubtitle($this->translate('subtitle'));
         $this->addElement(new SslSettingsForm(false, SslSettingsForm::SCOPE_SSL));
     }

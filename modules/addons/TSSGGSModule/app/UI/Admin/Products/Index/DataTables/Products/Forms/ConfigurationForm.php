@@ -129,11 +129,11 @@ class ConfigurationForm extends Form implements AdminAreaInterface, AjaxComponen
         );
 
         $this->builder->addField(
-            (new TextArea())->setName('processingGuide')
+            (new TextArea())->setName('processingGuide'), true
         );
 
         $this->builder->addField(
-            (new TextArea())->setName('issuedMessage')
+            (new TextArea())->setName('issuedMessage'), true
         );
     }
 }

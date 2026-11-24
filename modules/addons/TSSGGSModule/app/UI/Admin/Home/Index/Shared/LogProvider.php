@@ -14,6 +14,25 @@ class LogProvider
 {
     use TranslatorTrait;
 
+    /** the cron jobs the report checks (each should have run within the last day) */
+    const CRONS = ['ProductPricingUpdate', 'SSLCertificates', 'RenewalNotifyCertificate', 'ReSyncProducts', 'SSLCertificatesProcessing', 'SSLAutoInstall'];
+
+    /** "No issues" or "Issues: N" (a cron that did not run in the last day or ended with an error) */
+    public static function cronStatus(): string
+    {
+        $issues = 0;
+        foreach(self::CRONS as $cron)
+        {
+            $check = CronCheck::where('type', $cron)->where('last_run', '>', date('Y-m-d H:i:s', strtotime('-1 day')))->first();
+            if(!$check || trim((string)$check->last_error) !== '')
+            {
+                $issues++;
+            }
+        }
+
+        return $issues ? 'Issues: ' . $issues : 'No issues';
+    }
+
     public function getLog($data = [])
     {
 
@@ -23,7 +42,7 @@ class LogProvider
             'phpVersion'          => 'PHP Version:',
             'tssPartnerId'        => 'TSS Partner ID:',
             'ggsPartnerId'        => 'GGS Partner ID:',
-            //'cronStatus'          => 'CRON Status:',
+            'cronStatus'          => 'CRON Status:',
             'fromDate'            => 'From Date:',
             'toDate'              => 'To Date:',
             //'modifiedModuleFiles' => 'Modified Files:',
@@ -46,10 +65,7 @@ class LogProvider
             $log[] = '';
         }
 
-        $expectedCrons = [
-            'ProductPricingUpdate',
-            'SSLCertificates'
-        ];
+        $expectedCrons = self::CRONS;
 
         $log[] = 'Crons:';
 

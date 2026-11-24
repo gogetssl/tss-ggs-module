@@ -127,7 +127,8 @@ add_hook('ClientAreaPrimarySidebar', 1, function($primarySidebar) {
             }
         }
 
-        if($serviceOpen && isset($orderData['orderData']['order']['status']) && $orderData['orderData']['order']['status'] == 'pending')
+        // the validation actions while the vendor processes the order ("pending" is the same as "processing")
+        if($serviceOpen && isset($orderData['orderData']['order']['status']) && in_array($orderData['orderData']['order']['status'], ['pending', 'processing'], true))
         {
             $myAccount = $primarySidebar->getChild('Service Details Actions');
             if($myAccount)
@@ -230,10 +231,16 @@ add_hook('ClientAreaPage', 1, function($params) {
             exit;
         }
 
+        // a certificate bought at payment is bought with its number of SANs: more can be added once it is enrolled
+        // (its details submitted), not while it waits for them
+        $notEnrolled = \ModulesGarden\TSSGGSModule\App\Libs\IncompleteOrder::pending($serviceId)
+            ? \ModulesGarden\TSSGGSModule\App\Libs\ClientText::get('sanUpgradeNotEnrolled', 'Additional domains can be added after the certificate details are submitted.')
+            : '';
+
         // SANs of an ordered certificate can only be added; the main domain type of a FLEX certificate is fixed
         if(isset($_POST['step']) && $_POST['step'] == '2' && isset($_POST['configoption']) && is_array($_POST['configoption']))
         {
-            $error = \ModulesGarden\TSSGGSModule\App\Libs\SanUpgrade::downgradeError($serviceId, $_POST['configoption']);
+            $error = $notEnrolled !== '' ? $notEnrolled : \ModulesGarden\TSSGGSModule\App\Libs\SanUpgrade::downgradeError($serviceId, $_POST['configoption']);
             if($error === '')
             {
                 $error = \ModulesGarden\TSSGGSModule\App\Libs\MainDomain::changeError((int)$serviceId, $_POST['configoption']);
@@ -252,6 +259,10 @@ add_hook('ClientAreaPage', 1, function($params) {
             unset($_SESSION['tssggs_upgrade_error']);
 
             return ['errormessage' => '<li>' . htmlspecialchars($error) . '</li>'];
+        }
+        if($notEnrolled !== '')
+        {
+            return ['errormessage' => '<li>' . htmlspecialchars($notEnrolled) . '</li>'];
         }
     }
 
@@ -278,6 +289,7 @@ add_hook('ClientAreaPageUpgrade', 1, function($vars) {
 add_hook('InvoiceCreation', 1, function($vars) {
     try
     {
+        \ModulesGarden\TSSGGSModule\App\Libs\UpgradePricing::cleanOneTimePeriods(isset($vars['invoiceid']) ? (int)$vars['invoiceid'] : 0);
         \ModulesGarden\TSSGGSModule\App\Libs\UpgradePricing::fixInvoice(isset($vars['invoiceid']) ? (int)$vars['invoiceid'] : 0);
     }
     catch(\Throwable $e)
@@ -323,11 +335,11 @@ add_hook('ClientAreaHomepagePanels', 1, function($homePagePanels) {
         }
 
         $t     = \ModulesGarden\TSSGGSModule\App\ClientArea\SslPages::texts();
-        $icons = ['unpaid' => 'fa-credit-card', 'processing' => 'fa-cogs', 'expires_soon' => 'fa-hourglass-half'];
+        $icons = ['unpaid' => 'fa-credit-card', 'awaiting' => 'fa-edit', 'processing' => 'fa-cogs', 'expires_soon' => 'fa-hourglass-half'];
         $body  = '<div class="tssggs-summary" style="display:flex;flex-wrap:wrap;text-align:center;">';
         foreach($icons as $type => $icon)
         {
-            $body .= '<a href="index.php?m=TSSGGSModule&amp;type=' . $type . '" style="flex:1 1 33%;padding:15px 5px;text-decoration:none;">'
+            $body .= '<a href="index.php?m=TSSGGSModule&amp;type=' . $type . '" style="flex:1 1 25%;padding:15px 5px;text-decoration:none;">'
                 . '<i class="fas ' . $icon . '" style="font-size:22px;display:block;margin-bottom:6px;"></i>'
                 . '<span style="display:block;">' . $t[$type] . '</span><strong style="font-size:20px;">' . (int)$counts[$type] . '</strong></a>';
         }

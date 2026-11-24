@@ -10,7 +10,59 @@ use WHMCS\Database\Capsule;
  */
 class ClientSslSummary
 {
-    const TYPES = ['total', 'unpaid', 'processing', 'expires_soon'];
+    const TYPES = ['total', 'unpaid', 'awaiting', 'processing', 'expires_soon'];
+
+    /**
+     * Label colour per status key (Bootstrap label classes of the client area theme), the same scheme as the admin
+     * reports: green = issued, yellow = waiting for someone, blue = in progress, red = ended or failed, grey = other
+     */
+    const COLOURS = [
+        'active'     => 'label-success',
+        'pending'    => 'label-warning',
+        'awaiting'   => 'label-warning',
+        'unpaid'     => 'label-warning',
+        'suspended'  => 'label-warning',
+        'processing' => 'label-info',
+        'cancelled'  => 'label-danger',
+        'terminated' => 'label-danger',
+        'expired'    => 'label-danger',
+        'rejected'   => 'label-danger',
+        'revoked'    => 'label-danger',
+        'refunded'   => 'label-danger',
+        'failed'     => 'label-danger',
+        'fraud'      => 'label-danger',
+    ];
+
+    /**
+     * One status key per certificate: the vendor order status when there is one, else the WHMCS SSL order status
+     * ("Awaiting Configuration" = awaiting, "Configuration Submitted" = processing), else the service status
+     */
+    public static function statusKey($orderStatus, $sslStatus, $serviceStatus)
+    {
+        $orderStatus = strtolower(trim((string)$orderStatus));
+        // a cancelled / terminated service ends an order that was never issued, whatever the vendor still reports
+        if(in_array((string)$serviceStatus, ['Cancelled', 'Terminated', 'Fraud'], true) && $orderStatus !== 'active')
+        {
+            return strtolower((string)$serviceStatus);
+        }
+        if($orderStatus !== '')
+        {
+            return $orderStatus === 'canceled' ? 'cancelled' : $orderStatus;
+        }
+        $map = ['awaiting configuration' => 'awaiting', 'configuration submitted' => 'processing', 'completed' => 'active'];
+        $ssl = strtolower(trim((string)$sslStatus));
+        if($ssl !== '')
+        {
+            return $map[$ssl] ?? str_replace(' ', '_', $ssl);
+        }
+
+        return str_replace(' ', '_', strtolower(trim((string)$serviceStatus)));
+    }
+
+    public static function statusClass($key)
+    {
+        return self::COLOURS[$key] ?? 'label-default';
+    }
 
     protected $userId;
     protected $services;
@@ -62,6 +114,10 @@ class ClientSslSummary
             $issued   = $status === 'active';
             $live     = in_array($row->domainstatus, ['Active', 'Pending', 'Suspended'], true);
             $expiring = $issued && $row->domainstatus === 'Active' && $row->nextduedate >= date('Y-m-d') && $row->nextduedate <= $soon;
+            $key      = self::statusKey($status, $row->ssl_status, $row->domainstatus);
+            // processing = submitted to the certificate authority and not finished: not an order still waiting for the
+            // client's configuration, nor a cancelled / expired one
+            $working  = !in_array($key, array_merge(['active', 'awaiting'], AutoInstallHelpers::FINAL_ORDER_STATUSES), true);
 
             $this->services[] = [
                 'id'             => (int)$row->id,
@@ -73,10 +129,15 @@ class ClientSslSummary
                 'regdate'        => (string)$row->regdate,
                 'nextduedate'    => (string)$row->nextduedate,
                 'unpaid_invoice' => isset($unpaid[$row->id]) ? (int)$unpaid[$row->id] : 0,
+                'status_key'     => $key,
+                'status_text'    => ucfirst(str_replace('_', ' ', $key)),
+                'status_class'   => self::statusClass($key),
                 'types'          => array_keys(array_filter([
                     'total'        => $live,
                     'unpaid'       => $live && isset($unpaid[$row->id]),
-                    'processing'   => $row->domainstatus === 'Active' && !$issued && !in_array($status, AutoInstallHelpers::FINAL_ORDER_STATUSES, true),
+                    // paid, but the client has not sent the CSR / details yet
+                    'awaiting'     => $row->domainstatus === 'Active' && $key === 'awaiting',
+                    'processing'   => $row->domainstatus === 'Active' && $working,
                     'expires_soon' => $expiring,
                 ])),
             ];
@@ -138,7 +199,9 @@ class ClientSslSummary
             $certificate = [
                 'service_id'   => $service['id'],
                 'product'      => $service['product'],
-                'status'       => $service['order_status'] !== '' ? $service['order_status'] : ($service['ssl_status'] ?: $service['service_status']),
+                'status'       => $service['status_key'],
+                'status_text'  => $service['status_text'],
+                'status_class' => $service['status_class'],
                 'valid_from'   => isset($stored['orderFiles']['validity']['begin']) ? substr($stored['orderFiles']['validity']['begin'], 0, 10) : '',
                 'valid_till'   => isset($stored['orderFiles']['validity']['end']) ? substr($stored['orderFiles']['validity']['end'], 0, 10) : '',
                 'ordered'      => $service['regdate'],
@@ -157,6 +220,18 @@ class ClientSslSummary
             usort($certificates, function($a, $b) {
                 return [$b['ordered'], $b['service_id']] <=> [$a['ordered'], $a['service_id']];
             });
+            // the current certificate is the newest issued one of a live service, so a newer order that is not issued
+            // (waiting, cancelled) does not hide it; without an issued one the newest order is shown
+            foreach($certificates as $i => $certificate)
+            {
+                if($certificate['status'] === 'active' && $certificate['service_live'])
+                {
+                    array_unshift($certificates, $certificate);
+                    unset($certificates[$i + 1]);
+                    $certificates = array_values($certificates);
+                    break;
+                }
+            }
             $domains[$name] = $certificates;
         }
 

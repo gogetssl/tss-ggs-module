@@ -299,7 +299,7 @@ class AutoInstallHelpers
      */
     public static function processQueue()
     {
-        // The queue is run by two crons (SSLAutoInstall + SSLCertificatesProcessing) - only one run at a time,
+        // The queue can be started by more than one cron run at a time (SSLAutoInstall) - only one run at a time,
         // otherwise hasOpenTask()/addTask() in scanAutoReissue() and the stuck-task reset can duplicate tasks
         $lock = Capsule::select("SELECT GET_LOCK('tssggs_autoinstall_queue', 0) AS l");
         if(empty($lock) || (int)$lock[0]->l !== 1)

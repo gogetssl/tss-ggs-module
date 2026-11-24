@@ -199,7 +199,7 @@ class PricingContainer extends Container implements AdminAreaInterface
 
     protected function preview(array $preview, $token)
     {
-        $html = '<div class="tssggs-note" style="border:1px solid #d9dee5;padding:12px;margin-bottom:16px;"><h4 style="margin-top:0">' . $this->e($this->t('preview_title')) . '</h4>'
+        $html = '<div class="tssggs-note" style="margin-bottom:16px;"><h4 style="margin-top:0">' . $this->e($this->t('preview_title')) . '</h4>'
             . '<p>' . $this->e($this->t('preview_summary', ['accepted' => count($preview['accepted']), 'rejected' => count($preview['rejected']), 'unchanged' => (int)$preview['unchanged']])) . '</p>';
 
         if($preview['accepted'])

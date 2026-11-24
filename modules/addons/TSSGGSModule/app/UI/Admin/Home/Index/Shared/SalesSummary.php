@@ -3,15 +3,34 @@
 namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Shared;
 
 use ModulesGarden\TSSGGSModule\App\Libs\Edition;
+use ModulesGarden\TSSGGSModule\App\Libs\GeneralSettings;
+use ModulesGarden\TSSGGSModule\Core\Support\Facades\Translator;
 
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Reports\Index\DataTables\Shared\RecordsProvider;
 
 /**
- * Last month's sales figures; computed once per request (KPI tiles + Sales overview card)
+ * Sales figures of the Dashboard period (Settings > General > Admin Area); computed once per request (KPI tiles + Sales overview card)
  */
 class SalesSummary
 {
+    /** period => start of the period (null: all invoices) */
+    const PERIODS = ['month' => '-1 month', '90days' => '-90 days', 'year' => '-1 year', 'total' => null];
+
     protected static $data = null;
+
+    /** the chosen Dashboard period */
+    public static function period(): string
+    {
+        $period = (string)GeneralSettings::get('dashboardPeriod');
+
+        return array_key_exists($period, self::PERIODS) ? $period : 'month';
+    }
+
+    /** the name of a period (default: the chosen one), e.g. "Last 90 days" */
+    public static function periodLabel(string $period = null): string
+    {
+        return (string)Translator::get('admin.home.index.period_' . ($period ?? self::period()));
+    }
 
     /**
      * ['paid', 'unpaid', 'overdue' => invoiced amounts, 'profit' => profit of the paid sales,
@@ -22,7 +41,8 @@ class SalesSummary
     {
         if(self::$data === null)
         {
-            $from    = date('Y-m-d', strtotime('-1 month'));
+            $start   = self::PERIODS[self::period()];
+            $from    = $start === null ? '1970-01-01' : date('Y-m-d', strtotime($start));
             $data    = ['paid' => 0, 'unpaid' => 0, 'overdue' => 0, 'profit' => 0, 'cost' => 0, 'costedSales' => 0, 'issued' => 0, 'expiring' => 0];
             $records = (new RecordsProvider())->getRecords(['fromDate' => $from, 'toDate' => date('Y-m-d')]);
             $issued  = [];

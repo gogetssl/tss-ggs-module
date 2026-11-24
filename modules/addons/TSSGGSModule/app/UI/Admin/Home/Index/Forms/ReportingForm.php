@@ -45,6 +45,13 @@ class ReportingForm extends Form implements AdminAreaInterface, AjaxComponentInt
         $this->setId('ReportingForm');
 
 
+        // where the report goes: the support mailbox of this edition
+        $this->builder->addField(
+            (new FormInputText())
+                ->setName('sendTo')
+                ->setReadOnly(true)
+        );
+
         $this->builder->addField(
             (new FormInputText())
                 ->setName('whmcsUrl')
@@ -57,7 +64,7 @@ class ReportingForm extends Form implements AdminAreaInterface, AjaxComponentInt
                 ->setReadOnly(true)
         );
 
-        if($moduleConfiguration['credentials']['ggs']['PartnerCode'])
+        if(($moduleConfiguration['credentials']['ggs']['PartnerCode'] ?? ''))
         {
             $this->builder->addField(
                 (new FormInputText())
@@ -66,7 +73,7 @@ class ReportingForm extends Form implements AdminAreaInterface, AjaxComponentInt
             );
         }
 
-        if($moduleConfiguration['credentials']['tss']['PartnerCode'])
+        if(($moduleConfiguration['credentials']['tss']['PartnerCode'] ?? ''))
         {
             $this->builder->addField(
                 (new FormInputText())
@@ -75,7 +82,7 @@ class ReportingForm extends Form implements AdminAreaInterface, AjaxComponentInt
             );
         }
 
-        if(!$moduleConfiguration['credentials']['ggs']['PartnerCode'] || !$moduleConfiguration['credentials']['tss']['PartnerCode'])
+        if(!($moduleConfiguration['credentials']['ggs']['PartnerCode'] ?? '') || !($moduleConfiguration['credentials']['tss']['PartnerCode'] ?? ''))
         {
             $this->builder->addelement(new Icon());//empty field
         }

@@ -147,7 +147,6 @@ class GgsReader extends AbstractReader
             'recurringSendExpirationNotificationsSubscription'   => $on('send_expiration_notification_subscription') ? '30,15,7,3,1' : '',
             'renewOrderViaExistingOrder'                         => empty($s['renew_new_order']) ? 'on' : '',
             'automaticProcessingOfRenewalOrders'                 => $on('automatic_processing_of_renewal_orders'),
-            'setTheUnpaidStatusForRenewalInvoices'               => $on('renewal_invoice_status_unpaid'),
             'visibleRenewButtonBeforeExpiration'                 => $on('visible_renew_button'),
             'visibleRenewButtonAfterExpiration'                  => $on('visible_renew_button'),
             'enableCsrGenerator'                                 => $on('display_csr_generator'),

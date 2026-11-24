@@ -17,7 +17,7 @@ class CronSettingsProvider extends CrudProvider
 
         foreach($moduleConfiguration['cronSettings'] as $key => $value)
         {
-            $this->data[$key] = $value;
+            $this->data[$key] = $moduleRepository->cronFrequency($key, $value);
         }
     }
 

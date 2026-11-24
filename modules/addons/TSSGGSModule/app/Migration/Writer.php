@@ -443,6 +443,8 @@ class Writer
                 $update['configdata'] = self::json($rec['configdata']);
             }
             Capsule::table('tblsslorders')->where('id', $rec['ssl_order_id'])->update($update);
+            // the old module may have stored the order ID: the order status sync converts it to the item ID
+            \ModulesGarden\TSSGGSModule\App\Libs\CertificateSyncHelpers::itemIdConversionRestart();
 
             // remove any unified rows a previous attempt left behind
             Capsule::table(self::tRequests())->where('serviceid', $rec['service_id'])->whereIn('name', array_merge(['addOrder', 'certificate', 'autoinstall', 'renewOrder', \ModulesGarden\TSSGGSModule\App\Libs\RecordOnly::REQUEST], GatewayOrderService::requestNames()))->delete();

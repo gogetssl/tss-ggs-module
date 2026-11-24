@@ -385,6 +385,8 @@ trait SslConfigurationActions
         $serviceId = (int)$params['serviceid'];
         $userId    = (int)$params['userid'];
 
+        // a migrated order bought at payment: completed with its token (read once)
+        \ModulesGarden\TSSGGSModule\App\Libs\IncompleteOrder::claimMigrated($serviceId);
         $ssl = SSL::getByServiceId($serviceId);
         if(!$ssl || $ssl->status !== 'Awaiting Configuration' || !empty($ssl->remoteid))
         {
@@ -684,7 +686,8 @@ trait SslConfigurationActions
         $result = (new SSLStepThree())->run($stepParams);
 
         $ssl = SSL::getByServiceId($serviceId);
-        if(empty($ssl->remoteid))
+        // the token completed the order elsewhere meanwhile: the service follows that order, these details are not used
+        if(empty($ssl->remoteid) || (is_array($result) && !empty($result['adopted'])))
         {
             throw new \Exception(is_array($result) && !empty($result['error']) ? $result['error'] : Lang::absoluteT('sslConfigOrderFailed'));
         }

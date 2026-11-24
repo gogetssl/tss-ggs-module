@@ -277,6 +277,36 @@ class UpgradePricing
      * ("only in Draft status"), and credit on the account can pay it the moment it is finalised, so this is the only
      * point where the price can be set. WHMCS recalculates the totals (and tax) after this hook. Runs once per invoice.
      */
+    /**
+     * A one-time service has no next due date: WHMCS still ends its upgrade invoice line with the period
+     * "(22/11/2026 - 00/00/0000)". That period is removed (as the GoGetSSL module 2.x did). Any SSL service of the module.
+     *
+     * @return int invoice lines changed
+     */
+    public static function cleanOneTimePeriods($invoiceId)
+    {
+        $changed = 0;
+        foreach(Capsule::table('tblinvoiceitems')->where('invoiceid', (int)$invoiceId)->where('type', 'Upgrade')->get(['id', 'relid', 'description']) as $item)
+        {
+            $serviceId = (int)Capsule::table('tblupgrades')->where('id', (int)$item->relid)->value('relid');
+            $service   = $serviceId ? Capsule::table('tblhosting')->join('tblproducts', 'tblproducts.id', '=', 'tblhosting.packageid')
+                ->where('tblhosting.id', $serviceId)->first(['tblhosting.billingcycle', 'tblproducts.servertype']) : null;
+            if(!$service || $service->servertype !== 'TSSGGSModule' || $service->billingcycle !== 'One Time')
+            {
+                continue;
+            }
+            // the period in any WHMCS date format, its end being the empty date
+            $description = preg_replace('/\s*\([^()]*\s-\s(?:00[\/.\-]00[\/.\-]0000|0000-00-00)\)\s*$/', '', (string)$item->description);
+            if($description !== null && $description !== (string)$item->description)
+            {
+                Capsule::table('tblinvoiceitems')->where('id', (int)$item->id)->update(['description' => $description]);
+                $changed++;
+            }
+        }
+
+        return $changed;
+    }
+
     public static function fixInvoice($invoiceId)
     {
         $invoiceId = (int)$invoiceId;

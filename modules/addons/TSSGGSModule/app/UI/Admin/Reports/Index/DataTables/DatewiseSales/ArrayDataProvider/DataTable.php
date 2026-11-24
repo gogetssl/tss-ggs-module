@@ -2,6 +2,7 @@
 
 namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Reports\Index\DataTables\DatewiseSales\ArrayDataProvider;
 
+use ModulesGarden\TSSGGSModule\App\UI\Admin\Reports\Index\DataTables\Shared\StatusLabel;
 
 use ModulesGarden\TSSGGSModule\App\Libs\Helpers;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Reports\Index\DataTables\DatewiseSales\Forms\DownloadForm;
@@ -90,46 +91,10 @@ class DataTable extends \ModulesGarden\TSSGGSModule\Components\DataTable\DataTab
     protected function parseDataSetRecords(): void
     {
         $this->dataSet->setFieldModifier('status', function($fieldName, $row, $fieldValue) {
-
-            if($fieldValue == 'Active')
-            {
-                $label = new LabelSuccess();
-            }
-            elseif($fieldValue == 'Pending')
-            {
-                $label = new LabelWarning();
-            }
-            elseif($fieldValue == 'Awaiting Configuration')
-            {
-                $label = new Label();
-            }
-            else
-            {
-                $label = new LabelDanger();
-            }
-
-            $label->setText($fieldValue);
-
-            return $label;
+            return StatusLabel::order($fieldValue);
         });
         $this->dataSet->setFieldModifier('paymentStatus', function($fieldName, $row, $fieldValue) {
-
-            if($fieldValue == 'Paid')
-            {
-                $label = new LabelSuccess();
-            }
-            elseif($fieldValue == 'Pending')
-            {
-                $label = new LabelWarning();
-            }
-            else
-            {
-                $label = new LabelDanger();
-            }
-
-            $label->setText($fieldValue);
-
-            return $label;
+            return StatusLabel::payment($fieldValue);
         });
 
         $this->dataSet->setFieldModifier('salesAmount', function($fieldName, $row, $fieldValue) {

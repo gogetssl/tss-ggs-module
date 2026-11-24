@@ -74,14 +74,6 @@
     line-height: 1.25;
 }
 
-#layers2 .tssggs-dash__period {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    color: var(--tw-muted);
-    font-size: 12px;
-}
-
 /* ---- attention banner ---- */
 
 #layers2 .tssggs-dash__alert {

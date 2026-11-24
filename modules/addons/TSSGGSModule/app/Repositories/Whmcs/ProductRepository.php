@@ -52,23 +52,23 @@ class ProductRepository
 
     public function createProduct($name, $description, $gid, $pricing = [])
     {
+        // every imported product: "Automatically setup the product as soon as the first payment is received"
         $postData = [
             'type' => 'other',
             'gid' => $gid,
             'name' => $name,
             'description' => $description,
             'hidden' => '',
-            'module' => 'TSSGGSModule'
+            'module' => 'TSSGGSModule',
+            'autosetup' => 'payment',
         ];
 
         if(empty($pricing))
         {
             $postData['paytype'] = 'free';
-            $postData['autosetup'] = 'order';
         }
         else
         {
-            $postData['autosetup'] = 'payment';
             $postData['paytype'] = 'recurring';
             $postData['pricing'] = $pricing;
         }

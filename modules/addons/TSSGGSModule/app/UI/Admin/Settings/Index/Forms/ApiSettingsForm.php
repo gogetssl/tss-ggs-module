@@ -88,6 +88,19 @@ class ApiSettingsForm extends Form implements AdminAreaInterface, AjaxComponentI
             }
         }
 
+        // with both vendors on the page the buttons work on both accounts while Connect is on: said above them (shown only
+        // while the switch is on, resources/assets/js/custom/apiScope.js), and the result lists each API
+        if(count($vendors) > 1)
+        {
+            $this->addElement((new \ModulesGarden\TSSGGSModule\Components\Text\Text())->setText(
+                '<div class="tssggs-sec__desc tssggs-api-scope" data-switch="connectOther"'
+                . (\ModulesGarden\TSSGGSModule\App\Libs\Edition::connectedVendor() === '' ? ' style="display:none"' : '') . '><p>' . htmlspecialchars($this->translate('buttonsScope', [
+                    'primary' => \ModulesGarden\TSSGGSModule\App\Libs\Edition::brandOf($vendors[0]),
+                    'other'   => \ModulesGarden\TSSGGSModule\App\Libs\Edition::brandOf($vendors[1]),
+                ])) . '</p></div>'
+            ));
+        }
+
         // Saving tests the connection first and the credentials may be prefilled from the legacy modules (not stored yet),
         // so Save stays enabled on this screen
         $this->saveBar(

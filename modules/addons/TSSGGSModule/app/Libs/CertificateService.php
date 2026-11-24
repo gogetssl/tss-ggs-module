@@ -243,7 +243,9 @@ class CertificateService
     public static function validationDataMissing(array $stored)
     {
         $status = isset($stored['orderData']['order']['status']) ? (string)$stored['orderData']['order']['status'] : '';
-        if(in_array($status, ['active', 'cancelled', 'rejected', 'expired', 'filed'], true))
+        // only an order the vendor is processing has validation details to wait for: any other status (issued,
+        // ended, or waiting at the vendor side: new_order, unpaid, failed) is not read again from the client page
+        if(!in_array(\ModulesGarden\TSSGGSModule\App\Libs\CertificateSyncHelpers::normalizeStatus($status), ['', 'pending', 'processing'], true))
         {
             return false;
         }
@@ -370,7 +372,7 @@ class CertificateService
             'crt_code'        => nl2br($bundle->crt()),
         ];
 
-        $template = (string)GeneralSettings::get('certificateEmailTemplate');
+        $template = self::certificateTemplate();
         try
         {
             if($template !== '')
@@ -400,6 +402,58 @@ class CertificateService
         }
 
         self::event($serviceId, 'info', 'Certificate sent to the client by email');
+    }
+
+    /**
+     * Templates the certificate e-mail can use besides the module's own "Send Certificate": Product/Service templates
+     * (sendMessage() sends them to the service's client) that an administrator created, without the module's own ones
+     * (a choice saved before, e.g. migrated from the earlier module, stays selectable - see the settings providers).
+     * A General template is never offered: WHMCS addresses it to a client ID, and a service ID there reaches another
+     * client.
+     *
+     * @return string[] template names
+     */
+    public static function certificateTemplates()
+    {
+        // without the templates of this module under any of its names (both editions, the earlier names) and of the
+        // legacy GoGetSSL module ("SSLCenter - ...", imported by App\Libs\LegacyEmailImport)
+        $modules = array_map(function($module) { return $module . ' - '; }, array_merge(Edition::knownNames(), ['SSLCenter']));
+        $names   = [];
+        foreach(Capsule::table('tblemailtemplates')->where('type', 'product')->where('language', '')->where('custom', 1)->orderBy('name')->pluck('name') as $name)
+        {
+            foreach($modules as $prefix)
+            {
+                if(strpos((string)$name, $prefix) === 0)
+                {
+                    continue 2;
+                }
+            }
+            $names[] = (string)$name;
+        }
+
+        return $names;
+    }
+
+    /**
+     * The chosen certificate e-mail template when it is a Product/Service template that exists, '' (the module's own
+     * template) otherwise - also for a General template chosen before 1.19.0
+     */
+    public static function certificateTemplate()
+    {
+        $template = trim((string)GeneralSettings::get('certificateEmailTemplate'));
+        if($template === '')
+        {
+            return '';
+        }
+        $type = Capsule::table('tblemailtemplates')->where('name', $template)->where('language', '')->value('type');
+        if($type !== 'product')
+        {
+            GeneralSettings::activity('Certificate e-mail template "' . $template . '" is not a Product/Service template - the module template is used');
+
+            return '';
+        }
+
+        return $template;
     }
 
     /**
@@ -590,6 +644,12 @@ class CertificateService
                 break;
 
             default:
+                // bought at payment, details never submitted: that order is cancelled (IncompleteOrder)
+                if(IncompleteOrder::cancel($serviceId, $reason))
+                {
+                    Capsule::table('tblsslorders')->where('serviceid', (int)$serviceId)->update(['status' => 'Cancelled']);
+                    break;
+                }
                 $ssl = self::sslOrder($serviceId);
                 if(!$ssl || empty($ssl->remoteid) || in_array(self::status($serviceId), AutoInstallHelpers::FINAL_ORDER_STATUSES, true))
                 {

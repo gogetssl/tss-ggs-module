@@ -99,10 +99,28 @@ class AddonModuleRepository
     /** job (cron setting key) => [CronCheck type, default frequency] */
     const CRON_JOBS = [
         'cron1' => ['ProductPricingUpdate', '1d'],
-        'cron2' => ['SSLCertificates', '1d'],
+        'cron2' => ['SSLCertificates', '5m'],
         'cron3' => ['RenewalNotifyCertificate', '1d'],
-        'cron5' => ['SSLCertificatesProcessing', '5m'],
     ];
+
+    /** frequencies a job no longer offers: a saved one runs as the job's default */
+    const RETIRED_FREQUENCIES = [
+        'cron2' => ['1w'],
+    ];
+
+    /**
+     * The frequency a job runs with: the saved one, or the default when none (or a retired one) is saved
+     */
+    public function cronFrequency($name, $saved)
+    {
+        $default = isset(self::CRON_JOBS[$name]) ? self::CRON_JOBS[$name][1] : '';
+        if($saved === null || $saved === '' || in_array($saved, isset(self::RETIRED_FREQUENCIES[$name]) ? self::RETIRED_FREQUENCIES[$name] : [], true))
+        {
+            return $default;
+        }
+
+        return $saved;
+    }
 
     /** seconds between two runs of a frequency */
     const CRON_INTERVALS = [
@@ -131,7 +149,7 @@ class AddonModuleRepository
 
         $setting = AddonModule::where('module', 'configuration_TSSGGSModule')->where('setting', 'cronSettings')->first();
         $cronSettings = isset($setting->value) && !empty($setting->value) ? (array)json_decode($setting->value, true) : [];
-        $frequency = isset($cronSettings[$name]) && $cronSettings[$name] !== '' ? $cronSettings[$name] : $job[1];
+        $frequency = $this->cronFrequency($name, isset($cronSettings[$name]) ? $cronSettings[$name] : null);
 
         if($frequency === 'never' || !isset(self::CRON_INTERVALS[$frequency]))
         {

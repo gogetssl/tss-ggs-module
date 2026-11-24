@@ -266,7 +266,7 @@ class MigrationContainer extends Container implements AdminAreaInterface
         if(!empty($summary['cron_lines']) && $run['status'] === Store::RUN_COMPLETED)
         {
             $html .= '<details class="tssggs-details"><summary>' . htmlspecialchars($this->t('cron_title')) . '</summary><p>' . htmlspecialchars($this->t('cron_remove')) . '</p><pre>' . htmlspecialchars(implode("\n", $summary['cron_lines'])) . '</pre>'
-                . '<p>' . htmlspecialchars($this->t('cron_add')) . '</p><pre>' . htmlspecialchars("*/5 * * * * php -q {WHMCS}/modules/addons/TSSGGSModule/cron/cron.php ProductPricingUpdate\n*/5 * * * * php -q {WHMCS}/modules/addons/TSSGGSModule/cron/cron.php SSLCertificates\n*/5 * * * * php -q {WHMCS}/modules/addons/TSSGGSModule/cron/cron.php RenewalNotifyCertificate\n*/5 * * * * php -q {WHMCS}/modules/addons/TSSGGSModule/cron/cron.php ReSyncProducts\n*/5 * * * * php -q {WHMCS}/modules/addons/TSSGGSModule/cron/cron.php SSLCertificatesProcessing\n*/5 * * * * php -q {WHMCS}/modules/addons/TSSGGSModule/cron/cron.php SSLAutoInstall") . '</pre></details>';
+                . '<p>' . htmlspecialchars($this->t('cron_add')) . '</p><pre>' . htmlspecialchars("*/5 * * * * php -q {WHMCS}/modules/addons/TSSGGSModule/cron/cron.php ProductPricingUpdate\n*/5 * * * * php -q {WHMCS}/modules/addons/TSSGGSModule/cron/cron.php SSLCertificates\n*/5 * * * * php -q {WHMCS}/modules/addons/TSSGGSModule/cron/cron.php RenewalNotifyCertificate\n*/5 * * * * php -q {WHMCS}/modules/addons/TSSGGSModule/cron/cron.php ReSyncProducts\n*/5 * * * * php -q {WHMCS}/modules/addons/TSSGGSModule/cron/cron.php SSLAutoInstall") . '</pre></details>';
         }
         if(!empty($summary['legacy_deactivated']))
         {

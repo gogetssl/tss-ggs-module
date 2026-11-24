@@ -32,20 +32,26 @@
 #layers2 .tssggs-head__brand {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 9px;
     color: var(--tw-fg);
     text-decoration: none;
 }
 
+/* the edition's logo (AppNavBar), in its own colours */
 #layers2 .tssggs-head__logo {
     display: grid;
     place-items: center;
-    width: 40px;
+}
+
+/* TheSSLStore 30x40, GoGetSSL 33x40 */
+#layers2 .tssggs-head__mark {
+    display: block;
+    width: 30px;
     height: 40px;
-    border-radius: 8px;
-    background: var(--tw-primary);
-    color: #fff;
-    font-size: 24px;
+}
+
+#layers2 .tssggs-head__mark--ggs {
+    width: 33px;
 }
 
 #layers2 .tssggs-head__text strong {
@@ -57,7 +63,6 @@
 
 #layers2 .tssggs-head__text small {
     display: block;
-    margin-top: 2px;
     color: var(--tw-muted);
     font-size: 14px;
 }

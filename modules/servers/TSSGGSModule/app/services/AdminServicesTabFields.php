@@ -70,6 +70,11 @@ class AdminServicesTabFields
         try
         {
             $sslService = SSL::getByServiceId($params['serviceid']);
+            // a migrated order bought at payment: its token is read once (it may turn out completed meanwhile)
+            if($sslService && $sslService->status === 'Awaiting Configuration' && \ModulesGarden\TSSGGSModule\App\Libs\IncompleteOrder::claimMigrated((int)$params['serviceid']))
+            {
+                $sslService = SSL::getByServiceId($params['serviceid']);
+            }
             if(is_null($sslService))
             {
                 throw new \Exception(AdminText::get('error_not_initialized', 'The create action has not been initialized'));
@@ -78,6 +83,24 @@ class AdminServicesTabFields
             if($sslService->status === 'Awaiting Configuration')
             {
                 $fields = [AdminText::get('configuration_status', 'Configuration Status') => '<span class="label label-warning">' . self::t('status_awaiting_configuration', 'Awaiting Configuration') . '</span>'];
+                // a certificate bought at payment: its order and the token that completes it (IncompleteOrder)
+                $incomplete = \ModulesGarden\TSSGGSModule\App\Libs\IncompleteOrder::pending((int)$params['serviceid']);
+                if($incomplete)
+                {
+                    $fields[AdminText::get('vendor_order', '%%VENDOR%% Order')] = self::orderLine($incomplete['order_id'] ?? 0, $incomplete['item_id'])
+                        . ' &nbsp;<span class="label label-default">' . self::t('incomplete_bought', 'bought, waiting for its details') . '</span>';
+                    $fields[AdminText::get('certificate_token', 'Certificate Token')] = '<input type="text" class="form-control input-sm" style="max-width:760px;font-family:monospace;" readonly onclick="this.select()" value="'
+                        . htmlspecialchars((string)$incomplete['token'], ENT_QUOTES) . '">'
+                        . '<small class="text-muted">' . self::t('certificate_token_hint', 'Completes the order: the client can use it in the cPanel, Plesk and other plugins, or submit the details on the configuration page.') . '</small>';
+                }
+                // a migrated order bought at payment whose token could not be read (tried again an hour later)
+                $record = \ModulesGarden\TSSGGSModule\App\Libs\IncompleteOrder::get((int)$params['serviceid']);
+                if(!$incomplete && $record && $record['status'] === \ModulesGarden\TSSGGSModule\App\Libs\IncompleteOrder::STATUS_UNREAD)
+                {
+                    $fields[AdminText::get('vendor_order', '%%VENDOR%% Order')] = htmlspecialchars((string)($record['migrated'] ?? ''), ENT_QUOTES);
+                    $fields[AdminText::get('certificate_token', 'Certificate Token')] = '<span class="text-warning">'
+                        . self::t('certificate_token_unread', 'Not read yet from %%VENDOR%%, tried again within an hour') . ': ' . htmlspecialchars((string)($record['error'] ?? ''), ENT_QUOTES) . '</span>';
+                }
                 // S/MIME after a renewal: the orders placed before
                 $gatewayType = \ModulesGarden\TSSGGSModule\App\Libs\GatewayOrderService::typeOfService((int)$params['serviceid']);
                 if($gatewayType)
@@ -414,7 +437,8 @@ class AdminServicesTabFields
         $item      = (array)reset($items);
         $status    = isset($order['order']['status']) ? (string)$order['order']['status'] : '';
         $labels    = ['active' => 'label-success', 'processing' => 'label-info', 'pending' => 'label-info', 'cancelled' => 'label-danger',
-                      'rejected' => 'label-danger', 'revoked' => 'label-danger', 'expired' => 'label-default'];
+                      'rejected' => 'label-danger', 'revoked' => 'label-danger', 'refunded' => 'label-danger', 'expired' => 'label-default',
+                      'failed' => 'label-warning', 'unpaid' => 'label-warning', 'new_order' => 'label-warning'];
         $synced    = Request::where('serviceid', $serviceId)->where('name', 'certificate')->value('updated_at');
 
         $fields = [];
@@ -423,6 +447,18 @@ class AdminServicesTabFields
             . ' | ' . htmlspecialchars(Helpers::vendorToDisplay($params['configoption1']));
         $fields[AdminText::get('vendor_status', 'Vendor Status')] = self::vendorStatus($status, $labels, $order['order']['date'] ?? '', '')
             . ($synced ? ' &nbsp;| ' . self::t('last_synchronized', 'last synchronized :date:', ['date' => $synced]) : '');
+        // the order waits at the vendor side: the client sees an orange message too (CertificateSyncHelpers::NOTICE_STATUSES)
+        $noticeStatus = \ModulesGarden\TSSGGSModule\App\Libs\CertificateSyncHelpers::normalizeStatus($status);
+        if(in_array($noticeStatus, \ModulesGarden\TSSGGSModule\App\Libs\CertificateSyncHelpers::NOTICE_STATUSES, true))
+        {
+            $english = [
+                'failed'    => 'Something is wrong with this order at %%VENDOR%%: it could not be processed. Contact %%VENDOR%% support to check the reason. The client is asked to contact your support.',
+                'unpaid'    => 'The order is still unpaid at %%VENDOR%%. Check the balance of your %%VENDOR%% account or contact %%VENDOR%% support. The client is asked to contact your support.',
+                'new_order' => 'The order is being sent to the certificate authority. It should be accepted within minutes.',
+            ];
+            $fields[AdminText::get('vendor_status', 'Vendor Status')] .= '<div class="alert alert-warning" style="margin:6px 0 0;padding:6px 10px;max-width:760px;">'
+                . self::t('vendor_notice_' . $noticeStatus, $english[$noticeStatus]) . '</div>';
+        }
 
         $validity = isset($stored['orderFiles']['validity']) ? $stored['orderFiles']['validity'] : [];
         if(!empty($validity['begin']) || !empty($item['subscription']['end']))

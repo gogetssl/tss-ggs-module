@@ -85,6 +85,14 @@ class Edition
     /** Brand of each vendor, for texts about a vendor's own orders and products */
     const BRANDS = [self::GGS => 'GoGetSSL', self::TSS => 'TheSSLStore'];
 
+    /** The documentation (Wiki) of each edition - SAMPLE addresses until the Wikis are published */
+    const WIKI = [self::GGS => 'https://github.com/gogetssl/whmcs-module/wiki', self::TSS => 'https://github.com/thesslstore/whmcs-plugin/wiki'];
+
+    public static function wiki()
+    {
+        return self::WIKI[self::get()] ?? self::WIKI[self::TSS];
+    }
+
     /** tbladdonmodules setting that holds the connected second vendor ('' / none) */
     const CONNECTED_SETTING = 'connected_vendor';
 

@@ -11,6 +11,7 @@ var component =
                 navbar_: null,
                 moduleIcon_: '',
                 moduleVersion_: '',
+                edition_: '',
             }
         },
         props: [
@@ -21,6 +22,7 @@ var component =
             'navbar',
             'moduleIcon',
             'moduleVersion',
+            'edition',
         ],
         created: function () {
         },

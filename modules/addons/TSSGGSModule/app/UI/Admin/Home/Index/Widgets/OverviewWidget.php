@@ -7,7 +7,7 @@ use ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Shared\Card;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Shared\SalesSummary;
 
 /**
- * Sales and margin of the last month: invoiced amount, reseller cost, gross profit and margin on cost, with the
+ * Sales and margin of the Dashboard period: invoiced amount, reseller cost, gross profit and margin on cost, with the
  * paid / unpaid / overdue split and a hint when the margin is low
  */
 class OverviewWidget extends Card
@@ -39,6 +39,7 @@ class OverviewWidget extends Card
         }
 
         $note = $this->translate('split', [
+            'period'  => SalesSummary::periodLabel(),
             'paid'    => Helpers::formatDefaultCurrency($sales['paid']),
             'unpaid'  => Helpers::formatDefaultCurrency($sales['unpaid']),
             'overdue' => Helpers::formatDefaultCurrency($sales['overdue']),

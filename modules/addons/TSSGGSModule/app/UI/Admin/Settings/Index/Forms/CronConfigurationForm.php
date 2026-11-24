@@ -29,8 +29,7 @@ class CronConfigurationForm extends Form implements AdminAreaInterface, AjaxComp
     /** job => [setting key of its frequency (null: runs with every start), choices] */
     const JOBS = [
         'ProductPricingUpdate'      => ['cron1', ['1d', '1w', '1mo', 'never']],
-        'SSLCertificatesProcessing' => ['cron5', ['5m', '10m', '30m', '1h', '3h', 'never']],
-        'SSLCertificates'           => ['cron2', ['1d', '12h', '1w', 'never']],
+        'SSLCertificates'           => ['cron2', ['5m', '10m', '30m', '1h', '3h', '12h', '1d', 'never']],
         'RenewalNotifyCertificate'  => ['cron3', ['1d', 'never']],
         'SSLAutoInstall'            => [null, []],
     ];

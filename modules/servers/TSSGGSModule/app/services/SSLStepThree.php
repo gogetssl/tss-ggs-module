@@ -128,12 +128,35 @@ class SSLStepThree
                 $orderParams['renewal'] = $renewal;
             }
 
+            // a renewal on the same service is stored as a renewOrder row, as Renew stores its own: the rows of the
+            // earlier orders keep their invoice and prices, and the next automatic renewal reads this one
+            $pendingRow   = Request::where('serviceid', $params['serviceid'])->where('name', 'renewalPending')->value('request');
+            $pendingData  = $pendingRow ? (json_decode((string)$pendingRow, true) ?: []) : [];
+            $sameRenewal  = $renewal && (int)($pendingData['prior_service'] ?? 0) === (int)$params['serviceid'];
+
+            // a certificate bought at payment (IncompleteOrder): its details complete that order with the token
+            $incomplete = \ModulesGarden\TSSGGSModule\App\Libs\IncompleteOrder::pending($params['serviceid']);
+            $place      = function(array $orderParams) use ($api, $params, $incomplete, $sameRenewal) {
+                if($incomplete)
+                {
+                    return $api->completeOrder($incomplete['token'], $orderParams, $params['serviceid']);
+                }
+                return $sameRenewal
+                    ? $api->renewOrder($params['serviceid'], $orderParams)
+                    : $api->addOrder($orderParams, $params['serviceid']);
+            };
+
             try
             {
-                $newOrder = $api->addOrder($orderParams, $params['serviceid']);
+                $newOrder = $place($orderParams);
             }
             catch(\Exception $renewalRefused)
             {
+                // the token was used meanwhile (a plugin submitted the details): the service follows that order
+                if($incomplete && \ModulesGarden\TSSGGSModule\App\Libs\IncompleteOrder::adoptIfCompleted($params['serviceid']))
+                {
+                    return ['adopted' => true, 'error' => \ModulesGarden\TSSGGSModule\App\Libs\ClientText::get('orderCompletedElsewhere', 'The details of this certificate were already submitted with its token (for example by a hosting panel plugin). Reload the page to follow the order.')];
+                }
                 if(!$renewal)
                 {
                     throw $renewalRefused;
@@ -142,21 +165,32 @@ class SSLStepThree
                 // certificate with these details (only the carried-over days are lost); a refusal of the details
                 // themselves comes back from this second attempt and is shown to the client as before
                 unset($orderParams['renewal']);
-                $newOrder = $api->addOrder($orderParams, $params['serviceid']);
+                $newOrder = $place($orderParams);
                 \ModulesGarden\TSSGGSModule\App\Libs\CertificateService::event($params['serviceid'], 'info', '[Renewal] The vendor did not take it as a renewal of the previous order (' . $renewalRefused->getMessage() . '): ordered as a new certificate');
             }
             if($renewal)
             {
                 \ModulesGarden\TSSGGSModule\App\Libs\RenewalPolicy::renewalPlaced((int)$params['serviceid']);
             }
-            $itemId   = SSLTrustCenterApi::getItemId($newOrder);
+            $itemId   = SSLTrustCenterApi::getItemId($newOrder, $incomplete ? $incomplete['item_id'] : null);
+            if($incomplete)
+            {
+                \ModulesGarden\TSSGGSModule\App\Libs\IncompleteOrder::markCompleted($params['serviceid']);
+            }
             SSL::where('serviceid', $params['serviceid'])->update(['remoteid' => $itemId]);
             Service::where('id', $params['serviceid'])->update(['domain' => $commonName]);
 
-            $apiPrice = $newOrder['order']['total_amount'];
+            // this order's row: the one bought at payment (addOrder, or renewOrder for a renewal on this service) or
+            // the one placed just now
+            $purchaseRow = $incomplete ? Request::currentOrder($params['serviceid'])
+                : Request::where('serviceid', $params['serviceid'])->where('name', $sameRenewal ? 'renewOrder' : 'addOrder')->orderBy('id', 'desc')->first();
 
+            // a completed order was paid at the purchase: its price is on its row already
+            $apiPrice = $incomplete ? (float)($purchaseRow->api_price ?? 0) : $newOrder['order']['total_amount'];
+
+            // the invoice of this order (a renewal has its own), not the first one of the service
             $invoiceId = 0;
-            $item = InvoiceItem::where('relid', $params['serviceid'])->where('type', 'Hosting')->first();
+            $item = InvoiceItem::where('relid', $params['serviceid'])->where('type', 'Hosting')->orderBy('id', 'desc')->first();
             if(isset($item->invoiceid) && !empty($item->invoiceid))
             {
                 $invoiceId = $item->invoiceid;
@@ -170,7 +204,7 @@ class SSLStepThree
                 $invoiceId    = $addonBilling['invoiceid'] ?: $invoiceId;
             }
 
-            Request::where('serviceid', $params['serviceid'])->where('name', 'addOrder')->update([
+            Request::where('id', $purchaseRow ? (int)$purchaseRow->id : 0)->update([
                 'invoiceid' => $invoiceId,
                 'api_price' => $apiPrice,
                 'whmcs_price' => $sellingPrice,
@@ -194,14 +228,14 @@ class SSLStepThree
                 ]
             );
 
-            // (a "processing" order is picked up by the SSLCertificatesProcessing cron; the client's session id is
+            // (the order status sync picks the order up when the vendor reports it; the client's session id is
             // no longer stored for a task runner that never ran)
 
             // SANs paid with this order - an upgrade of the SAN options orders only the difference (see SanUpgrade)
             SanUpgrade::rememberPurchased($params['serviceid'], SanUpgrade::paidQuantities($params));
 
-            CertificateService::event($params['serviceid'], 'success', '[Order] SSL order placed for domain: ' . $commonName
-                . ' (order #' . $newOrder['order']['id'] . ', ' . (count($san) + 1) . ' domain(s))', $params['userid']);
+            CertificateService::event($params['serviceid'], 'success', '[Order] SSL order ' . ($incomplete ? 'completed' : 'placed') . ' for domain: ' . $commonName
+                . ' (order #' . ($newOrder['order']['id'] ?? ($incomplete['order_id'] ?? '')) . ', ' . (count($san) + 1) . ' domain(s))', $params['userid']);
 
             // OV / EV: tell the client the certificate authority now verifies the organization
             \ModulesGarden\TSSGGSModule\App\Libs\OrganizationValidation::notify((int)$params['serviceid'], $itemId, (bool)$renewal);

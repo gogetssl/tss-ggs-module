@@ -103,7 +103,8 @@ class Actions {
     {
         // the private keys go in any case, also when the vendor order is left open
         CertificateService::forgetPrivateKeys($params['serviceid']);
-        if(!GeneralSettings::enabled('terminateCancelsOrder'))
+        // a certificate bought at payment whose details were never submitted is always cancelled: nothing was issued
+        if(!GeneralSettings::enabled('terminateCancelsOrder') && !\ModulesGarden\TSSGGSModule\App\Libs\IncompleteOrder::pending($params['serviceid']))
         {
             return 'success';
         }

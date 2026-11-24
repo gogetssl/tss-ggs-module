@@ -18,7 +18,20 @@ class CreateAccount {
         $serviceId = $params['serviceid'];
         $userId = $params['userid'];
 
+        $imported = isset($_SESSION['TSSGGSModule']['importedServices']) && is_array($_SESSION['TSSGGSModule']['importedServices'])
+            && in_array($serviceId, $_SESSION['TSSGGSModule']['importedServices']);
+
+        // TLS certificate: bought at once without its details - the gateway returns the certificate token, shown to
+        // the client to complete the order here or in any plugin (cPanel, Plesk ...). When the gateway refuses it
+        // (balance, product) nothing is stored and the error is returned: WHMCS keeps the service Pending and the
+        // admin runs Module Create again.
         $serviceSSL = SSL::getByServiceId($serviceId);
+        if (!$imported && \ModulesGarden\TSSGGSModule\App\Libs\IncompleteOrder::appliesTo($whmcsProductId)
+            && (is_null($serviceSSL) || ($serviceSSL->status === 'Awaiting Configuration' && empty($serviceSSL->remoteid)))) {
+            \ModulesGarden\TSSGGSModule\App\Libs\IncompleteOrder::ensure($serviceId, $whmcsProductId, $params['model']->billingcycle,
+                \ModulesGarden\TSSGGSModule\App\Libs\SanUpgrade::paidQuantities($params));
+        }
+
         if (!is_null($serviceSSL)) {
             // A migrated legacy service ("setup on order" products) already has its row: adopt it instead of failing
             if ($serviceSSL->status === 'Awaiting Configuration' && empty($serviceSSL->remoteid)) {
@@ -38,7 +51,7 @@ class CreateAccount {
                 'status' => 'Awaiting Configuration'
             ]);
         }
-        if(isset($_SESSION['TSSGGSModule']['importedServices']) && is_array($_SESSION['TSSGGSModule']['importedServices']) && in_array($serviceId, $_SESSION['TSSGGSModule']['importedServices']))
+        if($imported)
         {
             $key = array_search($serviceId, $_SESSION['TSSGGSModule']['importedServices']);
             unset($_SESSION['TSSGGSModule']['importedServices'][$key]);

@@ -52,7 +52,6 @@
 
 /* module header + nav: one bordered block */
 #layers2 .tssggs-head { border-color: var(--tw-border); }
-#layers2 .tssggs-head__logo { background: var(--tw-primary); }
 #layers2 .tssggs-head__text strong { display: block; color: var(--tw-fg); font-size: 20px; font-weight: 600; line-height: 1; }
 #layers2 .lu-app-navbar { border-color: var(--tw-border); }
 #layers2 .lu-navbar { min-height: 0; }
@@ -173,7 +172,6 @@
 #layers2 .tssggs-dash__alert > .mdi { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 6px; background: var(--tw-danger-soft); color: var(--tw-danger); font-size: 16px; }
 
 /* period chip next to the heading */
-#layers2 .tssggs-dash__period { height: 32px; padding: 0 12px; border: 1px solid var(--tw-border); border-radius: 6px; background: var(--tw-surface); color: var(--tw-fg); font-size: 13px; }
 
 /* migration stat tiles: plain-case labels like the KPI tiles */
 #layers2 .tssggs-card__label { color: var(--tw-fg-soft); font-size: 12px; letter-spacing: 0; text-transform: none; }
@@ -254,7 +252,7 @@
 #layers2 .tssggs-alertrow time { color: var(--th-quiet); font-size: 12px; white-space: nowrap; }
 
 /* setup strip */
-#layers2 .tssggs-setup { margin-top: 0; padding: 12px 18px; border: 1px solid var(--tw-border); border-radius: 8px; background: var(--tw-surface); }
+#layers2 .tssggs-setup { margin-top: 16px; padding: 12px 18px; border: 1px solid var(--tw-border); border-radius: 8px; background: var(--tw-surface); }
 #layers2 .tssggs-setup > .tssggs-html { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
 #layers2 .tssggs-setup__lead { display: flex; align-items: center; gap: 10px; padding-right: 16px; border-right: 1px solid var(--tw-border); color: var(--tw-fg); font-weight: 500; white-space: nowrap; }
 #layers2 .tssggs-setup__step { display: flex; flex: 1 1 200px; align-items: center; gap: 10px; padding: 8px 12px; border: 1px solid var(--tw-border); border-radius: 6px; color: var(--tw-fg) !important; text-decoration: none; transition: border-color .2s; }
@@ -350,7 +348,6 @@
 #layers2 .tssggs-stage__top svg.tssggs-ico,
 #layers2 .tssggs-pipe__more svg.tssggs-ico,
 #layers2 .tssggs-setup__step > svg.tssggs-ico,
-#layers2 .tssggs-dash__period svg.tssggs-ico,
 #layers2 .tssggs-dcard__sub svg.tssggs-ico,
 #layers2 .tssggs-cronjob__freq svg.tssggs-ico,
 #layers2 .tssggs-cronone__title svg.tssggs-ico { width: 16px; height: 16px; }
@@ -384,7 +381,6 @@
 #layers2 .tssggs-badge,
 #layers2 .tssggs-copy,
 #layers2 .tssggs-dash__crumb,
-#layers2 .tssggs-dash__period,
 #layers2 .tssggs-dash__foot span,
 #layers2 .tssggs-cronjob__freq,
 #layers2 .tssggs-cronone__title,
@@ -512,6 +508,8 @@
 #layers2 .tssggs-note.is-ok   { --notice-color: var(--nt-success); --notice-bg: var(--nt-success-soft); --notice-icon: var(--nt-icon-ok); }
 #layers2 .tssggs-note.is-warn { --notice-color: var(--nt-warning); --notice-bg: var(--nt-warning-soft); --notice-icon: var(--nt-icon-warn); }
 #layers2 .tssggs-note.is-bad  { --notice-color: var(--nt-error);   --notice-bg: var(--nt-error-soft);   --notice-icon: var(--nt-icon-warn); }
+/* the plain (blue) info notice: background only, no border - the coloured states keep theirs */
+#layers2 .tssggs-note:not(.is-ok):not(.is-warn):not(.is-bad) { border: 0; }
 #layers2 .tssggs-note a { color: var(--notice-color); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
 #layers2 .tssggs-note a:focus-visible, #layers2 .tssggs-explain a:focus-visible { outline: 2px solid var(--notice-color, var(--nt-info)); outline-offset: 3px; }
 
@@ -593,3 +591,7 @@
 #layers2 .tssggs-upd-banner svg { width: 20px; height: 20px; color: var(--tw-primary); flex: none; }
 #layers2 .tssggs-upd-banner a { margin-left: auto; font-weight: 600; color: var(--tw-primary); white-space: nowrap; }
 @media (max-width: 640px) { #layers2 .tssggs-upd__facts { grid-template-columns: 1fr; } }
+/* Products: All / Imported / Not imported and the validation filter */
+#layers2 .tssggs-filters { display: flex; flex-wrap: wrap; gap: 8px 24px; margin: 0 0 12px; }
+#layers2 .tssggs-show { display: flex; flex-wrap: wrap; gap: 8px; }
+#layers2 .tssggs-show .lu-btn b { margin-left: 4px; font-weight: 600; }

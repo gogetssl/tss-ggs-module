@@ -15,6 +15,9 @@ use ModulesGarden\TSSGGSModule\Core\Support\Facades\Validator;
 
 class SslSettingsProvider extends CrudProvider
 {
+    /** Default CSR Country: no fixed country, the client's own one is used */
+    const CSR_COUNTRY_CLIENT = 'client';
+
     public function read()
     {
         $moduleRepository    = new AddonModuleRepository();
@@ -62,7 +65,10 @@ class SslSettingsProvider extends CrudProvider
 
         $this->availableValues['country']                               = Helpers::getCountryOptions();
         // empty = each client's own country (the first country of the list used to be saved without being chosen)
-        $this->availableValues['defaultCsrCountry']                     = ['' => "The client's own country"] + Helpers::getCountryOptions();
+        // "client" (the client's own country) is a real value: the dropdown drops an option with an empty value, which
+        // left Afghanistan, the first country, selected and saved
+        $this->availableValues['defaultCsrCountry']                     = [self::CSR_COUNTRY_CLIENT => "The client's own country"] + Helpers::getCountryOptions();
+        $this->data['defaultCsrCountry']                                = preg_match('/^[A-Z]{2}$/', strtoupper(trim((string)($this->data['defaultCsrCountry'] ?? '')))) ? $this->data['defaultCsrCountry'] : self::CSR_COUNTRY_CLIENT;
         $this->availableValues['additionalDaysForRenewalOrder']         = Helpers::get30DaysOptions();
         $reissueDays = [1, 3, 7, 10, 21, 30];
         $current     = (int)$this->data['autoReissueDaysBeforeExpire'];
@@ -113,10 +119,17 @@ class SslSettingsProvider extends CrudProvider
         // as a string: the dropdown takes a numeric 0 for "nothing chosen"
         $this->data['pendingPaymentWaitSubscription'] = (string)RenewalPolicy::pendingWait(RenewalPolicy::SUBSCRIPTION);
 
+        // the module template, the administrator's own Product/Service templates (CertificateService::certificateTemplates)
+        // and the saved one, so a choice made before stays visible
         $templates = ['' => $this->translate('moduleTemplate')];
-        foreach(\WHMCS\Database\Capsule::table('tblemailtemplates')->where('type', 'general')->where('language', '')->orderBy('name')->pluck('name') as $name)
+        foreach(\ModulesGarden\TSSGGSModule\App\Libs\CertificateService::certificateTemplates() as $name)
         {
             $templates[$name] = $name;
+        }
+        $saved = trim((string)\ModulesGarden\TSSGGSModule\App\Libs\GeneralSettings::get('certificateEmailTemplate'));
+        if($saved !== '' && !isset($templates[$saved]))
+        {
+            $templates[$saved] = $saved;
         }
         $this->availableValues['certificateEmailTemplate'] = $templates;
     }
@@ -184,6 +197,11 @@ class SslSettingsProvider extends CrudProvider
         );
 
         $data = $this->formData->toArray();
+        // stored empty: the client area then uses the client's own country
+        if(array_key_exists('defaultCsrCountry', $data) && $data['defaultCsrCountry'] === self::CSR_COUNTRY_CLIENT)
+        {
+            $data['defaultCsrCountry'] = '';
+        }
 
         // fields of the general store (downloads, messages, due dates ...) go there, the rest into the SSL settings; both
         // are merged into what is stored, so a page that shows only part of the settings keeps the others

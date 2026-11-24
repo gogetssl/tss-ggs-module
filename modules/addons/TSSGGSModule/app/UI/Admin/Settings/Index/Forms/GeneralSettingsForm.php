@@ -39,9 +39,15 @@ class GeneralSettingsForm extends Form implements AdminAreaInterface, AjaxCompon
         $this->builder->addFieldInContainer($clientArea, (new Dropdown())->setName('expiresSoonDays'), true);
         $this->builder->addFieldInContainer($clientArea, (new Switcher())->setName('certificatesByDomain')->addClass('switcher-revert'), true);
         $this->builder->addFieldInContainer($clientArea, (new Switcher())->setName('sslTools')->addClass('switcher-revert'), true);
+        // where to see these client area pages with examples: the edition's Wiki
+        $clientArea->addElement((new \ModulesGarden\TSSGGSModule\Components\Text\Text())->setText(
+            '<div class="tssggs-note">' . htmlspecialchars($this->translate('clientAreaWiki')) . ' <a href="' . htmlspecialchars(\ModulesGarden\TSSGGSModule\App\Libs\Edition::wiki()) . '" target="_blank" rel="noopener">'
+            . htmlspecialchars($this->translate('clientAreaWikiLink')) . '</a></div>'
+        ));
 
         $interface = $this->section('interface', 'view-dashboard-outline');
         $this->builder->addFieldInContainer($interface, (new Switcher())->setName('hideInfoMessages')->addClass('switcher-revert'), true);
+        $this->builder->addFieldInContainer($interface, (new Dropdown())->setName('dashboardPeriod'), true);
 
         $lifecycle = $this->section('lifecycle', 'sync');
         $this->builder->addFieldInContainer($lifecycle, (new Switcher())->setName('terminateCancelsOrder')->addClass('switcher-revert'), true);
@@ -51,7 +57,10 @@ class GeneralSettingsForm extends Form implements AdminAreaInterface, AjaxCompon
         // field shows a mask as its placeholder, and an empty field keeps the saved token
         if(in_array('ggs', \ModulesGarden\TSSGGSModule\App\Libs\Edition::vendors(), true))
         {
-            $lei   = $this->section('lei', 'card-account-details-outline');
+            $lei   = $this->section('lei', 'getlei');
+            // Company Register Search on: the token field appears (resources/assets/js/custom/switchFields.js)
+            $this->builder->addFieldInContainer($lei, (new Switcher())->setName('openCorporates')->addClass('switcher-revert'), true);
+            $lei->addElement((new \ModulesGarden\TSSGGSModule\Components\Text\Text())->setText('<span class="tssggs-depends" data-switch="openCorporates" data-fields="openCorporatesToken" hidden></span>'));
             $token = (new FormInputPassword())->setName('openCorporatesToken');
             if(\ModulesGarden\TSSGGSModule\App\Libs\GeneralSettings::get('openCorporatesToken'))
             {

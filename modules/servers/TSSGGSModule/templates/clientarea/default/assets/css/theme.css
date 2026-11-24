@@ -349,3 +349,11 @@ table.table-validation-details td.break-all {
 
 /* a paid renewal waiting for the client's details: says so above the form */
 .tssggs-cert .tssggs-renewal-notice { margin: 0 0 8px; padding: 10px 14px; border-radius: 8px; background: var(--c-green-tint); color: var(--c-text); font-size: 13.5px; }
+
+/* certificate token of an order bought at payment (awaiting configuration) */
+.tssggs-cert .tssggs-token { margin: 0 0 14px; padding: 12px 14px; border-radius: 8px; background: var(--c-subtle); }
+.tssggs-cert .tssggs-token__title { margin: 0 0 4px; font-weight: 600; }
+.tssggs-cert .tssggs-token__text { margin: 0 0 10px; font-weight: 400; font-size: 13.5px; }
+.tssggs-cert .tssggs-token__row { display: flex; gap: 8px; align-items: stretch; }
+.tssggs-cert .tssggs-token__value { flex: 1 1 auto; min-width: 0; padding: 7px 10px; border: 1px solid #cdd3d8; border-radius: 6px; background: #fff; color: var(--c-text); }
+@media (max-width: 575px) { .tssggs-cert .tssggs-token__row { flex-direction: column; } }

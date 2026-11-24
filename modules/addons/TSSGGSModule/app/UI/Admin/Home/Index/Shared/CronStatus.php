@@ -13,7 +13,6 @@ class CronStatus
     /** the jobs, in the order RunAll starts them (ReSyncProducts is part of ProductPricingUpdate now) */
     const TASKS = [
         'ProductPricingUpdate',
-        'SSLCertificatesProcessing',
         'SSLCertificates',
         'RenewalNotifyCertificate',
         'SSLAutoInstall',

@@ -151,7 +151,7 @@ var component = {
 
             this.ajaxData_['filters'] = filtersValues;
 
-            this.loadAjaxData_();
+            this.loadAjaxData_(true);
         },
 
         checkClearFilterButton: function (event) {
@@ -212,9 +212,15 @@ var component = {
             return this.loadAjaxData_();
         },
 
-        loadAjaxData_: function () {
-            this.massActionIds_ = [];
-            this.massActionOpen_ = false;
+        // keepSelection: paging, sorting, searching and filters keep the rows selected on other pages;
+        // a reload (after an action) starts with no selection
+        loadAjaxData_: function (keepSelection) {
+            keepSelection = keepSelection === true;
+            if (!keepSelection)
+            {
+                this.massActionIds_ = [];
+                this.massActionOpen_ = false;
+            }
 
             var self = this;
             var resp = this.loadDataFromServer_({
@@ -253,7 +259,7 @@ var component = {
                         if (data.records.length === 0 && self.dataShowing > 0)
                         {
                             self.dataShowing = 0;
-                            return self.loadAjaxData_();
+                            return self.loadAjaxData_(keepSelection);
                         }
 
 
@@ -270,6 +276,7 @@ var component = {
                         }
 
                         self.noData = data.records.length > 0 ? false : true;
+                        self.syncPageSelection_();
                     }
                     self.updatePagination();
                 });
@@ -283,7 +290,7 @@ var component = {
         updateLength: function (length) {
             this.recordsPerPage_ = length;
             this.dataShowing = 0; //reset offsetu żeby po wejściu w większe strony no ucinało końcówki
-            this.loadAjaxData_();
+            this.loadAjaxData_(true);
         },
 
         searchDataEnter: function (event) {
@@ -305,7 +312,7 @@ var component = {
             {
                 self.sSearchPrevious = false;
             }
-            self.loadAjaxData_();
+            self.loadAjaxData_(true);
         },
 
         updatePagination: function () {
@@ -386,7 +393,7 @@ var component = {
             {
                 var newPageNumber = $(event.target).attr('data-dt-idx');
                 self.dataShowing = ((newPageNumber < 1) ? 0 : newPageNumber - 1) * parseInt(self.recordsPerPage_);
-                self.loadAjaxData_();
+                self.loadAjaxData_(true);
             }
         },
 
@@ -408,15 +415,27 @@ var component = {
                 this.sortDir_ = 'ASC';
             }
 
-            this.loadAjaxData_();
+            this.loadAjaxData_(true);
         },
 
+        // the header checkbox selects or clears the rows of this page; rows selected on other pages stay
         massActionCheckbox: function (value) {
-            this.massActionIds_ = [];
+            var pageIds = this.records_.map(val => val[this.uniqueColumnName_]);
             if (this.massActionOpen_)
             {
-                this.records_.map(val => this.massActionIds_.push(val[this.uniqueColumnName_]))
+                pageIds.forEach(id => { if (this.massActionIds_.indexOf(id) === -1) { this.massActionIds_.push(id); } });
             }
+            else
+            {
+                this.massActionIds_ = this.massActionIds_.filter(id => pageIds.indexOf(id) === -1);
+            }
+        },
+
+        // the header checkbox is ticked while rows of this page are selected (a page may hold rows that cannot be
+        // selected, e.g. imported products), so the next click clears the page
+        syncPageSelection_: function () {
+            var ids = this.massActionIds_;
+            this.massActionOpen_ = this.records_.some(val => ids.indexOf(val[this.uniqueColumnName_]) !== -1);
         },
 
         getSortedClass(column)
@@ -466,9 +485,7 @@ var component = {
         massActionIds_: {
             deep: true,
             handler: function () {
-                if(!this.massActionIds_.length){
-                    this.massActionOpen_ = false;
-                }
+                this.syncPageSelection_();
             }
         },
     }

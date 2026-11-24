@@ -34,26 +34,52 @@ class GeneralSettingsProvider extends CrudProvider
         }
         $this->availableValues['sidebarTemplates'] = $pages;
 
-        // the OpenCorporates token is never sent to the page
+        // the OpenCorporates token is never sent to the page; the switch is on while a token is saved
+        $this->data['openCorporates']      = (string)GeneralSettings::get('openCorporatesToken') !== '';
         $this->data['openCorporatesToken'] = '';
         $this->data['debugServices'] = implode(', ', \ModulesGarden\TSSGGSModule\App\Libs\LogPolicy::debugServices());
         $this->data['debugHours']    = 4;
         $this->availableValues['apiLogMode'] = self::apiModeOptions($this);
         $this->availableValues['debugHours'] = self::debugHourOptions($this);
         $this->availableValues['expiresSoonDays'] = ['10' => '10', '15' => '15', '30' => '30', '60' => '60', '90' => '90'];
+        // availableValues is an ArrayAccess container: the options are built first, then set at once
+        $periods = [];
+        foreach(array_keys(\ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Shared\SalesSummary::PERIODS) as $period)
+        {
+            $periods[$period] = \ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Shared\SalesSummary::periodLabel($period);
+        }
+        $this->availableValues['dashboardPeriod'] = $periods;
 
-        // General e-mail templates; empty = the module's own "Send Certificate" template
+        // the module template, the administrator's own Product/Service templates (CertificateService::certificateTemplates)
+        // and the saved one, so a choice made before stays visible
         $templates = ['' => $this->translate('moduleTemplate')];
-        foreach(Capsule::table('tblemailtemplates')->where('type', 'general')->where('language', '')->orderBy('name')->pluck('name') as $name)
+        foreach(\ModulesGarden\TSSGGSModule\App\Libs\CertificateService::certificateTemplates() as $name)
         {
             $templates[$name] = $name;
+        }
+        $saved = trim((string)\ModulesGarden\TSSGGSModule\App\Libs\GeneralSettings::get('certificateEmailTemplate'));
+        if($saved !== '' && !isset($templates[$saved]))
+        {
+            $templates[$saved] = $saved;
         }
         $this->availableValues['certificateEmailTemplate'] = $templates;
     }
 
     public function update()
     {
-        self::saveGeneral($this->formData->toArray());
+        $data = $this->formData->toArray();
+        // Company Register Search switched on needs a token: the one typed now or the saved one
+        if(array_key_exists('openCorporates', $data) && self::on($data['openCorporates'])
+            && trim((string)($data['openCorporatesToken'] ?? '')) === '' && (string)GeneralSettings::get('openCorporatesToken') === '')
+        {
+            return (new \ModulesGarden\TSSGGSModule\Core\Components\Response\Response())->setError($this->translate('openCorporatesTokenMissing'));
+        }
+        self::saveGeneral($data);
+    }
+
+    protected static function on($value)
+    {
+        return !empty($value) && !in_array($value, ['off', 'false', '0'], true);
     }
 
     /**
@@ -68,6 +94,10 @@ class GeneralSettingsProvider extends CrudProvider
                 $data[$key] = !empty($data[$key]) && !in_array($data[$key], ['off', 'false', '0'], true);
             }
         }
+        if(array_key_exists('dashboardPeriod', $data) && !array_key_exists((string)$data['dashboardPeriod'], \ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Shared\SalesSummary::PERIODS))
+        {
+            unset($data['dashboardPeriod']);
+        }
         if(array_key_exists('expiresSoonDays', $data))
         {
             $data['expiresSoonDays'] = max(1, (int)$data['expiresSoonDays']);
@@ -80,6 +110,15 @@ class GeneralSettingsProvider extends CrudProvider
             }, $pages))));
         }
 
+        // Company Register Search off: the saved token is removed (no unused secret stays stored)
+        if(array_key_exists('openCorporates', $data))
+        {
+            if(!self::on($data['openCorporates']))
+            {
+                $data['openCorporatesToken'] = '-';
+            }
+            unset($data['openCorporates']);
+        }
         // OpenCorporates token: empty keeps the saved one, "-" removes it, anything else is saved encrypted
         if(array_key_exists('openCorporatesToken', $data))
         {

@@ -61,7 +61,7 @@ class SslSettingsForm extends Form implements AdminAreaInterface, AjaxComponentI
 
         if($ssl)
         {
-            $this->validationFields($this->section('sslValidation', 'shield-check-outline'), $this->scope === self::SCOPE_ALL);
+            $this->validationFields($this->section('sslValidation', 'format-list-checks'), $this->scope === self::SCOPE_ALL);
             $this->csrFields($this->section('csrGenerator', 'key-variant'));
         }
 
@@ -79,7 +79,7 @@ class SslSettingsForm extends Form implements AdminAreaInterface, AjaxComponentI
 
         if($ssl)
         {
-            $this->renewalFields($this->section('renewals', 'sync'), $this->scope === self::SCOPE_ALL);
+            $this->renewalFields($this->section('renewals', 'calendar-month-outline'), $this->scope === self::SCOPE_ALL);
             $this->orderFields($this->section('recurringAndOneTime', 'credit-card-clock-outline'));
         }
 
@@ -87,7 +87,7 @@ class SslSettingsForm extends Form implements AdminAreaInterface, AjaxComponentI
 
         if($this->scope === self::SCOPE_ALL || $this->scope === self::SCOPE_AUTOMATED)
         {
-            $this->subscriptionFields($this->section('renewalsSubscription', 'sync'));
+            $this->subscriptionFields($this->section('renewalsSubscription', 'calendar-month-outline'));
         }
 
         $this->saveBar(null, $this->scope === self::SCOPE_ALL);
@@ -150,7 +150,7 @@ class SslSettingsForm extends Form implements AdminAreaInterface, AjaxComponentI
 
         if($withReissue)
         {
-            $this->builder->addFieldInContainer($widget, (new Dropdown())->setName('autoReissueDaysBeforeExpire'));
+            $this->builder->addFieldInContainer($widget, (new Dropdown())->setName('autoReissueDaysBeforeExpire'), true);
         }
         // daily e-mail to the administrators: installed, failed and long-waiting AutoInstall jobs (App\Libs\AutoInstallReport)
         $this->builder->addFieldInContainer($widget, (new Switcher())->setName('autoInstallReportEmail')->addClass('switcher-revert'), true);
@@ -175,7 +175,8 @@ class SslSettingsForm extends Form implements AdminAreaInterface, AjaxComponentI
             $csrGeneratorContainer,
             (new Switcher())
                 ->setName('useProfileDetailsForCsr')
-                ->addClass('switcher-revert')
+                ->addClass('switcher-revert'),
+            true
         );
 
         $countryContainer = new Container();
@@ -188,23 +189,32 @@ class SslSettingsForm extends Form implements AdminAreaInterface, AjaxComponentI
             $countryContainer,
             (new Dropdown())
                 ->setName('defaultCsrCountry')
-                ->setDefaultValueAsFirstOption()
+                ->setDefaultValueAsFirstOption(),
+            true
         );
     }
 
     protected function renewalFields($widget, $withReissue)
     {
-        foreach(['visibleRenewButtonBeforeExpiration', 'visibleRenewButtonAfterExpiration', 'renewOrderViaExistingOrder', 'renewReuseOrderDetails', 'setTheUnpaidStatusForRenewalInvoices'] as $name)
+        // no "Set The Unpaid Status For Renewal Invoices": renewal invoices are always Unpaid (the setting of the earlier
+        // GoGetSSL module was never read here)
+        foreach(['visibleRenewButtonBeforeExpiration', 'visibleRenewButtonAfterExpiration', 'renewOrderViaExistingOrder', 'renewReuseOrderDetails'] as $name)
         {
-            $this->builder->addFieldInContainer($widget, (new Switcher())->setName($name)->addClass('switcher-revert'));
+            $this->builder->addFieldInContainer($widget, (new Switcher())->setName($name)->addClass('switcher-revert'), true);
         }
 
-        $this->builder->addFieldInContainer($widget, (new Dropdown())->setName('additionalDaysForRenewalOrder')->setDefaultValueAsFirstOption());
+        $this->builder->addFieldInContainer($widget, (new Dropdown())->setName('additionalDaysForRenewalOrder')->setDefaultValueAsFirstOption(), true);
 
         if($withReissue)
         {
-            $this->builder->addFieldInContainer($widget, (new Dropdown())->setName('autoReissueDaysBeforeExpire'));
+            $this->builder->addFieldInContainer($widget, (new Dropdown())->setName('autoReissueDaysBeforeExpire'), true);
         }
+
+        // the detailed descriptions with examples: the edition's Wiki
+        $widget->addElement((new Text())->setText(
+            '<div class="tssggs-note">' . htmlspecialchars($this->translate('renewalsWiki')) . ' <a href="' . htmlspecialchars(\ModulesGarden\TSSGGSModule\App\Libs\Edition::wiki()) . '" target="_blank" rel="noopener">'
+            . htmlspecialchars($this->translate('wikiLink')) . '</a></div>'
+        ));
 
     }
 
@@ -213,6 +223,11 @@ class SslSettingsForm extends Form implements AdminAreaInterface, AjaxComponentI
      */
     protected function orderFields($widget)
     {
+        // price of additional SANs bought after the order (App\Libs\UpgradePricing): every billing type, so a heading
+        // of its own before the recurring / one-time ones
+        $allOrdersWidget = $this->subSection('allOrders', $widget);
+        $this->builder->addFieldInContainer($allOrdersWidget, (new Dropdown())->setName('sanUpgradePricing')->setDefaultValueAsFirstOption(), true);
+
         $recurringOrdersWidget = $this->subSection('recurringOrders', $widget);
 
         $recurringSwitcher = $this->builder->addFieldInContainer(
@@ -244,8 +259,6 @@ class SslSettingsForm extends Form implements AdminAreaInterface, AjaxComponentI
         );
         $this->builder->addFieldInContainer($recurringContainer, (new Dropdown())->setName('recurringPaymentTerm'));
         $recurringContainer->addElement((new Text())->setText($this->renewalCheck(RenewalPolicy::CERTIFICATE)));
-        // price of additional SANs bought after the order (App\Libs\UpgradePricing)
-        $this->builder->addFieldInContainer($recurringOrdersWidget, (new Dropdown())->setName('sanUpgradePricing')->setDefaultValueAsFirstOption(), true);
 
         $oneTimeOrdersWidget = $this->subSection('oneTimeOrders', $widget);
 
@@ -315,8 +328,8 @@ class SslSettingsForm extends Form implements AdminAreaInterface, AjaxComponentI
             $this->builder->addFieldInContainer($sub, (new FormInputText())->setName('agreementUrl_' . $authority), true);
             $this->builder->addFieldInContainer($sub, (new TextArea())->setName('agreementText_' . $authority), true);
         }
-        $other = $this->subSection('agreement_other', $widget);
-        $this->builder->addFieldInContainer($other, (new TextArea())->setName('agreementText'), true);
+        // no "other certificate authorities" agreement: every product sold is Sectigo, DigiCert or GoGetSSL (an agreement
+        // text saved there earlier still fills an empty one of these, CertificateService::agreement)
     }
 
     protected function deliveryFields($widget)
@@ -330,7 +343,7 @@ class SslSettingsForm extends Form implements AdminAreaInterface, AjaxComponentI
     protected function messageFields($widget)
     {
         $this->builder->addFieldInContainer($widget, (new TextArea())->setName('processingGuide'), true);
-        // "Issued SSL Message for": a certificate family (App\Libs\IssuedMessage) and a language, or General. Only the
+        // "Issued SSL Message for": a certificate family (App\Libs\IssuedMessage) and a language. Only the
         // chosen boxes are shown (resources/assets/js/custom/issuedMessageFor.js); the selectors have no name, so they
         // are never saved. Each family / language box is prefilled with the built-in text (SslSettingsProvider::read)
         $issued    = \ModulesGarden\TSSGGSModule\App\Libs\IssuedMessage::class;
@@ -340,7 +353,8 @@ class SslSettingsForm extends Form implements AdminAreaInterface, AjaxComponentI
         {
             $options .= '<option value="' . $family . '">' . htmlspecialchars($this->translate('issuedMessageFor_' . $family)) . '</option>';
         }
-        $options  .= '<option value="general">' . htmlspecialchars($this->translate('issuedMessageForGeneral')) . '</option>';
+        // no "General (other certificates)": every SSL product sold is Sectigo or DigiCert (GoGetSSL-brand ones too), so
+        // a family message always applies; a General message saved earlier still shows when a family's is switched off
         $languageOptions = '';
         foreach($languages as $language)
         {
@@ -365,7 +379,6 @@ class SslSettingsForm extends Form implements AdminAreaInterface, AjaxComponentI
                     ->setDescription($this->translate($hint)), true);
             }
         }
-        $this->builder->addFieldInContainer($widget, (new TextArea())->setName('issuedMessage'), true);
         $this->builder->addFieldInContainer($widget, (new Dropdown())->setName('certificateEmailTemplate'), true);
     }
 
