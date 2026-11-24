@@ -2,6 +2,8 @@
 
 namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Widgets;
 
+use ModulesGarden\TSSGGSModule\App\Libs\GeneralSettings;
+use ModulesGarden\TSSGGSModule\App\Libs\WhmcsModuleLog;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Shared\Card;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Shared\CronStatus;
 
@@ -55,6 +57,13 @@ class SystemCheckWidget extends Card
             $name  = $this->translate('name_' . $task);
             $name  = strpos($name, 'name_') !== false ? $task : $name;
             $html .= Card::row(self::ICONS[$task] ?? 'cog-outline', $name, '', $state);
+        }
+
+        // the module sends its requests to the WHMCS Module Log, but WHMCS has that log switched off: nothing is recorded
+        if(GeneralSettings::enabled('moduleLog') && !WhmcsModuleLog::enabled())
+        {
+            $html .= Card::row('text-box-outline', $this->translate('moduleLog'), '', '<a href="' . Card::e(WhmcsModuleLog::pageUrl()) . '">'
+                . Card::status('warn', $this->translate('moduleLog_off'), 'alert-outline', $this->translate('moduleLog_off_title')) . '</a>');
         }
         $this->addElement(Card::html('<div class="tssggs-dcard__rows" id="tssggs-health">' . $html . '</div>'));
 

@@ -2,6 +2,7 @@
 
 namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Forms;
 
+use ModulesGarden\TSSGGSModule\App\Libs\WhmcsModuleLog;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Concerns\SettingsLayout;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Providers\GeneralSettingsProvider;
 use ModulesGarden\TSSGGSModule\Components\Form\Builder\BuilderCreator;
@@ -48,36 +49,13 @@ class LogsSettingsForm extends Form implements AdminAreaInterface, AjaxComponent
         $whmcs = $this->section('whmcsLogs', 'clipboard-text');
         $this->builder->addFieldInContainer($whmcs, (new Switcher())->setName('whmcsActivityLog')->addClass('switcher-revert'), true);
         $this->builder->addFieldInContainer($whmcs, (new Switcher())->setName('moduleLog')->addClass('switcher-revert'), true);
-        $whmcsOff = $this->whmcsModuleLogOff();
-        if($whmcsOff)
+        if(!WhmcsModuleLog::enabled())
         {
             // the switch above only says what the module sends; WHMCS drops it all while its own Module Log is off
             $whmcs->addElement((new Text())->setText('<div class="tssggs-renewal-check"><p class="tssggs-renewal-check__warning tssggs-renewal-check__warning--amber">'
-                . htmlspecialchars($this->translate('whmcsModuleLogOff')) . ' <a href="' . htmlspecialchars($whmcsOff) . '">' . htmlspecialchars($this->translate('whmcsModuleLogOpen')) . '</a></p></div>'));
+                . htmlspecialchars($this->translate('whmcsModuleLogOff')) . ' <a href="' . htmlspecialchars(WhmcsModuleLog::pageUrl()) . '">' . htmlspecialchars($this->translate('whmcsModuleLogOpen')) . '</a></p></div>'));
         }
 
         $this->saveBar();
-    }
-
-    /**
-     * WHMCS writes module calls only while its own Module Log (debug logging) is on: the link to that page when it is
-     * off, '' when it is on
-     */
-    protected function whmcsModuleLogOff(): string
-    {
-        try
-        {
-            if(\WHMCS\Config\Setting::getValue('ModuleDebugMode'))
-            {
-                return '';
-            }
-            $version = (string)($GLOBALS['CONFIG']['Version'] ?? '');
-        }
-        catch(\Throwable $e)
-        {
-            return '';
-        }
-
-        return $version !== '' && version_compare($version, '9.0.0', '<') ? 'systemmodulelog.php' : 'index.php?rp=/admin/logs/module-log';
     }
 }

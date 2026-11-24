@@ -52,6 +52,9 @@ $_LANG['admin.home.index.widgets.system_check_widget.gateway']         = '%%VEND
 $_LANG['admin.home.index.widgets.system_check_widget.gateway_ok']      = 'Connected (:ms ms)';
 $_LANG['admin.home.index.widgets.system_check_widget.gateway_error']   = 'Unreachable';
 $_LANG['admin.home.index.widgets.system_check_widget.gateway_recheck'] = 'Check the connection again';
+$_LANG['admin.home.index.widgets.system_check_widget.moduleLog'] = 'WHMCS Module Log';
+$_LANG['admin.home.index.widgets.system_check_widget.moduleLog_off'] = 'Off in WHMCS';
+$_LANG['admin.home.index.widgets.system_check_widget.moduleLog_off_title'] = 'The module sends its requests to the WHMCS Module Log, but WHMCS has that log switched off, so nothing is recorded. Click to open the WHMCS Module Log page.';
 
 $_LANG['admin.home.index.widgets.migration_widget.title']           = 'Legacy module migration';
 $_LANG['admin.home.index.widgets.migration_widget.intro']           = 'Move your existing SSL services to this module.';

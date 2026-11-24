@@ -58,6 +58,9 @@ $_LANG['admin.home.index.widgets.system_check_widget.gateway']         = 'Forbin
 $_LANG['admin.home.index.widgets.system_check_widget.gateway_ok']      = 'Forbundet (:ms ms)';
 $_LANG['admin.home.index.widgets.system_check_widget.gateway_error']   = 'Kan ikke nås';
 $_LANG['admin.home.index.widgets.system_check_widget.gateway_recheck'] = 'Kontroller forbindelsen igen';
+$_LANG['admin.home.index.widgets.system_check_widget.moduleLog'] = 'WHMCS Module Log';
+$_LANG['admin.home.index.widgets.system_check_widget.moduleLog_off'] = 'Slået fra i WHMCS';
+$_LANG['admin.home.index.widgets.system_check_widget.moduleLog_off_title'] = 'Modulet sender sine forespørgsler til WHMCS Module Log, men loggen er slået fra i WHMCS, så intet registreres. Klik for at åbne siden WHMCS Module Log.';
 
 $_LANG['admin.home.index.widgets.migration_widget.title']           = 'Migrering af ældre modul';
 $_LANG['admin.home.index.widgets.migration_widget.intro']           = 'Flyt dine eksisterende SSL-tjenester til dette modul.';
