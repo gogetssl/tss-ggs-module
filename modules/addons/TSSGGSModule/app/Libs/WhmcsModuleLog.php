@@ -15,9 +15,6 @@ class WhmcsModuleLog
     /** the WHMCS permission of the Module Log page, where WHMCS itself switches it on */
     const PERMISSION = 'View Module Debug Log';
 
-    /** session key of the result shown on Settings > Logs after the button */
-    const SESSION = 'tssggs_whmcs_module_log';
-
     /** debug logging is on in WHMCS (an unreadable setting counts as on: no false warning) */
     public static function enabled(): bool
     {

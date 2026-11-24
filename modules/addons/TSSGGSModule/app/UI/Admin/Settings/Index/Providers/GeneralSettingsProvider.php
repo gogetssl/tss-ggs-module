@@ -37,6 +37,8 @@ class GeneralSettingsProvider extends CrudProvider
         // the OpenCorporates token is never sent to the page; the switch is on while a token is saved
         $this->data['openCorporates']      = (string)GeneralSettings::get('openCorporatesToken') !== '';
         $this->data['openCorporatesToken'] = '';
+        // WHMCS Module Log: YES only while WHMCS records it too (switched off in WHMCS = nothing is written, so NO)
+        $this->data['moduleLog']     = GeneralSettings::enabled('moduleLog') && \ModulesGarden\TSSGGSModule\App\Libs\WhmcsModuleLog::enabled();
         $this->data['debugServices'] = implode(', ', \ModulesGarden\TSSGGSModule\App\Libs\LogPolicy::debugServices());
         $this->data['debugHours']    = 4;
         $this->availableValues['apiLogMode'] = self::apiModeOptions($this);
@@ -73,6 +75,17 @@ class GeneralSettingsProvider extends CrudProvider
             && trim((string)($data['openCorporatesToken'] ?? '')) === '' && (string)GeneralSettings::get('openCorporatesToken') === '')
         {
             return (new \ModulesGarden\TSSGGSModule\Core\Components\Response\Response())->setError($this->translate('openCorporatesTokenMissing'));
+        }
+        // WHMCS Module Log YES: WHMCS has to record it too, so it is switched on there (WHMCS-wide, logged in the activity
+        // log). NO only stops this module sending; WHMCS keeps its own setting for the other modules
+        if(array_key_exists('moduleLog', $data) && self::on($data['moduleLog']) && !\ModulesGarden\TSSGGSModule\App\Libs\WhmcsModuleLog::enabled())
+        {
+            if(!\ModulesGarden\TSSGGSModule\App\Libs\WhmcsModuleLog::canEnable())
+            {
+                return (new \ModulesGarden\TSSGGSModule\Core\Components\Response\Response())->setError($this->translate('whmcsModuleLogNoPermission',
+                    [':permission' => \ModulesGarden\TSSGGSModule\App\Libs\WhmcsModuleLog::PERMISSION]));
+            }
+            \ModulesGarden\TSSGGSModule\App\Libs\WhmcsModuleLog::enable();
         }
         self::saveGeneral($data);
     }

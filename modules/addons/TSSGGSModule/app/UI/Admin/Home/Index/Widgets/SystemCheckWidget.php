@@ -62,7 +62,7 @@ class SystemCheckWidget extends Card
         // the module sends its requests to the WHMCS Module Log, but WHMCS has that log switched off: nothing is recorded
         if(GeneralSettings::enabled('moduleLog') && !WhmcsModuleLog::enabled())
         {
-            $html .= Card::row('text-box-outline', $this->translate('moduleLog'), '', '<a href="' . Card::e(WhmcsModuleLog::pageUrl()) . '">'
+            $html .= Card::row('text-box-outline', $this->translate('moduleLog'), '', '<a href="addonmodules.php?module=TSSGGSModule&amp;mg-page=settings&amp;settings-page=logsSettings">'
                 . Card::status('warn', $this->translate('moduleLog_off'), 'alert-outline', $this->translate('moduleLog_off_title')) . '</a>');
         }
         $this->addElement(Card::html('<div class="tssggs-dcard__rows" id="tssggs-health">' . $html . '</div>'));
