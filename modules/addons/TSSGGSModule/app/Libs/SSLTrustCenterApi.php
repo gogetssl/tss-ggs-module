@@ -224,14 +224,28 @@ class SSLTrustCenterApi
      * Sends the details of a certificate bought with createIncomplete() (PUT /certificates/tls/{token}): the CSR, the
      * common name, the alternative names, the contacts and an optional renewal - the fields of addOrder() without
      * product. Answers with the order details (as getOrder()). POST on the same URL is the reissue call.
+     * The details are kept on the purchase row (Request::currentOrder(), addOrder or renewOrder) next to its product,
+     * as addOrder() / renewOrder() keep theirs: an automatic renewal places the next order with them.
      */
     public function completeOrder($token, array $data, $serviceId)
     {
         $this->serviceHint = $serviceId;
         unset($data['product']);
-        $data = $this->withoutFreeName($data);
+        $data  = $this->withoutFreeName($data);
+        $order = $this->call('/certificates/' . $this->category . '/' . rawurlencode((string)$token), $data, 'PUT');
 
-        return $this->call('/certificates/' . $this->category . '/' . rawurlencode((string)$token), $data, 'PUT');
+        $row = Request::currentOrder($serviceId);
+        if($row)
+        {
+            $stored = json_decode((string)\decrypt((string)$row->request), true);
+            $stored = is_array($stored) ? $stored : [];
+            Request::where('id', $row->id)->update([
+                'request'    => \encrypt(json_encode(array_intersect_key($stored, ['product' => true]) + $data)),
+                'updated_at' => date('Y-m-d H:i:s'),
+            ]);
+        }
+
+        return $order;
     }
 
     public function renewOrder($serviceId, $data)
