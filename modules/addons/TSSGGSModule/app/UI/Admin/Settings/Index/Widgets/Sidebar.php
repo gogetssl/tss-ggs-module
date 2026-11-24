@@ -14,7 +14,7 @@ class Sidebar extends \ModulesGarden\TSSGGSModule\Components\Sidebar\Sidebar
         'sslSettings'       => 'shield-check-outline',
         'automatedSettings' => 'sync',
         'productsSettings'  => 'package-variant-closed',
-        'financeSettings'   => 'email-outline',
+        'financeSettings'   => 'cash-multiple',
         'emailSettings'     => 'bell-outline',
         'cronSettings'      => 'file-clock-outline',
         'logsSettings'      => 'text-box-outline',
