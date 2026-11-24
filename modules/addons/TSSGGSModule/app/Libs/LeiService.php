@@ -9,18 +9,24 @@ use WHMCS\Database\Capsule;
  * LEI codes (Legal Entity Identifier), ordered through the gateway (/lei).
  *
  * An LEI is registered with the LEI issuer for the legal entity the client enters after paying (name, registration
- * number, jurisdiction, addresses) and the person signing the application. The issuer checks the data (processing),
- * may ask the client to confirm what it found (incomplete: the issuer emails the client), finishes (pending) and
- * issues the 20-character code (active, with valid_from / valid_till).
+ * number, jurisdiction, addresses) and the person signing the application.
  *
+ * order.status is the general cycle: processing (new_order, renew, processing), pending (the issuer waits for the
+ * client's confirmation, or finishes), active, failed (the issuer refused the submission), cancelled, revoked (by the
+ * issuer), expired. items[].status is the exact stage, as the gateway's database has it: need_action (the client
+ * confirms the submitted data: POST /lei/{id}/confirm) -> user_confirmed -> pre_issue -> active. The data shown for the
+ * confirmation is the submitted organization and signatory: the issuer's own data is not available before issue.
+ * Submitted data can not be changed (a client with wrong data contacts support; an LEI no longer needed is cancelled).
+ *
+ * Validity: valid_till = issue date + the bought term (1-5 years); the issuer does the yearly GLEIF renewals within it.
  * Renewal: from 60 days before valid_till (or after it), POST /lei/{id}/renew creates a new LEI record (its own id,
  * is_renewal true) that replaces the old one once the issuer confirms - the service follows the new record.
  *
  * Vendors: GoGetSSL only for now (161 LEI Code, 162 LEI Code PRO). TheSSLStore is planned: add its products to PRODUCTS.
  * 165 (Renewal Transfer of an LEI issued elsewhere) is not sold (Vlad, 2026-11-20).
  *
- * Stored order (see GatewayOrderService) plus: leiNumber, legalName, legalEntity, signingAuthority, registeredLegalAddress,
- * registeredHeadquartersAddress, isRenewal. tblhosting.domain = the legal name.
+ * Stored order (see GatewayOrderService) plus: itemStatus, leiNumber, registrationAuthorityId, legalName, legalEntity,
+ * signingAuthority, isRenewal. tblhosting.domain = the legal name.
  */
 class LeiService extends GatewayOrderService
 {
@@ -33,6 +39,12 @@ class LeiService extends GatewayOrderService
 
     /** terms the gateway sells (months) */
     const TERMS = [12, 24, 36, 48, 60];
+
+    /** items[].status stages that refine an open order (order.status processing / pending) */
+    const STAGES = ['need_action', 'user_confirmed', 'pre_issue'];
+
+    /** the gateway takes a renewal from this many days before valid_till */
+    const RENEWAL_WINDOW_DAYS = 60;
 
     /** the gateway's text rule: no field may hold these (quotes are fine: names go to the issuer as registered) */
     const FORBIDDEN_TEXT = '/[<>{}%*;=\x00-\x1F\x7F]/u';
@@ -415,13 +427,102 @@ class LeiService extends GatewayOrderService
         return true;
     }
 
+    // ------------------------------------------------------------------ status and confirmation
+
+    /**
+     * The status to show: the exact stage (items[].status) while the order is open, else the order's status.
+     * items[].status alone can mislead: "pending" there is a submission the issuer refused (order.status failed).
+     */
+    public static function displayStatus(array $stored)
+    {
+        $status = strtolower((string)($stored['status'] ?? ''));
+        $stage  = strtolower((string)($stored['itemStatus'] ?? ''));
+        if(in_array($status, ['processing', 'pending'], true) && in_array($stage, self::STAGES, true))
+        {
+            return $stage;
+        }
+
+        return $status !== '' ? $status : 'processing';
+    }
+
+    /** the order read again; a new stage within the same order status goes to the service log */
+    public static function refresh($serviceId)
+    {
+        $before = static::displayStatus(static::stored($serviceId));
+        $stored = parent::refresh($serviceId);
+        $after  = static::displayStatus($stored);
+        if($after !== $before && in_array($after, self::STAGES, true))
+        {
+            CertificateService::event($serviceId, 'info', 'LEI stage: ' . $before . ' -> ' . $after);
+        }
+
+        return $stored;
+    }
+
+    /** the issuer waits for the client to confirm the submitted data */
+    public static function needsConfirmation(array $stored)
+    {
+        return !empty($stored['itemId']) && static::displayStatus($stored) === 'need_action';
+    }
+
+    /**
+     * The client confirms the submitted data (POST /lei/{id}/confirm); the LEI record is read again afterwards
+     *
+     * @return array|null the stored order after the confirmation, null when the LEI waits for none (any more)
+     */
+    public static function confirm($serviceId)
+    {
+        // the stage is read from the gateway first: the issuer may have moved on since the page was shown
+        $stored = static::refresh($serviceId);
+        if(!static::needsConfirmation($stored))
+        {
+            return null;
+        }
+
+        CertificateService::api($serviceId)->confirmLei((int)$stored['itemId']);
+        CertificateService::event($serviceId, 'info', 'LEI data confirmed by the client (LEI record #' . (int)$stored['itemId'] . ')');
+
+        try
+        {
+            return static::refresh($serviceId);
+        }
+        catch(\Throwable $e)
+        {
+            // confirmed: the next refresh shows the new stage
+            return $stored;
+        }
+    }
+
+    /**
+     * The Renew button: the module's window before the due date, and not before the gateway takes a renewal
+     * (60 days before valid_till)
+     */
+    public static function renewalOpen($serviceId)
+    {
+        if(!parent::renewalOpen($serviceId))
+        {
+            return false;
+        }
+        $till = strtotime((string)(static::stored($serviceId)['validTill'] ?? ''));
+
+        return !$till || $till - self::RENEWAL_WINDOW_DAYS * 86400 <= time();
+    }
+
     // ------------------------------------------------------------------ hooks
 
     protected static function applyItem(array $stored, array $item)
     {
+        if(!empty($item['status']))
+        {
+            $stored['itemStatus'] = strtolower((string)$item['status']);
+        }
         if(!empty($item['lei_number']))
         {
             $stored['leiNumber'] = strtoupper((string)$item['lei_number']);
+        }
+        if(!empty($item['registration_authority_id']))
+        {
+            $stored['registrationAuthorityId'] = (string)$item['registration_authority_id'];
         }
         foreach(['valid_from' => 'validFrom', 'valid_till' => 'validTill'] as $from => $to)
         {
@@ -441,13 +542,8 @@ class LeiService extends GatewayOrderService
         {
             $stored['signingAuthority'] = $signatory;
         }
-        foreach(['registered_legal_address' => 'registeredLegalAddress', 'registered_headquarters_address' => 'registeredHeadquartersAddress'] as $from => $to)
-        {
-            if(!empty($item[$from]) && is_array($item[$from]))
-            {
-                $stored[$to] = $item[$from];
-            }
-        }
+        // the gateway dropped registered_*: the submitted organization is what is shown
+        unset($stored['registeredLegalAddress'], $stored['registeredHeadquartersAddress']);
         if(isset($item['is_renewal']))
         {
             $stored['isRenewal'] = (bool)$item['is_renewal'];
