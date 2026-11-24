@@ -1008,6 +1008,7 @@ $_LANG['clientText']['reissueAfterIssue'] = 'Das Zertifikat kann neu ausgestellt
 $_LANG['clientText']['noFileValidation'] = 'Die Bestellung verwendet keine Dateivalidierung (HTTP/HTTPS)';
 $_LANG['clientText']['notIssuedYet'] = 'Das Zertifikat wurde noch nicht ausgestellt';
 $_LANG['clientText']['orderNotPlacedYet'] = 'Die SSL-Bestellung wurde noch nicht aufgegeben';
+$_LANG['clientText']['awaitingValidationMethod'] = 'Die Validierungsmethode für diese Bestellung wurde noch nicht festgelegt. Bitte wählen Sie, wie Ihre Domain validiert werden soll, und versuchen Sie es erneut.';
 $_LANG['clientText']['csrKeyTooSmall'] = 'Der CSR verwendet einen :bits:-Bit-Schlüssel. Zertifizierungsstellen verlangen mindestens 2048-Bit-RSA oder 256-Bit-ECC – bitte erstellen Sie einen neuen CSR.';
 $_LANG['clientText']['csrNotValid'] = 'Der CSR ist ungültig';
 $_LANG['clientText']['noValidationMethod'] = 'Keine Validierungsmethode für :domain:';

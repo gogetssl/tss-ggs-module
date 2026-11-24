@@ -213,7 +213,9 @@ class SSLStepThree
                 'status' => $newOrder['order']['status']
             ]);
 
-            $orderData = $api->getOrder($itemId, $params['serviceid']);
+            // the order is placed (and paid); if the gateway can not show it yet, the answer of the order call stands in
+            // until the order status sync reads it - the client must not see an error for an order that went through
+            $orderData = $api->getOrderOr($itemId, $params['serviceid'], (array)$newOrder);
 
             $orderFiles = [];
             $request = ['orderData' => $orderData, 'orderFiles' => $orderFiles];

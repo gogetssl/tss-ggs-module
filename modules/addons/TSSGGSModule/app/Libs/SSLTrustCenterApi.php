@@ -1094,10 +1094,46 @@ class SSLTrustCenterApi
                 }
             }
 
+            // the order waits for its validation method: a sentence the client can act on, not the gateway's 502
+            if(isset($response['message']) && stripos((string)$response['message'], self::AWAITING_CONFIGURATION) !== false)
+            {
+                throw new AwaitingConfigurationException(ClientText::get('awaitingValidationMethod',
+                    'The validation method for this order has not been set yet. Please choose how to validate your domain and try again.'), $httpCode);
+            }
+
             throw new \Exception(self::readableError(isset($response['message']) ? $response['message'] : '', $httpCode), $httpCode);
         }
 
         return $response;
+    }
+
+    /**
+     * The order was submitted but its validation method was never chosen: the gateway answers the order details with
+     * 502 GEX-4 "Unexpected validation method: not yet set" (seen 2026-11-24). The order waits for its configuration,
+     * it has not failed.
+     */
+    public static function isAwaitingConfiguration(\Throwable $e)
+    {
+        return $e instanceof AwaitingConfigurationException || stripos($e->getMessage(), self::AWAITING_CONFIGURATION) !== false;
+    }
+
+    /** the part of the gateway's message that says so */
+    const AWAITING_CONFIGURATION = 'validation method: not yet set';
+
+    /**
+     * getOrder(), or $fallback when the gateway can not show the order yet because its validation method is not set:
+     * for the reads right after a client's action that the gateway did accept (order placed, reissue, method change)
+     */
+    public function getOrderOr($orderId, $serviceId, array $fallback)
+    {
+        try
+        {
+            return $this->getOrder($orderId, $serviceId);
+        }
+        catch(AwaitingConfigurationException $e)
+        {
+            return $fallback;
+        }
     }
 
     /**

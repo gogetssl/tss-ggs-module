@@ -26,6 +26,47 @@ class CertificateSyncHelpers
     /** orders read per run by the conversion */
     const ITEM_ID_BATCH = 100;
 
+    /** setting: service ID => when its order was first seen waiting for its validation method (JSON) */
+    const AWAITING_CONFIGURATION = 'sync_awaiting_configuration';
+
+    /** such an order is read every hour for its first day, then twice a day */
+    const AWAITING_SLOW_AFTER = 86400;
+    const AWAITING_SLOW_RETRY = 43200;
+
+    /** service ID => first seen (unix time) */
+    public static function awaitingConfiguration(): array
+    {
+        $value = Capsule::table('tbladdonmodules')->where('module', 'configuration_TSSGGSModule')->where('setting', self::AWAITING_CONFIGURATION)->value('value');
+        $list  = $value ? json_decode((string)$value, true) : [];
+
+        return is_array($list) ? $list : [];
+    }
+
+    public static function markAwaitingConfiguration(int $serviceId)
+    {
+        $list = self::awaitingConfiguration();
+        if(!isset($list[$serviceId]))
+        {
+            $list[$serviceId] = time();
+            self::storeAwaiting($list);
+        }
+    }
+
+    public static function clearAwaitingConfiguration(int $serviceId)
+    {
+        $list = self::awaitingConfiguration();
+        if(isset($list[$serviceId]))
+        {
+            unset($list[$serviceId]);
+            self::storeAwaiting($list);
+        }
+    }
+
+    protected static function storeAwaiting(array $list)
+    {
+        Capsule::table('tbladdonmodules')->updateOrInsert(['module' => 'configuration_TSSGGSModule', 'setting' => self::AWAITING_CONFIGURATION], ['value' => json_encode($list)]);
+    }
+
     /**
      * One-time conversion to certificate (item) IDs. /services/updates reports item IDs; a service created before
      * 1.2.4, or moved over from an old module when only the order ID was known, holds the order ID in
@@ -44,17 +85,22 @@ class CertificateSyncHelpers
             return [];
         }
 
-        $left  = 0;
-        $batch = [];
-        // read again at most once an hour: an order that can not be read is not asked for on every run
-        $retry = date('Y-m-d H:i:s', time() - 3600);
+        $left     = 0;
+        $batch    = [];
+        $awaiting = self::awaitingConfiguration();
+        $open     = [];
         foreach(self::getCertificatesQuery()->orderBy('tblsslorders.updated_at', 'asc')->get()->toArray() as $certificate)
         {
+            $open[(int)$certificate['id']] = true;
             if(in_array((string)$certificate['remoteid'], $exclude, true) || !self::itemIdUnconfirmed($certificate))
             {
                 continue;
             }
             $left++;
+            // read again at most once an hour (an order that can not be read is not asked for on every run); an order
+            // waiting for its validation method for more than a day only twice a day
+            $since     = (int)($awaiting[(int)$certificate['id']] ?? 0);
+            $retry     = date('Y-m-d H:i:s', time() - ($since && $since < time() - self::AWAITING_SLOW_AFTER ? self::AWAITING_SLOW_RETRY : 3600));
             $updatedAt = (string)Capsule::table('tblsslorders')->where('serviceid', (int)$certificate['id'])->value('updated_at');
             if(count($batch) < self::ITEM_ID_BATCH && ($updatedAt === '' || $updatedAt < $retry))
             {
@@ -65,6 +111,13 @@ class CertificateSyncHelpers
         if($left === 0)
         {
             Capsule::table('tbladdonmodules')->updateOrInsert(['module' => 'configuration_TSSGGSModule', 'setting' => self::ITEM_IDS_CONFIRMED], ['value' => '1']);
+        }
+
+        // services no longer open (configured elsewhere, terminated, cancelled) leave the waiting list
+        $kept = array_intersect_key($awaiting, $open);
+        if(count($kept) !== count($awaiting))
+        {
+            self::storeAwaiting($kept);
         }
 
         return $batch;
