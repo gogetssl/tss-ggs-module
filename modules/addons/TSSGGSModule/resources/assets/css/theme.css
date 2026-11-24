@@ -597,4 +597,4 @@
 #layers2 .tssggs-show .lu-btn b { margin-left: 4px; font-weight: 600; }
 
 /* Settings > CRON: what starts the module's jobs right now (CronSettingsWidget::status) */
-#layers2 .tssggs-cronone .tssggs-cronone__status { margin: 12px 0 0; font-size: 13px; line-height: 20px; }
+#layers2 .tssggs-cronone .tssggs-cronone__status { margin: 12px 0 0; font-size: 13px; line-height: 20px; background: #fff; }
