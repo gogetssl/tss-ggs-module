@@ -72,8 +72,11 @@ class CronLauncher
      */
     public static function status(): array
     {
-        $state = self::state();
-        $out   = ['mode' => 'none', 'reason' => '', 'hook' => (int)($state['fired'] ?? 0), 'started' => (int)($state['started'] ?? 0), 'job' => self::lastJobRun()];
+        $state  = self::state();
+        // the start marker is older than the state file: right after an upgrade only the marker knows the last start
+        $marker = ModuleConstants::getFullPath('storage', 'cron_hook_last_start');
+        $start  = max((int)($state['started'] ?? 0), is_file($marker) ? (int)filemtime($marker) : 0);
+        $out    = ['mode' => 'none', 'reason' => '', 'hook' => (int)($state['fired'] ?? 0), 'started' => $start, 'job' => self::lastJobRun()];
 
         if(self::ownCronWorks())
         {
