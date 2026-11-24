@@ -20,6 +20,9 @@ class LeiCompanySearch
     const LIMIT           = 10;
     const TIMEOUT         = 8;
 
+    /** countries whose addresses have no region: the city is sent as the region (the gateway requires one; LV accepted) */
+    const REGION_FROM_CITY = ['LV'];
+
     /** the OpenCorporates API token (stored encrypted), '' when none */
     public static function token()
     {
@@ -104,13 +107,13 @@ class LeiCompanySearch
                 'jurisdiction'        => $jurisdiction,
                 'incorporation_date'  => (string)($company['incorporation_date'] ?? ''),
                 'status'              => (string)($company['current_status'] ?? ''),
-                'address'             => [
+                'address'             => self::completeAddress([
                     'address_line_1' => self::plain((string)($address['street_address'] ?? ($company['registered_address_in_full'] ?? ''))),
                     'city'           => self::plain((string)($address['locality'] ?? '')),
                     'region'         => self::plain((string)($address['region'] ?? '')),
                     'postal_code'    => self::plain((string)($address['postal_code'] ?? '')),
                     'country'        => substr($jurisdiction, 0, 2),
-                ],
+                ]),
                 'lei'        => '',
                 'lei_status' => '',
             ];
@@ -143,20 +146,59 @@ class LeiCompanySearch
                 'jurisdiction'        => strtoupper((string)($entity['jurisdiction'] ?? ($address['country'] ?? ''))),
                 'incorporation_date'  => substr((string)($entity['creationDate'] ?? ''), 0, 10),
                 'status'              => (string)($entity['status'] ?? ''),
-                'address'             => [
+                'address'             => self::completeAddress([
                     'address_line_1' => self::plain((string)(((array)($address['addressLines'] ?? []))[0] ?? '')),
                     'city'           => self::plain((string)($address['city'] ?? '')),
                     // GLEIF regions are ISO 3166-2 codes (LV-RIX): the form takes a name, so only a plain value is kept
                     'region'         => preg_match('/^[A-Z]{2}-/', (string)($address['region'] ?? '')) ? '' : (string)($address['region'] ?? ''),
                     'postal_code'    => self::plain((string)($address['postalCode'] ?? '')),
                     'country'        => strtoupper((string)($address['country'] ?? '')),
-                ],
+                ]),
                 'lei'        => (string)($record['attributes']['lei'] ?? ($record['id'] ?? '')),
                 'lei_status' => (string)($record['attributes']['registration']['status'] ?? ''),
             ];
         }
 
         return $results;
+    }
+
+    /**
+     * Fills the empty parts of a register address from what it has:
+     *  - a register that gives the whole address on one line (OpenCorporates for Latvia: "Zaubes iela 9A - 36, Riga,
+     *    LV-1013") is split at the commas: a trailing postal code ("LV-1013", "1013", "75008") and the city before it
+     *    go to their own fields when those are empty, the rest stays the street;
+     *  - REGION_FROM_CITY countries get the city as the region.
+     * Values the register gave are never replaced.
+     */
+    public static function completeAddress(array $address)
+    {
+        $street = trim((string)($address['address_line_1'] ?? ''));
+        if(trim((string)($address['city'] ?? '')) === '' && strpos($street, ',') !== false)
+        {
+            $parts = array_values(array_filter(array_map('trim', explode(',', $street)), 'strlen'));
+            if(count($parts) > 1 && trim((string)($address['postal_code'] ?? '')) === '' && self::isPostalCode(end($parts)))
+            {
+                $address['postal_code'] = array_pop($parts);
+            }
+            // the city is the last part without digits ("Riga"); a street part like "iela 4 - 29" never is
+            if(count($parts) > 1 && !preg_match('/\d/', end($parts)))
+            {
+                $address['city'] = array_pop($parts);
+            }
+            $address['address_line_1'] = implode(', ', $parts);
+        }
+        if(trim((string)($address['region'] ?? '')) === '' && in_array(strtoupper((string)($address['country'] ?? '')), self::REGION_FROM_CITY, true))
+        {
+            $address['region'] = (string)($address['city'] ?? '');
+        }
+
+        return $address;
+    }
+
+    /** A postal code on its own: digits with an optional country prefix or a space / dash ("LV-1013", "1013", "SW1A 1AA" no) */
+    protected static function isPostalCode($value)
+    {
+        return (bool)preg_match('/^(?:[A-Z]{2}-)?\d[\d -]{2,9}$/u', trim((string)$value));
     }
 
     /**
