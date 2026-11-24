@@ -240,7 +240,7 @@ class RenewalNotifyCertificate extends AbstractCommand
         }
 
         // each step on its own: the time of this run is always saved, or the job would start again every 5 minutes
-        foreach(['terminateUnpaid', 'closeRenewed'] as $step)
+        foreach(['closeRenewed'] as $step)
         {
             try
             {
@@ -258,11 +258,6 @@ class RenewalNotifyCertificate extends AbstractCommand
             ['last_run' => date('Y-m-d H:i:s'), 'last_error' => $errorToDB]
         );
 
-    }
-
-    private function terminateUnpaid()
-    {
-        \ModulesGarden\TSSGGSModule\App\Libs\UnpaidTermination::run();
     }
 
     /**

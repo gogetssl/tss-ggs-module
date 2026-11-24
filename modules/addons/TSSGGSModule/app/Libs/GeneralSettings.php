@@ -53,7 +53,6 @@ class GeneralSettings
         // Lifecycle
         'terminateCancelsOrder'    => true,
         'renewReuseOrderDetails'   => true,   // S/MIME / code signing: a paid renewal orders with the previous details
-        'terminateUnpaidOnExpiry'  => true,
         // Interface
         'hideInfoMessages'         => false,
         'dashboardPeriod'          => 'month',   // App\UI\Admin\Home\Index\Shared\SalesSummary::PERIODS

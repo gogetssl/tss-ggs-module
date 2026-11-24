@@ -1366,9 +1366,7 @@ $_LANG['admin.settings.index.forms.finance_settings_form.currencyBuffer_descript
 $_LANG['admin.settings.index.providers.finance_settings_provider.rateSource_manual'] = 'Fester Kurs (unten eingegeben)';
 $_LANG['admin.settings.index.providers.finance_settings_provider.rateSource_ecb'] = 'Tageskurs (Europäische Zentralbank)';
 $_LANG['admin.settings.index.forms.finance_settings_form.billing'] = 'Abrechnung';
-$_LANG['admin.settings.index.forms.finance_settings_form.billing_desc'] = 'Wann Verlängerungen fällig werden und was mit unbezahlten Services geschieht. Verlängerungsrechnungen und Ablauferinnerungen finden Sie unter Einstellungen > SSL-Zertifikate und Automatisiertes SSL.';
-$_LANG['admin.settings.index.forms.finance_settings_form.terminateUnpaidOnExpiry'] = 'Unbezahlte Services bei Ablauf kündigen';
-$_LANG['admin.settings.index.forms.finance_settings_form.terminateUnpaidOnExpiry_description'] = 'Ein Service, dessen Ablaufdatum ohne Zahlung verstrichen ist, wird gekündigt, seine Bestellung bzw. sein Abonnement wird beim Anbieter storniert und seine unbezahlte Verlängerungsrechnung wird storniert. Ist der Anbieter nicht erreichbar, bleibt der Service offen und der nächste Cron-Lauf versucht es erneut. Gilt für Abonnement-Services (nicht für einmalige Services)';
+$_LANG['admin.settings.index.forms.finance_settings_form.billing_desc'] = 'Unbezahlte Zertifikate werden nicht vom Modul gekündigt: WHMCS übernimmt das mit seiner eigenen Regel (Setup > Automation Settings > Suspension & Termination, "Terminate after X days"), und beim Kündigen eines Dienstes wird auch seine Bestellung beim Anbieter storniert (Einstellungen > Allgemein > Service-Lebenszyklus). Unbezahlte ACME- und Plan-Abonnements werden vor ihrer Verlängerung storniert: Einstellungen > Automatisiertes SSL. Verlängerungsrechnungen und Ablauferinnerungen finden Sie unter Einstellungen > SSL-Zertifikate und Automatisiertes SSL.';
 $_LANG['admin.settings.index.forms.finance_settings_form.balance'] = 'Reseller-Guthaben';
 $_LANG['admin.settings.index.forms.finance_settings_form.renewalPrices_desc'] = 'Wenn Sie einen Preis ändern, berechnet WHMCS bestehenden Services weiterhin den Preis, zu dem sie bestellt wurden. Wählen Sie, was bestehende Services bei ihrer nächsten Verlängerung zahlen (wird nach jeder Preisaktualisierung geprüft; bereits vorhandene Rechnungen ändern sich nicht):';
 $_LANG['admin.settings.index.forms.finance_settings_form.renewalPoint_never'] = 'Bestellpreis beibehalten:';
@@ -1488,20 +1486,13 @@ $_LANG['admin.emails.name_renewal_details_required'] = 'Verlängerungsdaten erfo
 $_LANG['admin.emails.when_renewal_details_required'] = 'Wird gesendet, wenn eine Verlängerung bezahlt ist und der Kunde die Daten erneut einreichen muss (CSR, Domains, Kontakte) - "Mit denselben Bestelldaten verlängern" ist aus, oder der Anbieter hat die bisherigen Daten abgelehnt.';
 
 // renewal paid but still pending (1.5.2)
-$_LANG['admin.settings.index.forms.finance_settings_form.pendingPaymentWaitCertificate'] = 'Verlängerung bezahlt, aber noch ausstehend';
-$_LANG['admin.settings.index.forms.finance_settings_form.pendingPaymentWaitCertificate_description'] = 'Eine vom Kunden bezahlte Verlängerung, deren Zahlung beim Ende der Bestellung noch nicht eingegangen ist ("Payment Pending" - Überweisung, E-Check). Warten: der Dienst wird so viele Tage nicht beendet; geht die Zahlung ein, wird wie üblich verlängert. Für Sie ohne Kosten - die Verlängerung wird erst nach Zahlung bestellt. Eine "Payment Pending"-Rechnung storniert das Modul nie.';
 $_LANG['admin.settings.index.forms.ssl_settings_form.pendingPaymentWaitSubscription'] = 'Verlängerung bezahlt, aber noch ausstehend';
 $_LANG['admin.settings.index.forms.ssl_settings_form.pendingPaymentWaitSubscription_description'] = 'Eine vom Kunden bezahlte Verlängerung, deren Zahlung bei Fälligkeit der Rechnung noch nicht eingegangen ist ("Payment Pending"). Als unbezahlt behandeln: das Abonnement wird am Tag vor der Verlängerung durch den Anbieter storniert, wie eine unbezahlte Verlängerung. Warten: es wird so viele Tage nicht storniert. Eine "Payment Pending"-Rechnung storniert das Modul nie.';
 $_LANG['admin.settings.index.forms.ssl_settings_form.pendingWaitSubscriptionRisk'] = 'Warten auf ausstehende Zahlungen: der Anbieter verlängert das Abonnement und berechnet es Ihnen, bevor eine ausstehende Zahlung eingegangen ist. Schlägt die Zahlung fehl, bleibt die Belastung bei Ihnen.';
-$_LANG['admin.settings.index.providers.finance_settings_provider.pendingWait_0'] = 'Als unbezahlt behandeln';
 $_LANG['admin.settings.index.providers.ssl_settings_provider.pendingWait_0'] = 'Als unbezahlt behandeln';
-$_LANG['admin.settings.index.providers.finance_settings_provider.pendingWait_3'] = '3 Tage auf den Eingang warten';
 $_LANG['admin.settings.index.providers.ssl_settings_provider.pendingWait_3'] = '3 Tage auf den Eingang warten';
-$_LANG['admin.settings.index.providers.finance_settings_provider.pendingWait_7'] = '7 Tage auf den Eingang warten';
 $_LANG['admin.settings.index.providers.ssl_settings_provider.pendingWait_7'] = '7 Tage auf den Eingang warten';
-$_LANG['admin.settings.index.providers.finance_settings_provider.pendingWait_14'] = '14 Tage auf den Eingang warten';
 $_LANG['admin.settings.index.providers.ssl_settings_provider.pendingWait_14'] = '14 Tage auf den Eingang warten';
-$_LANG['admin.settings.index.providers.finance_settings_provider.pendingWait_30'] = '30 Tage auf den Eingang warten';
 $_LANG['admin.settings.index.providers.ssl_settings_provider.pendingWait_30'] = '30 Tage auf den Eingang warten';
 
 // migration: products without a gateway match, automatic rollback (1.7.0)

@@ -1368,9 +1368,7 @@ $_LANG['admin.settings.index.forms.finance_settings_form.currencyBuffer_descript
 $_LANG['admin.settings.index.providers.finance_settings_provider.rateSource_manual'] = 'Fast kurs (angives nedenfor)';
 $_LANG['admin.settings.index.providers.finance_settings_provider.rateSource_ecb'] = 'Dagskurs (Den Europæiske Centralbank)';
 $_LANG['admin.settings.index.forms.finance_settings_form.billing'] = 'Fakturering';
-$_LANG['admin.settings.index.forms.finance_settings_form.billing_desc'] = 'Hvornår fornyelser forfalder, og hvad der sker med ubetalte tjenester. Fornyelsesfakturaer og udløbspåmindelser findes under Indstillinger > SSL-certifikater og Automatiseret SSL.';
-$_LANG['admin.settings.index.forms.finance_settings_form.terminateUnpaidOnExpiry'] = 'Opsig ubetalte tjenester ved udløb';
-$_LANG['admin.settings.index.forms.finance_settings_form.terminateUnpaidOnExpiry_description'] = 'En tjeneste, hvis udløbsdato er passeret uden betaling, opsiges, dens ordre/abonnement annulleres hos leverandøren, og dens ubetalte fornyelsesfaktura annulleres. Hvis leverandøren ikke kan nås, forbliver tjenesten åben, og næste cron-kørsel forsøger igen. Gælder for abonnementstjenester (ikke engangstjenester)';
+$_LANG['admin.settings.index.forms.finance_settings_form.billing_desc'] = 'Ubetalte certifikater opsiges ikke af modulet: WHMCS gør det med sin egen regel (Setup > Automation Settings > Suspension & Termination, "Terminate after X days"), og når en tjeneste opsiges, annulleres dens ordre også hos leverandøren (Indstillinger > Generelt > Tjenestens livscyklus). Ubetalte ACME- og plan-abonnementer annulleres, før de fornyes: Indstillinger > Automatiseret SSL. Fornyelsesfakturaer og påmindelser om udløb findes under Indstillinger > SSL-certifikater og Automatiseret SSL.';
 $_LANG['admin.settings.index.forms.finance_settings_form.balance'] = 'Forhandlersaldo';
 $_LANG['admin.settings.index.forms.finance_settings_form.renewalPrices_desc'] = 'Når du ændrer en pris, fortsætter WHMCS med at opkræve den pris, som eksisterende tjenester blev bestilt til. Vælg, hvad eksisterende tjenester betaler ved næste fornyelse (kontrolleres efter hver prisopdatering; fakturaer, der allerede findes, ændres ikke):';
 $_LANG['admin.settings.index.forms.finance_settings_form.renewalPoint_never'] = 'Behold den bestilte pris:';
@@ -1490,20 +1488,13 @@ $_LANG['admin.emails.name_renewal_details_required'] = 'Fornyelsesoplysninger p�
 $_LANG['admin.emails.when_renewal_details_required'] = 'Sendes, når en fornyelse er betalt, og kunden skal indsende oplysningerne igen (CSR, domæner, kontakter) - "Forny med de samme ordreoplysninger" er slået fra, eller leverandøren afviste de tidligere oplysninger.';
 
 // renewal paid but still pending (1.5.2)
-$_LANG['admin.settings.index.forms.finance_settings_form.pendingPaymentWaitCertificate'] = 'Fornyelse betalt, men stadig afventende';
-$_LANG['admin.settings.index.forms.finance_settings_form.pendingPaymentWaitCertificate_description'] = 'En fornyelse, som kunden har betalt, men hvor betalingen endnu ikke er gået igennem ("Payment Pending" - bankoverførsel, e-check), når ordren udløber. Vent: tjenesten afsluttes ikke i så mange dage; når betalingen går igennem, fornyes den som normalt. Det koster dig intet - fornyelsen bestilles først, når den er betalt. En "Payment Pending"-faktura annulleres aldrig af modulet.';
 $_LANG['admin.settings.index.forms.ssl_settings_form.pendingPaymentWaitSubscription'] = 'Fornyelse betalt, men stadig afventende';
 $_LANG['admin.settings.index.forms.ssl_settings_form.pendingPaymentWaitSubscription_description'] = 'En fornyelse, som kunden har betalt, men hvor betalingen endnu ikke er gået igennem ("Payment Pending"), når fakturaen forfalder. Behandl som ubetalt: abonnementet annulleres dagen før leverandøren fornyer det, som ved en ubetalt fornyelse. Vent: det annulleres ikke i så mange dage. En "Payment Pending"-faktura annulleres aldrig af modulet.';
 $_LANG['admin.settings.index.forms.ssl_settings_form.pendingWaitSubscriptionRisk'] = 'Venter på afventende betalinger: leverandøren fornyer abonnementet og opkræver dig, før en afventende betaling er gået igennem. Mislykkes betalingen, bliver opkrævningen hos dig.';
-$_LANG['admin.settings.index.providers.finance_settings_provider.pendingWait_0'] = 'Behandl som ubetalt';
 $_LANG['admin.settings.index.providers.ssl_settings_provider.pendingWait_0'] = 'Behandl som ubetalt';
-$_LANG['admin.settings.index.providers.finance_settings_provider.pendingWait_3'] = 'Vent 3 dage på betalingen';
 $_LANG['admin.settings.index.providers.ssl_settings_provider.pendingWait_3'] = 'Vent 3 dage på betalingen';
-$_LANG['admin.settings.index.providers.finance_settings_provider.pendingWait_7'] = 'Vent 7 dage på betalingen';
 $_LANG['admin.settings.index.providers.ssl_settings_provider.pendingWait_7'] = 'Vent 7 dage på betalingen';
-$_LANG['admin.settings.index.providers.finance_settings_provider.pendingWait_14'] = 'Vent 14 dage på betalingen';
 $_LANG['admin.settings.index.providers.ssl_settings_provider.pendingWait_14'] = 'Vent 14 dage på betalingen';
-$_LANG['admin.settings.index.providers.finance_settings_provider.pendingWait_30'] = 'Vent 30 dage på betalingen';
 $_LANG['admin.settings.index.providers.ssl_settings_provider.pendingWait_30'] = 'Vent 30 dage på betalingen';
 
 // migration: products without a gateway match, automatic rollback (1.7.0)

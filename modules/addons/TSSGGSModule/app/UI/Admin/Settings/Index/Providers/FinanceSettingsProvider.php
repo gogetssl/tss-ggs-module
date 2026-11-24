@@ -17,9 +17,8 @@ class FinanceSettingsProvider extends CrudProvider
 {
     const FINANCE  = ['profitMargin', 'rate'];
     const GENERAL  = ['minProfit', 'termMarginStep', 'priceRounding', 'keepMarginOnSync', 'belowCostAction', 'belowCostEmail', 'renewalPriceMode',
-                      'renewalPriceClientEmail', 'renewalPriceEmailText', 'rateSource', 'currencyBuffer', 'terminateUnpaidOnExpiry',
-                      'pendingPaymentWaitCertificate', 'balanceAlert'];
-    const SWITCHES = ['keepMarginOnSync', 'belowCostEmail', 'renewalPriceClientEmail', 'terminateUnpaidOnExpiry', 'balanceAlert'];
+                      'renewalPriceClientEmail', 'renewalPriceEmailText', 'rateSource', 'currencyBuffer', 'balanceAlert'];
+    const SWITCHES = ['keepMarginOnSync', 'belowCostEmail', 'renewalPriceClientEmail', 'balanceAlert'];
 
     public function read()
     {
@@ -50,9 +49,6 @@ class FinanceSettingsProvider extends CrudProvider
         $this->availableValues['belowCostAction']  = $options('belowCost', FinancePolicy::BELOW_COST);
         $this->availableValues['renewalPriceMode'] = $options('renewal', FinancePolicy::RENEWAL_MODES);
         $this->availableValues['rateSource']       = $options('rateSource', FinancePolicy::RATE_SOURCES);
-        $this->availableValues['pendingPaymentWaitCertificate'] = $options('pendingWait', \ModulesGarden\TSSGGSModule\App\Libs\RenewalPolicy::PENDING_WAIT_OPTIONS);
-        // as a string: the dropdown takes a numeric 0 for "nothing chosen"
-        $this->data['pendingPaymentWaitCertificate'] = (string)\ModulesGarden\TSSGGSModule\App\Libs\RenewalPolicy::pendingWait(\ModulesGarden\TSSGGSModule\App\Libs\RenewalPolicy::CERTIFICATE);
         $this->availableValues['currency'] = Helpers::getCurrencyOptions();
     }
 
@@ -85,13 +81,6 @@ class FinanceSettingsProvider extends CrudProvider
             if(array_key_exists($key, $general))
             {
                 $general[$key] = max(0, (float)str_replace(',', '.', (string)$general[$key]));
-            }
-        }
-        foreach(['pendingPaymentWaitCertificate'] as $key)
-        {
-            if(array_key_exists($key, $general))
-            {
-                $general[$key] = max(0, (int)$general[$key]);
             }
         }
         // the default text is shown in the field; keep it empty when unchanged so later wording updates reach it
