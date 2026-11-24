@@ -63,7 +63,13 @@ class EmailSettingsWidget extends Widget
             {
                 continue;
             }
-            $html .= '<tr class="em-group"><td colspan="4">' . $this->e($this->t('group_' . $group)) . '</td></tr>';
+            // a section title: coloured bar + title + what the e-mails are about + how many (colours in migration.css)
+            $count = count($rows[$group]);
+            $html .= '<tr class="em-gap"><td colspan="4"></td></tr>'
+                . '<tr class="em-group em-group--' . $this->e($group) . '"><td colspan="4"><span class="em-group__dot"></span>'
+                . '<b class="em-group__title">' . $this->e($this->t('group_' . $group)) . '</b>'
+                . '<small class="em-group__desc">' . $this->e($this->t('group_' . $group . '_desc')) . '</small>'
+                . '<em class="em-group__count">' . $this->e($this->t($count === 1 ? 'group_count_one' : 'group_count', ['count' => $count])) . '</em></td></tr>';
             foreach($rows[$group] as $row)
             {
                 $status = $row['disabled'] ? '<span class="em-tag is-off">' . $this->e($this->t('badge_disabled')) . '</span>'

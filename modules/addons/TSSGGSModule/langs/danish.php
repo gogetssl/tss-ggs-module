@@ -909,6 +909,13 @@ $_LANG['admin.emails.group_validation']                  = 'Validering';
 $_LANG['admin.emails.group_issued']                      = 'Udstedt certifikat';
 $_LANG['admin.emails.group_renewals']                    = 'Fornyelser og påmindelser';
 $_LANG['admin.emails.group_problems']                    = 'Problemer';
+$_LANG['admin.emails.group_order_desc'] = 'Bestilling og konfiguration - sendes, når kunden skal angive oplysninger';
+$_LANG['admin.emails.group_validation_desc'] = 'Domæne- og organisationskontrol hos certifikatudstederen';
+$_LANG['admin.emails.group_issued_desc'] = 'Levering efter vellykket udstedelse';
+$_LANG['admin.emails.group_renewals_desc'] = 'Udløbsmeddelelser, fornyelsesfakturaer og påmindelser om genudstedelse';
+$_LANG['admin.emails.group_problems_desc'] = 'Fejl, som kunden skal tage sig af';
+$_LANG['admin.emails.group_count_one'] = '1 e-mail';
+$_LANG['admin.emails.group_count'] = ':count e-mails';
 $_LANG['admin.emails.badge_customised']                  = 'redigeret';
 $_LANG['admin.emails.badge_disabled']                    = 'deaktiveret';
 $_LANG['admin.emails.badge_unused']                      = 'sendes ikke';
@@ -1334,7 +1341,7 @@ $_LANG['admin.settings.index.widgets.finance_settings_widget.subtitle'] = 'Prise
 $_LANG['admin.settings.index.forms.finance_settings_form.pricing'] = 'Prissætning';
 $_LANG['admin.settings.index.forms.finance_settings_form.minProfit'] = 'Mindste fortjeneste pr. certifikat';
 $_LANG['admin.settings.index.forms.finance_settings_form.minProfit_description'] = 'I USD (eller din standardvaluta, hvis WHMCS ikke har USD). Et certifikat giver altid mindst dette beløb ud over omkostningen, uanset margenen: 30% af et certifikat til 6.00 er kun 1.80. Gælder ikke for SAN-tilvalg. 0 = slået fra';
-$_LANG['admin.settings.index.forms.finance_settings_form.termMarginStep'] = 'Lavere margen pr. ekstra år %';
+$_LANG['admin.settings.index.forms.finance_settings_form.termMarginStep'] = 'Lavere margen pr. ekstra år';
 $_LANG['admin.settings.index.forms.finance_settings_form.termMarginStep_description'] = 'Margenen for perioder på 2 og 3 år sænkes med denne værdi pr. ekstra år (margen 30, trin 5: 1 år 30%, 2 år 25%, 3 år 20%), så lange perioder forbliver konkurrencedygtige. Aldrig under 0. 0 = samme margen for alle perioder';
 $_LANG['admin.settings.index.forms.finance_settings_form.priceRounding'] = 'Prisafrunding';
 $_LANG['admin.settings.index.forms.finance_settings_form.priceRounding_description'] = 'Runder hver beregnet pris op til en pæn slutværdi. Afrunding sænker aldrig en pris';
@@ -1363,14 +1370,12 @@ $_LANG['admin.settings.index.forms.finance_settings_form.currency_desc'] = 'Forh
 $_LANG['admin.settings.index.forms.finance_settings_form.rateSource'] = 'Valutakurs fra USD til din standardvaluta';
 $_LANG['admin.settings.index.forms.finance_settings_form.rateSource_description'] = 'WHMCS har ingen USD-valuta, så modulet omregner selv omkostningen. Dagskurs: opdateres fra Den Europæiske Centralbank før hver prisopdatering';
 $_LANG['admin.settings.index.forms.finance_settings_form.rate_description'] = '1 USD = dette antal enheder af din standardvaluta. Med dagskursen udfyldes feltet automatisk';
-$_LANG['admin.settings.index.forms.finance_settings_form.currencyBuffer'] = 'Sikkerhedsbuffer for valuta %';
+$_LANG['admin.settings.index.forms.finance_settings_form.currencyBuffer'] = 'Sikkerhedsbuffer for valuta';
 $_LANG['admin.settings.index.forms.finance_settings_form.currencyBuffer_description'] = 'Lægges til priser i andre valutaer end USD, så en kursændring mellem to prisopdateringer ikke æder din margen. 0 = slået fra';
 $_LANG['admin.settings.index.providers.finance_settings_provider.rateSource_manual'] = 'Fast kurs (angives nedenfor)';
 $_LANG['admin.settings.index.providers.finance_settings_provider.rateSource_ecb'] = 'Dagskurs (Den Europæiske Centralbank)';
 $_LANG['admin.settings.index.forms.finance_settings_form.billing'] = 'Fakturering';
-$_LANG['admin.settings.index.forms.finance_settings_form.billing_desc'] = 'Hvornår fornyelser forfalder, og hvad der sker med ubetalte tjenester. Fornyelsesfakturaer og udløbspåmindelser findes under Indstillinger > SSL-certifikater og Automatiseret SSL.';
-$_LANG['admin.settings.index.forms.finance_settings_form.terminateUnpaidOnExpiry'] = 'Opsig ubetalte tjenester ved udløb';
-$_LANG['admin.settings.index.forms.finance_settings_form.terminateUnpaidOnExpiry_description'] = 'En tjeneste, hvis udløbsdato er passeret uden betaling, opsiges, dens ordre/abonnement annulleres hos leverandøren, og dens ubetalte fornyelsesfaktura annulleres. Hvis leverandøren ikke kan nås, forbliver tjenesten åben, og næste cron-kørsel forsøger igen. Gælder for abonnementstjenester (ikke engangstjenester)';
+$_LANG['admin.settings.index.forms.finance_settings_form.billing_desc'] = 'Ubetalte certifikater opsiges ikke af modulet: WHMCS gør det med sin egen regel (Setup > Automation Settings > Suspension & Termination, "Terminate after X days"), og når en tjeneste opsiges, annulleres dens ordre også hos leverandøren (Indstillinger > Generelt > Tjenestens livscyklus). Ubetalte ACME- og plan-abonnementer annulleres, før de fornyes: Indstillinger > Automatiseret SSL. Fornyelsesfakturaer og påmindelser om udløb findes under Indstillinger > SSL-certifikater og Automatiseret SSL.';
 $_LANG['admin.settings.index.forms.finance_settings_form.balance'] = 'Forhandlersaldo';
 $_LANG['admin.settings.index.forms.finance_settings_form.renewalPrices_desc'] = 'Når du ændrer en pris, fortsætter WHMCS med at opkræve den pris, som eksisterende tjenester blev bestilt til. Vælg, hvad eksisterende tjenester betaler ved næste fornyelse (kontrolleres efter hver prisopdatering; fakturaer, der allerede findes, ændres ikke):';
 $_LANG['admin.settings.index.forms.finance_settings_form.renewalPoint_never'] = 'Behold den bestilte pris:';
@@ -1490,20 +1495,13 @@ $_LANG['admin.emails.name_renewal_details_required'] = 'Fornyelsesoplysninger p�
 $_LANG['admin.emails.when_renewal_details_required'] = 'Sendes, når en fornyelse er betalt, og kunden skal indsende oplysningerne igen (CSR, domæner, kontakter) - "Forny med de samme ordreoplysninger" er slået fra, eller leverandøren afviste de tidligere oplysninger.';
 
 // renewal paid but still pending (1.5.2)
-$_LANG['admin.settings.index.forms.finance_settings_form.pendingPaymentWaitCertificate'] = 'Fornyelse betalt, men stadig afventende';
-$_LANG['admin.settings.index.forms.finance_settings_form.pendingPaymentWaitCertificate_description'] = 'En fornyelse, som kunden har betalt, men hvor betalingen endnu ikke er gået igennem ("Payment Pending" - bankoverførsel, e-check), når ordren udløber. Vent: tjenesten afsluttes ikke i så mange dage; når betalingen går igennem, fornyes den som normalt. Det koster dig intet - fornyelsen bestilles først, når den er betalt. En "Payment Pending"-faktura annulleres aldrig af modulet.';
 $_LANG['admin.settings.index.forms.ssl_settings_form.pendingPaymentWaitSubscription'] = 'Fornyelse betalt, men stadig afventende';
 $_LANG['admin.settings.index.forms.ssl_settings_form.pendingPaymentWaitSubscription_description'] = 'En fornyelse, som kunden har betalt, men hvor betalingen endnu ikke er gået igennem ("Payment Pending"), når fakturaen forfalder. Behandl som ubetalt: abonnementet annulleres dagen før leverandøren fornyer det, som ved en ubetalt fornyelse. Vent: det annulleres ikke i så mange dage. En "Payment Pending"-faktura annulleres aldrig af modulet.';
 $_LANG['admin.settings.index.forms.ssl_settings_form.pendingWaitSubscriptionRisk'] = 'Venter på afventende betalinger: leverandøren fornyer abonnementet og opkræver dig, før en afventende betaling er gået igennem. Mislykkes betalingen, bliver opkrævningen hos dig.';
-$_LANG['admin.settings.index.providers.finance_settings_provider.pendingWait_0'] = 'Behandl som ubetalt';
 $_LANG['admin.settings.index.providers.ssl_settings_provider.pendingWait_0'] = 'Behandl som ubetalt';
-$_LANG['admin.settings.index.providers.finance_settings_provider.pendingWait_3'] = 'Vent 3 dage på betalingen';
 $_LANG['admin.settings.index.providers.ssl_settings_provider.pendingWait_3'] = 'Vent 3 dage på betalingen';
-$_LANG['admin.settings.index.providers.finance_settings_provider.pendingWait_7'] = 'Vent 7 dage på betalingen';
 $_LANG['admin.settings.index.providers.ssl_settings_provider.pendingWait_7'] = 'Vent 7 dage på betalingen';
-$_LANG['admin.settings.index.providers.finance_settings_provider.pendingWait_14'] = 'Vent 14 dage på betalingen';
 $_LANG['admin.settings.index.providers.ssl_settings_provider.pendingWait_14'] = 'Vent 14 dage på betalingen';
-$_LANG['admin.settings.index.providers.finance_settings_provider.pendingWait_30'] = 'Vent 30 dage på betalingen';
 $_LANG['admin.settings.index.providers.ssl_settings_provider.pendingWait_30'] = 'Vent 30 dage på betalingen';
 
 // migration: products without a gateway match, automatic rollback (1.7.0)
@@ -1573,24 +1571,24 @@ $_LANG['admin.products.index.data_tables.products.array_data_provider.data_table
 $_LANG['admin.products.index.data_tables.products.array_data_provider.data_table.product_addon'] = 'Produkttilføjelse #:id';
 
 // Katalogsynkronisering (M-16)
-$_LANG['admin.settings.index.forms.finance_settings_form.catalogueSync'] = 'Katalogsynkronisering';
-$_LANG['admin.settings.index.forms.finance_settings_form.catalogueSync_desc'] = 'Hver nat sammenligner modulet udbyderens produktliste med den forrige. Hver ændring vises på siden Produkter (fanen "Katalogændringer"). Tilstanden bestemmer, hvad modulet selv ændrer:';
-$_LANG['admin.settings.index.forms.finance_settings_form.catalogueMode_manual'] = 'Manuelt:';
-$_LANG['admin.settings.index.forms.finance_settings_form.catalogueMode_manual_text'] = 'intet ændres, hver ændring rapporteres kun.';
-$_LANG['admin.settings.index.forms.finance_settings_form.catalogueMode_alterations'] = 'Kun tilpasninger:';
-$_LANG['admin.settings.index.forms.finance_settings_form.catalogueMode_alterations_text'] = 'ændrede produkter opdateres (SAN-indstillinger, produktindstillinger); nye og udgåede produkter rapporteres kun.';
-$_LANG['admin.settings.index.forms.finance_settings_form.catalogueMode_alterations_removal'] = 'Tilpasninger og fjernelse:';
-$_LANG['admin.settings.index.forms.finance_settings_form.catalogueMode_alterations_removal_text'] = 'pensionerer også produkter, som udbyderen ikke længere sælger (mangler på to forskellige dage). Et produkt med aktive services skjules kun på bestillingsformularen; dets services virker fortsat.';
-$_LANG['admin.settings.index.forms.finance_settings_form.catalogueMode_all'] = 'Alt:';
-$_LANG['admin.settings.index.forms.finance_settings_form.catalogueMode_all_text'] = 'importerer også nye produkter, skjult og med standardmargenen, i en skjult gruppe, så du kan gennemgå dem, før de sælges.';
-$_LANG['admin.settings.index.forms.finance_settings_form.catalogueSyncMode'] = 'Synkroniseringstilstand';
-$_LANG['admin.settings.index.forms.finance_settings_form.catalogueSyncMode_description'] = 'Hvad den natlige synkronisering selv må ændre. Knappen Synkroniser igen på siden Produkter opdaterer altid produkterne.';
-$_LANG['admin.settings.index.forms.finance_settings_form.catalogueChangesEmail'] = 'Send e-mail til administratorerne';
-$_LANG['admin.settings.index.forms.finance_settings_form.catalogueChangesEmail_description'] = 'Et resumé af ændringerne og af, hvad modulet gjorde, sendt efter den natlige synkronisering. Ingen ændringer, ingen e-mail';
-$_LANG['admin.settings.index.providers.finance_settings_provider.catalogueSync_manual'] = 'Manuelt';
-$_LANG['admin.settings.index.providers.finance_settings_provider.catalogueSync_alterations'] = 'Kun tilpasninger';
-$_LANG['admin.settings.index.providers.finance_settings_provider.catalogueSync_alterations_removal'] = 'Tilpasninger og fjernelse';
-$_LANG['admin.settings.index.providers.finance_settings_provider.catalogueSync_all'] = 'Alt (importer også nye produkter)';
+$_LANG['admin.settings.index.forms.products_settings_form.catalogueSync'] = 'Katalogsynkronisering';
+$_LANG['admin.settings.index.forms.products_settings_form.catalogueSync_desc'] = 'Hver nat sammenligner modulet udbyderens produktliste med den forrige. Hver ændring vises på siden Produkter (fanen "Katalogændringer"). Tilstanden bestemmer, hvad modulet selv ændrer:';
+$_LANG['admin.settings.index.forms.products_settings_form.catalogueMode_manual'] = 'Manuelt:';
+$_LANG['admin.settings.index.forms.products_settings_form.catalogueMode_manual_text'] = 'intet ændres, hver ændring rapporteres kun.';
+$_LANG['admin.settings.index.forms.products_settings_form.catalogueMode_alterations'] = 'Kun tilpasninger:';
+$_LANG['admin.settings.index.forms.products_settings_form.catalogueMode_alterations_text'] = 'ændrede produkter opdateres (SAN-indstillinger, produktindstillinger); nye og udgåede produkter rapporteres kun.';
+$_LANG['admin.settings.index.forms.products_settings_form.catalogueMode_alterations_removal'] = 'Tilpasninger og fjernelse:';
+$_LANG['admin.settings.index.forms.products_settings_form.catalogueMode_alterations_removal_text'] = 'pensionerer også produkter, som udbyderen ikke længere sælger (mangler på to forskellige dage). Et produkt med aktive services skjules kun på bestillingsformularen; dets services virker fortsat.';
+$_LANG['admin.settings.index.forms.products_settings_form.catalogueMode_all'] = 'Alt:';
+$_LANG['admin.settings.index.forms.products_settings_form.catalogueMode_all_text'] = 'importerer også nye produkter, skjult og med standardmargenen, i en skjult gruppe, så du kan gennemgå dem, før de sælges.';
+$_LANG['admin.settings.index.forms.products_settings_form.catalogueSyncMode'] = 'Synkroniseringstilstand';
+$_LANG['admin.settings.index.forms.products_settings_form.catalogueSyncMode_description'] = 'Hvad den natlige synkronisering selv må ændre. Knappen Synkroniser igen på siden Produkter opdaterer altid produkterne.';
+$_LANG['admin.settings.index.forms.products_settings_form.catalogueChangesEmail'] = 'Send e-mail til administratorerne';
+$_LANG['admin.settings.index.forms.products_settings_form.catalogueChangesEmail_description'] = 'Et resumé af ændringerne og af, hvad modulet gjorde, sendt efter den natlige synkronisering. Ingen ændringer, ingen e-mail';
+$_LANG['admin.settings.index.providers.products_settings_provider.catalogueSync_manual'] = 'Manuelt';
+$_LANG['admin.settings.index.providers.products_settings_provider.catalogueSync_alterations'] = 'Kun tilpasninger';
+$_LANG['admin.settings.index.providers.products_settings_provider.catalogueSync_alterations_removal'] = 'Tilpasninger og fjernelse';
+$_LANG['admin.settings.index.providers.products_settings_provider.catalogueSync_all'] = 'Alt (importer også nye produkter)';
 $_LANG['admin.products.productsTab'] = 'Produkter';
 $_LANG['admin.products.catalogueTab'] = 'Katalogændringer';
 $_LANG['admin.products.show_label'] = 'Vis';
@@ -1671,3 +1669,8 @@ $_LANG['admin.breadcrumbs.ModuleUpdate'] = 'Modulopdatering';
 $_LANG['admin.breadcrumbs.ModuleUpdate_index'] = 'Modulopdatering';
 $_LANG['admin.module_update.rollback_cli'] = 'Tilbagerulning er ikke mulig fra denne side på denne server (se serverkontrollerne). Kør på serveren: :command';
 $_LANG['admin.module_update.continue'] = 'Fortsæt';
+
+// Settings > Products (catalogue sync moved here from Finance)
+$_LANG['admin.settings.index.widgets.sidebar.productsSettings'] = 'Produkter';
+$_LANG['admin.settings.index.widgets.products_settings_widget.title'] = 'Produkter';
+$_LANG['admin.settings.index.widgets.products_settings_widget.subtitle'] = 'Hvordan din produktliste følger udbyderens katalog';

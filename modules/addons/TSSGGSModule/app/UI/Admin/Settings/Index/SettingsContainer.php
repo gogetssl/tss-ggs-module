@@ -9,6 +9,7 @@ use ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Widgets\EmailSettings
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Widgets\FinanceSettingsWidget;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Widgets\GeneralSettingsWidget;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Widgets\LogsSettingsWidget;
+use ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Widgets\ProductsSettingsWidget;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Widgets\Sidebar;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Widgets\SslSettingsWidget;
 use ModulesGarden\TSSGGSModule\Components\Container\Container;
@@ -36,6 +37,10 @@ class SettingsContainer extends Container implements AdminAreaInterface
         elseif(Request::get('settings-page') == 'automatedSettings')
         {
             $mainWidget = new AutomatedSettingsWidget();
+        }
+        elseif(Request::get('settings-page') == 'productsSettings')
+        {
+            $mainWidget = new ProductsSettingsWidget();
         }
         elseif(Request::get('settings-page') == 'financeSettings')
         {

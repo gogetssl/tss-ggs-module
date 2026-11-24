@@ -951,6 +951,13 @@ $_LANG['admin.emails.group_validation']                  = 'Validation';
 $_LANG['admin.emails.group_issued']                      = 'Issued certificate';
 $_LANG['admin.emails.group_renewals']                    = 'Renewals and reminders';
 $_LANG['admin.emails.group_problems']                    = 'Problems';
+$_LANG['admin.emails.group_order_desc'] = 'Ordering and configuration - sent when the client must supply details';
+$_LANG['admin.emails.group_validation_desc'] = 'Domain and organization checks by the certificate authority';
+$_LANG['admin.emails.group_issued_desc'] = 'Delivery after successful issuance';
+$_LANG['admin.emails.group_renewals_desc'] = 'Expiry notices, renewal invoices and reissue reminders';
+$_LANG['admin.emails.group_problems_desc'] = 'Failures that need the client\'s attention';
+$_LANG['admin.emails.group_count_one'] = '1 e-mail';
+$_LANG['admin.emails.group_count'] = ':count e-mails';
 $_LANG['admin.emails.badge_customised']                  = 'edited';
 $_LANG['admin.emails.badge_disabled']                    = 'disabled';
 $_LANG['admin.emails.badge_unused']                      = 'not sent';
@@ -1333,10 +1340,10 @@ $_LANG['admin.settings.index.forms.logs_settings_form.debugHours_description'] =
 // Settings > Finance (FinancePolicy, RenewalPrices)
 $_LANG['admin.settings.index.widgets.finance_settings_widget.subtitle'] = 'Prices, margins, renewals, currency and billing rules';
 $_LANG['admin.settings.index.forms.finance_settings_form.pricing'] = 'Pricing';
-$_LANG['admin.settings.index.forms.finance_settings_form.profitMargin'] = 'Default margin %';
+$_LANG['admin.settings.index.forms.finance_settings_form.profitMargin'] = 'Default margin';
 $_LANG['admin.settings.index.forms.finance_settings_form.minProfit'] = 'Minimum profit per certificate';
 $_LANG['admin.settings.index.forms.finance_settings_form.minProfit_description'] = 'In USD (or your default currency when WHMCS has no USD). A certificate always earns at least this much over its cost, whatever the margin says: 30% of a 6.00 certificate is only 1.80. Not applied to SAN options. 0 = off';
-$_LANG['admin.settings.index.forms.finance_settings_form.termMarginStep'] = 'Lower margin per extra year %';
+$_LANG['admin.settings.index.forms.finance_settings_form.termMarginStep'] = 'Lower margin per extra year';
 $_LANG['admin.settings.index.forms.finance_settings_form.termMarginStep_description'] = 'The margin of 2 and 3 year terms is lowered by this much per extra year (margin 30, step 5: 1 year 30%, 2 years 25%, 3 years 20%), so long terms stay competitive. Never below 0. 0 = the same margin for every term';
 $_LANG['admin.settings.index.forms.finance_settings_form.priceRounding'] = 'Price rounding';
 $_LANG['admin.settings.index.forms.finance_settings_form.priceRounding_description'] = 'Rounds every calculated price up to a clean ending. Rounding never lowers a price';
@@ -1367,14 +1374,12 @@ $_LANG['admin.settings.index.forms.finance_settings_form.rateSource'] = 'Exchang
 $_LANG['admin.settings.index.forms.finance_settings_form.rateSource_description'] = 'WHMCS has no USD currency, so the module converts the cost itself. Daily rate: updated from the European Central Bank before every price update';
 $_LANG['admin.settings.index.forms.finance_settings_form.rate'] = 'Rate';
 $_LANG['admin.settings.index.forms.finance_settings_form.rate_description'] = '1 USD = this many units of your default currency. With the daily rate it is filled in automatically';
-$_LANG['admin.settings.index.forms.finance_settings_form.currencyBuffer'] = 'Currency safety buffer %';
+$_LANG['admin.settings.index.forms.finance_settings_form.currencyBuffer'] = 'Currency safety buffer';
 $_LANG['admin.settings.index.forms.finance_settings_form.currencyBuffer_description'] = 'Added to prices in currencies other than USD, so an exchange rate move between two price updates does not eat your margin. 0 = off';
 $_LANG['admin.settings.index.providers.finance_settings_provider.rateSource_manual'] = 'Fixed rate (entered below)';
 $_LANG['admin.settings.index.providers.finance_settings_provider.rateSource_ecb'] = 'Daily rate (European Central Bank)';
 $_LANG['admin.settings.index.forms.finance_settings_form.billing'] = 'Billing';
-$_LANG['admin.settings.index.forms.finance_settings_form.billing_desc'] = 'When renewals fall due and what happens to unpaid services. Renewal invoices and expiry reminders are on Settings > SSL Certificates and Automated SSL.';
-$_LANG['admin.settings.index.forms.finance_settings_form.terminateUnpaidOnExpiry'] = 'Terminate unpaid services on expiry';
-$_LANG['admin.settings.index.forms.finance_settings_form.terminateUnpaidOnExpiry_description'] = 'A service whose expiry date has passed without a payment is terminated, its order / subscription is cancelled at the vendor and its unpaid renewal invoice is cancelled. If the vendor can not be reached the service stays open and the next cron run tries again. Applies to subscription (non one-time) services';
+$_LANG['admin.settings.index.forms.finance_settings_form.billing_desc'] = 'Unpaid certificates are not terminated by the module: WHMCS does it with its own rule (Setup > Automation Settings > Suspension & Termination, "Terminate after X days"), and terminating a service also cancels its order at the vendor (Settings > General > Service Lifecycle). Unpaid ACME and plan subscriptions are cancelled before they renew: Settings > Automated SSL. Renewal invoices and expiry reminders are on Settings > SSL Certificates and Automated SSL.';
 $_LANG['admin.settings.index.forms.finance_settings_form.balance'] = 'Reseller balance';
 $_LANG['admin.settings.index.forms.finance_settings_form.renewalPrices_desc'] = 'When you change a price, WHMCS keeps charging existing services the price they were ordered with. Choose what existing services pay at their next renewal (checked after every price update; invoices that already exist do not change):';
 $_LANG['admin.settings.index.forms.finance_settings_form.renewalPoint_never'] = 'Keep the ordered price:';
@@ -1497,20 +1502,13 @@ $_LANG['admin.emails.name_renewal_details_required'] = 'Renewal details required
 $_LANG['admin.emails.when_renewal_details_required'] = 'Sent when a renewal is paid and the client has to submit the details again (CSR, domains, contacts) - "Renew With The Same Order Details" is off, or the vendor refused the previous details.';
 
 // renewal paid but still pending (1.5.2)
-$_LANG['admin.settings.index.forms.finance_settings_form.pendingPaymentWaitCertificate'] = 'Renewal Paid But Still Pending';
-$_LANG['admin.settings.index.forms.finance_settings_form.pendingPaymentWaitCertificate_description'] = 'A renewal the client paid whose payment has not cleared yet ("Payment Pending" - a bank transfer, an e-check) when the order ends. Wait: the service is not terminated for that many days; once the payment clears it is renewed as usual. Waiting costs you nothing - the renewal is ordered only once paid. A "Payment Pending" invoice is never cancelled by the module.';
 $_LANG['admin.settings.index.forms.ssl_settings_form.pendingPaymentWaitSubscription'] = 'Renewal Paid But Still Pending';
 $_LANG['admin.settings.index.forms.ssl_settings_form.pendingPaymentWaitSubscription_description'] = 'A renewal the client paid whose payment has not cleared yet ("Payment Pending") when its invoice falls due. Treat as unpaid: the subscription is cancelled the day before the vendor renews it, as for an unpaid renewal. Wait: it is not cancelled for that many days. A "Payment Pending" invoice is never cancelled by the module.';
 $_LANG['admin.settings.index.forms.ssl_settings_form.pendingWaitSubscriptionRisk'] = 'Waiting for pending payments: the vendor renews the subscription and charges you before a pending payment has cleared. If the payment then fails, the charge stays with you.';
-$_LANG['admin.settings.index.providers.finance_settings_provider.pendingWait_0'] = 'Treat as unpaid';
 $_LANG['admin.settings.index.providers.ssl_settings_provider.pendingWait_0'] = 'Treat as unpaid';
-$_LANG['admin.settings.index.providers.finance_settings_provider.pendingWait_3'] = 'Wait 3 days for it to clear';
 $_LANG['admin.settings.index.providers.ssl_settings_provider.pendingWait_3'] = 'Wait 3 days for it to clear';
-$_LANG['admin.settings.index.providers.finance_settings_provider.pendingWait_7'] = 'Wait 7 days for it to clear';
 $_LANG['admin.settings.index.providers.ssl_settings_provider.pendingWait_7'] = 'Wait 7 days for it to clear';
-$_LANG['admin.settings.index.providers.finance_settings_provider.pendingWait_14'] = 'Wait 14 days for it to clear';
 $_LANG['admin.settings.index.providers.ssl_settings_provider.pendingWait_14'] = 'Wait 14 days for it to clear';
-$_LANG['admin.settings.index.providers.finance_settings_provider.pendingWait_30'] = 'Wait 30 days for it to clear';
 $_LANG['admin.settings.index.providers.ssl_settings_provider.pendingWait_30'] = 'Wait 30 days for it to clear';
 
 // migration: products without a gateway match, automatic rollback (1.7.0)
@@ -1580,24 +1578,24 @@ $_LANG['admin.products.index.data_tables.products.array_data_provider.data_table
 $_LANG['admin.products.index.data_tables.products.array_data_provider.data_table.product_addon'] = 'Product addon #:id';
 
 // Catalogue sync (M-16)
-$_LANG['admin.settings.index.forms.finance_settings_form.catalogueSync'] = 'Catalogue sync';
-$_LANG['admin.settings.index.forms.finance_settings_form.catalogueSync_desc'] = 'Every night the module compares the provider\'s product list with the previous one. Every change is listed on the Products page (tab "Catalogue changes"). The mode decides what the module changes by itself:';
-$_LANG['admin.settings.index.forms.finance_settings_form.catalogueMode_manual'] = 'Manually:';
-$_LANG['admin.settings.index.forms.finance_settings_form.catalogueMode_manual_text'] = 'nothing is changed, every change is only reported.';
-$_LANG['admin.settings.index.forms.finance_settings_form.catalogueMode_alterations'] = 'Only alterations:';
-$_LANG['admin.settings.index.forms.finance_settings_form.catalogueMode_alterations_text'] = 'products that changed are updated (SAN options, product settings); new and discontinued products are only reported.';
-$_LANG['admin.settings.index.forms.finance_settings_form.catalogueMode_alterations_removal'] = 'Alterations and removal:';
-$_LANG['admin.settings.index.forms.finance_settings_form.catalogueMode_alterations_removal_text'] = 'also retires products the provider stopped selling (missing on two different days). A product with active services is only hidden from the order form; its services keep working.';
-$_LANG['admin.settings.index.forms.finance_settings_form.catalogueMode_all'] = 'All:';
-$_LANG['admin.settings.index.forms.finance_settings_form.catalogueMode_all_text'] = 'also imports new products, hidden and with the default margin, into a hidden group for you to review before they go on sale.';
-$_LANG['admin.settings.index.forms.finance_settings_form.catalogueSyncMode'] = 'Sync mode';
-$_LANG['admin.settings.index.forms.finance_settings_form.catalogueSyncMode_description'] = 'What the nightly sync may change by itself. The Re-sync button on the Products page always updates the products.';
-$_LANG['admin.settings.index.forms.finance_settings_form.catalogueChangesEmail'] = 'E-mail the administrators';
-$_LANG['admin.settings.index.forms.finance_settings_form.catalogueChangesEmail_description'] = 'A summary of the changes and of what the module did, sent after the nightly sync. No changes, no e-mail';
-$_LANG['admin.settings.index.providers.finance_settings_provider.catalogueSync_manual'] = 'Manually';
-$_LANG['admin.settings.index.providers.finance_settings_provider.catalogueSync_alterations'] = 'Only alterations';
-$_LANG['admin.settings.index.providers.finance_settings_provider.catalogueSync_alterations_removal'] = 'Alterations and removal';
-$_LANG['admin.settings.index.providers.finance_settings_provider.catalogueSync_all'] = 'All (also import new products)';
+$_LANG['admin.settings.index.forms.products_settings_form.catalogueSync'] = 'Catalogue sync';
+$_LANG['admin.settings.index.forms.products_settings_form.catalogueSync_desc'] = 'Every night the module compares the provider\'s product list with the previous one. Every change is listed on the Products page (tab "Catalogue changes"). The mode decides what the module changes by itself:';
+$_LANG['admin.settings.index.forms.products_settings_form.catalogueMode_manual'] = 'Manually:';
+$_LANG['admin.settings.index.forms.products_settings_form.catalogueMode_manual_text'] = 'nothing is changed, every change is only reported.';
+$_LANG['admin.settings.index.forms.products_settings_form.catalogueMode_alterations'] = 'Only alterations:';
+$_LANG['admin.settings.index.forms.products_settings_form.catalogueMode_alterations_text'] = 'products that changed are updated (SAN options, product settings); new and discontinued products are only reported.';
+$_LANG['admin.settings.index.forms.products_settings_form.catalogueMode_alterations_removal'] = 'Alterations and removal:';
+$_LANG['admin.settings.index.forms.products_settings_form.catalogueMode_alterations_removal_text'] = 'also retires products the provider stopped selling (missing on two different days). A product with active services is only hidden from the order form; its services keep working.';
+$_LANG['admin.settings.index.forms.products_settings_form.catalogueMode_all'] = 'All:';
+$_LANG['admin.settings.index.forms.products_settings_form.catalogueMode_all_text'] = 'also imports new products, hidden and with the default margin, into a hidden group for you to review before they go on sale.';
+$_LANG['admin.settings.index.forms.products_settings_form.catalogueSyncMode'] = 'Sync mode';
+$_LANG['admin.settings.index.forms.products_settings_form.catalogueSyncMode_description'] = 'What the nightly sync may change by itself. The Re-sync button on the Products page always updates the products.';
+$_LANG['admin.settings.index.forms.products_settings_form.catalogueChangesEmail'] = 'E-mail the administrators';
+$_LANG['admin.settings.index.forms.products_settings_form.catalogueChangesEmail_description'] = 'A summary of the changes and of what the module did, sent after the nightly sync. No changes, no e-mail';
+$_LANG['admin.settings.index.providers.products_settings_provider.catalogueSync_manual'] = 'Manually';
+$_LANG['admin.settings.index.providers.products_settings_provider.catalogueSync_alterations'] = 'Only alterations';
+$_LANG['admin.settings.index.providers.products_settings_provider.catalogueSync_alterations_removal'] = 'Alterations and removal';
+$_LANG['admin.settings.index.providers.products_settings_provider.catalogueSync_all'] = 'All (also import new products)';
 $_LANG['admin.products.productsTab'] = 'Products';
 $_LANG['admin.products.catalogueTab'] = 'Catalogue changes';
 $_LANG['admin.products.show_label'] = 'Show';
@@ -1678,3 +1676,8 @@ $_LANG['admin.breadcrumbs.ModuleUpdate'] = 'Module update';
 $_LANG['admin.breadcrumbs.ModuleUpdate_index'] = 'Module update';
 $_LANG['admin.module_update.rollback_cli'] = 'Rolling back is not possible from this page here (see the server checks). Run on the server: :command';
 $_LANG['admin.module_update.continue'] = 'Continue';
+
+// Settings > Products (catalogue sync moved here from Finance)
+$_LANG['admin.settings.index.widgets.sidebar.productsSettings'] = 'Products';
+$_LANG['admin.settings.index.widgets.products_settings_widget.title'] = 'Products';
+$_LANG['admin.settings.index.widgets.products_settings_widget.subtitle'] = 'How your product list follows the provider\'s catalogue';

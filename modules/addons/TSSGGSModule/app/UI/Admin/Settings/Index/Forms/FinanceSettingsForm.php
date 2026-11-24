@@ -3,6 +3,7 @@
 namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Forms;
 
 
+use ModulesGarden\TSSGGSModule\App\Libs\FinancePolicy;
 use ModulesGarden\TSSGGSModule\App\Libs\Markups;
 use ModulesGarden\TSSGGSModule\App\Libs\Helpers;
 use ModulesGarden\TSSGGSModule\App\Libs\PricingService;
@@ -47,19 +48,22 @@ class FinanceSettingsForm extends Form implements AdminAreaInterface, AjaxCompon
 
         $pricing = $this->section('pricing', 'trending-up');
         $pricing->addElement((new Text())->setText($this->otherPriceRules()));
-        $this->builder->addFieldInContainer($pricing, (new Number())->setName('profitMargin')->setMin(0)->setMax(1000)->required()->numeric()->between(0, 1000), true);
-        $this->builder->addFieldInContainer($pricing, (new FormInputText())->setName('minProfit')->numeric()->between(0, 100000), true);
-        $this->builder->addFieldInContainer($pricing, (new Number())->setName('termMarginStep')->setMin(0)->setMax(100)->numeric()->between(0, 100), true);
+        $this->builder->addFieldInContainer($pricing, (new Number())->setName('profitMargin')->addClass('tssggs-percent')->setMin(0)->setMax(1000)->required()->numeric()->between(0, 1000), true);
+        $currency = preg_replace('/[^A-Z]/', '', FinancePolicy::baseCurrencyCode());
+        if($currency !== '' && $currency !== 'USD')
+        {
+            // the amount field shows the currency after the number: USD in settings.css, another base currency here
+            $pricing->addElement((new Text())->setText('<style>#layers2 .tssggs-settings form .tssggs-sec .lu-form-group:has(> .tssggs-money)::after { content: "'
+                . $currency . '"; }</style>'));
+        }
+        $this->builder->addFieldInContainer($pricing, (new FormInputText())->setName('minProfit')->addClass('tssggs-money')->numeric()->between(0, 100000), true);
+        $this->builder->addFieldInContainer($pricing, (new Number())->setName('termMarginStep')->addClass('tssggs-percent')->setMin(0)->setMax(100)->numeric()->between(0, 100), true);
         $this->builder->addFieldInContainer($pricing, (new Dropdown())->setName('priceRounding'), true);
         $this->builder->addFieldInContainer($pricing, (new Switcher())->setName('keepMarginOnSync')->addClass('switcher-revert'), true);
 
         $belowCost = $this->section('belowCost', 'alert-circle-outline');
         $this->builder->addFieldInContainer($belowCost, (new Dropdown())->setName('belowCostAction'), true);
         $this->builder->addFieldInContainer($belowCost, (new Switcher())->setName('belowCostEmail')->addClass('switcher-revert'), true);
-
-        $catalogue = $this->section('catalogueSync', 'sync', null, ['catalogueMode_manual', 'catalogueMode_alterations', 'catalogueMode_alterations_removal', 'catalogueMode_all']);
-        $this->builder->addFieldInContainer($catalogue, (new Dropdown())->setName('catalogueSyncMode'), true);
-        $this->builder->addFieldInContainer($catalogue, (new Switcher())->setName('catalogueChangesEmail')->addClass('switcher-revert'), true);
 
         $renewals = $this->section('renewalPrices', 'refresh', null, ['renewalPoint_never', 'renewalPoint_belowCost', 'renewalPoint_always']);
         $this->builder->addFieldInContainer($renewals, (new Dropdown())->setName('renewalPriceMode'), true);
@@ -72,11 +76,10 @@ class FinanceSettingsForm extends Form implements AdminAreaInterface, AjaxCompon
             $this->builder->addFieldInContainer($currency, (new Dropdown())->setName('rateSource'), true);
             $this->builder->addFieldInContainer($currency, (new FormInputText())->setName('rate')->required()->numeric(), true);
         }
-        $this->builder->addFieldInContainer($currency, (new FormInputText())->setName('currencyBuffer')->numeric()->between(0, 50), true);
+        $this->builder->addFieldInContainer($currency, (new FormInputText())->setName('currencyBuffer')->addClass('tssggs-percent')->numeric()->between(0, 50), true);
 
-        $billing = $this->section('billing', 'credit-card-clock-outline');
-        $this->builder->addFieldInContainer($billing, (new Switcher())->setName('terminateUnpaidOnExpiry')->addClass('switcher-revert'), true);
-        $this->builder->addFieldInContainer($billing, (new Dropdown())->setName('pendingPaymentWaitCertificate'), true);
+        // no fields: unpaid certificates are terminated by WHMCS's own automation, the description says where
+        $this->section('billing', 'credit-card-clock-outline');
 
         $balance = $this->section('balance', 'hand-coin-outline');
         $this->builder->addFieldInContainer($balance, (new Switcher())->setName('balanceAlert')->addClass('switcher-revert'), true);

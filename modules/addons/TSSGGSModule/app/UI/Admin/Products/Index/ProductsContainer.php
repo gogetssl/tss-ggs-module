@@ -138,8 +138,8 @@ class ProductsContainer extends Container implements AdminAreaInterface
         $h     = function($value) { return htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8'); };
 
         $html = '<div class="tssggs-changes"><p class="tssggs-changes__intro">' . $t('catalogue_intro', [':days' => CatalogueSync::TAB_DAYS])
-            . ' ' . $t('catalogue_mode', [':mode' => (string)$this->translate('catalogueSync_' . CatalogueSync::mode(), [], ['admin.settings.index.providers.finance_settings_provider'])])
-            . ' <a href="addonmodules.php?module=TSSGGSModule&amp;mg-page=settings&amp;settings-page=financeSettings">' . $t('catalogue_settings') . '</a></p>';
+            . ' ' . $t('catalogue_mode', [':mode' => (string)$this->translate('catalogueSync_' . CatalogueSync::mode(), [], ['admin.settings.index.providers.products_settings_provider'])])
+            . ' <a href="addonmodules.php?module=TSSGGSModule&amp;mg-page=settings&amp;settings-page=productsSettings">' . $t('catalogue_settings') . '</a></p>';
 
         if(!count($changes))
         {

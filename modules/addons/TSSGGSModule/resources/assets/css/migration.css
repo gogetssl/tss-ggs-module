@@ -138,7 +138,32 @@
 .tssggs-emails table.em-list th { text-align: left; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--tw-muted); padding: 6px 10px; border-bottom: 1px solid var(--tw-border); }
 .tssggs-emails table.em-list td { padding: 8px 10px; border-bottom: 1px solid var(--tw-border); vertical-align: top; }
 .tssggs-emails table.em-list td.tssggs-muted { margin: 0; font-size: 12px; }
-.tssggs-emails table.em-list tr.em-group td { background: var(--tw-surface-alt); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--tw-muted); padding: 6px 10px; }
+/* section titles: green stays the brand; blue / amber / violet / red only mark the sections (each 4.5:1 on its tint) */
+.tssggs-emails {
+    --em-green: #0b7a3e;  --em-green-soft: #e8f5ee;
+    --em-blue: #1f5fbf;   --em-blue-soft: #e9f0fb;
+    --em-amber: #9a5b00;  --em-amber-soft: #fdf3e1;
+    --em-violet: #6a3fb5; --em-violet-soft: #f1ebfb;
+    --em-red: #b4262c;    --em-red-soft: #fcebec;
+}
+.tssggs-emails table.em-list tr.em-group--order      { --em-c: var(--em-blue);   --em-soft: var(--em-blue-soft); }
+.tssggs-emails table.em-list tr.em-group--validation { --em-c: var(--em-amber);  --em-soft: var(--em-amber-soft); }
+.tssggs-emails table.em-list tr.em-group--issued     { --em-c: var(--em-green);  --em-soft: var(--em-green-soft); }
+.tssggs-emails table.em-list tr.em-group--renewals   { --em-c: var(--em-violet); --em-soft: var(--em-violet-soft); }
+.tssggs-emails table.em-list tr.em-group--problems   { --em-c: var(--em-red);    --em-soft: var(--em-red-soft); }
+.tssggs-emails table.em-list tr.em-gap td { height: 14px; padding: 0; border: 0; background: transparent; }
+.tssggs-emails table.em-list tbody tr.em-gap:first-child td { height: 4px; }
+.tssggs-emails table.em-list tr.em-group td {
+    padding: 11px 14px; background: var(--em-soft, var(--tw-surface-alt));
+    border-top: 1px solid var(--tw-border); border-left: 4px solid var(--em-c, var(--tw-muted));
+}
+#layers2 .tssggs-emails table.em-list .em-group__dot { display: inline-block; flex: none; width: 8px !important; min-width: 8px; height: 8px; margin-right: 8px; border-radius: 50%; background: var(--em-c); vertical-align: 1px; }
+#layers2 .tssggs-emails table.em-list .em-group__title { margin-right: 10px; color: var(--em-c); font-size: 14px; font-weight: 700 !important; }
+.tssggs-emails table.em-list .em-group__desc { color: #4a4f57; font-size: 12px; }
+.tssggs-emails table.em-list .em-group__count {
+    float: right; padding: 1px 8px; border: 1px solid var(--em-c); border-radius: 999px; background: #fff;
+    color: var(--em-c); font-size: 11px; font-style: normal; font-weight: 600;
+}
 .tssggs-emails table.em-list tr.is-off td strong { color: var(--tw-muted); }
 .tssggs-emails table.em-list td.em-actions { white-space: nowrap; text-align: right; }
 .tssggs-emails table.em-list .lu-btn--success { background: var(--tw-primary); border-color: var(--tw-primary); color: #fff; }

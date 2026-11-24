@@ -907,6 +907,13 @@ $_LANG['admin.emails.group_validation'] = 'Validierung';
 $_LANG['admin.emails.group_issued'] = 'Ausgestelltes Zertifikat';
 $_LANG['admin.emails.group_renewals'] = 'Verlängerungen und Erinnerungen';
 $_LANG['admin.emails.group_problems'] = 'Probleme';
+$_LANG['admin.emails.group_order_desc'] = 'Bestellung und Konfiguration - gesendet, wenn der Kunde Angaben machen muss';
+$_LANG['admin.emails.group_validation_desc'] = 'Domain- und Organisationsprüfung durch die Zertifizierungsstelle';
+$_LANG['admin.emails.group_issued_desc'] = 'Zustellung nach erfolgreicher Ausstellung';
+$_LANG['admin.emails.group_renewals_desc'] = 'Ablaufhinweise, Verlängerungsrechnungen und Erinnerungen zur Neuausstellung';
+$_LANG['admin.emails.group_problems_desc'] = 'Fehler, um die sich der Kunde kümmern muss';
+$_LANG['admin.emails.group_count_one'] = '1 E-Mail';
+$_LANG['admin.emails.group_count'] = ':count E-Mails';
 $_LANG['admin.emails.badge_customised'] = 'bearbeitet';
 $_LANG['admin.emails.badge_disabled'] = 'deaktiviert';
 $_LANG['admin.emails.badge_unused'] = 'wird nicht gesendet';
@@ -1332,7 +1339,7 @@ $_LANG['admin.settings.index.widgets.finance_settings_widget.subtitle'] = 'Preis
 $_LANG['admin.settings.index.forms.finance_settings_form.pricing'] = 'Preisgestaltung';
 $_LANG['admin.settings.index.forms.finance_settings_form.minProfit'] = 'Mindestgewinn pro Zertifikat';
 $_LANG['admin.settings.index.forms.finance_settings_form.minProfit_description'] = 'In USD (oder in Ihrer Standardwährung, wenn WHMCS kein USD hat). Ein Zertifikat bringt immer mindestens diesen Betrag über seinem Einkaufspreis ein, unabhängig von der Marge: 30% eines Zertifikats für 6.00 sind nur 1.80. Gilt nicht für SAN-Optionen. 0 = aus';
-$_LANG['admin.settings.index.forms.finance_settings_form.termMarginStep'] = 'Geringere Marge pro zusätzlichem Jahr %';
+$_LANG['admin.settings.index.forms.finance_settings_form.termMarginStep'] = 'Geringere Marge pro zusätzlichem Jahr';
 $_LANG['admin.settings.index.forms.finance_settings_form.termMarginStep_description'] = 'Die Marge für Laufzeiten von 2 und 3 Jahren wird pro zusätzlichem Jahr um diesen Wert gesenkt (Marge 30, Schritt 5: 1 Jahr 30%, 2 Jahre 25%, 3 Jahre 20%), damit lange Laufzeiten wettbewerbsfähig bleiben. Nie unter 0. 0 = dieselbe Marge für jede Laufzeit';
 $_LANG['admin.settings.index.forms.finance_settings_form.priceRounding'] = 'Preisrundung';
 $_LANG['admin.settings.index.forms.finance_settings_form.priceRounding_description'] = 'Rundet jeden berechneten Preis auf eine glatte Endung auf. Die Rundung senkt nie einen Preis';
@@ -1361,14 +1368,12 @@ $_LANG['admin.settings.index.forms.finance_settings_form.currency_desc'] = 'Der 
 $_LANG['admin.settings.index.forms.finance_settings_form.rateSource'] = 'Wechselkurs USD in Ihre Standardwährung';
 $_LANG['admin.settings.index.forms.finance_settings_form.rateSource_description'] = 'WHMCS hat keine USD-Währung, daher rechnet das Modul den Einkaufspreis selbst um. Tageskurs: wird vor jeder Preisaktualisierung von der Europäischen Zentralbank abgerufen';
 $_LANG['admin.settings.index.forms.finance_settings_form.rate_description'] = '1 USD = so viele Einheiten Ihrer Standardwährung. Beim Tageskurs wird der Wert automatisch eingetragen';
-$_LANG['admin.settings.index.forms.finance_settings_form.currencyBuffer'] = 'Währungs-Sicherheitspuffer %';
+$_LANG['admin.settings.index.forms.finance_settings_form.currencyBuffer'] = 'Währungs-Sicherheitspuffer';
 $_LANG['admin.settings.index.forms.finance_settings_form.currencyBuffer_description'] = 'Wird auf Preise in anderen Währungen als USD aufgeschlagen, damit eine Wechselkursänderung zwischen zwei Preisaktualisierungen Ihre Marge nicht aufzehrt. 0 = aus';
 $_LANG['admin.settings.index.providers.finance_settings_provider.rateSource_manual'] = 'Fester Kurs (unten eingegeben)';
 $_LANG['admin.settings.index.providers.finance_settings_provider.rateSource_ecb'] = 'Tageskurs (Europäische Zentralbank)';
 $_LANG['admin.settings.index.forms.finance_settings_form.billing'] = 'Abrechnung';
-$_LANG['admin.settings.index.forms.finance_settings_form.billing_desc'] = 'Wann Verlängerungen fällig werden und was mit unbezahlten Services geschieht. Verlängerungsrechnungen und Ablauferinnerungen finden Sie unter Einstellungen > SSL-Zertifikate und Automatisiertes SSL.';
-$_LANG['admin.settings.index.forms.finance_settings_form.terminateUnpaidOnExpiry'] = 'Unbezahlte Services bei Ablauf kündigen';
-$_LANG['admin.settings.index.forms.finance_settings_form.terminateUnpaidOnExpiry_description'] = 'Ein Service, dessen Ablaufdatum ohne Zahlung verstrichen ist, wird gekündigt, seine Bestellung bzw. sein Abonnement wird beim Anbieter storniert und seine unbezahlte Verlängerungsrechnung wird storniert. Ist der Anbieter nicht erreichbar, bleibt der Service offen und der nächste Cron-Lauf versucht es erneut. Gilt für Abonnement-Services (nicht für einmalige Services)';
+$_LANG['admin.settings.index.forms.finance_settings_form.billing_desc'] = 'Unbezahlte Zertifikate werden nicht vom Modul gekündigt: WHMCS übernimmt das mit seiner eigenen Regel (Setup > Automation Settings > Suspension & Termination, "Terminate after X days"), und beim Kündigen eines Dienstes wird auch seine Bestellung beim Anbieter storniert (Einstellungen > Allgemein > Service-Lebenszyklus). Unbezahlte ACME- und Plan-Abonnements werden vor ihrer Verlängerung storniert: Einstellungen > Automatisiertes SSL. Verlängerungsrechnungen und Ablauferinnerungen finden Sie unter Einstellungen > SSL-Zertifikate und Automatisiertes SSL.';
 $_LANG['admin.settings.index.forms.finance_settings_form.balance'] = 'Reseller-Guthaben';
 $_LANG['admin.settings.index.forms.finance_settings_form.renewalPrices_desc'] = 'Wenn Sie einen Preis ändern, berechnet WHMCS bestehenden Services weiterhin den Preis, zu dem sie bestellt wurden. Wählen Sie, was bestehende Services bei ihrer nächsten Verlängerung zahlen (wird nach jeder Preisaktualisierung geprüft; bereits vorhandene Rechnungen ändern sich nicht):';
 $_LANG['admin.settings.index.forms.finance_settings_form.renewalPoint_never'] = 'Bestellpreis beibehalten:';
@@ -1488,20 +1493,13 @@ $_LANG['admin.emails.name_renewal_details_required'] = 'Verlängerungsdaten erfo
 $_LANG['admin.emails.when_renewal_details_required'] = 'Wird gesendet, wenn eine Verlängerung bezahlt ist und der Kunde die Daten erneut einreichen muss (CSR, Domains, Kontakte) - "Mit denselben Bestelldaten verlängern" ist aus, oder der Anbieter hat die bisherigen Daten abgelehnt.';
 
 // renewal paid but still pending (1.5.2)
-$_LANG['admin.settings.index.forms.finance_settings_form.pendingPaymentWaitCertificate'] = 'Verlängerung bezahlt, aber noch ausstehend';
-$_LANG['admin.settings.index.forms.finance_settings_form.pendingPaymentWaitCertificate_description'] = 'Eine vom Kunden bezahlte Verlängerung, deren Zahlung beim Ende der Bestellung noch nicht eingegangen ist ("Payment Pending" - Überweisung, E-Check). Warten: der Dienst wird so viele Tage nicht beendet; geht die Zahlung ein, wird wie üblich verlängert. Für Sie ohne Kosten - die Verlängerung wird erst nach Zahlung bestellt. Eine "Payment Pending"-Rechnung storniert das Modul nie.';
 $_LANG['admin.settings.index.forms.ssl_settings_form.pendingPaymentWaitSubscription'] = 'Verlängerung bezahlt, aber noch ausstehend';
 $_LANG['admin.settings.index.forms.ssl_settings_form.pendingPaymentWaitSubscription_description'] = 'Eine vom Kunden bezahlte Verlängerung, deren Zahlung bei Fälligkeit der Rechnung noch nicht eingegangen ist ("Payment Pending"). Als unbezahlt behandeln: das Abonnement wird am Tag vor der Verlängerung durch den Anbieter storniert, wie eine unbezahlte Verlängerung. Warten: es wird so viele Tage nicht storniert. Eine "Payment Pending"-Rechnung storniert das Modul nie.';
 $_LANG['admin.settings.index.forms.ssl_settings_form.pendingWaitSubscriptionRisk'] = 'Warten auf ausstehende Zahlungen: der Anbieter verlängert das Abonnement und berechnet es Ihnen, bevor eine ausstehende Zahlung eingegangen ist. Schlägt die Zahlung fehl, bleibt die Belastung bei Ihnen.';
-$_LANG['admin.settings.index.providers.finance_settings_provider.pendingWait_0'] = 'Als unbezahlt behandeln';
 $_LANG['admin.settings.index.providers.ssl_settings_provider.pendingWait_0'] = 'Als unbezahlt behandeln';
-$_LANG['admin.settings.index.providers.finance_settings_provider.pendingWait_3'] = '3 Tage auf den Eingang warten';
 $_LANG['admin.settings.index.providers.ssl_settings_provider.pendingWait_3'] = '3 Tage auf den Eingang warten';
-$_LANG['admin.settings.index.providers.finance_settings_provider.pendingWait_7'] = '7 Tage auf den Eingang warten';
 $_LANG['admin.settings.index.providers.ssl_settings_provider.pendingWait_7'] = '7 Tage auf den Eingang warten';
-$_LANG['admin.settings.index.providers.finance_settings_provider.pendingWait_14'] = '14 Tage auf den Eingang warten';
 $_LANG['admin.settings.index.providers.ssl_settings_provider.pendingWait_14'] = '14 Tage auf den Eingang warten';
-$_LANG['admin.settings.index.providers.finance_settings_provider.pendingWait_30'] = '30 Tage auf den Eingang warten';
 $_LANG['admin.settings.index.providers.ssl_settings_provider.pendingWait_30'] = '30 Tage auf den Eingang warten';
 
 // migration: products without a gateway match, automatic rollback (1.7.0)
@@ -1571,24 +1569,24 @@ $_LANG['admin.products.index.data_tables.products.array_data_provider.data_table
 $_LANG['admin.products.index.data_tables.products.array_data_provider.data_table.product_addon'] = 'Produkt-Addon #:id';
 
 // Katalog-Synchronisierung (M-16)
-$_LANG['admin.settings.index.forms.finance_settings_form.catalogueSync'] = 'Katalog-Synchronisierung';
-$_LANG['admin.settings.index.forms.finance_settings_form.catalogueSync_desc'] = 'Jede Nacht vergleicht das Modul die Produktliste des Anbieters mit der vorherigen. Jede Änderung wird auf der Seite Produkte aufgeführt (Reiter "Katalogänderungen"). Der Modus legt fest, was das Modul selbst ändert:';
-$_LANG['admin.settings.index.forms.finance_settings_form.catalogueMode_manual'] = 'Manuell:';
-$_LANG['admin.settings.index.forms.finance_settings_form.catalogueMode_manual_text'] = 'nichts wird geändert, jede Änderung wird nur gemeldet.';
-$_LANG['admin.settings.index.forms.finance_settings_form.catalogueMode_alterations'] = 'Nur Anpassungen:';
-$_LANG['admin.settings.index.forms.finance_settings_form.catalogueMode_alterations_text'] = 'geänderte Produkte werden aktualisiert (SAN-Optionen, Produkteinstellungen); neue und eingestellte Produkte werden nur gemeldet.';
-$_LANG['admin.settings.index.forms.finance_settings_form.catalogueMode_alterations_removal'] = 'Anpassungen und Entfernen:';
-$_LANG['admin.settings.index.forms.finance_settings_form.catalogueMode_alterations_removal_text'] = 'setzt außerdem Produkte in den Ruhestand, die der Anbieter nicht mehr verkauft (an zwei verschiedenen Tagen fehlend). Ein Produkt mit aktiven Services wird nur im Bestellformular ausgeblendet; seine Services funktionieren weiter.';
-$_LANG['admin.settings.index.forms.finance_settings_form.catalogueMode_all'] = 'Alles:';
-$_LANG['admin.settings.index.forms.finance_settings_form.catalogueMode_all_text'] = 'importiert außerdem neue Produkte, ausgeblendet und mit der Standardmarge, in eine ausgeblendete Gruppe, damit Sie sie vor dem Verkauf prüfen.';
-$_LANG['admin.settings.index.forms.finance_settings_form.catalogueSyncMode'] = 'Synchronisierungsmodus';
-$_LANG['admin.settings.index.forms.finance_settings_form.catalogueSyncMode_description'] = 'Was die nächtliche Synchronisierung selbst ändern darf. Die Schaltfläche Neu synchronisieren auf der Seite Produkte aktualisiert die Produkte immer.';
-$_LANG['admin.settings.index.forms.finance_settings_form.catalogueChangesEmail'] = 'Administratoren per E-Mail informieren';
-$_LANG['admin.settings.index.forms.finance_settings_form.catalogueChangesEmail_description'] = 'Eine Zusammenfassung der Änderungen und dessen, was das Modul getan hat, nach der nächtlichen Synchronisierung. Keine Änderungen, keine E-Mail';
-$_LANG['admin.settings.index.providers.finance_settings_provider.catalogueSync_manual'] = 'Manuell';
-$_LANG['admin.settings.index.providers.finance_settings_provider.catalogueSync_alterations'] = 'Nur Anpassungen';
-$_LANG['admin.settings.index.providers.finance_settings_provider.catalogueSync_alterations_removal'] = 'Anpassungen und Entfernen';
-$_LANG['admin.settings.index.providers.finance_settings_provider.catalogueSync_all'] = 'Alles (auch neue Produkte importieren)';
+$_LANG['admin.settings.index.forms.products_settings_form.catalogueSync'] = 'Katalog-Synchronisierung';
+$_LANG['admin.settings.index.forms.products_settings_form.catalogueSync_desc'] = 'Jede Nacht vergleicht das Modul die Produktliste des Anbieters mit der vorherigen. Jede Änderung wird auf der Seite Produkte aufgeführt (Reiter "Katalogänderungen"). Der Modus legt fest, was das Modul selbst ändert:';
+$_LANG['admin.settings.index.forms.products_settings_form.catalogueMode_manual'] = 'Manuell:';
+$_LANG['admin.settings.index.forms.products_settings_form.catalogueMode_manual_text'] = 'nichts wird geändert, jede Änderung wird nur gemeldet.';
+$_LANG['admin.settings.index.forms.products_settings_form.catalogueMode_alterations'] = 'Nur Anpassungen:';
+$_LANG['admin.settings.index.forms.products_settings_form.catalogueMode_alterations_text'] = 'geänderte Produkte werden aktualisiert (SAN-Optionen, Produkteinstellungen); neue und eingestellte Produkte werden nur gemeldet.';
+$_LANG['admin.settings.index.forms.products_settings_form.catalogueMode_alterations_removal'] = 'Anpassungen und Entfernen:';
+$_LANG['admin.settings.index.forms.products_settings_form.catalogueMode_alterations_removal_text'] = 'setzt außerdem Produkte in den Ruhestand, die der Anbieter nicht mehr verkauft (an zwei verschiedenen Tagen fehlend). Ein Produkt mit aktiven Services wird nur im Bestellformular ausgeblendet; seine Services funktionieren weiter.';
+$_LANG['admin.settings.index.forms.products_settings_form.catalogueMode_all'] = 'Alles:';
+$_LANG['admin.settings.index.forms.products_settings_form.catalogueMode_all_text'] = 'importiert außerdem neue Produkte, ausgeblendet und mit der Standardmarge, in eine ausgeblendete Gruppe, damit Sie sie vor dem Verkauf prüfen.';
+$_LANG['admin.settings.index.forms.products_settings_form.catalogueSyncMode'] = 'Synchronisierungsmodus';
+$_LANG['admin.settings.index.forms.products_settings_form.catalogueSyncMode_description'] = 'Was die nächtliche Synchronisierung selbst ändern darf. Die Schaltfläche Neu synchronisieren auf der Seite Produkte aktualisiert die Produkte immer.';
+$_LANG['admin.settings.index.forms.products_settings_form.catalogueChangesEmail'] = 'Administratoren per E-Mail informieren';
+$_LANG['admin.settings.index.forms.products_settings_form.catalogueChangesEmail_description'] = 'Eine Zusammenfassung der Änderungen und dessen, was das Modul getan hat, nach der nächtlichen Synchronisierung. Keine Änderungen, keine E-Mail';
+$_LANG['admin.settings.index.providers.products_settings_provider.catalogueSync_manual'] = 'Manuell';
+$_LANG['admin.settings.index.providers.products_settings_provider.catalogueSync_alterations'] = 'Nur Anpassungen';
+$_LANG['admin.settings.index.providers.products_settings_provider.catalogueSync_alterations_removal'] = 'Anpassungen und Entfernen';
+$_LANG['admin.settings.index.providers.products_settings_provider.catalogueSync_all'] = 'Alles (auch neue Produkte importieren)';
 $_LANG['admin.products.productsTab'] = 'Produkte';
 $_LANG['admin.products.catalogueTab'] = 'Katalogänderungen';
 $_LANG['admin.products.show_label'] = 'Anzeigen';
@@ -1669,3 +1667,8 @@ $_LANG['admin.breadcrumbs.ModuleUpdate'] = 'Modul-Update';
 $_LANG['admin.breadcrumbs.ModuleUpdate_index'] = 'Modul-Update';
 $_LANG['admin.module_update.rollback_cli'] = 'Das Zurücksetzen ist auf diesem Server nicht über diese Seite möglich (siehe Serverprüfungen). Auf dem Server ausführen: :command';
 $_LANG['admin.module_update.continue'] = 'Weiter';
+
+// Settings > Products (catalogue sync moved here from Finance)
+$_LANG['admin.settings.index.widgets.sidebar.productsSettings'] = 'Produkte';
+$_LANG['admin.settings.index.widgets.products_settings_widget.title'] = 'Produkte';
+$_LANG['admin.settings.index.widgets.products_settings_widget.subtitle'] = 'Wie Ihre Produktliste dem Katalog des Anbieters folgt';
