@@ -85,6 +85,10 @@ class GeneralSettings
         'currencyBuffer'           => 0,
         'balanceAlert'             => true,
         'balanceAlertSent'         => 0,
+        // low balance warning (App\Libs\BalanceMonitor): amount per vendor account (0 = off), last check per vendor
+        'balanceThresholdTss'      => 0,
+        'balanceThresholdGgs'      => 0,
+        'balanceInfo'              => [],
 
         'openCorporatesToken'      => '',     // LEI order form company search (stored encrypted, App\Libs\LeiCompanySearch)
     ];

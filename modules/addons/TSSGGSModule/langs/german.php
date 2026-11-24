@@ -1384,6 +1384,17 @@ $_LANG['admin.settings.index.providers.finance_settings_provider.renewal_always'
 $_LANG['admin.settings.index.forms.finance_settings_form.balance_desc'] = 'Zertifikatsbestellungen werden aus Ihrem Guthaben beim Zertifikatsanbieter bezahlt. Ist das Guthaben aufgebraucht, können bezahlte Bestellungen nicht ausgestellt werden und Ihre Kunden warten auf ihre Zertifikate.';
 $_LANG['admin.settings.index.forms.finance_settings_form.balanceAlert'] = 'Per E-Mail informieren, wenn eine Bestellung mangels Guthaben fehlschlägt';
 $_LANG['admin.settings.index.forms.finance_settings_form.balanceAlert_description'] = 'Sie erhalten eine E-Mail, sobald der Anbieter eine Bestellung ablehnt, weil das Guthaben zu niedrig ist, sodass Sie es aufladen und die Bestellung erneut senden können. Höchstens eine E-Mail alle 6 Stunden';
+$_LANG['admin.settings.index.forms.finance_settings_form.balanceThreshold'] = 'Warnen, wenn das verbleibende Guthaben unter diesem Betrag liegt (:currency)';
+$_LANG['admin.settings.index.forms.finance_settings_form.balanceThresholdBrand'] = ':brand: warnen, wenn das verbleibende Guthaben unter diesem Betrag liegt (:currency)';
+$_LANG['admin.settings.index.forms.finance_settings_form.balanceThreshold_description'] = 'Das Guthaben wird stündlich gelesen. Unter diesem Betrag erhalten die WHMCS-Administratoren eine E-Mail, höchstens eine pro Tag, solange es niedrig bleibt. Prepaid-Konten: es zählt das Guthaben; Kreditkonten: der verbleibende Kredit (Guthaben + Kreditlimit); Konten mit Monatsrechnung werden nie durch das Guthaben gestoppt. Sie erhalten auch eine E-Mail, wenn das Konto nicht mehr aktiv ist. 0 = aus';
+$_LANG['admin.settings.index.forms.finance_settings_form.balanceNow'] = ':brand Guthaben: :balance (Prepaid). Gelesen :time.';
+$_LANG['admin.settings.index.forms.finance_settings_form.balanceNowCredit'] = ':brand: :left Kredit verbleibend (Guthaben :balance, Kreditlimit :limit). Gelesen :time.';
+$_LANG['admin.settings.index.forms.finance_settings_form.balanceNowCreditNoLimit'] = ':brand: Guthaben :balance, Kredit ohne Limit - keine Warnung nötig. Gelesen :time.';
+$_LANG['admin.settings.index.forms.finance_settings_form.balanceNowInvoice'] = ':brand: Guthaben :balance, Zahlung per Monatsrechnung - ein niedriges Guthaben stoppt keine Bestellungen, daher keine Warnung. Gelesen :time.';
+$_LANG['admin.settings.index.forms.finance_settings_form.balanceNotChecked'] = ':brand: Das Guthaben wurde noch nicht gelesen. Es wird beim Speichern dieser Seite und danach stündlich gelesen.';
+$_LANG['admin.settings.index.forms.finance_settings_form.balanceError'] = ':brand: Das Guthaben konnte nicht gelesen werden: :error';
+$_LANG['admin.settings.index.forms.finance_settings_form.balanceErrorLast'] = 'Das letzte Lesen ist fehlgeschlagen: :error';
+$_LANG['admin.settings.index.forms.finance_settings_form.balanceInactive'] = 'Kontostatus: :status - Bestellungen werden abgelehnt, bis das Konto wieder aktiv ist.';
 $_LANG['admin.settings.index.forms.finance_settings_form.pricing_desc'] = 'Die Standardregeln, nach denen aus Ihrem Reseller-Einkaufspreis ein Verkaufspreis wird. Sie gelten für Produkte mit automatischer Preisgestaltung, für Marge anwenden auf der Seite Preise, für den Produktimport und für neue SAN-Optionen.';
 $_LANG['admin.settings.index.forms.finance_settings_form.rulesIntro'] = 'Auch andere Einstellungen beeinflussen, was Kunden zahlen. Was dort derzeit eingestellt ist:';
 $_LANG['admin.settings.index.forms.finance_settings_form.rulesAuto'] = 'Seite Preise:';
