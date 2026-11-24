@@ -161,11 +161,21 @@ class SSLCertificates extends AbstractCommand
                 {
                     CertificateSyncHelpers::syncCertificate($certificate, $addonConfig);
                 }
+                CertificateSyncHelpers::clearAwaitingConfiguration((int)$certificate['id']);
 
             } catch (\Throwable $e) {
 
                 // counted as handled: an order that keeps failing must not hold a place among the oldest ones for ever
                 \WHMCS\Database\Capsule::table('tblsslorders')->where('serviceid', (int)$certificate['id'])->update(['updated_at' => date('Y-m-d H:i:s')]);
+
+                // submitted, but the client never chose how to validate: the order waits, it has not failed (read less often, see CertificateSyncHelpers)
+                if(SSLTrustCenterApi::isAwaitingConfiguration($e))
+                {
+                    CertificateSyncHelpers::markAwaitingConfiguration((int)$certificate['id']);
+                    $io->write('Waiting for configuration: service #' . (int)$certificate['id']);
+                    continue;
+                }
+
                 $failed[$certificate['id']] = $e->getMessage();
                 $io->write('Error: ' . $e->getMessage());
 

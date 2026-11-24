@@ -1092,6 +1092,16 @@ class SSLTrustCenterApi
     }
 
     /**
+     * The order was submitted but its validation method was never chosen: the gateway answers the order details with
+     * 502 GEX-4 "Unexpected validation method: not yet set" (seen 2026-11-24). The order waits for its configuration,
+     * it has not failed.
+     */
+    public static function isAwaitingConfiguration(\Throwable $e)
+    {
+        return stripos($e->getMessage(), 'validation method: not yet set') !== false;
+    }
+
+    /**
      * Gateway error as a sentence a client can read (it is shown in the client area as is); the HTTP code stays in
      * the exception code and in the API log. "Vendor returns error:ErrorCode:x|ErrorMessage:y" becomes "y".
      */
