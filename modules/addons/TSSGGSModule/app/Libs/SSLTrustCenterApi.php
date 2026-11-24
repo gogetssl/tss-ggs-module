@@ -221,9 +221,9 @@ class SSLTrustCenterApi
     }
 
     /**
-     * Sends the details of a certificate bought with createIncomplete() (POST /certificates/tls/{token}): the CSR, the
+     * Sends the details of a certificate bought with createIncomplete() (PUT /certificates/tls/{token}): the CSR, the
      * common name, the alternative names, the contacts and an optional renewal - the fields of addOrder() without
-     * product. Answers with the order details (as getOrder()).
+     * product. Answers with the order details (as getOrder()). POST on the same URL is the reissue call.
      */
     public function completeOrder($token, array $data, $serviceId)
     {
@@ -231,7 +231,7 @@ class SSLTrustCenterApi
         unset($data['product']);
         $data = $this->withoutFreeName($data);
 
-        return $this->call('/certificates/' . $this->category . '/' . rawurlencode((string)$token), $data);
+        return $this->call('/certificates/' . $this->category . '/' . rawurlencode((string)$token), $data, 'PUT');
     }
 
     public function renewOrder($serviceId, $data)
