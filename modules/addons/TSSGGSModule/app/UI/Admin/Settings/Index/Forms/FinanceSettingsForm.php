@@ -91,6 +91,11 @@ class FinanceSettingsForm extends Form implements AdminAreaInterface, AjaxCompon
             $brand    = Edition::brandOf($vendor);
             $currency = (string)($info['currency'] ?? 'USD');
             $balance->addElement((new Text())->setText($this->balanceNow($vendor, $info)));
+            // a monthly invoice account is never stopped by its balance: no amount to set (its saved one is kept)
+            if(($info['terms'] ?? '') === 'invoice')
+            {
+                continue;
+            }
             $title    = count($vendors) > 1 ? 'balanceThresholdBrand' : 'balanceThreshold';
             $this->builder->addFieldInContainer($balance, (new FormInputText())->setName(BalanceMonitor::thresholdKey($vendor))
                 ->setTitle($this->translate($title, [':brand' => $brand, ':currency' => $currency]))
