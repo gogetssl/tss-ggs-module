@@ -1008,6 +1008,7 @@ $_LANG['clientText']['reissueAfterIssue'] = 'The certificate can be reissued onc
 $_LANG['clientText']['noFileValidation'] = 'The order does not use file (HTTP/HTTPS) validation';
 $_LANG['clientText']['notIssuedYet'] = 'The certificate has not been issued yet';
 $_LANG['clientText']['orderNotPlacedYet'] = 'The SSL order has not been placed yet';
+$_LANG['clientText']['awaitingValidationMethod'] = 'The validation method for this order has not been set yet. Please choose how to validate your domain and try again.';
 $_LANG['clientText']['csrKeyTooSmall'] = 'The CSR uses a :bits:-bit key. Certificate authorities need at least 2048-bit RSA or 256-bit ECC - please create a new CSR.';
 $_LANG['clientText']['csrNotValid'] = 'The CSR is not valid';
 $_LANG['clientText']['noValidationMethod'] = 'No validation method for :domain:';

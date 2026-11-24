@@ -1085,6 +1085,13 @@ class SSLTrustCenterApi
                 }
             }
 
+            // the order waits for its validation method: a sentence the client can act on, not the gateway's 502
+            if(isset($response['message']) && stripos((string)$response['message'], self::AWAITING_CONFIGURATION) !== false)
+            {
+                throw new AwaitingConfigurationException(ClientText::get('awaitingValidationMethod',
+                    'The validation method for this order has not been set yet. Please choose how to validate your domain and try again.'), $httpCode);
+            }
+
             throw new \Exception(self::readableError(isset($response['message']) ? $response['message'] : '', $httpCode), $httpCode);
         }
 
@@ -1098,7 +1105,26 @@ class SSLTrustCenterApi
      */
     public static function isAwaitingConfiguration(\Throwable $e)
     {
-        return stripos($e->getMessage(), 'validation method: not yet set') !== false;
+        return $e instanceof AwaitingConfigurationException || stripos($e->getMessage(), self::AWAITING_CONFIGURATION) !== false;
+    }
+
+    /** the part of the gateway's message that says so */
+    const AWAITING_CONFIGURATION = 'validation method: not yet set';
+
+    /**
+     * getOrder(), or $fallback when the gateway can not show the order yet because its validation method is not set:
+     * for the reads right after a client's action that the gateway did accept (order placed, reissue, method change)
+     */
+    public function getOrderOr($orderId, $serviceId, array $fallback)
+    {
+        try
+        {
+            return $this->getOrder($orderId, $serviceId);
+        }
+        catch(AwaitingConfigurationException $e)
+        {
+            return $fallback;
+        }
     }
 
     /**

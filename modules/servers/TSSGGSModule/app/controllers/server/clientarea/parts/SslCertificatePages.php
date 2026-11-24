@@ -1383,7 +1383,8 @@ trait SslCertificatePages
                 {
                     $api->changeApprovers($itemId, $domainChange);
                 }
-                $newData                               = $api->getOrder($itemId, $serviceId);
+                // the change went through; if the gateway can not show the order yet, the stored status stays until the sync reads it
+                $newData                               = $api->getOrderOr($itemId, $serviceId, ['order' => $certificate['orderData']['order'] ?? [], 'items' => $certificate['orderData']['items'] ?? []]);
                 $certificate['orderData']['orderData'] = $newOrderData;
                 $certificate['orderData']['order']     = $newData['order'];
                 $certificate['orderData']['items']     = $newData['items'];

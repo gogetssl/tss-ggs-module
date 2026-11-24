@@ -810,7 +810,8 @@ class CertificateService
             ]);
         }
 
-        $orderData  = $api->getOrder($itemId, $serviceId);
+        // the reissue was accepted; if the gateway can not show the order yet, the stored details stay until the sync reads it
+        $orderData  = $api->getOrderOr($itemId, $serviceId, (array)(self::stored($serviceId)['orderData'] ?? $reissue));
         $orderFiles = [];
         try
         {
@@ -1018,7 +1019,8 @@ class CertificateService
             }
         }
 
-        $fresh = $api->getOrder((int)$ssl->remoteid, $serviceId);
+        // the change went through; if the gateway can not show the order yet, the stored status stays until the sync reads it
+        $fresh = $api->getOrderOr((int)$ssl->remoteid, $serviceId, ['order' => $stored['orderData']['order'] ?? [], 'items' => $stored['orderData']['items'] ?? []]);
         $stored['orderData']['order'] = $fresh['order'];
         $stored['orderData']['items'] = $fresh['items'];
         Request::updateOrderData($serviceId, $stored);

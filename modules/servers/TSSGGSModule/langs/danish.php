@@ -1008,6 +1008,7 @@ $_LANG['clientText']['reissueAfterIssue'] = 'Certifikatet kan genudstedes, når 
 $_LANG['clientText']['noFileValidation'] = 'Ordren bruger ikke filvalidering (HTTP/HTTPS)';
 $_LANG['clientText']['notIssuedYet'] = 'Certifikatet er endnu ikke udstedt';
 $_LANG['clientText']['orderNotPlacedYet'] = 'SSL-ordren er endnu ikke afgivet';
+$_LANG['clientText']['awaitingValidationMethod'] = 'Valideringsmetoden for denne ordre er endnu ikke valgt. Vælg, hvordan dit domæne skal valideres, og prøv igen.';
 $_LANG['clientText']['csrKeyTooSmall'] = 'CSR\'en bruger en :bits:-bit nøgle. Certifikatudstedere kræver mindst 2048-bit RSA eller 256-bit ECC - opret en ny CSR.';
 $_LANG['clientText']['csrNotValid'] = 'CSR\'en er ikke gyldig';
 $_LANG['clientText']['noValidationMethod'] = 'Ingen valideringsmetode for :domain:';

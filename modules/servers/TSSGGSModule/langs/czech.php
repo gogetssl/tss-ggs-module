@@ -1008,6 +1008,7 @@ $_LANG['clientText']['reissueAfterIssue'] = 'Certifikát lze znovu vystavit až 
 $_LANG['clientText']['noFileValidation'] = 'Objednávka nepoužívá ověření souborem (HTTP/HTTPS)';
 $_LANG['clientText']['notIssuedYet'] = 'Certifikát zatím nebyl vydán';
 $_LANG['clientText']['orderNotPlacedYet'] = 'Objednávka SSL zatím nebyla zadána';
+$_LANG['clientText']['awaitingValidationMethod'] = 'Metoda ověření pro tuto objednávku zatím nebyla nastavena. Zvolte prosím, jak ověřit svou doménu, a zkuste to znovu.';
 $_LANG['clientText']['csrKeyTooSmall'] = 'CSR používá :bits:bitový klíč. Certifikační autority vyžadují alespoň 2048bitový RSA nebo 256bitový ECC – vytvořte prosím nový CSR.';
 $_LANG['clientText']['csrNotValid'] = 'CSR není platný';
 $_LANG['clientText']['noValidationMethod'] = 'Pro :domain: chybí metoda ověření';
