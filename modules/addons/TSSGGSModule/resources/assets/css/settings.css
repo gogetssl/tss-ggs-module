@@ -174,6 +174,17 @@
     border-bottom: 0;
 }
 
+/* a row followed by its renewal summary box: the box separates them, no divider above it */
+#layers2 .tssggs-settings form .tssggs-sec .lu-form-group:has(+ span .tssggs-renewal-check) {
+    border-bottom: 0;
+}
+
+/* a row right after an opened block of rows (e.g. "Buy More Domains" Price after the recurring settings): the
+   block's last row has no divider, so this row draws it */
+#layers2 .tssggs-settings form .tssggs-sec .lu-collapse.lu-show + .lu-form-group {
+    border-top: 1px solid var(--tw-border);
+}
+
 #layers2 .tssggs-settings form .tssggs-sec .lu-form-group > .lu-form-label,
 #layers2 .tssggs-settings form .tssggs-sec .lu-form-group > label {
     grid-column: 1;
