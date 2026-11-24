@@ -1395,6 +1395,18 @@ $_LANG['admin.settings.index.providers.finance_settings_provider.renewal_always'
 $_LANG['admin.settings.index.forms.finance_settings_form.balance_desc'] = 'Certificate orders are paid from your balance at the certificate vendor. If the balance runs out, paid orders can not be issued and your clients wait for their certificates.';
 $_LANG['admin.settings.index.forms.finance_settings_form.balanceAlert'] = 'E-mail me when an order fails for lack of funds';
 $_LANG['admin.settings.index.forms.finance_settings_form.balanceAlert_description'] = 'You get an e-mail as soon as the vendor refuses an order because the balance is too low, so you can top up and send the order again. At most one e-mail every 6 hours';
+$_LANG['admin.settings.index.forms.finance_settings_form.balanceThreshold'] = 'Warn me when the money left is below (:currency)';
+$_LANG['admin.settings.index.forms.finance_settings_form.balanceThresholdBrand'] = ':brand account: warn me when the money left is below (:currency)';
+$_LANG['admin.settings.index.forms.finance_settings_form.balanceThreshold_description'] = 'The balance is read every hour. Below this amount the WHMCS administrators get an e-mail, at most one a day while it stays low. Prepaid accounts: the balance counts; credit accounts: the credit left (balance + credit limit); monthly invoice accounts are never stopped by the balance. You also get an e-mail when the account is no longer active. 0 = off';
+$_LANG['admin.settings.index.forms.finance_settings_form.balanceNow'] = ':brand account: balance :balance (prepaid).';
+$_LANG['admin.settings.index.forms.finance_settings_form.balanceNowCredit'] = ':brand account: you have a credit line available: :left (credit limit :limit, balance :balance).';
+$_LANG['admin.settings.index.forms.finance_settings_form.balanceNowCreditNoLimit'] = ':brand account: balance :balance, credit without a limit - nothing to warn about.';
+$_LANG['admin.settings.index.forms.finance_settings_form.balanceNowInvoice'] = ':brand account: balance :balance, paid by monthly invoice - a low balance does not stop orders, so there is no warning.';
+$_LANG['admin.settings.index.forms.finance_settings_form.balanceUpdated'] = 'Updated at :time';
+$_LANG['admin.settings.index.forms.finance_settings_form.balanceNotChecked'] = ':brand account: the balance has not been read yet. It is read when you save this page and then every hour.';
+$_LANG['admin.settings.index.forms.finance_settings_form.balanceError'] = ':brand account: the balance could not be read: :error';
+$_LANG['admin.settings.index.forms.finance_settings_form.balanceErrorLast'] = 'The last reading failed: :error';
+$_LANG['admin.settings.index.forms.finance_settings_form.balanceInactive'] = 'Account status: :status - orders are refused until the account is active again.';
 $_LANG['admin.settings.index.forms.finance_settings_form.pricing_desc'] = 'The default rules for turning your reseller cost into a selling price. They apply to products with automatic pricing, to Apply margin on the Pricing page, to the product import and to new SAN options.';
 $_LANG['admin.settings.index.forms.finance_settings_form.rulesIntro'] = 'Other settings also change what clients pay. What is set there now:';
 $_LANG['admin.settings.index.forms.finance_settings_form.rulesAuto'] = 'Pricing page:';

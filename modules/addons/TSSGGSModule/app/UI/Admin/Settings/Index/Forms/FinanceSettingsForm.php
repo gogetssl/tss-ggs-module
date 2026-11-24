@@ -3,6 +3,8 @@
 namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Forms;
 
 
+use ModulesGarden\TSSGGSModule\App\Libs\BalanceMonitor;
+use ModulesGarden\TSSGGSModule\App\Libs\Edition;
 use ModulesGarden\TSSGGSModule\App\Libs\FinancePolicy;
 use ModulesGarden\TSSGGSModule\App\Libs\Markups;
 use ModulesGarden\TSSGGSModule\App\Libs\Helpers;
@@ -83,8 +85,88 @@ class FinanceSettingsForm extends Form implements AdminAreaInterface, AjaxCompon
 
         $balance = $this->section('balance', 'hand-coin-outline');
         $this->builder->addFieldInContainer($balance, (new Switcher())->setName('balanceAlert')->addClass('switcher-revert'), true);
+        // not read within the last hour (or never): read now, so the page shows the balance before the first cron run
+        BalanceMonitor::run();
+        $vendors = Edition::vendors();
+        foreach($vendors as $vendor)
+        {
+            $info     = BalanceMonitor::info($vendor);
+            $brand    = Edition::brandOf($vendor);
+            $currency = (string)($info['currency'] ?? 'USD');
+            $balance->addElement((new Text())->setText($this->balanceNow($vendor, $info)));
+            // a monthly invoice account is never stopped by its balance: no amount to set (its saved one is kept)
+            if(($info['terms'] ?? '') === 'invoice')
+            {
+                continue;
+            }
+            $title    = count($vendors) > 1 ? 'balanceThresholdBrand' : 'balanceThreshold';
+            $this->builder->addFieldInContainer($balance, (new FormInputText())->setName(BalanceMonitor::thresholdKey($vendor))
+                ->setTitle($this->translate($title, [':brand' => $brand, ':currency' => $currency]))
+                ->setDescription($this->translate('balanceThreshold_description'))
+                ->numeric()->between(0, 10000000), true);
+        }
 
         $this->saveBar();
+    }
+
+    /**
+     * What the last balance check of a vendor account found, in one line: money left by the account's terms, the
+     * check time, a read error or a status that stops orders
+     */
+    protected function balanceNow($vendor, array $info): string
+    {
+        // the values are escaped here (the error and the status come from the API), the account and the amounts bold;
+        // the language texts themselves hold no markup
+        $bold = function($value) { return '<b>' . htmlspecialchars((string)$value) . '</b>'; };
+        $vars = [':brand' => $bold(Edition::brandOf($vendor))];
+        if(empty($info['checked']))
+        {
+            return $this->balanceBox($this->translate('balanceNotChecked', $vars), false);
+        }
+        $currency = (string)($info['currency'] ?? 'USD');
+        $vars    += [
+            ':time'    => htmlspecialchars(date('Y-m-d H:i', (int)$info['checked'])),
+            ':balance' => $bold(BalanceMonitor::money($info['balance'] ?? 0, $currency)),
+            ':left'    => $bold(BalanceMonitor::money($info['left'] ?? 0, $currency)),
+            ':limit'   => $bold(BalanceMonitor::money($info['credit_limit'] ?? 0, $currency)),
+            ':error'   => htmlspecialchars((string)($info['error'] ?? '')),
+            ':status'  => $bold($info['status'] ?? ''),
+        ];
+        if(!isset($info['balance']))
+        {
+            return $this->balanceBox($this->translate('balanceError', $vars), true);
+        }
+        $terms = (string)($info['terms'] ?? 'prepaid');
+        $key   = $terms === 'invoice' ? 'balanceNowInvoice' : ($terms === 'credit' ? ($info['left'] === null ? 'balanceNowCreditNoLimit' : 'balanceNowCredit') : 'balanceNow');
+        $text  = $this->translate($key, $vars);
+        if(!empty($info['error']))
+        {
+            $text .= ' ' . $this->translate('balanceErrorLast', $vars);
+        }
+        $inactive = ($info['status'] ?? null) !== null && $info['status'] !== 'active';
+        if($inactive)
+        {
+            $text .= ' ' . $this->translate('balanceInactive', $vars);
+        }
+        // when it was read: a second, quieter line
+        $text .= '<span class="tssggs-renewal-check__meta">' . $this->translate('balanceUpdated', $vars) . '</span>';
+
+        if($inactive || !empty($info['low']) || !empty($info['error']))
+        {
+            return $this->balanceBox($text, true);
+        }
+
+        // a credit line that is not running low: green, the reseller can order on credit
+        return $this->balanceBox($text, false, $key === 'balanceNowCredit');
+    }
+
+    /** $html: a language text with escaped values (balanceNow) */
+    protected function balanceBox(string $html, bool $warn, bool $ok = false): string
+    {
+        $class = $warn ? 'tssggs-renewal-check__warning tssggs-renewal-check__warning--amber'
+            : ($ok ? 'tssggs-renewal-check__warning tssggs-renewal-check__warning--green' : 'tssggs-renewal-check__summary');
+
+        return '<div class="tssggs-renewal-check"><p class="' . $class . '">' . $html . '</p></div>';
     }
 
     /**

@@ -1391,6 +1391,18 @@ $_LANG['admin.settings.index.providers.finance_settings_provider.renewal_always'
 $_LANG['admin.settings.index.forms.finance_settings_form.balance_desc'] = 'Certifikatordrer betales fra din saldo hos certifikatleverandøren. Hvis saldoen slipper op, kan betalte ordrer ikke udstedes, og dine kunder må vente på deres certifikater.';
 $_LANG['admin.settings.index.forms.finance_settings_form.balanceAlert'] = 'Send mig en e-mail, når en ordre mislykkes på grund af manglende dækning';
 $_LANG['admin.settings.index.forms.finance_settings_form.balanceAlert_description'] = 'Du får en e-mail, så snart leverandøren afviser en ordre, fordi saldoen er for lav, så du kan indbetale og sende ordren igen. Højst én e-mail hver 6. time';
+$_LANG['admin.settings.index.forms.finance_settings_form.balanceThreshold'] = 'Advar mig, når de resterende midler er under (:currency)';
+$_LANG['admin.settings.index.forms.finance_settings_form.balanceThresholdBrand'] = ':brand-konto: advar mig, når de resterende midler er under (:currency)';
+$_LANG['admin.settings.index.forms.finance_settings_form.balanceThreshold_description'] = 'Saldoen læses hver time. Under dette beløb får WHMCS-administratorerne en e-mail, højst én om dagen, så længe den er lav. Forudbetalte konti: saldoen tæller; kreditkonti: den resterende kredit (saldo + kreditgrænse); konti med månedlig faktura stoppes aldrig af saldoen. Du får også en e-mail, når kontoen ikke længere er aktiv. 0 = fra';
+$_LANG['admin.settings.index.forms.finance_settings_form.balanceNow'] = ':brand-konto: saldo :balance (forudbetalt).';
+$_LANG['admin.settings.index.forms.finance_settings_form.balanceNowCredit'] = ':brand-konto: du har en kreditlinje til rådighed: :left (kreditgrænse :limit, saldo :balance).';
+$_LANG['admin.settings.index.forms.finance_settings_form.balanceNowCreditNoLimit'] = ':brand-konto: saldo :balance, kredit uden grænse - intet at advare om.';
+$_LANG['admin.settings.index.forms.finance_settings_form.balanceNowInvoice'] = ':brand-konto: saldo :balance, betales med månedlig faktura - en lav saldo stopper ikke ordrer, så der sendes ingen advarsel.';
+$_LANG['admin.settings.index.forms.finance_settings_form.balanceUpdated'] = 'Opdateret :time';
+$_LANG['admin.settings.index.forms.finance_settings_form.balanceNotChecked'] = ':brand-konto: saldoen er ikke læst endnu. Den læses, når du gemmer denne side, og derefter hver time.';
+$_LANG['admin.settings.index.forms.finance_settings_form.balanceError'] = ':brand-konto: saldoen kunne ikke læses: :error';
+$_LANG['admin.settings.index.forms.finance_settings_form.balanceErrorLast'] = 'Den seneste læsning mislykkedes: :error';
+$_LANG['admin.settings.index.forms.finance_settings_form.balanceInactive'] = 'Kontostatus: :status - ordrer afvises, indtil kontoen er aktiv igen.';
 $_LANG['admin.settings.index.forms.finance_settings_form.pricing_desc'] = 'Standardreglerne for, hvordan din forhandleromkostning omsættes til en salgspris. De gælder for produkter med automatisk prissætning, for Anvend margen på siden Priser, for produktimporten og for nye SAN-tilvalg.';
 $_LANG['admin.settings.index.forms.finance_settings_form.rulesIntro'] = 'Andre indstillinger påvirker også, hvad kunderne betaler. Det er aktuelt indstillet sådan:';
 $_LANG['admin.settings.index.forms.finance_settings_form.rulesAuto'] = 'Siden Priser:';

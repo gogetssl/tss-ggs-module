@@ -78,6 +78,15 @@ class SSLTrustCenterApi
         return new self($vendor, $credentials[0], $credentials[1], $category ?: 'tls', $credentials[2]);
     }
 
+    /**
+     * GET /profile: the reseller account - status (null for TheSSLStore), organization / contact / address and
+     * billing {currency, balance, terms prepaid|credit|invoice, credit_limit, plan}. Used by App\Libs\BalanceMonitor.
+     */
+    public function getProfile()
+    {
+        return $this->call('/profile', [], 'GET');
+    }
+
     public function getProducts()
     {
         return $this->call('/products');

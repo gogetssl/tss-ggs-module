@@ -17,7 +17,7 @@ class FinanceSettingsProvider extends CrudProvider
 {
     const FINANCE  = ['profitMargin', 'rate'];
     const GENERAL  = ['minProfit', 'termMarginStep', 'priceRounding', 'keepMarginOnSync', 'belowCostAction', 'belowCostEmail', 'renewalPriceMode',
-                      'renewalPriceClientEmail', 'renewalPriceEmailText', 'rateSource', 'currencyBuffer', 'balanceAlert'];
+                      'renewalPriceClientEmail', 'renewalPriceEmailText', 'rateSource', 'currencyBuffer', 'balanceAlert', 'balanceThresholdTss', 'balanceThresholdGgs'];
     const SWITCHES = ['keepMarginOnSync', 'belowCostEmail', 'renewalPriceClientEmail', 'balanceAlert'];
 
     public function read()
@@ -76,7 +76,7 @@ class FinanceSettingsProvider extends CrudProvider
                 $general[$key] = !empty($general[$key]) && !in_array($general[$key], ['off', 'false', '0'], true);
             }
         }
-        foreach(['minProfit', 'termMarginStep', 'currencyBuffer'] as $key)
+        foreach(['minProfit', 'termMarginStep', 'currencyBuffer', 'balanceThresholdTss', 'balanceThresholdGgs'] as $key)
         {
             if(array_key_exists($key, $general))
             {
@@ -89,5 +89,8 @@ class FinanceSettingsProvider extends CrudProvider
             $general['renewalPriceEmailText'] = '';
         }
         GeneralSettings::save($general);
+
+        // the balance is read again now: the page shows it fresh and a new warning amount is checked at once
+        \ModulesGarden\TSSGGSModule\App\Libs\BalanceMonitor::run(true);
     }
 }
