@@ -287,21 +287,25 @@ class AdminServicesTabFields
         $stored = $lei::stored($serviceId);
         $status = (string)($stored['status'] ?? '');
         $labels = ['active' => 'label-success', 'processing' => 'label-info', 'pending' => 'label-info', 'incomplete' => 'label-warning', 'unpaid' => 'label-warning',
-                   'cancelled' => 'label-danger', 'rejected' => 'label-danger', 'expired' => 'label-default'];
+                   'cancelled' => 'label-danger', 'rejected' => 'label-danger', 'failed' => 'label-danger', 'revoked' => 'label-danger', 'expired' => 'label-default'];
         $entity = (array)($stored['legalEntity'] ?? []);
         $signer = (array)($stored['signingAuthority'] ?? []);
+        // the exact stage (items[].status), e.g. need_action = the client has to confirm the data on the service page
+        $stage  = (string)($stored['itemStatus'] ?? '');
+        $ra     = (string)($stored['registrationAuthorityId'] ?? '');
 
         $fields = [];
         $fields[AdminText::get('configuration_status', 'Configuration Status')] = htmlspecialchars($sslService->status);
         $fields[AdminText::get('vendor_order', '%%VENDOR%% Order')] = self::orderLine($stored['orderId'] ?? 0, $stored['itemId'] ?? 0, '',
             'lei_record', 'LEI record #:id:');
         $fields[AdminText::get('vendor_status', 'Vendor Status')]   = self::vendorStatus($status, $labels, $stored['orderedAt'] ?? '', $stored['refreshedAt'] ?? '')
+            . ($stage !== '' && $stage !== $status ? ' <small class="text-muted">' . htmlspecialchars(self::t('lei_stage', 'stage') . ': ' . $stage) . '</small>' : '')
             . (!empty($stored['isRenewal']) ? ' <small class="text-muted">(' . self::t('lei_renewal', 'renewal') . ')</small>' : '');
         $fields[AdminText::get('lei_number', 'LEI')] = !empty($stored['leiNumber'])
             ? '<a href="' . htmlspecialchars($lei::gleifUrl($stored['leiNumber'])) . '" target="_blank" rel="noopener"><code>' . htmlspecialchars($stored['leiNumber']) . '</code></a>'
             : '-';
         $fields[AdminText::get('lei_legal_entity', 'Legal Entity')] = $entity
-            ? htmlspecialchars((string)($entity['legal_name'] ?? '')) . '<br><small>' . htmlspecialchars(trim(($entity['registration_authority_entity_id'] ?? '') . ', ' . ($entity['legal_jurisdiction'] ?? ''), ', ')) . '</small>'
+            ? htmlspecialchars((string)($entity['legal_name'] ?? '')) . '<br><small>' . htmlspecialchars(trim(($entity['registration_authority_entity_id'] ?? '') . ', ' . ($entity['legal_jurisdiction'] ?? '') . ($ra !== '' ? ', ' . $ra : ''), ', ')) . '</small>'
             : htmlspecialchars((string)($stored['legalName'] ?? '-'));
         $fields[AdminText::get('lei_signing_authority', 'Signing Authority')] = $signer ? htmlspecialchars(trim(($signer['first_name'] ?? '') . ' ' . ($signer['last_name'] ?? ''))) : '-';
         $fields[AdminText::get('validity', 'Validity')] = (!empty($stored['validFrom']) ? htmlspecialchars(substr($stored['validFrom'], 0, 10)) : '-') . ' &rarr; '

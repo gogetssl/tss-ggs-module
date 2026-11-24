@@ -729,6 +729,15 @@ class SSLTrustCenterApi
         return $this->call('/lei', $data);
     }
 
+    /**
+     * POST /lei/{id}/confirm (no body, answers 204): the client confirms the data the issuer is about to register -
+     * only while the LEI record waits for it (items[].status need_action), else 400 GGS-3
+     */
+    public function confirmLei($leiId)
+    {
+        return $this->call('/lei/' . (int)$leiId . '/confirm', [], 'POST');
+    }
+
     /** POST /lei/{id}/renew: the renewal order of an issued LEI; the answer is the new LEI record */
     public function renewLei($leiId, array $data)
     {
