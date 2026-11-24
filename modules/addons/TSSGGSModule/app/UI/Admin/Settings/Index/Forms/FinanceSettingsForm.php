@@ -112,19 +112,22 @@ class FinanceSettingsForm extends Form implements AdminAreaInterface, AjaxCompon
      */
     protected function balanceNow($vendor, array $info): string
     {
-        $vars = [':brand' => Edition::brandOf($vendor)];
+        // the values are escaped here (the error and the status come from the API), the account and the amounts bold;
+        // the language texts themselves hold no markup
+        $bold = function($value) { return '<b>' . htmlspecialchars((string)$value) . '</b>'; };
+        $vars = [':brand' => $bold(Edition::brandOf($vendor))];
         if(empty($info['checked']))
         {
             return $this->balanceBox($this->translate('balanceNotChecked', $vars), false);
         }
         $currency = (string)($info['currency'] ?? 'USD');
         $vars    += [
-            ':time'    => date('Y-m-d H:i', (int)$info['checked']),
-            ':balance' => BalanceMonitor::money($info['balance'] ?? 0, $currency),
-            ':left'    => BalanceMonitor::money($info['left'] ?? 0, $currency),
-            ':limit'   => BalanceMonitor::money($info['credit_limit'] ?? 0, $currency),
-            ':error'   => (string)($info['error'] ?? ''),
-            ':status'  => (string)($info['status'] ?? ''),
+            ':time'    => htmlspecialchars(date('Y-m-d H:i', (int)$info['checked'])),
+            ':balance' => $bold(BalanceMonitor::money($info['balance'] ?? 0, $currency)),
+            ':left'    => $bold(BalanceMonitor::money($info['left'] ?? 0, $currency)),
+            ':limit'   => $bold(BalanceMonitor::money($info['credit_limit'] ?? 0, $currency)),
+            ':error'   => htmlspecialchars((string)($info['error'] ?? '')),
+            ':status'  => $bold($info['status'] ?? ''),
         ];
         if(!isset($info['balance']))
         {
@@ -152,12 +155,13 @@ class FinanceSettingsForm extends Form implements AdminAreaInterface, AjaxCompon
         return $this->balanceBox($text, false, $key === 'balanceNowCredit');
     }
 
-    protected function balanceBox(string $text, bool $warn, bool $ok = false): string
+    /** $html: a language text with escaped values (balanceNow) */
+    protected function balanceBox(string $html, bool $warn, bool $ok = false): string
     {
         $class = $warn ? 'tssggs-renewal-check__warning tssggs-renewal-check__warning--amber'
             : ($ok ? 'tssggs-renewal-check__warning tssggs-renewal-check__warning--green' : 'tssggs-renewal-check__summary');
 
-        return '<div class="tssggs-renewal-check"><p class="' . $class . '">' . htmlspecialchars($text) . '</p></div>';
+        return '<div class="tssggs-renewal-check"><p class="' . $class . '">' . $html . '</p></div>';
     }
 
     /**
