@@ -89,7 +89,8 @@ class CertificateSyncHelpers
         $batch    = [];
         $awaiting = self::awaitingConfiguration();
         $open     = [];
-        foreach(self::getCertificatesQuery()->orderBy('tblsslorders.updated_at', 'asc')->get()->toArray() as $certificate)
+        // the order row's last change comes with the query (one query, not one per open order)
+        foreach(self::getCertificatesQuery()->addSelect('tblsslorders.updated_at as ssl_updated_at')->orderBy('tblsslorders.updated_at', 'asc')->get()->toArray() as $certificate)
         {
             $open[(int)$certificate['id']] = true;
             if(in_array((string)$certificate['remoteid'], $exclude, true) || !self::itemIdUnconfirmed($certificate))
@@ -101,7 +102,7 @@ class CertificateSyncHelpers
             // waiting for its validation method for more than a day only twice a day
             $since     = (int)($awaiting[(int)$certificate['id']] ?? 0);
             $retry     = date('Y-m-d H:i:s', time() - ($since && $since < time() - self::AWAITING_SLOW_AFTER ? self::AWAITING_SLOW_RETRY : 3600));
-            $updatedAt = (string)Capsule::table('tblsslorders')->where('serviceid', (int)$certificate['id'])->value('updated_at');
+            $updatedAt = (string)($certificate['ssl_updated_at'] ?? '');
             if(count($batch) < self::ITEM_ID_BATCH && ($updatedAt === '' || $updatedAt < $retry))
             {
                 $batch[] = $certificate;

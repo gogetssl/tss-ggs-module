@@ -342,12 +342,22 @@ class AddonCertificates
     public static function reconcile(): array
     {
         $changes = [];
+        $links   = [];
         foreach(Request::where('name', self::LINK)->get(['serviceid', 'request']) as $row)
         {
-            $serviceId      = (int)$row->serviceid;
-            $hostingAddonId = (int)((json_decode((string)$row->request, true) ?: [])['addon'] ?? 0);
-            $service        = Capsule::table('tblhosting')->where('id', $serviceId)->value('domainstatus');
-            $addon          = $hostingAddonId ? Capsule::table('tblhostingaddons')->where('id', $hostingAddonId)->value('status') : null;
+            $links[(int)$row->serviceid] = (int)((json_decode((string)$row->request, true) ?: [])['addon'] ?? 0);
+        }
+        if(!$links)
+        {
+            return $changes;
+        }
+        // the statuses of all linked services and addons in two queries (this runs with every order status sync)
+        $services = Capsule::table('tblhosting')->whereIn('id', array_keys($links))->pluck('domainstatus', 'id')->all();
+        $addons   = Capsule::table('tblhostingaddons')->whereIn('id', array_values(array_filter($links)))->pluck('status', 'id')->all();
+        foreach($links as $serviceId => $hostingAddonId)
+        {
+            $service = $services[$serviceId] ?? null;
+            $addon   = $hostingAddonId ? ($addons[$hostingAddonId] ?? null) : null;
             if($service === null)
             {
                 continue;

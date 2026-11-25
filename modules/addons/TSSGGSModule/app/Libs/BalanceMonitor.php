@@ -63,7 +63,7 @@ class BalanceMonitor
      * Checks every connected vendor account that is due (or all of them with $force). Errors are kept in the info
      * of the account and never thrown: a cron run or a settings save must not fail because of it.
      */
-    public static function run($force = false)
+    public static function run($force = false, ?int $timeout = null)
     {
         foreach(Edition::vendors() as $vendor)
         {
@@ -73,17 +73,19 @@ class BalanceMonitor
             {
                 continue;
             }
-            self::check($vendor);
+            self::check($vendor, $timeout);
         }
     }
 
-    protected static function check($vendor)
+    /** @param int|null $timeout seconds to wait for the gateway (a page passes SSLTrustCenterApi::PAGE_TIMEOUT) */
+    protected static function check($vendor, ?int $timeout = null)
     {
         $previous = self::info($vendor);
         $info     = ['checked' => time()] + array_intersect_key($previous, array_flip(['low', 'mailed']));
         try
         {
-            $profile = (array)SSLTrustCenterApi::forVendor($vendor)->getProfile();
+            $api     = SSLTrustCenterApi::forVendor($vendor);
+            $profile = (array)($timeout ? $api->withTimeout($timeout) : $api)->getProfile();
             $billing = (array)($profile['billing'] ?? []);
             $info   += [
                 'currency'     => strtoupper((string)($billing['currency'] ?? 'USD')) ?: 'USD',

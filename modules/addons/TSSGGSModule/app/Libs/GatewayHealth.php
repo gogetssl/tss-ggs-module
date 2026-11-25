@@ -26,7 +26,7 @@ class GatewayHealth
             $start = microtime(true);
             try
             {
-                $api->validate();
+                $api->withTimeout(SSLTrustCenterApi::PAGE_TIMEOUT)->validate();
                 $result[$vendor] = ['ok' => true, 'error' => ''];
             }
             catch(\Throwable $e)

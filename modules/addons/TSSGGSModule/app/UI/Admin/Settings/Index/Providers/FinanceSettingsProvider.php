@@ -91,6 +91,6 @@ class FinanceSettingsProvider extends CrudProvider
         GeneralSettings::save($general);
 
         // the balance is read again now: the page shows it fresh and a new warning amount is checked at once
-        \ModulesGarden\TSSGGSModule\App\Libs\BalanceMonitor::run(true);
+        \ModulesGarden\TSSGGSModule\App\Libs\BalanceMonitor::run(true, \ModulesGarden\TSSGGSModule\App\Libs\SSLTrustCenterApi::PAGE_TIMEOUT);
     }
 }

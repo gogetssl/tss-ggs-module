@@ -44,6 +44,12 @@ class SSLTrustCenterApi
     protected $category;
     protected $serviceHint = null;
 
+    /** seconds this client waits for an answer (TIMEOUT unless set shorter with withTimeout) */
+    protected $timeout = self::TIMEOUT;
+
+    /** an admin page that asks the gateway while it loads waits at most this long (seconds) */
+    const PAGE_TIMEOUT = 8;
+
     /**
      * @param bool $sandbox true: the sandbox credentials, sent to the sandbox gateway (SANDBOX_URL)
      */
@@ -54,6 +60,17 @@ class SSLTrustCenterApi
         $this->key      = $key;
         $this->category = $category;
         $this->apiUrl   = $sandbox ? self::SANDBOX_URL : self::API_URL;
+    }
+
+    /**
+     * A shorter wait for checks made while a page loads (connection status, balance): a slow gateway then costs the
+     * page seconds, not a minute. Orders and other actions keep the full TIMEOUT.
+     */
+    public function withTimeout(int $seconds): self
+    {
+        $this->timeout = max(1, min($seconds, self::TIMEOUT));
+
+        return $this;
     }
 
     /** true when this client talks to the sandbox gateway */

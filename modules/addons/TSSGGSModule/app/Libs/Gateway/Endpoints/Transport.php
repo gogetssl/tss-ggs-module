@@ -168,8 +168,8 @@ trait Transport
         curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($c, CURLINFO_HEADER_OUT, true);
         curl_setopt($c, CURLOPT_HEADER, true);
-        curl_setopt($c, CURLOPT_CONNECTTIMEOUT, self::CONNECT_TIMEOUT);
-        curl_setopt($c, CURLOPT_TIMEOUT, self::TIMEOUT);
+        curl_setopt($c, CURLOPT_CONNECTTIMEOUT, min(self::CONNECT_TIMEOUT, $this->timeout));
+        curl_setopt($c, CURLOPT_TIMEOUT, $this->timeout);
 
         $started = microtime(true);
         $hint    = $this->serviceHint; // logCall() clears it

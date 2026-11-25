@@ -86,7 +86,7 @@ class FinanceSettingsForm extends Form implements AdminAreaInterface, AjaxCompon
         $balance = $this->section('balance', 'hand-coin-outline');
         $this->builder->addFieldInContainer($balance, (new Switcher())->setName('balanceAlert')->addClass('switcher-revert'), true);
         // not read within the last hour (or never): read now, so the page shows the balance before the first cron run
-        BalanceMonitor::run();
+        BalanceMonitor::run(false, \ModulesGarden\TSSGGSModule\App\Libs\SSLTrustCenterApi::PAGE_TIMEOUT);
         $vendors = Edition::vendors();
         foreach($vendors as $vendor)
         {
