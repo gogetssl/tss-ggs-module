@@ -1724,3 +1724,4 @@ $_LANG['admin.kernel.selected'] = 'Einträge ausgewählt';
 $_LANG['admin.products.not_imported'] = 'Dieses Produkt ist noch nicht importiert.';
 $_LANG['admin.products.select_first'] = 'Markieren Sie zuerst die Produkte, die importiert werden sollen.';
 $_LANG['admin.products.choose_group'] = 'Wählen Sie eine Produktgruppe oder geben Sie der neuen Gruppe einen Namen.';
+$_LANG['admin.home.index.forms.reporting_form.details_required'] = 'Beschreiben Sie das Problem, damit der Support weiß, wonach er suchen soll.';

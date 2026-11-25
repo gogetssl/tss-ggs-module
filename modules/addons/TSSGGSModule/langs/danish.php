@@ -1726,3 +1726,4 @@ $_LANG['admin.kernel.selected'] = 'elementer valgt';
 $_LANG['admin.products.not_imported'] = 'Dette produkt er ikke importeret endnu.';
 $_LANG['admin.products.select_first'] = 'Markér først de produkter, der skal importeres.';
 $_LANG['admin.products.choose_group'] = 'Vælg en produktgruppe, eller giv den nye gruppe et navn.';
+$_LANG['admin.home.index.forms.reporting_form.details_required'] = 'Beskriv problemet, så supporten ved, hvad de skal lede efter.';

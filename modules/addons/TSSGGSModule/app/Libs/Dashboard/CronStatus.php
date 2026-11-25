@@ -1,6 +1,6 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Shared;
+namespace ModulesGarden\TSSGGSModule\App\Libs\Dashboard;
 
 use ModulesGarden\TSSGGSModule\App\Models\CronCheck;
 

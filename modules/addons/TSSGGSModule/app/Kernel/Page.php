@@ -16,6 +16,9 @@ abstract class Page
     const LANG       = '';
     const BODY_CLASS = '';
 
+    /** false: the layout prints no page heading (the dashboard has its own) */
+    const HEADING = true;
+
     protected $request;
     protected $lang;
 

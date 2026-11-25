@@ -19,6 +19,7 @@ class Layout
         return View::render('admin/layout', [
             'body'      => $body,
             'bodyClass' => $page::BODY_CLASS,
+            'heading'   => $page::HEADING,
             'title'     => $page->title(),
             'module'    => Edition::name(),
             'edition'   => Edition::get(),

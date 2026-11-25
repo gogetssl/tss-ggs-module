@@ -135,6 +135,66 @@ parameters:
 			path: modules/addons/TSSGGSModule/app/Http/Admin/Migration.php
 
 		-
+			message: '#^Call to an undefined method WHMCS\\Mail\\Message\:\:addRecipient\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: modules/addons/TSSGGSModule/app/Libs/Dashboard/SupportReport.php
+
+		-
+			message: '#^Call to an undefined method WHMCS\\Mail\\Message\:\:addStringAttachment\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: modules/addons/TSSGGSModule/app/Libs/Dashboard/SupportReport.php
+
+		-
+			message: '#^Call to an undefined method WHMCS\\Mail\\Message\:\:clearRecipients\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: modules/addons/TSSGGSModule/app/Libs/Dashboard/SupportReport.php
+
+		-
+			message: '#^Call to an undefined method WHMCS\\Mail\\Message\:\:setBodyFromSmarty\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: modules/addons/TSSGGSModule/app/Libs/Dashboard/SupportReport.php
+
+		-
+			message: '#^Call to an undefined method WHMCS\\Mail\\Message\:\:setFromEmail\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: modules/addons/TSSGGSModule/app/Libs/Dashboard/SupportReport.php
+
+		-
+			message: '#^Call to an undefined method WHMCS\\Mail\\Message\:\:setFromName\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: modules/addons/TSSGGSModule/app/Libs/Dashboard/SupportReport.php
+
+		-
+			message: '#^Call to an undefined method WHMCS\\Mail\\Message\:\:setReplyTo\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: modules/addons/TSSGGSModule/app/Libs/Dashboard/SupportReport.php
+
+		-
+			message: '#^Call to an undefined method WHMCS\\Mail\\Message\:\:setSubject\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: modules/addons/TSSGGSModule/app/Libs/Dashboard/SupportReport.php
+
+		-
+			message: '#^Call to an undefined static method WHMCS\\Module\\Mail\:\:factory\(\)\.$#'
+			identifier: staticMethod.notFound
+			count: 1
+			path: modules/addons/TSSGGSModule/app/Libs/Dashboard/SupportReport.php
+
+		-
+			message: '#^Call to an undefined method ModulesGarden\\TSSGGSModule\\Core\\WHMCS\\Models\\ProductGroup\:\:save\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: modules/addons/TSSGGSModule/app/Libs/Products/ProductImport.php
+
+		-
 			message: '#^Cannot cast ModulesGarden\\TSSGGSModule\\Core\\Support\\Facades\\Config to string\.$#'
 			identifier: cast.string
 			count: 1
@@ -171,12 +231,6 @@ parameters:
 			path: modules/addons/TSSGGSModule/app/UI/Actions/ConfigOptions.php
 
 		-
-			message: '#^Class ModulesGarden\\TSSGGSModule\\Core\\WHMCS\\Url referenced with incorrect case\: ModulesGarden\\TSSGGSModule\\Core\\WHMCS\\URL\.$#'
-			identifier: class.nameCase
-			count: 1
-			path: modules/addons/TSSGGSModule/app/UI/Admin/AutomationQueue/Index/DataTables/Queue/DataTable.php
-
-		-
 			message: '#^Call to an undefined method ModulesGarden\\TSSGGSModule\\Core\\Components\\AbstractComponent\:\:setTitle\(\)\.$#'
 			identifier: method.notFound
 			count: 1
@@ -193,84 +247,6 @@ parameters:
 			identifier: cast.string
 			count: 1
 			path: modules/addons/TSSGGSModule/app/UI/Admin/Configuration/Shared/WizardLayout.php
-
-		-
-			message: '#^Call to an undefined method ModulesGarden\\TSSGGSModule\\Core\\Components\\AbstractComponent\:\:setTitle\(\)\.$#'
-			identifier: method.notFound
-			count: 3
-			path: modules/addons/TSSGGSModule/app/UI/Admin/Home/Index/Forms/ReportingForm.php
-
-		-
-			message: '#^Cannot cast ModulesGarden\\TSSGGSModule\\Core\\Support\\Facades\\Config to string\.$#'
-			identifier: cast.string
-			count: 1
-			path: modules/addons/TSSGGSModule/app/UI/Admin/Home/Index/HomeContainer.php
-
-		-
-			message: '#^Call to an undefined method WHMCS\\Mail\\Message\:\:addRecipient\(\)\.$#'
-			identifier: method.notFound
-			count: 2
-			path: modules/addons/TSSGGSModule/app/UI/Admin/Home/Index/Providers/ReportingProvider.php
-
-		-
-			message: '#^Call to an undefined method WHMCS\\Mail\\Message\:\:addStringAttachment\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: modules/addons/TSSGGSModule/app/UI/Admin/Home/Index/Providers/ReportingProvider.php
-
-		-
-			message: '#^Call to an undefined method WHMCS\\Mail\\Message\:\:clearRecipients\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: modules/addons/TSSGGSModule/app/UI/Admin/Home/Index/Providers/ReportingProvider.php
-
-		-
-			message: '#^Call to an undefined method WHMCS\\Mail\\Message\:\:setBodyFromSmarty\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: modules/addons/TSSGGSModule/app/UI/Admin/Home/Index/Providers/ReportingProvider.php
-
-		-
-			message: '#^Call to an undefined method WHMCS\\Mail\\Message\:\:setFromEmail\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: modules/addons/TSSGGSModule/app/UI/Admin/Home/Index/Providers/ReportingProvider.php
-
-		-
-			message: '#^Call to an undefined method WHMCS\\Mail\\Message\:\:setFromName\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: modules/addons/TSSGGSModule/app/UI/Admin/Home/Index/Providers/ReportingProvider.php
-
-		-
-			message: '#^Call to an undefined method WHMCS\\Mail\\Message\:\:setReplyTo\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: modules/addons/TSSGGSModule/app/UI/Admin/Home/Index/Providers/ReportingProvider.php
-
-		-
-			message: '#^Call to an undefined method WHMCS\\Mail\\Message\:\:setSubject\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: modules/addons/TSSGGSModule/app/UI/Admin/Home/Index/Providers/ReportingProvider.php
-
-		-
-			message: '#^Call to an undefined static method WHMCS\\Module\\Mail\:\:factory\(\)\.$#'
-			identifier: staticMethod.notFound
-			count: 1
-			path: modules/addons/TSSGGSModule/app/UI/Admin/Home/Index/Providers/ReportingProvider.php
-
-		-
-			message: '#^Cannot cast ModulesGarden\\TSSGGSModule\\Core\\Support\\Facades\\Config to string\.$#'
-			identifier: cast.string
-			count: 1
-			path: modules/addons/TSSGGSModule/app/UI/Admin/Home/Index/Providers/ReportingProvider.php
-
-		-
-			message: '#^Cannot cast ModulesGarden\\TSSGGSModule\\Core\\Support\\Facades\\Translator to string\.$#'
-			identifier: cast.string
-			count: 1
-			path: modules/addons/TSSGGSModule/app/UI/Admin/Home/Index/Shared/SalesSummary.php
 
 		-
 			message: '#^Call to an undefined method ModulesGarden\\TSSGGSModule\\Core\\Components\\FormFields\\FormField\:\:setMax\(\)\.$#'
@@ -295,18 +271,6 @@ parameters:
 			identifier: method.notFound
 			count: 1
 			path: modules/addons/TSSGGSModule/app/UI/Admin/Products/Index/DataTables/Products/Providers/ImportProvider.php
-
-		-
-			message: '#^Call to an undefined method ModulesGarden\\TSSGGSModule\\Core\\WHMCS\\Models\\ProductGroup\:\:save\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: modules/addons/TSSGGSModule/app/Libs/Products/ProductImport.php
-
-		-
-			message: '#^Call to an undefined method ModulesGarden\\TSSGGSModule\\Core\\Components\\AbstractComponent\:\:setDefaultValueAsFirstOption\(\)\.$#'
-			identifier: method.notFound
-			count: 3
-			path: modules/addons/TSSGGSModule/app/UI/Admin/Reports/Index/DataTables/DatewiseSales/Forms/FilterForm.php
 
 		-
 			message: '#^Call to an undefined method ModulesGarden\\TSSGGSModule\\Core\\Components\\AbstractComponent\:\:setTitle\(\)\.$#'
@@ -373,12 +337,6 @@ parameters:
 			identifier: method.notFound
 			count: 7
 			path: modules/addons/TSSGGSModule/app/UI/Admin/Settings/Index/Forms/SslSettingsForm.php
-
-		-
-			message: '#^Call to an undefined static method Illuminate\\Database\\Capsule\\Manager\:\:raw\(\)\.$#'
-			identifier: staticMethod.notFound
-			count: 1
-			path: modules/addons/TSSGGSModule/app/UI/Admin/Statistics/Index/Widgets/ResellersWidget.php
 
 		-
 			message: '#^Call to an undefined method WHMCS\\Utility\\Country\:\:getCountryNameArray\(\)\.$#'

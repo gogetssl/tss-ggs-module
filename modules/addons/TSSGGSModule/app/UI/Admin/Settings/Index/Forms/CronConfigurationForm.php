@@ -4,7 +4,7 @@ namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Forms;
 
 
 use ModulesGarden\TSSGGSModule\App\Libs\Support\Icons;
-use ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Shared\CronStatus;
+use ModulesGarden\TSSGGSModule\App\Libs\Dashboard\CronStatus;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Concerns\SettingsLayout;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Providers\CronSettingsProvider;
 use ModulesGarden\TSSGGSModule\Components\Dropdown\Dropdown;

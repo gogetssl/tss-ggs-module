@@ -17,6 +17,8 @@ use ModulesGarden\TSSGGSModule\App\Libs\Support\Icons;
  *   {icon name='check'}               inline SVG icon
  *   {url action='index' p=2}          link to an action of the current page
  *   {url page='settings'}             link to another page
+ *   {tile icon='check' tone='ok'}     square icon tile
+ *   {pill tone='ok' label=$text}      status pill
  */
 class View
 {
@@ -43,6 +45,24 @@ class View
             unset($params['page'], $params['action']);
 
             return htmlspecialchars($target !== '' ? Page::pageUrl($target, $action, $params) : $page->url($action, $params), ENT_QUOTES, 'UTF-8');
+        });
+
+        // {tile icon='check' tone='ok'}: square icon tile (panel headers, list items); tone '' | ok | bad | warn | info | dark
+        $smarty->registerPlugin('function', 'tile', function(array $params) {
+            $tone = preg_replace('/[^a-z]/', '', (string)($params['tone'] ?? ''));
+
+            return '<span class="tssggs-tile' . ($tone !== '' ? ' is-' . $tone : '') . '">' . Icons::svg((string)($params['icon'] ?? '')) . '</span>';
+        });
+        // {pill tone='ok' label=$text icon='check' title=$hint}: status pill; tone ok | warn | bad | muted; without an icon: a dot
+        $smarty->registerPlugin('function', 'pill', function(array $params) {
+            $e     = function($value) {
+                return htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8');
+            };
+            $icon  = (string)($params['icon'] ?? '');
+            $title = (string)($params['title'] ?? '');
+
+            return '<span class="tssggs-pill is-' . preg_replace('/[^a-z]/', '', (string)($params['tone'] ?? 'muted')) . '"' . ($title !== '' ? ' title="' . $e($title) . '"' : '') . '>'
+                . ($icon !== '' ? Icons::svg($icon) : '<span class="tssggs-pill__dot"></span>') . $e($params['label'] ?? '') . '</span>';
         });
 
         // in every template; a page's own data of the same name wins

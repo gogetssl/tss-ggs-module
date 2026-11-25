@@ -1,18 +1,15 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Shared;
+namespace ModulesGarden\TSSGGSModule\App\Libs\Dashboard;
 
 
 use ModulesGarden\TSSGGSModule\App\Libs\Support\Helpers;
 use ModulesGarden\TSSGGSModule\App\Models\CronCheck;
-use ModulesGarden\TSSGGSModule\Core\Translation\TranslatorTrait;
 
 use ModulesGarden\TSSGGSModule\Packages\Logs\Models\Logs;
 
 class LogProvider
 {
-    use TranslatorTrait;
-
     /** the cron jobs the report checks (each should have run within the last day) */
     const CRONS = ['ProductPricingUpdate', 'SSLCertificates', 'RenewalNotifyCertificate', 'ReSyncProducts', 'SSLCertificatesProcessing', 'SSLAutoInstall'];
 

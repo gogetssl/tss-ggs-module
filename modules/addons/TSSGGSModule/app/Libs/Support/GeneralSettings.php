@@ -56,7 +56,7 @@ class GeneralSettings
         'renewReuseOrderDetails'   => true,   // S/MIME / code signing: a paid renewal orders with the previous details
         // Interface
         'hideInfoMessages'         => false,
-        'dashboardPeriod'          => 'month',   // App\UI\Admin\Home\Index\Shared\SalesSummary::PERIODS
+        'dashboardPeriod'          => 'month',   // App\Libs\Dashboard\SalesSummary::PERIODS
         // Orders
         'defaultWebServer'         => '',     // legacy free text (migrated TSS setting), still sent when set
         'useDefaultWebServer'      => true,   // true: clients are not asked for their web server

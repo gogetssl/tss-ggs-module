@@ -3,7 +3,7 @@
 namespace ModulesGarden\TSSGGSModule\App\Libs\Support;
 
 use ModulesGarden\TSSGGSModule\App\Models\CronCheck;
-use ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Shared\CronStatus;
+use ModulesGarden\TSSGGSModule\App\Libs\Dashboard\CronStatus;
 use ModulesGarden\TSSGGSModule\Core\ModuleConstants;
 
 /**

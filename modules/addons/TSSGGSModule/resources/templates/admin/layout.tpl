@@ -24,6 +24,7 @@
 
         <div class="lu-app-main">
             <div class="lu-app-main__body">
+                {if $heading}
                 <div class="lu-app-main__top lu-top tssggs-pagehead">
                     <div class="tssggs-pagehead__crumb">
                         <span>{$module}</span>
@@ -32,6 +33,7 @@
                     </div>
                     <h2 class="tssggs-pagehead__title">{$title}</h2>
                 </div>
+                {/if}
                 <div></div>
                 <div class="modulesgarden-app-main-container lu-single-element">
                     <div class="{$bodyClass} lu-single-element">

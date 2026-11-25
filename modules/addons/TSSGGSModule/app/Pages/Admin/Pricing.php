@@ -9,7 +9,7 @@ use ModulesGarden\TSSGGSModule\App\Libs\Billing\PricingService;
 use ModulesGarden\TSSGGSModule\App\Libs\Support\GeneralSettings;
 use ModulesGarden\TSSGGSModule\App\Libs\Support\Helpers;
 use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\ProductRepository;
-use ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Widgets\NextStepsWidget;
+use ModulesGarden\TSSGGSModule\App\Libs\Dashboard\NextSteps;
 
 /**
  * Admin page "Pricing": one editable grid per currency (product + SAN options x 1/2/3 years) with the reseller
@@ -107,7 +107,7 @@ class Pricing extends Page
                 }
             }
 
-            NextStepsWidget::markDone(NextStepsWidget::STEP_PRICING);
+            NextSteps::markDone(NextSteps::STEP_PRICING);
 
             return ['saved' => $changed] + ($invalid ? ['invalid' => $invalid] : []);
         });
@@ -124,7 +124,7 @@ class Pricing extends Page
             }
             $currencyId = $this->request->string('scope') === 'all' ? null : $this->request->int('currency');
 
-            NextStepsWidget::markDone(NextStepsWidget::STEP_PRICING);
+            NextSteps::markDone(NextSteps::STEP_PRICING);
 
             return ['margin_applied' => (new PricingService())->applyMargin($margin, $currencyId)];
         });
@@ -168,7 +168,7 @@ class Pricing extends Page
                 throw new \RuntimeException('The import preview has expired, upload the file again');
             }
 
-            NextStepsWidget::markDone(NextStepsWidget::STEP_PRICING);
+            NextSteps::markDone(NextSteps::STEP_PRICING);
 
             return ['imported' => (new PricingService())->applyCsv($preview['accepted'])];
         });

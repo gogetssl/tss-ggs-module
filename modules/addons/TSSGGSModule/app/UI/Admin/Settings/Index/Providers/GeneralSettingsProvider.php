@@ -45,9 +45,9 @@ class GeneralSettingsProvider extends CrudProvider
         $this->availableValues['expiresSoonDays'] = ['10' => '10', '15' => '15', '30' => '30', '60' => '60', '90' => '90'];
         // availableValues is an ArrayAccess container: the options are built first, then set at once
         $periods = [];
-        foreach(array_keys(\ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Shared\SalesSummary::PERIODS) as $period)
+        foreach(array_keys(\ModulesGarden\TSSGGSModule\App\Libs\Dashboard\SalesSummary::PERIODS) as $period)
         {
-            $periods[$period] = \ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Shared\SalesSummary::periodLabel($period);
+            $periods[$period] = \ModulesGarden\TSSGGSModule\App\Libs\Dashboard\SalesSummary::periodLabel($period);
         }
         $this->availableValues['dashboardPeriod'] = $periods;
 
@@ -106,7 +106,7 @@ class GeneralSettingsProvider extends CrudProvider
                 $data[$key] = !empty($data[$key]) && !in_array($data[$key], ['off', 'false', '0'], true);
             }
         }
-        if(array_key_exists('dashboardPeriod', $data) && !array_key_exists((string)$data['dashboardPeriod'], \ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Shared\SalesSummary::PERIODS))
+        if(array_key_exists('dashboardPeriod', $data) && !array_key_exists((string)$data['dashboardPeriod'], \ModulesGarden\TSSGGSModule\App\Libs\Dashboard\SalesSummary::PERIODS))
         {
             unset($data['dashboardPeriod']);
         }

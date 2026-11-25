@@ -8,7 +8,7 @@ use ModulesGarden\TSSGGSModule\App\Libs\Certificates\IssuedMessage;
 use ModulesGarden\TSSGGSModule\App\Libs\Billing\RenewalPolicy;
 use ModulesGarden\TSSGGSModule\App\Libs\Support\Helpers;
 use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
-use ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Widgets\NextStepsWidget;
+use ModulesGarden\TSSGGSModule\App\Libs\Dashboard\NextSteps;
 use ModulesGarden\TSSGGSModule\Core\DataProviders\CrudProvider;
 use ModulesGarden\TSSGGSModule\Core\Support\Facades\Validator;
 
@@ -225,7 +225,7 @@ class SslSettingsProvider extends CrudProvider
         }
         (new AddonModuleRepository)->saveSslSettings(array_diff_key($data, $general));
         // the dashboard's "Check renewal settings" step
-        NextStepsWidget::markDone(NextStepsWidget::STEP_RENEWALS);
+        NextSteps::markDone(NextSteps::STEP_RENEWALS);
     }
 
     /**

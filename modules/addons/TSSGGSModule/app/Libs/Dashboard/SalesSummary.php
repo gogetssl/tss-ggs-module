@@ -1,10 +1,10 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Shared;
+namespace ModulesGarden\TSSGGSModule\App\Libs\Dashboard;
 
 use ModulesGarden\TSSGGSModule\App\Libs\Support\Edition;
 use ModulesGarden\TSSGGSModule\App\Libs\Support\GeneralSettings;
-use ModulesGarden\TSSGGSModule\Core\Support\Facades\Translator;
+use ModulesGarden\TSSGGSModule\App\Kernel\Lang;
 
 use ModulesGarden\TSSGGSModule\App\Libs\Billing\SalesReport;
 
@@ -29,7 +29,7 @@ class SalesSummary
     /** the name of a period (default: the chosen one), e.g. "Last 90 days" */
     public static function periodLabel(string $period = null): string
     {
-        return (string)Translator::get('admin.home.index.period_' . ($period ?? self::period()));
+        return (new Lang('admin'))->get('admin.home.index.period_' . ($period ?? self::period()));
     }
 
     /**

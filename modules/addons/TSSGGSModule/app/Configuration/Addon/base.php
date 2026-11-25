@@ -68,7 +68,7 @@ function TSSGGSModule_output($params)
     #MGLICENSE_CHECK_ECHO_AND_RETURN_MESSAGE#
 
     // a page that already lives on the module's own kernel (app/Pages/Admin); every other page: the old framework
-    if (\ModulesGarden\TSSGGSModule\App\Kernel\Kernel::handles('admin', $_GET['mg-page'] ?? null))
+    if (\ModulesGarden\TSSGGSModule\App\Kernel\Kernel::handles('admin', $_GET['mg-page'] ?? 'home'))
     {
         \ModulesGarden\TSSGGSModule\App\Kernel\Kernel::run('admin');
 
