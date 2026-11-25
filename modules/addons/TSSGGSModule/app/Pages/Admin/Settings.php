@@ -3,6 +3,10 @@
 namespace ModulesGarden\TSSGGSModule\App\Pages\Admin;
 
 use ModulesGarden\TSSGGSModule\App\Kernel\Page;
+use ModulesGarden\TSSGGSModule\App\Libs\Settings\CronScreen;
+use ModulesGarden\TSSGGSModule\App\Libs\Settings\CronSettingsProvider;
+use ModulesGarden\TSSGGSModule\App\Libs\Settings\FinanceScreen;
+use ModulesGarden\TSSGGSModule\App\Libs\Settings\FinanceSettingsProvider;
 use ModulesGarden\TSSGGSModule\App\Libs\Settings\GeneralSettingsProvider;
 use ModulesGarden\TSSGGSModule\App\Libs\Settings\ProductsSettingsProvider;
 use ModulesGarden\TSSGGSModule\App\Libs\Settings\Result;
@@ -37,11 +41,14 @@ class Settings extends Page
 
     /**
      * the screens on the kernel: provider (values, choices, save), template, and the groups of its texts -
-     * "form" for the fields and sections, "widget" for the title and subtitle of the screen
+     * "form" for the fields and sections, "widget" for the title and subtitle of the screen; "extra": a class whose
+     * data($lang) gives what the screen shows besides its fields ($extra in the template)
      */
     const SCREENS = [
         'generalSettings'  => ['provider' => GeneralSettingsProvider::class, 'template' => 'general', 'form' => 'general_settings_form', 'widget' => 'general_settings_widget'],
         'productsSettings' => ['provider' => ProductsSettingsProvider::class, 'template' => 'products', 'form' => 'products_settings_form', 'widget' => 'products_settings_widget'],
+        'financeSettings'  => ['provider' => FinanceSettingsProvider::class, 'template' => 'finance', 'form' => 'finance_settings_form', 'widget' => 'finance_settings_widget', 'extra' => FinanceScreen::class],
+        'cronSettings'     => ['provider' => CronSettingsProvider::class, 'template' => 'cron', 'form' => 'cron_configuration_form', 'widget' => 'cron_settings_widget', 'extra' => CronScreen::class, 'css' => 'tssggs-cronpanel'],
         'logsSettings'     => ['provider' => GeneralSettingsProvider::class, 'template' => 'logs', 'form' => 'logs_settings_form', 'widget' => 'logs_settings_widget'],
     ];
 
@@ -123,6 +130,8 @@ class Settings extends Page
             // after a failed save the screen shows what was typed
             'typed'    => $result && $result->isError() ? $this->request->posted() : [],
             'options'  => $provider->options(),
+            'extra'    => isset($config['extra']) ? $config['extra']::data($this->lang) : [],
+            'css'      => $config['css'] ?? '',
             'flash'    => $flash,
             'saved'    => $result !== null && !$result->isError(),
             'saveUrl'  => self::pageUrl('settings', 'save', ['settings-page' => $screen]),

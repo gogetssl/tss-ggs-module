@@ -5,7 +5,7 @@
     the question before leaving) is resources/assets/js/core/savebar.js.
     In a screen's template: $f is the group of its texts, $data its values, $options the choices of its selects.
 *}
-<div class="lu-widget">
+<div class="lu-widget {$css}">
     <div class="lu-widget__header">
         <div class="lu-widget__top lu-top lu-top--sub">
             <span class="lu-widget__icon">{icon name=$icon}</span>

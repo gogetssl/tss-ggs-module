@@ -1,20 +1,21 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Providers;
+namespace ModulesGarden\TSSGGSModule\App\Libs\Settings;
 
 use ModulesGarden\TSSGGSModule\App\Libs\Billing\FinancePolicy;
 use ModulesGarden\TSSGGSModule\App\Libs\Support\GeneralSettings;
 use ModulesGarden\TSSGGSModule\App\Libs\Support\Helpers;
 use ModulesGarden\TSSGGSModule\App\Libs\Billing\RenewalPrices;
 use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
-use ModulesGarden\TSSGGSModule\Core\DataProviders\CrudProvider;
 
 /**
  * Settings > Finance. The margin and the exchange rate live in "financeSettings" (read by the price update and the
  * order code), everything else in the general settings.
  */
-class FinanceSettingsProvider extends CrudProvider
+class FinanceSettingsProvider extends Provider
 {
+    const TEXTS = 'admin.settings.index.providers.finance_settings_provider';
+
     const FINANCE  = ['profitMargin', 'rate'];
     const GENERAL  = ['minProfit', 'termMarginStep', 'priceRounding', 'keepMarginOnSync', 'belowCostAction', 'belowCostEmail', 'renewalPriceMode',
                       'renewalPriceClientEmail', 'renewalPriceEmailText', 'rateSource', 'currencyBuffer', 'balanceAlert', 'balanceThresholdTss', 'balanceThresholdGgs'];

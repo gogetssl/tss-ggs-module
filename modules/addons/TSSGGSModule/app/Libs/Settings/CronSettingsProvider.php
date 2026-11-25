@@ -1,13 +1,14 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Providers;
+namespace ModulesGarden\TSSGGSModule\App\Libs\Settings;
 
 use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
-use ModulesGarden\TSSGGSModule\Core\DataProviders\CrudProvider;
 
 
-class CronSettingsProvider extends CrudProvider
+class CronSettingsProvider extends Provider
 {
+    const TEXTS = 'admin.settings.index.providers.cron_settings_provider';
+
     public function read()
     {
         $moduleRepository    = new AddonModuleRepository();
