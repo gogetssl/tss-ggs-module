@@ -6,7 +6,7 @@ use ModulesGarden\TSSGGSModule\App\Libs\Support\Edition;
 use ModulesGarden\TSSGGSModule\App\Libs\Support\GeneralSettings;
 use ModulesGarden\TSSGGSModule\Core\Support\Facades\Translator;
 
-use ModulesGarden\TSSGGSModule\App\UI\Admin\Reports\Index\DataTables\Shared\RecordsProvider;
+use ModulesGarden\TSSGGSModule\App\Libs\Billing\SalesReport;
 
 /**
  * Sales figures of the Dashboard period (Settings > General > Admin Area); computed once per request (KPI tiles + Sales overview card)
@@ -44,7 +44,7 @@ class SalesSummary
             $start   = self::PERIODS[self::period()];
             $from    = $start === null ? '1970-01-01' : date('Y-m-d', strtotime($start));
             $data    = ['paid' => 0, 'unpaid' => 0, 'overdue' => 0, 'profit' => 0, 'cost' => 0, 'costedSales' => 0, 'issued' => 0, 'expiring' => 0];
-            $records = (new RecordsProvider())->getRecords(['fromDate' => $from, 'toDate' => date('Y-m-d')]);
+            $records = (new SalesReport())->getRecords(['fromDate' => $from, 'toDate' => date('Y-m-d')]);
             $issued  = [];
 
             foreach($records as $record)

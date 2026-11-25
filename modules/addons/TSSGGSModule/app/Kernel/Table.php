@@ -3,7 +3,7 @@
 namespace ModulesGarden\TSSGGSModule\App\Kernel;
 
 /**
- * A list of database rows with search, sorting and paging (template admin/partials/table.tpl).
+ * A list with search, sorting and paging (template admin/partials/table.tpl).
  *
  *   $table = Table::make($this->request, 'queue')
  *       ->column('id', $this->t('id'), true, Table::SEARCH_INT)      // name, title, sortable, searched as
@@ -12,10 +12,12 @@ namespace ModulesGarden\TSSGGSModule\App\Kernel;
  *       ->rowTemplate('admin/automationQueue/row')
  *       ->run($query);                                               // an Illuminate query builder
  *
+ * run() reads the rows of a database query; rows() takes rows that are already there (arrays), e.g. a report.
  * The result goes to the view as it is ({include file='admin/partials/table.tpl' table=$table}); the page may change
- * $table['rows'] before that. The table reloads itself through htmx: the request then carries table=<id>, and the
- * action answers with the fragment admin/partials/table.
+ * $table['rows'] before that. The table reloads itself through htmx: the request then carries table=<id>
+ * (isReload()), and the action answers with the fragment admin/partials/table.
  * Request values: tq (search), ts / td (sort column / direction), tp (page), tl (rows per page).
+ * keep() names further request values the table sends along when it reloads (the filters of the page).
  */
 class Table
 {
@@ -31,6 +33,8 @@ class Table
     protected $lengths     = [10, 25, 50];
     protected $rowTemplate = '';
     protected $actions     = false;
+    protected $keep        = [];
+    protected $toolbar     = '';
 
     public static function make(Request $request, string $id): self
     {
@@ -42,7 +46,7 @@ class Table
     }
 
     /**
-     * @param string $name   column of the query (also the key of the row)
+     * @param string $name   column of the query / key of the row
      * @param string $search '' (not searched) | SEARCH_TEXT (contains) | SEARCH_INT (equal, when the search is a number)
      */
     public function column(string $name, string $title, bool $sortable = false, string $search = ''): self
@@ -77,6 +81,22 @@ class Table
         return $this;
     }
 
+    /** @param string $template buttons shown on the right of the search (the template sees $table) */
+    public function toolbar(string $template): self
+    {
+        $this->toolbar = $template;
+
+        return $this;
+    }
+
+    /** @param array $values name => value the table sends along when it reloads (filters, the report's name) */
+    public function keep(array $values): self
+    {
+        $this->keep = $values + $this->keep;
+
+        return $this;
+    }
+
     /** This request is the table reloading itself (search, sort, page) */
     public function isReload(): bool
     {
@@ -89,18 +109,12 @@ class Table
      */
     public function run($query): array
     {
-        $sortable = array_keys(array_filter($this->columns, function($column) {
-            return $column['sortable'];
-        }));
-        $search = $this->request->string('tq');
-        $sort   = $this->request->oneOf('ts', $sortable, $this->sort);
-        $dir    = $sort === $this->request->string('ts') ? $this->request->oneOf('td', ['asc', 'desc'], 'asc') : $this->dir;
-        $length = $this->request->int('tl', $this->lengths[0]);
-        $length = in_array($length, $this->lengths, true) || $length === self::ALL ? $length : $this->lengths[0];
+        $state = $this->state();
 
-        if($search !== '')
+        if($state['search'] !== '')
         {
             $columns = $this->columns;
+            $search  = $state['search'];
             $query->where(function($q) use ($columns, $search) {
                 foreach($columns as $column)
                 {
@@ -117,26 +131,95 @@ class Table
         }
 
         $total = (clone $query)->count();
-        $pages = max(1, (int)ceil($total / $length));
-        $page  = min($pages, max(1, $this->request->int('tp', 1)));
-        if($sort !== '')
+        $pages = max(1, (int)ceil($total / $state['length']));
+        $page  = min($pages, max(1, $state['page']));
+        if($state['sort'] !== '')
         {
-            $query->orderBy($sort, $dir);
+            $query->orderBy($state['sort'], $state['dir']);
         }
         $rows = [];
-        foreach($query->offset(($page - 1) * $length)->limit($length)->get() as $row)
+        foreach($query->offset(($page - 1) * $state['length'])->limit($state['length'])->get() as $row)
         {
             $rows[] = (array)$row;
         }
 
+        return $this->result($state, $rows, $total, $page, $pages);
+    }
+
+    /**
+     * @param array[] $rows all the rows (arrays keyed by column name); values may be HTML - the search looks at the text
+     * @return array the table for the template
+     */
+    public function rows(array $rows): array
+    {
+        $state = $this->state();
+
+        if($state['search'] !== '')
+        {
+            $searched = array_keys(array_filter($this->columns, function($column) {
+                return $column['search'] !== '';
+            }));
+            $search   = $state['search'];
+            $rows     = array_values(array_filter($rows, function($row) use ($searched, $search) {
+                foreach($searched as $name)
+                {
+                    if(stripos(strip_tags((string)($row[$name] ?? '')), $search) !== false)
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }));
+        }
+
+        if($state['sort'] !== '')
+        {
+            $name = $state['sort'];
+            $sign = $state['dir'] === 'desc' ? -1 : 1;
+            usort($rows, function($a, $b) use ($name, $sign) {
+                $x = $a[$name] ?? '';
+                $y = $b[$name] ?? '';
+
+                return $sign * (is_numeric($x) && is_numeric($y) ? $x <=> $y : strcasecmp(strip_tags((string)$x), strip_tags((string)$y)));
+            });
+        }
+
+        $total = count($rows);
+        $pages = max(1, (int)ceil($total / $state['length']));
+        $page  = min($pages, max(1, $state['page']));
+
+        return $this->result($state, array_slice($rows, ($page - 1) * $state['length'], $state['length']), $total, $page, $pages);
+    }
+
+    /** @return array search, sort, dir, length, page as the request asks for them */
+    protected function state(): array
+    {
+        $sortable = array_keys(array_filter($this->columns, function($column) {
+            return $column['sortable'];
+        }));
+        $sort   = $this->request->oneOf('ts', $sortable, $this->sort);
+        $length = $this->request->int('tl', $this->lengths[0]);
+
+        return [
+            'search' => $this->request->string('tq'),
+            'sort'   => $sort,
+            'dir'    => $sort === $this->request->string('ts') ? $this->request->oneOf('td', ['asc', 'desc'], 'asc') : $this->dir,
+            'length' => in_array($length, $this->lengths, true) || $length === self::ALL ? $length : $this->lengths[0],
+            'page'   => $this->request->int('tp', 1),
+        ];
+    }
+
+    protected function result(array $state, array $rows, int $total, int $page, int $pages): array
+    {
         $columns = [];
         foreach($this->columns as $column)
         {
-            $sorted    = $column['name'] === $sort;
+            $sorted    = $column['name'] === $state['sort'];
             $columns[] = $column + [
-                'class'   => $column['sortable'] ? 'sorting' . ($sorted ? ' sorting_' . $dir : '') : '',
+                'class'   => $column['sortable'] ? 'sorting' . ($sorted ? ' sorting_' . $state['dir'] : '') : '',
                 // a click on the sorted column turns the direction round
-                'nextDir' => $sorted && $dir === 'asc' ? 'desc' : 'asc',
+                'nextDir' => $sorted && $state['dir'] === 'asc' ? 'desc' : 'asc',
             ];
         }
 
@@ -146,17 +229,19 @@ class Table
             'rows'        => $rows,
             'rowTemplate' => $this->rowTemplate,
             'actions'     => $this->actions,
+            'keep'        => $this->keep,
+            'toolbar'     => $this->toolbar,
             'searchable'  => (bool)array_filter($this->columns, function($column) {
                 return $column['search'] !== '';
             }),
-            'search'      => $search,
-            'sort'        => $sort,
-            'dir'         => $dir,
+            'search'      => $state['search'],
+            'sort'        => $state['sort'],
+            'dir'         => $state['dir'],
             'page'        => $page,
             'pages'       => $pages,
             'pageList'    => self::pageList($page, $pages),
             'total'       => $total,
-            'length'      => $length,
+            'length'      => $state['length'],
             'lengths'     => $this->lengths,
             'all'         => self::ALL,
         ];

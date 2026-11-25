@@ -9,7 +9,7 @@ use ModulesGarden\TSSGGSModule\App\Kernel\Page;
 use ModulesGarden\TSSGGSModule\App\Kernel\Response;
 use ModulesGarden\TSSGGSModule\App\Libs\Support\GeneralSettings;
 use ModulesGarden\TSSGGSModule\App\Libs\Support\Helpers;
-use ModulesGarden\TSSGGSModule\App\UI\Admin\Reports\Index\DataTables\Shared\RecordsProvider;
+use ModulesGarden\TSSGGSModule\App\Libs\Billing\SalesReport;
 use WHMCS\Database\Capsule;
 
 /**
@@ -68,7 +68,7 @@ class Statistics extends Page
         foreach($this->months() as $month)
         {
             $sum = 0;
-            foreach((new RecordsProvider())->getRecords(['fromDate' => $month['from'], 'toDate' => $month['to']]) as $record)
+            foreach((new SalesReport())->getRecords(['fromDate' => $month['from'], 'toDate' => $month['to']]) as $record)
             {
                 $sum += $record['grossProfit'];
             }
@@ -88,7 +88,7 @@ class Statistics extends Page
         $months = $this->months();
         foreach($months as $index => $month)
         {
-            foreach((new RecordsProvider())->getRecords(['fromDate' => $month['from'], 'toDate' => $month['to']]) as $record)
+            foreach((new SalesReport())->getRecords(['fromDate' => $month['from'], 'toDate' => $month['to']]) as $record)
             {
                 $names[$record['productId']]          = $record['productName'];
                 $profit[$record['productId']][$index] = ($profit[$record['productId']][$index] ?? 0) + $record['grossProfit'];
@@ -182,7 +182,7 @@ class Statistics extends Page
     protected function services(array $filters): array
     {
         $records = [];
-        foreach((new RecordsProvider())->getRecords($filters) as $record)
+        foreach((new SalesReport())->getRecords($filters) as $record)
         {
             $records[$record['serviceId']] = $record;
         }

@@ -1,6 +1,6 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Reports\Index\DataTables\Shared;
+namespace ModulesGarden\TSSGGSModule\App\Libs\Billing;
 
 use ModulesGarden\TSSGGSModule\App\Libs\Support\Edition;
 
@@ -10,13 +10,17 @@ use ModulesGarden\TSSGGSModule\App\Libs\Subscriptions\AisHelpers;
 use ModulesGarden\TSSGGSModule\App\Libs\Support\Helpers;
 use ModulesGarden\TSSGGSModule\App\Models\AcmeSubscription;
 use ModulesGarden\TSSGGSModule\App\Models\AisSubscription;
-use ModulesGarden\TSSGGSModule\Core\Translation\TranslatorTrait;
+use ModulesGarden\TSSGGSModule\App\Kernel\Lang;
 use ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Service;
 use Illuminate\Database\Capsule\Manager as Capsule;
 
-class RecordsProvider
+/**
+ * The sales records behind the reports and the statistics: one record per invoiced service of this module's
+ * products (client, product, brand, order status, sales amount, cost, gross profit, payment, dates).
+ */
+class SalesReport
 {
-    use TranslatorTrait;
+    const TEXTS = 'admin.reports.index.data_tables.shared.records_provider.';
 
     protected static function e($value): string
     {
@@ -24,14 +28,11 @@ class RecordsProvider
     }
 
     /**
-     * Sends the report as a CSV download: the given columns of the rows the filters select
+     * @return string the report as CSV: the given columns of the rows the filters select
      */
-    public function outputCsv($filters, array $fields, $onlyPaid = false): void
+    public function csv($filters, array $fields, $onlyPaid = false): string
     {
-        header('Content-Type: text/csv; charset=utf-8');
-        header('Content-Disposition: attachment; filename=report.csv');
-
-        $output = fopen('php://output', 'w');
+        $output = fopen('php://temp', 'w+');
         fputcsv($output, array_map(function($field) {
             return ucwords(preg_replace('/(?<!^)([A-Z])/', ' $1', $field));
         }, $fields));
@@ -46,10 +47,14 @@ class RecordsProvider
             }
             fputcsv($output, $row);
         }
+        rewind($output);
+
+        return (string)stream_get_contents($output);
     }
 
     public function getRecords($filters = [], $onlyPaid = false)
     {
+        $lang     = new Lang('admin');
         $requests = Edition::table('Requests');
         $query    = Capsule::table('tblinvoiceitems')
                         ->join('tblhosting', 'tblinvoiceitems.relid', '=', 'tblhosting.id')
@@ -216,8 +221,8 @@ class RecordsProvider
                 'date'           => $item->regdate,
                 'storeId'        => $storeId,
                 // shown as HTML: the values are escaped (WHMCS stores some of them encoded already - not encoded twice)
-                'clientDetails'  => self::e($clientName) . "<br><strong>{$this->translate('country')}</strong> " . self::e($item->country),
-                'productDetails' => self::e($item->name) . "<br><strong>{$this->translate('domain')}</strong> " . self::e($item->domain),
+                'clientDetails'  => self::e($clientName) . '<br><strong>' . self::e($lang->get(self::TEXTS . 'country')) . '</strong> ' . self::e($item->country),
+                'productDetails' => self::e($item->name) . '<br><strong>' . self::e($lang->get(self::TEXTS . 'domain')) . '</strong> ' . self::e($item->domain),
                 'productId'      => $item->productId,
                 'productName'    => $item->name,
                 'type'           => $item->configoption4,

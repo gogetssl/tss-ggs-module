@@ -18,6 +18,9 @@
             <input type="hidden" name="td" value="{$table.dir}" x-ref="td">
             <input type="hidden" name="tp" value="{$table.page}" x-ref="tp">
             <input type="hidden" name="tl" value="{$table.length}" x-ref="tl">
+            {foreach $table.keep as $keepName => $keepValue}
+                <input type="hidden" name="{$keepName}" value="{$keepValue}">
+            {/foreach}
 
             {if $table.searchable}
                 <div class="lu-t-c__top lu-top mob-top-search">
@@ -32,6 +35,10 @@
                             </button>
                         </div>
                     </div>
+                    {* buttons on the right of the search (Table::toolbar) *}
+                    {if $table.toolbar !== ''}
+                        <div class="lu-top__toolbar lu-single-element">{include file="{$table.toolbar}.tpl"}</div>
+                    {/if}
                 </div>
             {/if}
 
