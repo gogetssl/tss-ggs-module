@@ -3,36 +3,113 @@
  *
  * - every htmx request carries the WHMCS token (the layout prints it as data-token on #layers2), so a POST action
  *   is accepted by the kernel
- * - a form or a button with data-confirm="question" asks before it is sent
+ * - a question before a change, in the module's own dialog (the <template data-confirm-template> of
+ *   admin/layout.tpl):
+ *       hx-confirm="question"      on an htmx element
+ *       data-confirm="question"    on a form or a submit button
+ *   data-confirm-title="..." sets the dialog's title (default: the page title)
  * - a failed request shows its answer instead of failing silently
+ * - while a part of the page loads, its container is dimmed
  */
 (function () {
     'use strict';
 
+    function root() {
+        return document.getElementById('layers2');
+    }
+
     function token() {
-        var root = document.getElementById('layers2');
-        return root ? root.getAttribute('data-token') || '' : '';
+        return root() ? root().getAttribute('data-token') || '' : '';
     }
 
     document.addEventListener('htmx:configRequest', function (event) {
         event.detail.headers['X-CSRF-Token'] = token();
     });
 
-    document.addEventListener('submit', function (event) {
-        var question = event.target.getAttribute('data-confirm');
-        if (question && !window.confirm(question)) {
-            event.preventDefault();
-            event.stopImmediatePropagation();
-        }
-    }, true);
+    /* ---- confirmation dialog ---- */
 
+    function ask(element, question, yes) {
+        var template = document.querySelector('template[data-confirm-template]');
+        var host = root() ? root().querySelector('.lu-app') : null;
+        if (!template || !host) {
+            if (window.confirm(question)) { yes(); }
+            return;
+        }
+
+        var modal = template.content.firstElementChild.cloneNode(true);
+        var heading = document.querySelector('#layers2 h2');
+        modal.querySelector('[data-confirm-title]').textContent = (element && element.getAttribute('data-confirm-title')) || (heading ? heading.textContent : '');
+        modal.querySelector('[data-confirm-text]').textContent = question;
+
+        function close() {
+            document.removeEventListener('keydown', onKey);
+            modal.remove();
+        }
+        function onKey(event) {
+            if (event.key === 'Escape') { close(); }
+        }
+        modal.addEventListener('click', function (event) {
+            if (event.target.closest('[data-confirm-yes]')) {
+                close();
+                yes();
+            } else if (event.target.closest('[data-confirm-no]') || event.target === modal) {
+                close();
+            }
+        });
+        document.addEventListener('keydown', onKey);
+        host.appendChild(modal);
+        modal.querySelector('[data-confirm-yes]').focus();
+    }
+
+    // hx-confirm
+    document.addEventListener('htmx:confirm', function (event) {
+        if (!event.detail.question) {
+            return;
+        }
+        event.preventDefault();
+        ask(event.detail.elt, event.detail.question, function () {
+            event.detail.issueRequest(true);
+        });
+    });
+
+    // <button data-confirm> (a form with several buttons, each with its own question)
     document.addEventListener('click', function (event) {
         var button = event.target.closest ? event.target.closest('button[data-confirm]') : null;
-        if (button && !window.confirm(button.getAttribute('data-confirm'))) {
-            event.preventDefault();
-            event.stopImmediatePropagation();
+        if (!button) {
+            return;
         }
+        if (button.confirmed) {
+            button.confirmed = false;
+            return;
+        }
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        ask(button, button.getAttribute('data-confirm'), function () {
+            button.confirmed = true;
+            button.click();
+        });
     }, true);
+
+    // <form data-confirm>
+    document.addEventListener('submit', function (event) {
+        var form = event.target;
+        if (!form.getAttribute || !form.getAttribute('data-confirm')) {
+            return;
+        }
+        if (form.confirmed) {
+            form.confirmed = false;
+            return;
+        }
+        var submitter = event.submitter || null;
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        ask(form, form.getAttribute('data-confirm'), function () {
+            form.confirmed = true;
+            if (form.requestSubmit) { form.requestSubmit(submitter); } else { form.submit(); }
+        });
+    }, true);
+
+    /* ---- htmx answers ---- */
 
     // the kernel answers an error (expired token, exception) with a notice: show it in the target too
     document.addEventListener('htmx:beforeSwap', function (event) {
@@ -42,7 +119,7 @@
         }
     });
 
-    // while a part of the page loads, its container gets .tssggs-loading (theme.css dims it)
+    // while a part of the page loads, its container gets a "loading" class (theme.css dims it)
     document.addEventListener('htmx:beforeRequest', function (event) {
         var target = event.detail.target;
         if (target) { target.classList.add('tssggs-loading'); }

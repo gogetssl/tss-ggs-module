@@ -1717,3 +1717,7 @@ $_LANG['admin.settings.index.widgets.products_settings_widget.subtitle'] = 'How 
 $_LANG['admin.kernel.notFound']     = 'This page does not exist.';
 $_LANG['admin.kernel.tokenExpired'] = 'Your session token has expired. Reload the page and try again.';
 $_LANG['admin.kernel.error']        = 'The page could not be shown: :message';
+$_LANG['admin.kernel.search'] = 'Search...';
+$_LANG['admin.kernel.noRecords'] = 'No records found';
+$_LANG['admin.kernel.confirm'] = 'Confirm';
+$_LANG['admin.kernel.cancel'] = 'Cancel';

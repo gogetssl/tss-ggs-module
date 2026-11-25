@@ -43,6 +43,30 @@
     </div>
 </div>
 
+{* The dialog that asks before a change (hx-confirm / data-confirm); app.js fills in the title and the question *}
+<template data-confirm-template>
+    <div class="lu-modal show modal--zoomIn lu-modal--info">
+        <div class="lu-modal__dialog">
+            <div class="lu-modal__content">
+                <div class="lu-modal__top lu-top">
+                    <span class="lu-top__icon lu-text-warning">{icon name='information-outline'}</span>
+                    <div class="lu-top__title lu-text-warning lu-type-4"><span data-confirm-title></span></div>
+                    <div class="lu-top__toolbar">
+                        <button type="button" class="lu-btn lu-btn--xs lu-btn--default lu-btn--icon lu-btn--link lu-btn--plain closeModal" aria-label="{t key='admin.kernel.cancel'}" data-confirm-no>
+                            <span class="lu-btn__icon tssggs-icobox">{icon name='close'}</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="lu-modal__body"><p data-confirm-text></p></div>
+                <div class="lu-modal__actions">
+                    <button type="button" class="lu-btn lu-btn--warning" data-confirm-yes><span class="lu-btn__text">{t key='admin.kernel.confirm'}</span></button>
+                    <button type="button" class="lu-btn lu-btn--danger lu-btn--outline lu-btn--plain" data-confirm-no><span class="lu-btn__text">{t key='admin.kernel.cancel'}</span></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
 <div class="clear"></div>
 
 <link rel="stylesheet" href="{$assets}/build/css.php?v={$version}&amp;type=module&amp;isAdminArea=1">

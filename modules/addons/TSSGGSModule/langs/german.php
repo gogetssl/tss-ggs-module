@@ -1708,3 +1708,7 @@ $_LANG['admin.settings.index.widgets.products_settings_widget.subtitle'] = 'Wie 
 $_LANG['admin.kernel.notFound']     = 'Diese Seite existiert nicht.';
 $_LANG['admin.kernel.tokenExpired'] = 'Ihr Sitzungstoken ist abgelaufen. Laden Sie die Seite neu und versuchen Sie es erneut.';
 $_LANG['admin.kernel.error']        = 'Die Seite konnte nicht angezeigt werden: :message';
+$_LANG['admin.kernel.search'] = 'Suchen...';
+$_LANG['admin.kernel.noRecords'] = 'Keine Einträge gefunden';
+$_LANG['admin.kernel.confirm'] = 'Bestätigen';
+$_LANG['admin.kernel.cancel'] = 'Abbrechen';

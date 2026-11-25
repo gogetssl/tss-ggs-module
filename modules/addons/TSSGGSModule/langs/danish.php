@@ -1710,3 +1710,7 @@ $_LANG['admin.settings.index.widgets.products_settings_widget.subtitle'] = 'Hvor
 $_LANG['admin.kernel.notFound']     = 'Denne side findes ikke.';
 $_LANG['admin.kernel.tokenExpired'] = 'Dit sessionstoken er udløbet. Genindlæs siden, og prøv igen.';
 $_LANG['admin.kernel.error']        = 'Siden kunne ikke vises: :message';
+$_LANG['admin.kernel.search'] = 'Søg...';
+$_LANG['admin.kernel.noRecords'] = 'Ingen poster fundet';
+$_LANG['admin.kernel.confirm'] = 'Bekræft';
+$_LANG['admin.kernel.cancel'] = 'Annuller';

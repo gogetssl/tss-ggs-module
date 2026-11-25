@@ -47,6 +47,7 @@ class View
 
         // in every template; a page's own data of the same name wins
         $smarty->assign('moduleName', Kernel::module());
+        $smarty->assign('pageName', $page->name());
         // {$assets}/assets/js/..., {$assets}/assets/img/...; {$version} for cache busting
         $smarty->assign('assets', Kernel::assetsUrl());
         $smarty->assign('version', Layout::version());

@@ -666,3 +666,4 @@
 #layers2 .tssggs-pricing__preview h4 { margin-top: 0; }
 #layers2 [hidden] { display: none !important; }
 #layers2 .em-hint { margin-top: 0; }
+#layers2 .tssggs-table__empty { padding: 15px; text-align: center; border-top: 1px solid #e9ebf0; }
