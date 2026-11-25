@@ -33,8 +33,13 @@
                 </div>
                 <div class="lu-top__toolbar tssggs-savebar">
                     <button type="submit" class="lu-btn lu-btn--success"><span class="lu-btn__text">{t key='admin.savebar.saveChanges'}</span></button>
+                    {* Test Connection: only its result comes back (into the screen's own box), the form stays as typed *}
+                    {if $testUrl !== ''}
+                        <button type="submit" class="lu-btn lu-btn--primary" formaction="{$testUrl}" data-test
+                                hx-post="{$testUrl}" hx-target="#tssggs-settings-test" hx-swap="innerHTML show:bottom"><span class="lu-btn__text">{t key="{$f}.testConnection"}</span></button>
+                    {/if}
                     <span>
-                        <span class="tssggs-savebar__status" role="status" aria-live="polite" data-clean="{t key='admin.savebar.noUnsaved'}" data-dirty="{t key='admin.savebar.unsaved'}"
+                        <span class="tssggs-savebar__status" role="status" aria-live="polite"{if $always} data-always="1"{/if} data-clean="{t key='admin.savebar.noUnsaved'}" data-dirty="{t key='admin.savebar.unsaved'}"
                               data-failed="{t key='admin.savebar.notSaved'}" data-confirm="{t key='admin.savebar.leaveConfirm'}">{t key='admin.savebar.noUnsaved'}</span>
                     </span>
                 </div>

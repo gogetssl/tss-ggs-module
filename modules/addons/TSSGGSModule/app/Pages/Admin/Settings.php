@@ -3,6 +3,8 @@
 namespace ModulesGarden\TSSGGSModule\App\Pages\Admin;
 
 use ModulesGarden\TSSGGSModule\App\Kernel\Page;
+use ModulesGarden\TSSGGSModule\App\Libs\Settings\ApiScreen;
+use ModulesGarden\TSSGGSModule\App\Libs\Settings\ApiSettingsProvider;
 use ModulesGarden\TSSGGSModule\App\Libs\Settings\CronScreen;
 use ModulesGarden\TSSGGSModule\App\Libs\Settings\CronSettingsProvider;
 use ModulesGarden\TSSGGSModule\App\Libs\Settings\EmailScreen;
@@ -20,9 +22,7 @@ use ModulesGarden\TSSGGSModule\App\Libs\Support\GeneralSettings;
  * Admin page "Settings": a menu of screens on the left, the chosen screen (settings-page=...) on the right - one
  * form with sections and a sticky Save bar. A screen's values and choices come from its provider (App\Libs\Settings),
  * which also saves them; its fields are in its own template (resources/templates/admin/settings/<template>.tpl).
- *
- * The screens are being moved one by one: SCREENS lists the ones the kernel serves, the others are still shown by
- * the old framework (serves()).
+ * A screen without a provider (Email notifications) only shows what its "extra" class gives.
  */
 class Settings extends Page
 {
@@ -50,6 +50,9 @@ class Settings extends Page
      * of its own and no Save bar: its template shows what "extra" gives.
      */
     const SCREENS = [
+        // "test": the Save bar also has Test Connection (postTest); "always": Save is enabled without a change,
+        // because saving tests the connection and the credentials may be prefilled, not stored yet
+        'apiSettings'      => ['provider' => ApiSettingsProvider::class, 'template' => 'api', 'form' => 'api_settings_form', 'widget' => 'api_settings_widget', 'extra' => ApiScreen::class, 'test' => true, 'always' => true],
         'generalSettings'  => ['provider' => GeneralSettingsProvider::class, 'template' => 'general', 'form' => 'general_settings_form', 'widget' => 'general_settings_widget'],
         'sslSettings'      => ['provider' => SslSettingsProvider::class, 'template' => 'ssl', 'form' => 'ssl_settings_form', 'widget' => 'ssl_settings_widget', 'extra' => SslScreen::class, 'switch' => ['1', '0']],
         'automatedSettings' => ['provider' => SslSettingsProvider::class, 'template' => 'automated', 'form' => 'ssl_settings_form', 'widget' => 'automated_settings_widget', 'extra' => SslScreen::class, 'switch' => ['1', '0']],
@@ -59,12 +62,6 @@ class Settings extends Page
         'cronSettings'     => ['provider' => CronSettingsProvider::class, 'template' => 'cron', 'form' => 'cron_configuration_form', 'widget' => 'cron_settings_widget', 'extra' => CronScreen::class, 'css' => 'tssggs-cronpanel'],
         'logsSettings'     => ['provider' => GeneralSettingsProvider::class, 'template' => 'logs', 'form' => 'logs_settings_form', 'widget' => 'logs_settings_widget'],
     ];
-
-    /** Whether the kernel shows the screen this request asks for */
-    public static function serves(array $query): bool
-    {
-        return isset(self::SCREENS[(string)($query['settings-page'] ?? '')]);
-    }
 
     public function index()
     {
@@ -102,6 +99,36 @@ class Settings extends Page
         }
 
         return $this->fragment('admin/settings/screen', $this->screenData($screen, $result));
+    }
+
+    /**
+     * POST the screen's fields to Test Connection (Settings > API): tests what the form holds and gives only the
+     * result, so the form stays as typed. Nothing is saved.
+     */
+    public function postTest()
+    {
+        $screen = $this->screen();
+        if(empty(self::SCREENS[$screen]['test']))
+        {
+            return $this->redirect('index', ['settings-page' => $screen]);
+        }
+        $class = self::SCREENS[$screen]['provider'];
+        try
+        {
+            $result = (new $class($this->request->posted(), $this->lang))->test();
+        }
+        catch(\Throwable $e)
+        {
+            $result = (new Result())->setError(htmlspecialchars($e->getMessage()));
+        }
+        if(!$this->request->isHtmx())
+        {
+            $this->flash($result->message(), $result->isError() ? 'bad' : 'ok');
+
+            return $this->redirect('index', ['settings-page' => $screen]);
+        }
+
+        return $this->fragment('admin/settings/test_result', ['flash' => ['text' => $result->message(), 'tone' => $result->isError() ? 'bad' : 'ok']]);
     }
 
     protected function screen(): string
@@ -154,6 +181,8 @@ class Settings extends Page
             'flash'    => $flash,
             'saved'    => $result !== null && !$result->isError(),
             'saveUrl'  => self::pageUrl('settings', 'save', ['settings-page' => $screen]),
+            'testUrl'  => empty($config['test']) ? '' : self::pageUrl('settings', 'test', ['settings-page' => $screen]),
+            'always'   => !empty($config['always']),
             'vendors'  => Edition::vendors(),
             'wiki'     => Edition::wiki(),
             'hasOpenCorporatesToken' => (string)GeneralSettings::get('openCorporatesToken') !== '',

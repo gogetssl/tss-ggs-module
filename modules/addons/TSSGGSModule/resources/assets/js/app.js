@@ -148,7 +148,8 @@
     document.addEventListener('htmx:afterSettle', function (event) {
         var config = event.detail.requestConfig;
         var form = document.querySelector('#layers2 form[data-saved]');
-        if (form && config && String(config.verb).toLowerCase() === 'post') {
+        // not for Test Connection ([data-test]): it saves nothing and leaves the form as it is
+        if (form && config && String(config.verb).toLowerCase() === 'post' && !(config.elt && config.elt.hasAttribute && config.elt.hasAttribute('data-test'))) {
             document.dispatchEvent(new CustomEvent('tssggs-form-result', { detail: { ok: form.getAttribute('data-saved') === '1' } }));
             var result = form.querySelector('[role=status]');
             if (result && result.scrollIntoView) { result.scrollIntoView({ block: 'center' }); }

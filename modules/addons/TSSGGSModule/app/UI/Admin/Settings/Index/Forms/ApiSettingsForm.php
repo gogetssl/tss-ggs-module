@@ -85,7 +85,7 @@ class ApiSettingsForm extends Form implements AdminAreaInterface, AjaxComponentI
         }
 
         // with both vendors on the page the buttons work on both accounts while Connect is on: said above them (shown only
-        // while the switch is on, resources/assets/js/custom/apiScope.js), and the result lists each API
+        // while the switch is on), and the result lists each API
         if(count($vendors) > 1)
         {
             $this->addElement((new \ModulesGarden\TSSGGSModule\Components\Text\Text())->setText(
