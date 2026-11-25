@@ -103,7 +103,7 @@ $_LANG['admin.migration.confirm_start']         = 'Start the migration now? Back
 $_LANG['admin.migration.unsupported_version_hint'] = 'Update the legacy module to its latest version and reload this page, or keep it as a standalone module.';
 $_LANG['admin.migration.run_title']             = 'Migration #:id (:source)';
 $_LANG['admin.migration.run_stale']             = 'No progress for more than 10 minutes. The run continues while this page stays open; or roll it back.';
-$_LANG['admin.migration.verify_result']         = 'Verification: :checked migrated services checked, :active active SSL services with complete data, :left legacy order rows left.';
+$_LANG['admin.migration.verify_result']         = 'Check after the migration: :checked migrated services checked, :left legacy order rows left. :active of them are certificates in progress, with their order data complete.';
 $_LANG['admin.migration.exceptions']            = ':n services or products not migrated (with the reason)';
 $_LANG['admin.migration.col_object']            = 'Object';
 $_LANG['admin.migration.col_status']            = 'Status';
@@ -217,7 +217,7 @@ $_LANG['admin.configuration.content.step3.fact_services']   = ':active active se
 $_LANG['admin.configuration.content.step3.fact_orders']     = ':n SSL orders, :unconfigured not configured yet, :unpaid unpaid';
 $_LANG['admin.configuration.content.step3.fact_subscriptions'] = ':acme ACME and :ais AutoInstall SSL subscriptions, :autoinstall certificates installed via cPanel';
 $_LANG['admin.configuration.content.step3.unsupported_hint'] = 'Update the legacy module to its latest version first, then run the migration from the Migration page, or install this module as a new standalone module.';
-$_LANG['admin.configuration.content.step3.runs_later']      = 'Nothing is changed yet. The migration starts from the Finalization step, after your API credentials are in place.';
+$_LANG['admin.configuration.content.step3.runs_later']      = 'Nothing is changed yet. The migration has its own step in this wizard, after your API credentials are in place and the products are chosen.';
 $_LANG['admin.configuration.content.step3.next_step_btn'] = 'Next step';
 
 //$_LANG['admin.configuration.content.step3.step3_title']   = 'STEP 4. Vendor selection';

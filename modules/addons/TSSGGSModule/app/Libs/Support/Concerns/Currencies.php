@@ -22,9 +22,10 @@ trait Currencies
         $amount          = floatval($amount);
         $defaultCurrency = Helpers::getDefaultCurrency();
 
-        $clientCurrency = Client::findOrFail($clientId)->currency;
+        // tblclients.currency holds the id of the client's currency
+        $clientCurrency = (int)Client::findOrFail($clientId)->currency;
 
-        return \convertCurrency($amount, $clientCurrency->id, $defaultCurrency->id);
+        return \convertCurrency($amount, $clientCurrency, $defaultCurrency->id);
     }
 
     public static function formatDefaultCurrency($amount)

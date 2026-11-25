@@ -27,7 +27,7 @@
                 </ul>
                 <p class="tssggs-runner__note" x-show="running" x-cloak>{t key="{$m}.runner_keep_open"}</p>
                 <p class="tssggs-runner__error" x-show="error" x-text="error" x-cloak></p>
-                <p class="tssggs-runner__note" x-show="progress.finished" x-cloak>{t key="{$m}.runner_finished"} <a href="" @click.prevent="window.location.reload()">{t key="{$m}.runner_reload"}</a></p>
+                <p class="tssggs-runner__note" x-show="justFinished" x-cloak>{t key="{$m}.runner_finished"} <a href="" @click.prevent="window.location.reload()">{t key="{$m}.runner_reload"}</a></p>
             </div>
 
             <span class="tssggs-html">
@@ -70,13 +70,13 @@
                             {if $wizard}<input type="hidden" name="return" value="wizard">{/if}
                             <button type="submit" class="mod-btn mod-btn--default">{t key="{$m}.btn_extend"}</button>
                         </form>
-                        <form method="post" action="{url page='migration' action='deleteBackups' id=$run.id}" data-confirm="{t key="{$m}.confirm_delete"}">
+                        <form method="post" action="{url page='migration' action='deleteBackups' id=$run.id}" data-confirm="{t key="{$m}.confirm_delete"}" data-confirm-title="{t key="{$m}.title"}">
                             <input type="hidden" name="token" value="{$token}">
                             {if $wizard}<input type="hidden" name="return" value="wizard">{/if}
                             <button type="submit" class="mod-btn mod-btn--default">{t key="{$m}.btn_delete_backups"}</button>
                         </form>
                         {if $run.canRollback}
-                            <form method="post" action="{url page='migration' action='rollback' id=$run.id}" data-confirm="{t key="{$m}.confirm_rollback"}">
+                            <form method="post" action="{url page='migration' action='rollback' id=$run.id}" data-confirm="{t key="{$m}.confirm_rollback"}" data-confirm-title="{t key="{$m}.title"}">
                                 <input type="hidden" name="token" value="{$token}">
                                 {if $wizard}<input type="hidden" name="return" value="wizard">{/if}
                                 <button type="submit" class="mod-btn mod-btn--danger">{t key="{$m}.btn_rollback"}</button>

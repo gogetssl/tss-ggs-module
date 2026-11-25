@@ -19,6 +19,21 @@ class ApiSettingsProvider extends Provider
     /** the token fields of the screen */
     const TOKENS = ['tssLiveAuthToken', 'tssTestAuthToken', 'ggsLiveAuthToken'];
 
+    /** the setup wizard: the form holds the edition's own account only */
+    protected $ownOnly = false;
+
+    /**
+     * The setup wizard's page shows the edition's own account only. A connected second vendor is then left as it is:
+     * not tested (the admin could not correct it there), not disconnected, and its stored credentials are kept.
+     * It is managed in Settings > API.
+     */
+    public function ownVendorOnly(): self
+    {
+        $this->ownOnly = true;
+
+        return $this;
+    }
+
     /**
      * A stored API token is never sent back to the browser: the field stays empty and the token is kept when it is
      * saved empty (see token()). A "password" input still carries its value in the page, so echoing it would put the
@@ -75,7 +90,7 @@ class ApiSettingsProvider extends Provider
     {
         // a connected vendor that still sells products in WHMCS can not be disconnected: its services need its API
         $connect = $this->connectChosen();
-        if(!$connect && Edition::connectedVendor() !== '' && CrossVendor::productCount(Edition::connectedVendor()) > 0)
+        if(!$this->ownOnly && !$connect && Edition::connectedVendor() !== '' && CrossVendor::productCount(Edition::connectedVendor()) > 0)
         {
             return (new Result())->setError(sprintf($this->translate('disconnectHasProducts'), Edition::brandOf(Edition::connectedVendor()), CrossVendor::productCount(Edition::connectedVendor())));
         }
@@ -88,16 +103,19 @@ class ApiSettingsProvider extends Provider
         }
 
         // connected first, so the other vendor's credentials are saved with the edition's own ones
-        Edition::setConnectedVendor($connect ? Edition::otherVendor() : '');
+        if(!$this->ownOnly)
+        {
+            Edition::setConnectedVendor($connect ? Edition::otherVendor() : '');
+        }
 
         (new AddonModuleRepository())->saveCredentials(
-            (string)$this->formData['tssLivePartnerCode'],
+            $this->field('tssLivePartnerCode', 'tss', 'PartnerCode'),
             $this->token('tssLiveAuthToken', 'tss', 'AuthToken'),
-            (string)$this->formData['ggsLivePartnerCode'],
+            $this->field('ggsLivePartnerCode', 'ggs', 'PartnerCode'),
             $this->token('ggsLiveAuthToken', 'ggs', 'AuthToken'),
-            (string)$this->formData['tssTestPartnerCode'],
+            $this->field('tssTestPartnerCode', 'tss', 'TestPartnerCode'),
             $this->token('tssTestAuthToken', 'tss', 'TestAuthToken'),
-            (string)$this->formData['OperationMode']
+            $this->field('OperationMode', 'tss', 'OperationMode')
         );
 
         return (new Result())->setSuccess($this->translate('savedAPI') . '<br>' . implode('<br>', $lines));
@@ -178,7 +196,23 @@ class ApiSettingsProvider extends Provider
     /** Vendors the saved credentials are for: the edition's own, plus the other one when it is connected */
     protected function chosenVendors(): array
     {
-        return $this->connectChosen() ? [Edition::primaryVendor(), Edition::otherVendor()] : [Edition::primaryVendor()];
+        return !$this->ownOnly && $this->connectChosen() ? [Edition::primaryVendor(), Edition::otherVendor()] : [Edition::primaryVendor()];
+    }
+
+    /**
+     * A field that is not a token: what the form holds. In the wizard the other vendor has no fields on the page, so
+     * what is stored for it is kept.
+     */
+    protected function field(string $field, string $vendor, string $storedField): string
+    {
+        if($this->ownOnly && $vendor !== Edition::primaryVendor())
+        {
+            $credentials = (new AddonModuleRepository())->storedCredentials();
+
+            return (string)($credentials[$vendor][$storedField] ?? '');
+        }
+
+        return (string)$this->formData[$field];
     }
 
     /**
@@ -200,7 +234,7 @@ class ApiSettingsProvider extends Provider
     /** Whether the form differs from what is stored: Connect switched or a token typed */
     protected function unsaved(): bool
     {
-        if($this->connectChosen() !== (Edition::connectedVendor() !== ''))
+        if(!$this->ownOnly && $this->connectChosen() !== (Edition::connectedVendor() !== ''))
         {
             return true;
         }

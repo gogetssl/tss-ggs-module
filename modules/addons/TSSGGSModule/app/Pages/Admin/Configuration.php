@@ -212,12 +212,12 @@ class Configuration extends Page
         ]);
     }
 
-    /** POST: the wizard is done; on to the Migration page when a legacy module is still to migrate, else the dashboard */
+    /** POST: the wizard is done; on to the Migration page while this edition's legacy module is still to migrate, else the dashboard */
     public function postFinalize()
     {
         (new AddonModuleRepository())->finalize();
 
-        return Response::redirect(self::pageUrl(Choice::toMigrate() ? 'migration' : 'home'));
+        return Response::redirect(self::pageUrl(Wizard::migrationPlanned() && !Wizard::migrationCompleted() ? 'migration' : 'home'));
     }
 
     /** The migration of the legacy module (only when it was chosen on page 3): the blocks of the Migration page */
@@ -263,7 +263,8 @@ class Configuration extends Page
             'stepOf'    => sprintf($this->lang->get(self::WIZARD . 'step_of'), $pos + 1, count($pages)),
             // "STEP 2. System Compatibility Check" -> "System Compatibility Check" (the number is in the line above)
             'stepTitle' => (string)preg_replace('/^\s*STEP\s+\d+\s*[.\-:]\s*/i', '', $this->t('step' . $page . '.step' . $page . '_title')),
-            'crumb'     => $this->lang->get('admin.breadcrumbs.Configuration_step' . $page),
+            // the heading counts as the wizard does (page 7 is its sixth step when the migration is part of it)
+            'crumb'     => $this->lang->get('admin.breadcrumbs.Configuration_step' . ($pos + 1)),
             'module'    => Edition::name(),
             'moduleVersion' => Layout::version(),
         ]);
@@ -281,7 +282,8 @@ class Configuration extends Page
     {
         try
         {
-            $result = $run(new ApiSettingsProvider($this->request->posted(), $this->lang));
+            // the wizard's page has the fields of the edition's own account only
+            $result = $run((new ApiSettingsProvider($this->request->posted(), $this->lang))->ownVendorOnly());
 
             return $result instanceof Result ? $result : (new Result())->setSuccess('');
         }

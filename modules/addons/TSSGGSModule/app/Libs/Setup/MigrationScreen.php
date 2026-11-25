@@ -267,7 +267,9 @@ class MigrationScreen
             'canRollback'  => $run['backup_prefix'] && (in_array($run['status'], [Store::RUN_COMPLETED, Store::RUN_FAILED], true) || $status['stale']),
         ];
 
-        if(!empty($summary['verify']))
+        // what the check after the run said, and the legacy addon's switch-off, no longer hold once it is rolled back
+        $undone = $run['status'] === Store::RUN_ROLLED_BACK;
+        if(!empty($summary['verify']) && !$undone)
         {
             $v               = $summary['verify'];
             $block['verify'] = [
@@ -295,7 +297,7 @@ class MigrationScreen
                 return '*/5 * * * * php -q {WHMCS}/modules/addons/' . $module . '/cron/cron.php ' . $job;
             }, ['ProductPricingUpdate', 'SSLCertificates', 'RenewalNotifyCertificate', 'ReSyncProducts', 'SSLAutoInstall']));
         }
-        if(!empty($summary['legacy_deactivated']))
+        if(!empty($summary['legacy_deactivated']) && !$undone)
         {
             $block['deactivated'] = $this->t('legacy_deactivated', ['result' => $summary['legacy_deactivated']['ok'] ? $this->t('yes') : $this->t('no')]);
         }

@@ -109,7 +109,7 @@ $_LANG['admin.migration.confirm_start']         = 'Start migreringen nu? Der opr
 $_LANG['admin.migration.unsupported_version_hint'] = 'Opdater det ældre modul til den nyeste version og genindlæs siden, eller behold det som et selvstændigt modul.';
 $_LANG['admin.migration.run_title']             = 'Migrering #:id (:source)';
 $_LANG['admin.migration.run_stale']             = 'Ingen fremdrift i mere end 10 minutter. Kørslen fortsætter, mens denne side er åben; eller rul den tilbage.';
-$_LANG['admin.migration.verify_result']         = 'Verifikation: :checked migrerede tjenester kontrolleret, :active aktive SSL-tjenester med komplette data, :left ældre ordrerækker tilbage.';
+$_LANG['admin.migration.verify_result']         = 'Kontrol efter migreringen: :checked migrerede tjenester kontrolleret, :left ældre ordrerækker tilbage. :active af dem er certifikater under behandling, med komplette ordredata.';
 $_LANG['admin.migration.exceptions']            = ':n tjenester eller produkter ikke migreret (med årsag)';
 $_LANG['admin.migration.col_object']            = 'Objekt';
 $_LANG['admin.migration.col_status']            = 'Status';
@@ -224,7 +224,7 @@ $_LANG['admin.configuration.content.step3.fact_services']   = ':active aktive tj
 $_LANG['admin.configuration.content.step3.fact_orders']     = ':n SSL-ordrer, :unconfigured endnu ikke konfigureret, :unpaid ubetalt';
 $_LANG['admin.configuration.content.step3.fact_subscriptions'] = ':acme ACME- og :ais AutoInstall SSL-abonnementer, :autoinstall certifikater installeret via cPanel';
 $_LANG['admin.configuration.content.step3.unsupported_hint'] = 'Opdater først det ældre modul til den nyeste version, og kør derefter migreringen fra siden Migrering, eller installer dette modul som et nyt selvstændigt modul.';
-$_LANG['admin.configuration.content.step3.runs_later']      = 'Intet er ændret endnu. Migreringen starter fra trinnet Afslutning, når dine API-legitimationsoplysninger er på plads.';
+$_LANG['admin.configuration.content.step3.runs_later']      = 'Intet er ændret endnu. Migreringen har sit eget trin i denne guide, når dine API-legitimationsoplysninger er på plads, og produkterne er valgt.';
 $_LANG['admin.configuration.content.step3.next_step_btn'] = 'Næste trin';
 
 //$_LANG['admin.configuration.content.step3.step3_title']   = 'STEP 4. Vendor selection';

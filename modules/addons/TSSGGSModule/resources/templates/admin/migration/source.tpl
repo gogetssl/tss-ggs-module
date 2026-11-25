@@ -36,7 +36,7 @@
                 {elseif $src.state === 'old'}
                     <div class="tssggs-note is-bad">{t key="{$m}.unsupported_version_hint"}</div>
                 {else}
-                    <form method="post" action="{url page='migration' action='start'}" data-confirm="{t key="{$m}.confirm_start"}">
+                    <form method="post" action="{url page='migration' action='start'}" data-confirm="{t key="{$m}.confirm_start"}" data-confirm-title="{t key="{$m}.title"}">
                         <input type="hidden" name="token" value="{$token}">
                         <input type="hidden" name="source" value="{$src.source}">
                         {if $wizard}<input type="hidden" name="return" value="wizard">{/if}

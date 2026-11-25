@@ -15,6 +15,8 @@ function moduleMigrationRunner(config) {
         progress: config.progress,
         error: config.progress.error || '',
         running: false,
+        // the run ended while this page was open: its result is on the page after a reload
+        justFinished: false,
 
         init: function () {
             if (!this.progress.finished) {
@@ -42,6 +44,7 @@ function moduleMigrationRunner(config) {
                     self.error = data.progress.error || '';
                     if (data.progress.finished) {
                         self.running = false;
+                        self.justFinished = true;
                         return;
                     }
                     setTimeout(function () { self.step(); }, 400);

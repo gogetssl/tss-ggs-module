@@ -109,7 +109,7 @@ $_LANG['admin.migration.confirm_start'] = 'Migration jetzt starten? Zuerst werde
 $_LANG['admin.migration.unsupported_version_hint'] = 'Aktualisieren Sie das Altmodul auf die neueste Version und laden Sie diese Seite neu, oder belassen Sie es als eigenständiges Modul.';
 $_LANG['admin.migration.run_title'] = 'Migration #:id (:source)';
 $_LANG['admin.migration.run_stale'] = 'Seit mehr als 10 Minuten kein Fortschritt. Der Lauf wird fortgesetzt, solange diese Seite geöffnet bleibt; oder setzen Sie ihn zurück.';
-$_LANG['admin.migration.verify_result'] = 'Überprüfung: :checked migrierte Services geprüft, :active aktive SSL-Services mit vollständigen Daten, :left verbleibende Bestellzeilen des Altmoduls.';
+$_LANG['admin.migration.verify_result'] = 'Prüfung nach der Migration: :checked migrierte Services geprüft, :left verbleibende Bestellzeilen des Altmoduls. :active davon sind Zertifikate in Bearbeitung, mit vollständigen Bestelldaten.';
 $_LANG['admin.migration.exceptions'] = ':n nicht migrierte Dienste oder Produkte (mit Grund)';
 $_LANG['admin.migration.col_object'] = 'Objekt';
 $_LANG['admin.migration.col_status'] = 'Status';
@@ -224,7 +224,7 @@ $_LANG['admin.configuration.content.step3.fact_services'] = ':active aktive Serv
 $_LANG['admin.configuration.content.step3.fact_orders'] = ':n SSL-Bestellungen, :unconfigured noch nicht konfiguriert, :unpaid unbezahlt';
 $_LANG['admin.configuration.content.step3.fact_subscriptions'] = ':acme ACME- und :ais AutoInstall-SSL-Abonnements, :autoinstall über cPanel installierte Zertifikate';
 $_LANG['admin.configuration.content.step3.unsupported_hint'] = 'Aktualisieren Sie zuerst das Altmodul auf die neueste Version und starten Sie die Migration dann auf der Seite Migration, oder installieren Sie dieses Modul als neues eigenständiges Modul.';
-$_LANG['admin.configuration.content.step3.runs_later'] = 'Es wird noch nichts geändert. Die Migration startet im Schritt Abschluss, nachdem Ihre API-Zugangsdaten hinterlegt sind.';
+$_LANG['admin.configuration.content.step3.runs_later'] = 'Es wird noch nichts geändert. Die Migration hat einen eigenen Schritt in diesem Assistenten, nachdem Ihre API-Zugangsdaten hinterlegt und die Produkte ausgewählt sind.';
 $_LANG['admin.configuration.content.step3.next_step_btn'] = 'Nächster Schritt';
 
 //$_LANG['admin.configuration.content.step3.step3_title']   = 'STEP 4. Vendor selection';
