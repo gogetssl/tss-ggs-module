@@ -46,6 +46,21 @@ class Writer
         $this->source      = $source;
     }
 
+    /** @var string|null */
+    protected $startedAt;
+
+    /** When this run started ('' when unknown) */
+    protected function startedAt(): string
+    {
+        if($this->startedAt === null)
+        {
+            $run             = Store::getRun($this->migrationId) ?: [];
+            $this->startedAt = (string)(($run['started_at'] ?? '') ?: ($run['created_at'] ?? ''));
+        }
+
+        return $this->startedAt;
+    }
+
     // ---- Settings ---- //
 
     /**
@@ -630,11 +645,18 @@ class Writer
     /**
      * Removes the unified rows a service write created (tblsslorders itself is restored from the backup)
      */
-    public function undoService(array $written): void
+    public function undoService(array $written, int $serviceId = 0): void
     {
         if(!empty($written['requests']))
         {
             Capsule::table(self::tRequests())->whereIn('id', $written['requests'])->delete();
+        }
+        // what this module noted for the service while it managed it (an incomplete order, a pending renewal ...):
+        // the service goes back to the legacy module, so nothing of it may stay
+        $since = $serviceId > 0 ? $this->startedAt() : '';
+        if($since !== '')
+        {
+            Capsule::table(self::tRequests())->where('serviceid', $serviceId)->where('created_at', '>=', $since)->delete();
         }
         if(!empty($written['queue']))
         {

@@ -958,7 +958,7 @@ class Engine
                 $current = Capsule::table('tblsslorders')->where('id', (int)$job['ssl_order_id'])->value('status');
                 if($current && $current !== 'Awaiting Configuration')
                 {
-                    $writer->undoService($job['data']);
+                    $writer->undoService($job['data'], (int)$job['object_id']);
                     Capsule::table(Store::jobsTable())->where('id', $job['id'])->update(['status' => Store::JOB_PENDING, 'updated_at' => date('Y-m-d H:i:s')]);
                     $this->migrateService($runId, $job['id'], (int)$job['object_id'], $writer, $products, (bool)$run['options']['fetch_cpanel_keys']);
                     $changed++;

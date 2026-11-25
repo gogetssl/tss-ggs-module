@@ -19,7 +19,8 @@ class Swap
 
     public static function journal()
     {
-        $data = json_decode((string)@file_get_contents(Workdir::path('journal.json')), true);
+        $file = Workdir::path('journal.json');
+        $data = is_file($file) ? json_decode((string)@file_get_contents($file), true) : null;
 
         return is_array($data) ? $data : null;
     }
@@ -67,7 +68,9 @@ class Swap
     {
         $file   = Workdir::path($name);
         $exists = is_file($file);
-        $handle = @fopen($file, 'c') ?: @fopen($file, 'r');
+        // WHMCS logs a failed fopen() even when it is silenced: ask first
+        $handle = (!$exists || is_writable($file)) ? @fopen($file, 'c') : false;
+        $handle = $handle ?: (is_readable($file) ? @fopen($file, 'r') : false);
         if($handle && !$exists)
         {
             @chmod($file, 0664);

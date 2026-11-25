@@ -59,7 +59,8 @@ class SSLCertificates extends Command
         }
 
         $addonConfig = (new AddonModuleRepository())->getModuleConfiguration();
-        $credentials = $addonConfig['credentials'];
+        // not connected yet (the setup wizard is not finished): nothing to ask
+        $credentials = (array)($addonConfig['credentials'] ?? []);
 
         $timestamp = time();
         $errors = false;
