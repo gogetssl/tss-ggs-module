@@ -204,7 +204,7 @@ class Logs extends Page
                 'note'   => $this->lang->has($noteKey) ? $this->lang->get($noteKey) : '',
                 'icon'   => $type === 'total' ? 'layers' : (LogBook::TYPES[$type]['icon'] ?? 'information-outline'),
                 // the colour of the "Show" button: as the old cards had it
-                'button' => ['emergency' => 'danger', 'alert' => 'danger', 'critical' => 'danger', 'error' => 'danger', 'warning' => 'warning', 'notice' => 'info', 'info' => 'info'][$type] ?? 'default',
+                'button' => ['emergency' => 'danger', 'alert' => 'danger', 'critical' => 'danger', 'error' => 'danger', 'warning' => 'warning', 'notice' => 'info', 'info' => 'info'][$type] ?? '',
                 'url'    => self::pageUrl('logs', 'index', $type === 'total' ? [] : ['type' => $type]),
             ];
         }

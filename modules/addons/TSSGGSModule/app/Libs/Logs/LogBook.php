@@ -188,11 +188,21 @@ class LogBook
     /** @return array type => number of entries, the types that have entries, then "total" */
     public static function counts(): array
     {
-        $counts = [];
-        foreach(Logs::query()->toBase()->selectRaw('type, count(id) as entries')->groupBy('type')->orderBy('type')->get() as $row)
+        $found = [];
+        foreach(Logs::query()->toBase()->selectRaw('type, count(id) as entries')->groupBy('type')->get() as $row)
         {
-            $counts[(string)$row->type] = (int)$row->entries;
+            $found[(string)$row->type] = (int)$row->entries;
         }
+        // from the everyday entries to the gravest ones
+        $counts = [];
+        foreach(['info', 'notice', 'debug', 'warning', 'error', 'critical', 'alert', 'emergency'] as $type)
+        {
+            if(isset($found[$type]))
+            {
+                $counts[$type] = $found[$type];
+            }
+        }
+        $counts += $found;
 
         return $counts + ['total' => array_sum($counts)];
     }

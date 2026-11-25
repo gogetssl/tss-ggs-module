@@ -30,7 +30,7 @@
                         </div>
                     </div>
                     <div class="lu-widget__actions lu-widget__actions--raised">
-                        <a class="lu-btn lu-btn--{$card.button} lu-w-100{if $card.type === $type || ($card.type === 'total' && $type === '')} is-active{/if}" href="{$card.url}"
+                        <a class="lu-btn{if $card.button !== ''} lu-btn--{$card.button}{/if} lu-w-100{if $card.type === $type || ($card.type === 'total' && $type === '')} is-active{/if}" href="{$card.url}"
                            hx-get="{$card.url}" hx-target="#tssggs-logs" hx-swap="innerHTML"><span class="lu-btn__text">{t key='show'}</span></a>
                     </div>
                 </div>
