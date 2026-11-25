@@ -14,7 +14,7 @@ class CronSettingsProvider extends Provider
         $moduleRepository    = new AddonModuleRepository();
         $moduleConfiguration = $moduleRepository->getModuleConfiguration();
 
-        foreach($moduleConfiguration['cronSettings'] as $key => $value)
+        foreach((array)($moduleConfiguration['cronSettings'] ?? []) as $key => $value)
         {
             $this->data[$key] = $moduleRepository->cronFrequency($key, $value);
         }

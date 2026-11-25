@@ -26,7 +26,7 @@ class SslSettingsProvider extends Provider
         $moduleRepository    = new AddonModuleRepository();
         $moduleConfiguration = $moduleRepository->getModuleConfiguration();
 
-        foreach($moduleConfiguration['sslSettings'] as $key => $value)
+        foreach((array)($moduleConfiguration['sslSettings'] ?? []) as $key => $value)
         {
             $this->data[$key] = $value;
         }
