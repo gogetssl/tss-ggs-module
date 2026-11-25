@@ -1,0 +1,34 @@
+{*
+    A section of a settings screen: icon, title, a short description, then the fields.
+
+        {include file='admin/settings/section_start.tpl' name='clientArea' icon='account-group-outline'}
+            ... fields ...
+        {include file='admin/settings/section_end.tpl'}
+
+    Texts of the screen's form group ($f): "<name>" the title, "<name>_desc" the description.
+    $points: text keys of points listed under the description ("<key>" bold lead-in, "<key>_text" the explanation).
+    $sub=true: a small heading inside a section (no icon, no description).
+*}
+<div class="lu-widget tssggs-sec{if $sub|default:false} tssggs-sec--sub{/if}">
+    <div class="lu-widget__header">
+        <div class="lu-widget__top lu-top">
+            {if $icon|default:'' !== ''}<span class="lu-widget__icon">{icon name=$icon}</span>{/if}
+            <div class="lu-top__title"> {t key="{$f}.{$name}"} </div>
+        </div>
+    </div>
+    <div class="lu-widget__body">
+        <div class="lu-widget__content">
+            {if !$sub|default:false}
+                <span>
+                    <div class="tssggs-sec__desc">
+                        <p>{t key="{$f}.{$name}_desc"}</p>
+                        {if $points|default:[]}
+                            <ul>
+                                {foreach $points as $point}
+                                    <li><b>{t key="{$f}.{$point}"}</b> {t key="{$f}.{$point}_text"}</li>
+                                {/foreach}
+                            </ul>
+                        {/if}
+                    </div>
+                </span>
+            {/if}

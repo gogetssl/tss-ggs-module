@@ -1,12 +1,13 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Providers;
+namespace ModulesGarden\TSSGGSModule\App\Libs\Settings;
 
 use ModulesGarden\TSSGGSModule\App\Libs\Support\GeneralSettings;
-use ModulesGarden\TSSGGSModule\Core\DataProviders\CrudProvider;
 
-class GeneralSettingsProvider extends CrudProvider
+class GeneralSettingsProvider extends Provider
 {
+    const TEXTS = 'admin.settings.index.providers.general_settings_provider';
+
     const SWITCHES = ['renewReuseOrderDetails', 'downloadFormat_zip', 'downloadFormat_crt', 'downloadFormat_ca', 'downloadFormat_fullchain', 'downloadFormat_nginx', 'downloadFormat_apache', 'downloadFormat_pkcs7', 'clientSummary', 'certificatesByDomain', 'sslTools', 'whmcsActivityLog', 'moduleLog', 'certificateLog', 'internalLog', 'eventLog', 'terminateCancelsOrder', 'requireAgreement', 'useDefaultWebServer', 'keepMarginOnSync', 'belowCostEmail', 'hideInfoMessages', 'issuedMessageOn_sectigo', 'issuedMessageOn_digicert'];
 
     /** WHMCS client area templates offered in "Show the SSL menu on" (any other template name can be typed in) */
@@ -73,7 +74,7 @@ class GeneralSettingsProvider extends CrudProvider
         if(array_key_exists('openCorporates', $data) && self::on($data['openCorporates'])
             && trim((string)($data['openCorporatesToken'] ?? '')) === '' && (string)GeneralSettings::get('openCorporatesToken') === '')
         {
-            return (new \ModulesGarden\TSSGGSModule\Core\Components\Response\Response())->setError($this->translate('openCorporatesTokenMissing'));
+            return (new Result())->setError($this->translate('openCorporatesTokenMissing'));
         }
         // WHMCS Module Log YES: WHMCS has to record it too, so it is switched on there (WHMCS-wide, logged in the activity
         // log). NO only stops this module sending; WHMCS keeps its own setting for the other modules
@@ -81,7 +82,7 @@ class GeneralSettingsProvider extends CrudProvider
         {
             if(!\ModulesGarden\TSSGGSModule\App\Libs\Support\WhmcsModuleLog::canEnable())
             {
-                return (new \ModulesGarden\TSSGGSModule\Core\Components\Response\Response())->setError($this->translate('whmcsModuleLogNoPermission',
+                return (new Result())->setError($this->translate('whmcsModuleLogNoPermission',
                     [':permission' => \ModulesGarden\TSSGGSModule\App\Libs\Support\WhmcsModuleLog::PERMISSION]));
             }
             \ModulesGarden\TSSGGSModule\App\Libs\Support\WhmcsModuleLog::enable();

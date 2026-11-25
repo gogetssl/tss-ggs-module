@@ -3,7 +3,7 @@
 namespace ModulesGarden\TSSGGSModule\Packages\Logs\UI\Providers;
 
 use ModulesGarden\TSSGGSModule\App\Libs\Support\GeneralSettings;
-use ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Providers\GeneralSettingsProvider;
+use ModulesGarden\TSSGGSModule\App\Libs\Settings\GeneralSettingsProvider;
 use ModulesGarden\TSSGGSModule\Core\DataProviders\CrudProvider;
 use ModulesGarden\TSSGGSModule\Core\Support\Facades\Validator;
 use ModulesGarden\TSSGGSModule\Core\Validation\Rule;

@@ -7,9 +7,6 @@ use ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Widgets\AutomatedSett
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Widgets\CronSettingsWidget;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Widgets\EmailSettingsWidget;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Widgets\FinanceSettingsWidget;
-use ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Widgets\GeneralSettingsWidget;
-use ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Widgets\LogsSettingsWidget;
-use ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Widgets\ProductsSettingsWidget;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Widgets\Sidebar;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Widgets\SslSettingsWidget;
 use ModulesGarden\TSSGGSModule\Components\Container\Container;
@@ -36,10 +33,6 @@ class SettingsContainer extends Container implements AdminAreaInterface
         {
             $mainWidget = new AutomatedSettingsWidget();
         }
-        elseif(Request::get('settings-page') == 'productsSettings')
-        {
-            $mainWidget = new ProductsSettingsWidget();
-        }
         elseif(Request::get('settings-page') == 'financeSettings')
         {
             $mainWidget = new FinanceSettingsWidget();
@@ -51,14 +44,6 @@ class SettingsContainer extends Container implements AdminAreaInterface
         elseif(Request::get('settings-page') == 'emailSettings')
         {
             $mainWidget = new EmailSettingsWidget();
-        }
-        elseif(Request::get('settings-page') == 'logsSettings')
-        {
-            $mainWidget = new LogsSettingsWidget();
-        }
-        elseif(Request::get('settings-page') == 'generalSettings')
-        {
-            $mainWidget = new GeneralSettingsWidget();
         }
         else
         {

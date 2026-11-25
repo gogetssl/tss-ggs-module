@@ -13,6 +13,7 @@
     'use strict';
 
     var SELECTOR = '#layers2 select.lu-form-control:not(.selectized):not([multiple]):not([data-native])';
+    var MULTI = '#layers2 select.lu-form-control[multiple]:not(.selectized):not([data-native])';
     var openOne = null;
 
     function element(tag, className) {
@@ -214,6 +215,177 @@
         render();
     }
 
+    /*
+     * A <select multiple class="lu-form-control">: the chosen values are shown as tags with an "x", the list offers
+     * the others; with data-create a value that is not in the list can be typed and added with Enter.
+     * Backspace in the empty field removes the last tag.
+     */
+    function enhanceMulti(select) {
+        select.classList.add('selectized');
+        select.style.display = 'none';
+        select.tabIndex = -1;
+
+        var control = element('div', 'lu-selectize-control lu-selectize-tagger multi plugin-remove_button');
+        var box = element('div', 'lu-selectize-input lu-form-control items not-full has-options');
+        var search = element('input', '');
+        search.type = 'text';
+        search.autocomplete = 'off';
+        search.placeholder = select.getAttribute('data-placeholder') || '';
+        var dropdown = element('div', 'lu-selectize-dropdown multi lu-form-control');
+        dropdown.style.display = 'none';
+        var list = element('div', 'lu-selectize-dropdown-content');
+        dropdown.appendChild(list);
+        box.appendChild(search);
+        control.appendChild(box);
+        control.appendChild(dropdown);
+        select.parentNode.insertBefore(control, select.nextSibling);
+
+        var shown = [];
+        var active = 0;
+
+        function changed() {
+            select.dispatchEvent(new Event('input', { bubbles: true }));
+            select.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+
+        function render() {
+            Array.prototype.slice.call(box.querySelectorAll('.item')).forEach(function (tag) { tag.remove(); });
+            var any = false;
+            Array.prototype.forEach.call(select.options, function (option) {
+                if (!option.selected) {
+                    return;
+                }
+                any = true;
+                var tag = element('div', 'item');
+                tag.setAttribute('data-value', option.value);
+                tag.textContent = option.textContent;
+                var remove = element('a', 'remove');
+                remove.href = '#';
+                remove.tabIndex = -1;
+                remove.textContent = '×';
+                remove.addEventListener('mousedown', function (event) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    option.selected = false;
+                    render();
+                    changed();
+                });
+                tag.appendChild(remove);
+                box.insertBefore(tag, search);
+            });
+            box.classList.toggle('has-items', any);
+            search.placeholder = any ? '' : (select.getAttribute('data-placeholder') || '');
+            search.style.width = any ? Math.max(4, (search.value.length + 1) * 8) + 'px' : '';
+        }
+
+        function fill() {
+            var query = search.value.trim().toLowerCase();
+            list.textContent = '';
+            shown = [];
+            Array.prototype.forEach.call(select.options, function (option) {
+                if (option.selected || option.textContent === '' || (query !== '' && option.textContent.toLowerCase().indexOf(query) === -1)) {
+                    return;
+                }
+                var row = element('div', 'option');
+                row.setAttribute('data-selectable', '');
+                row.textContent = option.textContent;
+                list.appendChild(row);
+                shown.push(option);
+            });
+            active = 0;
+            highlight();
+            dropdown.style.display = shown.length ? 'block' : 'none';
+        }
+
+        function highlight() {
+            Array.prototype.forEach.call(list.children, function (row, index) {
+                row.classList.toggle('active', index === active);
+            });
+        }
+
+        function open() {
+            if (openOne && openOne !== close) {
+                openOne();
+            }
+            openOne = close;
+            dropdown.style.visibility = 'visible';
+            dropdown.style.width = box.offsetWidth + 'px';
+            dropdown.style.top = box.offsetHeight + 'px';
+            dropdown.style.left = '0px';
+            box.classList.add('focus', 'input-active', 'dropdown-active');
+            fill();
+        }
+
+        function close() {
+            if (openOne === close) {
+                openOne = null;
+            }
+            dropdown.style.display = 'none';
+            box.classList.remove('focus', 'input-active', 'dropdown-active');
+            search.value = '';
+        }
+
+        function add(option) {
+            option.selected = true;
+            search.value = '';
+            render();
+            changed();
+            open();
+        }
+
+        box.addEventListener('mousedown', function (event) {
+            if (event.target !== search) {
+                event.preventDefault();
+            }
+            search.focus();
+            open();
+        });
+        search.addEventListener('focus', open);
+        search.addEventListener('input', function () {
+            search.style.width = Math.max(4, (search.value.length + 1) * 8) + 'px';
+            open();
+        });
+        search.addEventListener('keydown', function (event) {
+            if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+                event.preventDefault();
+                active = Math.min(shown.length - 1, Math.max(0, active + (event.key === 'ArrowDown' ? 1 : -1)));
+                highlight();
+            } else if (event.key === 'Enter') {
+                event.preventDefault();
+                var typed = search.value.trim();
+                if (shown[active]) {
+                    add(shown[active]);
+                } else if (typed !== '' && select.hasAttribute('data-create')) {
+                    // a value that is not in the list
+                    var option = document.createElement('option');
+                    option.value = typed;
+                    option.textContent = typed;
+                    select.appendChild(option);
+                    add(option);
+                }
+            } else if (event.key === 'Backspace' && search.value === '') {
+                var chosen = Array.prototype.filter.call(select.options, function (option) { return option.selected; });
+                if (chosen.length) {
+                    chosen[chosen.length - 1].selected = false;
+                    render();
+                    changed();
+                    open();
+                }
+            } else if (event.key === 'Escape' || event.key === 'Tab') {
+                close();
+            }
+        });
+        list.addEventListener('mousedown', function (event) {
+            event.preventDefault();
+            var row = event.target.closest('.option');
+            if (row) {
+                add(shown[Array.prototype.indexOf.call(list.children, row)]);
+            }
+        });
+
+        render();
+    }
+
     // a click anywhere else closes the open dropdown
     document.addEventListener('mousedown', function (event) {
         if (openOne && !(event.target.closest && event.target.closest('.lu-selectize-control'))) {
@@ -223,6 +395,7 @@
 
     function enhanceAll() {
         Array.prototype.forEach.call(document.querySelectorAll(SELECTOR), enhance);
+        Array.prototype.forEach.call(document.querySelectorAll(MULTI), enhanceMulti);
     }
 
     if (document.readyState === 'loading') {

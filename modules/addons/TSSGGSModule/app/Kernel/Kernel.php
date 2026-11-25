@@ -49,9 +49,19 @@ final class Kernel
         return is_file(self::path('app', 'Pages', ucfirst($area), ucfirst($page) . '.php')) && class_exists($class) ? $class : null;
     }
 
-    public static function handles(string $area, $page): bool
+    /**
+     * @param array|null $query the request's query string; a page that is only partly moved (Settings) says through
+     *                          its static serves($query) which of its screens the kernel serves already
+     */
+    public static function handles(string $area, $page, array $query = null): bool
     {
-        return is_string($page) && self::pageClass($area, $page) !== null;
+        $class = is_string($page) ? self::pageClass($area, $page) : null;
+        if($class === null)
+        {
+            return false;
+        }
+
+        return !method_exists($class, 'serves') || $class::serves($query ?? $_GET);
     }
 
     /**

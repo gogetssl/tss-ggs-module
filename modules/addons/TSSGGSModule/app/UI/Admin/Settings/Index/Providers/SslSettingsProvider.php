@@ -2,6 +2,7 @@
 
 namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Providers;
 
+use ModulesGarden\TSSGGSModule\App\Libs\Settings\GeneralSettingsProvider;
 use ModulesGarden\TSSGGSModule\App\Libs\AutoInstall\AutoInstallHelpers;
 use ModulesGarden\TSSGGSModule\App\Libs\Support\GeneralSettings;
 use ModulesGarden\TSSGGSModule\App\Libs\Certificates\IssuedMessage;

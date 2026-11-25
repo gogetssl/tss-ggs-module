@@ -673,3 +673,6 @@
 #layers2 .lu-selectize-input.lu-is-error { border-color: #d4183d !important; }
 #layers2 .tssggs-badge { margin: 0 3px 3px 0; }
 #layers2 .tssggs-manage { white-space: nowrap; font-size: 12px; }
+/* the "?" beside a field label: its text shows on hover or focus */
+#layers2 .tssggs-tip { position: relative; cursor: help; }
+#layers2 .tssggs-tip:hover::after, #layers2 .tssggs-tip:focus::after { content: attr(data-title); position: absolute; z-index: 30; left: 50%; bottom: calc(100% + 8px); transform: translateX(-50%); width: max-content; max-width: 320px; padding: 8px 10px; border-radius: 6px; background: #25282d; color: #fff; font: 400 12px/1.45 inherit; font-style: normal; text-align: left; white-space: normal; box-shadow: 0 4px 14px rgba(0,0,0,.18); }

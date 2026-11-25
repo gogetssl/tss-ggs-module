@@ -50,6 +50,19 @@ final class Request
         return $this->post[$name] ?? $this->query[$name] ?? $default;
     }
 
+    /**
+     * @return array everything a form posted, as typed: WHMCS hands request values HTML-encoded (' arrives as &#039;),
+     *               which would be saved into the settings; the token and the routing values are left out
+     */
+    public function posted(): array
+    {
+        $decode = function($value) use (&$decode) {
+            return is_array($value) ? array_map($decode, $value) : html_entity_decode((string)$value, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        };
+
+        return $decode(array_diff_key($this->post, array_flip(['token', 'module', 'mg-page', 'mg-action'])));
+    }
+
     public function string(string $name, string $default = ''): string
     {
         $value = $this->input($name, $default);

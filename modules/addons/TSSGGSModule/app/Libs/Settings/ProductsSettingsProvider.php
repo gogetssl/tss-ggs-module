@@ -1,17 +1,18 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Providers;
+namespace ModulesGarden\TSSGGSModule\App\Libs\Settings;
 
 use ModulesGarden\TSSGGSModule\App\Libs\Products\CatalogueSync;
 use ModulesGarden\TSSGGSModule\App\Libs\Support\GeneralSettings;
-use ModulesGarden\TSSGGSModule\Core\DataProviders\CrudProvider;
 
 /**
  * Settings > Products: the catalogue sync mode and its e-mail, both in the general settings (the same keys the
  * Finance page used before)
  */
-class ProductsSettingsProvider extends CrudProvider
+class ProductsSettingsProvider extends Provider
 {
+    const TEXTS = 'admin.settings.index.providers.products_settings_provider';
+
     public function read()
     {
         $this->data['catalogueSyncMode']     = CatalogueSync::mode();

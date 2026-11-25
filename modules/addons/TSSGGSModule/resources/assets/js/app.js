@@ -143,6 +143,18 @@
         }
     });
 
+    /* ---- settings screens: the Save bar (core/savebar.js) learns how the save went ---- */
+
+    document.addEventListener('htmx:afterSettle', function (event) {
+        var config = event.detail.requestConfig;
+        var form = document.querySelector('#layers2 form[data-saved]');
+        if (form && config && String(config.verb).toLowerCase() === 'post') {
+            document.dispatchEvent(new CustomEvent('tssggs-form-result', { detail: { ok: form.getAttribute('data-saved') === '1' } }));
+            var result = form.querySelector('[role=status]');
+            if (result && result.scrollIntoView) { result.scrollIntoView({ block: 'center' }); }
+        }
+    });
+
     /* ---- htmx answers ---- */
 
     // Only the kernel's own answers go into the page (header X-Module-Kernel): its errors (expired token, exception)

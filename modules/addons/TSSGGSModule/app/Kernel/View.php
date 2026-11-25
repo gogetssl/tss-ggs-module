@@ -19,6 +19,7 @@ use ModulesGarden\TSSGGSModule\App\Libs\Support\Icons;
  *   {url page='settings'}             link to another page
  *   {tile icon='check' tone='ok'}     square icon tile
  *   {pill tone='ok' label=$text}      status pill
+ *   {tip key='x_description'}         the "?" hint beside a label
  */
 class View
 {
@@ -63,6 +64,26 @@ class View
 
             return '<span class="tssggs-pill is-' . preg_replace('/[^a-z]/', '', (string)($params['tone'] ?? 'muted')) . '"' . ($title !== '' ? ' title="' . $e($title) . '"' : '') . '>'
                 . ($icon !== '' ? Icons::svg($icon) : '<span class="tssggs-pill__dot"></span>') . $e($params['label'] ?? '') . '</span>';
+        });
+
+        // {tip key='...description'} or {tip text=$hint}: the "?" beside a label, with the text as its hint; nothing
+        // when the key has no text
+        $smarty->registerPlugin('function', 'tip', function(array $params) use ($page) {
+            $key  = (string)($params['key'] ?? '');
+            $text = (string)($params['text'] ?? '');
+            if($text === '' && $key !== '')
+            {
+                $own  = $page::LANG . '.' . $key;
+                $text = $page->lang()->has($own) ? $page->lang()->get($own) : ($page->lang()->has($key) ? $page->lang()->get($key) : '');
+            }
+            if($text === '')
+            {
+                return '';
+            }
+            $text = htmlspecialchars($text, ENT_QUOTES, 'UTF-8');
+
+            return '<i class="lu-i-c-2x lu-form-tooltip-helper lu-tooltip tssggs-icobox tssggs-tip" tabindex="0" data-title="' . $text . '" aria-label="' . $text . '">'
+                . Icons::svg('help-circle-outline') . '</i>';
         });
 
         // in every template; a page's own data of the same name wins
