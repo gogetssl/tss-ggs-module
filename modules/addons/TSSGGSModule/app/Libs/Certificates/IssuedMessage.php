@@ -270,7 +270,7 @@ class IssuedMessage
         $language = self::language($language);
         if(!array_key_exists($language, self::$defaults))
         {
-            $dir  = dirname(__DIR__, 4) . DIRECTORY_SEPARATOR . 'servers' . DIRECTORY_SEPARATOR . 'TSSGGSModule' . DIRECTORY_SEPARATOR . 'langs' . DIRECTORY_SEPARATOR;
+            $dir  = dirname(__DIR__, 5) . DIRECTORY_SEPARATOR . 'servers' . DIRECTORY_SEPARATOR . 'TSSGGSModule' . DIRECTORY_SEPARATOR . 'langs' . DIRECTORY_SEPARATOR;
             $text = null;
             foreach([$dir . $language . '.php', $dir . 'overrides' . DIRECTORY_SEPARATOR . $language . '.php'] as $file)
             {

@@ -331,8 +331,8 @@ class Helpers
     public static function getChecksumData()
     {
         $rootDirs = [
-            dirname(__DIR__, 2),
-            dirname(__DIR__, 4) . '/servers/TSSGGSModule'
+            dirname(__DIR__, 3),
+            dirname(__DIR__, 5) . '/servers/TSSGGSModule'
         ];
 
         $excludedDirs = [
@@ -371,7 +371,7 @@ class Helpers
 
     public static function compareChecksumData($checksumData = false, $previousChecksumData = false)
     {
-        $checksumFile = dirname(__DIR__, 2) . '/storage/app/checksum.json';
+        $checksumFile = dirname(__DIR__, 3) . '/storage/app/checksum.json';
 
         if(!$checksumData)
         {
@@ -428,7 +428,7 @@ class Helpers
 
     public static function updateChecksumData($checksumData = false)
     {
-        $checksumFile = dirname(__DIR__, 2) . '/storage/app/checksum.json';
+        $checksumFile = dirname(__DIR__, 3) . '/storage/app/checksum.json';
 
         if(!$checksumData)
         {

@@ -78,7 +78,7 @@ class SystemRequirements
 
     protected function checkStorage(): array
     {
-        $root     = dirname(__DIR__, 2);
+        $root     = dirname(__DIR__, 3);
         $problems = [];
         foreach(self::STORAGE_DIRS as $dir)
         {

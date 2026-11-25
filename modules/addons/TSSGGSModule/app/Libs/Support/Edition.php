@@ -44,7 +44,7 @@ class Edition
     {
         if(self::$edition === null)
         {
-            $config        = @include __DIR__ . '/../Config/edition.php';
+            $config        = @include __DIR__ . '/../../Config/edition.php';
             $edition       = is_array($config) && isset($config['edition']) ? strtolower(trim((string)$config['edition'])) : '';
             self::$edition = isset(self::$editions[$edition]) ? $edition : self::GGS;
         }
@@ -221,6 +221,6 @@ class Edition
      */
     public static function folder()
     {
-        return basename(dirname(__DIR__, 2));
+        return basename(dirname(__DIR__, 3));
     }
 }

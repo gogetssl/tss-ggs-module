@@ -68,7 +68,7 @@ class AdminText
     /** english, then the language, then the overrides of both */
     private static function load(string $language): array
     {
-        $dir   = dirname(__DIR__, 4) . DIRECTORY_SEPARATOR . 'servers' . DIRECTORY_SEPARATOR . 'TSSGGSModule' . DIRECTORY_SEPARATOR . 'langs' . DIRECTORY_SEPARATOR . 'admin';
+        $dir   = dirname(__DIR__, 5) . DIRECTORY_SEPARATOR . 'servers' . DIRECTORY_SEPARATOR . 'TSSGGSModule' . DIRECTORY_SEPARATOR . 'langs' . DIRECTORY_SEPARATOR . 'admin';
         $texts = [];
         foreach(array_unique(['english', $language]) as $name)
         {
