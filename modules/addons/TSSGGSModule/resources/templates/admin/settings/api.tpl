@@ -3,7 +3,7 @@
     (a switch plus its credentials - only its exclusive products are offered then).
     $extra (App\Libs\Settings\ApiScreen): accounts (vendor, own, section, icon, hasLive, hasTest), scope.
     A stored token is never sent back to the page: its field shows a mask, and an empty field keeps the stored token.
-    Test Connection (in the Save bar, screen.tpl) puts its result into the box at the end of this template.
+    Test Connection (in the Save bar, screen.tpl) puts its result into the box above the fields.
 *}
 <div x-data="{ connect: {if $data.connectOther}true{else}false{/if} }" @change="if ($event.target.name === 'connectOther') { connect = $event.target.value === 'on' }">
     {foreach $extra.accounts as $account}
@@ -32,5 +32,4 @@
 
     {* with Connect on, the buttons work on both accounts *}
     <span x-show="connect" x-cloak><div class="tssggs-sec__desc tssggs-api-scope"><p>{$extra.scope}</p></div></span>
-    <div id="tssggs-settings-test"></div>
 </div>
