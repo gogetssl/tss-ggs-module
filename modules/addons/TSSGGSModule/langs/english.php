@@ -1712,3 +1712,8 @@ $_LANG['admin.module_update.continue'] = 'Continue';
 $_LANG['admin.settings.index.widgets.sidebar.productsSettings'] = 'Products';
 $_LANG['admin.settings.index.widgets.products_settings_widget.title'] = 'Products';
 $_LANG['admin.settings.index.widgets.products_settings_widget.subtitle'] = 'How your product list follows the provider\'s catalogue';
+
+// pages on the module's own kernel
+$_LANG['admin.kernel.notFound']     = 'This page does not exist.';
+$_LANG['admin.kernel.tokenExpired'] = 'Your session token has expired. Reload the page and try again.';
+$_LANG['admin.kernel.error']        = 'The page could not be shown: :message';

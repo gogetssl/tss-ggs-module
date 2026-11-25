@@ -1703,3 +1703,8 @@ $_LANG['admin.module_update.continue'] = 'Weiter';
 $_LANG['admin.settings.index.widgets.sidebar.productsSettings'] = 'Produkte';
 $_LANG['admin.settings.index.widgets.products_settings_widget.title'] = 'Produkte';
 $_LANG['admin.settings.index.widgets.products_settings_widget.subtitle'] = 'Wie Ihre Produktliste dem Katalog des Anbieters folgt';
+
+// pages on the module's own kernel
+$_LANG['admin.kernel.notFound']     = 'Diese Seite existiert nicht.';
+$_LANG['admin.kernel.tokenExpired'] = 'Ihr Sitzungstoken ist abgelaufen. Laden Sie die Seite neu und versuchen Sie es erneut.';
+$_LANG['admin.kernel.error']        = 'Die Seite konnte nicht angezeigt werden: :message';

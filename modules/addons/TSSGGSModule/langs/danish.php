@@ -1705,3 +1705,8 @@ $_LANG['admin.module_update.continue'] = 'Fortsæt';
 $_LANG['admin.settings.index.widgets.sidebar.productsSettings'] = 'Produkter';
 $_LANG['admin.settings.index.widgets.products_settings_widget.title'] = 'Produkter';
 $_LANG['admin.settings.index.widgets.products_settings_widget.subtitle'] = 'Hvordan din produktliste følger udbyderens katalog';
+
+// pages on the module's own kernel
+$_LANG['admin.kernel.notFound']     = 'Denne side findes ikke.';
+$_LANG['admin.kernel.tokenExpired'] = 'Dit sessionstoken er udløbet. Genindlæs siden, og prøv igen.';
+$_LANG['admin.kernel.error']        = 'Siden kunne ikke vises: :message';

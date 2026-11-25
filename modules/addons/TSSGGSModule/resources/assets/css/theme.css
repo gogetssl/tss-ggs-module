@@ -634,3 +634,12 @@
 #layers2 .tssggs-cronlive__jobs li.is-idle span { color: var(--cl-idle); }
 @media (max-width: 640px) { #layers2 .tssggs-cronlive__top { flex-wrap: wrap; padding: 16px; } #layers2 .tssggs-cronlive__next { flex-basis: 100%; padding-left: 30px; } #layers2 .tssggs-cronlive__jobs { padding: 12px 16px; } #layers2 .tssggs-cronlive__sum { margin-left: 0; } }
 @media (prefers-reduced-motion: reduce) { #layers2 .tssggs-cronlive__dot, #layers2 .tssggs-cronlive li span { animation: none !important; } }
+
+/* ---- pages on the new kernel (htmx + Alpine) ---- */
+#layers2 .tssggs-loading { opacity: .55; transition: opacity .15s ease; }
+#layers2 .tssggs-log__filters { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 12px; }
+#layers2 .tssggs-log__pager { display: flex; gap: 6px; align-items: center; }
+#layers2 .tssggs-log__type { font-weight: 600; color: #333; }
+#layers2 .tssggs-log__type--success { color: #1f7a4d; }
+#layers2 .tssggs-log__type--error { color: #a8322d; }
+#layers2 .tssggs-log__type--info { color: #5b6673; }
