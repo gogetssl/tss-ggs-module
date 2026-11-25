@@ -2,7 +2,6 @@
 
 namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Concerns;
 
-use ModulesGarden\TSSGGSModule\Components\Button\ButtonPrimary;
 use ModulesGarden\TSSGGSModule\Components\Button\ButtonSuccess;
 use ModulesGarden\TSSGGSModule\Components\Text\Text;
 use ModulesGarden\TSSGGSModule\Components\Toolbar\Toolbar;

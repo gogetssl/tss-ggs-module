@@ -12,7 +12,6 @@ use ModulesGarden\TSSGGSModule\Packages\Logs\Support\Facades\Logger;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use WHMCS\Database\Capsule;
 
 /**
  * Class Sample

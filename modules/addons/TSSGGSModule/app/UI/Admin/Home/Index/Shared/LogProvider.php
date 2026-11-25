@@ -7,7 +7,6 @@ use ModulesGarden\TSSGGSModule\App\Libs\Helpers;
 use ModulesGarden\TSSGGSModule\App\Models\CronCheck;
 use ModulesGarden\TSSGGSModule\Core\Translation\TranslatorTrait;
 
-use Illuminate\Database\Capsule\Manager as Capsule;
 use ModulesGarden\TSSGGSModule\Packages\Logs\Models\Logs;
 
 class LogProvider

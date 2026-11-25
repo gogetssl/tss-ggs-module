@@ -4,7 +4,6 @@ namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Providers;
 
 use ModulesGarden\TSSGGSModule\App\Libs\GeneralSettings;
 use ModulesGarden\TSSGGSModule\Core\DataProviders\CrudProvider;
-use WHMCS\Database\Capsule;
 
 class GeneralSettingsProvider extends CrudProvider
 {

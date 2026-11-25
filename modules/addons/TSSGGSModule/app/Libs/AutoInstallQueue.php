@@ -2,7 +2,6 @@
 
 namespace ModulesGarden\TSSGGSModule\App\Libs;
 
-use ModulesGarden\TSSGGSModule\App\Libs\Edition;
 
 use WHMCS\Database\Capsule;
 

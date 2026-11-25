@@ -3,10 +3,8 @@
 namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Products\Index;
 
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Products\Index\DataTables\Products\ArrayDataProvider\DataTable;
-use ModulesGarden\TSSGGSModule\Components\Alert\Alert;
 use ModulesGarden\TSSGGSModule\App\Http\Admin\Products as ProductsController;
 use ModulesGarden\TSSGGSModule\Components\Alert\AlertDanger;
-use ModulesGarden\TSSGGSModule\Components\Alert\AlertInfo;
 use ModulesGarden\TSSGGSModule\Components\Alert\AlertSuccess;
 use ModulesGarden\TSSGGSModule\Components\Container\Container;
 use ModulesGarden\TSSGGSModule\App\Libs\Icons;

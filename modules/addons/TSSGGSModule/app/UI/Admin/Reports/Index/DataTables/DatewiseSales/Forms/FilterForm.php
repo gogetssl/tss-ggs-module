@@ -5,7 +5,6 @@ namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Reports\Index\DataTables\Datew
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Reports\Index\DataTables\DatewiseSales\Providers\FilterProvider;
 
 use ModulesGarden\TSSGGSModule\Components\Button\ButtonBasic;
-use ModulesGarden\TSSGGSModule\Components\Button\ButtonPrimary;
 use ModulesGarden\TSSGGSModule\Components\Button\ButtonSuccess;
 use ModulesGarden\TSSGGSModule\Components\DatePicker\DatePicker;
 use ModulesGarden\TSSGGSModule\Components\Dropdown\Dropdown;

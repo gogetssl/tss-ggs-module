@@ -5,7 +5,6 @@ namespace ModulesGarden\TSSGGSModule\App\Libs;
 use ModulesGarden\TSSGGSModule\App\Models\CronCheck;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Shared\CronStatus;
 use ModulesGarden\TSSGGSModule\Core\ModuleConstants;
-use ModulesGarden\TSSGGSModule\Packages\ModuleSettings\Models\ModuleSettings;
 
 /**
  * Resellers without shell access (or without the module's own cron entry) still get the module's jobs: WHMCS's system

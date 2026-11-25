@@ -10,20 +10,17 @@ use ModulesGarden\TSSGGSModule\App\Models\RemoteProduct;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Products\Index\DataTables\Products\Modals\ImportModal;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Products\Index\DataTables\Products\Modals\ConfigurationModal;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Products\Index\DataTables\Products\Modals\ReSyncModal;
-use ModulesGarden\TSSGGSModule\Components\Button\Button;
 use ModulesGarden\TSSGGSModule\Components\Button\ButtonPrimary;
 use ModulesGarden\TSSGGSModule\Components\Button\ButtonSuccess;
 use ModulesGarden\TSSGGSModule\Components\DataTable\Column;
 use ModulesGarden\TSSGGSModule\Components\IconButton\IconButton;
 use ModulesGarden\TSSGGSModule\Components\IconButton\IconButtonEdit;
-use ModulesGarden\TSSGGSModule\Components\Label\LabelSuccess;
 use ModulesGarden\TSSGGSModule\Components\VisibilityWrapper\VisibilityWrapper;
 use ModulesGarden\TSSGGSModule\Core\Components\Actions\ModalLoad;
 use ModulesGarden\TSSGGSModule\Core\Contracts\Components\AdminAreaInterface;
 use ModulesGarden\TSSGGSModule\Core\Contracts\Components\AjaxComponentInterface;
 use ModulesGarden\TSSGGSModule\Core\DataProviders\ArrayDataProvider;
 use ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Product;
-use WHMCS\User\Client;
 
 class DataTable extends \ModulesGarden\TSSGGSModule\Components\DataTable\DataTable implements AdminAreaInterface, AjaxComponentInterface
 {

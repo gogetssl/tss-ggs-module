@@ -1,0 +1,507 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Class ModulesGarden\\TSSGGSModule\\Packages\\AppCenter\\Libs\\App\\BaseApp not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: modules/addons/TSSGGSModule/app/Config/appCenter.php
+
+		-
+			message: '#^Parameter \$app of anonymous function has invalid type ModulesGarden\\VultrVps\\Packages\\AppCenter\\Libs\\Models\\App\.$#'
+			identifier: class.notFound
+			count: 1
+			path: modules/addons/TSSGGSModule/app/Config/appCenter.php
+
+		-
+			message: '#^Parameter \$formData of anonymous function has invalid type ModulesGarden\\VultrVps\\Core\\Data\\Container\.$#'
+			identifier: class.notFound
+			count: 1
+			path: modules/addons/TSSGGSModule/app/Config/appCenter.php
+
+		-
+			message: '#^Class ModulesGarden\\TSSGGSModule\\Core\\WHMCS\\Url referenced with incorrect case\: ModulesGarden\\TSSGGSModule\\Core\\WHMCS\\URL\.$#'
+			identifier: class.nameCase
+			count: 1
+			path: modules/addons/TSSGGSModule/app/Config/product.php
+
+		-
+			message: '#^Instantiated class ModulesGarden\\TSSGGSModule\\Packages\\Scheduler\\Models\\Command not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: modules/addons/TSSGGSModule/app/Config/scheduler.php
+
+		-
+			message: '#^Result of method Symfony\\Component\\Console\\Output\\OutputInterface\:\:write\(\) \(void\) is used\.$#'
+			identifier: method.void
+			count: 1
+			path: modules/addons/TSSGGSModule/app/Cron/RenewalNotifyCertificate.php
+
+		-
+			message: '#^Result of method Symfony\\Component\\Console\\Style\\SymfonyStyle\:\:title\(\) \(void\) is used\.$#'
+			identifier: method.void
+			count: 1
+			path: modules/addons/TSSGGSModule/app/Cron/RenewalNotifyCertificate.php
+
+		-
+			message: '#^Result of method Symfony\\Component\\Console\\Output\\OutputInterface\:\:write\(\) \(void\) is used\.$#'
+			identifier: method.void
+			count: 1
+			path: modules/addons/TSSGGSModule/app/Cron/SSLCertificates.php
+
+		-
+			message: '#^Result of method Symfony\\Component\\Console\\Style\\SymfonyStyle\:\:title\(\) \(void\) is used\.$#'
+			identifier: method.void
+			count: 1
+			path: modules/addons/TSSGGSModule/app/Cron/SSLCertificates.php
+
+		-
+			message: '#^Call to an undefined method ModulesGarden\\TSSGGSModule\\Packages\\ModuleSettings\\Models\\ModuleSettings\:\:pluck\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: modules/addons/TSSGGSModule/app/Helpers/ModuleSettings.php
+
+		-
+			message: '''
+				#^PHPDoc tag @var has invalid value \(\$toReturn is a HTML integration code \(or null if no integration was made\)
+				you can add your code to this var before returning its content,
+				do not overwrite this var\!\)\: Unexpected token "\$toReturn", expected type at offset 20 on line 2$#
+			'''
+			identifier: phpDoc.parseError
+			count: 1
+			path: modules/addons/TSSGGSModule/app/Hooks/AdminAreaFooterOutput.php
+
+		-
+			message: '#^Variable \$hookManager might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: modules/addons/TSSGGSModule/app/Hooks/AdminAreaFooterOutput.php
+
+		-
+			message: '#^Variable \$hookManager might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: modules/addons/TSSGGSModule/app/Hooks/AfterCronJob.php
+
+		-
+			message: '''
+				#^PHPDoc tag @var has invalid value \(\$toReturn is a HTML integration code \(or null if no integration was made\)
+				you can add your code to this var before returning its content,
+				do not overwrite this var\!\)\: Unexpected token "\$toReturn", expected type at offset 20 on line 2$#
+			'''
+			identifier: phpDoc.parseError
+			count: 1
+			path: modules/addons/TSSGGSModule/app/Hooks/ClientAreaFooterOutput.php
+
+		-
+			message: '#^Variable \$hookManager might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: modules/addons/TSSGGSModule/app/Hooks/ClientAreaFooterOutput.php
+
+		-
+			message: '#^Variable \$hookManager might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: modules/addons/TSSGGSModule/app/Hooks/ClientAreaPrimarySidebar.php
+
+		-
+			message: '#^Variable \$hookManager might not be defined\.$#'
+			identifier: variable.undefined
+			count: 2
+			path: modules/addons/TSSGGSModule/app/Hooks/DailyCronJob.php
+
+		-
+			message: '#^Variable \$hookManager might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: modules/addons/TSSGGSModule/app/Hooks/InvoicePaid.php
+
+		-
+			message: '#^Variable \$hookManager might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: modules/addons/TSSGGSModule/app/Hooks/ShoppingCartValidateCheckout.php
+
+		-
+			message: '#^Variable \$hookManager might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: modules/addons/TSSGGSModule/app/Hooks/ShoppingCartValidateProductUpdate.php
+
+		-
+			message: '#^Class ModulesGarden\\TSSGGSModule\\Core\\Http\\JsonResponse does not have a constructor and must be instantiated without any parameters\.$#'
+			identifier: new.noConstructor
+			count: 2
+			path: modules/addons/TSSGGSModule/app/Http/Admin/Migration.php
+
+		-
+			message: '#^Used function ModulesGarden\\TSSGGSModule\\Core\\Helper not found\.$#'
+			identifier: function.notFound
+			count: 1
+			path: modules/addons/TSSGGSModule/app/Http/Admin/Statistics.php
+
+		-
+			message: '#^Path in require_once\(\) "/home/whmcs/qa/src/includes/modulefunctions\.php" is not a file or it does not exist\.$#'
+			identifier: requireOnce.fileNotFound
+			count: 1
+			path: modules/addons/TSSGGSModule/app/Libs/AddonCertificates.php
+
+		-
+			message: '#^Path in require_once\(\) "/home/whmcs/qa/src/includes/clientfunctions\.php" is not a file or it does not exist\.$#'
+			identifier: requireOnce.fileNotFound
+			count: 1
+			path: modules/addons/TSSGGSModule/app/Libs/RenewalPrices.php
+
+		-
+			message: '#^Path in require_once\(\) "/home/whmcs/qa/src/includes/configoptionsfunctions\.php" is not a file or it does not exist\.$#'
+			identifier: requireOnce.fileNotFound
+			count: 1
+			path: modules/addons/TSSGGSModule/app/Libs/RenewalPrices.php
+
+		-
+			message: '#^Path in require_once\(\) "/home/whmcs/qa/src/includes/invoicefunctions\.php" is not a file or it does not exist\.$#'
+			identifier: requireOnce.fileNotFound
+			count: 1
+			path: modules/addons/TSSGGSModule/app/Libs/RenewalPrices.php
+
+		-
+			message: '#^Path in require_once\(\) "/home/whmcs/qa/src/includes/orderfunctions\.php" is not a file or it does not exist\.$#'
+			identifier: requireOnce.fileNotFound
+			count: 1
+			path: modules/addons/TSSGGSModule/app/Libs/RenewalPrices.php
+
+		-
+			message: '#^Cannot cast ModulesGarden\\TSSGGSModule\\Core\\Support\\Facades\\Config to string\.$#'
+			identifier: cast.string
+			count: 1
+			path: modules/addons/TSSGGSModule/app/Libs/Update/State.php
+
+		-
+			message: '#^Path in require_once\(\) "/home/whmcs/qa/src/includes/invoicefunctions\.php" is not a file or it does not exist\.$#'
+			identifier: requireOnce.fileNotFound
+			count: 1
+			path: modules/addons/TSSGGSModule/app/Libs/UpgradePricing.php
+
+		-
+			message: '#^Path in require_once\(\) "/home/whmcs/qa/src/includes/invoicefunctions\.php" is not a file or it does not exist\.$#'
+			identifier: requireOnce.fileNotFound
+			count: 1
+			path: modules/addons/TSSGGSModule/app/Libs/ZeroInvoice.php
+
+		-
+			message: '#^Call to an undefined method ModulesGarden\\TSSGGSModule\\App\\Migration\\Readers\\LegacyReaderInterface\:\:filesPresent\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: modules/addons/TSSGGSModule/app/Migration/Detector.php
+
+		-
+			message: '#^Call to an undefined method ModulesGarden\\TSSGGSModule\\App\\Migration\\Readers\\LegacyReaderInterface\:\:isAddonActive\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: modules/addons/TSSGGSModule/app/Migration/Detector.php
+
+		-
+			message: '#^Call to an undefined method ModulesGarden\\TSSGGSModule\\App\\Migration\\Readers\\LegacyReaderInterface\:\:productIds\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: modules/addons/TSSGGSModule/app/Migration/Detector.php
+
+		-
+			message: '#^Path in require_once\(\) "/home/whmcs/qa/src/includes/modulefunctions\.php" is not a file or it does not exist\.$#'
+			identifier: requireOnce.fileNotFound
+			count: 1
+			path: modules/addons/TSSGGSModule/app/Migration/LegacyBlock.php
+
+		-
+			message: '#^Call to an undefined method ModulesGarden\\TSSGGSModule\\Core\\Components\\FormFields\\FormField\:\:setDefaultValueAsFirstOption\(\)\.$#'
+			identifier: method.notFound
+			count: 5
+			path: modules/addons/TSSGGSModule/app/UI/Actions/ConfigOptions.php
+
+		-
+			message: '#^Call to an undefined method ModulesGarden\\TSSGGSModule\\Core\\Components\\FormFields\\FormField\:\:setOptions\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: modules/addons/TSSGGSModule/app/UI/Actions/ConfigOptions.php
+
+		-
+			message: '#^Class ModulesGarden\\TSSGGSModule\\Core\\WHMCS\\Url referenced with incorrect case\: ModulesGarden\\TSSGGSModule\\Core\\WHMCS\\URL\.$#'
+			identifier: class.nameCase
+			count: 1
+			path: modules/addons/TSSGGSModule/app/UI/Admin/AutomationQueue/Index/DataTables/Queue/DataTable.php
+
+		-
+			message: '#^Call to an undefined method ModulesGarden\\TSSGGSModule\\Core\\Components\\AbstractComponent\:\:setTitle\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: modules/addons/TSSGGSModule/app/UI/Admin/Configuration/Shared/Forms/FinalizeForm.php
+
+		-
+			message: '#^Call to an undefined method ModulesGarden\\TSSGGSModule\\Core\\Components\\AbstractComponent\:\:setTitle\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: modules/addons/TSSGGSModule/app/UI/Admin/Configuration/Shared/Forms/LegacyChoiceForm.php
+
+		-
+			message: '#^Cannot cast ModulesGarden\\TSSGGSModule\\Core\\Support\\Facades\\Config to string\.$#'
+			identifier: cast.string
+			count: 1
+			path: modules/addons/TSSGGSModule/app/UI/Admin/Configuration/Shared/WizardLayout.php
+
+		-
+			message: '#^Call to an undefined method ModulesGarden\\TSSGGSModule\\Core\\Components\\AbstractComponent\:\:setTitle\(\)\.$#'
+			identifier: method.notFound
+			count: 3
+			path: modules/addons/TSSGGSModule/app/UI/Admin/Home/Index/Forms/ReportingForm.php
+
+		-
+			message: '#^Cannot cast ModulesGarden\\TSSGGSModule\\Core\\Support\\Facades\\Config to string\.$#'
+			identifier: cast.string
+			count: 1
+			path: modules/addons/TSSGGSModule/app/UI/Admin/Home/Index/HomeContainer.php
+
+		-
+			message: '#^Call to an undefined method WHMCS\\Mail\\Message\:\:addRecipient\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: modules/addons/TSSGGSModule/app/UI/Admin/Home/Index/Providers/ReportingProvider.php
+
+		-
+			message: '#^Call to an undefined method WHMCS\\Mail\\Message\:\:addStringAttachment\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: modules/addons/TSSGGSModule/app/UI/Admin/Home/Index/Providers/ReportingProvider.php
+
+		-
+			message: '#^Call to an undefined method WHMCS\\Mail\\Message\:\:clearRecipients\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: modules/addons/TSSGGSModule/app/UI/Admin/Home/Index/Providers/ReportingProvider.php
+
+		-
+			message: '#^Call to an undefined method WHMCS\\Mail\\Message\:\:setBodyFromSmarty\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: modules/addons/TSSGGSModule/app/UI/Admin/Home/Index/Providers/ReportingProvider.php
+
+		-
+			message: '#^Call to an undefined method WHMCS\\Mail\\Message\:\:setFromEmail\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: modules/addons/TSSGGSModule/app/UI/Admin/Home/Index/Providers/ReportingProvider.php
+
+		-
+			message: '#^Call to an undefined method WHMCS\\Mail\\Message\:\:setFromName\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: modules/addons/TSSGGSModule/app/UI/Admin/Home/Index/Providers/ReportingProvider.php
+
+		-
+			message: '#^Call to an undefined method WHMCS\\Mail\\Message\:\:setReplyTo\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: modules/addons/TSSGGSModule/app/UI/Admin/Home/Index/Providers/ReportingProvider.php
+
+		-
+			message: '#^Call to an undefined method WHMCS\\Mail\\Message\:\:setSubject\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: modules/addons/TSSGGSModule/app/UI/Admin/Home/Index/Providers/ReportingProvider.php
+
+		-
+			message: '#^Call to an undefined static method WHMCS\\Module\\Mail\:\:factory\(\)\.$#'
+			identifier: staticMethod.notFound
+			count: 1
+			path: modules/addons/TSSGGSModule/app/UI/Admin/Home/Index/Providers/ReportingProvider.php
+
+		-
+			message: '#^Cannot cast ModulesGarden\\TSSGGSModule\\Core\\Support\\Facades\\Config to string\.$#'
+			identifier: cast.string
+			count: 1
+			path: modules/addons/TSSGGSModule/app/UI/Admin/Home/Index/Providers/ReportingProvider.php
+
+		-
+			message: '#^Cannot cast ModulesGarden\\TSSGGSModule\\Core\\Support\\Facades\\Translator to string\.$#'
+			identifier: cast.string
+			count: 1
+			path: modules/addons/TSSGGSModule/app/UI/Admin/Home/Index/Shared/SalesSummary.php
+
+		-
+			message: '#^Call to an undefined method ModulesGarden\\TSSGGSModule\\Core\\Components\\FormFields\\FormField\:\:setMax\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: modules/addons/TSSGGSModule/app/UI/Admin/Products/Index/DataTables/Products/Forms/ConfigurationForm.php
+
+		-
+			message: '#^Call to an undefined method ModulesGarden\\TSSGGSModule\\Core\\Components\\AbstractComponent\:\:setDefaultValue\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: modules/addons/TSSGGSModule/app/UI/Admin/Products/Index/DataTables/Products/Forms/ImportForm.php
+
+		-
+			message: '#^Variable \$productGroupMode might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: modules/addons/TSSGGSModule/app/UI/Admin/Products/Index/DataTables/Products/Forms/ImportForm.php
+
+		-
+			message: '#^Call to an undefined method ModulesGarden\\TSSGGSModule\\Core\\WHMCS\\Models\\ProductGroup\:\:save\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: modules/addons/TSSGGSModule/app/UI/Admin/Products/Index/DataTables/Products/Providers/ImportProvider.php
+
+		-
+			message: '#^Call to an undefined method ModulesGarden\\TSSGGSModule\\Core\\Components\\AbstractComponent\:\:setDefaultValueAsFirstOption\(\)\.$#'
+			identifier: method.notFound
+			count: 3
+			path: modules/addons/TSSGGSModule/app/UI/Admin/Reports/Index/DataTables/DatewiseSales/Forms/FilterForm.php
+
+		-
+			message: '#^Call to an undefined method ModulesGarden\\TSSGGSModule\\Core\\Components\\AbstractComponent\:\:setTitle\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: modules/addons/TSSGGSModule/app/UI/Admin/Settings/Index/Forms/ApiSettingsForm.php
+
+		-
+			message: '#^Call to an undefined method ModulesGarden\\TSSGGSModule\\Core\\Components\\FormFields\\FormField\:\:setOptions\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: modules/addons/TSSGGSModule/app/UI/Admin/Settings/Index/Forms/ApiSettingsForm.php
+
+		-
+			message: '#^Call to an undefined method ModulesGarden\\TSSGGSModule\\Core\\Components\\AbstractComponent\:\:setTitle\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: modules/addons/TSSGGSModule/app/UI/Admin/Settings/Index/Forms/CronConfigurationForm.php
+
+		-
+			message: '#^Call to an undefined method ModulesGarden\\TSSGGSModule\\Core\\Components\\AbstractComponent\:\:setTitle\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: modules/addons/TSSGGSModule/app/UI/Admin/Settings/Index/Forms/FinanceSettingsForm.php
+
+		-
+			message: '#^Call to an undefined method ModulesGarden\\TSSGGSModule\\Core\\Components\\FormFields\\FormField\:\:setMin\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: modules/addons/TSSGGSModule/app/UI/Admin/Settings/Index/Forms/FinanceSettingsForm.php
+
+		-
+			message: '#^Call to an undefined method ModulesGarden\\TSSGGSModule\\Core\\Components\\AbstractComponent\:\:setTitle\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: modules/addons/TSSGGSModule/app/UI/Admin/Settings/Index/Forms/GeneralSettingsForm.php
+
+		-
+			message: '#^Call to an undefined method ModulesGarden\\TSSGGSModule\\Core\\Components\\FormFields\\FormField\:\:setMultiple\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: modules/addons/TSSGGSModule/app/UI/Admin/Settings/Index/Forms/GeneralSettingsForm.php
+
+		-
+			message: '#^Call to an undefined method ModulesGarden\\TSSGGSModule\\Core\\Components\\AbstractComponent\:\:setTitle\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: modules/addons/TSSGGSModule/app/UI/Admin/Settings/Index/Forms/LogsSettingsForm.php
+
+		-
+			message: '#^Call to an undefined method ModulesGarden\\TSSGGSModule\\Core\\Components\\AbstractComponent\:\:setTitle\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: modules/addons/TSSGGSModule/app/UI/Admin/Settings/Index/Forms/ProductsSettingsForm.php
+
+		-
+			message: '#^Call to an undefined method ModulesGarden\\TSSGGSModule\\Core\\Components\\AbstractComponent\:\:setTitle\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: modules/addons/TSSGGSModule/app/UI/Admin/Settings/Index/Forms/SslSettingsForm.php
+
+		-
+			message: '#^Call to an undefined method ModulesGarden\\TSSGGSModule\\Core\\Components\\FormFields\\FormField\:\:setDefaultValueAsFirstOption\(\)\.$#'
+			identifier: method.notFound
+			count: 7
+			path: modules/addons/TSSGGSModule/app/UI/Admin/Settings/Index/Forms/SslSettingsForm.php
+
+		-
+			message: '#^Call to an undefined static method Illuminate\\Database\\Capsule\\Manager\:\:raw\(\)\.$#'
+			identifier: staticMethod.notFound
+			count: 1
+			path: modules/addons/TSSGGSModule/app/UI/Admin/Statistics/Index/Widgets/ResellersWidget.php
+
+		-
+			message: '#^Call to an undefined method WHMCS\\Utility\\Country\:\:getCountryNameArray\(\)\.$#'
+			identifier: method.notFound
+			count: 5
+			path: modules/servers/TSSGGSModule/app/controllers/server/clientarea/home.php
+
+		-
+			message: '#^Variable \$approverEmail might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: modules/servers/TSSGGSModule/app/controllers/server/clientarea/home.php
+
+		-
+			message: '#^Variable \$decodeKey might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: modules/servers/TSSGGSModule/app/controllers/server/clientarea/home.php
+
+		-
+			message: '#^Class Illuminate\\Database\\Eloquent\\Model referenced with incorrect case\: Illuminate\\Database\\Eloquent\\model\.$#'
+			identifier: class.nameCase
+			count: 1
+			path: modules/servers/TSSGGSModule/app/models/whmcs/Client.php
+
+		-
+			message: '#^Class Illuminate\\Database\\Eloquent\\Model referenced with incorrect case\: Illuminate\\Database\\Eloquent\\model\.$#'
+			identifier: class.nameCase
+			count: 1
+			path: modules/servers/TSSGGSModule/app/models/whmcs/Order.php
+
+		-
+			message: '#^Class Illuminate\\Database\\Eloquent\\Model referenced with incorrect case\: Illuminate\\Database\\Eloquent\\model\.$#'
+			identifier: class.nameCase
+			count: 1
+			path: modules/servers/TSSGGSModule/app/models/whmcs/Product.php
+
+		-
+			message: '#^Class Illuminate\\Database\\Eloquent\\Model referenced with incorrect case\: Illuminate\\Database\\Eloquent\\model\.$#'
+			identifier: class.nameCase
+			count: 1
+			path: modules/servers/TSSGGSModule/app/models/whmcs/ProductConfigOption.php
+
+		-
+			message: '#^Class Illuminate\\Database\\Eloquent\\Model referenced with incorrect case\: Illuminate\\Database\\Eloquent\\model\.$#'
+			identifier: class.nameCase
+			count: 1
+			path: modules/servers/TSSGGSModule/app/models/whmcs/SSL.php
+
+		-
+			message: '#^Class Illuminate\\Database\\Eloquent\\Model referenced with incorrect case\: Illuminate\\Database\\Eloquent\\model\.$#'
+			identifier: class.nameCase
+			count: 1
+			path: modules/servers/TSSGGSModule/app/models/whmcs/Service.php
+
+		-
+			message: '#^Call to static method factory\(\) on an unknown class MultibrandFunctionality\\app\\models\\Brand\.$#'
+			identifier: class.notFound
+			count: 2
+			path: modules/servers/TSSGGSModule/app/repository/whmcs/Config.php
+
+		-
+			message: '#^Call to static method factory\(\) on an unknown class MultibrandFunctionality\\app\\models\\BrandRelations\.$#'
+			identifier: class.notFound
+			count: 1
+			path: modules/servers/TSSGGSModule/app/repository/whmcs/Config.php
+
+		-
+			message: '#^Call to static method getSystemURL\(\) on an unknown class MGModule\\Multibrand\\Core\\Server\.$#'
+			identifier: class.notFound
+			count: 1
+			path: modules/servers/TSSGGSModule/app/repository/whmcs/Config.php
+
+		-
+			message: '#^Instantiated class MGModule\\Multibrand\\Loader not found\.$#'
+			identifier: class.notFound
+			count: 1
+			path: modules/servers/TSSGGSModule/app/repository/whmcs/Config.php

@@ -7,39 +7,16 @@ use ModulesGarden\Servers\TSSGGSModule\app\models\whmcs\Order;
 use ModulesGarden\Servers\TSSGGSModule\app\models\whmcs\Product;
 use ModulesGarden\Servers\TSSGGSModule\app\models\whmcs\Service;
 use ModulesGarden\Servers\TSSGGSModule\app\models\whmcs\SSL;
-use ModulesGarden\Servers\TSSGGSModule\app\repository\whmcs\Config;
 use ModulesGarden\Servers\TSSGGSModule\app\repository\whmcs\Domain;
 use ModulesGarden\Servers\TSSGGSModule\app\repository\whmcs\ProductConfigOptions;
-use ModulesGarden\Servers\TSSGGSModule\app\services\InvoiceRenew;
-use ModulesGarden\Servers\TSSGGSModule\app\services\SSLStepThree;
 use ModulesGarden\Servers\TSSGGSModule\core\Lang;
-use ModulesGarden\Servers\TSSGGSModule\core\process\AbstractController;
 use ModulesGarden\Servers\TSSGGSModule\Server;
-use ModulesGarden\TSSGGSModule\App\Helpers\EmailTemplates;
 use ModulesGarden\TSSGGSModule\App\Libs\AcmeHelpers;
-use ModulesGarden\TSSGGSModule\App\Libs\AisHelpers;
-use ModulesGarden\TSSGGSModule\App\Libs\AutoInstallHelpers;
-use ModulesGarden\TSSGGSModule\App\Libs\CertificateBundle;
 use ModulesGarden\TSSGGSModule\App\Libs\CertificateService;
-use ModulesGarden\TSSGGSModule\App\Libs\CertificateSyncHelpers;
-use ModulesGarden\TSSGGSModule\App\Libs\Cpanel;
-use ModulesGarden\TSSGGSModule\App\Libs\GeneralSettings;
-use ModulesGarden\TSSGGSModule\App\Libs\ProductSettings;
-use ModulesGarden\TSSGGSModule\App\Libs\SmimeService;
-use ModulesGarden\TSSGGSModule\App\Libs\CodeSigningService;
-use ModulesGarden\TSSGGSModule\App\Libs\SslProductHelpers;
 use ModulesGarden\TSSGGSModule\App\Libs\Helpers;
-use ModulesGarden\TSSGGSModule\App\Libs\SSLTrustCenterApi;
 use ModulesGarden\TSSGGSModule\App\Models\AcmeSubscription;
 use ModulesGarden\TSSGGSModule\App\Models\AcmeSubscriptionDomain;
-use ModulesGarden\TSSGGSModule\App\Models\AisSubscription;
-use ModulesGarden\TSSGGSModule\App\Models\RemoteProduct;
-use ModulesGarden\TSSGGSModule\App\Models\Request;
-use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
-use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\ProductRepository;
-use ModulesGarden\TSSGGSModule\Core\WHMCS\Helper;
 use ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Invoice;
-use WHMCS\Billing\Tax;
 use WHMCS\Database\Capsule;
 
 /**
@@ -125,7 +102,7 @@ trait AcmeActions
         ];
     }
 
-    private function indexAcmeHTML($input, $vars = array())
+    private function indexAcmeHTML($input, $vars = [])
     {
         $serviceId    = (int)$input['params']['serviceid'];
         $userId       = (int)$input['params']['userid'];
@@ -209,19 +186,19 @@ trait AcmeActions
 
         if($vars['configurationStatus'] === 'Awaiting Configuration')
         {
-            return array(
+            return [
                 'tpl'  => 'home_acme_awaiting_configuration',
                 'vars' => $vars
-            );
+            ];
         }
 
-        return array(
+        return [
             'tpl'  => 'home_acme',
             'vars' => $vars
-        );
+        ];
     }
 
-    private function acmeConfigurationHTML($input, $vars = array())
+    private function acmeConfigurationHTML($input, $vars = [])
     {
         $whmcsProductId = (int)$input['params']['packageid'];
         $serviceId      = (int)$input['params']['serviceid'];
@@ -250,13 +227,13 @@ trait AcmeActions
         $vars['singleDomainsLimit']   = $singleLimit;
         $vars['wildcardDomainsLimit'] = $wildcardLimit;
 
-        return array(
+        return [
             'tpl'  => 'home_acme_configuration',
             'vars' => $vars
-        );
+        ];
     }
 
-    public function createSubscriptionJSON($input, $vars = array())
+    public function createSubscriptionJSON($input, $vars = [])
     {
         $this->requireCsrfToken();
         $this->requireOrderableService($input, AcmeHelpers::isAcmeWhmcsProduct((int)$input['params']['packageid']));
@@ -367,8 +344,8 @@ trait AcmeActions
         $response = $api->createAcmeSubscription($order);
 
         $apiOrderId   = isset($response['order_id']) ? (int)$response['order_id'] : (isset($response['id']) ? (int)$response['id'] : 0);
-        $apiItems     = isset($response['items']) && is_array($response['items']) ? $response['items'] : array();
-        $apiFirstItem = isset($apiItems[0]) && is_array($apiItems[0]) ? $apiItems[0] : array();
+        $apiItems     = isset($response['items']) && is_array($response['items']) ? $response['items'] : [];
+        $apiFirstItem = isset($apiItems[0]) && is_array($apiItems[0]) ? $apiItems[0] : [];
         $acmeId       = isset($apiFirstItem['id']) ? (int)$apiFirstItem['id'] : (isset($response['item_id']) ? (int)$response['item_id'] : 0);
 
         if($apiOrderId <= 0)
@@ -441,7 +418,7 @@ trait AcmeActions
         ];
     }
 
-    public function buyMoreDomainsJSON($input, $vars = array())
+    public function buyMoreDomainsJSON($input, $vars = [])
     {
         $this->requireCsrfToken();
         $this->requireOrderableService($input, AcmeHelpers::isAcmeWhmcsProduct((int)$input['params']['packageid']));
@@ -555,7 +532,7 @@ trait AcmeActions
         ];
     }
 
-    public function upgradeConfigOptionsJSON($input, $vars = array())
+    public function upgradeConfigOptionsJSON($input, $vars = [])
     {
         $this->requireCsrfToken();
         $params    = $input['params'];
@@ -729,7 +706,7 @@ trait AcmeActions
         ];
     }
 
-    public function removeDomainJSON($input, $vars = array())
+    public function removeDomainJSON($input, $vars = [])
     {
         $this->requireCsrfToken();
         $serviceId = (int)$input['id'];
@@ -778,7 +755,7 @@ trait AcmeActions
         ];
     }
 
-    public function cancelSubscriptionJSON($input, $vars = array())
+    public function cancelSubscriptionJSON($input, $vars = [])
     {
         $this->requireCsrfToken();
         $serviceId    = (int)$input['id'];
@@ -826,7 +803,7 @@ trait AcmeActions
         ];
     }
 
-    public function stopAutoRenewalJSON($input, $vars = array())
+    public function stopAutoRenewalJSON($input, $vars = [])
     {
         $this->requireCsrfToken();
         $serviceId    = (int)$input['id'];
@@ -871,7 +848,7 @@ trait AcmeActions
         return ['primary' => $contact, 'technical' => $contact];
     }
 
-    public function checkCertificateDetailsJSON($input, $vars = array())
+    public function checkCertificateDetailsJSON($input, $vars = [])
     {
         $serviceId = (int)$input['id'];
 

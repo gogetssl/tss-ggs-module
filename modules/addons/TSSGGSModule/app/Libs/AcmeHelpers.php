@@ -8,7 +8,6 @@ use ModulesGarden\Servers\TSSGGSModule\core\Lang;
 use ModulesGarden\TSSGGSModule\App\Models\AcmeSubscription;
 use ModulesGarden\TSSGGSModule\App\Models\RemoteProduct;
 use ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Product;
-use ModulesGarden\TSSGGSModule\Packages\Product\Services\ConfigurableOptions;
 use WHMCS\Database\Capsule;
 
 class AcmeHelpers
@@ -203,11 +202,11 @@ class AcmeHelpers
         $details = $api->getCertificateDetails('caas', $itemId);
 
         $orderStatus      = isset($details['order']['status']) ? $details['order']['status'] : (isset($details['status']) ? $details['status'] : $subscription->status);
-        $items            = isset($details['items']) && is_array($details['items']) ? $details['items'] : array();
-        $firstItem        = isset($items[0]) && is_array($items[0]) ? $items[0] : array();
+        $items            = isset($details['items']) && is_array($details['items']) ? $details['items'] : [];
+        $firstItem        = isset($items[0]) && is_array($items[0]) ? $items[0] : [];
         $acmeId           = isset($firstItem['id']) ? (int)$firstItem['id'] : (isset($subscription->acme_id) ? (int)$subscription->acme_id : 0);
-        $account          = isset($firstItem['account']) && is_array($firstItem['account']) ? $firstItem['account'] : array();
-        $subscriptionData = isset($firstItem['subscription']) && is_array($firstItem['subscription']) ? $firstItem['subscription'] : array();
+        $account          = isset($firstItem['account']) && is_array($firstItem['account']) ? $firstItem['account'] : [];
+        $subscriptionData = isset($firstItem['subscription']) && is_array($firstItem['subscription']) ? $firstItem['subscription'] : [];
         $periodStart      = isset($subscriptionData['begin']) ? $subscriptionData['begin'] : $subscription->period_start;
         $periodEnd        = isset($subscriptionData['end']) ? $subscriptionData['end'] : $subscription->period_end;
         $renewalDate      = isset($subscriptionData['next_renewal']) ? $subscriptionData['next_renewal'] : $subscription->renewal_date;

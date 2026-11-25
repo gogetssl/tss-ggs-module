@@ -2,7 +2,6 @@
 
 namespace ModulesGarden\TSSGGSModule\App\Http\Admin;
 
-use ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\HomeContainer;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\SettingsContainer;
 use ModulesGarden\TSSGGSModule\Core\Contracts\Controllers\AdminAreaInterface;
 use ModulesGarden\TSSGGSModule\Core\Http\AbstractController;

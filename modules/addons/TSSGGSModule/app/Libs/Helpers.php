@@ -19,7 +19,6 @@ use ModulesGarden\TSSGGSModule\Packages\Product\Libs\ConfigurableOptions\Quantit
 use ModulesGarden\TSSGGSModule\Packages\Product\Libs\ConfigurableOptions\SubOption\SubOption;
 use ModulesGarden\TSSGGSModule\Packages\Product\Services\ConfigurableOptions;
 use ModulesGarden\TSSGGSModule\Packages\Product\Services\ConfigurableOptionsGroup;
-use WHMCS\Database\Capsule;
 
 class Helpers
 {
@@ -845,4 +844,4 @@ class Helpers
             "ZW" => "Zimbabwe"
         ];
     }
-}
+}

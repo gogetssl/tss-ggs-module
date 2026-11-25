@@ -15,7 +15,6 @@ use ModulesGarden\TSSGGSModule\App\Libs\CertificateBundle;
 use ModulesGarden\TSSGGSModule\App\Libs\CertificateService;
 use ModulesGarden\TSSGGSModule\App\Libs\ClientText;
 use ModulesGarden\TSSGGSModule\App\Libs\GeneralSettings;
-use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
 
 class Actions {
 
@@ -463,4 +462,3 @@ class Actions {
     }
 
 }
-

@@ -9,7 +9,6 @@ use ModulesGarden\TSSGGSModule\Components\TableSimple\Column\Column;
 use ModulesGarden\TSSGGSModule\Components\TableSimple\Record\Record;
 use ModulesGarden\TSSGGSModule\Components\TableSimple\TableSimple;
 use ModulesGarden\TSSGGSModule\Components\Widget\Widget;
-use ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Currency;
 use Illuminate\Database\Capsule\Manager as Capsule;
 
 class InvoicesWidget extends Widget

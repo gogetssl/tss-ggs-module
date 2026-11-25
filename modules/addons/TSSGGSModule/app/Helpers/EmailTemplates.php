@@ -2,10 +2,7 @@
 
 namespace ModulesGarden\TSSGGSModule\App\Helpers;
 
-use ModulesGarden\Servers\TSSGGSModule\app\repository\whmcs\Config;
 use ModulesGarden\TSSGGSModule\App\Libs\Edition;
-use ModulesGarden\TSSGGSModule\App\Libs\Helpers;
-use ModulesGarden\TSSGGSModule\Core\WHMCS\Helper;
 use ModulesGarden\TSSGGSModule\Core\WHMCS\Models\EmailTemplate;
 
 class EmailTemplates

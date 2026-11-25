@@ -17,7 +17,7 @@ trait LeiActions
     /**
      * Service page: the order form while the service waits for configuration, else the LEI status
      */
-    private function indexLeiHTML($input, $vars = array())
+    private function indexLeiHTML($input, $vars = [])
     {
         $serviceId = (int)$input['params']['serviceid'];
         $ssl       = SSL::getByServiceId($serviceId);
@@ -126,7 +126,7 @@ trait LeiActions
     /**
      * Order: a new LEI, or the renewal of the issued one (lei_mode = renew)
      */
-    public function createLeiJSON($input, $vars = array())
+    public function createLeiJSON($input, $vars = [])
     {
         $this->requireCsrfToken();
         $serviceId = (int)$input['params']['serviceid'];
@@ -183,7 +183,7 @@ trait LeiActions
     /**
      * Company search of the order form (OpenCorporates when configured, GLEIF always)
      */
-    public function searchLeiCompanyJSON($input, $vars = array())
+    public function searchLeiCompanyJSON($input, $vars = [])
     {
         $this->requireCsrfToken();
         if(!LeiService::isLeiWhmcsProduct((int)$input['params']['pid']))
@@ -194,7 +194,7 @@ trait LeiActions
         return ['results' => LeiCompanySearch::search((string)($input['query'] ?? ''), (string)($input['country'] ?? ''))];
     }
 
-    public function refreshLeiDetailsJSON($input, $vars = array())
+    public function refreshLeiDetailsJSON($input, $vars = [])
     {
         $this->requireCsrfToken();
         $serviceId = (int)$input['params']['serviceid'];
@@ -208,7 +208,7 @@ trait LeiActions
     }
 
     /** the client confirms the submitted data the issuer waits for */
-    public function confirmLeiJSON($input, $vars = array())
+    public function confirmLeiJSON($input, $vars = [])
     {
         $this->requireCsrfToken();
         $serviceId = (int)$input['params']['serviceid'];

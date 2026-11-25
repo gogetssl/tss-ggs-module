@@ -4,7 +4,6 @@ namespace ModulesGarden\TSSGGSModule\App\Migration;
 
 use ModulesGarden\TSSGGSModule\App\Libs\AddonCertificates;
 use ModulesGarden\TSSGGSModule\App\Libs\ProductAddons;
-use ModulesGarden\TSSGGSModule\App\Migration\Readers\LegacyReaderInterface;
 use ModulesGarden\TSSGGSModule\App\Models\Request;
 use WHMCS\Database\Capsule;
 

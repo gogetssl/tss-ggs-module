@@ -5,7 +5,6 @@ namespace ModulesGarden\TSSGGSModule\App\Libs;
 use ModulesGarden\TSSGGSModule\App\Models\Request;
 use ModulesGarden\TSSGGSModule\Core\Support\Facades\Config;
 use ModulesGarden\TSSGGSModule\Packages\Logs\Support\Facades\Logger;
-use stdClass;
 
 class SSLTrustCenterApi
 {
@@ -500,7 +499,7 @@ class SSLTrustCenterApi
         }
 
         $target = strtolower(trim((string)$domainName));
-        $items  = isset($status['items']) && is_array($status['items']) ? $status['items'] : array();
+        $items  = isset($status['items']) && is_array($status['items']) ? $status['items'] : [];
 
         foreach($items as $item)
         {
@@ -1162,5 +1161,3 @@ class SSLTrustCenterApi
             : $message . '.';
     }
 }
-
-

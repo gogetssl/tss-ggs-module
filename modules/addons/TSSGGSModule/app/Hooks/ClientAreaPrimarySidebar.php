@@ -8,7 +8,6 @@ if(!defined('WHMCS'))
 }
 
 
-use ModulesGarden\TSSGGSModule\Packages\Product\Support\Facades\Sidebar;
 
 $hookManager->register(
     function($sidebarWhmcs) {
@@ -16,4 +15,3 @@ $hookManager->register(
     },
     100
 );
-

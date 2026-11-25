@@ -4,7 +4,6 @@ namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Reports\Index\DataTables\Datew
 
 use ModulesGarden\TSSGGSModule\App\Libs\Helpers;
 use ModulesGarden\TSSGGSModule\Core\DataProviders\CrudProvider;
-use ModulesGarden\TSSGGSModule\Core\WHMCS\Helper;
 
 class FilterProvider extends CrudProvider
 {

@@ -2,7 +2,6 @@
 
 namespace ModulesGarden\TSSGGSModule\App\Helpers;
 
-use ModulesGarden\TSSGGSModule\Core\WHMCS\Models\EmailTemplate;
 use WHMCS\Database\Capsule;
 
 /**

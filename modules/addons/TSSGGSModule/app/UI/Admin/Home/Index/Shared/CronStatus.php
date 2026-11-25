@@ -3,7 +3,6 @@
 namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Shared;
 
 use ModulesGarden\TSSGGSModule\App\Models\CronCheck;
-use ModulesGarden\TSSGGSModule\Packages\ModuleSettings\Models\ModuleSettings;
 
 /**
  * Last run of the module cron and its scheduled tasks; read once per request (attention banner + System health card)

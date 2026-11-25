@@ -5,7 +5,6 @@ namespace ModulesGarden\TSSGGSModule\App\Libs;
 use ModulesGarden\TSSGGSModule\App\Helpers\AutoInstallEmailTemplates;
 use ModulesGarden\TSSGGSModule\App\Models\Request;
 use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
-use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\ProductRepository;
 use ModulesGarden\TSSGGSModule\Packages\Logs\Support\Facades\Logger;
 use WHMCS\Database\Capsule;
 

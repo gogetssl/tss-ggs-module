@@ -4,7 +4,6 @@ namespace ModulesGarden\TSSGGSModule\App\Http\Client;
 
 use ModulesGarden\TSSGGSModule\Core\Helper;
 use ModulesGarden\TSSGGSModule\Core\Http\AbstractClientController;
-use ModulesGarden\TSSGGSModule\Packages\Logs\UI\Pages\LogsDataTable;
 
 /**
  * Description of Samples

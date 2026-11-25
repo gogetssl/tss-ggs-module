@@ -7,7 +7,6 @@ use ModulesGarden\TSSGGSModule\App\Libs\Helpers;
 use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Modals\ReportingModal;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Providers\ReportingProvider;
-use ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Components\RevertSwitcher;
 use ModulesGarden\TSSGGSModule\Components\Button\ButtonCancel;
 use ModulesGarden\TSSGGSModule\Components\Button\ButtonSuccess;
 use ModulesGarden\TSSGGSModule\Components\DatePicker\DatePicker;

@@ -2,7 +2,6 @@
 
 namespace ModulesGarden\Servers\TSSGGSModule\app\repository\whmcs;
 
-use WHMCS\Database\Capsule as DataBase;
 use ModulesGarden\Servers\TSSGGSModule\core\Lang;
 
 class Domain {

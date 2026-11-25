@@ -19,7 +19,7 @@ trait DocumentSigningActions
     /**
      * Service page: the order form while the service waits for configuration, else the order status
      */
-    private function indexDocumentSigningHTML($input, $vars = array())
+    private function indexDocumentSigningHTML($input, $vars = [])
     {
         $serviceId = (int)$input['params']['serviceid'];
         $ssl       = SSL::getByServiceId($serviceId);
@@ -130,7 +130,7 @@ trait DocumentSigningActions
         return ['tpl' => 'home_docsigning_configuration', 'vars' => $vars];
     }
 
-    public function createDocumentSigningJSON($input, $vars = array())
+    public function createDocumentSigningJSON($input, $vars = [])
     {
         $this->requireCsrfToken();
         $serviceId = (int)$input['params']['serviceid'];
@@ -192,7 +192,7 @@ trait DocumentSigningActions
         return ['success' => true, 'message' => Lang::absoluteT('serverCA', 'home', 'dsOrderedSuccessfully')];
     }
 
-    public function refreshDocumentSigningDetailsJSON($input, $vars = array())
+    public function refreshDocumentSigningDetailsJSON($input, $vars = [])
     {
         $this->requireCsrfToken();
         $serviceId = (int)$input['params']['serviceid'];

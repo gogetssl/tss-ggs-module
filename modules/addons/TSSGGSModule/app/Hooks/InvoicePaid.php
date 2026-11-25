@@ -11,7 +11,6 @@ if(!defined('WHMCS'))
 
 use ModulesGarden\TSSGGSModule\App\Helpers\EmailTemplates;
 use ModulesGarden\TSSGGSModule\App\Libs\AcmeHelpers;
-use ModulesGarden\TSSGGSModule\App\Libs\Helpers;
 use ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Service;
 
 $hookManager->register(

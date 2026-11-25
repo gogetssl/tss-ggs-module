@@ -5,28 +5,13 @@ namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Reports\Index\DataTables\Renew
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Reports\Index\DataTables\Shared\StatusLabel;
 
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Reports\Index\DataTables\Renewal\Forms\DownloadForm;
-use ModulesGarden\TSSGGSModule\App\UI\Admin\Reports\Index\DataTables\Renewal\Forms\GetCsvForm;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Reports\Index\DataTables\Shared\RecordsProvider;
-use ModulesGarden\TSSGGSModule\Components\Button\Button;
-use ModulesGarden\TSSGGSModule\Components\Button\ButtonPrimary;
 use ModulesGarden\TSSGGSModule\Components\DataTable\Column;
-use ModulesGarden\TSSGGSModule\Components\Dropdown\Dropdown;
-use ModulesGarden\TSSGGSModule\Components\Form\Form;
-use ModulesGarden\TSSGGSModule\Components\FormLabel\FormLabel;
-use ModulesGarden\TSSGGSModule\Components\Label\Label;
-use ModulesGarden\TSSGGSModule\Components\Label\LabelDanger;
-use ModulesGarden\TSSGGSModule\Components\Label\LabelInfo;
-use ModulesGarden\TSSGGSModule\Components\Label\LabelSuccess;
-use ModulesGarden\TSSGGSModule\Components\Label\LabelWarning;
-use ModulesGarden\TSSGGSModule\Core\Components\Actions\DownloadFileFromForm;
-use ModulesGarden\TSSGGSModule\Core\Components\Actions\Reload;
 use ModulesGarden\TSSGGSModule\Core\Contracts\Components\AdminAreaInterface;
 use ModulesGarden\TSSGGSModule\Core\Contracts\Components\AjaxComponentInterface;
 use ModulesGarden\TSSGGSModule\Core\DataProviders\ArrayDataProvider;
 
 use ModulesGarden\TSSGGSModule\Core\Support\Facades\Request;
-use ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Service;
-use WHMCS\User\Client;
 
 class DataTable extends \ModulesGarden\TSSGGSModule\Components\DataTable\DataTable implements AdminAreaInterface, AjaxComponentInterface
 {

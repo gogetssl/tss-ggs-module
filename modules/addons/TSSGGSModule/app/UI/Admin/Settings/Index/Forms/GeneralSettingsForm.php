@@ -8,7 +8,6 @@ use ModulesGarden\TSSGGSModule\Components\Dropdown\Dropdown;
 use ModulesGarden\TSSGGSModule\Components\Form\Builder\BuilderCreator;
 use ModulesGarden\TSSGGSModule\Components\Form\Form;
 use ModulesGarden\TSSGGSModule\Components\FormInputPassword\FormInputPassword;
-use ModulesGarden\TSSGGSModule\Components\FormInputText\FormInputText;
 use ModulesGarden\TSSGGSModule\Components\Switcher\Switcher;
 use ModulesGarden\TSSGGSModule\Core\Contracts\Components\AdminAreaInterface;
 use ModulesGarden\TSSGGSModule\Core\Contracts\Components\AjaxComponentInterface;

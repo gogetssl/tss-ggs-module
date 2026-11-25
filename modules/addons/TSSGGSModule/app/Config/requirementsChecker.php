@@ -24,4 +24,3 @@ return [
     new IsWritable('/var/www'),
     new IsReadable('/var/www')*/
 ];
-

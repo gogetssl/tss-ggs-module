@@ -14,8 +14,6 @@ use ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Widgets\Sidebar;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Widgets\SslSettingsWidget;
 use ModulesGarden\TSSGGSModule\Components\Container\Container;
 use ModulesGarden\TSSGGSModule\Components\Grid\Grid;
-use ModulesGarden\TSSGGSModule\Components\Tab\Tab;
-use ModulesGarden\TSSGGSModule\Components\TabsWidget\TabsWidget;
 use ModulesGarden\TSSGGSModule\Core\Contracts\Components\AdminAreaInterface;
 use ModulesGarden\TSSGGSModule\Core\Support\Facades\Request;
 

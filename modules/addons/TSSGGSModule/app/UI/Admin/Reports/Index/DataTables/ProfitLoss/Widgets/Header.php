@@ -3,14 +3,12 @@
 namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Reports\Index\DataTables\ProfitLoss\Widgets;
 
 use ModulesGarden\TSSGGSModule\App\Libs\Helpers;
-use ModulesGarden\TSSGGSModule\App\UI\Admin\Reports\Index\DataTables\ProfitLoss\ArrayDataProvider\DataProvider;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Reports\Index\DataTables\Shared\RecordsProvider;
 use ModulesGarden\TSSGGSModule\Components\Alert\Alert;
 use ModulesGarden\TSSGGSModule\Core\Components\Enums\Color;
 use ModulesGarden\TSSGGSModule\Core\Contracts\Components\AdminAreaInterface;
 use ModulesGarden\TSSGGSModule\Core\Contracts\Components\AjaxComponentInterface;
 use ModulesGarden\TSSGGSModule\Core\Support\Facades\Request;
-use ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Currency;
 
 class Header extends Alert implements AdminAreaInterface, AjaxComponentInterface
 {

@@ -4,7 +4,6 @@ namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Modals;
 
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Forms\ReportingForm;
 use ModulesGarden\TSSGGSModule\Components\Modal\Modal;
-use ModulesGarden\TSSGGSModule\Components\Modal\ModalEdit;
 use ModulesGarden\TSSGGSModule\Core\Contracts\Components\AdminAreaInterface;
 use ModulesGarden\TSSGGSModule\Core\Contracts\Components\AjaxComponentInterface;
 

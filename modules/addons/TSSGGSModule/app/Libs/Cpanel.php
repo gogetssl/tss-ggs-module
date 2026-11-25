@@ -314,7 +314,7 @@ class Cpanel
         return $verify;
     }
 
-    protected function exec($name, $api, $params = array())
+    protected function exec($name, $api, $params = [])
     {
         if(!$this->ch || !$this->sessionUrl)
         {
@@ -849,7 +849,7 @@ class Cpanel
         return true;
     }
 
-    private function get($params = array())
+    private function get($params = [])
     {
         $url = $this->whmUrl() . '/json-api/cpanel';
         $ch  = curl_init();
@@ -863,13 +863,13 @@ class Cpanel
             }
         }
         $url       = trim($url, '&');
-        $chOptions = array(
+        $chOptions = [
             CURLOPT_URL            => $url,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_SSL_VERIFYPEER => $this->verifyTls(),
             CURLOPT_SSL_VERIFYHOST => $this->verifyTls() ? 2 : 0,
             CURLOPT_TIMEOUT        => 30
-        );
+        ];
 
         $authHeader = $this->buildAuthHeader();
         if(!empty($authHeader))

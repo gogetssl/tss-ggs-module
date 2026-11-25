@@ -2,23 +2,19 @@
 
 namespace ModulesGarden\TSSGGSModule\App\Cron;
 
-use Exception;
 use ModulesGarden\TSSGGSModule\App\Libs\Helpers;
 use ModulesGarden\TSSGGSModule\App\Libs\GeneralSettings;
 use ModulesGarden\TSSGGSModule\App\Libs\FinancePolicy;
 use ModulesGarden\TSSGGSModule\App\Libs\RenewalPrices;
 use ModulesGarden\TSSGGSModule\App\Libs\PricingService;
 use ModulesGarden\TSSGGSModule\App\Libs\ProductSettings;
-use ModulesGarden\TSSGGSModule\App\Libs\SSLTrustCenterApi;
 use ModulesGarden\TSSGGSModule\App\Models\CronCheck;
 use ModulesGarden\TSSGGSModule\App\Models\RemoteProduct;
-use ModulesGarden\TSSGGSModule\App\Models\Request;
 use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
 use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\ProductRepository;
 use ModulesGarden\TSSGGSModule\Core\CommandLine\AbstractCommand;
 use ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Currency;
 use ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Pricing;
-use ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Service;
 use ModulesGarden\TSSGGSModule\Packages\Logs\Support\Facades\Logger;
 use ModulesGarden\TSSGGSModule\Packages\Product\Services\ConfigurableOptions;
 use Symfony\Component\Console\Input\InputInterface;
