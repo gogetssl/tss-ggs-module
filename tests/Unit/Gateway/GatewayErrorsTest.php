@@ -2,7 +2,8 @@
 
 namespace Tests\Unit\Gateway;
 
-use ModulesGarden\TSSGGSModule\App\Libs\AwaitingConfigurationException;
+use ModulesGarden\TSSGGSModule\App\Libs\Gateway\AwaitingConfigurationException;
+use ModulesGarden\TSSGGSModule\App\Libs\Gateway\GatewayException;
 use ModulesGarden\TSSGGSModule\App\Libs\SSLTrustCenterApi;
 use PHPUnit\Framework\TestCase;
 
@@ -36,6 +37,17 @@ class GatewayErrorsTest extends TestCase
         $this->assertTrue(SSLTrustCenterApi::isAwaitingConfiguration(new AwaitingConfigurationException('anything', 502)));
         $this->assertTrue(SSLTrustCenterApi::isAwaitingConfiguration(new \Exception(SSLTrustCenterApi::readableError('Unexpected validation method: not yet set', 502))));
         $this->assertFalse(SSLTrustCenterApi::isAwaitingConfiguration(new \Exception(SSLTrustCenterApi::readableError('Unexpected validation method: pre-validated (public key reuse)', 502))));
+    }
+
+    public function testGatewayExceptionKeepsCodeAndRawMessage(): void
+    {
+        $e = new GatewayException('Readable.', 502, 'GEX-4', 'Unexpected validation method: not yet set');
+        $this->assertSame(502, $e->getHttpCode());
+        $this->assertSame('GEX-4', $e->getGatewayCode());
+        $this->assertTrue($e->says('NOT YET SET'));
+        $this->assertFalse($e->says(''));
+        $this->assertInstanceOf(\Exception::class, $e, 'callers catching \Exception keep working');
+        $this->assertInstanceOf(GatewayException::class, new AwaitingConfigurationException('x', 502));
     }
 
     public function testItemIdComesFromTheFirstItem(): void

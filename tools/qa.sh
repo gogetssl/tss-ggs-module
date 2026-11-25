@@ -4,6 +4,7 @@
 #   tools/qa.sh unit     PHPUnit unit tests (tests/Unit, no WHMCS needed)
 #   tools/qa.sh stan     PHPStan static analysis (phpstan.neon.dist, known issues in phpstan-baseline.neon)
 #   tools/qa.sh cs       code style check, nothing is changed (.php-cs-fixer.dist.php)
+#   tools/qa.sh fix      apply the code style rules to the working tree
 #   tools/qa.sh smoke    smoke tests inside a WHMCS install where this code is deployed (tests/Smoke)
 #   tools/qa.sh all      unit + stan + cs
 #
@@ -39,6 +40,15 @@ stan()  {
     run "QA_WHMCS=$QA_WHMCS php -d memory_limit=2G $TOOLS/phpstan.phar analyse -c phpstan.neon.dist --no-progress --error-format=table ${STAN_ARGS:-}"
 }
 cs()    { run "php $TOOLS/php-cs-fixer.phar check --config=.php-cs-fixer.dist.php --diff --show-progress=none"; }
+fix()   {
+    # applies the code style rules on the host and copies the fixed files back into the working tree
+    run "php $TOOLS/php-cs-fixer.phar fix --config=.php-cs-fixer.dist.php --show-progress=none -q; tar -czf /tmp/qa-fixed.tgz modules/addons/TSSGGSModule/app modules/servers/TSSGGSModule/app tests"
+    local tgz; tgz=$(mktemp -t qa-XXXX).tgz; local dst="$tgz"
+    command -v cygpath >/dev/null 2>&1 && dst=$(cygpath -w "$tgz")
+    $SCP "$QA_HOST:/tmp/qa-fixed.tgz" "$dst"
+    tar -xzf "$tgz" -C "$ROOT"; rm -f "$tgz"
+    echo "code style applied; review with: git diff"
+}
 smoke() {
     : "${QA_WHMCS:?set QA_WHMCS to the WHMCS root}"; : "${QA_MODULE:?set QA_MODULE to the deployed module folder}"
     # each smoke test is a module console command: copied into the deployed module (namespace of its folder), run, removed
@@ -50,8 +60,8 @@ smoke() {
 }
 
 case "$what" in
-    unit|stan|cs) upload; $what ;;
+    unit|stan|cs|fix) upload; $what ;;
     smoke) smoke ;;
     all) upload; status=0; unit || status=1; stan || status=1; cs || status=1; exit $status ;;
-    *) echo "usage: tools/qa.sh unit|stan|cs|smoke|all"; exit 2 ;;
+    *) echo "usage: tools/qa.sh unit|stan|cs|fix|smoke|all"; exit 2 ;;
 esac
