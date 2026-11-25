@@ -14,6 +14,9 @@ New admin interface base, third-party framework removed
 - Templates can be customised without tools: copy a file from
   resources/templates to the same path under overrides/templates and edit
   the copy. An update never touches the overrides folder.
+- The admin pages use the module's own stylesheet and class names
+  (mod-* inside #mod-root). If you changed the module's templates or
+  CSS in an earlier version, check your copies against the new names.
 - Order status sync: runs every 5 minutes by default (5 minutes to 1 day),
   reads only orders that are processing or active, and an order waiting
   for its validation method is no longer a failed order.
