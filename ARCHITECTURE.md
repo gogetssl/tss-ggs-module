@@ -64,6 +64,15 @@ resources/assets/js/app.js  the module's own script (token header for htmx, load
 - Behaviour goes into the template as attributes (`hx-get`, `hx-post`, `hx-target`, `x-data`, `@click`), not into
   new JavaScript files. No inline styles: classes in `theme.css`.
 - Read input through `Request` (`int`, `string`, `oneOf`), never `$_GET` / `$_POST` directly.
+- **No `>` inside a `<form ...>` tag** (no arrow function in `@submit` / `x-init`): WHMCS adds its token field after
+  the first `>` it finds and cuts the tag in two. `KernelTest` checks every template.
+- A question before a change: `data-confirm="..."` on the form or the button (`app.js`), `hx-confirm` on an htmx
+  element. A slow part of a page: `{include file='admin/partials/lazy.tpl' url=...}` (spinner, then the fragment).
+- Shared partials in `admin/partials`: `flash.tpl` (message of the last action), `alert.tpl`, `lazy.tpl`,
+  `menu_item.tpl`. A script that only one page needs: `resources/assets/js/pages/<page>.js`, loaded by its template.
+- Pages in `Kernel::SETUP_FIRST` lead to the setup wizard until the vendor API is connected.
+- A page whose action replaces the module's files or sends a file (module update, CSV export) uses plain form
+  posts and redirects, not htmx.
 
 ## Rules that keep it maintainable
 
