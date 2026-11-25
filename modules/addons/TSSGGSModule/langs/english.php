@@ -1735,3 +1735,4 @@ $_LANG['admin.products.select_first'] = 'Tick the products to import first.';
 $_LANG['admin.products.choose_group'] = 'Choose a product group, or give the new group a name.';
 $_LANG['admin.home.index.forms.reporting_form.details_required'] = 'Describe the issue so support knows what to look for.';
 $_LANG['admin.kernel.saved'] = 'Settings saved.';
+$_LANG['admin.settings.index.providers.ssl_settings_provider.fixedDetailsRequired'] = 'Fixed technical details are switched on: fill in every field of the technical contact, including the country.';

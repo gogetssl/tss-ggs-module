@@ -10,6 +10,7 @@
     save that failed), the choices of a select from $options.<name>.
     Optional: placeholder (escaped text, e.g. from {t}), class (on the input, e.g. tssggs-percent / tssggs-money show a unit), placeholder, min, max, rows,
     label / hint (texts given by the screen instead of the ones looked up).
+    A yesno posts $switchOn / $switchOff (on / off, or 1 / 0 where the screen's store keeps those).
 *}
 {if isset($typed[$name])}{$value = $typed[$name]}{else}{$value = $data[$name]|default:''}{/if}
 {capture name='label'}{if $label|default:'' !== ''}{$label}{else}{t key="{$f}.{$name}"}{/if}{/capture}
@@ -22,11 +23,11 @@
             <span class="lu-form-text lu-single-element"> {$smarty.capture.label nofilter} {$smarty.capture.hint nofilter}</span>
             <div role="radiogroup" class="tssggs-yn__segments">
                 <label class="tssggs-yn__segment">
-                    <input type="radio" name="{$name}" value="on" class="tssggs-yn__radio no-icheck"{if $on} checked{/if}>
+                    <input type="radio" name="{$name}" value="{$switchOn}" class="tssggs-yn__radio no-icheck"{if $on} checked{/if}>
                     <span>{t key='admin.kernel.yes'}</span>
                 </label>
                 <label class="tssggs-yn__segment">
-                    <input type="radio" name="{$name}" value="off" class="tssggs-yn__radio tssggs-yn__radio--danger no-icheck"{if !$on} checked{/if}>
+                    <input type="radio" name="{$name}" value="{$switchOff}" class="tssggs-yn__radio tssggs-yn__radio--danger no-icheck"{if !$on} checked{/if}>
                     <span>{t key='admin.kernel.no'}</span>
                 </label>
             </div>

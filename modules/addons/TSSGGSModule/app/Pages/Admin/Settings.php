@@ -10,6 +10,8 @@ use ModulesGarden\TSSGGSModule\App\Libs\Settings\FinanceSettingsProvider;
 use ModulesGarden\TSSGGSModule\App\Libs\Settings\GeneralSettingsProvider;
 use ModulesGarden\TSSGGSModule\App\Libs\Settings\ProductsSettingsProvider;
 use ModulesGarden\TSSGGSModule\App\Libs\Settings\Result;
+use ModulesGarden\TSSGGSModule\App\Libs\Settings\SslScreen;
+use ModulesGarden\TSSGGSModule\App\Libs\Settings\SslSettingsProvider;
 use ModulesGarden\TSSGGSModule\App\Libs\Support\Edition;
 use ModulesGarden\TSSGGSModule\App\Libs\Support\GeneralSettings;
 
@@ -42,10 +44,13 @@ class Settings extends Page
     /**
      * the screens on the kernel: provider (values, choices, save), template, and the groups of its texts -
      * "form" for the fields and sections, "widget" for the title and subtitle of the screen; "extra": a class whose
-     * data($lang) gives what the screen shows besides its fields ($extra in the template)
+     * data($lang) gives what the screen shows besides its fields ($extra in the template); "switch": what a Yes / No
+     * posts when the store of the screen keeps another pair than on / off
      */
     const SCREENS = [
         'generalSettings'  => ['provider' => GeneralSettingsProvider::class, 'template' => 'general', 'form' => 'general_settings_form', 'widget' => 'general_settings_widget'],
+        'sslSettings'      => ['provider' => SslSettingsProvider::class, 'template' => 'ssl', 'form' => 'ssl_settings_form', 'widget' => 'ssl_settings_widget', 'extra' => SslScreen::class, 'switch' => ['1', '0']],
+        'automatedSettings' => ['provider' => SslSettingsProvider::class, 'template' => 'automated', 'form' => 'ssl_settings_form', 'widget' => 'automated_settings_widget', 'extra' => SslScreen::class, 'switch' => ['1', '0']],
         'productsSettings' => ['provider' => ProductsSettingsProvider::class, 'template' => 'products', 'form' => 'products_settings_form', 'widget' => 'products_settings_widget'],
         'financeSettings'  => ['provider' => FinanceSettingsProvider::class, 'template' => 'finance', 'form' => 'finance_settings_form', 'widget' => 'finance_settings_widget', 'extra' => FinanceScreen::class],
         'cronSettings'     => ['provider' => CronSettingsProvider::class, 'template' => 'cron', 'form' => 'cron_configuration_form', 'widget' => 'cron_settings_widget', 'extra' => CronScreen::class, 'css' => 'tssggs-cronpanel'],
@@ -132,6 +137,8 @@ class Settings extends Page
             'options'  => $provider->options(),
             'extra'    => isset($config['extra']) ? $config['extra']::data($this->lang) : [],
             'css'      => $config['css'] ?? '',
+            'switchOn'  => $config['switch'][0] ?? 'on',
+            'switchOff' => $config['switch'][1] ?? 'off',
             'flash'    => $flash,
             'saved'    => $result !== null && !$result->isError(),
             'saveUrl'  => self::pageUrl('settings', 'save', ['settings-page' => $screen]),

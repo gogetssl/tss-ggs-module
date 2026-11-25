@@ -3,10 +3,8 @@
 namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index;
 
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Widgets\ApiSettingsWidget;
-use ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Widgets\AutomatedSettingsWidget;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Widgets\EmailSettingsWidget;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Widgets\Sidebar;
-use ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Widgets\SslSettingsWidget;
 use ModulesGarden\TSSGGSModule\Components\Container\Container;
 use ModulesGarden\TSSGGSModule\Components\Grid\Grid;
 use ModulesGarden\TSSGGSModule\Core\Contracts\Components\AdminAreaInterface;
@@ -22,14 +20,6 @@ class SettingsContainer extends Container implements AdminAreaInterface
         if(Request::get('settings-page') == 'apiSettings')
         {
             $mainWidget = new ApiSettingsWidget();
-        }
-        elseif(Request::get('settings-page') == 'sslSettings')
-        {
-            $mainWidget = new SslSettingsWidget();
-        }
-        elseif(Request::get('settings-page') == 'automatedSettings')
-        {
-            $mainWidget = new AutomatedSettingsWidget();
         }
         elseif(Request::get('settings-page') == 'emailSettings')
         {

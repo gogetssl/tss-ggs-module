@@ -1726,3 +1726,4 @@ $_LANG['admin.products.select_first'] = 'Markieren Sie zuerst die Produkte, die 
 $_LANG['admin.products.choose_group'] = 'Wählen Sie eine Produktgruppe oder geben Sie der neuen Gruppe einen Namen.';
 $_LANG['admin.home.index.forms.reporting_form.details_required'] = 'Beschreiben Sie das Problem, damit der Support weiß, wonach er suchen soll.';
 $_LANG['admin.kernel.saved'] = 'Einstellungen gespeichert.';
+$_LANG['admin.settings.index.providers.ssl_settings_provider.fixedDetailsRequired'] = 'Feste technische Kontaktdaten sind eingeschaltet: Füllen Sie alle Felder des technischen Kontakts aus, einschließlich des Landes.';
