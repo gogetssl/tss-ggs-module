@@ -10,6 +10,7 @@
     save that failed), the choices of a select from $options.<name>.
     Optional: placeholder (escaped text, e.g. from {t}), class (on the input, e.g. tssggs-percent / tssggs-money show a unit), placeholder, min, max, rows,
     label / hint (texts given by the screen instead of the ones looked up).
+    A password field asks the browser not to fill in a saved login (autocomplete="new-password").
     A yesno posts $switchOn / $switchOff (on / off, or 1 / 0 where the screen's store keeps those).
 *}
 {if isset($typed[$name])}{$value = $typed[$name]}{else}{$value = $data[$name]|default:''}{/if}
@@ -56,7 +57,7 @@
             <textarea name="{$name}" class="lu-form-control {$class|default:''}" rows="{$rows|default:5}" placeholder="{$placeholder|default:'' nofilter}">{$value}</textarea>
         {else}
             <input type="{$type}" name="{$name}" class="lu-form-control {$class|default:''}" value="{$value}" placeholder="{$placeholder|default:'' nofilter}"
-                   {if $min|default:'' !== ''}min="{$min}"{/if} {if $max|default:'' !== ''}max="{$max}"{/if} {if $type === 'number'}step="any"{/if} autocomplete="off">
+                   {if $min|default:'' !== ''}min="{$min}"{/if} {if $max|default:'' !== ''}max="{$max}"{/if} {if $type === 'number'}step="any"{/if} autocomplete="{if $type === 'password'}new-password{else}off{/if}">
         {/if}
     </div>
 {/if}
