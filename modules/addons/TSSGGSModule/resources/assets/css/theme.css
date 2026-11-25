@@ -639,7 +639,8 @@
 #layers2 .tssggs-loading { opacity: .55; transition: opacity .15s ease; }
 #layers2 .tssggs-log__filters { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 12px; }
 #layers2 .tssggs-log__pager { display: flex; gap: 6px; align-items: center; }
-#layers2 .tssggs-log__type { font-weight: 600; color: #333; }
-#layers2 .tssggs-log__type--success { color: #1f7a4d; }
-#layers2 .tssggs-log__type--error { color: #a8322d; }
-#layers2 .tssggs-log__type--info { color: #5b6673; }
+/* the table sets the cell colour with more weight, hence td + !important */
+#layers2 .tssggs-log td.tssggs-log__type { font-weight: 600; }
+#layers2 .tssggs-log td.tssggs-log__type--success { color: #1f7a4d !important; }
+#layers2 .tssggs-log td.tssggs-log__type--error { color: #a8322d !important; }
+#layers2 .tssggs-log td.tssggs-log__type--info { color: #5b6673 !important; }
