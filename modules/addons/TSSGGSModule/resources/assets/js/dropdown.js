@@ -6,7 +6,7 @@
  *
  * Nothing to do in a template: write a normal <select class="lu-form-control">.
  *   data-native          keeps the browser's own select
- *   multiple             is left alone
+ *   multiple             the chosen values are tags; data-create lets a new value be typed
  * Keys: arrows move, Enter chooses, Escape closes.
  */
 (function () {
@@ -275,7 +275,8 @@
             });
             box.classList.toggle('has-items', any);
             search.placeholder = any ? '' : (select.getAttribute('data-placeholder') || '');
-            search.style.width = any ? Math.max(4, (search.value.length + 1) * 8) + 'px' : '';
+            // with nothing chosen the field shows its placeholder in full
+            search.style.width = any ? Math.max(4, (search.value.length + 1) * 8) + 'px' : '100%';
         }
 
         function fill() {
