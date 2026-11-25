@@ -73,6 +73,18 @@ resources/assets/js/app.js  the module's own script (token header for htmx, load
 - Pages in `Kernel::SETUP_FIRST` lead to the setup wizard until the vendor API is connected.
 - A page whose action replaces the module's files or sends a file (module update, CSV export) uses plain form
   posts and redirects, not htmx.
+- **Still on the old framework**: the setup wizard (`mg-page=configuration`) and the Migration page; they keep
+  `app/Http/Admin/{Configuration,Migration}.php`, `app/UI/Admin/{Configuration,Migration}` and the old API / SSL
+  settings forms under `app/UI/Admin/Settings`. Everything else is on the kernel.
+- **Settings** (`app/Pages/Admin/Settings.php`): one entry per screen in `SCREENS` - a provider from
+  `app/Libs/Settings` (`read()` gives values and choices, `update()` saves and may return a `Result`), a template
+  `admin/settings/<name>.tpl` built from `section_start.tpl` / `field.tpl` / `section_end.tpl`, optional `extra`
+  class (`data($lang)`: what the screen shows besides its fields). A screen without a provider has no form and no
+  Save bar (Email notifications). `test` adds Test Connection (the provider's `test()`), `always` keeps Save enabled.
+- **Lists** (`Kernel\Table`): `searchUsing()` for a search of the page's own (Logs: by service), `toolbar()`,
+  `selectable()` for ticked rows. A dialog is a fragment put into `#tssggs-dialog` (`partials/dialog_start.tpl`).
+- **Deploy to the test box builds from the last commit** (`build/build.js HEAD`): commit before `deploypkg.sh`,
+  or the box still runs the old code while `qa.sh` (which copies the working tree) already sees the new one.
 
 ## Rules that keep it maintainable
 
