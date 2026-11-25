@@ -676,3 +676,7 @@
 /* the "?" beside a field label: its text shows on hover or focus */
 #layers2 .tssggs-tip { position: relative; cursor: help; }
 #layers2 .tssggs-tip:hover::after, #layers2 .tssggs-tip:focus::after { content: attr(data-title); position: absolute; z-index: 30; left: 50%; bottom: calc(100% + 8px); transform: translateX(-50%); width: max-content; max-width: 320px; padding: 8px 10px; border-radius: 6px; background: #25282d; color: #fff; font: 400 12px/1.45 inherit; font-style: normal; text-align: left; white-space: normal; box-shadow: 0 4px 14px rgba(0,0,0,.18); }
+/* the "Actions" menu of a list (admin/logs/toolbar.tpl): opens under its button, right edges aligned */
+#layers2 .tssggs-menu { position: relative; }
+#layers2 .tssggs-menu__drop { top: 100%; right: 0; left: auto; z-index: 1000; margin-top: 6px; }
+#layers2 .tssggs-menu__drop .lu-dropdown__link { display: flex; align-items: center; gap: 10px; }
