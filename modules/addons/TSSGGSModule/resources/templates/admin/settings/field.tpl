@@ -38,6 +38,8 @@
         <label class="lu-form-label lu-single-element"><span>{$smarty.capture.label nofilter}</span>{$smarty.capture.hint nofilter}</label>
         {if $type === 'select'}
             <select name="{$name}" class="lu-form-control {$class|default:''}">
+                {* nothing saved yet and no "empty" choice in the list: the field stays empty instead of taking the first choice *}
+                {if (string)$value === '' && !isset($options[$name][''])}<option value="" selected></option>{/if}
                 {foreach $options[$name]|default:[] as $optionValue => $optionText}
                     <option value="{$optionValue}"{if (string)$optionValue === (string)$value} selected{/if}>{$optionText}</option>
                 {/foreach}
