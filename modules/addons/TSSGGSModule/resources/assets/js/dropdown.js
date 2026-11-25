@@ -70,13 +70,13 @@
             list.textContent = '';
             shown = [];
             Array.prototype.forEach.call(select.options, function (option) {
-                if (option.disabled || (query !== '' && option.textContent.toLowerCase().indexOf(query) === -1)) {
+                // an option without a text is the "nothing chosen yet" placeholder: it is not offered
+                if (option.disabled || option.textContent === '' || (query !== '' && option.textContent.toLowerCase().indexOf(query) === -1)) {
                     return;
                 }
                 var row = element('div', 'option' + (option.selected ? ' selected' : ''));
                 row.setAttribute('data-selectable', '');
-                // an empty option ("All", "choose...") still needs a line to click
-                row.textContent = option.textContent !== '' ? option.textContent : ' ';
+                row.textContent = option.textContent;
                 list.appendChild(row);
                 shown.push(option);
             });
