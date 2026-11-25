@@ -10,8 +10,6 @@ parameters:
     paths:
         - modules/addons/TSSGGSModule/app
         - modules/servers/TSSGGSModule/app
-    excludePaths:
-        - modules/addons/TSSGGSModule/app/Database/*
     bootstrapFiles:
         - tests/phpstan-bootstrap.php
     scanDirectories:

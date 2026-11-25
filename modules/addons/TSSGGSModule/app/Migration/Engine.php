@@ -708,7 +708,7 @@ class Engine
                 // only slower without it
             }
         }
-        // the unified module's own table: kept (App\Libs\SchemaIndexes adds the same on every install)
+        // the unified module's own table: kept (App\Database\Schema adds the same on every install)
         try
         {
             Schema::addIndex(Writer::tRequests(), 'serviceid', 'serviceid');

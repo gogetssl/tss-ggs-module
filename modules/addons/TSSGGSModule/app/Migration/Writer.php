@@ -383,7 +383,6 @@ class Writer
      */
     public function writeMarkups(array $rules): array
     {
-        Markups::createTable();
         $ids = [];
         foreach($rules as $rule)
         {
@@ -431,7 +430,6 @@ class Writer
     public function writeService(array $rec, string $privateKeyPem = ''): array
     {
         // table creation inside the transaction would commit it implicitly (MySQL DDL)
-        AutoInstallQueue::createTables();
 
         return Capsule::connection()->transaction(function() use ($rec, $privateKeyPem) {
             $now     = date('Y-m-d H:i:s');

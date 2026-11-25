@@ -24,7 +24,6 @@ class CertificateLog extends AbstractController implements AdminAreaInterface
     {
         if(\ModulesGarden\TSSGGSModule\App\Libs\CsrfToken::valid($_REQUEST['token'] ?? ''))
         {
-            AutoInstallQueue::createTables();
             $query = Capsule::table(AutoInstallQueue::logsTable());
             $older = (string)($_REQUEST['older'] ?? '');
             // only "all" or a number of days: anything else deletes nothing

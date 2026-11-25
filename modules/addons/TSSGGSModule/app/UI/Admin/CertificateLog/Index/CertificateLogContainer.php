@@ -24,7 +24,6 @@ class CertificateLogContainer extends Container implements AdminAreaInterface
     public function loadHtml(): void
     {
         $this->setCss('tssggs-migration tssggs-log');
-        AutoInstallQueue::createTables();
 
         $service = (int)($_GET['service'] ?? 0);
         $type    = in_array($_GET['type'] ?? '', ['success', 'info', 'error'], true) ? $_GET['type'] : '';

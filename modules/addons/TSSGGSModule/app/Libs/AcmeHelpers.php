@@ -193,7 +193,6 @@ class AcmeHelpers
             throw new \Exception(Lang::absoluteT('subscription_was_not_created_yet'));
         }
 
-        SubscriptionState::ensureColumns();
         $wasUnpaid  = SubscriptionState::renewalUnpaid($subscription);
         $apiOrderId = (int)$subscription->api_order_id;
         $api        = Helpers::getApiByServiceId($serviceId);

@@ -108,7 +108,6 @@ trait AcmeActions
         $userId       = (int)$input['params']['userid'];
         $sslService   = SSL::getByServiceId($serviceId);
         $product      = Product::find((int)$input['params']['pid']);
-        \ModulesGarden\TSSGGSModule\App\Libs\SubscriptionState::ensureColumns();
         $subscription = AcmeSubscription::where('service_id', $serviceId)->first();
 
         // not active yet, or its ACME account not active yet (the keys work only then): read the current state

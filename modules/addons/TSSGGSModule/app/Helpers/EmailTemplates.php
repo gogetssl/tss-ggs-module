@@ -155,7 +155,7 @@ class EmailTemplates
                                      <p>{$signature}</p>';
 
 
-    /** keys of e-mails the module no longer has: their templates are deleted on upgrade (SchemaIndexes) */
+    /** keys of e-mails the module no longer has: their templates are deleted on upgrade (App\Database\Schema::afterUpgrade) */
     const REMOVED_TEMPLATES = [
         'Renewal', // the GoGetSSL module's "expires within 30 days, click Renew" - Service Expiration does it (removed in 1.9.0)
     ];

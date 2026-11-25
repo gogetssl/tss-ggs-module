@@ -43,41 +43,9 @@ class AisHelpers
     /** the module's method => the gateway's installation_method */
     const GATEWAY_METHODS = [self::METHOD_AUTOINSTALL => 'ais', self::METHOD_ACME => 'acme'];
 
-    protected static $columnsChecked = false;
-
-    /**
-     * Columns added in 1.4 (install method, ACME account of a subscription switched to ACME). The schema file only
-     * creates missing tables, so an existing table gets them here.
-     */
-    public static function ensureColumns()
-    {
-        SubscriptionState::ensureColumns();
-        if(self::$columnsChecked)
-        {
-            return;
-        }
-        self::$columnsChecked = true;
-        $table  = (new AisSubscription())->getTable();
-        $schema = \WHMCS\Database\Capsule::schema();
-        if(!$schema->hasTable($table))
-        {
-            return;
-        }
-        $columns = ['install_method' => 'string', 'acme_account_id' => 'string', 'eab_kid' => 'string', 'eab_hmac_key' => 'text', 'server_url' => 'text'];
-        foreach($columns as $column => $type)
-        {
-            if(!$schema->hasColumn($table, $column))
-            {
-                $schema->table($table, function($t) use ($column, $type) {
-                    $type === 'text' ? $t->text($column)->nullable() : $t->string($column, $column === 'install_method' ? 32 : 255)->nullable();
-                });
-            }
-        }
-    }
 
     public static function refreshAisDetails($serviceId)
     {
-        self::ensureColumns();
         $subscription = AisSubscription::getByServiceId($serviceId);
 
         if(!$subscription || (int)$subscription->ais_item_id <= 0)

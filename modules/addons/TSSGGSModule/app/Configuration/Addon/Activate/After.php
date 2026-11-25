@@ -15,6 +15,9 @@ class After extends \ModulesGarden\TSSGGSModule\Core\Configuration\Addon\Activat
     {
         $return = parent::execute($params);
 
+        // schema.sql created the tables: the later changes (App\Database\Schema) are recorded as applied now
+        \ModulesGarden\TSSGGSModule\App\Database\Schema::migrate();
+
         return $return;
     }
 }

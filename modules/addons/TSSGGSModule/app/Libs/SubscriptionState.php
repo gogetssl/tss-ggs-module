@@ -2,8 +2,6 @@
 
 namespace ModulesGarden\TSSGGSModule\App\Libs;
 
-use ModulesGarden\TSSGGSModule\App\Models\AcmeSubscription;
-use ModulesGarden\TSSGGSModule\App\Models\AisSubscription;
 
 /**
  * State of an ACME / Plan + Automate subscription as the gateway documents it (API v2, 2026-11-19), the same for both
@@ -18,28 +16,6 @@ class SubscriptionState
 {
     const CLOSED = ['cancelled', 'terminated', 'expired'];
 
-    private static $columnsChecked = false;
-
-    /** account_status column (1.16.1) on both subscription tables - the schema file only creates missing tables */
-    public static function ensureColumns()
-    {
-        if(self::$columnsChecked)
-        {
-            return;
-        }
-        self::$columnsChecked = true;
-        $schema = \WHMCS\Database\Capsule::schema();
-        foreach([new AcmeSubscription(), new AisSubscription()] as $model)
-        {
-            $table = $model->getTable();
-            if($schema->hasTable($table) && !$schema->hasColumn($table, 'account_status'))
-            {
-                $schema->table($table, function($t) {
-                    $t->string('account_status', 32)->nullable();
-                });
-            }
-        }
-    }
 
     /** items[0].account.status of a details answer, lower case ('' when not given) */
     public static function accountStatus(array $item)

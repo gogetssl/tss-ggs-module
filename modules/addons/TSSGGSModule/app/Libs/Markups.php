@@ -16,34 +16,10 @@ class Markups
         return Edition::table('ClientMarkups');
     }
 
-    protected static $tableChecked = false;
     protected static $cache        = [];
-
-    public static function createTable()
-    {
-        if(self::$tableChecked)
-        {
-            return;
-        }
-        if(!Capsule::schema()->hasTable(self::table()))
-        {
-            Capsule::schema()->create(self::table(), function($table) {
-                $table->engine = 'InnoDB';
-                $table->increments('id');
-                $table->integer('client_id')->default(0)->index();
-                $table->integer('product_id')->default(0)->index();
-                $table->decimal('markup', 8, 2);
-                $table->dateTime('created_at');
-                $table->unique(['client_id', 'product_id']);
-            });
-        }
-        self::$tableChecked = true;
-    }
 
     public static function all()
     {
-        self::createTable();
-
         return Capsule::table(self::table() . ' as r')
             ->leftJoin('tblclients as c', 'c.id', '=', 'r.client_id')
             ->leftJoin('tblproducts as p', 'p.id', '=', 'r.product_id')
@@ -53,7 +29,6 @@ class Markups
 
     public static function set($clientId, $productId, $markup)
     {
-        self::createTable();
         if($productId && !Capsule::table('tblproducts')->where('id', (int)$productId)->where('servertype', 'TSSGGSModule')->exists())
         {
             throw new \InvalidArgumentException('Unknown product');
@@ -76,7 +51,6 @@ class Markups
 
     public static function delete($id)
     {
-        self::createTable();
         self::$cache = [];
 
         return Capsule::table(self::table())->where('id', (int)$id)->delete();
@@ -90,7 +64,6 @@ class Markups
         $key = (int)$clientId . ':' . (int)$productId;
         if(!array_key_exists($key, self::$cache))
         {
-            self::createTable();
             $rules = Capsule::table(self::table())
                 ->whereIn('client_id', array_unique([0, (int)$clientId]))
                 ->whereIn('product_id', [0, (int)$productId])

@@ -55,39 +55,10 @@ class CatalogueSync
         'terms'        => 'Terms (months)',
     ];
 
-    protected static $tableChecked = false;
 
     public static function table()
     {
         return Edition::table('CatalogueChanges');
-    }
-
-    public static function createTable()
-    {
-        if(self::$tableChecked)
-        {
-            return;
-        }
-        // schema.sql creates it on install / upgrade; this covers a module updated without the upgrade having run yet
-        if(!Capsule::schema()->hasTable(self::table()))
-        {
-            Capsule::schema()->create(self::table(), function($table) {
-                $table->engine = 'InnoDB';
-                $table->increments('id');
-                $table->string('vendor', 32);
-                $table->string('remote_id', 191);
-                $table->string('product_name', 255)->default('');
-                $table->integer('whmcs_pid')->default(0);
-                $table->string('type', 32);
-                $table->string('field', 64)->default('');
-                $table->text('old_value')->nullable();
-                $table->text('new_value')->nullable();
-                $table->text('action')->nullable();
-                $table->dateTime('created_at')->index();
-                $table->dateTime('emailed_at')->nullable()->index();
-            });
-        }
-        self::$tableChecked = true;
     }
 
     public static function mode()
@@ -206,7 +177,6 @@ class CatalogueSync
             return true;
         }
 
-        self::createTable();
         $today = Capsule::table(self::table())->where('vendor', $vendor)->where('type', self::WARNING)->where('created_at', '>=', date('Y-m-d 00:00:00'))->exists();
         if(!$today)
         {
@@ -347,7 +317,6 @@ class CatalogueSync
 
     protected static function record($vendor, $remoteId, $name, $pid, $type, $field, $old, $new, $action)
     {
-        self::createTable();
         Capsule::table(self::table())->insert([
             'vendor'       => (string)$vendor,
             'remote_id'    => (string)$remoteId,
@@ -472,7 +441,6 @@ class CatalogueSync
      */
     protected static function importNew()
     {
-        self::createTable();
         $rows = Capsule::table(self::table())->where('type', self::NEW)->where('whmcs_pid', 0)->where('created_at', '>=', date('Y-m-d H:i:s', strtotime('-7 days')))->get();
         if(!count($rows))
         {
@@ -589,7 +557,6 @@ class CatalogueSync
      */
     public static function notify()
     {
-        self::createTable();
         Capsule::table(self::table())->where('created_at', '<', date('Y-m-d H:i:s', strtotime('-' . self::KEEP_DAYS . ' days')))->delete();
 
         $rows = Capsule::table(self::table())->whereNull('emailed_at')->orderBy('id')->get();
@@ -703,8 +670,6 @@ class CatalogueSync
     /** Changes of the last days, newest first, for the Products page */
     public static function recent($days = self::TAB_DAYS, $limit = 1000)
     {
-        self::createTable();
-
         return Capsule::table(self::table())->where('created_at', '>=', date('Y-m-d H:i:s', strtotime('-' . (int)$days . ' days')))
             ->orderBy('id', 'desc')->limit((int)$limit)->get();
     }

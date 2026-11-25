@@ -64,8 +64,6 @@ class DataTable extends \ModulesGarden\TSSGGSModule\Components\DataTable\DataTab
 
     public function loadData(): void
     {
-        AutoInstallQueue::createTables();
-
         $dataProv = new QueryDataProvider(
             Capsule::table(AutoInstallQueue::queueTable())->select(
                 'id', 'client_id', 'service_id', 'domain', 'type', 'status', 'attempts', 'error_message', 'updated_at',

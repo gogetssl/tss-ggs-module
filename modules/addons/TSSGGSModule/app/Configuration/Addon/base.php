@@ -28,13 +28,14 @@ function TSSGGSModule_adoptAnOlderInstall()
     require_once $libs . 'Edition.php';
     require_once $libs . 'TablePrefix.php';
     require_once $libs . 'ModuleRename.php';
-    require_once $libs . 'SchemaIndexes.php';
+    require_once dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . 'Database' . DIRECTORY_SEPARATOR . 'Schema.php';
 
-    foreach (['TablePrefix', 'ModuleRename', 'SchemaIndexes'] as $step)
+    // older names first, then the database changes since schema.sql (App\Database\Schema)
+    foreach (['\\ModulesGarden\\TSSGGSModule\\App\\Libs\\TablePrefix', '\\ModulesGarden\\TSSGGSModule\\App\\Libs\\ModuleRename', '\\ModulesGarden\\TSSGGSModule\\App\\Database\\Schema'] as $step)
     {
         try
         {
-            call_user_func(['\\ModulesGarden\\TSSGGSModule\\App\\Libs\\' . $step, 'migrate']);
+            call_user_func([$step, 'migrate']);
         }
         catch (\Throwable $e)
         {

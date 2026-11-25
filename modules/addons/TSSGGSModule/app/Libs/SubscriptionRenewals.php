@@ -33,7 +33,6 @@ class SubscriptionRenewals
     public static function run(array $sslSettings)
     {
         $errors = [];
-        AisHelpers::ensureColumns();
         foreach(self::TYPES as $category => [$model, $itemColumn])
         {
             foreach($model::query()->get() as $subscription)

@@ -26,7 +26,6 @@ trait AisActions
         $userId       = (int)$input['params']['userid'];
         $sslService   = SSL::getByServiceId($serviceId);
         $product      = Product::find((int)$input['params']['pid']);
-        AisHelpers::ensureColumns();
         $subscription = AisSubscription::getByServiceId($serviceId);
 
         // not active yet, or switched to ACME with an ACME account not active yet (the keys work only then)
@@ -283,7 +282,6 @@ trait AisActions
         try
         {
             CertificateService::api($serviceId)->changeAisInstallMethod((int)$subscription->ais_item_id, $method);
-            AisHelpers::ensureColumns();
             $subscription->install_method = $method;
             // the ACME account of an earlier switch is not this one: the details bring the new account (GoGetSSL: once it is
             // registered, a few minutes later - the page shows it as being set up until then)

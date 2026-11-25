@@ -27,38 +27,10 @@ class AutoInstallReport
     /** rows per section in the e-mail */
     const MAX_ROWS  = 100;
 
-    protected static $checked = false;
 
     public static function table()
     {
         return Edition::table('AutoInstallReport');
-    }
-
-    public static function createTable()
-    {
-        if(self::$checked)
-        {
-            return;
-        }
-        self::$checked = true;
-        if(Capsule::schema()->hasTable(self::table()))
-        {
-            return;
-        }
-        Capsule::schema()->create(self::table(), function($table) {
-            $table->engine = 'InnoDB';
-            $table->increments('id');
-            $table->integer('service_id')->index();
-            $table->integer('client_id')->default(0);
-            $table->string('domain')->default('');
-            $table->string('kind', 16);
-            $table->string('status', 16)->default(self::PENDING)->index();
-            $table->text('detail')->nullable();
-            $table->dateTime('started_at');
-            $table->dateTime('finished_at')->nullable();
-            $table->dateTime('late_at')->nullable();
-            $table->dateTime('emailed_at')->nullable();
-        });
     }
 
     /** A job starts: an earlier unfinished job of the service is closed (replaced) */
@@ -66,7 +38,6 @@ class AutoInstallReport
     {
         try
         {
-            self::createTable();
             Capsule::table(self::table())->where('service_id', (int)$serviceId)->where('status', self::PENDING)
                 ->update(['status' => self::STOPPED, 'finished_at' => date('Y-m-d H:i:s'), 'detail' => 'Replaced by a new job']);
             Capsule::table(self::table())->insert([
@@ -92,7 +63,6 @@ class AutoInstallReport
     {
         try
         {
-            self::createTable();
             Capsule::table(self::table())->where('service_id', (int)$serviceId)->where('status', self::PENDING)
                 ->update(['status' => $status, 'finished_at' => date('Y-m-d H:i:s'), 'detail' => (string)$detail]);
         }
@@ -107,7 +77,6 @@ class AutoInstallReport
      */
     public static function notify()
     {
-        self::createTable();
         Capsule::table(self::table())->where('started_at', '<', date('Y-m-d H:i:s', strtotime('-' . self::KEEP_DAYS . ' days')))->delete();
 
         $finished = Capsule::table(self::table())->whereIn('status', [self::INSTALLED, self::FAILED])->whereNull('emailed_at')->orderBy('id')->get()->all();

@@ -16,6 +16,19 @@ if(file_exists(dirname(__DIR__, 2).DS.'addons'.DS.'TSSGGSModule'.DS.'app'.DS.'Li
 
 \ModulesGarden\Servers\TSSGGSModule\Server::I();
 
+// files updated by copying, without the addon upgrade: the database changes (App\Database\Schema) are applied here
+// too; once current it is one query per request
+try
+{
+    if(class_exists('\ModulesGarden\TSSGGSModule\App\Database\Schema'))
+    {
+        \ModulesGarden\TSSGGSModule\App\Database\Schema::migrate();
+    }
+}
+catch(\Throwable $e)
+{
+    // the service actions go on; the next request tries again
+}
 
 
 if (!defined("WHMCS")) {

@@ -22,57 +22,11 @@ class AutoInstallQueue
 
     const MAX_ATTEMPTS = 5;
 
-    protected static $tablesChecked = false;
-
-    public static function createTables()
-    {
-        if(self::$tablesChecked)
-        {
-            return;
-        }
-
-        $schema = Capsule::schema();
-
-        if(!$schema->hasTable(self::queueTable()))
-        {
-            $schema->create(self::queueTable(), function($table) {
-                $table->engine = 'InnoDB';
-                $table->increments('id');
-                $table->integer('client_id');
-                $table->integer('service_id')->index();
-                $table->string('type', 32);
-                $table->string('status', 32)->default('pending');
-                $table->string('domain')->nullable();
-                $table->integer('attempts')->default(0);
-                $table->text('data')->nullable();
-                $table->string('error_message', 512)->nullable();
-                $table->dateTime('created_at');
-                $table->dateTime('updated_at');
-            });
-        }
-
-        if(!$schema->hasTable(self::logsTable()))
-        {
-            $schema->create(self::logsTable(), function($table) {
-                $table->engine = 'InnoDB';
-                $table->increments('id');
-                $table->integer('client_id');
-                $table->integer('service_id')->index();
-                $table->string('type', 16);
-                $table->text('message');
-                $table->dateTime('created_at');
-            });
-        }
-
-        self::$tablesChecked = true;
-    }
 
     // ---- Queue ---- //
 
     public static function addTask($clientId, $serviceId, $type, array $data = [])
     {
-        self::createTables();
-
         return Capsule::table(self::queueTable())->insertGetId([
             'client_id'  => (int)$clientId,
             'service_id' => (int)$serviceId,
@@ -88,8 +42,6 @@ class AutoInstallQueue
 
     public static function getPendingTasks($type, $limit = 20)
     {
-        self::createTables();
-
         return Capsule::table(self::queueTable())
             ->where('status', 'pending')
             ->where('type', $type)
@@ -172,8 +124,6 @@ class AutoInstallQueue
      */
     public static function resetTask($id)
     {
-        self::createTables();
-
         $task = Capsule::table(self::queueTable())->where('id', (int)$id)->first();
         if(!$task)
         {
@@ -204,8 +154,6 @@ class AutoInstallQueue
 
     public static function resetStuckProcessing($minutesOld = 15)
     {
-        self::createTables();
-
         Capsule::table(self::queueTable())
             ->where('status', 'processing')
             ->where('updated_at', '<', date('Y-m-d H:i:s', strtotime('-' . (int)$minutesOld . ' minutes')))
@@ -218,8 +166,6 @@ class AutoInstallQueue
 
     public static function hasOpenTask($serviceId, $type = null)
     {
-        self::createTables();
-
         $query = Capsule::table(self::queueTable())
             ->where('service_id', (int)$serviceId)
             ->whereIn('status', ['pending', 'processing']);
@@ -234,8 +180,6 @@ class AutoInstallQueue
 
     public static function cancelOpenTasks($serviceId, $reason = '')
     {
-        self::createTables();
-
         Capsule::table(self::queueTable())
             ->where('service_id', (int)$serviceId)
             ->whereIn('status', ['pending', 'processing'])
@@ -256,7 +200,6 @@ class AutoInstallQueue
             return;
         }
 
-        self::createTables();
 
         Capsule::table(self::logsTable())->insert([
             'client_id'  => (int)$clientId,
@@ -269,8 +212,6 @@ class AutoInstallQueue
 
     public static function getLogs($serviceId, $limit = 15)
     {
-        self::createTables();
-
         return Capsule::table(self::logsTable())
             ->where('service_id', (int)$serviceId)
             ->orderBy('id', 'desc')

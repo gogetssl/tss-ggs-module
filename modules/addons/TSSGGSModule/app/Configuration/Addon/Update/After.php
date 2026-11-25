@@ -20,8 +20,8 @@ class After extends \ModulesGarden\TSSGGSModule\Core\Configuration\Addon\Update\
 
         $fileLoader = new FileLoader();
         $fileLoader->performQueryFromFile(ModuleConstants::getFullPath('app', 'Database', 'schema.sql'));
-        // columns added to existing tables
-        \ModulesGarden\TSSGGSModule\App\Libs\AisHelpers::ensureColumns();
+        // the later changes: columns, indexes, tables added since (App\Database\Schema)
+        \ModulesGarden\TSSGGSModule\App\Database\Schema::migrate();
 
         return $return;
     }
