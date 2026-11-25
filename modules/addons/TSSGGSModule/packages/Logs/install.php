@@ -10,10 +10,8 @@ use function ModulesGarden\TSSGGSModule\Core\listen;
 
 return [
     'menu'        => [
+        // the Logs page is in the module's own menu (app/Config/menu/admin.yml)
         'admin'  => [
-            'logs' => [
-                'icon' => 'mdi mdi-clipboard-text',
-            ],
         ],
         'client' => [
 

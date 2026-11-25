@@ -1729,3 +1729,5 @@ $_LANG['admin.products.choose_group'] = 'Vælg en produktgruppe, eller giv den n
 $_LANG['admin.home.index.forms.reporting_form.details_required'] = 'Beskriv problemet, så supporten ved, hvad de skal lede efter.';
 $_LANG['admin.kernel.saved'] = 'Indstillingerne er gemt.';
 $_LANG['admin.settings.index.providers.ssl_settings_provider.fixedDetailsRequired'] = 'Faste tekniske oplysninger er slået til: udfyld alle felter for den tekniske kontakt, også landet.';
+$_LANG['admin.menu.logs'] = 'Logfiler';
+$_LANG['admin.breadcrumbs.Logs'] = 'Logfiler';

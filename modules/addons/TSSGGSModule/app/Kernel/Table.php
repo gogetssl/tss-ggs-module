@@ -36,6 +36,7 @@ class Table
     protected $keep        = [];
     protected $toolbar     = '';
     protected $mass        = null;
+    protected $searcher    = null;
 
     public static function make(Request $request, string $id): self
     {
@@ -110,6 +111,17 @@ class Table
         return $this;
     }
 
+    /**
+     * A search of the page's own for run(): $searcher($query, $search, $columns) adds the conditions to $query.
+     * $columns($q) adds the usual search in the searched columns to a (sub)query - for a page that searches there too.
+     */
+    public function searchUsing(callable $searcher): self
+    {
+        $this->searcher = $searcher;
+
+        return $this;
+    }
+
     /** This request is the table reloading itself (search, sort, page) */
     public function isReload(): bool
     {
@@ -128,7 +140,7 @@ class Table
         {
             $columns = $this->columns;
             $search  = $state['search'];
-            $query->where(function($q) use ($columns, $search) {
+            $usual   = function($q) use ($columns, $search) {
                 foreach($columns as $column)
                 {
                     if($column['search'] === self::SEARCH_TEXT)
@@ -140,7 +152,15 @@ class Table
                         $q->orWhere($column['name'], '=', (int)$search);
                     }
                 }
-            });
+            };
+            if($this->searcher)
+            {
+                ($this->searcher)($query, $search, $usual);
+            }
+            else
+            {
+                $query->where($usual);
+            }
         }
 
         $total = (clone $query)->count();
