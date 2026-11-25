@@ -11,10 +11,13 @@ final class Response
     const PAGE     = 'page';
     const FRAGMENT = 'fragment';
     const REDIRECT = 'redirect';
+    const DOWNLOAD = 'download';
 
     protected $type;
     protected $body;
     protected $status;
+    protected $fileName = '';
+    protected $mime = '';
 
     protected function __construct(string $type, string $body, int $status = 200)
     {
@@ -37,6 +40,16 @@ final class Response
     public static function redirect(string $url): self
     {
         return new self(self::REDIRECT, $url, 302);
+    }
+
+    /** A file the browser saves (CSV export) */
+    public static function download(string $content, string $fileName, string $mime = 'text/csv; charset=utf-8'): self
+    {
+        $response           = new self(self::DOWNLOAD, $content);
+        $response->fileName = preg_replace('/[^A-Za-z0-9._-]/', '_', $fileName);
+        $response->mime     = $mime;
+
+        return $response;
     }
 
     public function type(): string
@@ -71,6 +84,13 @@ final class Response
             exit;
         }
         http_response_code($this->status);
+        if($this->type === self::DOWNLOAD)
+        {
+            header('Content-Type: ' . $this->mime);
+            header('Content-Disposition: attachment; filename="' . $this->fileName . '"');
+            echo $this->body;
+            exit;
+        }
         header('Content-Type: text/html; charset=utf-8');
         echo $this->body;
         exit;

@@ -57,7 +57,7 @@
                 {if $checksOk && $fullAdmin}
                     <p>{t key='install_info'}</p>
                     <form method="post" action="{url action='step'}" class="tssggs-upd__form"
-                          data-confirm="{t key='install_confirm' version=$version}" @submit="confirm($el.dataset.confirm) || $event.preventDefault()" x-data>
+                          data-confirm="{t key='install_confirm' version=$version}">
                         <input type="hidden" name="token" value="{$token}">
                         <input type="hidden" name="step" value="prepare">
                         <button type="submit" class="tssggs-upd__btn is-primary">{t key='install' version=$version}</button>
@@ -84,7 +84,7 @@
                     <p>{t key='rollback_info' version=$backup}</p>
                     {if $canSwap}
                         <form method="post" action="{url action='rollback'}" class="tssggs-upd__form"
-                              data-confirm="{t key='rollback_confirm' version=$backup}" @submit="confirm($el.dataset.confirm) || $event.preventDefault()" x-data>
+                              data-confirm="{t key='rollback_confirm' version=$backup}">
                             <input type="hidden" name="token" value="{$token}">
                             <button type="submit" class="tssggs-upd__btn is-plain">{t key='rollback' version=$backup}</button>
                         </form>

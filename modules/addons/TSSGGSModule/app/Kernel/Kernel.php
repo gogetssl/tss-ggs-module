@@ -17,6 +17,9 @@ namespace ModulesGarden\TSSGGSModule\App\Kernel;
  */
 final class Kernel
 {
+    /** pages that need the vendor API: until the setup wizard has connected it, they lead to the wizard */
+    const SETUP_FIRST = ['home', 'products', 'import', 'statistics', 'reports', 'pricing', 'settings'];
+
     /** @return string the module's folder name (TSSPlugin / GGSModule in a build) */
     public static function module(): string
     {
@@ -58,7 +61,9 @@ final class Kernel
 
         try
         {
-            $response = self::dispatch($page, $request);
+            $response = in_array($page->name(), self::SETUP_FIRST, true) && !self::connected()
+                ? Response::redirect(Page::pageUrl('configuration', 'step1'))
+                : self::dispatch($page, $request);
         }
         catch(\Throwable $e)
         {
@@ -70,6 +75,14 @@ final class Kernel
         }
 
         $response->send($page, $request);
+    }
+
+    /** The setup wizard has tested the API credentials successfully */
+    public static function connected(): bool
+    {
+        $configuration = (new \ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository())->getModuleConfiguration();
+
+        return !empty($configuration) && ($configuration['test_connection'] ?? 'error') !== 'error';
     }
 
     protected static function dispatch(Page $page, Request $request): Response

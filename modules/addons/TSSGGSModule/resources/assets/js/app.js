@@ -3,6 +3,7 @@
  *
  * - every htmx request carries the WHMCS token (the layout prints it as data-token on #layers2), so a POST action
  *   is accepted by the kernel
+ * - a form with data-confirm="question" asks before it is sent
  * - a failed request shows its answer instead of failing silently
  */
 (function () {
@@ -16,6 +17,14 @@
     document.addEventListener('htmx:configRequest', function (event) {
         event.detail.headers['X-CSRF-Token'] = token();
     });
+
+    document.addEventListener('submit', function (event) {
+        var question = event.target.getAttribute('data-confirm');
+        if (question && !window.confirm(question)) {
+            event.preventDefault();
+            event.stopImmediatePropagation();
+        }
+    }, true);
 
     // the kernel answers an error (expired token, exception) with a notice: show it in the target too
     document.addEventListener('htmx:beforeSwap', function (event) {

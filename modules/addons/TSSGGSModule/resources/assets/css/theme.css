@@ -647,3 +647,20 @@
 #layers2 .tssggs-inline-form { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; margin-bottom: 18px; }
 #layers2 .tssggs-inline-form label { display: block; font-weight: 600; }
 #layers2 .tssggs-lazy { min-height: 64px; position: relative; }
+#layers2 .tssggs-toolbar { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; margin-bottom: 14px; }
+#layers2 .tssggs-toolbar label { display: block; font-weight: 600; }
+#layers2 .tssggs-toolbar__group { display: flex; gap: 6px; align-items: flex-end; }
+#layers2 .tssggs-toolbar__group.is-centered { align-items: center; }
+#layers2 .tssggs-toolbar__space { flex: 1; }
+#layers2 .tssggs-inline { display: inline; }
+#layers2 .tssggs-text-bad { color: #a8322d !important; }
+#layers2 tr.tssggs-row-bad > td { background: #f9e3e1 !important; }
+#layers2 .tssggs-pricing__grid tr.is-base > td { border-top: 2px solid #ddd !important; }
+#layers2 .tssggs-pricing__sub { padding-left: 16px; }
+#layers2 input.tssggs-pricing__price { width: 100px !important; display: inline-block !important; }
+#layers2 input.tssggs-pricing__price.is-below { border-color: #a8322d !important; background: #f9e3e1 !important; }
+#layers2 small.tssggs-pricing__cost { color: #5b6673 !important; }
+#layers2 small.tssggs-pricing__cost.is-below { color: #a8322d !important; font-weight: 600; }
+#layers2 small.tssggs-pricing__client { color: #1a6fb5 !important; font-weight: 600; }
+#layers2 .tssggs-pricing__preview { margin-bottom: 16px; }
+#layers2 .tssggs-pricing__preview h4 { margin-top: 0; }
