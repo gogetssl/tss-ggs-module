@@ -72,4 +72,5 @@
 <link rel="stylesheet" href="{$assets}/build/css.php?v={$version}&amp;type=module&amp;isAdminArea=1">
 <script src="{$assets}/assets/js/vendor/htmx.js?v={$version}"></script>
 <script src="{$assets}/assets/js/app.js?v={$version}"></script>
+<script src="{$assets}/assets/js/dropdown.js?v={$version}"></script>
 <script defer src="{$assets}/assets/js/vendor/alpine.js?v={$version}"></script>
