@@ -42,8 +42,8 @@ class SmokeKernelPages extends \ModulesGarden\__MODULE__\Core\CommandLine\Comman
                     if(!$htmx)
                     {
                         $html = Layout::render($page, $response->body());
-                        // a page with its own heading (the dashboard) gets none from the layout
-                        foreach(array_merge(['id="layers2"', 'lu-nav__item', 'vendor/htmx.js', 'vendor/alpine.js'], $page::HEADING ? ['pagehead__title'] : []) as $must)
+                        // a page with its own heading (the dashboard) gets none from the layout; the setup wizard has no menu
+                        foreach(array_merge(['id="layers2"', 'vendor/htmx.js', 'vendor/alpine.js'], $page::CHROME ? ['lu-nav__item'] : [], $page::HEADING ? ['pagehead__title'] : []) as $must)
                         {
                             if(strpos($html, $must) === false)
                             {
@@ -76,6 +76,16 @@ class SmokeKernelPages extends \ModulesGarden\__MODULE__\Core\CommandLine\Comman
                         {
                             throw new \RuntimeException($action . ' "' . $part . '" is not known to the page');
                         }
+                    }
+                }
+                // every page of the setup wizard (a finalized wizard answers with a redirect to the dashboard)
+                foreach(defined($class . '::WIZARD') ? \ModulesGarden\__MODULE__\App\Libs\Setup\Wizard::PAGES : [] as $step)
+                {
+                    $request  = new Request(['mg-page' => lcfirst($name), 'mg-action' => 'step' . $step], [], ['REQUEST_METHOD' => 'GET']);
+                    $response = (new $class($request, new Lang('admin', 'english')))->{'step' . $step}();
+                    if(!$response instanceof Response || trim($response->body()) === '')
+                    {
+                        throw new \RuntimeException('step ' . $step . ' gave no content');
                     }
                 }
                 // every screen of a page with screens (Settings)

@@ -53,6 +53,15 @@ final class Response
         return $response;
     }
 
+    /** Data for a script of the page (the migration runner asks for the progress) */
+    public static function json(array $data, int $status = 200): self
+    {
+        $response       = new self(self::DOWNLOAD, (string)json_encode($data), $status);
+        $response->mime = 'application/json; charset=utf-8';
+
+        return $response;
+    }
+
     /**
      * The answer of a dialog's form that worked: the fragment goes where the form says (the list behind the dialog)
      * and the dialog closes (app.js).
@@ -118,7 +127,11 @@ final class Response
         if($this->type === self::DOWNLOAD)
         {
             header('Content-Type: ' . $this->mime);
-            header('Content-Disposition: attachment; filename="' . $this->fileName . '"');
+            if($this->fileName !== '')
+            {
+                header('Content-Disposition: attachment; filename="' . $this->fileName . '"');
+                header('X-Content-Type-Options: nosniff');
+            }
             echo $this->body;
             exit;
         }

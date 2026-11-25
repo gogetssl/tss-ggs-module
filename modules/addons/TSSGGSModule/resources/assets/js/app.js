@@ -6,7 +6,7 @@
  * - a question before a change, in the module's own dialog (the <template data-confirm-template> of
  *   admin/layout.tpl):
  *       hx-confirm="question"      on an htmx element
- *       data-confirm="question"    on a form or a submit button
+ *       data-confirm="question"    on a form or a submit button (data-no-confirm on a button of such a form: no question)
  *   data-confirm-title="..." sets the dialog's title (default: the page title)
  * - a failed request shows its answer instead of failing silently
  * - while a part of the page loads, its container is dimmed
@@ -101,6 +101,10 @@
             return;
         }
         var submitter = event.submitter || null;
+        // a button of the form that does something else and needs no question: <button data-no-confirm>
+        if (submitter && submitter.hasAttribute('data-no-confirm')) {
+            return;
+        }
         event.preventDefault();
         event.stopImmediatePropagation();
         ask(form, form.getAttribute('data-confirm'), function () {

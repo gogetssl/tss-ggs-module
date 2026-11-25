@@ -4,6 +4,7 @@
 *}
 <div id="layers2" data-token="{$token}">
     <div class="lu-app">
+        {if $chrome}
         <div>
             <div class="lu-app-header lu-app-header--responsive lu-navbar tssggs-head">
                 <a href="{$homeUrl}" class="tssggs-head__brand">
@@ -21,6 +22,7 @@
                 </div>
             </div>
         </div>
+        {/if}
 
         <div class="lu-app-main">
             <div class="lu-app-main__body">

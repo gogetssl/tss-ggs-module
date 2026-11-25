@@ -12,6 +12,7 @@ use ModulesGarden\TSSGGSModule\App\Libs\Support\Icons;
  *
  * Every {$variable} is HTML-escaped. Print ready HTML with {$variable nofilter}.
  *
+ *   {t key='x' html=true}             a text with its own HTML, not escaped
  *   {t key='filter'}                  text of the page's own group (Page::LANG), ":name" replaced by name=...
  *   {t key='admin.menu.home'}         a full key works too
  *   {icon name='check'}               inline SVG icon
@@ -33,9 +34,11 @@ class View
 
         $smarty->registerPlugin('function', 't', function(array $params) use ($page) {
             $key = (string)($params['key'] ?? '');
-            unset($params['key']);
+            // html=true: a text of the module that holds its own HTML (<b>), printed as it is
+            $html = !empty($params['html']);
+            unset($params['key'], $params['html']);
 
-            return htmlspecialchars($page->t($key, $params), ENT_QUOTES, 'UTF-8');
+            return $html ? $page->t($key, $params) : htmlspecialchars($page->t($key, $params), ENT_QUOTES, 'UTF-8');
         });
         $smarty->registerPlugin('function', 'icon', function(array $params) {
             return Icons::svg((string)($params['name'] ?? ''), (string)($params['class'] ?? ''));

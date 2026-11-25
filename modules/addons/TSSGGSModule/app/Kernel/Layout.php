@@ -20,6 +20,8 @@ class Layout
             'body'      => $body,
             'bodyClass' => $page::BODY_CLASS,
             'heading'   => $page::HEADING,
+            // the setup wizard has no module header and no menu
+            'chrome'    => $page::CHROME,
             'title'     => $page->title(),
             'module'    => Edition::name(),
             'edition'   => Edition::get(),

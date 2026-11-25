@@ -19,6 +19,9 @@ abstract class Page
     /** false: the layout prints no page heading (the dashboard has its own) */
     const HEADING = true;
 
+    /** false: the layout prints no module header and no menu (the setup wizard) */
+    const CHROME = true;
+
     protected $request;
     protected $lang;
 
