@@ -148,4 +148,6 @@ namespace {
     function getCartConfigOptions($pid, $values, $cycle, $accountId = '', $orderForm = '', $showHiddenOptions = false) {}
     /** @param mixed $vars @return array<mixed> */
     function run_hook(string $hookName, $vars, bool $unpackArguments = false) {}
+    /** checks the CSRF token of the request (dies on a wrong one) @return mixed */
+    function check_token(string $type = 'WHMCS.default') {}
 }

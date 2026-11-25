@@ -26,6 +26,8 @@ parameters:
         - modules/servers/TSSGGSModule/Configuration.php
         - modules/servers/TSSGGSModule/Loader.php
         - modules/servers/TSSGGSModule/Server.php
+        # global functions the hook classes call (unifiedSslLabelBlock is shared by both editions)
+        - modules/servers/TSSGGSModule/hooks.php
     ignoreErrors:
         # Eloquent models and the Capsule facade answer static calls through __callStatic (where, insert, select ...);
         # plain PHPStan can not see them (Larastan would, but needs Composer)
