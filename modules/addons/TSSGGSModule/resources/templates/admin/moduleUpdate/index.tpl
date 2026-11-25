@@ -20,7 +20,7 @@
                 {/foreach}
             </ol>
             <p>{t key='installing_wait'}</p>
-            <form method="post" action="{url action='step'}" x-data x-init="setTimeout(() => $el.submit(), 400)">
+            <form method="post" action="{url action='step'}" x-data x-init="setTimeout(function () { $el.submit() }, 400)">
                 <input type="hidden" name="token" value="{$token}">
                 <input type="hidden" name="step" value="{$running.next}">
                 <button type="submit" class="tssggs-upd__btn is-primary">{t key='continue'}</button>

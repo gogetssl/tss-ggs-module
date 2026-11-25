@@ -55,4 +55,25 @@ class KernelTest extends TestCase
         $this->assertNotSame($lang->get('admin.certificate_log.filter'), $german->get('admin.certificate_log.empty'));
         $this->assertTrue((new Lang('admin', 'klingon'))->has('admin.menu.home'), 'an unknown language shows English');
     }
+
+    /**
+     * WHMCS adds its token field to every form by looking for "<form ...>" up to the first ">". A ">" inside an
+     * attribute of the tag (an arrow function in @submit) cuts the tag in two and the page shows the rest as text.
+     */
+    public function testNoFormTagOfATemplateContainsAGreaterThanSign(): void
+    {
+        $root = dirname(__DIR__, 3) . '/modules/addons/TSSGGSModule/resources/templates';
+        $it   = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($root, \FilesystemIterator::SKIP_DOTS));
+        $seen = 0;
+        foreach($it as $file)
+        {
+            preg_match_all('/<form\b[^>]*>/', (string)file_get_contents($file->getPathname()), $tags);
+            foreach($tags[0] as $tag)
+            {
+                $seen++;
+                $this->assertSame(0, substr_count($tag, '"') % 2, $file->getFilename() . ': ">" inside the form tag ' . substr($tag, 0, 80));
+            }
+        }
+        $this->assertGreaterThan(0, $seen);
+    }
 }

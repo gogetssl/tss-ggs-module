@@ -58,9 +58,10 @@
     {if !$rows}
         <p>{t key='no_products'}</p>
     {else}
-        {* only the changed fields are posted (a large catalogue would exceed max_input_vars) *}
+        {* only the changed fields are posted (a large catalogue would exceed max_input_vars).
+           No ">" inside a <form> tag: WHMCS adds its token field after the first ">" it finds. *}
         <form method="post" action="{url action='save'}" x-data
-              @submit="$el.querySelectorAll('input[name^=price]').forEach(i => i.disabled = i.value === i.defaultValue)">
+              @submit="$el.querySelectorAll('input[name^=price]').forEach(function (i) { i.disabled = i.value === i.defaultValue })">
             <input type="hidden" name="token" value="{$token}">
             <input type="hidden" name="currency" value="{$currencyId}">
             <table class="table table-condensed tssggs-pricing__grid">
