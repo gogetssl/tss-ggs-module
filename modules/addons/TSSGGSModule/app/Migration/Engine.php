@@ -1181,7 +1181,7 @@ class Engine
         Capsule::connection()->transaction(function() use ($runId, $run, $backup, $reader, $writer) {
             foreach(Store::jobsByStatus($runId, Store::KIND_SERVICE, Store::JOB_DONE) as $job)
             {
-                $writer->undoService($job['data']);
+                $writer->undoService($job['data'], (int)$job['object_id']);
             }
             // markup rules created by the run (settings and product jobs)
             $markupIds = [];
