@@ -72,6 +72,15 @@ final class Kernel
     {
         $request = $request ?: Request::fromGlobals();
         $class   = self::pageClass($area, $request->page());
+        if($class === null)
+        {
+            // no such page: said inside the module's layout (the dashboard page lends it)
+            $home = self::pageClass($area, 'home');
+            $page = new $home($request, new Lang($area));
+            Response::html(Layout::notFound($page), 404)->send($page, $request);
+
+            return;
+        }
         /** @var Page $page */
         $page    = new $class($request, new Lang($area));
 

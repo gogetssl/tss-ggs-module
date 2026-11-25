@@ -5,9 +5,9 @@ namespace ModulesGarden\Servers\TSSGGSModule\app\services;
 
 use ModulesGarden\TSSGGSModule\App\Helpers\EmailTemplates;
 use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
-use ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Invoice;
-use ModulesGarden\TSSGGSModule\Core\WHMCS\Models\InvoiceItem;
-use ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Service;
+use ModulesGarden\TSSGGSModule\App\Models\Whmcs\Invoice;
+use ModulesGarden\TSSGGSModule\App\Models\Whmcs\InvoiceItem;
+use ModulesGarden\TSSGGSModule\App\Models\Whmcs\Service;
 use WHMCS\Database\Capsule;
 
 class InvoiceRenew {

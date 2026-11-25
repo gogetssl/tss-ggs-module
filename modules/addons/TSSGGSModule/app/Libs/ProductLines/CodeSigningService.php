@@ -3,8 +3,8 @@
 namespace ModulesGarden\TSSGGSModule\App\Libs\ProductLines;
 
 use ModulesGarden\TSSGGSModule\App\Helpers\EmailTemplates;
-use ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Product;
-use ModulesGarden\TSSGGSModule\Packages\Product\Services\ConfigurableOptionsGroup;
+use ModulesGarden\TSSGGSModule\App\Models\Whmcs\Product;
+use ModulesGarden\TSSGGSModule\App\Libs\Products\ConfigOptions\ConfigurableOptionsGroup;
 use WHMCS\Database\Capsule;
 use ModulesGarden\TSSGGSModule\App\Libs\Certificates\CertificateService;
 use ModulesGarden\TSSGGSModule\App\Libs\Billing\FinancePolicy;

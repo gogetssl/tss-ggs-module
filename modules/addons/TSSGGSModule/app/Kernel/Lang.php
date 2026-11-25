@@ -41,6 +41,15 @@ class Lang
         }, $text);
     }
 
+    /**
+     * A text in the language of whoever is looking at the page (the admin in the admin area, else the client):
+     * for code outside the pages, e.g. a hook that answers with an error message.
+     */
+    public static function text(string $key, array $replace = []): string
+    {
+        return (new self(defined('ADMINAREA') ? 'admin' : 'client'))->get($key, $replace);
+    }
+
     public function has(string $key): bool
     {
         return isset($this->texts[$key]);

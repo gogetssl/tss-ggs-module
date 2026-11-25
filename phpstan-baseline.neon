@@ -1,36 +1,6 @@
 parameters:
 	ignoreErrors:
 		-
-			message: '#^Class ModulesGarden\\TSSGGSModule\\Packages\\AppCenter\\Libs\\App\\BaseApp not found\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/addons/TSSGGSModule/app/Config/appCenter.php
-
-		-
-			message: '#^Parameter \$app of anonymous function has invalid type ModulesGarden\\VultrVps\\Packages\\AppCenter\\Libs\\Models\\App\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/addons/TSSGGSModule/app/Config/appCenter.php
-
-		-
-			message: '#^Parameter \$formData of anonymous function has invalid type ModulesGarden\\VultrVps\\Core\\Data\\Container\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/addons/TSSGGSModule/app/Config/appCenter.php
-
-		-
-			message: '#^Class ModulesGarden\\TSSGGSModule\\Core\\WHMCS\\Url referenced with incorrect case\: ModulesGarden\\TSSGGSModule\\Core\\WHMCS\\URL\.$#'
-			identifier: class.nameCase
-			count: 1
-			path: modules/addons/TSSGGSModule/app/Config/product.php
-
-		-
-			message: '#^Instantiated class ModulesGarden\\TSSGGSModule\\Packages\\Scheduler\\Models\\Command not found\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/addons/TSSGGSModule/app/Config/scheduler.php
-
-		-
 			message: '#^Result of method Symfony\\Component\\Console\\Output\\OutputInterface\:\:write\(\) \(void\) is used\.$#'
 			identifier: method.void
 			count: 1
@@ -53,50 +23,12 @@ parameters:
 			identifier: method.void
 			count: 1
 			path: modules/addons/TSSGGSModule/app/Cron/SSLCertificates.php
-
-		-
-			message: '#^Call to an undefined method ModulesGarden\\TSSGGSModule\\Packages\\ModuleSettings\\Models\\ModuleSettings\:\:pluck\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: modules/addons/TSSGGSModule/app/Helpers/ModuleSettings.php
-
-		-
-			message: '''
-				#^PHPDoc tag @var has invalid value \(\$toReturn is a HTML integration code \(or null if no integration was made\)
-				you can add your code to this var before returning its content,
-				do not overwrite this var\!\)\: Unexpected token "\$toReturn", expected type at offset 20 on line 2$#
-			'''
-			identifier: phpDoc.parseError
-			count: 1
-			path: modules/addons/TSSGGSModule/app/Hooks/AdminAreaFooterOutput.php
-
-		-
-			message: '#^Variable \$hookManager might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: modules/addons/TSSGGSModule/app/Hooks/AdminAreaFooterOutput.php
 
 		-
 			message: '#^Variable \$hookManager might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
 			path: modules/addons/TSSGGSModule/app/Hooks/AfterCronJob.php
-
-		-
-			message: '''
-				#^PHPDoc tag @var has invalid value \(\$toReturn is a HTML integration code \(or null if no integration was made\)
-				you can add your code to this var before returning its content,
-				do not overwrite this var\!\)\: Unexpected token "\$toReturn", expected type at offset 20 on line 2$#
-			'''
-			identifier: phpDoc.parseError
-			count: 1
-			path: modules/addons/TSSGGSModule/app/Hooks/ClientAreaFooterOutput.php
-
-		-
-			message: '#^Variable \$hookManager might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: modules/addons/TSSGGSModule/app/Hooks/ClientAreaFooterOutput.php
 
 		-
 			message: '#^Variable \$hookManager might not be defined\.$#'
@@ -107,7 +39,7 @@ parameters:
 		-
 			message: '#^Variable \$hookManager might not be defined\.$#'
 			identifier: variable.undefined
-			count: 2
+			count: 3
 			path: modules/addons/TSSGGSModule/app/Hooks/DailyCronJob.php
 
 		-
@@ -183,16 +115,34 @@ parameters:
 			path: modules/addons/TSSGGSModule/app/Libs/Dashboard/SupportReport.php
 
 		-
-			message: '#^Call to an undefined method ModulesGarden\\TSSGGSModule\\Core\\WHMCS\\Models\\ProductGroup\:\:save\(\)\.$#'
+			message: '#^Call to an undefined method ModulesGarden\\TSSGGSModule\\App\\Models\\Whmcs\\Pricing\:\:priceFields\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: modules/addons/TSSGGSModule/app/Libs/Products/ConfigOptions/SubOption.php
+
+		-
+			message: '#^Call to an undefined method ModulesGarden\\TSSGGSModule\\App\\Models\\Whmcs\\Pricing\:\:setupFields\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: modules/addons/TSSGGSModule/app/Libs/Products/ConfigOptions/SubOption.php
+
+		-
+			message: '#^Call to an undefined method ModulesGarden\\TSSGGSModule\\App\\Models\\Whmcs\\ProductConfigOption\:\:save\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: modules/addons/TSSGGSModule/app/Libs/Products/ProductEditor.php
+
+		-
+			message: '#^Call to an undefined method ModulesGarden\\TSSGGSModule\\App\\Models\\Whmcs\\ProductGroup\:\:save\(\)\.$#'
 			identifier: method.notFound
 			count: 1
 			path: modules/addons/TSSGGSModule/app/Libs/Products/ProductImport.php
 
 		-
-			message: '#^Cannot cast ModulesGarden\\TSSGGSModule\\Core\\Support\\Facades\\Config to string\.$#'
-			identifier: cast.string
+			message: '#^Call to an undefined method ModulesGarden\\TSSGGSModule\\App\\Models\\Whmcs\\ProductConfigOption\:\:save\(\)\.$#'
+			identifier: method.notFound
 			count: 1
-			path: modules/addons/TSSGGSModule/app/Libs/Update/State.php
+			path: modules/addons/TSSGGSModule/app/Libs/Support/Helpers.php
 
 		-
 			message: '#^Call to an undefined method ModulesGarden\\TSSGGSModule\\App\\Migration\\Readers\\LegacyReaderInterface\:\:filesPresent\(\)\.$#'
@@ -211,18 +161,6 @@ parameters:
 			identifier: method.notFound
 			count: 1
 			path: modules/addons/TSSGGSModule/app/Migration/Detector.php
-
-		-
-			message: '#^Call to an undefined method ModulesGarden\\TSSGGSModule\\Core\\Components\\FormFields\\FormField\:\:setDefaultValueAsFirstOption\(\)\.$#'
-			identifier: method.notFound
-			count: 5
-			path: modules/addons/TSSGGSModule/app/UI/Actions/ConfigOptions.php
-
-		-
-			message: '#^Call to an undefined method ModulesGarden\\TSSGGSModule\\Core\\Components\\FormFields\\FormField\:\:setOptions\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: modules/addons/TSSGGSModule/app/UI/Actions/ConfigOptions.php
 
 		-
 			message: '#^Call to an undefined method WHMCS\\Utility\\Country\:\:getCountryNameArray\(\)\.$#'

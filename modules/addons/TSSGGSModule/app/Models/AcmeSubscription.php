@@ -3,9 +3,8 @@
 namespace ModulesGarden\TSSGGSModule\App\Models;
 
 use ModulesGarden\TSSGGSModule\App\Libs\Support\SecretValue;
-use ModulesGarden\TSSGGSModule\Core\Models\ExtendedEloquentModel;
 
-class AcmeSubscription extends ExtendedEloquentModel
+class AcmeSubscription extends Model
 {
     public $timestamps = true;
     protected $table = 'AcmeSubscriptions';

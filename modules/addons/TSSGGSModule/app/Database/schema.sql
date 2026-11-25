@@ -155,3 +155,24 @@ CREATE TABLE IF NOT EXISTS `#prefix#AutoInstallReport` (
     KEY `service_id` (`service_id`),
     KEY `status` (`status`)
     ) ENGINE=InnoDB DEFAULT CHARSET=#charset# DEFAULT COLLATE #collation#;
+--
+-- `#prefix#Logs`: the module log (App\Libs\Logs\Logger, admin page "Logs")
+--
+CREATE TABLE IF NOT EXISTS `#prefix#Logs` (
+    `id`            int(10) unsigned    NOT NULL AUTO_INCREMENT,
+    `type`          varchar(255)        NOT NULL,
+    `date`          datetime            DEFAULT NULL,
+    `message`       text                NOT NULL,
+    `data`          text                NOT NULL,
+    `created_at`    date                DEFAULT NULL,
+    `updated_at`    date                DEFAULT NULL,
+    PRIMARY KEY (`id`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=#charset# DEFAULT COLLATE #collation#;
+--
+-- `#prefix#ModuleSettings`: small settings kept one per row (App\Libs\Support\ModuleSettings)
+--
+CREATE TABLE IF NOT EXISTS `#prefix#ModuleSettings` (
+    `setting`       varchar(64)         NOT NULL UNIQUE,
+    `value`         text                NOT NULL,
+    PRIMARY KEY (`setting`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=#charset# DEFAULT COLLATE #collation#;

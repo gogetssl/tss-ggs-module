@@ -8,7 +8,6 @@ use ModulesGarden\TSSGGSModule\App\Kernel\Table;
 use ModulesGarden\TSSGGSModule\App\Libs\Logs\LogBook;
 use ModulesGarden\TSSGGSModule\App\Libs\Support\GeneralSettings;
 use ModulesGarden\TSSGGSModule\App\Libs\Support\LogPolicy;
-use ModulesGarden\TSSGGSModule\Packages\Logs\Enums\LogTypes;
 
 /**
  * Admin page "Logs": the technical log of the module - a card per type with its number of entries, then the list
@@ -158,7 +157,7 @@ class Logs extends Page
     /** The type the list is narrowed to (the "Show" button of a card); '' = every type */
     protected function type(): string
     {
-        return $this->request->oneOf('type', LogTypes::getAvailable(), '');
+        return $this->request->oneOf('type', LogBook::LEVELS, '');
     }
 
     protected function table(): array
@@ -244,6 +243,6 @@ class Logs extends Page
             $hours[(string)$hour] = $this->lang->get('admin.log_policy.hours_' . $hour);
         }
 
-        return ['values' => $values, 'modes' => $modes, 'hours' => $hours, 'types' => $this->typeNames(LogTypes::getAvailable()), 'error' => $error];
+        return ['values' => $values, 'modes' => $modes, 'hours' => $hours, 'types' => $this->typeNames(LogBook::LEVELS), 'error' => $error];
     }
 }

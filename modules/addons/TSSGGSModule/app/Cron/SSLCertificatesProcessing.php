@@ -2,7 +2,7 @@
 
 namespace ModulesGarden\TSSGGSModule\App\Cron;
 
-use ModulesGarden\TSSGGSModule\Core\CommandLine\AbstractCommand;
+use ModulesGarden\TSSGGSModule\App\Kernel\Console\Command;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -13,7 +13,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  * GET /services/updates every 5 minutes) now reads only the orders the vendor reports as changed. Kept so an old
  * cron line "cron.php SSLCertificatesProcessing" still works: it starts the order status sync, which runs when due.
  */
-class SSLCertificatesProcessing extends AbstractCommand
+class SSLCertificatesProcessing extends Command
 {
     protected $name = 'SSLCertificatesProcessing';
 

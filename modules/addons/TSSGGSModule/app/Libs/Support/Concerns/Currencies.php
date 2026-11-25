@@ -3,8 +3,8 @@
 namespace ModulesGarden\TSSGGSModule\App\Libs\Support\Concerns;
 
 use ModulesGarden\TSSGGSModule\App\Libs\Support\Helpers;
-use ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Client;
-use ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Currency;
+use ModulesGarden\TSSGGSModule\App\Models\Whmcs\Client;
+use ModulesGarden\TSSGGSModule\App\Models\Whmcs\Currency;
 
 /**
  * Currencies: the default currency, conversion, formatting, tax.

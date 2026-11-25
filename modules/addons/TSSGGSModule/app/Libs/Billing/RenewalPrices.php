@@ -2,7 +2,7 @@
 
 namespace ModulesGarden\TSSGGSModule\App\Libs\Billing;
 
-use ModulesGarden\TSSGGSModule\Packages\Logs\Support\Facades\Logger;
+use ModulesGarden\TSSGGSModule\App\Libs\Logs\Logger;
 use WHMCS\Database\Capsule;
 use ModulesGarden\TSSGGSModule\App\Libs\Certificates\MainDomain;
 use ModulesGarden\TSSGGSModule\App\Libs\Support\GeneralSettings;

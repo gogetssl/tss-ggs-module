@@ -11,7 +11,7 @@ use ModulesGarden\TSSGGSModule\App\Libs\Gateway\SSLTrustCenterApi;
 use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
 use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\ProductRepository;
 use ModulesGarden\TSSGGSModule\App\Models\Request;
-use ModulesGarden\TSSGGSModule\Core\WHMCS\Models\InvoiceItem;
+use ModulesGarden\TSSGGSModule\App\Models\Whmcs\InvoiceItem;
 
 class SSLStepThree
 {

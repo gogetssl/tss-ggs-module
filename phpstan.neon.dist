@@ -1,4 +1,4 @@
-# Static analysis of the module's own code (not the bundled framework in core/, components/, packages/).
+# Static analysis of the module's own code.
 # Run: tools/qa.sh stan. Issues that existed when the analysis was introduced are listed in phpstan-baseline.neon;
 # new code must not add any. Raise the level step by step (regenerate the baseline with --generate-baseline).
 includes:
@@ -10,12 +10,13 @@ parameters:
     paths:
         - modules/addons/TSSGGSModule/app
         - modules/servers/TSSGGSModule/app
+    excludePaths:
+        analyse:
+            # thin wrappers of WHMCS's own (encoded) model classes: read for their names, not analysed
+            - modules/addons/TSSGGSModule/app/Models/Whmcs
     bootstrapFiles:
         - tests/phpstan-bootstrap.php
     scanDirectories:
-        - modules/addons/TSSGGSModule/core
-        - modules/addons/TSSGGSModule/components
-        - modules/addons/TSSGGSModule/packages
         - modules/servers/TSSGGSModule/core
         # WHMCS's own libraries that are plain PHP (WHMCS root from QA_WHMCS, see tools/qa.sh)
         - %env.QA_WHMCS%/vendor/illuminate

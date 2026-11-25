@@ -1,8 +1,10 @@
 <?php
 
-require_once dirname(__FILE__, 3) . '/vendor/autoload.php';
-
-\ModulesGarden\TSSGGSModule\Core\ModuleConstants::initialize();
+/**
+ * The module's stylesheet for the admin area: one request that imports the CSS files of resources/assets/css.
+ * A reseller's copy of a file in overrides/assets/css (same file name) is used instead of the module's own.
+ * Loaded by the admin layout (resources/templates/admin/layout.tpl); needs nothing of WHMCS or the module.
+ */
 
 $files = [
     'products-icons.css',
@@ -38,7 +40,7 @@ $stamp   = function($path) use ($version) {
 
 foreach ($files as $file)
 {
-    $override = \ModulesGarden\TSSGGSModule\Core\ModuleConstants::getFullPath('overrides', 'assets', 'css', $file);
+    $override = dirname(__DIR__, 2) . '/overrides/assets/css/' . $file;
     if (file_exists($override))
     {
         echo "@import \"../../overrides/assets/css/$file" . $stamp($override) . "\";\n";
@@ -48,4 +50,3 @@ foreach ($files as $file)
         echo "@import \"../assets/css/$file" . $stamp(dirname(__DIR__) . '/assets/css/' . $file) . "\";\n";
     }
 }
-

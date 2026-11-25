@@ -2,9 +2,8 @@
 
 namespace ModulesGarden\TSSGGSModule\App\Models;
 
-use ModulesGarden\TSSGGSModule\Core\Models\ExtendedEloquentModel;
 
-class CronCheck extends ExtendedEloquentModel
+class CronCheck extends Model
 {
 
     public    $timestamps = true;

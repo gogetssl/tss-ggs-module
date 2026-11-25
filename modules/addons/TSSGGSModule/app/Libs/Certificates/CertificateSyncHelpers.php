@@ -4,8 +4,8 @@ namespace ModulesGarden\TSSGGSModule\App\Libs\Certificates;
 
 use Exception;
 use ModulesGarden\TSSGGSModule\App\Models\Request;
-use ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Service;
-use ModulesGarden\TSSGGSModule\Packages\Logs\Support\Facades\Logger;
+use ModulesGarden\TSSGGSModule\App\Models\Whmcs\Service;
+use ModulesGarden\TSSGGSModule\App\Libs\Logs\Logger;
 use WHMCS\Database\Capsule;
 use ModulesGarden\TSSGGSModule\App\Libs\Gateway\SSLTrustCenterApi;
 use ModulesGarden\TSSGGSModule\App\Libs\Products\SslProductHelpers;

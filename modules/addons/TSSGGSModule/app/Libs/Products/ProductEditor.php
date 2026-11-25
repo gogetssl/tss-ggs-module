@@ -4,7 +4,7 @@ namespace ModulesGarden\TSSGGSModule\App\Libs\Products;
 
 use ModulesGarden\TSSGGSModule\App\Models\RemoteProduct;
 use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\ProductRepository;
-use ModulesGarden\TSSGGSModule\Packages\Product\Services\ConfigurableOptions;
+use ModulesGarden\TSSGGSModule\App\Libs\Products\ConfigOptions\ConfigurableOptions;
 
 /**
  * The "Product Configuration" dialog of the Products page: what an imported product is sold as in WHMCS (name,

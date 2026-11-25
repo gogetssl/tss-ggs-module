@@ -2,9 +2,8 @@
 
 namespace ModulesGarden\TSSGGSModule\App\Models;
 
-use ModulesGarden\TSSGGSModule\Core\Models\ExtendedEloquentModel;
 
-class Request extends ExtendedEloquentModel
+class Request extends Model
 {
     public    $timestamps = true;
     protected $table      = 'Requests';

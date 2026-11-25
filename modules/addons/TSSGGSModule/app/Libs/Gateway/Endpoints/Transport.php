@@ -12,8 +12,7 @@ use ModulesGarden\TSSGGSModule\App\Libs\Support\LogPolicy;
 use ModulesGarden\TSSGGSModule\App\Libs\Gateway\SSLTrustCenterApi;
 use ModulesGarden\TSSGGSModule\App\Libs\Support\SecretValue;
 use ModulesGarden\TSSGGSModule\App\Models\Request;
-use ModulesGarden\TSSGGSModule\Core\Support\Facades\Config;
-use ModulesGarden\TSSGGSModule\Packages\Logs\Support\Facades\Logger;
+use ModulesGarden\TSSGGSModule\App\Libs\Logs\Logger;
 
 /**
  * HTTP transport of the gateway API: the request, its log entries, and errors as readable texts / typed exceptions.
@@ -125,8 +124,9 @@ trait Transport
 
         global $CONFIG;
 
-        $versionModule = Config::get('version', '1.0.0');
-        $moduleName    = str_replace(' ', '', Config::get('systemName', 'TSSGGSModule'));
+        // what this client has always called itself to the vendor
+        $versionModule = '1.0.0';
+        $moduleName    = 'TSSGGSModule';
 
         $url = $this->apiUrl . $uri;
 

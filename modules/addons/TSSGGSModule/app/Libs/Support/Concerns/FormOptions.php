@@ -3,13 +3,12 @@
 namespace ModulesGarden\TSSGGSModule\App\Libs\Support\Concerns;
 
 use ModulesGarden\TSSGGSModule\App\Libs\Support\Helpers;
-use ModulesGarden\TSSGGSModule\Core\Support\Facades\Translator;
-use ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Client;
-use ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Currency;
-use ModulesGarden\TSSGGSModule\Core\WHMCS\Models\PaymentGateway;
-use ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Product;
-use ModulesGarden\TSSGGSModule\Core\WHMCS\Models\ProductGroup;
-use ModulesGarden\TSSGGSModule\Core\WHMCS\URL\Admin;
+use ModulesGarden\TSSGGSModule\App\Kernel\Lang;
+use ModulesGarden\TSSGGSModule\App\Models\Whmcs\Client;
+use ModulesGarden\TSSGGSModule\App\Models\Whmcs\Currency;
+use ModulesGarden\TSSGGSModule\App\Models\Whmcs\PaymentGateway;
+use ModulesGarden\TSSGGSModule\App\Models\Whmcs\Product;
+use ModulesGarden\TSSGGSModule\App\Models\Whmcs\ProductGroup;
 
 /**
  * Choices for admin form fields: currencies, products, brands, groups, days, clients, payment methods, countries.
@@ -63,8 +62,8 @@ trait FormOptions
     {
         $productGroups       = ProductGroup::get();
         $productGroupOptions = [
-            ''    => Translator::get('choseProductGroup'),
-            'new' => Translator::get('createNewProductGroup'),
+            ''    => (new Lang('admin'))->get('choseProductGroup'),
+            'new' => (new Lang('admin'))->get('createNewProductGroup'),
         ];
 
         foreach($productGroups as $productGroup)

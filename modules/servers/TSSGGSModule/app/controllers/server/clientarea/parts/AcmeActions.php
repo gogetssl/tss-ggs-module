@@ -16,7 +16,7 @@ use ModulesGarden\TSSGGSModule\App\Libs\Certificates\CertificateService;
 use ModulesGarden\TSSGGSModule\App\Libs\Support\Helpers;
 use ModulesGarden\TSSGGSModule\App\Models\AcmeSubscription;
 use ModulesGarden\TSSGGSModule\App\Models\AcmeSubscriptionDomain;
-use ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Invoice;
+use ModulesGarden\TSSGGSModule\App\Models\Whmcs\Invoice;
 use WHMCS\Database\Capsule;
 
 /**

@@ -15,7 +15,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  * the full page in the layout and the htmx answer of its index action. Read-only. Exit code 1 when a page fails
  * or its HTML is not what the layout / a fragment must be.
  */
-class SmokeKernelPages extends \ModulesGarden\__MODULE__\Core\CommandLine\Command
+class SmokeKernelPages extends \ModulesGarden\__MODULE__\App\Kernel\Console\Command
 {
     protected $name = 'SmokeKernelPages';
     protected $description = 'Smoke test of the pages on the own kernel';

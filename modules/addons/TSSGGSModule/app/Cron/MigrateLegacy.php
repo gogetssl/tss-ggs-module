@@ -5,7 +5,7 @@ namespace ModulesGarden\TSSGGSModule\App\Cron;
 use ModulesGarden\TSSGGSModule\App\Migration\Detector;
 use ModulesGarden\TSSGGSModule\App\Migration\Engine;
 use ModulesGarden\TSSGGSModule\App\Migration\Store;
-use ModulesGarden\TSSGGSModule\Core\CommandLine\AbstractCommand;
+use ModulesGarden\TSSGGSModule\App\Kernel\Console\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -23,7 +23,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  *   php -q cron.php MigrateLegacy rollback --id=N
  *   php -q cron.php MigrateLegacy housekeeping          (expired backups, old log rows; also run by cron5)
  */
-class MigrateLegacy extends AbstractCommand
+class MigrateLegacy extends Command
 {
     /** "ref=gatewayId,ref=record" -> [ref => target] */
     protected static function map(string $raw): array

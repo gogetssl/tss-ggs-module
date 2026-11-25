@@ -12,7 +12,7 @@ use WHMCS\Database\Capsule;
  * (ModuleBuildParams + <module>_ClientArea), one service per order state of each product category. Read-only: the
  * page is only built, nothing is sent or saved by the test itself. Exit code 1 when a page throws or returns an error.
  */
-class SmokeClientArea extends \ModulesGarden\__MODULE__\Core\CommandLine\Command
+class SmokeClientArea extends \ModulesGarden\__MODULE__\App\Kernel\Console\Command
 {
     protected $name = 'SmokeClientArea';
     protected $description = 'Smoke test of the client area pages';

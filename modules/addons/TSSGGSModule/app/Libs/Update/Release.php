@@ -3,7 +3,7 @@
 namespace ModulesGarden\TSSGGSModule\App\Libs\Update;
 
 use ModulesGarden\TSSGGSModule\App\Libs\Support\Edition;
-use ModulesGarden\TSSGGSModule\Core\ModuleConstants;
+use ModulesGarden\TSSGGSModule\App\Kernel\Kernel;
 
 /**
  * Finds the newest release and proves it is ours.
@@ -27,7 +27,7 @@ class Release
     public static function keys()
     {
         $keys = [];
-        $file = ModuleConstants::getFullPath('app', 'Config', 'updateKeys.php');
+        $file = Kernel::path('app', 'Config', 'updateKeys.php');
         foreach((array)(is_file($file) ? include $file : []) as $id => $key)
         {
             $raw = base64_decode((string)$key, true);

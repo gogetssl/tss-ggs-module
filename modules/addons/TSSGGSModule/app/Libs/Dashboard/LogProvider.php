@@ -6,7 +6,7 @@ namespace ModulesGarden\TSSGGSModule\App\Libs\Dashboard;
 use ModulesGarden\TSSGGSModule\App\Libs\Support\Helpers;
 use ModulesGarden\TSSGGSModule\App\Models\CronCheck;
 
-use ModulesGarden\TSSGGSModule\Packages\Logs\Models\Logs;
+use ModulesGarden\TSSGGSModule\App\Models\Log;
 
 class LogProvider
 {
@@ -91,7 +91,7 @@ class LogProvider
         $log[] = '';
         $log[] = 'Logs:';
 
-        $rows = Logs::where('date', '>=', $data['fromDate'] . ' 00:00:00')
+        $rows = Log::where('date', '>=', $data['fromDate'] . ' 00:00:00')
                     ->where('date', '<=', $data['toDate'] . ' 23:59:59')
                     ->select('id', 'type', 'date', 'data', 'message')
                     ->get();

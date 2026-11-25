@@ -5,10 +5,9 @@ namespace ModulesGarden\TSSGGSModule\App\Models;
 use ModulesGarden\TSSGGSModule\App\Libs\Products\CatalogueSync;
 use ModulesGarden\TSSGGSModule\App\Libs\Support\Helpers;
 use ModulesGarden\TSSGGSModule\App\Libs\Products\ProductCatalog;
-use ModulesGarden\TSSGGSModule\Core\Models\ExtendedEloquentModel;
-use ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Product;
+use ModulesGarden\TSSGGSModule\App\Models\Whmcs\Product;
 
-class RemoteProduct extends ExtendedEloquentModel
+class RemoteProduct extends Model
 {
 
     public    $timestamps = true;

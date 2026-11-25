@@ -1,3 +1,0 @@
-<div :id="cid_" class="lu-input-group" :class="[css_, {'lu-single-element' : elements_.elements && elements_.elements.length == 1}]">
-    <component :key="element.uniq" v-bind="element.slots" v-bind:is="element.name" v-for="(element, key) in elements_.elements" v-on="$listeners"></component>
-</div>

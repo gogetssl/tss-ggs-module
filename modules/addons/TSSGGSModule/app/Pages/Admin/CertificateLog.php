@@ -5,7 +5,7 @@ namespace ModulesGarden\TSSGGSModule\App\Pages\Admin;
 use ModulesGarden\TSSGGSModule\App\Kernel\Page;
 use ModulesGarden\TSSGGSModule\App\Libs\AutoInstall\AutoInstallQueue;
 use ModulesGarden\TSSGGSModule\App\Libs\Support\GeneralSettings;
-use ModulesGarden\TSSGGSModule\App\UI\Shared\Html;
+use ModulesGarden\TSSGGSModule\App\Libs\Support\Html;
 use WHMCS\Database\Capsule;
 
 /**

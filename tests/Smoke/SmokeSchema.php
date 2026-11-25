@@ -13,7 +13,7 @@ use WHMCS\Database\Capsule;
  * Smoke test (tools/qa.sh smoke): the database is at the latest App\Database\Schema version and every table and
  * column the steps add is there. Read-only. Exit code 1 when anything is missing.
  */
-class SmokeSchema extends \ModulesGarden\__MODULE__\Core\CommandLine\Command
+class SmokeSchema extends \ModulesGarden\__MODULE__\App\Kernel\Console\Command
 {
     protected $name = 'SmokeSchema';
     protected $description = 'Smoke test of the database schema';

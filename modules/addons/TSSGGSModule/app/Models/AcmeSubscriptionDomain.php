@@ -2,12 +2,11 @@
 
 namespace ModulesGarden\TSSGGSModule\App\Models;
 
-use ModulesGarden\TSSGGSModule\Core\Models\ExtendedEloquentModel;
 
 /**
  * @Table(name=SSLCENTER_acme_subscription_domains,prefixed=true)
  */
-class AcmeSubscriptionDomain extends ExtendedEloquentModel
+class AcmeSubscriptionDomain extends Model
 {
     public    $timestamps = true;
     protected $table      = 'AcmeSubscriptionDomains';

@@ -157,7 +157,7 @@ class CatalogueSync
         catch(\Throwable $e)
         {
             // the sync itself must never fail because of the report
-            \ModulesGarden\TSSGGSModule\Packages\Logs\Support\Facades\Logger::error('Catalogue changes: ' . $e->getMessage());
+            \ModulesGarden\TSSGGSModule\App\Libs\Logs\Logger::error('Catalogue changes: ' . $e->getMessage());
         }
     }
 
@@ -202,7 +202,7 @@ class CatalogueSync
         }
         catch(\Throwable $e)
         {
-            \ModulesGarden\TSSGGSModule\Packages\Logs\Support\Facades\Logger::error('Catalogue changes: ' . $e->getMessage());
+            \ModulesGarden\TSSGGSModule\App\Libs\Logs\Logger::error('Catalogue changes: ' . $e->getMessage());
         }
     }
 

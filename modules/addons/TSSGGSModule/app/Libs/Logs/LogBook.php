@@ -5,9 +5,8 @@ namespace ModulesGarden\TSSGGSModule\App\Libs\Logs;
 use ModulesGarden\TSSGGSModule\App\Libs\Settings\GeneralSettingsProvider;
 use ModulesGarden\TSSGGSModule\App\Libs\Support\GeneralSettings;
 use ModulesGarden\TSSGGSModule\App\Libs\Support\LogPolicy;
-use ModulesGarden\TSSGGSModule\Packages\Logs\Enums\LogTypes;
-use ModulesGarden\TSSGGSModule\Packages\Logs\Models\Logs;
-use ModulesGarden\TSSGGSModule\Packages\ModuleSettings\Support\Facades\ModuleSettings;
+use ModulesGarden\TSSGGSModule\App\Models\Log;
+use ModulesGarden\TSSGGSModule\App\Libs\Support\ModuleSettings;
 use WHMCS\Database\Capsule;
 
 /**
@@ -19,6 +18,9 @@ class LogBook
     const MAX_SERVICES   = 200;
     const NEARBY_MINUTES = 10;
     const NEARBY_LIMIT   = 20;
+
+    /** every type an entry can have (PSR-3 levels) */
+    const LEVELS = ['alert', 'critical', 'debug', 'emergency', 'error', 'info', 'notice', 'warning'];
 
     /** type => colour of its label and of its card's button, icon of its card */
     const TYPES = [
@@ -37,7 +39,7 @@ class LogBook
     /** @return \Illuminate\Database\Query\Builder the entries, optionally of one type */
     public static function query(string $type = '')
     {
-        $query = Logs::query()->toBase()->select('id', 'type', 'date', 'data', 'message');
+        $query = Log::query()->toBase()->select('id', 'type', 'date', 'data', 'message');
         if($type !== '')
         {
             $query->where('type', $type);
@@ -189,7 +191,7 @@ class LogBook
     public static function counts(): array
     {
         $found = [];
-        foreach(Logs::query()->toBase()->selectRaw('type, count(id) as entries')->groupBy('type')->get() as $row)
+        foreach(Log::query()->toBase()->selectRaw('type, count(id) as entries')->groupBy('type')->get() as $row)
         {
             $found[(string)$row->type] = (int)$row->entries;
         }
@@ -210,7 +212,7 @@ class LogBook
     /** @return string[] the types that have entries */
     public static function usedTypes(): array
     {
-        return array_map('strval', Logs::query()->toBase()->distinct()->orderBy('type')->pluck('type')->all());
+        return array_map('strval', Log::query()->toBase()->distinct()->orderBy('type')->pluck('type')->all());
     }
 
     /* ---- one entry ---- */
@@ -223,7 +225,7 @@ class LogBook
      */
     public static function details(int $id): ?array
     {
-        $log = Logs::where('id', $id)->first();
+        $log = Log::where('id', $id)->first();
         if(!$log)
         {
             return null;
@@ -300,7 +302,7 @@ class LogBook
         $time   = strtotime((string)$log->date) ?: time();
         $window = self::NEARBY_MINUTES * 60;
 
-        return Logs::where('id', '!=', $log->id)
+        return Log::where('id', '!=', $log->id)
             ->where('data', 'REGEXP', '"service":' . $serviceId . '[,}]')
             ->whereBetween('date', [date('Y-m-d H:i:s', $time - $window), date('Y-m-d H:i:s', $time + $window)])
             ->orderBy('id')
@@ -364,13 +366,13 @@ class LogBook
     {
         $ids = array_values(array_filter(array_map('intval', $ids)));
 
-        return $ids ? (int)Logs::whereIn('id', $ids)->delete() : 0;
+        return $ids ? (int)Log::whereIn('id', $ids)->delete() : 0;
     }
 
     /** Every entry of the module log */
     public static function clean(): void
     {
-        Logs::query()->delete();
+        Log::query()->delete();
     }
 
     /**
@@ -380,8 +382,8 @@ class LogBook
      */
     public static function prune(array $types, int $olderThanDays): int
     {
-        $query = Logs::query();
-        $types = array_values(array_intersect($types, LogTypes::getAvailable()));
+        $query = Log::query();
+        $types = array_values(array_intersect($types, self::LEVELS));
         if($types)
         {
             $query->whereIn('type', $types);
@@ -399,8 +401,8 @@ class LogBook
     /** @return array from, to: the dates of the oldest and the newest entry (Y-m-d; today when the log is empty) */
     public static function period(): array
     {
-        $from = (string)Logs::query()->toBase()->min('date');
-        $to   = (string)Logs::query()->toBase()->max('date');
+        $from = (string)Log::query()->toBase()->min('date');
+        $to   = (string)Log::query()->toBase()->max('date');
 
         return ['from' => substr($from, 0, 10) ?: date('Y-m-d'), 'to' => substr($to, 0, 10) ?: date('Y-m-d')];
     }
@@ -412,7 +414,7 @@ class LogBook
      */
     public static function csv(string $from, string $to, array $types): ?string
     {
-        $query = Logs::query()->toBase()->select('id', 'type', 'date', 'message', 'data')->orderBy('id');
+        $query = Log::query()->toBase()->select('id', 'type', 'date', 'message', 'data')->orderBy('id');
         if($from !== '' && ($time = strtotime($from)))
         {
             $query->where('date', '>=', date('Y-m-d', $time));
@@ -421,7 +423,7 @@ class LogBook
         {
             $query->where('date', '<', date('Y-m-d', $time + 86400));
         }
-        $types = array_values(array_intersect($types, LogTypes::getAvailable()));
+        $types = array_values(array_intersect($types, self::LEVELS));
         if($types)
         {
             $query->whereIn('type', $types);
@@ -489,7 +491,7 @@ class LogBook
         ]);
 
         $save = [
-            'logs.types'      => array_values(array_intersect(array_filter((array)($posted['types'] ?? [])), LogTypes::getAvailable())) ?: '',
+            'logs.types'      => array_values(array_intersect(array_filter((array)($posted['types'] ?? [])), self::LEVELS)) ?: '',
             'logs.auto_prune' => $autoPrune ? 1 : 0,
         ];
         if($autoPrune)

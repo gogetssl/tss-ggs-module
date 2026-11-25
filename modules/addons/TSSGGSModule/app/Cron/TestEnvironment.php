@@ -3,7 +3,7 @@
 namespace ModulesGarden\TSSGGSModule\App\Cron;
 
 use ModulesGarden\TSSGGSModule\App\Migration\TestEnvironment as Env;
-use ModulesGarden\TSSGGSModule\Core\CommandLine\AbstractCommand;
+use ModulesGarden\TSSGGSModule\App\Kernel\Console\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -18,7 +18,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  *   php -q cron.php TestEnvironment status                 baseline tables with row counts and sizes
  *   php -q cron.php TestEnvironment drop                   remove the baseline tables
  */
-class TestEnvironment extends AbstractCommand
+class TestEnvironment extends Command
 {
     protected $name        = 'TestEnvironment';
     protected $description = 'Development only: snapshot and reset the install for repeated migration tests';

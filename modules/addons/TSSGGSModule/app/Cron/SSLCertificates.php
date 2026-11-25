@@ -7,8 +7,8 @@ use ModulesGarden\TSSGGSModule\App\Libs\Certificates\CertificateSyncHelpers;
 use ModulesGarden\TSSGGSModule\App\Libs\Gateway\SSLTrustCenterApi;
 use ModulesGarden\TSSGGSModule\App\Models\CronCheck;
 use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
-use ModulesGarden\TSSGGSModule\Core\CommandLine\AbstractCommand;
-use ModulesGarden\TSSGGSModule\Packages\Logs\Support\Facades\Logger;
+use ModulesGarden\TSSGGSModule\App\Kernel\Console\Command;
+use ModulesGarden\TSSGGSModule\App\Libs\Logs\Logger;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -17,7 +17,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  * Class Sample
  * @package ModulesGarden\TSSGGSModule\App\Cron
  */
-class SSLCertificates extends AbstractCommand
+class SSLCertificates extends Command
 {
     /**
      * Command name

@@ -3,7 +3,7 @@
 namespace ModulesGarden\TSSGGSModule\App\Libs\AutoInstall;
 
 use ModulesGarden\TSSGGSModule\App\Models\Request;
-use ModulesGarden\TSSGGSModule\Packages\Logs\Support\Facades\Logger;
+use ModulesGarden\TSSGGSModule\App\Libs\Logs\Logger;
 use ModulesGarden\TSSGGSModule\App\Libs\Certificates\CertificateService;
 
 /**

@@ -3,7 +3,7 @@
 namespace ModulesGarden\TSSGGSModule\App\Libs\AutoInstall;
 
 use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
-use ModulesGarden\TSSGGSModule\Core\ModuleConstants;
+use ModulesGarden\TSSGGSModule\App\Kernel\Kernel;
 use WHMCS\Database\Capsule;
 use ModulesGarden\TSSGGSModule\App\Libs\Support\GeneralSettings;
 use ModulesGarden\TSSGGSModule\App\Libs\Support\SecretValue;
@@ -438,7 +438,7 @@ class Cpanel
         $service = (array)$service;
         $host    = (isset($service['hostname']) ? $service['hostname'] : '') . (isset($service['ipaddress']) ? $service['ipaddress'] : '') . (isset($service['port']) ? $service['port'] : '');
 
-        return ModuleConstants::getFullPath('storage', 'cpanel_domains', md5(strtolower($host . '|' . $username)) . '.json');
+        return Kernel::path('storage', 'cpanel_domains', md5(strtolower($host . '|' . $username)) . '.json');
     }
 
     protected static function readCache($file)

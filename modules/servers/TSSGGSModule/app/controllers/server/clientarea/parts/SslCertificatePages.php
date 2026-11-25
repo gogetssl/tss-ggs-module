@@ -5,7 +5,7 @@ namespace ModulesGarden\Servers\TSSGGSModule\app\controllers\server\clientarea\p
 use ModulesGarden\Servers\TSSGGSModule\app\models\whmcs\Client;
 use ModulesGarden\Servers\TSSGGSModule\app\models\whmcs\Service;
 use ModulesGarden\Servers\TSSGGSModule\app\models\whmcs\SSL;
-use ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Invoice;
+use ModulesGarden\TSSGGSModule\App\Models\Whmcs\Invoice;
 
 /**
  * SSL certificate of a service: status pages, downloads, reissue, validation, renewal invoice, CSR tools.

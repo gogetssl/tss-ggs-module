@@ -4,7 +4,7 @@ namespace ModulesGarden\TSSGGSModule\App\Cron;
 
 use ModulesGarden\TSSGGSModule\App\Libs\AutoInstall\AutoInstallHelpers;
 use ModulesGarden\TSSGGSModule\App\Models\CronCheck;
-use ModulesGarden\TSSGGSModule\Core\CommandLine\AbstractCommand;
+use ModulesGarden\TSSGGSModule\App\Kernel\Console\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -14,7 +14,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  * Recommended: every 5 minutes
  *   php -q {WHMCS}/modules/addons/TSSGGSModule/cron/cron.php SSLAutoInstall
  */
-class SSLAutoInstall extends AbstractCommand
+class SSLAutoInstall extends Command
 {
     protected $name = 'SSLAutoInstall';
 

@@ -7,9 +7,9 @@ use ModulesGarden\TSSGGSModule\App\Libs\AutoInstall\AutoInstallHelpers;
 use ModulesGarden\TSSGGSModule\App\Models\CronCheck;
 use ModulesGarden\TSSGGSModule\App\Models\Request;
 use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
-use ModulesGarden\TSSGGSModule\Core\CommandLine\AbstractCommand;
-use ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Service;
-use ModulesGarden\TSSGGSModule\Packages\Logs\Support\Facades\Logger;
+use ModulesGarden\TSSGGSModule\App\Kernel\Console\Command;
+use ModulesGarden\TSSGGSModule\App\Models\Whmcs\Service;
+use ModulesGarden\TSSGGSModule\App\Libs\Logs\Logger;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -18,7 +18,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  * Class Sample
  * @package ModulesGarden\TSSGGSModule\App\Cron
  */
-class RenewalNotifyCertificate extends AbstractCommand
+class RenewalNotifyCertificate extends Command
 {
     /**
      * Command name

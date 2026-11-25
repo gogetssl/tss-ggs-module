@@ -5,7 +5,7 @@ namespace ModulesGarden\TSSGGSModule\App\Libs\Subscriptions;
 use ModulesGarden\Servers\TSSGGSModule\app\models\whmcs\SSL;
 use ModulesGarden\TSSGGSModule\App\Models\AisSubscription;
 use ModulesGarden\TSSGGSModule\App\Models\RemoteProduct;
-use ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Product;
+use ModulesGarden\TSSGGSModule\App\Models\Whmcs\Product;
 use ModulesGarden\TSSGGSModule\App\Libs\Support\Helpers;
 
 class AisHelpers

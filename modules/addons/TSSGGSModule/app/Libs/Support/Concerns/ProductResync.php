@@ -11,12 +11,12 @@ use ModulesGarden\TSSGGSModule\App\Libs\Support\Helpers;
 use ModulesGarden\TSSGGSModule\App\Models\RemoteProduct;
 use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
 use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\ProductRepository;
-use ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Currency;
-use ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Pricing;
-use ModulesGarden\TSSGGSModule\Packages\Product\Libs\ConfigurableOptions\Quantity;
-use ModulesGarden\TSSGGSModule\Packages\Product\Libs\ConfigurableOptions\SubOption\SubOption;
-use ModulesGarden\TSSGGSModule\Packages\Product\Services\ConfigurableOptions;
-use ModulesGarden\TSSGGSModule\Packages\Product\Services\ConfigurableOptionsGroup;
+use ModulesGarden\TSSGGSModule\App\Models\Whmcs\Currency;
+use ModulesGarden\TSSGGSModule\App\Models\Whmcs\Pricing;
+use ModulesGarden\TSSGGSModule\App\Libs\Products\ConfigOptions\Quantity;
+use ModulesGarden\TSSGGSModule\App\Libs\Products\ConfigOptions\SubOption;
+use ModulesGarden\TSSGGSModule\App\Libs\Products\ConfigOptions\ConfigurableOptions;
+use ModulesGarden\TSSGGSModule\App\Libs\Products\ConfigOptions\ConfigurableOptionsGroup;
 
 /**
  * Re-reads the catalogue of a vendor and brings the configurable options of the products up to date.

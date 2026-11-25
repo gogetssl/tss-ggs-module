@@ -1,3 +1,0 @@
-<ul :id="cid_" :class="[css_, {'lu-single-element' : elements_ && elements_.length == 1}]" class="lu-d-table lu-array-tree-view">
-    <component :key="element.uniq" v-bind="element.slots" v-bind:is="element.name" v-for="(element, key) in elements_" v-on="$listeners"></component>
-</ul>

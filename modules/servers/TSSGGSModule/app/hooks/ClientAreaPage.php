@@ -23,7 +23,7 @@ class ClientAreaPage
         if($page == 'upgrade.php' && isset($_GET['type']) && $_GET['type'] == 'configoptions')
         {
             $serviceId = (int)$_GET['id'];
-            $service   = \ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Service::find($serviceId);
+            $service   = \ModulesGarden\TSSGGSModule\App\Models\Whmcs\Service::find($serviceId);
 
             if(!$service || $service->product->servertype != 'TSSGGSModule')
             {

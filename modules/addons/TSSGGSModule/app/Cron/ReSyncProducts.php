@@ -2,7 +2,7 @@
 
 namespace ModulesGarden\TSSGGSModule\App\Cron;
 
-use ModulesGarden\TSSGGSModule\Core\CommandLine\AbstractCommand;
+use ModulesGarden\TSSGGSModule\App\Kernel\Console\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -11,7 +11,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  * Class Sample
  * @package ModulesGarden\TSSGGSModule\App\Cron
  */
-class ReSyncProducts extends AbstractCommand
+class ReSyncProducts extends Command
 {
     /**
      * Command name

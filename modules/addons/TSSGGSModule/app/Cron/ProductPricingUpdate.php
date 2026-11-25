@@ -12,11 +12,11 @@ use ModulesGarden\TSSGGSModule\App\Models\CronCheck;
 use ModulesGarden\TSSGGSModule\App\Models\RemoteProduct;
 use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
 use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\ProductRepository;
-use ModulesGarden\TSSGGSModule\Core\CommandLine\AbstractCommand;
-use ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Currency;
-use ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Pricing;
-use ModulesGarden\TSSGGSModule\Packages\Logs\Support\Facades\Logger;
-use ModulesGarden\TSSGGSModule\Packages\Product\Services\ConfigurableOptions;
+use ModulesGarden\TSSGGSModule\App\Kernel\Console\Command;
+use ModulesGarden\TSSGGSModule\App\Models\Whmcs\Currency;
+use ModulesGarden\TSSGGSModule\App\Models\Whmcs\Pricing;
+use ModulesGarden\TSSGGSModule\App\Libs\Logs\Logger;
+use ModulesGarden\TSSGGSModule\App\Libs\Products\ConfigOptions\ConfigurableOptions;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -25,7 +25,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  * Class Sample
  * @package ModulesGarden\TSSGGSModule\App\Cron
  */
-class ProductPricingUpdate extends AbstractCommand
+class ProductPricingUpdate extends Command
 {
     /**
      * Command name

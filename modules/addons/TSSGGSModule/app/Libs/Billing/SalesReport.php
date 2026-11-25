@@ -11,7 +11,7 @@ use ModulesGarden\TSSGGSModule\App\Libs\Support\Helpers;
 use ModulesGarden\TSSGGSModule\App\Models\AcmeSubscription;
 use ModulesGarden\TSSGGSModule\App\Models\AisSubscription;
 use ModulesGarden\TSSGGSModule\App\Kernel\Lang;
-use ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Service;
+use ModulesGarden\TSSGGSModule\App\Models\Whmcs\Service;
 use Illuminate\Database\Capsule\Manager as Capsule;
 
 /**
@@ -73,11 +73,6 @@ class SalesReport
             $query->where('tblinvoices.status', 'Paid');
         }
 
-        // the CSV forms pass their data as a container object
-        if($filters instanceof \ModulesGarden\TSSGGSModule\Core\Data\Container)
-        {
-            $filters = $filters->toArray();
-        }
         $filters = (array)$filters + ['fromDate' => '', 'toDate' => '', 'productId' => '', 'brand' => '', 'sslStatus' => '', 'vendorOrderId' => '', 'renewalPeriod' => ''];
 
         if($filters['fromDate'])

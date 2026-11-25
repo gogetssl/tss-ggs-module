@@ -5,7 +5,7 @@ namespace ModulesGarden\TSSGGSModule\App\Libs\Subscriptions;
 use ModulesGarden\TSSGGSModule\App\Helpers\EmailTemplates;
 use ModulesGarden\TSSGGSModule\App\Models\AcmeSubscription;
 use ModulesGarden\TSSGGSModule\App\Models\AisSubscription;
-use ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Service;
+use ModulesGarden\TSSGGSModule\App\Models\Whmcs\Service;
 use WHMCS\Database\Capsule;
 use ModulesGarden\TSSGGSModule\App\Libs\Certificates\CertificateService;
 use ModulesGarden\TSSGGSModule\App\Libs\Billing\RenewalPolicy;

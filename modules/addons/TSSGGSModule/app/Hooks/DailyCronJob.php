@@ -40,3 +40,18 @@ $hookManager->register(
     },
     110
 );
+
+// module log entries older than the days set under Logs > Actions > Settings are removed
+$hookManager->register(
+    function($args) {
+        try
+        {
+            \ModulesGarden\TSSGGSModule\App\Libs\Logs\Logger::prune();
+        }
+        catch(\Throwable $e)
+        {
+            logActivity('SSL module: the module log could not be cleaned: ' . $e->getMessage());
+        }
+    },
+    120
+);

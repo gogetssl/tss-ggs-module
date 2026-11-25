@@ -20,7 +20,7 @@ $hookManager->register(
         $csError = $pid ? \ModulesGarden\TSSGGSModule\App\Libs\ProductLines\CodeSigningService::cartError($pid, $params['billingcycle'] ?? ($_SESSION['cart']['products'][$params['i']]['billingcycle'] ?? ''), (array)($params['configoption'] ?? [])) : null;
         if ($csError)
         {
-            return [\ModulesGarden\TSSGGSModule\Core\translate($csError)];
+            return [\ModulesGarden\TSSGGSModule\App\Kernel\Lang::text($csError)];
         }
 
         if (!$pid || !AcmeHelpers::isAcmeWhmcsProduct($pid))
@@ -52,7 +52,7 @@ $hookManager->register(
 
         if ($sansCount <= 0 && $wildcardCount <= 0)
         {
-            return [\ModulesGarden\TSSGGSModule\Core\translate('acme_order_requires_at_least_one_san')];
+            return [\ModulesGarden\TSSGGSModule\App\Kernel\Lang::text('acme_order_requires_at_least_one_san')];
         }
     },
     1

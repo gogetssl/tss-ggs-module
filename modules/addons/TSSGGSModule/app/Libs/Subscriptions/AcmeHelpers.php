@@ -7,7 +7,7 @@ use ModulesGarden\Servers\TSSGGSModule\app\models\whmcs\SSL;
 use ModulesGarden\Servers\TSSGGSModule\core\Lang;
 use ModulesGarden\TSSGGSModule\App\Models\AcmeSubscription;
 use ModulesGarden\TSSGGSModule\App\Models\RemoteProduct;
-use ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Product;
+use ModulesGarden\TSSGGSModule\App\Models\Whmcs\Product;
 use WHMCS\Database\Capsule;
 use ModulesGarden\TSSGGSModule\App\Libs\Billing\ZeroInvoice;
 use ModulesGarden\TSSGGSModule\App\Libs\Support\Helpers;

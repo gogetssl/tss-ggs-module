@@ -4,7 +4,7 @@ namespace ModulesGarden\TSSGGSModule\App\Libs\Support;
 
 use ModulesGarden\TSSGGSModule\App\Models\CronCheck;
 use ModulesGarden\TSSGGSModule\App\Libs\Dashboard\CronStatus;
-use ModulesGarden\TSSGGSModule\Core\ModuleConstants;
+use ModulesGarden\TSSGGSModule\App\Kernel\Kernel;
 
 /**
  * Resellers without shell access (or without the module's own cron entry) still get the module's jobs: WHMCS's system
@@ -53,7 +53,7 @@ class CronLauncher
             }
 
             $php    = self::phpBinary();
-            $script = ModuleConstants::getFullPath('cron', 'cron.php');
+            $script = Kernel::path('cron', 'cron.php');
             // the same single command a reseller schedules by hand: every job runs when it is due
             exec('nohup ' . escapeshellarg($php) . ' -q ' . escapeshellarg($script) . ' RunAll > /dev/null 2>&1 &');
             self::record('started');
@@ -73,7 +73,7 @@ class CronLauncher
     {
         $state  = self::state();
         // the start marker is older than the state file: right after an upgrade only the marker knows the last start
-        $marker = ModuleConstants::getFullPath('storage', 'cron_hook_last_start');
+        $marker = Kernel::path('storage', 'cron_hook_last_start');
         $start  = max((int)($state['started'] ?? 0), is_file($marker) ? (int)filemtime($marker) : 0);
         $out    = ['mode' => 'none', 'reason' => '', 'hook' => (int)($state['fired'] ?? 0), 'started' => $start, 'job' => self::lastJobRun()];
 
@@ -101,7 +101,7 @@ class CronLauncher
 
     protected static function state(): array
     {
-        $file = ModuleConstants::getFullPath('storage', self::STATE_FILE);
+        $file = Kernel::path('storage', self::STATE_FILE);
         $data = is_file($file) ? json_decode((string)@file_get_contents($file), true) : null;
 
         return is_array($data) ? $data : [];
@@ -117,7 +117,7 @@ class CronLauncher
         {
             $state['started'] = time();
         }
-        @file_put_contents(ModuleConstants::getFullPath('storage', self::STATE_FILE), json_encode($state), LOCK_EX);
+        @file_put_contents(Kernel::path('storage', self::STATE_FILE), json_encode($state), LOCK_EX);
     }
 
     protected static function lastJobRun(): int
@@ -142,7 +142,7 @@ class CronLauncher
     protected static function ownCronWorks()
     {
         $lastRun = self::lastJobRun();
-        $marker = ModuleConstants::getFullPath('storage', 'cron_hook_last_start');
+        $marker = Kernel::path('storage', 'cron_hook_last_start');
         $ours   = is_file($marker) ? filemtime($marker) : 0;
 
         return $lastRun > time() - self::OWN_CRON_MINUTES * 60 && $lastRun > $ours + 600;
@@ -166,7 +166,7 @@ class CronLauncher
      */
     protected static function throttle()
     {
-        $marker = ModuleConstants::getFullPath('storage', 'cron_hook_last_start');
+        $marker = Kernel::path('storage', 'cron_hook_last_start');
         if(is_file($marker) && filemtime($marker) > time() - self::MIN_INTERVAL_SECONDS)
         {
             return false;

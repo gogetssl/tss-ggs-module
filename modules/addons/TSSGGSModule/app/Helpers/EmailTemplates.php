@@ -3,7 +3,7 @@
 namespace ModulesGarden\TSSGGSModule\App\Helpers;
 
 use ModulesGarden\TSSGGSModule\App\Libs\Support\Edition;
-use ModulesGarden\TSSGGSModule\Core\WHMCS\Models\EmailTemplate;
+use ModulesGarden\TSSGGSModule\App\Models\Whmcs\EmailTemplate;
 
 class EmailTemplates
 {

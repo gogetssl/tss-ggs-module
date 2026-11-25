@@ -9,7 +9,7 @@ use ModulesGarden\Servers\TSSGGSModule\app\services\InvoiceRenew;
 use ModulesGarden\Servers\TSSGGSModule\core\Lang;
 use ModulesGarden\TSSGGSModule\App\Libs\Certificates\CertificateService;
 use ModulesGarden\TSSGGSModule\App\Libs\ProductLines\CodeSigningService;
-use ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Invoice;
+use ModulesGarden\TSSGGSModule\App\Models\Whmcs\Invoice;
 
 /**
  * Renewal dialog of S/MIME and code signing certificates.

@@ -7,11 +7,11 @@ use ModulesGarden\TSSGGSModule\App\Libs\Support\Helpers;
 use ModulesGarden\TSSGGSModule\App\Models\RemoteProduct;
 use ModulesGarden\TSSGGSModule\App\Models\Request as RequestModel;
 use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
-use ModulesGarden\TSSGGSModule\Core\Support\Facades\WhmcsApi;
-use ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Client;
-use ModulesGarden\TSSGGSModule\Core\WHMCS\Models\PaymentGateway;
-use ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Service;
-use ModulesGarden\TSSGGSModule\Packages\Logs\Support\Facades\Logger;
+use ModulesGarden\TSSGGSModule\App\Libs\Support\WhmcsApi;
+use ModulesGarden\TSSGGSModule\App\Models\Whmcs\Client;
+use ModulesGarden\TSSGGSModule\App\Models\Whmcs\PaymentGateway;
+use ModulesGarden\TSSGGSModule\App\Models\Whmcs\Service;
+use ModulesGarden\TSSGGSModule\App\Libs\Logs\Logger;
 use WHMCS\Database\Capsule;
 
 /**

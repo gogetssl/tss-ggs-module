@@ -2,12 +2,9 @@
 
 namespace ModulesGarden\TSSGGSModule\App\Libs\Support;
 
-use ModulesGarden\TSSGGSModule\Components\Link\Link;
-use ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Client;
-use ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Product;
-use ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Service;
-use ModulesGarden\TSSGGSModule\Core\WHMCS\URL\Admin;
-use ModulesGarden\TSSGGSModule\Packages\Product\Services\ConfigurableOptions;
+use ModulesGarden\TSSGGSModule\App\Models\Whmcs\Product;
+use ModulesGarden\TSSGGSModule\App\Models\Whmcs\Service;
+use ModulesGarden\TSSGGSModule\App\Libs\Products\ConfigOptions\ConfigurableOptions;
 use ModulesGarden\TSSGGSModule\App\Libs\Gateway\SSLTrustCenterApi;
 
 class Helpers
@@ -103,23 +100,6 @@ class Helpers
         ];
 
         return $dictionary[$billingPeriod] ?: false;
-    }
-
-    public static function getAdminAreaClientLink($clientId)
-    {
-        $client = Client::find($clientId);
-
-        if(!$client)
-        {
-            return false;
-        }
-
-        $link  = new Link;
-        $title = $client->companyname ?: $client->firstname . ' ' . $client->lastname;
-        $link->setTitle($title);
-        $link->setUrl(Admin::clientSummary($clientId));
-
-        return $link;
     }
 
     public static function vendorToDisplay($vendor)

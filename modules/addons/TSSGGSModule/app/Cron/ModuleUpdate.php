@@ -7,7 +7,7 @@ use ModulesGarden\TSSGGSModule\App\Libs\Update\Preflight;
 use ModulesGarden\TSSGGSModule\App\Libs\Update\Release;
 use ModulesGarden\TSSGGSModule\App\Libs\Update\State;
 use ModulesGarden\TSSGGSModule\App\Libs\Update\Workdir;
-use ModulesGarden\TSSGGSModule\Core\CommandLine\AbstractCommand;
+use ModulesGarden\TSSGGSModule\App\Kernel\Console\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -20,7 +20,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  *   php cron/cron.php ModuleUpdate --rollback   put the previous version back from its backup
  * An update that stopped half way is repaired with: php modules/.<folder>-update/recover.php
  */
-class ModuleUpdate extends AbstractCommand
+class ModuleUpdate extends Command
 {
     protected $name = 'ModuleUpdate';
 

@@ -92,7 +92,7 @@ class Layout
     /** @return string content of a page that only says something (tone: '' | ok | warn | bad) */
     public static function message(Page $page, string $text, string $tone = ''): string
     {
-        return \ModulesGarden\TSSGGSModule\App\UI\Shared\Html::noticeText($text, $tone);
+        return \ModulesGarden\TSSGGSModule\App\Libs\Support\Html::noticeText($text, $tone);
     }
 
     public static function notFound(Page $page): string

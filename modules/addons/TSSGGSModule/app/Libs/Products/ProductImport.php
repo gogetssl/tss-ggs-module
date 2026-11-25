@@ -7,13 +7,13 @@ use ModulesGarden\TSSGGSModule\App\Libs\Billing\FinancePolicy;
 use ModulesGarden\TSSGGSModule\App\Libs\Support\Helpers;
 use ModulesGarden\TSSGGSModule\App\Models\RemoteProduct;
 use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\ProductRepository;
-use ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Currency;
-use ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Pricing;
-use ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Product;
-use ModulesGarden\TSSGGSModule\Core\WHMCS\Models\ProductGroup;
-use ModulesGarden\TSSGGSModule\Packages\Product\Libs\ConfigurableOptions\Quantity;
-use ModulesGarden\TSSGGSModule\Packages\Product\Libs\ConfigurableOptions\SubOption\SubOption;
-use ModulesGarden\TSSGGSModule\Packages\Product\Services\ConfigurableOptions;
+use ModulesGarden\TSSGGSModule\App\Models\Whmcs\Currency;
+use ModulesGarden\TSSGGSModule\App\Models\Whmcs\Pricing;
+use ModulesGarden\TSSGGSModule\App\Models\Whmcs\Product;
+use ModulesGarden\TSSGGSModule\App\Models\Whmcs\ProductGroup;
+use ModulesGarden\TSSGGSModule\App\Libs\Products\ConfigOptions\Quantity;
+use ModulesGarden\TSSGGSModule\App\Libs\Products\ConfigOptions\SubOption;
+use ModulesGarden\TSSGGSModule\App\Libs\Products\ConfigOptions\ConfigurableOptions;
 
 /**
  * Import of vendor products into WHMCS (admin page Products, the setup wizard, the nightly catalogue sync): for each
