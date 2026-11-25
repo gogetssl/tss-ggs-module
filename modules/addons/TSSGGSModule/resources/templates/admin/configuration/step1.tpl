@@ -12,5 +12,5 @@
     </div>
 </span>
 <span>{t key='step1.third_p' html=true}</span>
-<div class="lu-row"></div>
-<a class="lu-btn lu-btn--success mt30_custom" href="{$next}"><span class="lu-btn__text">{t key='step1.next_step_btn'}</span></a>
+<div class="mod-row"></div>
+<a class="mod-btn mod-btn--success mt30_custom" href="{$next}"><span class="mod-btn-text">{t key='step1.next_step_btn'}</span></a>

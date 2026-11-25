@@ -29,7 +29,7 @@
     </div>
 </span>
 {if $blocked}
-    <button type="button" class="lu-btn lu-btn--success mt30_custom disabled" disabled><span class="lu-btn__text">{t key='step2.next_step_btn'}</span></button>
+    <button type="button" class="mod-btn mod-btn--success mt30_custom disabled" disabled><span class="mod-btn-text">{t key='step2.next_step_btn'}</span></button>
 {else}
-    <a class="lu-btn lu-btn--success mt30_custom" href="{$next}"><span class="lu-btn__text">{t key='step2.next_step_btn'}</span></a>
+    <a class="mod-btn mod-btn--success mt30_custom" href="{$next}"><span class="mod-btn-text">{t key='step2.next_step_btn'}</span></a>
 {/if}

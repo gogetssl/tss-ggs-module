@@ -71,6 +71,8 @@ resources/templates/        Smarty templates: admin/layout.tpl, admin/partials, 
 overrides/templates/        a reseller's copy of a template at the same path wins; updates never touch it
 resources/assets/js/vendor  htmx.js, alpine.js (readable, shipped with the module, no CDN, no build step)
 resources/assets/js/app.js  the module's own script (token header for htmx, loading state)
+resources/assets/css        the module's own stylesheet: ui-base.css, ui-controls.css, ui-layout.css (classes mod-*,
+                            everything under #mod-root), then one file per area; resources/build/css.php lists them
 ```
 
 - A page is a class in `app/Pages/Admin` (`mod-page=certificateLog` is `CertificateLog`); a page that does not exist

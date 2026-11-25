@@ -1,6 +1,6 @@
 /* ---- Settings screens: one card, sections with an icon and a description, label left / control right, sticky Save bar ---- */
 
-#layers2 .tssggs-settings .tssggs-page__desc {
+#mod-root .tssggs-settings .tssggs-page__desc {
     margin: 0 0 14px;
     color: var(--tw-muted);
     font-size: 14px;
@@ -8,7 +8,7 @@
 }
 
 /* a section: icon + title, description, rows; a divider line between sections */
-#layers2 .tssggs-settings form .lu-widget.tssggs-sec {
+#mod-root .tssggs-settings form .mod-box.tssggs-sec {
     margin: 0;
     padding: 32px 0 0; /* the last row ends at the divider with the same 10px as every row */
     border: 0;
@@ -17,24 +17,24 @@
     background: transparent;
 }
 
-#layers2 .tssggs-settings form .lu-widget.tssggs-sec:first-child {
+#mod-root .tssggs-settings form .mod-box.tssggs-sec:first-child {
     padding-top: 6px;
     border-top: 0;
 }
 
-#layers2 .tssggs-settings form .lu-widget.tssggs-sec > .lu-widget__header {
+#mod-root .tssggs-settings form .mod-box.tssggs-sec > .mod-box-head {
     margin: 0 0 14px !important;
     padding: 0 !important;
 }
 
 /* section heading: icon in a soft square, the title centred on it */
-#layers2 .tssggs-settings form .lu-widget.tssggs-sec > .lu-widget__header .lu-widget__top {
+#mod-root .tssggs-settings form .mod-box.tssggs-sec > .mod-box-head .mod-box-top {
     display: flex;
     align-items: center;
     gap: 12px;
 }
 
-#layers2 .tssggs-settings form .lu-widget.tssggs-sec > .lu-widget__header .lu-widget__icon {
+#mod-root .tssggs-settings form .mod-box.tssggs-sec > .mod-box-head .mod-box-icon {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -46,12 +46,12 @@
     color: var(--tw-primary);
 }
 
-#layers2 .tssggs-settings form .lu-widget.tssggs-sec > .lu-widget__header .lu-widget__icon svg {
+#mod-root .tssggs-settings form .mod-box.tssggs-sec > .mod-box-head .mod-box-icon svg {
     width: 20px;
     height: 20px;
 }
 
-#layers2 .tssggs-settings form .lu-widget.tssggs-sec > .lu-widget__header .lu-top__title {
+#mod-root .tssggs-settings form .mod-box.tssggs-sec > .mod-box-head .mod-bar-title {
     margin: 0;
     color: var(--tw-fg);
     font-size: 18px !important;
@@ -60,7 +60,7 @@
 }
 
 /* the section's information message: soft background, info icon on the left */
-#layers2 .tssggs-settings .tssggs-sec__desc {
+#mod-root .tssggs-settings .tssggs-sec__desc {
     position: relative;
     margin: 0 0 12px;
     padding: 12px 16px 12px 46px;
@@ -71,7 +71,7 @@
     line-height: 20px;
 }
 
-#layers2 .tssggs-settings .tssggs-sec__desc::before {
+#mod-root .tssggs-settings .tssggs-sec__desc::before {
     content: '';
     position: absolute;
     left: 16px;
@@ -84,12 +84,12 @@
 }
 
 /* the card heading (Log settings): a larger icon in a grey square, the title and a second row under it */
-#layers2 .lu-app-main .tssggs-settings .lu-widget > .lu-widget__header:has(.lu-top--sub) {
+#mod-root .mod-main .tssggs-settings .mod-box > .mod-box-head:has(.mod-bar--sub) {
     padding: 18px 24px !important;
     background: transparent !important;
 }
 
-#layers2 .lu-app-main .tssggs-settings .lu-widget > .lu-widget__header > .lu-widget__top.lu-top--sub {
+#mod-root .mod-main .tssggs-settings .mod-box > .mod-box-head > .mod-box-top.mod-bar--sub {
     display: grid !important;
     grid-template-columns: 48px minmax(0, 1fr);
     grid-template-rows: auto auto;
@@ -98,7 +98,7 @@
     align-items: center;
 }
 
-#layers2 .lu-app-main .tssggs-settings .lu-widget__top.lu-top--sub .lu-widget__icon {
+#mod-root .mod-main .tssggs-settings .mod-box-top.mod-bar--sub .mod-box-icon {
     align-self: center;
     flex: none !important;
     width: 48px !important;
@@ -117,12 +117,12 @@
     color: var(--tw-fg);
 }
 
-#layers2 .lu-app-main .tssggs-settings .lu-widget__top.lu-top--sub .lu-widget__icon svg {
+#mod-root .mod-main .tssggs-settings .mod-box-top.mod-bar--sub .mod-box-icon svg {
     width: 26px;
     height: 26px;
 }
 
-#layers2 .lu-app-main .tssggs-settings .lu-widget__top.lu-top--sub .lu-top__title {
+#mod-root .mod-main .tssggs-settings .mod-box-top.mod-bar--sub .mod-bar-title {
     margin: 0 !important;
     grid-column: 2;
     align-self: end;
@@ -131,7 +131,7 @@
     line-height: 28px !important;
 }
 
-#layers2 .lu-app-main .tssggs-settings .lu-widget__top.lu-top--sub .lu-top__subtitle {
+#mod-root .mod-main .tssggs-settings .mod-box-top.mod-bar--sub .mod-bar-sub {
     margin: 0 !important;
     grid-column: 2;
     align-self: start;
@@ -141,12 +141,12 @@
 }
 
 /* a heading inside a section ("Recurring Orders"): bold label, no icon, no divider */
-#layers2 .tssggs-settings form .lu-widget.tssggs-sec.tssggs-sec--sub {
+#mod-root .tssggs-settings form .mod-box.tssggs-sec.tssggs-sec--sub {
     padding: 14px 0 0;
     border-top: 0;
 }
 
-#layers2 .tssggs-settings form .lu-widget.tssggs-sec--sub > .lu-widget__header .lu-top__title {
+#mod-root .tssggs-settings form .mod-box.tssggs-sec--sub > .mod-box-head .mod-bar-title {
     padding-left: 10px;
     border-left: 3px solid var(--tw-primary);
     color: var(--tw-fg);
@@ -156,7 +156,7 @@
 }
 
 /* rows: the label on the left, the control on the right, a divider between rows */
-#layers2 .tssggs-settings form .tssggs-sec .lu-form-group {
+#mod-root .tssggs-settings form .tssggs-sec .mod-field {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(200px, 300px);
     column-gap: 24px;
@@ -168,25 +168,25 @@
     border-bottom: 1px solid var(--tw-border);
 }
 
-#layers2 .tssggs-settings form .tssggs-sec .lu-form-group:last-child,
+#mod-root .tssggs-settings form .tssggs-sec .mod-field:last-child,
 /* the last row still shown: the rows after it are hidden by their switch (resources/assets/js/custom/switchFields.js) */
-#layers2 .tssggs-settings form .tssggs-sec .lu-form-group:not(:has(~ .lu-form-group:not([style*="display: none"]))) {
+#mod-root .tssggs-settings form .tssggs-sec .mod-field:not(:has(~ .mod-field:not([style*="display: none"]))) {
     border-bottom: 0;
 }
 
 /* a row followed by its renewal summary box: the box separates them, no divider above it */
-#layers2 .tssggs-settings form .tssggs-sec .lu-form-group:has(+ span .tssggs-renewal-check) {
+#mod-root .tssggs-settings form .tssggs-sec .mod-field:has(+ span .tssggs-renewal-check) {
     border-bottom: 0;
 }
 
 /* a row right after an opened block of rows (e.g. "Buy More Domains" Price after the recurring settings): the
    block's last row has no divider, so this row draws it */
-#layers2 .tssggs-settings form .tssggs-sec .lu-collapse.lu-show + .lu-form-group {
+#mod-root .tssggs-settings form .tssggs-sec .mod-fold.mod-shown + .mod-field {
     border-top: 1px solid var(--tw-border);
 }
 
-#layers2 .tssggs-settings form .tssggs-sec .lu-form-group > .lu-form-label,
-#layers2 .tssggs-settings form .tssggs-sec .lu-form-group > label {
+#mod-root .tssggs-settings form .tssggs-sec .mod-field > .mod-field-label,
+#mod-root .tssggs-settings form .tssggs-sec .mod-field > label {
     grid-column: 1;
     margin: 0;
     color: var(--tw-fg);
@@ -194,19 +194,19 @@
     font-weight: 500;
 }
 
-#layers2 .tssggs-settings form .tssggs-sec .lu-form-group > :not(label):not(.lu-preloader-container) {
+#mod-root .tssggs-settings form .tssggs-sec .mod-field > :not(label):not(.mod-spinner-box) {
     grid-column: 2;
 }
 
 /* unit fields (Finance Settings): the number on the right with its unit after it - "1 %", "0 USD" (another base
    currency: FinanceSettingsForm sets the text); no number spinner under the unit */
-#layers2 .tssggs-settings form .tssggs-sec .lu-form-group:has(> .tssggs-percent),
-#layers2 .tssggs-settings form .tssggs-sec .lu-form-group:has(> .tssggs-money) {
+#mod-root .tssggs-settings form .tssggs-sec .mod-field:has(> .tssggs-percent),
+#mod-root .tssggs-settings form .tssggs-sec .mod-field:has(> .tssggs-money) {
     position: relative;
 }
 
-#layers2 .tssggs-settings form .tssggs-sec .lu-form-group:has(> .tssggs-percent)::after,
-#layers2 .tssggs-settings form .tssggs-sec .lu-form-group:has(> .tssggs-money)::after {
+#mod-root .tssggs-settings form .tssggs-sec .mod-field:has(> .tssggs-percent)::after,
+#mod-root .tssggs-settings form .tssggs-sec .mod-field:has(> .tssggs-money)::after {
     position: absolute;
     right: 14px;
     top: 50%;
@@ -216,66 +216,66 @@
     pointer-events: none;
 }
 
-#layers2 .tssggs-settings form .tssggs-sec .lu-form-group:has(> .tssggs-percent)::after {
+#mod-root .tssggs-settings form .tssggs-sec .mod-field:has(> .tssggs-percent)::after {
     content: "%";
 }
 
-#layers2 .tssggs-settings form .tssggs-sec .lu-form-group:has(> .tssggs-money)::after {
+#mod-root .tssggs-settings form .tssggs-sec .mod-field:has(> .tssggs-money)::after {
     content: "USD";
 }
 
-#layers2 .tssggs-settings form .tssggs-sec .lu-form-group > input.tssggs-percent,
-#layers2 .tssggs-settings form .tssggs-sec .lu-form-group > input.tssggs-money {
+#mod-root .tssggs-settings form .tssggs-sec .mod-field > input.tssggs-percent,
+#mod-root .tssggs-settings form .tssggs-sec .mod-field > input.tssggs-money {
     text-align: right;
     -moz-appearance: textfield;
 }
 
-#layers2 .tssggs-settings form .tssggs-sec .lu-form-group > input.tssggs-percent {
+#mod-root .tssggs-settings form .tssggs-sec .mod-field > input.tssggs-percent {
     padding-right: 30px !important;
 }
 
-#layers2 .tssggs-settings form .tssggs-sec .lu-form-group > input.tssggs-money {
+#mod-root .tssggs-settings form .tssggs-sec .mod-field > input.tssggs-money {
     padding-right: 50px !important;
 }
 
-#layers2 .tssggs-settings form .tssggs-sec .lu-form-group > input.tssggs-percent::-webkit-outer-spin-button,
-#layers2 .tssggs-settings form .tssggs-sec .lu-form-group > input.tssggs-percent::-webkit-inner-spin-button {
+#mod-root .tssggs-settings form .tssggs-sec .mod-field > input.tssggs-percent::-webkit-outer-spin-button,
+#mod-root .tssggs-settings form .tssggs-sec .mod-field > input.tssggs-percent::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
 }
 
-#layers2 .tssggs-settings form .tssggs-sec .lu-form-group:has(textarea) {
+#mod-root .tssggs-settings form .tssggs-sec .mod-field:has(textarea) {
     align-items: start;
 }
 
 /* Yes / No rows: the label fills the row, the choice sits at its right edge */
-#layers2 .tssggs-settings form .tssggs-sec .lu-form-group.lu-form-check {
+#mod-root .tssggs-settings form .tssggs-sec .mod-field.mod-check {
     display: flex;
     align-items: center;
     margin: 0 !important;
 }
 
-#layers2 .tssggs-settings form .tssggs-sec .lu-form-check .tssggs-yn {
+#mod-root .tssggs-settings form .tssggs-sec .mod-check .tssggs-yn {
     display: flex;
     justify-content: space-between;
     gap: 24px;
     width: 100%;
 }
 
-#layers2 .tssggs-settings form .tssggs-sec .lu-form-check .tssggs-yn > .lu-form-text,
-#layers2 .tssggs-settings form .tssggs-sec .lu-form-check .tssggs-yn > span {
+#mod-root .tssggs-settings form .tssggs-sec .mod-check .tssggs-yn > .mod-check-text,
+#mod-root .tssggs-settings form .tssggs-sec .mod-check .tssggs-yn > span {
     flex: 1 1 auto;
     color: var(--tw-fg);
     font-size: 13px;
     font-weight: 500;
 }
 
-#layers2 .tssggs-settings form .tssggs-sec .lu-form-check .tssggs-yn__segments {
+#mod-root .tssggs-settings form .tssggs-sec .mod-check .tssggs-yn__segments {
     flex: 0 0 auto;
 }
 
 /* ---- the sticky Save bar ---- */
-#layers2 .tssggs-settings form .tssggs-savebar {
+#mod-root .tssggs-settings form .tssggs-savebar {
     position: sticky;
     bottom: 0;
     z-index: 10;
@@ -292,22 +292,22 @@
     background: var(--tw-surface);
 }
 
-#layers2 .tssggs-settings form .tssggs-savebar .lu-btn[disabled] {
+#mod-root .tssggs-settings form .tssggs-savebar .mod-btn[disabled] {
     opacity: .45;
     cursor: not-allowed;
 }
 
-#layers2 .tssggs-settings .tssggs-savebar__status {
+#mod-root .tssggs-settings .tssggs-savebar__status {
     color: var(--tw-muted);
     font-size: 12px;
 }
 
-#layers2 .tssggs-settings .tssggs-savebar__status.is-dirty {
+#mod-root .tssggs-settings .tssggs-savebar__status.is-dirty {
     color: var(--tw-fg);
     font-weight: 500;
 }
 
-#layers2 .tssggs-settings .tssggs-savebar__status.is-failed {
+#mod-root .tssggs-settings .tssggs-savebar__status.is-failed {
     color: var(--tw-danger);
     font-weight: 500;
 }
@@ -318,34 +318,34 @@ body:has(.tssggs-savebar) {
 }
 
 /* Widgets in one grid row share the row height */
-#layers2 .lu-row > .lu-single-element { display: flex; flex-direction: column; }
-#layers2 .lu-row > .lu-single-element > .lu-widget { flex: 1 1 auto; }
+#mod-root .mod-row > .mod-solo { display: flex; flex-direction: column; }
+#mod-root .mod-row > .mod-solo > .mod-box { flex: 1 1 auto; }
 
 /* CSV template download block: compact, 20px around the button */
-#layers2 .tssggs-dl { align-self: start; }
-#layers2 .tssggs-dl .lu-widget__body { padding: 20px; }
-#layers2 .tssggs-dl .lu-widget__content { padding: 0 !important; margin: 0 !important; width: 100%; }
-#layers2 .tssggs-dl .lu-top__toolbar, #layers2 .tssggs-dl form, #layers2 .tssggs-dl .lu-single-element { margin: 0 !important; padding: 0 !important; }
+#mod-root .tssggs-dl { align-self: start; }
+#mod-root .tssggs-dl .mod-box-body { padding: 20px; }
+#mod-root .tssggs-dl .mod-box-content { padding: 0 !important; margin: 0 !important; width: 100%; }
+#mod-root .tssggs-dl .mod-bar-tools, #mod-root .tssggs-dl form, #mod-root .tssggs-dl .mod-solo { margin: 0 !important; padding: 0 !important; }
 
 /* Logs: note under the counter cards */
-#layers2 .tssggs-cardnote { margin-top: 4px; }
-#layers2 .tssggs-cardnote small { display: block; color: var(--tw-fg-soft, #5b6673); font-size: 14px; line-height: 20px; white-space: normal; }
+#mod-root .tssggs-cardnote { margin-top: 4px; }
+#mod-root .tssggs-cardnote small { display: block; color: var(--tw-fg-soft, #5b6673); font-size: 14px; line-height: 20px; white-space: normal; }
 
 /* section information message with a list of points (e.g. the renewal price options) */
-#layers2 .tssggs-settings .tssggs-sec__desc > p { margin: 0; }
-#layers2 .tssggs-settings .tssggs-sec__desc > ul { margin: 8px 0 0; padding-left: 18px; list-style: disc; }
-#layers2 .tssggs-settings .tssggs-sec__desc > ul > li + li { margin-top: 4px; }
-#layers2 .tssggs-settings .tssggs-sec__desc > ul b { color: var(--tw-fg); font-weight: 600; }
+#mod-root .tssggs-settings .tssggs-sec__desc > p { margin: 0; }
+#mod-root .tssggs-settings .tssggs-sec__desc > ul { margin: 8px 0 0; padding-left: 18px; list-style: disc; }
+#mod-root .tssggs-settings .tssggs-sec__desc > ul > li + li { margin-top: 4px; }
+#mod-root .tssggs-settings .tssggs-sec__desc > ul b { color: var(--tw-fg); font-weight: 600; }
 
 /* every select of the settings pages is clickable as a whole */
-#layers2 .tssggs-settings .lu-selectize-control .lu-selectize-input,
-#layers2 .tssggs-settings .lu-selectize-control .lu-selectize-input > input,
-#layers2 .tssggs-settings .lu-selectize-control .lu-selectize-input > .item,
-#layers2 .tssggs-settings select { cursor: pointer !important; }
+#mod-root .tssggs-settings .mod-select .mod-select-box,
+#mod-root .tssggs-settings .mod-select .mod-select-box > input,
+#mod-root .tssggs-settings .mod-select .mod-select-box > .item,
+#mod-root .tssggs-settings select { cursor: pointer !important; }
 
 /* Finance > Pricing: the other places that change prices, with links */
-#layers2 .tssggs-settings .tssggs-sec__desc--rules { margin-top: -4px; }
-#layers2 .tssggs-settings .tssggs-sec__desc a { color: var(--tw-primary); font-weight: 500; text-decoration: underline; text-underline-offset: 2px; white-space: nowrap; }
+#mod-root .tssggs-settings .tssggs-sec__desc--rules { margin-top: -4px; }
+#mod-root .tssggs-settings .tssggs-sec__desc a { color: var(--tw-primary); font-weight: 500; text-decoration: underline; text-underline-offset: 2px; white-space: nowrap; }
 
 /* help icon after a field label: the same gap as on the Yes / No rows */
-#layers2 .lu-form-label > span + * { margin-left: 4px; }
+#mod-root .mod-field-label > span + * { margin-left: 4px; }

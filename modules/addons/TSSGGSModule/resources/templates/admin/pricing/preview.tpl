@@ -41,10 +41,10 @@
 
     <form method="post" action="{url action='importConfirm'}" class="tssggs-inline">
         <input type="hidden" name="token" value="{$token}">
-        <button class="lu-btn lu-btn--success" type="submit"{if !$preview.accepted} disabled{/if}>{t key='import_confirm' count=$preview.accepted|@count}</button>
+        <button class="mod-btn mod-btn--success" type="submit"{if !$preview.accepted} disabled{/if}>{t key='import_confirm' count=$preview.accepted|@count}</button>
     </form>
     <form method="post" action="{url action='importCancel'}" class="tssggs-inline">
         <input type="hidden" name="token" value="{$token}">
-        <button class="lu-btn lu-btn--default" type="submit">{t key='import_cancel'}</button>
+        <button class="mod-btn mod-btn--default" type="submit">{t key='import_cancel'}</button>
     </form>
 </div>

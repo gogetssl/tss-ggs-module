@@ -43,7 +43,7 @@ class SmokeKernelPages extends \__MODULE__\App\Kernel\Console\Command
                     {
                         $html = Layout::render($page, $response->body());
                         // a page with its own heading (the dashboard) gets none from the layout; the setup wizard has no menu
-                        foreach(array_merge(['id="layers2"', 'vendor/htmx.js', 'vendor/alpine.js'], $page::CHROME ? ['lu-nav__item'] : [], $page::HEADING ? ['pagehead__title'] : []) as $must)
+                        foreach(array_merge(['id="mod-root"', 'vendor/htmx.js', 'vendor/alpine.js'], $page::CHROME ? ['mod-nav-item'] : [], $page::HEADING ? ['pagehead__title'] : []) as $must)
                         {
                             if(strpos($html, $must) === false)
                             {
@@ -51,7 +51,7 @@ class SmokeKernelPages extends \__MODULE__\App\Kernel\Console\Command
                             }
                         }
                     }
-                    elseif($response->type() === Response::PAGE && strpos($response->body(), 'id="layers2"') !== false)
+                    elseif($response->type() === Response::PAGE && strpos($response->body(), 'id="mod-root"') !== false)
                     {
                         throw new \RuntimeException('htmx answer contains the layout');
                     }
@@ -93,7 +93,7 @@ class SmokeKernelPages extends \__MODULE__\App\Kernel\Console\Command
                 {
                     $request  = new Request(['mod-page' => lcfirst($name), 'settings-page' => $screen], [], ['REQUEST_METHOD' => 'GET']);
                     $response = (new $class($request, new Lang('admin', 'english')))->index();
-                    if(!$response instanceof Response || strpos($response->body(), 'lu-widget__body') === false)
+                    if(!$response instanceof Response || strpos($response->body(), 'mod-box-body') === false)
                     {
                         throw new \RuntimeException('screen "' . $screen . '" gave no content');
                     }

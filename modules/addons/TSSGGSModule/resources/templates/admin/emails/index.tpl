@@ -115,14 +115,14 @@
 
                 {if $canEdit}
                     <div class="em-bar">
-                        <button class="lu-btn lu-btn--success" type="submit" formaction="{url action='save'}">{t key='save'}</button>
-                        <button class="lu-btn lu-btn--default" type="submit" formaction="{url action='preview'}">{t key='preview'}</button>
-                        <button class="lu-btn lu-btn--default" type="submit" formaction="{url action='test'}" data-confirm="{t key='confirm_test'}">{t key='test'}</button>
+                        <button class="mod-btn mod-btn--success" type="submit" formaction="{url action='save'}">{t key='save'}</button>
+                        <button class="mod-btn mod-btn--default" type="submit" formaction="{url action='preview'}">{t key='preview'}</button>
+                        <button class="mod-btn mod-btn--default" type="submit" formaction="{url action='test'}" data-confirm="{t key='confirm_test'}">{t key='test'}</button>
                         <span class="em-spacer"></span>
                         {if $language === ''}
-                            <button class="lu-btn lu-btn--default is-danger" type="submit" formaction="{url action='reset'}" data-confirm="{t key='confirm_reset'}">{t key='reset'}</button>
+                            <button class="mod-btn mod-btn--default is-danger" type="submit" formaction="{url action='reset'}" data-confirm="{t key='confirm_reset'}">{t key='reset'}</button>
                         {elseif $own}
-                            <button class="lu-btn lu-btn--default is-danger" type="submit" formaction="{url action='removeLanguage'}" data-confirm="{t key='confirm_remove_language'}">{t key='remove_language' language=$languageName}</button>
+                            <button class="mod-btn mod-btn--default is-danger" type="submit" formaction="{url action='removeLanguage'}" data-confirm="{t key='confirm_remove_language'}">{t key='remove_language' language=$languageName}</button>
                         {/if}
                     </div>
                 {/if}

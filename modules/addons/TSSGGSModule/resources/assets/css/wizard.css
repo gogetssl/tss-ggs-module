@@ -40,8 +40,8 @@
 }
 
 .contentarea:has(.tssggs-wizard) h1,
-.lu-app:has(.tssggs-wizard) > :not(.lu-app-main),
-.lu-app-main__body:has(.tssggs-wizard) > .lu-app-main__top {
+.mod-shell:has(.tssggs-wizard) > :not(.mod-main),
+.mod-main-body:has(.tssggs-wizard) > .mod-main-top {
     display: none;
 }
 
@@ -262,7 +262,7 @@ a.tssggs-wizard__item:focus-visible {
 
 /* ---- Step card (framework widget) ---- */
 
-.tssggs-wizard .tssggs-step.lu-widget {
+.tssggs-wizard .tssggs-step.mod-box {
     margin: 0;
     border: 1px solid var(--tw-border);
     border-radius: var(--tw-radius);
@@ -270,15 +270,15 @@ a.tssggs-wizard__item:focus-visible {
     box-shadow: var(--tw-shadow);
 }
 
-.tssggs-wizard .tssggs-step > .lu-widget__body > .lu-widget__content {
+.tssggs-wizard .tssggs-step > .mod-box-body > .mod-box-content {
     padding: 32px;
     font-size: 15px;
     line-height: 1.6;
     color: var(--tw-fg-soft);
 }
 
-/* #layers2 (the module root) outranks the WHMCS admin theme's heading styles */
-#layers2 .tssggs-step__eyebrow {
+/* #mod-root (the module root) outranks the WHMCS admin theme's heading styles */
+#mod-root .tssggs-step__eyebrow {
     font-size: 12px;
     font-weight: 600;
     letter-spacing: .06em;
@@ -286,7 +286,7 @@ a.tssggs-wizard__item:focus-visible {
     color: var(--tw-primary);
 }
 
-#layers2 .tssggs-step__title {
+#mod-root .tssggs-step__title {
     margin: 4px 0 20px;
     padding: 0;
     font-family: inherit;
@@ -365,29 +365,29 @@ a.tssggs-wizard__item:focus-visible {
 /* fixed columns: Required / Found / Status get set widths, the check (name, hint, fix command) takes the rest and
    wraps - long hints and long "found" values never push the table out of the card. The framework sizes table
    cells and spans with !important rules, hence the !important here. */
-#layers2 .tssggs-checks {
+#mod-root .tssggs-checks {
     width: 100%;
     box-sizing: border-box;
 }
 
-#layers2 .tssggs-checks table {
+#mod-root .tssggs-checks table {
     width: 100% !important;
     table-layout: fixed;
 }
 
-#layers2 .tssggs-checks th:nth-child(2) { width: 130px !important; }
-#layers2 .tssggs-checks th:nth-child(3) { width: 220px !important; }
-#layers2 .tssggs-checks th:nth-child(4) { width: 100px !important; }
+#mod-root .tssggs-checks th:nth-child(2) { width: 130px !important; }
+#mod-root .tssggs-checks th:nth-child(3) { width: 220px !important; }
+#mod-root .tssggs-checks th:nth-child(4) { width: 100px !important; }
 
-#layers2 .tssggs-checks td:first-child,
-#layers2 .tssggs-checks td:nth-child(3) {
+#mod-root .tssggs-checks td:first-child,
+#mod-root .tssggs-checks td:nth-child(3) {
     white-space: normal !important;
     overflow-wrap: anywhere;
 }
 
-#layers2 .tssggs-checks__name,
-#layers2 .tssggs-checks__hint,
-#layers2 .tssggs-checks__cmd {
+#mod-root .tssggs-checks__name,
+#mod-root .tssggs-checks__hint,
+#mod-root .tssggs-checks__cmd {
     width: auto !important;
     max-width: 100%;
 }
@@ -404,7 +404,7 @@ a.tssggs-wizard__item:focus-visible {
 }
 
 /* the wizard card body is a flex item that would otherwise grow to the table's natural width */
-.tssggs-step > .lu-widget__body {
+.tssggs-step > .mod-box-body {
     flex: 1 1 auto;
     min-width: 0;
     max-width: 100%;
@@ -471,7 +471,7 @@ a.tssggs-wizard__item:focus-visible {
 }
 
 /* alerts inside step cards */
-.tssggs-wizard .tssggs-step .lu-alert {
+.tssggs-wizard .tssggs-step .mod-alert {
     margin: 0 0 8px;
     padding: 12px 16px;
     border: 1px solid var(--tw-border);
@@ -481,19 +481,19 @@ a.tssggs-wizard__item:focus-visible {
     font-size: 14px;
 }
 
-.tssggs-wizard .tssggs-step .lu-alert--success {
+.tssggs-wizard .tssggs-step .mod-alert--success {
     border-color: rgba(0, 113, 54, .3);
     background: var(--tw-primary-soft);
 }
 
-.tssggs-wizard .tssggs-step .lu-alert--danger {
+.tssggs-wizard .tssggs-step .mod-alert--danger {
     border-color: rgba(231, 0, 11, .3);
     background: var(--tw-danger-soft);
 }
 
 /* buttons */
-.tssggs-wizard .tssggs-step .lu-btn--success,
-.tssggs-wizard .tssggs-step .lu-btn--primary {
+.tssggs-wizard .tssggs-step .mod-btn--success,
+.tssggs-wizard .tssggs-step .mod-btn--primary {
     display: inline-flex;
     align-items: center;
     gap: 8px;
@@ -506,20 +506,20 @@ a.tssggs-wizard__item:focus-visible {
     box-shadow: var(--tw-shadow);
 }
 
-.tssggs-wizard .tssggs-step .lu-btn--success:hover,
-.tssggs-wizard .tssggs-step .lu-btn--primary:hover {
+.tssggs-wizard .tssggs-step .mod-btn--success:hover,
+.tssggs-wizard .tssggs-step .mod-btn--primary:hover {
     background: var(--tw-primary-hover);
     color: #fff;
 }
 
-.tssggs-wizard .tssggs-step .lu-btn--success:focus-visible,
-.tssggs-wizard .tssggs-step .lu-btn--primary:focus-visible {
+.tssggs-wizard .tssggs-step .mod-btn--success:focus-visible,
+.tssggs-wizard .tssggs-step .mod-btn--primary:focus-visible {
     outline: 2px solid var(--tw-ring);
     outline-offset: 2px;
 }
 
 /* form fields */
-.tssggs-wizard .tssggs-step .lu-form-control:focus {
+.tssggs-wizard .tssggs-step .mod-input:focus {
     border-color: var(--tw-ring);
     box-shadow: 0 0 0 3px rgba(53, 150, 88, .2);
 }
@@ -563,7 +563,7 @@ a.tssggs-wizard__item:focus-visible {
     }
 
     .tssggs-wizard__section,
-    .tssggs-wizard .tssggs-step > .lu-widget__body > .lu-widget__content {
+    .tssggs-wizard .tssggs-step > .mod-box-body > .mod-box-content {
         padding: 20px;
     }
 

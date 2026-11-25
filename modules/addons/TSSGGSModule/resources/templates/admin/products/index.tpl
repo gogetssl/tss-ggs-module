@@ -2,22 +2,22 @@
     Products page: two tabs - the products (banner, explanation, then the list in #tssggs-products) and the changes
     in the vendor's catalogue. Every action on a product puts list.tpl back into #tssggs-products.
 *}
-<div class="lu-widget" data-component="tabs-container" x-data="{ tab: '{$tab}' }">
-    <div class="lu-widget__header">
-        <div class="lu-widget__nav">
-            <ul class="lu-nav lu-nav--md lu-nav--h lu-nav--tabs lu-nav--arrow">
-                <li class="lu-nav__item" :class="tab === 'products' && 'is-active'">
-                    <a class="lu-nav__link" href="#" @click.prevent="tab = 'products'"><span class="lu-nav__link-text">{t key='productsTab'}</span></a>
+<div class="mod-box" data-component="tabs-container" x-data="{ tab: '{$tab}' }">
+    <div class="mod-box-head">
+        <div class="mod-box-nav">
+            <ul class="mod-nav mod-nav--md mod-nav--row mod-nav--tabs mod-nav--arrow">
+                <li class="mod-nav-item" :class="tab === 'products' && 'is-active'">
+                    <a class="mod-nav-link" href="#" @click.prevent="tab = 'products'"><span class="mod-nav-text">{t key='productsTab'}</span></a>
                 </li>
-                <li class="lu-nav__item" :class="tab === 'changes' && 'is-active'">
-                    <a class="lu-nav__link" href="#" @click.prevent="tab = 'changes'"><span class="lu-nav__link-text">{t key='catalogueTab'}{if $recentChanges} ({$recentChanges}){/if}</span></a>
+                <li class="mod-nav-item" :class="tab === 'changes' && 'is-active'">
+                    <a class="mod-nav-link" href="#" @click.prevent="tab = 'changes'"><span class="mod-nav-text">{t key='catalogueTab'}{if $recentChanges} ({$recentChanges}){/if}</span></a>
                 </li>
             </ul>
         </div>
     </div>
-    <div class="lu-widget__body">
-        <div class="lu-tab-content">
-            <div class="lu-p-2x lu-tab-pane" :class="tab === 'products' && 'is-active'">
+    <div class="mod-box-body">
+        <div class="mod-panes">
+            <div class="mod-pad mod-pane" :class="tab === 'products' && 'is-active'">
                 {if $connect !== ''}
                     {* the other vendor's exclusive products: shown until that account is connected *}
                     <span class="tssggs-html">
@@ -55,7 +55,7 @@
                 </div>
             </div>
 
-            <div class="lu-p-2x lu-tab-pane" :class="tab === 'changes' && 'is-active'">
+            <div class="mod-pad mod-pane" :class="tab === 'changes' && 'is-active'">
                 <span class="tssggs-html">
                     <div class="tssggs-changes">
                         <p class="tssggs-changes__intro">

@@ -7,7 +7,7 @@
 {if $prefilled !== ''}
     <span class="tssggs-html"><div class="tssggs-note is-ok">{$prefilled}</div></span>
 {/if}
-<form method="post" action="{$saveUrl}" class="lu-w-100" hx-post="{$saveUrl}" hx-target="#tssggs-settings-test" hx-swap="innerHTML">
+<form method="post" action="{$saveUrl}" class="mod-w-full" hx-post="{$saveUrl}" hx-target="#tssggs-settings-test" hx-swap="innerHTML">
     <input type="hidden" name="token" value="{$token}">
     <div id="tssggs-settings-test">
         {if $flash}<div class="tssggs-note is-{$flash.tone}" role="status">{$flash.text nofilter}</div>{/if}
@@ -31,9 +31,9 @@
             {/if}
         {include file='admin/settings/section_end.tpl'}
     </div>
-    <div class="lu-top__toolbar">
-        <button type="submit" class="lu-btn lu-btn--success"><span class="lu-btn__text">{t key="{$f}.next_step"}</span></button>
-        <button type="submit" class="lu-btn lu-btn--primary" formaction="{$testUrl}" data-test
-                hx-post="{$testUrl}" hx-target="#tssggs-settings-test" hx-swap="innerHTML"><span class="lu-btn__text">{t key="{$f}.testConnection"}</span></button>
+    <div class="mod-bar-tools">
+        <button type="submit" class="mod-btn mod-btn--success"><span class="mod-btn-text">{t key="{$f}.next_step"}</span></button>
+        <button type="submit" class="mod-btn mod-btn--primary" formaction="{$testUrl}" data-test
+                hx-post="{$testUrl}" hx-target="#tssggs-settings-test" hx-swap="innerHTML"><span class="mod-btn-text">{t key="{$f}.testConnection"}</span></button>
     </div>
 </form>

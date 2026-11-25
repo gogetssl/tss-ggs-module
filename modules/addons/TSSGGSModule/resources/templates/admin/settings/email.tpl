@@ -42,10 +42,10 @@
                                             <input type="hidden" name="key" value="{$row.key}">
                                             <input type="hidden" name="return" value="settings">
                                             {if !$row.disabled}<input type="hidden" name="disable" value="1">{/if}
-                                            <button type="submit" class="lu-btn lu-btn--sm {if $row.disabled}lu-btn--success{else}lu-btn--default{/if}">{if $row.disabled}{t key='admin.emails.enable'}{else}{t key='admin.emails.disable'}{/if}</button>
+                                            <button type="submit" class="mod-btn mod-btn--sm {if $row.disabled}mod-btn--success{else}mod-btn--default{/if}">{if $row.disabled}{t key='admin.emails.enable'}{else}{t key='admin.emails.disable'}{/if}</button>
                                         </form>
                                     {/if}
-                                    <a class="lu-btn lu-btn--sm lu-btn--default" href="{url page='emails' key=$row.key}">{t key="{$w}.edit"}</a>
+                                    <a class="mod-btn mod-btn--sm mod-btn--default" href="{url page='emails' key=$row.key}">{t key="{$w}.edit"}</a>
                                 </td>
                             </tr>
                         {/foreach}

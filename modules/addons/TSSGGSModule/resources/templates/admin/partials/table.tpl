@@ -5,10 +5,10 @@
     A button inside a row posts with hx-post; the enclosing form sends the current search, sorting and page along.
     Give the button its own hx-target AND hx-swap (it would inherit hx-swap="outerHTML" from the form).
 *}
-<div id="tssggs-table-{$table.id}" class="lu-widget"
+<div id="tssggs-table-{$table.id}" class="mod-box"
      x-data="{ ticked: 0, go(values) { var refs = this.$refs; Object.keys(values).forEach(function (name) { refs[name].value = values[name] }); refs.form.requestSubmit() }, count() { this.ticked = this.$root.querySelectorAll('[data-row-check]:checked').length }, tickAll(on) { this.$root.querySelectorAll('[data-row-check]:not(:disabled)').forEach(function (box) { box.checked = on }); this.count() } }">
-    <div class="lu-widget__body">
-        <form method="get" action="addonmodules.php" x-ref="form" class="lu-t-c datatableLoader"
+    <div class="mod-box-body">
+        <form method="get" action="addonmodules.php" x-ref="form" class="mod-list mod-list-form"
               hx-get="addonmodules.php" hx-target="#tssggs-table-{$table.id}" hx-swap="outerHTML"
               hx-trigger="submit, input delay:400ms from:find input[name=tq]">
             <input type="hidden" name="module" value="{$moduleName}">
@@ -23,63 +23,63 @@
             {/foreach}
 
             {if $table.searchable}
-                <div class="lu-t-c__top lu-top mob-top-search">
-                    <div class="lu-top__toolbar">
-                        <div class="lu-top__search lu-input-group">
-                            <span class="lu-icon-sm lu-input-group__icon"><span class="tssggs-icobox">{icon name='magnify'}</span></span>
-                            <input class="lu-form-control lu-input-group__form-control lu-table-search" name="tq" x-ref="tq" value="{$table.search}"
+                <div class="mod-list-top mod-bar">
+                    <div class="mod-bar-tools">
+                        <div class="mod-bar-search mod-inputbox">
+                            <span class="mod-ico-sm mod-inputbox-icon"><span class="tssggs-icobox">{icon name='magnify'}</span></span>
+                            <input class="mod-input mod-inputbox-input mod-table-search" name="tq" x-ref="tq" value="{$table.search}"
                                    placeholder="{t key='admin.kernel.search'}" autocomplete="off" @input="$refs.tp.value = 1">
-                            <button type="button" class="lu-btn lu-btn--link lu-p-r-0x lu-p-l-0x lu-m-r-1x lu-clear-main-search-button"
+                            <button type="button" class="mod-btn mod-btn--link mod-pad-r0 mod-pad-l0 mod-gap-r mod-search-clear"
                                     {if $table.search === ''}disabled{/if} @click="go({ tq: '', tp: 1 })">
-                                <span class="lu-i-c-2x tssggs-icobox">{icon name='close'}</span>
+                                <span class="mod-ico-16 tssggs-icobox">{icon name='close'}</span>
                             </button>
                         </div>
                     </div>
                     {* buttons on the right of the search (Table::toolbar) *}
                     {if $table.toolbar !== ''}
-                        <div class="lu-top__toolbar lu-single-element">{include file="{$table.toolbar}.tpl"}</div>
+                        <div class="mod-bar-tools mod-solo">{include file="{$table.toolbar}.tpl"}</div>
                     {/if}
                 </div>
             {/if}
 
             {* rows can be ticked (Table::selectable): the number of ticked rows and what can be done with them *}
             {if $table.mass !== ''}
-                <div class="lu-t-c__mass-actions lu-top" :class="ticked && 'is-open'">
-                    <div class="lu-top__title"><span class="lu-badge lu-badge--primary lu-value" x-text="ticked"></span> {t key='admin.kernel.selected'}</div>
-                    <div class="lu-top__toolbar lu-single-element">{include file="{$table.mass}.tpl"}</div>
+                <div class="mod-list-mass mod-bar" :class="ticked && 'is-open'">
+                    <div class="mod-bar-title"><span class="mod-count mod-count--primary mod-value" x-text="ticked"></span> {t key='admin.kernel.selected'}</div>
+                    <div class="mod-bar-tools mod-solo">{include file="{$table.mass}.tpl"}</div>
                 </div>
             {/if}
 
-            <div class="dataTables_wrapper no-footer">
-                <div class="lu-d-grid">
-                    <table class="lu-table lu-table--mob-collapsible dataTable no-footer dtr-column">
+            <div class="mod-list-scroll">
+                <div class="mod-grid">
+                    <table class="mod-table mod-table--stack mod-table--list">
                         <thead>
                             <tr role="row">
                                 {foreach $table.columns as $column}
                                     <th class="{$column.class}">
                                         {if $column@first && $table.mass !== ''}
-                                            <div class="lu-rail">
-                                                <div class="lu-form-check">
+                                            <div class="mod-line">
+                                                <div class="mod-check">
                                                     <label>
-                                                        <input class="lu-form-checkbox" type="checkbox" @change="tickAll($el.checked)">
-                                                        <span class="lu-form-indicator"></span>
+                                                        <input class="mod-check-input" type="checkbox" @change="tickAll($el.checked)">
+                                                        <span class="mod-check-box"></span>
                                                     </label>
                                                 </div>
-                                                <span class="lu-table__text{if $column.sortable} lu-is-sortable{/if}" {if $column.sortable}@click="go({ ts: '{$column.name}', td: '{$column.nextDir}', tp: 1 })"{/if}>{$column.title}</span>
+                                                <span class="mod-table-title{if $column.sortable} mod-sortable{/if}" {if $column.sortable}@click="go({ ts: '{$column.name}', td: '{$column.nextDir}', tp: 1 })"{/if}>{$column.title}</span>
                                             </div>
                                         {elseif $column.sortable}
-                                            <span class="lu-table__text lu-is-sortable" @click="go({ ts: '{$column.name}', td: '{$column.nextDir}', tp: 1 })">{$column.title}</span>
+                                            <span class="mod-table-title mod-sortable" @click="go({ ts: '{$column.name}', td: '{$column.nextDir}', tp: 1 })">{$column.title}</span>
                                         {else}
-                                            <span class="lu-table__text">{$column.title}</span>
+                                            <span class="mod-table-title">{$column.title}</span>
                                         {/if}
                                     </th>
                                 {/foreach}
-                                {if $table.actions}<th class="modTableActionsHeader"></th>{/if}
+                                {if $table.actions}<th class="mod-table-actions-head"></th>{/if}
                             </tr>
                         </thead>
                         <tbody @change="count()">
                             {foreach $table.rows as $row}
-                                <tr class="lu-table-row">
+                                <tr class="mod-table-row">
                                     {include file="{$table.rowTemplate}.tpl" row=$row}
                                 </tr>
                             {/foreach}
@@ -89,25 +89,25 @@
                         <div class="tssggs-table__empty">{t key='admin.kernel.noRecords'}</div>
                     {/if}
 
-                    <div class="lu-t-c__footer table-footer">
-                        <div class="dataTables_paginate paging_simple_numbers">
-                            <a class="paginate_button previous{if $table.page < 2} disabled{/if}" href="#" {if $table.page > 1}@click.prevent="go({ tp: {$table.page - 1} })"{else}@click.prevent{/if}></a>
+                    <div class="mod-list-foot">
+                        <div class="mod-pager">
+                            <a class="mod-pager-btn previous{if $table.page < 2} disabled{/if}" href="#" {if $table.page > 1}@click.prevent="go({ tp: {$table.page - 1} })"{else}@click.prevent{/if}></a>
                             {foreach $table.pageList as $number}
                                 <span>
                                     {if $number}
-                                        <a class="paginate_button{if $number === $table.page} current{/if}" href="#" @click.prevent="go({ tp: {$number} })"> {$number} </a>
+                                        <a class="mod-pager-btn{if $number === $table.page} current{/if}" href="#" @click.prevent="go({ tp: {$number} })"> {$number} </a>
                                     {else}
-                                        <a class="paginate_button disabled"> ... </a>
+                                        <a class="mod-pager-btn disabled"> ... </a>
                                     {/if}
                                 </span>
                             {/foreach}
-                            <a class="paginate_button next{if $table.page >= $table.pages} disabled{/if}" href="#" {if $table.page < $table.pages}@click.prevent="go({ tp: {$table.page + 1} })"{else}@click.prevent{/if}></a>
+                            <a class="mod-pager-btn next{if $table.page >= $table.pages} disabled{/if}" href="#" {if $table.page < $table.pages}@click.prevent="go({ tp: {$table.page + 1} })"{else}@click.prevent{/if}></a>
                         </div>
-                        <div class="lu-dt-buttons">
+                        <div class="mod-list-sizes">
                             {foreach $table.lengths as $length}
-                                <a class="dt-button{if $length === $table.length} active{/if}" @click="go({ tl: {$length}, tp: 1 })"><span>{$length}</span></a>
+                                <a class="mod-list-size{if $length === $table.length} active{/if}" @click="go({ tl: {$length}, tp: 1 })"><span>{$length}</span></a>
                             {/foreach}
-                            <a class="dt-button{if $table.length === $table.all} active{/if}" @click="go({ tl: {$table.all}, tp: 1 })"><span>∞</span></a>
+                            <a class="mod-list-size{if $table.length === $table.all} active{/if}" @click="go({ tl: {$table.all}, tp: 1 })"><span>∞</span></a>
                         </div>
                     </div>
                 </div>

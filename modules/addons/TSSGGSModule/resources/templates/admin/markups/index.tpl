@@ -29,7 +29,7 @@
             <label>{t key='markup'}</label>
             <input name="markup" class="form-control" style="width:110px" placeholder="10 or -5" required>
         </div>
-        <button class="lu-btn lu-btn--success" type="submit">{t key='save'}</button>
+        <button class="mod-btn mod-btn--success" type="submit">{t key='save'}</button>
     </form>
 
     <div id="tssggs-markups-list">

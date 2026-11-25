@@ -7,8 +7,10 @@
  */
 
 $files = [
-    'layers2-ui.css',
-    'mod_styles.css',
+    'ui-base.css',
+    'ui-controls.css',
+    'ui-layout.css',
+    'pages.css',
     'wizard.css',
     'migration.css',
     'dashboard.css',

@@ -19,9 +19,9 @@
 
 {if $type === 'yesno'}
     {$on = ($value === true || $value === 1 || $value === '1' || $value === 'on')}
-    <div class="lu-form-group lu-form-check lu-m-b-2x lu-single-element">
-        <div class="tssggs-yn lu-single-element">
-            <span class="lu-form-text lu-single-element"> {$smarty.capture.label nofilter} {$smarty.capture.hint nofilter}</span>
+    <div class="mod-field mod-check mod-gap-b mod-solo">
+        <div class="tssggs-yn mod-solo">
+            <span class="mod-check-text mod-solo"> {$smarty.capture.label nofilter} {$smarty.capture.hint nofilter}</span>
             <div role="radiogroup" class="tssggs-yn__segments">
                 <label class="tssggs-yn__segment">
                     <input type="radio" name="{$name}" value="{$switchOn}" class="tssggs-yn__radio no-icheck"{if $on} checked{/if}>
@@ -35,10 +35,10 @@
         </div>
     </div>
 {else}
-    <div class="lu-form-group">
-        <label class="lu-form-label lu-single-element"><span>{$smarty.capture.label nofilter}</span>{$smarty.capture.hint nofilter}</label>
+    <div class="mod-field">
+        <label class="mod-field-label mod-solo"><span>{$smarty.capture.label nofilter}</span>{$smarty.capture.hint nofilter}</label>
         {if $type === 'select'}
-            <select name="{$name}" class="lu-form-control {$class|default:''}">
+            <select name="{$name}" class="mod-input {$class|default:''}">
                 {* nothing saved yet and no "empty" choice in the list: the field stays empty instead of taking the first choice *}
                 {if (string)$value === '' && !isset($options[$name][''])}<option value="" selected></option>{/if}
                 {foreach $options[$name]|default:[] as $optionValue => $optionText}
@@ -48,15 +48,15 @@
         {elseif $type === 'multi'}
             {* nothing chosen still has to be posted: the empty value comes first *}
             <input type="hidden" name="{$name}" value="">
-            <select name="{$name}[]" class="lu-form-control {$class|default:''}" multiple data-create data-placeholder="{$placeholder|default:'' nofilter}">
+            <select name="{$name}[]" class="mod-input {$class|default:''}" multiple data-create data-placeholder="{$placeholder|default:'' nofilter}">
                 {foreach $options[$name]|default:[] as $optionValue => $optionText}
                     <option value="{$optionValue}"{if in_array($optionValue, (array)$value)} selected{/if}>{$optionText}</option>
                 {/foreach}
             </select>
         {elseif $type === 'textarea'}
-            <textarea name="{$name}" class="lu-form-control {$class|default:''}" rows="{$rows|default:5}" placeholder="{$placeholder|default:'' nofilter}">{$value}</textarea>
+            <textarea name="{$name}" class="mod-input {$class|default:''}" rows="{$rows|default:5}" placeholder="{$placeholder|default:'' nofilter}">{$value}</textarea>
         {else}
-            <input type="{$type}" name="{$name}" class="lu-form-control {$class|default:''}" value="{$value}" placeholder="{$placeholder|default:'' nofilter}"
+            <input type="{$type}" name="{$name}" class="mod-input {$class|default:''}" value="{$value}" placeholder="{$placeholder|default:'' nofilter}"
                    {if $min|default:'' !== ''}min="{$min}"{/if} {if $max|default:'' !== ''}max="{$max}"{/if} {if $type === 'number'}step="any"{/if} autocomplete="{if $type === 'password'}new-password{else}off{/if}">
         {/if}
     </div>

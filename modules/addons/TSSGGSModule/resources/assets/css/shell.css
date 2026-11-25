@@ -1,9 +1,9 @@
 /*
  * Module shell (design: github.com/gogetssl/ssl-plugin-refresh): header with logo and edition name, the two-row
- * navigation, and the skin of the Settings pages. Scoped to #layers2.
+ * navigation, and the skin of the Settings pages. Scoped to #mod-root.
  */
 
-#layers2 {
+#mod-root {
     --tw-primary: #007136;
     --tw-primary-soft: #e4f8e8;
     --tw-fg: #020618;
@@ -17,7 +17,7 @@
 
 /* ---- header ---- */
 
-#layers2 .tssggs-head {
+#mod-root .tssggs-head {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -29,7 +29,7 @@
     background: var(--tw-surface);
 }
 
-#layers2 .tssggs-head__brand {
+#mod-root .tssggs-head__brand {
     display: flex;
     align-items: center;
     gap: 9px;
@@ -38,36 +38,36 @@
 }
 
 /* the edition's logo (AppNavBar), in its own colours */
-#layers2 .tssggs-head__logo {
+#mod-root .tssggs-head__logo {
     display: grid;
     place-items: center;
 }
 
 /* TheSSLStore 30x40, GoGetSSL 33x40 */
-#layers2 .tssggs-head__mark {
+#mod-root .tssggs-head__mark {
     display: block;
     width: 30px;
     height: 40px;
 }
 
-#layers2 .tssggs-head__mark--ggs {
+#mod-root .tssggs-head__mark--ggs {
     width: 33px;
 }
 
-#layers2 .tssggs-head__text strong {
+#mod-root .tssggs-head__text strong {
     display: block;
     font-size: 20px;
     font-weight: 600;
     line-height: 1.3;
 }
 
-#layers2 .tssggs-head__text small {
+#mod-root .tssggs-head__text small {
     display: block;
     color: var(--tw-muted);
     font-size: 14px;
 }
 
-#layers2 .tssggs-head__btn {
+#mod-root .tssggs-head__btn {
     display: inline-flex;
     align-items: center;
     gap: 6px;
@@ -81,17 +81,17 @@
     text-decoration: none;
 }
 
-#layers2 .tssggs-head__btn:hover {
+#mod-root .tssggs-head__btn:hover {
     background: var(--tw-surface-alt);
 }
 
-#layers2 .tssggs-head .lu-navbar__burger {
+#mod-root .tssggs-head .mod-menubar-toggle {
     display: none;
 }
 
 /* ---- navigation: every tab visible, 6 per row (3 on a narrow column) ---- */
 
-#layers2 .lu-app-navbar {
+#mod-root .mod-shell-menu {
     margin: 0;
     padding: 0;
     border: 1px solid var(--tw-border);
@@ -101,11 +101,11 @@
     overflow: hidden;
 }
 
-#layers2 .lu-app-navbar .lu-navbar__nav {
+#mod-root .mod-shell-menu .mod-menubar-items {
     padding: 0;
 }
 
-#layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav {
+#mod-root .mod-shell-menu .mod-menubar-items > ul.mod-nav {
     width: 100% !important;
     max-width: none !important;
     display: grid !important;
@@ -118,7 +118,7 @@
 
 
 
-#layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav > li.lu-nav__item {
+#mod-root .mod-shell-menu .mod-menubar-items > ul.mod-nav > li.mod-nav-item {
     float: none;
     min-width: 0;
     margin: 0;
@@ -127,7 +127,7 @@
     border-bottom: 1px solid var(--tw-border);
 }
 
-#layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav > li.lu-nav__item > a.lu-nav__link {
+#mod-root .mod-shell-menu .mod-menubar-items > ul.mod-nav > li.mod-nav-item > a.mod-nav-link {
     display: flex;
     align-items: center;
     gap: 5px;
@@ -143,19 +143,19 @@
     white-space: normal;
 }
 
-#layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav > li.lu-nav__item > a.lu-nav__link:hover {
+#mod-root .mod-shell-menu .mod-menubar-items > ul.mod-nav > li.mod-nav-item > a.mod-nav-link:hover {
     background: var(--tw-surface-alt);
     color: var(--tw-fg);
 }
 
-#layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav > li.lu-nav__item.is-active > a.lu-nav__link {
+#mod-root .mod-shell-menu .mod-menubar-items > ul.mod-nav > li.mod-nav-item.is-active > a.mod-nav-link {
     border-bottom-color: var(--tw-primary);
     background: var(--tw-primary-soft);
     color: var(--tw-primary);
     font-weight: 500;
 }
 
-#layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav > li.lu-nav__item > a.lu-nav__link > i {
+#mod-root .mod-shell-menu .mod-menubar-items > ul.mod-nav > li.mod-nav-item > a.mod-nav-link > i {
     display: inline-flex;
     flex: 0 0 auto;
     align-items: center;
@@ -170,74 +170,74 @@
     vertical-align: middle;
 }
 
-#layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav > li.lu-nav__item > a.lu-nav__link .drop-arrow,
-#layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav > li.lu-nav__item > a.lu-nav__link::after,
-#layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav > li.lu-nav__item > a.lu-nav__link::before {
+#mod-root .mod-shell-menu .mod-menubar-items > ul.mod-nav > li.mod-nav-item > a.mod-nav-link .mod-pop-arrow,
+#mod-root .mod-shell-menu .mod-menubar-items > ul.mod-nav > li.mod-nav-item > a.mod-nav-link::after,
+#mod-root .mod-shell-menu .mod-menubar-items > ul.mod-nav > li.mod-nav-item > a.mod-nav-link::before {
     display: none;
 }
 
 /* ---- Settings pages ---- */
 
-#layers2 .tssggs-settings .lu-widget {
+#mod-root .tssggs-settings .mod-box {
     border: 1px solid var(--tw-border);
     border-radius: var(--tw-radius);
     background: var(--tw-surface);
     box-shadow: none;
 }
 
-#layers2 .tssggs-settings .lu-widget__header {
+#mod-root .tssggs-settings .mod-box-head {
     padding: 14px 18px;
     border-bottom: 1px solid var(--tw-border);
     background: transparent;
 }
 
-#layers2 .tssggs-settings .lu-widget__header .lu-top__title {
+#mod-root .tssggs-settings .mod-box-head .mod-bar-title {
     font-size: 15px;
     font-weight: 600;
     color: var(--tw-fg);
 }
 
 /* the sections inside the form: no card, a small heading (design: section headings with a divider-free list) */
-#layers2 .tssggs-settings form .lu-widget {
+#mod-root .tssggs-settings form .mod-box {
     margin: 0 0 22px;
     border: 0;
     border-radius: 0;
 }
 
-#layers2 .tssggs-settings form .lu-widget__header {
+#mod-root .tssggs-settings form .mod-box-head {
     padding: 0 0 6px;
     border-bottom: 0;
 }
 
-#layers2 .tssggs-settings form .lu-widget__header .lu-top__title {
+#mod-root .tssggs-settings form .mod-box-head .mod-bar-title {
     font-size: 12px !important;
     font-weight: 600 !important;
 }
 
-#layers2 .tssggs-settings form .lu-widget__body,
-#layers2 .tssggs-settings form .lu-widget__content {
+#mod-root .tssggs-settings form .mod-box-body,
+#mod-root .tssggs-settings form .mod-box-content {
     padding: 0;
 }
 
 /* sidebar of the settings sections */
-#layers2 .tssggs-settings .lu-widget__header .lu-top__title {
+#mod-root .tssggs-settings .mod-box-head .mod-bar-title {
     text-transform: none;
 }
 
-#layers2 .tssggs-settings ul.slu-nav,
-#layers2 .tssggs-settings .lu-navbar__nav ul {
+#mod-root .tssggs-settings ul.mod-sidenav,
+#mod-root .tssggs-settings .mod-menubar-items ul {
     margin: 0;
     padding: 4px 0;
     list-style: none;
 }
 
-#layers2 .tssggs-settings .lu-navbar__nav li.lu-nav__item {
+#mod-root .tssggs-settings .mod-menubar-items li.mod-nav-item {
     float: none;
     display: block;
     margin: 1px 0;
 }
 
-#layers2 .tssggs-settings .lu-navbar__nav li.lu-nav__item > a.lu-nav__link {
+#mod-root .tssggs-settings .mod-menubar-items li.mod-nav-item > a.mod-nav-link {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -249,17 +249,17 @@
     text-decoration: none;
 }
 
-#layers2 .tssggs-settings .lu-navbar__nav li.lu-nav__item > a.lu-nav__link:hover {
+#mod-root .tssggs-settings .mod-menubar-items li.mod-nav-item > a.mod-nav-link:hover {
     background: var(--tw-surface-alt);
 }
 
-#layers2 .tssggs-settings .lu-navbar__nav li.lu-nav__item.is-active > a.lu-nav__link {
+#mod-root .tssggs-settings .mod-menubar-items li.mod-nav-item.is-active > a.mod-nav-link {
     background: var(--tw-primary-soft);
     color: var(--tw-primary);
     font-weight: 500;
 }
 
-#layers2 .tssggs-settings .lu-navbar__nav li.lu-nav__item.is-active > a.lu-nav__link::after {
+#mod-root .tssggs-settings .mod-menubar-items li.mod-nav-item.is-active > a.mod-nav-link::after {
     content: "\203A";
     margin-left: 6px;
     font-size: 16px;
@@ -267,17 +267,17 @@
 }
 
 /* toggle rows: the label on the left, the switch on the right, a divider between rows */
-#layers2 .tssggs-settings .lu-form-group.lu-form-check {
+#mod-root .tssggs-settings .mod-field.mod-check {
     margin: 0;
     padding: 0;
     border-bottom: 1px solid var(--tw-border);
 }
 
-#layers2 .tssggs-settings .lu-form-group.lu-form-check:last-child {
+#mod-root .tssggs-settings .mod-field.mod-check:last-child {
     border-bottom: 0;
 }
 
-#layers2 .tssggs-settings .lu-form-group.lu-form-check > label {
+#mod-root .tssggs-settings .mod-field.mod-check > label {
     display: flex;
     flex-direction: row-reverse;
     align-items: center;
@@ -292,35 +292,35 @@
 }
 
 /* text fields and dropdowns */
-#layers2 .tssggs-settings .lu-form-group {
+#mod-root .tssggs-settings .mod-field {
     margin-bottom: 12px;
 }
 
-#layers2 .tssggs-settings .lu-form-control,
-#layers2 .tssggs-settings select.lu-form-control,
-#layers2 .tssggs-settings textarea.lu-form-control {
+#mod-root .tssggs-settings .mod-input,
+#mod-root .tssggs-settings select.mod-input,
+#mod-root .tssggs-settings textarea.mod-input {
     border: 1px solid var(--tw-border);
     border-radius: 6px;
     font-size: 12px;
     box-shadow: none;
 }
 
-#layers2 .tssggs-settings input.lu-form-control,
-#layers2 .tssggs-settings select.lu-form-control {
+#mod-root .tssggs-settings input.mod-input,
+#mod-root .tssggs-settings select.mod-input {
     height: 36px;
 }
 
-#layers2 .tssggs-settings .lu-form-control:focus {
+#mod-root .tssggs-settings .mod-input:focus {
     border-color: var(--tw-primary);
 }
 
-#layers2 .tssggs-settings label,
-#layers2 .tssggs-settings .lu-form-group__label {
+#mod-root .tssggs-settings label,
+#mod-root .tssggs-settings .mod-field-caption {
     font-size: 13px;
 }
 
 /* the Save bar */
-#layers2 .tssggs-settings form .lu-top__toolbar {
+#mod-root .tssggs-settings form .mod-bar-tools {
     margin: 8px -18px -18px;
     padding: 14px 18px;
     border-top: 1px solid var(--tw-border);
@@ -328,8 +328,8 @@
     background: var(--tw-surface-alt);
 }
 
-#layers2 .tssggs-settings form .lu-btn--success,
-#layers2 .tssggs-settings form .lu-btn.lu-btn--success {
+#mod-root .tssggs-settings form .mod-btn--success,
+#mod-root .tssggs-settings form .mod-btn.mod-btn--success {
     border-color: var(--tw-primary);
     background: var(--tw-primary);
     color: #fff;
@@ -341,26 +341,26 @@
 /* ---- polish ---- */
 
 /* section headings inside the forms sit right above their rows */
-#layers2 .tssggs-settings form .lu-widget__top {
+#mod-root .tssggs-settings form .mod-box-top {
     min-height: 0;
     padding: 0;
 }
 
-#layers2 .tssggs-settings form .lu-widget__header {
+#mod-root .tssggs-settings form .mod-box-head {
     margin: 0 0 2px;
 }
 
-#layers2 .tssggs-settings form .lu-widget__body {
+#mod-root .tssggs-settings form .mod-box-body {
     margin: 0;
 }
 
 /* the sections list: a small caps label as the title */
-#layers2 .tssggs-settings .lu-widget:has(.lu-navbar__nav) > .lu-widget__header {
+#mod-root .tssggs-settings .mod-box:has(.mod-menubar-items) > .mod-box-head {
     padding: 12px 12px 4px;
     border-bottom: 0;
 }
 
-#layers2 .tssggs-settings .lu-widget:has(.lu-navbar__nav) > .lu-widget__header .lu-top__title {
+#mod-root .tssggs-settings .mod-box:has(.mod-menubar-items) > .mod-box-head .mod-bar-title {
     color: var(--tw-muted);
     font-size: 10px !important;
     font-weight: 600 !important;
@@ -368,19 +368,19 @@
     text-transform: uppercase;
 }
 
-#layers2 .tssggs-settings .lu-widget:has(.lu-navbar__nav) > .lu-widget__body {
+#mod-root .tssggs-settings .mod-box:has(.mod-menubar-items) > .mod-box-body {
     padding: 0 6px 8px;
 }
 
 /* Settings page heading above the grid: closer to the design */
-#layers2 .tssggs-settings > .lu-row,
-#layers2 .tssggs-settings > div {
+#mod-root .tssggs-settings > .mod-row,
+#mod-root .tssggs-settings > div {
     margin-top: 4px;
 }
 
 /* ---- the navigation never hides: no off-canvas, no burger ---- */
 
-#layers2 .lu-app-navbar.lu-off-canvas-responsive {
+#mod-root .mod-shell-menu.mod-slide {
     position: static !important;
     top: auto !important;
     right: auto !important;
@@ -396,12 +396,12 @@
     margin: 0 !important;
 }
 
-#layers2 .lu-app-header .lu-navbar__burger {
+#mod-root .mod-shell-head .mod-menubar-toggle {
     display: none !important;
 }
 
-#layers2 .lu-app-navbar > div,
-#layers2 .lu-app-navbar .lu-navbar__nav {
+#mod-root .mod-shell-menu > div,
+#mod-root .mod-shell-menu .mod-menubar-items {
     display: block !important;
     float: none !important;
     width: 100% !important;
@@ -417,7 +417,7 @@
  * headings 1.3 (guidance: Material 3 density and 4dp grid, Refactoring UI, public design-system spacing tokens).
  */
 
-#layers2 {
+#mod-root {
     --sp-1: 4px;
     --sp-2: 8px;
     --sp-3: 12px;
@@ -426,118 +426,118 @@
     --sp-8: 32px;
 }
 
-#layers2 .lu-app-main {
+#mod-root .mod-main {
     line-height: 1.5;
 }
 
-#layers2 .lu-app-main h1,
-#layers2 .lu-app-main h2,
-#layers2 .lu-app-main h3,
-#layers2 .lu-app-main h4,
-#layers2 .lu-app-main .lu-top__title {
+#mod-root .mod-main h1,
+#mod-root .mod-main h2,
+#mod-root .mod-main h3,
+#mod-root .mod-main h4,
+#mod-root .mod-main .mod-bar-title {
     line-height: 1.3;
 }
 
-#layers2 .lu-app-main p {
+#mod-root .mod-main p {
     line-height: 1.5;
 }
 
 /* page: a header block, then 24px between the page blocks */
-#layers2 .lu-app-main__body {
+#mod-root .mod-main-body {
     padding-top: var(--sp-6);
 }
 
-#layers2 .lu-app-main__top {
+#mod-root .mod-main-top {
     margin-bottom: var(--sp-4);
 }
 
 /* dashboard */
-#layers2 .tssggs-dash__head {
+#mod-root .tssggs-dash__head {
     gap: var(--sp-4);
     padding: var(--sp-2) 0 var(--sp-6);
 }
 
-#layers2 .tssggs-dash__alert {
+#mod-root .tssggs-dash__alert {
     gap: var(--sp-4);
     margin-bottom: var(--sp-6);
     padding: var(--sp-4) var(--sp-6);
 }
 
-#layers2 .tssggs-dash__kpis {
+#mod-root .tssggs-dash__kpis {
     gap: var(--sp-4);
 }
 
-#layers2 .tssggs-kpi {
+#mod-root .tssggs-kpi {
     padding: var(--sp-6);
 }
 
-#layers2 .tssggs-dash__grid {
+#mod-root .tssggs-dash__grid {
     gap: var(--sp-6);
     margin-top: var(--sp-6);
 }
 
-#layers2 .tssggs-dash__col {
+#mod-root .tssggs-dash__col {
     gap: var(--sp-6);
 }
 
-#layers2 .tssggs-dcard__head {
+#mod-root .tssggs-dcard__head {
     padding: var(--sp-4) var(--sp-6);
 }
 
-#layers2 .tssggs-dcard__body {
+#mod-root .tssggs-dcard__body {
     padding: var(--sp-6);
 }
 
-#layers2 .tssggs-dcard__note {
+#mod-root .tssggs-dcard__note {
     padding: var(--sp-3) var(--sp-6);
 }
 
-#layers2 .tssggs-dash .tssggs-muted,
-#layers2 .tssggs-news__body,
-#layers2 .tssggs-support__text p {
+#mod-root .tssggs-dash .tssggs-muted,
+#mod-root .tssggs-news__body,
+#mod-root .tssggs-support__text p {
     line-height: 1.5;
 }
 
-#layers2 .tssggs-tasks li {
+#mod-root .tssggs-tasks li {
     padding: var(--sp-2) 0;
     line-height: 1.5;
 }
 
-#layers2 .tssggs-news {
+#mod-root .tssggs-news {
     padding: var(--sp-4) var(--sp-6);
 }
 
-#layers2 .tssggs-steps {
+#mod-root .tssggs-steps {
     padding: var(--sp-6);
     margin-bottom: var(--sp-6);
 }
 
-#layers2 .tssggs-step {
+#mod-root .tssggs-step {
     padding: var(--sp-4);
 }
 
 /* cards of the other pages (framework widgets) */
-#layers2 .lu-app-main .lu-widget {
+#mod-root .mod-main .mod-box {
     margin-bottom: var(--sp-6);
 }
 
-#layers2 .lu-app-main .lu-widget__header {
+#mod-root .mod-main .mod-box-head {
     padding: var(--sp-4) var(--sp-6);
 }
 
-#layers2 .lu-app-main .lu-widget__content {
+#mod-root .mod-main .mod-box-content {
     padding: var(--sp-6);
 }
 
 /* tables: generous rows, quiet headers */
-#layers2 .lu-table td,
-#layers2 .lu-table th {
+#mod-root .mod-table td,
+#mod-root .mod-table th {
     padding: var(--sp-3) var(--sp-4);
     line-height: 1.5;
     vertical-align: middle;
 }
 
-#layers2 .lu-table thead th {
+#mod-root .mod-table thead th {
     padding-top: var(--sp-3);
     padding-bottom: var(--sp-3);
     color: var(--tw-muted);
@@ -547,74 +547,74 @@
 }
 
 /* forms: 16px between rows, 8px between a label and its field */
-#layers2 .lu-form-group {
+#mod-root .mod-field {
     margin-bottom: var(--sp-4);
 }
 
-#layers2 .lu-form-group > label,
-#layers2 .lu-form-group .lu-form-group__label {
+#mod-root .mod-field > label,
+#mod-root .mod-field .mod-field-caption {
     margin-bottom: var(--sp-2);
     line-height: 1.5;
 }
 
 /* settings pages */
-#layers2 .tssggs-settings .lu-widget__header {
+#mod-root .tssggs-settings .mod-box-head {
     padding: var(--sp-4) var(--sp-6);
 }
 
-#layers2 .tssggs-settings .lu-widget > .lu-widget__body > .lu-widget__content {
+#mod-root .tssggs-settings .mod-box > .mod-box-body > .mod-box-content {
     padding: var(--sp-6);
 }
 
-#layers2 .tssggs-settings form .lu-widget {
+#mod-root .tssggs-settings form .mod-box {
     margin-bottom: var(--sp-8);
 }
 
-#layers2 .tssggs-settings form .lu-widget__header {
+#mod-root .tssggs-settings form .mod-box-head {
     margin-bottom: var(--sp-2);
 }
 
-#layers2 .tssggs-settings .lu-form-group.lu-form-check > label {
+#mod-root .tssggs-settings .mod-field.mod-check > label {
     padding: var(--sp-3) 0;
     line-height: 1.5;
 }
 
-#layers2 .tssggs-settings form .lu-top__toolbar {
+#mod-root .tssggs-settings form .mod-bar-tools {
     margin: var(--sp-4) calc(-1 * var(--sp-6)) calc(-1 * var(--sp-6));
     padding: var(--sp-4) var(--sp-6);
 }
 
 /* header block and navigation */
-#layers2 .tssggs-head {
+#mod-root .tssggs-head {
     padding: var(--sp-6);
 }
 
 /* labels that start a new group (e.g. "Gateway connection" under the task list) */
-#layers2 .tssggs-dash .tssggs-label {
+#mod-root .tssggs-dash .tssggs-label {
     margin: var(--sp-6) 0 var(--sp-2);
 }
 
-#layers2 .tssggs-dash .tssggs-label:first-child {
+#mod-root .tssggs-dash .tssggs-label:first-child {
     margin-top: 0;
 }
 
 /* the sections inside a settings form are not cards: no extra padding, rows start right under the heading */
-#layers2 .tssggs-settings form .lu-widget .lu-widget__content,
-#layers2 .tssggs-settings form .lu-widget .lu-widget__body {
+#mod-root .tssggs-settings form .mod-box .mod-box-content,
+#mod-root .tssggs-settings form .mod-box .mod-box-body {
     padding: 0 !important;
 }
 
-#layers2 .tssggs-settings form .lu-widget .lu-widget__header {
+#mod-root .tssggs-settings form .mod-box .mod-box-head {
     padding: 0 !important;
 }
 
 /* phones: two columns, a long label wraps onto a second line inside its cell */
 @media (max-width: 559px) {
-    #layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav {
+    #mod-root .mod-shell-menu .mod-menubar-items > ul.mod-nav {
         grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
     }
 
-    #layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav > li.lu-nav__item > a.lu-nav__link {
+    #mod-root .mod-shell-menu .mod-menubar-items > ul.mod-nav > li.mod-nav-item > a.mod-nav-link {
         padding: 4px 8px;
         font-size: 13px;
         line-height: 18px;
@@ -622,145 +622,145 @@
 }
 
 /* the framework gives every tab a 56px cell: the link (min 45px) fills its cell exactly, so the active underline sits at the bottom */
-#layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav > li.lu-nav__item {
+#mod-root .mod-shell-menu .mod-menubar-items > ul.mod-nav > li.mod-nav-item {
     display: flex;
     min-height: 0 !important;
 }
 
-#layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav > li.lu-nav__item > a.lu-nav__link {
+#mod-root .mod-shell-menu .mod-menubar-items > ul.mod-nav > li.mod-nav-item > a.mod-nav-link {
     flex: 1 1 auto;
 }
 
 /* sidebar rows: icon + text, active row soft green with a chevron (Lovable aside) */
-#layers2 .tssggs-settings .lu-navbar__nav li.lu-nav__item > a.lu-nav__link { min-height: 36px; justify-content: flex-start; gap: 8px; }
-#layers2 .tssggs-settings .lu-navbar__nav li.lu-nav__item > a.lu-nav__link > i { font-size: 16px; line-height: 1; flex: none; }
-#layers2 .tssggs-settings .lu-navbar__nav li.lu-nav__item > a.lu-nav__link::after { margin-left: auto; }
-#layers2 .tssggs-settings .lu-navbar__nav li.lu-nav__item.is-active > a.lu-nav__link { font-weight: 600; }
+#mod-root .tssggs-settings .mod-menubar-items li.mod-nav-item > a.mod-nav-link { min-height: 36px; justify-content: flex-start; gap: 8px; }
+#mod-root .tssggs-settings .mod-menubar-items li.mod-nav-item > a.mod-nav-link > i { font-size: 16px; line-height: 1; flex: none; }
+#mod-root .tssggs-settings .mod-menubar-items li.mod-nav-item > a.mod-nav-link::after { margin-left: auto; }
+#mod-root .tssggs-settings .mod-menubar-items li.mod-nav-item.is-active > a.mod-nav-link { font-weight: 600; }
 
 /* CRON page cards (Lovable) */
-#layers2 .tssggs-cronone { margin-bottom: 24px; padding: 16px; border: 1px solid var(--tw-primary); border-radius: 8px; background: var(--tw-primary-soft); }
-#layers2 .tssggs-cronone__title { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; }
-#layers2 .tssggs-cronone p { margin: 8px 0 12px; font-size: 12px; line-height: 20px; color: var(--tw-muted); }
-#layers2 .tssggs-cronone__code { display: flex; align-items: center; gap: 8px; padding: 8px 8px 8px 12px; border: 1px solid #e5e7eb; border-radius: 6px; background: #fff; }
-#layers2 .tssggs-cronone__code code { flex: 1; overflow-x: auto; white-space: nowrap; background: none; border: 0; padding: 0; font-size: 12px; }
-#layers2 .tssggs-copy { flex: none; padding: 4px 12px; border: 1px solid #e5e7eb; border-radius: 6px; background: #fff; font-size: 12px; cursor: pointer; }
-#layers2 .tssggs-copy:hover { background: var(--tw-surface-alt); }
-#layers2 .tssggs-cronjob { margin-bottom: 16px; padding: 24px; border: 1px solid #e5e7eb; border-radius: 8px; background: #fff; }
-#layers2 .tssggs-cronjob > .lu-widget__header { display: none; }
-#layers2 .tssggs-cronjob__head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
-#layers2 .tssggs-cronjob__head h3 { margin: 0; font-size: 16px; font-weight: 600; line-height: 24px; }
-#layers2 .tssggs-cronjob__about { margin: 9px 0 0; color: var(--tw-muted); font-size: 14px; line-height: 20px; }
-#layers2 .tssggs-cronjob__fail { margin-top: 12px; padding: 8px 12px; border: 1px solid #fecaca; border-radius: 6px; background: #fef2f2; color: #b91c1c; font-size: 12px; line-height: 20px; }
-#layers2 .tssggs-cronjob__sep { margin: 16px 0; border: 0; border-top: 1px solid #e5e7eb; }
-#layers2 .tssggs-cronjob__freq { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font-size: 14px; font-weight: 500; }
-#layers2 .tssggs-cronjob__meta { margin: 12px 0 0; color: var(--tw-muted); font-size: 12px; line-height: 20px; }
-#layers2 .tssggs-cronjob__meta code { font-size: 11px; }
-#layers2 .tssggs-badge { flex: none; padding: 2px 10px; border-radius: 999px; font-size: 12px; font-weight: 500; line-height: 20px; }
-#layers2 .tssggs-badge--ok { background: #dcfce7; color: #15803d; }
-#layers2 .tssggs-badge--bad { background: #fee2e2; color: #b91c1c; }
-#layers2 .tssggs-badge--idle { background: #f3f4f6; color: #6b7280; }
-#layers2 .tssggs-cronjob .lu-form-group > label, #layers2 .tssggs-cronjob .lu-form-group__label { display: none; }
-#layers2 .tssggs-cronjob .lu-form-group { margin: 0; }
+#mod-root .tssggs-cronone { margin-bottom: 24px; padding: 16px; border: 1px solid var(--tw-primary); border-radius: 8px; background: var(--tw-primary-soft); }
+#mod-root .tssggs-cronone__title { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; }
+#mod-root .tssggs-cronone p { margin: 8px 0 12px; font-size: 12px; line-height: 20px; color: var(--tw-muted); }
+#mod-root .tssggs-cronone__code { display: flex; align-items: center; gap: 8px; padding: 8px 8px 8px 12px; border: 1px solid #e5e7eb; border-radius: 6px; background: #fff; }
+#mod-root .tssggs-cronone__code code { flex: 1; overflow-x: auto; white-space: nowrap; background: none; border: 0; padding: 0; font-size: 12px; }
+#mod-root .tssggs-copy { flex: none; padding: 4px 12px; border: 1px solid #e5e7eb; border-radius: 6px; background: #fff; font-size: 12px; cursor: pointer; }
+#mod-root .tssggs-copy:hover { background: var(--tw-surface-alt); }
+#mod-root .tssggs-cronjob { margin-bottom: 16px; padding: 24px; border: 1px solid #e5e7eb; border-radius: 8px; background: #fff; }
+#mod-root .tssggs-cronjob > .mod-box-head { display: none; }
+#mod-root .tssggs-cronjob__head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+#mod-root .tssggs-cronjob__head h3 { margin: 0; font-size: 16px; font-weight: 600; line-height: 24px; }
+#mod-root .tssggs-cronjob__about { margin: 9px 0 0; color: var(--tw-muted); font-size: 14px; line-height: 20px; }
+#mod-root .tssggs-cronjob__fail { margin-top: 12px; padding: 8px 12px; border: 1px solid #fecaca; border-radius: 6px; background: #fef2f2; color: #b91c1c; font-size: 12px; line-height: 20px; }
+#mod-root .tssggs-cronjob__sep { margin: 16px 0; border: 0; border-top: 1px solid #e5e7eb; }
+#mod-root .tssggs-cronjob__freq { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font-size: 14px; font-weight: 500; }
+#mod-root .tssggs-cronjob__meta { margin: 12px 0 0; color: var(--tw-muted); font-size: 12px; line-height: 20px; }
+#mod-root .tssggs-cronjob__meta code { font-size: 11px; }
+#mod-root .tssggs-badge { flex: none; padding: 2px 10px; border-radius: 999px; font-size: 12px; font-weight: 500; line-height: 20px; }
+#mod-root .tssggs-badge--ok { background: #dcfce7; color: #15803d; }
+#mod-root .tssggs-badge--bad { background: #fee2e2; color: #b91c1c; }
+#mod-root .tssggs-badge--idle { background: #f3f4f6; color: #6b7280; }
+#mod-root .tssggs-cronjob .mod-field > label, #mod-root .tssggs-cronjob .mod-field-caption { display: none; }
+#mod-root .tssggs-cronjob .mod-field { margin: 0; }
 
 /* CRON page: 1:1 with the Lovable design */
-#layers2 .tssggs-cronone { border-color: color-mix(in srgb, var(--tw-primary) 25%, #fff); }
-#layers2 .tssggs-cronone__title i { color: var(--tw-primary); }
-#layers2 .tssggs-copy { display: inline-flex; align-items: center; gap: 6px; }
-#layers2 .tssggs-cronjob { padding: 20px 20px 16px; }
-#layers2 .tssggs-cronjob > .lu-widget__body > .lu-widget__content { display: flex; flex-wrap: wrap; align-items: center; column-gap: 12px; }
-#layers2 .tssggs-cronjob > .lu-widget__body > .lu-widget__content > span:first-child,
-#layers2 .tssggs-cronjob > .lu-widget__body > .lu-widget__content > span:last-child { flex: 0 0 100%; }
-#layers2 .tssggs-cronjob .lu-form-group { flex: 0 0 150px; }
-#layers2 .tssggs-cronjob__freq { margin: 0; }
-#layers2 .tssggs-cronjob__freq i { color: var(--tw-primary); font-size: 16px; }
-#layers2 .tssggs-cronjob__fixed { margin-left: 4px; font-weight: 400; }
-#layers2 .tssggs-cronjob__meta { display: flex; flex-direction: column; gap: 4px; margin-top: 16px; }
-#layers2 .tssggs-cronjob__meta i, #layers2 .tssggs-badge i { margin-right: 6px; font-size: 14px; vertical-align: -2px; }
-#layers2 .tssggs-badge { display: inline-flex; align-items: center; border: 1px solid transparent; }
-#layers2 .tssggs-badge--ok { background: color-mix(in srgb, var(--tw-primary) 8%, #fff); border-color: color-mix(in srgb, var(--tw-primary) 25%, #fff); color: var(--tw-primary); }
-#layers2 .tssggs-badge--bad { background: #fef2f2; border-color: #fecaca; }
-#layers2 .tssggs-cronsave { display: flex; align-items: center; gap: 12px; }
-#layers2 .tssggs-dirty { color: var(--tw-muted); font-size: 12px; }
-#layers2 .tssggs-dirty.is-dirty { color: #a65f00; }
-#layers2 .tssggs-settings form .lu-widget.tssggs-cronjob { margin: 0 0 16px !important; padding: 20px 20px 16px !important; border: 1px solid #e5e7eb !important; border-radius: 8px !important; background: #fff !important; box-shadow: none !important; }
-#layers2 .tssggs-badge i { display: inline-block; margin-right: 4px; line-height: 1; }
-#layers2 .tssggs-badge { padding: 2px 8px; font-size: 12px; line-height: 18px; }
+#mod-root .tssggs-cronone { border-color: color-mix(in srgb, var(--tw-primary) 25%, #fff); }
+#mod-root .tssggs-cronone__title i { color: var(--tw-primary); }
+#mod-root .tssggs-copy { display: inline-flex; align-items: center; gap: 6px; }
+#mod-root .tssggs-cronjob { padding: 20px 20px 16px; }
+#mod-root .tssggs-cronjob > .mod-box-body > .mod-box-content { display: flex; flex-wrap: wrap; align-items: center; column-gap: 12px; }
+#mod-root .tssggs-cronjob > .mod-box-body > .mod-box-content > span:first-child,
+#mod-root .tssggs-cronjob > .mod-box-body > .mod-box-content > span:last-child { flex: 0 0 100%; }
+#mod-root .tssggs-cronjob .mod-field { flex: 0 0 150px; }
+#mod-root .tssggs-cronjob__freq { margin: 0; }
+#mod-root .tssggs-cronjob__freq i { color: var(--tw-primary); font-size: 16px; }
+#mod-root .tssggs-cronjob__fixed { margin-left: 4px; font-weight: 400; }
+#mod-root .tssggs-cronjob__meta { display: flex; flex-direction: column; gap: 4px; margin-top: 16px; }
+#mod-root .tssggs-cronjob__meta i, #mod-root .tssggs-badge i { margin-right: 6px; font-size: 14px; vertical-align: -2px; }
+#mod-root .tssggs-badge { display: inline-flex; align-items: center; border: 1px solid transparent; }
+#mod-root .tssggs-badge--ok { background: color-mix(in srgb, var(--tw-primary) 8%, #fff); border-color: color-mix(in srgb, var(--tw-primary) 25%, #fff); color: var(--tw-primary); }
+#mod-root .tssggs-badge--bad { background: #fef2f2; border-color: #fecaca; }
+#mod-root .tssggs-cronsave { display: flex; align-items: center; gap: 12px; }
+#mod-root .tssggs-dirty { color: var(--tw-muted); font-size: 12px; }
+#mod-root .tssggs-dirty.is-dirty { color: #a65f00; }
+#mod-root .tssggs-settings form .mod-box.tssggs-cronjob { margin: 0 0 16px !important; padding: 20px 20px 16px !important; border: 1px solid #e5e7eb !important; border-radius: 8px !important; background: #fff !important; box-shadow: none !important; }
+#mod-root .tssggs-badge i { display: inline-block; margin-right: 4px; line-height: 1; }
+#mod-root .tssggs-badge { padding: 2px 8px; font-size: 12px; line-height: 18px; }
 
 /* settings sidebar: 1:1 with the Lovable aside */
-#layers2 .tssggs-settings .lu-widget:has(.lu-navbar__nav) { padding: 8px !important; border: 1px solid #e5e7eb !important; border-radius: 12px !important; box-shadow: none !important; }
-#layers2 .tssggs-settings .lu-widget:has(.lu-navbar__nav) > .lu-widget__header { height: auto !important; min-height: 0 !important; padding: 8px 12px !important; margin: 0 !important; }
-#layers2 .tssggs-settings .lu-widget:has(.lu-navbar__nav) > .lu-widget__header .lu-top { min-height: 0 !important; margin: 0 !important; padding: 0 !important; }
-#layers2 .tssggs-settings .lu-widget:has(.lu-navbar__nav) > .lu-widget__header .lu-top__title { margin: 0 !important; padding: 0 !important; font-size: 12px !important; font-weight: 500 !important; line-height: 16px !important; letter-spacing: .05em; color: var(--tw-muted); }
-#layers2 .tssggs-settings .lu-widget:has(.lu-navbar__nav) > .lu-widget__body { padding: 10px 0 0 !important; }
-#layers2 .tssggs-settings .lu-navbar__nav ul { padding: 0 !important; display: flex; flex-direction: column; gap: 2px; }
-#layers2 .tssggs-settings .lu-navbar__nav li.lu-nav__item,
-#layers2 .tssggs-settings .lu-navbar__nav li.lu-nav__item.is-active { margin: 0 !important; border: 0 !important; box-shadow: none !important; width: auto !important; }
-#layers2 .tssggs-settings .lu-navbar__nav li.lu-nav__item > a.lu-nav__link { min-height: 40px; padding: 8px 12px !important; gap: 12px; border: 0 !important; border-radius: 8px; font-size: 14px; font-weight: 500; line-height: 20px; color: var(--tw-fg); }
-#layers2 .tssggs-settings .lu-navbar__nav li.lu-nav__item > a.lu-nav__link > i { display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; font-size: 18px; line-height: 18px; }
-#layers2 .tssggs-settings .lu-navbar__nav li.lu-nav__item > a.lu-nav__link > i::before { line-height: 18px; }
-#layers2 .tssggs-settings .lu-navbar__nav li.lu-nav__item.is-active > a.lu-nav__link { background: var(--tw-primary-soft); color: var(--tw-primary); font-weight: 500; }
-#layers2 .tssggs-settings .lu-navbar__nav li.lu-nav__item.is-active > a.lu-nav__link::after { content: "\203A"; margin-left: auto; font-size: 20px; font-weight: 400; line-height: 1; }
-#layers2 .tssggs-settings .lu-widget:has(.lu-navbar__nav) > .lu-widget__header .lu-top__title { height: auto !important; min-height: 0 !important; }
-#layers2 .tssggs-settings .lu-widget:has(.lu-navbar__nav) .lu-nav__link-text { white-space: nowrap; }
+#mod-root .tssggs-settings .mod-box:has(.mod-menubar-items) { padding: 8px !important; border: 1px solid #e5e7eb !important; border-radius: 12px !important; box-shadow: none !important; }
+#mod-root .tssggs-settings .mod-box:has(.mod-menubar-items) > .mod-box-head { height: auto !important; min-height: 0 !important; padding: 8px 12px !important; margin: 0 !important; }
+#mod-root .tssggs-settings .mod-box:has(.mod-menubar-items) > .mod-box-head .mod-bar { min-height: 0 !important; margin: 0 !important; padding: 0 !important; }
+#mod-root .tssggs-settings .mod-box:has(.mod-menubar-items) > .mod-box-head .mod-bar-title { margin: 0 !important; padding: 0 !important; font-size: 12px !important; font-weight: 500 !important; line-height: 16px !important; letter-spacing: .05em; color: var(--tw-muted); }
+#mod-root .tssggs-settings .mod-box:has(.mod-menubar-items) > .mod-box-body { padding: 10px 0 0 !important; }
+#mod-root .tssggs-settings .mod-menubar-items ul { padding: 0 !important; display: flex; flex-direction: column; gap: 2px; }
+#mod-root .tssggs-settings .mod-menubar-items li.mod-nav-item,
+#mod-root .tssggs-settings .mod-menubar-items li.mod-nav-item.is-active { margin: 0 !important; border: 0 !important; box-shadow: none !important; width: auto !important; }
+#mod-root .tssggs-settings .mod-menubar-items li.mod-nav-item > a.mod-nav-link { min-height: 40px; padding: 8px 12px !important; gap: 12px; border: 0 !important; border-radius: 8px; font-size: 14px; font-weight: 500; line-height: 20px; color: var(--tw-fg); }
+#mod-root .tssggs-settings .mod-menubar-items li.mod-nav-item > a.mod-nav-link > i { display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; font-size: 18px; line-height: 18px; }
+#mod-root .tssggs-settings .mod-menubar-items li.mod-nav-item > a.mod-nav-link > i::before { line-height: 18px; }
+#mod-root .tssggs-settings .mod-menubar-items li.mod-nav-item.is-active > a.mod-nav-link { background: var(--tw-primary-soft); color: var(--tw-primary); font-weight: 500; }
+#mod-root .tssggs-settings .mod-menubar-items li.mod-nav-item.is-active > a.mod-nav-link::after { content: "\203A"; margin-left: auto; font-size: 20px; font-weight: 400; line-height: 1; }
+#mod-root .tssggs-settings .mod-box:has(.mod-menubar-items) > .mod-box-head .mod-bar-title { height: auto !important; min-height: 0 !important; }
+#mod-root .tssggs-settings .mod-box:has(.mod-menubar-items) .mod-nav-text { white-space: nowrap; }
 @media (min-width: 768px) {
-    #layers2 .tssggs-settings > .lu-container > .lu-row { flex-wrap: nowrap; }
-    #layers2 .tssggs-settings > .lu-container > .lu-row > .lu-col-md-2 { flex: 0 0 256px; max-width: 256px; }
-    #layers2 .tssggs-settings > .lu-container > .lu-row > .lu-col-md-10 { flex: 1 1 auto; max-width: none; min-width: 0; }
+    #mod-root .tssggs-settings > .mod-wrap > .mod-row { flex-wrap: nowrap; }
+    #mod-root .tssggs-settings > .mod-wrap > .mod-row > .mod-col-2 { flex: 0 0 256px; max-width: 256px; }
+    #mod-root .tssggs-settings > .mod-wrap > .mod-row > .mod-col-10 { flex: 1 1 auto; max-width: none; min-width: 0; }
 }
-#layers2 .tssggs-settings .lu-widget:has(.lu-navbar__nav) > .lu-widget__header .lu-top { height: auto !important; }
-#layers2 .tssggs-settings .lu-widget:has(.lu-navbar__nav) .lu-navbar__nav ul { flex: 1 1 auto; width: 100% !important; margin: 0 !important; }
-#layers2 .tssggs-settings .lu-widget:has(.lu-navbar__nav) .lu-navbar__nav ul { gap: 3px; }
+#mod-root .tssggs-settings .mod-box:has(.mod-menubar-items) > .mod-box-head .mod-bar { height: auto !important; }
+#mod-root .tssggs-settings .mod-box:has(.mod-menubar-items) .mod-menubar-items ul { flex: 1 1 auto; width: 100% !important; margin: 0 !important; }
+#mod-root .tssggs-settings .mod-box:has(.mod-menubar-items) .mod-menubar-items ul { gap: 3px; }
 
 /* ---- main navigation: one row of tabs + "More" dropdown (Lovable plugin-nav, final) ---- */
-#layers2 .tssggs-head { border-radius: 12px 12px 0 0; }
-#layers2 .lu-app-navbar,
-#layers2 .lu-app-navbar.lu-off-canvas-responsive,
-#layers2 .lu-app-navbar > div,
-#layers2 .lu-app-navbar .lu-navbar__nav { overflow: visible !important; }
-#layers2 .lu-app-navbar { border-radius: 0 0 12px 12px; }
-#layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav {
+#mod-root .tssggs-head { border-radius: 12px 12px 0 0; }
+#mod-root .mod-shell-menu,
+#mod-root .mod-shell-menu.mod-slide,
+#mod-root .mod-shell-menu > div,
+#mod-root .mod-shell-menu .mod-menubar-items { overflow: visible !important; }
+#mod-root .mod-shell-menu { border-radius: 0 0 12px 12px; }
+#mod-root .mod-shell-menu .mod-menubar-items > ul.mod-nav {
     display: flex !important; flex-wrap: wrap; align-items: center; grid-template-columns: none !important;
     padding: 0 4px !important; overflow: visible !important; transform: none !important;
 }
-#layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav > li.lu-nav__item {
+#mod-root .mod-shell-menu .mod-menubar-items > ul.mod-nav > li.mod-nav-item {
     position: relative; flex: none !important; width: auto !important; margin: 0 !important;
     border: 0 !important; background: none !important;
 }
-#layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav > li.lu-nav__item > a.lu-nav__link {
+#mod-root .mod-shell-menu .mod-menubar-items > ul.mod-nav > li.mod-nav-item > a.mod-nav-link {
     display: inline-flex; align-items: center; gap: 6px; height: 44px; min-height: 44px; padding: 0 12px !important;
     border: 0; border-bottom: 2px solid transparent; background: none !important;
     color: var(--tw-muted); font-size: 14px; font-weight: 400; line-height: 20px; white-space: nowrap;
 }
-#layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav > li.lu-nav__item > a.lu-nav__link:hover { color: var(--tw-fg); }
-#layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav > li.lu-nav__item.is-active > a.lu-nav__link {
+#mod-root .mod-shell-menu .mod-menubar-items > ul.mod-nav > li.mod-nav-item > a.mod-nav-link:hover { color: var(--tw-fg); }
+#mod-root .mod-shell-menu .mod-menubar-items > ul.mod-nav > li.mod-nav-item.is-active > a.mod-nav-link {
     border-bottom-color: var(--tw-primary); color: var(--tw-primary); font-weight: 500;
 }
-#layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav > li.lu-nav__item > a.lu-nav__link > i {
+#mod-root .mod-shell-menu .mod-menubar-items > ul.mod-nav > li.mod-nav-item > a.mod-nav-link > i {
     width: 16px; height: 16px; font-size: 16px; line-height: 16px;
 }
-#layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav > li.lu-nav__item > a.lu-nav__link > i.tssggs-nav-chevron { width: 14px; height: 14px; font-size: 14px; }
-#layers2 .lu-app-navbar .lu-nav__link-drop-arrow,
-#layers2 .lu-app-navbar .drop-arrow { display: none !important; }
+#mod-root .mod-shell-menu .mod-menubar-items > ul.mod-nav > li.mod-nav-item > a.mod-nav-link > i.tssggs-nav-chevron { width: 14px; height: 14px; font-size: 14px; }
+#mod-root .mod-shell-menu .mod-nav-caret,
+#mod-root .mod-shell-menu .mod-pop-arrow { display: none !important; }
 
 /* the dropdown */
-#layers2 .lu-app-navbar li.lu-has-dropdown > ul.lu-nav--sub {
+#mod-root .mod-shell-menu li.mod-has-menu > ul.mod-nav--sub {
     display: none !important; position: absolute; top: calc(100% + 4px); right: 0; left: auto; z-index: 1000;
     width: 208px; min-width: 208px; margin: 0; padding: 4px; list-style: none;
     border: 1px solid var(--tw-border); border-radius: 8px; background: var(--tw-surface);
     box-shadow: 0 4px 6px -1px rgba(0,0,0,.1), 0 2px 4px -2px rgba(0,0,0,.1);
     opacity: 1 !important; visibility: visible !important; transform: none !important;
 }
-#layers2 .lu-app-navbar li.lu-has-dropdown.tssggs-open > ul.lu-nav--sub { display: flex !important; flex-direction: column; }
-#layers2 .lu-app-navbar ul.lu-nav--sub > li.lu-nav__item { display: block; float: none; width: auto; margin: 0; border: 0; background: none; }
-#layers2 .lu-app-navbar ul.lu-nav--sub > li.lu-nav__item > a.lu-nav__link {
+#mod-root .mod-shell-menu li.mod-has-menu.tssggs-open > ul.mod-nav--sub { display: flex !important; flex-direction: column; }
+#mod-root .mod-shell-menu ul.mod-nav--sub > li.mod-nav-item { display: block; float: none; width: auto; margin: 0; border: 0; background: none; }
+#mod-root .mod-shell-menu ul.mod-nav--sub > li.mod-nav-item > a.mod-nav-link {
     display: flex; align-items: center; gap: 8px; height: auto; min-height: 36px; padding: 6px 8px !important;
     border: 0; border-radius: 6px; background: none; color: var(--tw-fg); font-size: 14px; font-weight: 400; line-height: 20px; white-space: nowrap;
 }
-#layers2 .lu-app-navbar ul.lu-nav--sub > li.lu-nav__item > a.lu-nav__link:hover { background: var(--tw-surface-alt); }
-#layers2 .lu-app-navbar ul.lu-nav--sub > li.lu-nav__item.is-active > a.lu-nav__link { color: var(--tw-primary); font-weight: 500; }
-#layers2 .lu-app-navbar ul.lu-nav--sub > li.lu-nav__item > a.lu-nav__link > i { width: 16px; height: 16px; margin: 0; font-size: 16px; line-height: 16px; }
-#layers2 .lu-app-navbar a.lu-nav__link:focus { outline: none; box-shadow: none; }
-#layers2 .lu-app-navbar a.lu-nav__link:focus-visible { outline: 2px solid var(--tw-primary); outline-offset: -2px; border-radius: 6px; }
+#mod-root .mod-shell-menu ul.mod-nav--sub > li.mod-nav-item > a.mod-nav-link:hover { background: var(--tw-surface-alt); }
+#mod-root .mod-shell-menu ul.mod-nav--sub > li.mod-nav-item.is-active > a.mod-nav-link { color: var(--tw-primary); font-weight: 500; }
+#mod-root .mod-shell-menu ul.mod-nav--sub > li.mod-nav-item > a.mod-nav-link > i { width: 16px; height: 16px; margin: 0; font-size: 16px; line-height: 16px; }
+#mod-root .mod-shell-menu a.mod-nav-link:focus { outline: none; box-shadow: none; }
+#mod-root .mod-shell-menu a.mod-nav-link:focus-visible { outline: 2px solid var(--tw-primary); outline-offset: -2px; border-radius: 6px; }
 
 /*
  * ---- admin pages: one system for every page (Lovable design) ----
@@ -769,122 +769,122 @@
  */
 
 /* page heading */
-#layers2 .lu-app-main__top.tssggs-pagehead { display: block; margin: 0 0 var(--sp-6) !important; padding: 0; }
-#layers2 .tssggs-pagehead__crumb { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; margin-bottom: 4px; color: var(--tw-muted); font-size: 12px; line-height: 16px; }
-#layers2 .tssggs-pagehead__crumb a { color: inherit; text-decoration: none; }
-#layers2 .tssggs-pagehead__crumb a:hover { color: var(--tw-fg); }
-#layers2 .tssggs-pagehead__crumb i { font-size: 14px; line-height: 1; }
-#layers2 .tssggs-pagehead__title { margin: 0; color: var(--tw-fg); font-size: 24px; font-weight: 600; line-height: 32px; }
+#mod-root .mod-main-top.tssggs-pagehead { display: block; margin: 0 0 var(--sp-6) !important; padding: 0; }
+#mod-root .tssggs-pagehead__crumb { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; margin-bottom: 4px; color: var(--tw-muted); font-size: 12px; line-height: 16px; }
+#mod-root .tssggs-pagehead__crumb a { color: inherit; text-decoration: none; }
+#mod-root .tssggs-pagehead__crumb a:hover { color: var(--tw-fg); }
+#mod-root .tssggs-pagehead__crumb i { font-size: 14px; line-height: 1; }
+#mod-root .tssggs-pagehead__title { margin: 0; color: var(--tw-fg); font-size: 24px; font-weight: 600; line-height: 32px; }
 
 /* pages built from one HTML block get the same card as the widget pages */
-#layers2 .tssggs-pricing .tssggs-html,
-#layers2 .tssggs-log .tssggs-html,
-#layers2 .tssggs-markups .tssggs-html {
+#mod-root .tssggs-pricing .tssggs-html,
+#mod-root .tssggs-log .tssggs-html,
+#mod-root .tssggs-markups .tssggs-html {
     display: block; padding: var(--sp-6); border: 1px solid var(--tw-border); border-radius: var(--tw-radius); background: var(--tw-surface);
 }
 /* notes above that card (right under the page header) stay on the page background */
-#layers2 .tssggs-log .tssggs-html.tssggs-notes,
-#layers2 .tssggs-pricing .tssggs-html.tssggs-notes { padding: 0; border: 0; border-radius: 0; background: none; margin-bottom: var(--sp-6); }
-#layers2 .tssggs-notes > :first-child { margin-top: 0; }
-#layers2 .tssggs-notes > :last-child { margin-bottom: 0; }
-#layers2 .lu-app-main .lu-widget { border: 1px solid var(--tw-border); border-radius: var(--tw-radius); box-shadow: none; }
+#mod-root .tssggs-log .tssggs-html.tssggs-notes,
+#mod-root .tssggs-pricing .tssggs-html.tssggs-notes { padding: 0; border: 0; border-radius: 0; background: none; margin-bottom: var(--sp-6); }
+#mod-root .tssggs-notes > :first-child { margin-top: 0; }
+#mod-root .tssggs-notes > :last-child { margin-bottom: 0; }
+#mod-root .mod-main .mod-box { border: 1px solid var(--tw-border); border-radius: var(--tw-radius); box-shadow: none; }
 
 /* tables */
-#layers2 .lu-app-main table.lu-table,
-#layers2 .lu-app-main table.table,
-#layers2 .lu-app-main table.tssggs-table { border-collapse: collapse; background: transparent; }
-#layers2 .lu-app-main table.lu-table > thead > tr > th,
-#layers2 .lu-app-main table.table > thead > tr > th,
-#layers2 .lu-app-main table.tssggs-table th {
+#mod-root .mod-main table.mod-table,
+#mod-root .mod-main table.table,
+#mod-root .mod-main table.tssggs-table { border-collapse: collapse; background: transparent; }
+#mod-root .mod-main table.mod-table > thead > tr > th,
+#mod-root .mod-main table.table > thead > tr > th,
+#mod-root .mod-main table.tssggs-table th {
     height: 40px; padding: 8px 12px; border: 0; border-bottom: 1px solid var(--tw-border); background: transparent;
     color: var(--tw-muted); font-size: 12px; font-weight: 500; letter-spacing: 0; line-height: 16px; text-transform: none; vertical-align: middle; white-space: nowrap;
 }
-#layers2 .lu-app-main table.lu-table > tbody > tr > td,
-#layers2 .lu-app-main table.table > tbody > tr > td,
-#layers2 .lu-app-main table.tssggs-table td {
+#mod-root .mod-main table.mod-table > tbody > tr > td,
+#mod-root .mod-main table.table > tbody > tr > td,
+#mod-root .mod-main table.tssggs-table td {
     padding: 12px; border: 0; border-bottom: 1px solid var(--tw-border); background: transparent;
     color: var(--tw-fg); font-size: 13px; line-height: 20px; vertical-align: middle; word-break: normal; overflow-wrap: break-word;
 }
-#layers2 .lu-app-main table.lu-table > tbody > tr:last-child > td,
-#layers2 .lu-app-main table.table > tbody > tr:last-child > td { border-bottom: 0; }
-#layers2 .lu-app-main table.table-striped > tbody > tr:nth-of-type(odd) { background: transparent; }
-#layers2 .lu-app-main table.lu-table > tbody > tr:hover > td,
-#layers2 .lu-app-main table.table > tbody > tr:hover > td { background: var(--tw-surface-alt); }
-#layers2 .lu-app-main table small,
-#layers2 .lu-app-main table .tssggs-muted { color: var(--tw-muted); font-size: 12px; }
+#mod-root .mod-main table.mod-table > tbody > tr:last-child > td,
+#mod-root .mod-main table.table > tbody > tr:last-child > td { border-bottom: 0; }
+#mod-root .mod-main table.table-striped > tbody > tr:nth-of-type(odd) { background: transparent; }
+#mod-root .mod-main table.mod-table > tbody > tr:hover > td,
+#mod-root .mod-main table.table > tbody > tr:hover > td { background: var(--tw-surface-alt); }
+#mod-root .mod-main table small,
+#mod-root .mod-main table .tssggs-muted { color: var(--tw-muted); font-size: 12px; }
 
 /* badges */
-#layers2 .lu-app-main .lu-label {
+#mod-root .mod-main .mod-tag {
     display: inline-flex; align-items: center; height: auto; padding: 2px 8px; border: 1px solid #e2e8f0; border-radius: 999px;
     background: #f1f5f9; color: #475569; font-size: 12px; font-weight: 500; line-height: 16px; text-transform: none; white-space: nowrap;
 }
-#layers2 .lu-app-main .lu-label--success { border-color: #bbf7d0; background: var(--tw-primary-soft); color: var(--tw-primary); }
-#layers2 .lu-app-main .lu-label--warning { border-color: #fde68a; background: #fffbeb; color: #b45309; }
-#layers2 .lu-app-main .lu-label--danger { border-color: #fecaca; background: #fef2f2; color: #b91c1c; }
-#layers2 .lu-app-main .lu-label--info,
-#layers2 .lu-app-main .lu-label--primary { border-color: #bfdbfe; background: #eff6ff; color: #1d4ed8; }
+#mod-root .mod-main .mod-tag--success { border-color: #bbf7d0; background: var(--tw-primary-soft); color: var(--tw-primary); }
+#mod-root .mod-main .mod-tag--warning { border-color: #fde68a; background: #fffbeb; color: #b45309; }
+#mod-root .mod-main .mod-tag--danger { border-color: #fecaca; background: #fef2f2; color: #b91c1c; }
+#mod-root .mod-main .mod-tag--info,
+#mod-root .mod-main .mod-tag--primary { border-color: #bfdbfe; background: #eff6ff; color: #1d4ed8; }
 
 /* buttons (not the icon / link ones) */
-#layers2 .lu-app-main .lu-btn:not(.lu-btn--link):not(.lu-btn--plain):not(.lu-btn--icon) {
+#mod-root .mod-main .mod-btn:not(.mod-btn--link):not(.mod-btn--plain):not(.mod-btn--icon) {
     display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 36px; padding: 0 16px;
     border-radius: 6px; font-size: 14px; font-weight: 500; line-height: 20px; box-shadow: none; text-transform: none;
 }
-#layers2 .lu-app-main .lu-btn--primary:not(.lu-btn--link):not(.lu-btn--plain),
-#layers2 .lu-app-main .lu-btn--success:not(.lu-btn--link):not(.lu-btn--plain) { border: 1px solid var(--tw-primary); background: var(--tw-primary); color: #fff; }
-#layers2 .lu-app-main .lu-btn--primary:not(.lu-btn--link):not(.lu-btn--plain):hover,
-#layers2 .lu-app-main .lu-btn--success:not(.lu-btn--link):not(.lu-btn--plain):hover { border-color: #005a2b; background: #005a2b; color: #fff; }
-#layers2 .lu-app-main .lu-btn--default:not(.lu-btn--link):not(.lu-btn--plain) { border: 1px solid var(--tw-border); background: var(--tw-surface); color: var(--tw-fg); }
-#layers2 .lu-app-main .lu-btn--default:not(.lu-btn--link):not(.lu-btn--plain):hover { background: var(--tw-surface-alt); }
-#layers2 .lu-app-main .lu-btn--danger:not(.lu-btn--link):not(.lu-btn--plain) { border: 1px solid #dc2626; background: #dc2626; color: #fff; }
-#layers2 .lu-app-main .lu-btn:focus-visible { outline: 2px solid var(--tw-primary); outline-offset: 2px; }
+#mod-root .mod-main .mod-btn--primary:not(.mod-btn--link):not(.mod-btn--plain),
+#mod-root .mod-main .mod-btn--success:not(.mod-btn--link):not(.mod-btn--plain) { border: 1px solid var(--tw-primary); background: var(--tw-primary); color: #fff; }
+#mod-root .mod-main .mod-btn--primary:not(.mod-btn--link):not(.mod-btn--plain):hover,
+#mod-root .mod-main .mod-btn--success:not(.mod-btn--link):not(.mod-btn--plain):hover { border-color: #005a2b; background: #005a2b; color: #fff; }
+#mod-root .mod-main .mod-btn--default:not(.mod-btn--link):not(.mod-btn--plain) { border: 1px solid var(--tw-border); background: var(--tw-surface); color: var(--tw-fg); }
+#mod-root .mod-main .mod-btn--default:not(.mod-btn--link):not(.mod-btn--plain):hover { background: var(--tw-surface-alt); }
+#mod-root .mod-main .mod-btn--danger:not(.mod-btn--link):not(.mod-btn--plain) { border: 1px solid #dc2626; background: #dc2626; color: #fff; }
+#mod-root .mod-main .mod-btn:focus-visible { outline: 2px solid var(--tw-primary); outline-offset: 2px; }
 
 /* inputs and selects */
-#layers2 .lu-app-main input.lu-form-control,
-#layers2 .lu-app-main select.lu-form-control,
-#layers2 .lu-app-main .lu-selectize-input.lu-form-control,
-#layers2 .lu-app-main .tssggs-html input[type=text],
-#layers2 .lu-app-main .tssggs-html input[type=number],
-#layers2 .lu-app-main .tssggs-html select {
+#mod-root .mod-main input.mod-input,
+#mod-root .mod-main select.mod-input,
+#mod-root .mod-main .mod-select-box.mod-input,
+#mod-root .mod-main .tssggs-html input[type=text],
+#mod-root .mod-main .tssggs-html input[type=number],
+#mod-root .mod-main .tssggs-html select {
     min-height: 36px; border: 1px solid var(--tw-border); border-radius: 6px; background-color: var(--tw-surface); color: var(--tw-fg); font-size: 13px; box-shadow: none;
 }
-#layers2 .lu-app-main .lu-form-control:focus,
-#layers2 .lu-app-main .tssggs-html input:focus,
-#layers2 .lu-app-main .tssggs-html select:focus { border-color: var(--tw-primary); outline: none; box-shadow: 0 0 0 3px color-mix(in srgb, var(--tw-primary) 15%, transparent); }
+#mod-root .mod-main .mod-input:focus,
+#mod-root .mod-main .tssggs-html input:focus,
+#mod-root .mod-main .tssggs-html select:focus { border-color: var(--tw-primary); outline: none; box-shadow: 0 0 0 3px color-mix(in srgb, var(--tw-primary) 15%, transparent); }
 
 /* info banners */
-#layers2 .lu-app-main .lu-alert { border-radius: var(--tw-radius); font-size: 13px; line-height: 20px; }
+#mod-root .mod-main .mod-alert { border-radius: var(--tw-radius); font-size: 13px; line-height: 20px; }
 /* alert and toast icons are 16px boxes (icons.css), the framework centres a 24px one: centre them again */
-#layers2-body .lu-alert.lu-has-icon[class]:before, #layers2 .lu-alert.lu-has-icon[class]:before { margin-top: -8px; }
+#mod-root-body .mod-alert.mod-has-icon[class]:before, #mod-root .mod-alert.mod-has-icon[class]:before { margin-top: -8px; }
 
 /* footer line */
-#layers2 .lu-app-main__footer { margin-top: var(--sp-6); }
-#layers2 .lu-footer-module-version-info { color: var(--tw-muted); font-size: 11px; }
+#mod-root .mod-main-foot { margin-top: var(--sp-6); }
+#mod-root .mod-footer-module-version-info { color: var(--tw-muted); font-size: 11px; }
 
 /* filter / toolbar forms inside the HTML pages: labels on one baseline, controls on one line */
-#layers2 .lu-app-main .tssggs-html form label:not(.tssggs-legacy__choice label) {
+#mod-root .mod-main .tssggs-html form label:not(.tssggs-legacy__choice label) {
     display: block; margin: 0 0 6px; color: var(--tw-fg); font-size: 12px; font-weight: 500 !important; line-height: 16px;
 }
-#layers2 .lu-app-main .tssggs-html .form-control { min-height: 36px; height: 36px; padding: 0 10px; border: 1px solid var(--tw-border); border-radius: 6px; font-size: 13px; box-shadow: none; }
-#layers2 .lu-app-main .tssggs-html table .form-control { height: 32px; min-height: 32px; }
-#layers2 .lu-app-main .tssggs-html input[type=file] { font-size: 13px; color: var(--tw-muted); }
-#layers2 .lu-app-main .tssggs-html input[type=file]::file-selector-button {
+#mod-root .mod-main .tssggs-html .form-control { min-height: 36px; height: 36px; padding: 0 10px; border: 1px solid var(--tw-border); border-radius: 6px; font-size: 13px; box-shadow: none; }
+#mod-root .mod-main .tssggs-html table .form-control { height: 32px; min-height: 32px; }
+#mod-root .mod-main .tssggs-html input[type=file] { font-size: 13px; color: var(--tw-muted); }
+#mod-root .mod-main .tssggs-html input[type=file]::file-selector-button {
     height: 36px; margin-right: 8px; padding: 0 14px; border: 1px solid var(--tw-border); border-radius: 6px;
     background: var(--tw-surface); color: var(--tw-fg); font-size: 14px; font-weight: 500; cursor: pointer;
 }
-#layers2 .lu-app-main .tssggs-html input[type=file]::file-selector-button:hover { background: var(--tw-surface-alt); }
-#layers2 .lu-app-main .tssggs-html > p.tssggs-muted,
-#layers2 .lu-app-main .tssggs-html .tssggs-muted { color: var(--tw-muted); font-size: 13px; line-height: 20px; }
+#mod-root .mod-main .tssggs-html input[type=file]::file-selector-button:hover { background: var(--tw-surface-alt); }
+#mod-root .mod-main .tssggs-html > p.tssggs-muted,
+#mod-root .mod-main .tssggs-html .tssggs-muted { color: var(--tw-muted); font-size: 13px; line-height: 20px; }
 
 /* breadcrumb chevron on the text's centre line */
-#layers2 .tssggs-pagehead__crumb i { display: inline-flex; align-items: center; height: 16px; }
-#layers2 .tssggs-pagehead__crumb i::before { line-height: 16px; }
+#mod-root .tssggs-pagehead__crumb i { display: inline-flex; align-items: center; height: 16px; }
+#mod-root .tssggs-pagehead__crumb i::before { line-height: 16px; }
 
 /* CRON job: "How often it runs" is as tall as the select next to it, so its text centres on the select */
-#layers2 .tssggs-cronjob .lu-widget__content > span:has(> .tssggs-cronjob__freq) { display: flex; align-items: center; }
-#layers2 .tssggs-cronjob__freq { height: 36px; margin: 0; line-height: 20px; }
+#mod-root .tssggs-cronjob .mod-box-content > span:has(> .tssggs-cronjob__freq) { display: flex; align-items: center; }
+#mod-root .tssggs-cronjob__freq { height: 36px; margin: 0; line-height: 20px; }
 
 /* Settings side menu: the font's glyphs sit a little low in the line box, so the icon is nudged down to match the text */
-#layers2 .tssggs-settings .lu-navbar__nav li.lu-nav__item > a.lu-nav__link .lu-nav__icon { position: relative; top: 1px; }
+#mod-root .tssggs-settings .mod-menubar-items li.mod-nav-item > a.mod-nav-link .mod-nav-mark { position: relative; top: 1px; }
 
 
 /*
@@ -894,53 +894,53 @@
  * 6px corners, dark green text #09572c. Hover: a faint white pill. "More" takes the current look while one of its
  * pages is open; its dropdown is a white card, the current page in it in green.
  */
-#layers2 .tssggs-head { position: relative; z-index: 1; }
-#layers2 .lu-app-navbar {
+#mod-root .tssggs-head { position: relative; z-index: 1; }
+#mod-root .mod-shell-menu {
     border: 0 !important; border-top: 1px solid #dde3ea !important; border-radius: 0 0 12px 12px;
     background: linear-gradient(180deg, #096634 0, #0b7a3e 24px, #0b7a3e 100%) !important;
     box-shadow: none !important;
 }
-#layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav { padding: 15px 24px !important; gap: 6px; background: transparent !important; }
-#layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav > li.lu-nav__item > a.lu-nav__link {
+#mod-root .mod-shell-menu .mod-menubar-items > ul.mod-nav { padding: 15px 24px !important; gap: 6px; background: transparent !important; }
+#mod-root .mod-shell-menu .mod-menubar-items > ul.mod-nav > li.mod-nav-item > a.mod-nav-link {
     position: relative; gap: 10px; height: 40px; min-height: 40px; padding: 0 12px !important;
     border: 0 !important; border-radius: 6px; background: transparent !important;
     color: #fff !important; font-size: 15px; font-weight: 400;
     transition: background-color .15s ease, color .15s ease;
 }
-#layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav > li.lu-nav__item > a.lu-nav__link::after,
-#layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav > li.lu-nav__item > a.lu-nav__link::before { display: none !important; }
-#layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav > li.lu-nav__item > a.lu-nav__link i,
-#layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav > li.lu-nav__item > a.lu-nav__link svg,
-#layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav > li.lu-nav__item > a.lu-nav__link .lu-nav__link-icon { color: inherit !important; fill: currentColor; opacity: 1; }
+#mod-root .mod-shell-menu .mod-menubar-items > ul.mod-nav > li.mod-nav-item > a.mod-nav-link::after,
+#mod-root .mod-shell-menu .mod-menubar-items > ul.mod-nav > li.mod-nav-item > a.mod-nav-link::before { display: none !important; }
+#mod-root .mod-shell-menu .mod-menubar-items > ul.mod-nav > li.mod-nav-item > a.mod-nav-link i,
+#mod-root .mod-shell-menu .mod-menubar-items > ul.mod-nav > li.mod-nav-item > a.mod-nav-link svg,
+#mod-root .mod-shell-menu .mod-menubar-items > ul.mod-nav > li.mod-nav-item > a.mod-nav-link .mod-nav-icon { color: inherit !important; fill: currentColor; opacity: 1; }
 /* hover: a faint white pill */
-#layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav > li.lu-nav__item > a.lu-nav__link:hover,
-#layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav > li.lu-has-dropdown.tssggs-open > a.lu-nav__link { background: rgba(255,255,255,.14) !important; color: #fff !important; }
+#mod-root .mod-shell-menu .mod-menubar-items > ul.mod-nav > li.mod-nav-item > a.mod-nav-link:hover,
+#mod-root .mod-shell-menu .mod-menubar-items > ul.mod-nav > li.mod-has-menu.tssggs-open > a.mod-nav-link { background: rgba(255,255,255,.14) !important; color: #fff !important; }
 /* current page: the white pill */
-#layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav > li.lu-nav__item.is-active > a.lu-nav__link,
-#layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav > li.lu-has-dropdown:has(ul.lu-nav--sub li.is-active) > a.lu-nav__link {
+#mod-root .mod-shell-menu .mod-menubar-items > ul.mod-nav > li.mod-nav-item.is-active > a.mod-nav-link,
+#mod-root .mod-shell-menu .mod-menubar-items > ul.mod-nav > li.mod-has-menu:has(ul.mod-nav--sub li.is-active) > a.mod-nav-link {
     background: #fff !important; color: #09572c !important; font-weight: 500; box-shadow: none;
 }
-#layers2 .lu-app-navbar .lu-navbar__nav > ul.lu-nav > li.lu-nav__item > a.lu-nav__link .tssggs-nav-chevron { transition: transform .15s ease; }
-#layers2 .lu-app-navbar li.lu-has-dropdown.tssggs-open > a.lu-nav__link .tssggs-nav-chevron { transform: rotate(180deg); }
-#layers2 .lu-app-navbar a.lu-nav__link:focus-visible { outline: 2px solid #fff; outline-offset: 2px; border-radius: 6px; }
+#mod-root .mod-shell-menu .mod-menubar-items > ul.mod-nav > li.mod-nav-item > a.mod-nav-link .tssggs-nav-chevron { transition: transform .15s ease; }
+#mod-root .mod-shell-menu li.mod-has-menu.tssggs-open > a.mod-nav-link .tssggs-nav-chevron { transform: rotate(180deg); }
+#mod-root .mod-shell-menu a.mod-nav-link:focus-visible { outline: 2px solid #fff; outline-offset: 2px; border-radius: 6px; }
 
 /* the "More" dropdown: a white card under the bar */
-#layers2 .lu-app-navbar li.lu-has-dropdown > ul.lu-nav--sub {
+#mod-root .mod-shell-menu li.mod-has-menu > ul.mod-nav--sub {
     top: calc(100% + 10px); width: 224px; min-width: 224px; padding: 6px;
     border-radius: 10px; box-shadow: 0 10px 24px -6px rgba(15,23,42,.22), 0 2px 6px -2px rgba(15,23,42,.12);
 }
-#layers2 .lu-app-navbar ul.lu-nav--sub > li.lu-nav__item > a.lu-nav__link { border-radius: 6px; color: var(--tw-fg) !important; }
-#layers2 .lu-app-navbar ul.lu-nav--sub > li.lu-nav__item > a.lu-nav__link:hover { background: var(--tw-surface-alt) !important; }
-#layers2 .lu-app-navbar ul.lu-nav--sub > li.lu-nav__item > a.lu-nav__link .lu-nav__link-icon,
-#layers2 .lu-app-navbar ul.lu-nav--sub > li.lu-nav__item > a.lu-nav__link svg { color: var(--tw-muted) !important; }
-#layers2 .lu-app-navbar ul.lu-nav--sub > li.lu-nav__item.is-active > a.lu-nav__link { background: #e4f3ea !important; color: #09572c !important; font-weight: 500; }
-#layers2 .lu-app-navbar ul.lu-nav--sub > li.lu-nav__item.is-active > a.lu-nav__link .lu-nav__link-icon,
-#layers2 .lu-app-navbar ul.lu-nav--sub > li.lu-nav__item.is-active > a.lu-nav__link svg { color: #09572c !important; }
-#layers2 .lu-app-navbar ul.lu-nav--sub > li.lu-nav__item > a.lu-nav__link::after { display: none !important; }
+#mod-root .mod-shell-menu ul.mod-nav--sub > li.mod-nav-item > a.mod-nav-link { border-radius: 6px; color: var(--tw-fg) !important; }
+#mod-root .mod-shell-menu ul.mod-nav--sub > li.mod-nav-item > a.mod-nav-link:hover { background: var(--tw-surface-alt) !important; }
+#mod-root .mod-shell-menu ul.mod-nav--sub > li.mod-nav-item > a.mod-nav-link .mod-nav-icon,
+#mod-root .mod-shell-menu ul.mod-nav--sub > li.mod-nav-item > a.mod-nav-link svg { color: var(--tw-muted) !important; }
+#mod-root .mod-shell-menu ul.mod-nav--sub > li.mod-nav-item.is-active > a.mod-nav-link { background: #e4f3ea !important; color: #09572c !important; font-weight: 500; }
+#mod-root .mod-shell-menu ul.mod-nav--sub > li.mod-nav-item.is-active > a.mod-nav-link .mod-nav-icon,
+#mod-root .mod-shell-menu ul.mod-nav--sub > li.mod-nav-item.is-active > a.mod-nav-link svg { color: #09572c !important; }
+#mod-root .mod-shell-menu ul.mod-nav--sub > li.mod-nav-item > a.mod-nav-link::after { display: none !important; }
 @media (prefers-reduced-motion: reduce) {
-    #layers2 .lu-app-navbar a.lu-nav__link, #layers2 .lu-app-navbar .tssggs-nav-chevron { transition: none !important; }
+    #mod-root .mod-shell-menu a.mod-nav-link, #mod-root .mod-shell-menu .tssggs-nav-chevron { transition: none !important; }
 }
 /* the framework's own nav rules are more specific: the bar's spacing and the 40px items win with a doubled class */
-#layers2 .lu-app-navbar.lu-navbar .lu-navbar__nav > ul.lu-nav.lu-nav { padding: 10px 24px !important; align-items: center !important; gap: 6px !important; }
-#layers2 .lu-app-navbar.lu-navbar .lu-navbar__nav > ul.lu-nav > li.lu-nav__item { align-self: center !important; height: auto !important; }
-#layers2 .lu-app-navbar.lu-navbar .lu-navbar__nav > ul.lu-nav > li.lu-nav__item > a.lu-nav__link { height: 32px !important; min-height: 32px !important; max-height: 32px; }
+#mod-root .mod-shell-menu.mod-menubar .mod-menubar-items > ul.mod-nav.mod-nav { padding: 10px 24px !important; align-items: center !important; gap: 6px !important; }
+#mod-root .mod-shell-menu.mod-menubar .mod-menubar-items > ul.mod-nav > li.mod-nav-item { align-self: center !important; height: auto !important; }
+#mod-root .mod-shell-menu.mod-menubar .mod-menubar-items > ul.mod-nav > li.mod-nav-item > a.mod-nav-link { height: 32px !important; min-height: 32px !important; max-height: 32px; }

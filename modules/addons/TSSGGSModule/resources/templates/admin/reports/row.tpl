@@ -6,9 +6,9 @@
     {$name = $column.name}
     <td>
         {if $name === 'status'}
-            <span class="lu-label lu-tooltip lu-label--{$row.statusTone} lu-label--sm">{$row.status}</span>
+            <span class="mod-tag mod-tip mod-tag--{$row.statusTone} mod-tag--sm">{$row.status}</span>
         {elseif $name === 'paymentStatus'}
-            <span class="lu-label lu-tooltip lu-label--{$row.paymentTone} lu-label--sm">{$row.paymentStatus}</span>
+            <span class="mod-tag mod-tip mod-tag--{$row.paymentTone} mod-tag--sm">{$row.paymentStatus}</span>
         {elseif $name === 'salesAmount'}
             <div>{$row.salesAmountText nofilter}</div>
         {elseif $name === 'cost'}

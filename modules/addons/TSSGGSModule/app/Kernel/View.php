@@ -85,7 +85,7 @@ class View
             }
             $text = htmlspecialchars($text, ENT_QUOTES, 'UTF-8');
 
-            return '<i class="lu-i-c-2x lu-form-tooltip-helper lu-tooltip tssggs-icobox tssggs-tip" tabindex="0" data-title="' . $text . '" aria-label="' . $text . '">'
+            return '<i class="mod-ico-16 mod-field-help mod-tip tssggs-icobox tssggs-tip" tabindex="0" data-title="' . $text . '" aria-label="' . $text . '">'
                 . Icons::svg('help-circle-outline') . '</i>';
         });
 

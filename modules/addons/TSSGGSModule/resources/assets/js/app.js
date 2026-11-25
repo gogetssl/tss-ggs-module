@@ -1,7 +1,7 @@
 /*
  * The module's own script for pages on the new kernel (htmx + Alpine.js, no build step - edit this file directly).
  *
- * - every htmx request carries the WHMCS token (the layout prints it as data-token on #layers2), so a POST action
+ * - every htmx request carries the WHMCS token (the layout prints it as data-token on #mod-root), so a POST action
  *   is accepted by the kernel
  * - a question before a change, in the module's own dialog (the <template data-confirm-template> of
  *   admin/layout.tpl):
@@ -15,7 +15,7 @@
     'use strict';
 
     function root() {
-        return document.getElementById('layers2');
+        return document.getElementById('mod-root');
     }
 
     function token() {
@@ -30,14 +30,14 @@
 
     function ask(element, question, yes) {
         var template = document.querySelector('template[data-confirm-template]');
-        var host = root() ? root().querySelector('.lu-app') : null;
+        var host = root() ? root().querySelector('.mod-shell') : null;
         if (!template || !host) {
             if (window.confirm(question)) { yes(); }
             return;
         }
 
         var modal = template.content.firstElementChild.cloneNode(true);
-        var heading = document.querySelector('#layers2 h2');
+        var heading = document.querySelector('#mod-root h2');
         modal.querySelector('[data-confirm-title]').textContent = (element && element.getAttribute('data-confirm-title')) || (heading ? heading.textContent : '');
         modal.querySelector('[data-confirm-text]').textContent = question;
 
@@ -136,7 +136,7 @@
         }
     });
     document.addEventListener('keydown', function (event) {
-        if (event.key === 'Escape' && dialogPlace() && !document.querySelector('.lu-selectize-dropdown[style*="block"]')) {
+        if (event.key === 'Escape' && dialogPlace() && !document.querySelector('.mod-select-list[style*="block"]')) {
             closeDialog();
         }
     });
@@ -151,7 +151,7 @@
 
     document.addEventListener('htmx:afterSettle', function (event) {
         var config = event.detail.requestConfig;
-        var form = document.querySelector('#layers2 form[data-saved]');
+        var form = document.querySelector('#mod-root form[data-saved]');
         // Test Connection ([data-test]) saves nothing and leaves the form as it is: only its result is brought into view
         if (config && config.elt && config.elt.hasAttribute && config.elt.hasAttribute('data-test')) {
             var tested = event.detail.target && event.detail.target.querySelector ? event.detail.target.querySelector('[role=status]') : null;

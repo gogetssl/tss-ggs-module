@@ -41,17 +41,17 @@
                 <option value="currency">{t key='scope_currency'}</option>
                 <option value="all">{t key='scope_all'}</option>
             </select>
-            <button class="lu-btn lu-btn--primary" type="submit">{t key='apply_margin'}</button>
+            <button class="mod-btn mod-btn--primary" type="submit">{t key='apply_margin'}</button>
         </form>
 
         <span class="tssggs-toolbar__space"></span>
 
-        <a class="lu-btn lu-btn--default" href="{url action='export' token=$token}">{t key='export'}</a>
+        <a class="mod-btn mod-btn--default" href="{url action='export' token=$token}">{t key='export'}</a>
         <form method="post" enctype="multipart/form-data" action="{url action='importPreview'}" class="tssggs-toolbar__group is-centered">
             <input type="hidden" name="token" value="{$token}">
             <input type="hidden" name="currency" value="{$currencyId}">
             <input type="file" name="csv" accept=".csv,text/csv" required style="max-width:220px">
-            <button class="lu-btn lu-btn--default" type="submit">{t key='import'}</button>
+            <button class="mod-btn mod-btn--default" type="submit">{t key='import'}</button>
         </form>
     </div>
 
@@ -112,7 +112,7 @@
                     {/foreach}
                 </tbody>
             </table>
-            <button class="lu-btn lu-btn--success" type="submit">{t key='save_all'}</button>
+            <button class="mod-btn mod-btn--success" type="submit">{t key='save_all'}</button>
         </form>
     {/if}
 </span>

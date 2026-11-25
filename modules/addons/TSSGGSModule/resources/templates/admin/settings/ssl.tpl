@@ -60,18 +60,18 @@
         are not saved.
     *}
     <span>
-        <div class="tssggs-issued-for lu-form-group" data-savebar-ignore>
+        <div class="tssggs-issued-for mod-field" data-savebar-ignore>
             <div class="tssggs-issued-for__field">
-                <label class="lu-form-label">{t key="{$f}.issuedMessageFor"}</label>
-                <select class="lu-form-control tssggs-issued-for__select">
+                <label class="mod-field-label">{t key="{$f}.issuedMessageFor"}</label>
+                <select class="mod-input tssggs-issued-for__select">
                     {foreach $extra.families as $family}
                         <option value="{$family.name}">{$family.brand}</option>
                     {/foreach}
                 </select>
             </div>
             <div class="tssggs-issued-for__field tssggs-issued-for__language">
-                <label class="lu-form-label">{t key="{$f}.issuedMessageLanguage"}</label>
-                <select class="lu-form-control tssggs-issued-for__language-select">
+                <label class="mod-field-label">{t key="{$f}.issuedMessageLanguage"}</label>
+                <select class="mod-input tssggs-issued-for__language-select">
                     {foreach $extra.languages as $code => $languageName}
                         <option value="{$code}">{$languageName}</option>
                     {/foreach}

@@ -48,9 +48,9 @@
 </span>
 
 {foreach $extra.jobs as $job}
-    <div class="lu-widget tssggs-cronjob">
-        <div class="lu-widget__body">
-            <div class="lu-widget__content">
+    <div class="mod-box tssggs-cronjob">
+        <div class="mod-box-body">
+            <div class="mod-box-content">
                 <span>
                     <div class="tssggs-cronjob__head">
                         <h3>{t key="{$f}.name_{$job.name}"}</h3>
@@ -75,8 +75,8 @@
                     </div>
                 </span>
                 {if $job.key}
-                    <div class="lu-form-group">
-                        <select name="{$job.key}" class="lu-form-control" required>
+                    <div class="mod-field">
+                        <select name="{$job.key}" class="mod-input" required>
                             {foreach $job.choices as $choice => $text}
                                 <option value="{$choice}"{if $data[$job.key]|default:'' === $choice} selected{/if}>{$text}</option>
                             {/foreach}

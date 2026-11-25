@@ -7,5 +7,5 @@
     $swap (default "outerHTML"): "innerHTML" keeps the placeholder as the part's container ($id names it).
 *}
 <div class="tssggs-lazy"{if $id|default:'' !== ''} id="{$id}"{/if} hx-get="{$url nofilter}" hx-trigger="{$when|default:'load'}" hx-swap="{$swap|default:'outerHTML'}">
-    <div class="lu-preloader-container"><div class="lu-preloader lu-preloader--sm"></div></div>
+    <div class="mod-spinner-box"><div class="mod-spinner mod-spinner--sm"></div></div>
 </div>

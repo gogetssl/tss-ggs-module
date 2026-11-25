@@ -20,12 +20,12 @@
     <p class="tssggs-muted">{t key='step3.runs_later'}</p>
 </span>
 
-<form method="post" action="{url action='choice'}" class="lu-w-100">
+<form method="post" action="{url action='choice'}" class="mod-w-full">
     <input type="hidden" name="token" value="{$token}">
     {foreach $modules as $module_}
-        <div class="lu-form-group">
-            <label class="lu-form-label lu-single-element"><span>{$module_.choiceLabel}</span>{tip text=$module_.choiceHint}</label>
-            <select name="choice_{$module_.source}" class="lu-form-control">
+        <div class="mod-field">
+            <label class="mod-field-label mod-solo"><span>{$module_.choiceLabel}</span>{tip text=$module_.choiceHint}</label>
+            <select name="choice_{$module_.source}" class="mod-input">
                 {if $module_.supported}
                     <option value="{$migrate}"{if $module_.choice === $migrate} selected{/if}>{t key='admin.configuration.shared.providers.legacy_choice_provider.option_migrate'}</option>
                 {/if}
@@ -33,5 +33,5 @@
             </select>
         </div>
     {/foreach}
-    <button type="submit" class="lu-btn lu-btn--success"><span class="lu-btn__text">{t key='step3.next_step_btn'}</span></button>
+    <button type="submit" class="mod-btn mod-btn--success"><span class="mod-btn-text">{t key='step3.next_step_btn'}</span></button>
 </form>

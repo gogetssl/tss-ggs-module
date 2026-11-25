@@ -1,4 +1,9 @@
-.lu-alert--secondary{
+/*
+ * Small rules of single pages that have no file of their own: the setup wizard's notes, the head line of a report,
+ * coloured figures.
+ */
+
+.mod-alert--secondary{
     background-color: #F6F6F6;
 }
 
@@ -6,11 +11,11 @@
     margin:20px;
 }
 
-label:has(.lu-switch>.switcher-revert)>.lu-switch {
+label:has(.mod-switch>.switcher-revert)>.mod-switch {
     margin: 0px !important;
 }
 
-label:has(.lu-switch>.switcher-revert)>span {
+label:has(.mod-switch>.switcher-revert)>span {
     order:2;
     margin-left: 5px;
 }
@@ -260,7 +265,7 @@ ul.vendor-selections label img {
     -webkit-filter: grayscale(1);
     filter: grayscale(1);
 }
-.menu-configuration-unified .lu-top__title::before {
+.menu-configuration-unified .mod-bar-title::before {
     font: normal normal normal 24px / 1 "Material Design Icons";
     content: "\F0279";
     margin-right: 10px;

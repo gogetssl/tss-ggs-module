@@ -9,7 +9,7 @@
 
     function box(form, name) {
         var field = form.querySelector('[name="' + name + '"]');
-        return field ? field.closest('.lu-form-group') || field.parentElement : null;
+        return field ? field.closest('.mod-field') || field.parentElement : null;
     }
 
     function apply(wrap) {

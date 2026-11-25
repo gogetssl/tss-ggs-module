@@ -9,15 +9,15 @@
     $points: text keys of points listed under the description ("<key>" bold lead-in, "<key>_text" the explanation).
     $sub=true: a small heading inside a section (no icon, no description).
 *}
-<div class="lu-widget tssggs-sec{if $sub|default:false} tssggs-sec--sub{/if}">
-    <div class="lu-widget__header">
-        <div class="lu-widget__top lu-top">
-            {if $icon|default:'' !== ''}<span class="lu-widget__icon">{icon name=$icon}</span>{/if}
-            <div class="lu-top__title"> {t key="{$f}.{$name}"} </div>
+<div class="mod-box tssggs-sec{if $sub|default:false} tssggs-sec--sub{/if}">
+    <div class="mod-box-head">
+        <div class="mod-box-top mod-bar">
+            {if $icon|default:'' !== ''}<span class="mod-box-icon">{icon name=$icon}</span>{/if}
+            <div class="mod-bar-title"> {t key="{$f}.{$name}"} </div>
         </div>
     </div>
-    <div class="lu-widget__body">
-        <div class="lu-widget__content">
+    <div class="mod-box-body">
+        <div class="mod-box-content">
             {if !$sub|default:false}
                 <span>
                     <div class="tssggs-sec__desc">

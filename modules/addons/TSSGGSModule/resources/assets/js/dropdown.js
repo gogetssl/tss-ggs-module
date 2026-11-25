@@ -1,10 +1,10 @@
 /*
- * Dropdowns of the module's forms. Every <select class="lu-form-control"> of a page on the new kernel is shown as
- * the module's own dropdown (classes lu-selectize-*), with a search: type to
+ * Dropdowns of the module's forms. Every <select class="mod-input"> of a page on the new kernel is shown as
+ * the module's own dropdown (classes mod-select-*), with a search: type to
  * narrow the list. The <select> stays in the page, hidden, and keeps the value - forms, htmx and Alpine work with
  * it as with any select (a choice fires its "change" event).
  *
- * Nothing to do in a template: write a normal <select class="lu-form-control">.
+ * Nothing to do in a template: write a normal <select class="mod-input">.
  *   data-native          keeps the browser's own select
  *   multiple             the chosen values are tags; data-create lets a new value be typed
  * Keys: arrows move, Enter chooses, Escape closes.
@@ -12,8 +12,8 @@
 (function () {
     'use strict';
 
-    var SELECTOR = '#layers2 select.lu-form-control:not(.selectized):not([multiple]):not([data-native])';
-    var MULTI = '#layers2 select.lu-form-control[multiple]:not(.selectized):not([data-native])';
+    var SELECTOR = '#mod-root select.mod-input:not(.mod-select-done):not([multiple]):not([data-native])';
+    var MULTI = '#mod-root select.mod-input[multiple]:not(.mod-select-done):not([data-native])';
     var openOne = null;
 
     function element(tag, className) {
@@ -23,20 +23,20 @@
     }
 
     function enhance(select) {
-        select.classList.add('selectized');
+        select.classList.add('mod-select-done');
         select.style.display = 'none';
         select.tabIndex = -1;
 
-        var control = element('div', 'lu-selectize-control single');
-        var box = element('div', 'lu-selectize-input lu-form-control items has-options');
+        var control = element('div', 'mod-select single');
+        var box = element('div', 'mod-select-box mod-input items has-options');
         var item = element('div', 'item');
         var search = element('input', '');
         search.type = 'text';
         search.autocomplete = 'off';
         search.style.width = '4px';
-        var dropdown = element('div', 'lu-selectize-dropdown single lu-form-control');
+        var dropdown = element('div', 'mod-select-list single mod-input');
         dropdown.style.display = 'none';
-        var list = element('div', 'lu-selectize-dropdown-content');
+        var list = element('div', 'mod-select-options');
         dropdown.appendChild(list);
         box.appendChild(item);
         box.appendChild(search);
@@ -201,7 +201,7 @@
         // a required select without a value: the browser cannot point at a hidden field, so the dropdown opens
         select.addEventListener('invalid', function (event) {
             event.preventDefault();
-            box.classList.add('lu-is-error');
+            box.classList.add('mod-is-error');
             // several can be missing at once: all are marked, the first one opens
             if (!openOne) {
                 open();
@@ -209,31 +209,31 @@
             }
         });
         select.addEventListener('change', function () {
-            box.classList.remove('lu-is-error');
+            box.classList.remove('mod-is-error');
         });
 
         render();
     }
 
     /*
-     * A <select multiple class="lu-form-control">: the chosen values are shown as tags with an "x", the list offers
+     * A <select multiple class="mod-input">: the chosen values are shown as tags with an "x", the list offers
      * the others; with data-create a value that is not in the list can be typed and added with Enter.
      * Backspace in the empty field removes the last tag.
      */
     function enhanceMulti(select) {
-        select.classList.add('selectized');
+        select.classList.add('mod-select-done');
         select.style.display = 'none';
         select.tabIndex = -1;
 
-        var control = element('div', 'lu-selectize-control lu-selectize-tagger multi plugin-remove_button');
-        var box = element('div', 'lu-selectize-input lu-form-control items not-full has-options');
+        var control = element('div', 'mod-select mod-select--tags multi plugin-remove_button');
+        var box = element('div', 'mod-select-box mod-input items not-full has-options');
         var search = element('input', '');
         search.type = 'text';
         search.autocomplete = 'off';
         search.placeholder = select.getAttribute('data-placeholder') || '';
-        var dropdown = element('div', 'lu-selectize-dropdown multi lu-form-control');
+        var dropdown = element('div', 'mod-select-list multi mod-input');
         dropdown.style.display = 'none';
-        var list = element('div', 'lu-selectize-dropdown-content');
+        var list = element('div', 'mod-select-options');
         dropdown.appendChild(list);
         box.appendChild(search);
         control.appendChild(box);
@@ -389,7 +389,7 @@
 
     // a click anywhere else closes the open dropdown
     document.addEventListener('mousedown', function (event) {
-        if (openOne && !(event.target.closest && event.target.closest('.lu-selectize-control'))) {
+        if (openOne && !(event.target.closest && event.target.closest('.mod-select'))) {
             openOne();
         }
     });

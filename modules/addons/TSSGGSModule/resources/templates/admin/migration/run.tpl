@@ -4,15 +4,15 @@
     change, and the run's log, backups and rollback.
 *}
 {$m = 'admin.migration'}
-<div class="lu-widget tssggs-migration__run is-{$run.status}">
-    <div class="lu-widget__header">
-        <div class="lu-widget__top lu-top">
-            <span class="lu-widget__icon">{icon name='sync'}</span>
-            <div class="lu-top__title"> {$run.title} </div>
+<div class="mod-box tssggs-migration__run is-{$run.status}">
+    <div class="mod-box-head">
+        <div class="mod-box-top mod-bar">
+            <span class="mod-box-icon">{icon name='sync'}</span>
+            <div class="mod-bar-title"> {$run.title} </div>
         </div>
     </div>
-    <div class="lu-widget__body">
-        <div class="lu-widget__content">
+    <div class="mod-box-body">
+        <div class="mod-box-content">
             <div class="tssggs-runner" x-data="moduleMigrationRunner({$run.runner|json_encode})" :class="'is-' + progress.status">
                 <div class="tssggs-runner__head">
                     <span class="tssggs-runner__state" x-text="states[progress.status] || progress.status"></span>
@@ -60,26 +60,26 @@
 
                 <div class="tssggs-actions">
                     {if $run.errorReport}
-                        <a class="lu-btn lu-btn--primary" href="{url page='migration' action='errorReport' id=$run.id}">{t key="{$m}.btn_error_report"}</a>
+                        <a class="mod-btn mod-btn--primary" href="{url page='migration' action='errorReport' id=$run.id}">{t key="{$m}.btn_error_report"}</a>
                     {/if}
-                    <a class="lu-btn lu-btn--default" href="{url page='migration' action='log' id=$run.id}">{t key="{$m}.btn_log"}</a>
+                    <a class="mod-btn mod-btn--default" href="{url page='migration' action='log' id=$run.id}">{t key="{$m}.btn_log"}</a>
                     {if $run.hasBackups}
                         <span class="tssggs-muted">{$run.backupsUntil}</span>
                         <form method="post" action="{url page='migration' action='extendBackups' id=$run.id}">
                             <input type="hidden" name="token" value="{$token}">
                             {if $wizard}<input type="hidden" name="return" value="wizard">{/if}
-                            <button type="submit" class="lu-btn lu-btn--default">{t key="{$m}.btn_extend"}</button>
+                            <button type="submit" class="mod-btn mod-btn--default">{t key="{$m}.btn_extend"}</button>
                         </form>
                         <form method="post" action="{url page='migration' action='deleteBackups' id=$run.id}" data-confirm="{t key="{$m}.confirm_delete"}">
                             <input type="hidden" name="token" value="{$token}">
                             {if $wizard}<input type="hidden" name="return" value="wizard">{/if}
-                            <button type="submit" class="lu-btn lu-btn--default">{t key="{$m}.btn_delete_backups"}</button>
+                            <button type="submit" class="mod-btn mod-btn--default">{t key="{$m}.btn_delete_backups"}</button>
                         </form>
                         {if $run.canRollback}
                             <form method="post" action="{url page='migration' action='rollback' id=$run.id}" data-confirm="{t key="{$m}.confirm_rollback"}">
                                 <input type="hidden" name="token" value="{$token}">
                                 {if $wizard}<input type="hidden" name="return" value="wizard">{/if}
-                                <button type="submit" class="lu-btn lu-btn--danger">{t key="{$m}.btn_rollback"}</button>
+                                <button type="submit" class="mod-btn mod-btn--danger">{t key="{$m}.btn_rollback"}</button>
                             </form>
                         {/if}
                     {else}

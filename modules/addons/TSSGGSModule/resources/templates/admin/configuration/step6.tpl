@@ -12,9 +12,9 @@
 <span class="title_list">{t key='step6.title_list'}</span>
 <span class="item_list">{t key='step6.item_list1' html=true}</span>
 <span class="item_list item_list2">{t key='step6.item_list2' html=true}</span>
-<form method="post" action="{url action='finalize'}" class="lu-w-100">
+<form method="post" action="{url action='finalize'}" class="mod-w-full">
     <input type="hidden" name="token" value="{$token}">
-    <div class="lu-top__toolbar">
-        <button type="submit" class="lu-btn lu-btn--success"><span class="lu-btn__text">{t key='step6.finalize'}</span></button>
+    <div class="mod-bar-tools">
+        <button type="submit" class="mod-btn mod-btn--success"><span class="mod-btn-text">{t key='step6.finalize'}</span></button>
     </div>
 </form>

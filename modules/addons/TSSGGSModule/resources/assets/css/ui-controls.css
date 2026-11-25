@@ -1,0 +1,543 @@
+/*
+ * The module's admin pages, part 2 of 3: buttons, form fields, the module's dropdown (assets/js/dropdown.js),
+ * tags, counters, notices and the "loading" ring. Colours come from ui-base.css.
+ */
+
+/* ---------- buttons ----------
+ * .mod-btn plus a tone (--default --primary --success --info --warning --danger), a shape (--outline --link --plain
+ * --icon) and a size (--xs --sm --lg). A tone sets what a filled button shows (--fill*) and what an outlined or a
+ * link button shows (--tone*, --edge*).
+ */
+
+#mod-root .mod-btn {
+    --fill: var(--mod-line);
+    --fill-hover: var(--mod-line-soft);
+    --fill-press: var(--mod-line-strong);
+    --tone: var(--mod-ink);
+    --tone-hover: var(--mod-ink);
+    --tone-press: var(--mod-ink);
+    --edge: var(--mod-line);
+    --edge-hover: var(--mod-line-soft);
+    --edge-press: var(--mod-line-strong);
+
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 36px;
+    padding: 0 15px;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    outline: 0;
+    background: var(--fill);
+    box-shadow: 0 2px 3px rgba(0, 0, 0, .15);
+    color: var(--mod-ink);
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 20px;
+    vertical-align: top;
+    white-space: nowrap;
+    transition: border-color .3s, background .3s, color .3s;
+}
+#mod-root .mod-btn:hover { background: var(--fill-hover); color: var(--mod-ink); }
+#mod-root .mod-btn:active,
+#mod-root .mod-btn:focus,
+#mod-root .mod-btn.is-active,
+#mod-root .mod-btn.mod-pop--on { background: var(--fill-press); color: var(--mod-ink); }
+#mod-root .mod-btn:hover,
+#mod-root .mod-btn:focus,
+#mod-root .mod-btn:active,
+#mod-root .mod-btn.mod-pop--on { outline: 0; text-decoration: none; cursor: pointer; }
+
+#mod-root .mod-btn-text { display: flex; align-items: center; }
+#mod-root .mod-btn-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    color: inherit;
+    font-size: 24px;
+    line-height: 24px;
+}
+#mod-root .mod-btn .mod-btn-icon { margin: 0 10px 0 -6px; }
+#mod-root .mod-btn .mod-btn-text + .mod-btn-icon { margin: 0 -6px 0 10px; }
+#mod-root .mod-btn-text + .mod-btn-icon { order: 2; }
+
+/* sizes */
+#mod-root .mod-btn--xs { height: 28px; border-radius: 2px; font-size: 11px; line-height: 16px; }
+#mod-root .mod-btn--xs .mod-btn-icon { margin: 0 8px 0 -4px; font-size: 19px; }
+#mod-root .mod-btn--xs .mod-btn-text + .mod-btn-icon { margin: 0 -4px 0 8px; }
+#mod-root .mod-btn--sm { height: 32px; border-radius: 2px; font-size: 12px; }
+#mod-root .mod-btn--sm .mod-btn-icon { margin: 0 8px 0 -8px; }
+#mod-root .mod-btn--sm .mod-btn-text + .mod-btn-icon { margin: 0 -8px 0 8px; }
+#mod-root .mod-btn--lg { height: 44px; padding: 0 23px; border-radius: 4px; font-size: 14px; }
+#mod-root .mod-btn--lg .mod-btn-icon { margin: 0 10px 0 -10px; }
+#mod-root .mod-btn--lg .mod-btn-text + .mod-btn-icon { margin: 0 -10px 0 10px; }
+
+/* only an icon */
+#mod-root .mod-btn--icon { width: 36px; }
+#mod-root .mod-btn--icon.mod-btn--xs { width: 28px; }
+#mod-root .mod-btn--icon.mod-btn--sm { width: 32px; }
+#mod-root .mod-btn--icon.mod-btn--lg { width: 44px; }
+#mod-root .mod-btn.mod-btn--icon { padding: 0; }
+#mod-root .mod-btn.mod-btn--icon .mod-btn-icon { margin: 0 !important; }
+#mod-root .mod-btn.mod-btn--block { display: flex; flex: 1 auto; width: 100%; text-align: center; }
+#mod-root .mod-btn.mod-btn--outline { border: 1px solid; }
+
+/* tones */
+#mod-root .mod-btn--primary {
+    --fill: var(--mod-blue); --fill-hover: var(--mod-blue-light); --fill-press: var(--mod-blue-dark);
+    --tone: var(--mod-blue); --tone-hover: var(--mod-blue-light); --tone-press: var(--mod-blue-dark);
+}
+#mod-root .mod-btn--success {
+    --fill: var(--mod-green); --fill-hover: var(--mod-green-light); --fill-press: #41b93d;
+    --tone: var(--mod-leaf); --tone-hover: #88d785; --tone-press: #41b93d;
+}
+#mod-root .mod-btn--info {
+    --fill: var(--mod-sky); --fill-hover: #83d2ff; --fill-press: #1dacff;
+    --tone: var(--mod-sky); --tone-hover: #83d2ff; --tone-press: #1dacff;
+}
+#mod-root .mod-btn--warning {
+    --fill: var(--mod-orange); --fill-hover: #ffab66; --fill-press: #ff7300;
+    --tone: var(--mod-orange); --tone-hover: #ffab66; --tone-press: #ff7300;
+}
+#mod-root .mod-btn--danger {
+    --fill: var(--mod-red); --fill-hover: #f66e6e; --fill-press: #f43e3e;
+    --tone: var(--mod-red); --tone-hover: #f66e6e; --tone-press: #f43e3e;
+}
+#mod-root .mod-btn--primary,
+#mod-root .mod-btn--success,
+#mod-root .mod-btn--info,
+#mod-root .mod-btn--warning,
+#mod-root .mod-btn--danger {
+    --edge: var(--tone); --edge-hover: var(--tone-hover); --edge-press: var(--tone-press);
+    background: var(--fill);
+    color: #fff;
+}
+#mod-root .mod-btn--primary:hover,
+#mod-root .mod-btn--success:hover,
+#mod-root .mod-btn--info:hover,
+#mod-root .mod-btn--warning:hover,
+#mod-root .mod-btn--danger:hover { background: var(--fill-hover); color: #fff; }
+#mod-root .mod-btn--primary:active, #mod-root .mod-btn--primary:focus, #mod-root .mod-btn--primary.is-active, #mod-root .mod-btn--primary.mod-pop--on,
+#mod-root .mod-btn--success:active, #mod-root .mod-btn--success:focus, #mod-root .mod-btn--success.is-active, #mod-root .mod-btn--success.mod-pop--on,
+#mod-root .mod-btn--info:active, #mod-root .mod-btn--info:focus, #mod-root .mod-btn--info.is-active, #mod-root .mod-btn--info.mod-pop--on,
+#mod-root .mod-btn--warning:active, #mod-root .mod-btn--warning:focus, #mod-root .mod-btn--warning.is-active, #mod-root .mod-btn--warning.mod-pop--on,
+#mod-root .mod-btn--danger:active, #mod-root .mod-btn--danger:focus, #mod-root .mod-btn--danger.is-active, #mod-root .mod-btn--danger.mod-pop--on { background: var(--fill-press); color: #fff; }
+#mod-root .mod-btn--danger:focus,
+#mod-root .mod-btn--danger.is-active,
+#mod-root .mod-btn--danger.mod-pop--on { background: #b10808; }
+
+#mod-root .mod-btn--default { background: var(--mod-line); color: var(--mod-ink); }
+#mod-root .mod-btn--default:hover { background: var(--mod-line-soft); color: var(--mod-ink); }
+#mod-root .mod-btn--default:active,
+#mod-root .mod-btn--default:focus,
+#mod-root .mod-btn--default.is-active,
+#mod-root .mod-btn--default.mod-pop--on { background: var(--mod-line-strong); color: var(--mod-ink); }
+
+/* a quiet button whatever its tone */
+#mod-root .mod-btn--plain { background-color: var(--mod-line); color: var(--mod-ink); }
+
+/* outlined */
+#mod-root .mod-btn--outline { background: transparent; box-shadow: none; }
+#mod-root .mod-btn--outline .mod-btn-icon { color: inherit; }
+#mod-root .mod-btn--outline.mod-btn--default,
+#mod-root .mod-btn--outline.mod-btn--primary,
+#mod-root .mod-btn--outline.mod-btn--success,
+#mod-root .mod-btn--outline.mod-btn--info,
+#mod-root .mod-btn--outline.mod-btn--warning,
+#mod-root .mod-btn--outline.mod-btn--danger { border-color: var(--edge); color: var(--tone); }
+#mod-root .mod-btn--outline.mod-btn--default:hover,
+#mod-root .mod-btn--outline.mod-btn--primary:hover,
+#mod-root .mod-btn--outline.mod-btn--success:hover,
+#mod-root .mod-btn--outline.mod-btn--info:hover,
+#mod-root .mod-btn--outline.mod-btn--warning:hover,
+#mod-root .mod-btn--outline.mod-btn--danger:hover { border-color: var(--edge-hover); background: transparent; color: var(--tone-hover); }
+#mod-root .mod-btn--outline.mod-btn--default:active, #mod-root .mod-btn--outline.mod-btn--default:focus, #mod-root .mod-btn--outline.mod-btn--default.is-active,
+#mod-root .mod-btn--outline.mod-btn--primary:active, #mod-root .mod-btn--outline.mod-btn--primary:focus, #mod-root .mod-btn--outline.mod-btn--primary.is-active,
+#mod-root .mod-btn--outline.mod-btn--success:active, #mod-root .mod-btn--outline.mod-btn--success:focus, #mod-root .mod-btn--outline.mod-btn--success.is-active,
+#mod-root .mod-btn--outline.mod-btn--info:active, #mod-root .mod-btn--outline.mod-btn--info:focus, #mod-root .mod-btn--outline.mod-btn--info.is-active,
+#mod-root .mod-btn--outline.mod-btn--warning:active, #mod-root .mod-btn--outline.mod-btn--warning:focus, #mod-root .mod-btn--outline.mod-btn--warning.is-active,
+#mod-root .mod-btn--outline.mod-btn--danger:active, #mod-root .mod-btn--outline.mod-btn--danger:focus, #mod-root .mod-btn--outline.mod-btn--danger.is-active { border-color: var(--edge-press); background: transparent; color: var(--tone-press); }
+#mod-root .mod-btn--outline.mod-btn--plain { border-color: var(--mod-line); color: var(--mod-ink); }
+
+/* looks like a link */
+#mod-root .mod-btn--link,
+#mod-root .mod-btn--link:hover,
+#mod-root .mod-btn--link:active,
+#mod-root .mod-btn--link:focus,
+#mod-root .mod-btn--link.is-active { background: transparent; }
+#mod-root .mod-btn--link { box-shadow: none; }
+#mod-root .mod-btn--link.mod-btn--default,
+#mod-root .mod-btn--link.mod-btn--primary,
+#mod-root .mod-btn--link.mod-btn--success,
+#mod-root .mod-btn--link.mod-btn--info,
+#mod-root .mod-btn--link.mod-btn--warning,
+#mod-root .mod-btn--link.mod-btn--danger { color: var(--tone); }
+#mod-root .mod-btn--link.mod-btn--default:hover,
+#mod-root .mod-btn--link.mod-btn--primary:hover,
+#mod-root .mod-btn--link.mod-btn--success:hover,
+#mod-root .mod-btn--link.mod-btn--info:hover,
+#mod-root .mod-btn--link.mod-btn--warning:hover,
+#mod-root .mod-btn--link.mod-btn--danger:hover { color: var(--tone-hover); }
+#mod-root .mod-btn--link.mod-btn--default:active, #mod-root .mod-btn--link.mod-btn--default:focus, #mod-root .mod-btn--link.mod-btn--default.is-active,
+#mod-root .mod-btn--link.mod-btn--primary:active, #mod-root .mod-btn--link.mod-btn--primary:focus, #mod-root .mod-btn--link.mod-btn--primary.is-active,
+#mod-root .mod-btn--link.mod-btn--success:active, #mod-root .mod-btn--link.mod-btn--success:focus, #mod-root .mod-btn--link.mod-btn--success.is-active,
+#mod-root .mod-btn--link.mod-btn--info:active, #mod-root .mod-btn--link.mod-btn--info:focus, #mod-root .mod-btn--link.mod-btn--info.is-active,
+#mod-root .mod-btn--link.mod-btn--warning:active, #mod-root .mod-btn--link.mod-btn--warning:focus, #mod-root .mod-btn--link.mod-btn--warning.is-active,
+#mod-root .mod-btn--link.mod-btn--danger:active, #mod-root .mod-btn--link.mod-btn--danger:focus, #mod-root .mod-btn--link.mod-btn--danger.is-active { background: transparent !important; color: var(--tone-press); }
+#mod-root .mod-btn--link.mod-btn--plain { color: var(--mod-ink); }
+
+/* inside the module's pages a neutral and a "danger" button have grey text until the pointer is on them */
+#mod-root .mod-shell .mod-btn--default,
+#mod-root .mod-shell .mod-btn--danger { color: var(--mod-ink-dim); }
+#mod-root .mod-shell .mod-btn--default:hover { color: var(--mod-ink); }
+
+/* ---------- form fields ---------- */
+
+#mod-root .mod-field { position: relative; margin-bottom: 16px; }
+#mod-root .mod-field > *:last-child { margin-bottom: 0 !important; }
+#mod-root .mod-field-label,
+#mod-root .mod-field-note { color: var(--mod-ink); }
+#mod-root .mod-field-label,
+#mod-root .mod-field > label,
+#mod-root .mod-check > label {
+    display: inline-flex;
+    flex-basis: auto;
+    align-items: center;
+    margin-bottom: 4px;
+    font-weight: 400;
+    line-height: 20px;
+}
+#mod-root .mod-field-note { margin-top: 4px; font-size: 13px; }
+#mod-root .mod-field-note--icon { display: flex; align-items: center; }
+#mod-root .mod-field-note--icon::before {
+    content: "";
+    display: inline-block;
+    width: 16px;
+    min-width: 16px;
+    height: 16px;
+    margin-right: 10px;
+    font-size: 16px;
+    line-height: 1;
+    text-align: center;
+}
+#mod-root .mod-field-help {
+    position: relative;
+    top: -1px;
+    margin-left: 1px;
+    color: #b3b5b9;
+    vertical-align: text-bottom;
+    cursor: pointer;
+}
+
+/* a text field, a textarea, a select; the box around a field with an icon or a button; the box of a checkbox */
+#mod-root .mod-inputbox,
+#mod-root .mod-input,
+#mod-root .mod-check-box,
+#mod-root .mod-check > label .mod-check-box {
+    border: 1px solid var(--mod-line-strong);
+    background-color: var(--mod-paper);
+    box-shadow: none;
+    color: var(--mod-ink);
+}
+#mod-root .mod-inputbox:hover,
+#mod-root .mod-input:hover,
+#mod-root .mod-check-box:hover,
+#mod-root .mod-check > label .mod-check-box:hover { border-color: var(--mod-line); }
+#mod-root .mod-inputbox:active, #mod-root .mod-inputbox:focus,
+#mod-root .mod-input:active, #mod-root .mod-input:focus,
+#mod-root .mod-check-box:active, #mod-root .mod-check-box:focus,
+#mod-root .mod-check > label .mod-check-box:active, #mod-root .mod-check > label .mod-check-box:focus { border-color: var(--mod-blue); outline: 0; }
+
+#mod-root .mod-input {
+    display: block;
+    width: 100%;
+    height: auto;
+    min-height: 36px;
+    padding: 4px 15px;
+    border-radius: 3px;
+    font-size: 15px;
+    line-height: 1;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    transition: border linear .3s;
+}
+#mod-root textarea.mod-input { max-width: 100%; min-height: 150px; padding: 10px 12px; line-height: 1.4; resize: none; }
+
+#mod-root .mod-inputbox {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: auto;
+    min-height: 36px;
+    padding: 0 !important;
+    border-radius: 3px;
+    font-size: 15px;
+    transition: border linear .3s;
+}
+#mod-root .mod-inputbox .mod-input,
+#mod-root .mod-inputbox .mod-select.mod-input,
+#mod-root .mod-inputbox .mod-select.mod-input .mod-select-box { border: none; background: transparent; font-size: inherit; }
+#mod-root .mod-inputbox.mod-input > .mod-field-label { margin-bottom: 0; }
+#mod-root .mod-inputbox input[type="file"]::-webkit-file-upload-button { display: none; }
+#mod-root .mod-inputbox input[type="file"]::file-selector-button { display: none; }
+#mod-root .mod-inputbox-icon:first-child { margin-right: -8px; margin-left: 8px; }
+#mod-root .mod-inputbox .mod-inputbox-btn { box-shadow: none; }
+#mod-root .mod-inputbox-btn:not(.mod-btn--rounded) { border-top-left-radius: 0; border-bottom-left-radius: 0; }
+#mod-root .mod-file { width: 100%; cursor: pointer; }
+#mod-root .mod-file span { display: table-cell; vertical-align: middle; }
+
+/* a checkbox: the real input is hidden, .mod-check-box is what is seen */
+#mod-root .mod-check label { margin: 0; cursor: pointer; }
+#mod-root .mod-check:not(.mod-check--basic) { position: relative; display: flex; flex-direction: column; margin-bottom: 8px; }
+#mod-root .mod-check:not(.mod-check--basic) label:hover .mod-check-box { border: 1px solid var(--mod-line-soft); }
+#mod-root .mod-check:not(.mod-check--basic) .mod-check-input { display: none; }
+#mod-root .mod-check-input + .mod-check-box {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 3px;
+}
+#mod-root .mod-check-input + .mod-check-box::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 16px;
+    line-height: 1;
+}
+#mod-root .mod-check-input:checked + .mod-check-box { border: 2px solid var(--mod-blue) !important; background: var(--mod-blue) !important; }
+#mod-root .mod-check-input:checked + .mod-check-box::after { display: inline-flex; }
+#mod-root .mod-check-input:disabled + .mod-check-box { opacity: .5; }
+#mod-root .mod-check-input:disabled:not(:checked) + .mod-check-box { border-color: var(--mod-line-strong) !important; }
+#mod-root .mod-check-input:disabled + .mod-check-box + .mod-check-text { opacity: .5; }
+#mod-root .mod-check-text:first-child { margin-right: 16px; }
+#mod-root .mod-check-text:last-child { margin-left: 16px; }
+
+/* a field with a mistake */
+#mod-root .mod-field.mod-is-error .mod-field-label,
+#mod-root .mod-field.mod-is-error .mod-field-note,
+#mod-root .mod-field.mod-is-error .mod-inputbox,
+#mod-root .mod-field.mod-is-error .mod-input,
+#mod-root .mod-field.mod-is-error .mod-check-box,
+#mod-root .mod-check.mod-is-error .mod-check-text { color: var(--mod-red); }
+#mod-root .mod-field.mod-is-error > .mod-inputbox,
+#mod-root .mod-field.mod-is-error > .mod-input,
+#mod-root .mod-field.mod-is-error > .mod-check-box,
+#mod-root .mod-field.mod-is-error > .mod-check > label .mod-check-box { border: 1px solid var(--mod-red); background-color: var(--mod-paper); box-shadow: none; }
+#mod-root .mod-field.mod-is-error > .mod-inputbox:hover,
+#mod-root .mod-field.mod-is-error > .mod-input:hover,
+#mod-root .mod-field.mod-is-error .mod-inputbox:focus,
+#mod-root .mod-field.mod-is-error .mod-input:focus,
+#mod-root .mod-field.mod-is-error .mod-input:active,
+#mod-root .mod-check.mod-is-error .mod-check-box { border-color: var(--mod-red); }
+#mod-root .mod-check.mod-is-error .mod-check-input:checked + .mod-check-box { border-color: var(--mod-red) !important; background-color: var(--mod-red) !important; }
+
+/* ---------- the module's dropdown: what assets/js/dropdown.js builds around a <select class="mod-input"> ---------- */
+
+#mod-root .mod-select { position: relative; height: auto; padding: 0; border: 0; background: var(--mod-paper); }
+#mod-root .mod-inputbox .mod-select { width: 100%; max-width: 60%; }
+#mod-root .mod-select .mod-select-box {
+    position: relative;
+    display: flex;
+    flex-wrap: inherit;
+    align-items: center;
+    padding-right: 32px;
+    padding-bottom: 0;
+    overflow-x: inherit;
+}
+#mod-root .mod-select.multi .mod-select-box { flex-wrap: wrap; }
+#mod-root .mod-select.mod-select--tags .mod-select-box { cursor: text; }
+#mod-root .mod-select .mod-select-box::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    right: 2px;
+    left: auto;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    margin-top: -12px;
+    color: var(--mod-blue);
+    font-size: 19px;
+    line-height: 1;
+}
+#mod-root .mod-select .mod-select-box::after { display: none; }
+#mod-root .mod-select .mod-select-box.full { padding: 2px 15px; }
+#mod-root .mod-select .mod-select-box:not(.has-options.has-items) { padding-top: 1px; }
+#mod-root .mod-select .mod-select-box.full.items.has-items { padding: 2px 24px 2px 15px; }
+#mod-root .mod-select .mod-select-box input { height: 100%; border: 0; background: transparent; color: inherit; }
+#mod-root .mod-select-box > input:focus { outline: 0 !important; }
+#mod-root .mod-select .mod-select-box:not(.input-active) input { padding: 0 !important; }
+#mod-root .mod-select .mod-select-box.has-items:not(.input-active) input { height: 0 !important; }
+#mod-root .mod-select .mod-select-box .item { min-height: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; word-break: break-all; }
+
+/* the chosen values of a <select multiple> */
+#mod-root .mod-select.multi .item { position: relative; margin: 0 4px 4px 0; padding: 0 24px 0 8px; background: var(--mod-line); line-height: 24px; }
+#mod-root .mod-select.multi .item.active { color: #333; }
+#mod-root .mod-select.multi .item a { padding-top: 0; color: var(--mod-blue); transition: color .3s; }
+#mod-root .mod-select.multi .item .remove { position: absolute; top: 0; right: 0; bottom: 0; width: 17px; text-align: center; }
+#mod-root .mod-select.multi.plugin-remove_button .item > a:hover { background: rgba(0, 0, 0, .05); }
+
+/* the list of choices */
+#mod-root .mod-select .mod-select-list {
+    position: absolute;
+    z-index: 99;
+    width: 100% !important;
+    padding: 0;
+    border: none;
+    background: var(--mod-paper);
+    box-shadow: 0 5px 30px rgba(0, 0, 0, .15);
+}
+#mod-root .mod-select .mod-select-options { max-height: 200px; padding: 8px 0; overflow-y: auto; }
+#mod-root .mod-select .mod-select-options .create { padding: 10px 16px; }
+#mod-root .mod-select .mod-select-list .option {
+    align-items: center;
+    min-height: 28px;
+    padding: 8px 16px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: pre-wrap;
+    cursor: pointer;
+}
+#mod-root .mod-select .mod-select-list .option.active,
+#mod-root .mod-select .mod-select-list .option:hover { background: transparent; color: var(--mod-blue); }
+#mod-root .mod-select .mod-select-list .option .mod-count { margin-left: auto; }
+#mod-root .mod-select-list .optgroup::before { content: " "; display: block; height: 1px; margin: 9px 0; overflow: hidden; background-color: #e5e5e5; }
+#mod-root .mod-select-list .optgroup:first-child::before { display: none; }
+
+/* ---------- tags (a state in a list), counters ---------- */
+
+#mod-root .mod-tag {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 24px;
+    padding: 0 12px;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    background: var(--mod-line);
+    color: var(--mod-ink);
+    font-size: 12px;
+    font-weight: 400;
+    text-align: center;
+    text-transform: none;
+    vertical-align: middle;
+}
+#mod-root .mod-tag--sm { height: 22px; padding: 0 8px; font-size: 15px; line-height: normal; }
+#mod-root .mod-tag--md { height: 24px; padding: 0 10px; font-size: 12px; line-height: normal; }
+#mod-root .mod-tag--lg { height: 32px; padding: 0 16px; font-size: 13px; }
+#mod-root .mod-tag--default { --tone: var(--mod-ink); background: var(--mod-line); color: var(--mod-ink); }
+#mod-root .mod-tag--primary { --tone: var(--mod-blue); }
+#mod-root .mod-tag--success { --tone: var(--mod-leaf); }
+#mod-root .mod-tag--info { --tone: var(--mod-sky); }
+#mod-root .mod-tag--warning { --tone: var(--mod-orange); }
+#mod-root .mod-tag--danger { --tone: var(--mod-red); }
+#mod-root .mod-tag--primary,
+#mod-root .mod-tag--success,
+#mod-root .mod-tag--info,
+#mod-root .mod-tag--warning,
+#mod-root .mod-tag--danger { background: var(--tone); color: #fff; }
+#mod-root .mod-tag--outline { border-color: var(--mod-line); background: transparent; color: var(--mod-ink); }
+#mod-root .mod-tag--outline.mod-tag--primary,
+#mod-root .mod-tag--outline.mod-tag--success,
+#mod-root .mod-tag--outline.mod-tag--info,
+#mod-root .mod-tag--outline.mod-tag--warning,
+#mod-root .mod-tag--outline.mod-tag--danger { border-color: var(--tone); color: var(--tone); }
+/* a coloured ring and the word in the same colour */
+#mod-root .mod-tag--status { padding: 0; border: none; background: transparent; color: var(--mod-ink); }
+#mod-root .mod-tag--status::before { content: ""; display: inline-block; width: 12px; height: 12px; margin-right: 8px; border: 2px solid; border-radius: 6px; }
+#mod-root .mod-tag--status.mod-tag--default,
+#mod-root .mod-tag--status.mod-tag--primary,
+#mod-root .mod-tag--status.mod-tag--success,
+#mod-root .mod-tag--status.mod-tag--info,
+#mod-root .mod-tag--status.mod-tag--warning,
+#mod-root .mod-tag--status.mod-tag--danger { color: var(--tone); }
+
+#mod-root .mod-count {
+    display: inline-block;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    border: 1px solid var(--mod-line);
+    border-radius: 25px;
+    background: var(--mod-line);
+    color: var(--mod-ink);
+    font-size: 10px;
+    font-weight: 400;
+    line-height: 20px;
+    text-align: center;
+}
+#mod-root .mod-count--primary { border-color: var(--mod-blue); background: var(--mod-blue); color: #fff; }
+#mod-root .mod-btn-text .mod-count { margin-left: 8px; border: 1px solid var(--mod-line-soft); background: var(--mod-line-soft); }
+#mod-root .mod-nav-link > .mod-count,
+#mod-root .mod-menu-link > .mod-count { margin-left: auto; }
+
+/* ---------- notices ---------- */
+
+#mod-root .mod-alert {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    flex-flow: row wrap;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 13px;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    font-size: 15px;
+    line-height: 20px;
+}
+#mod-root .mod-alert-body { flex: 1; margin-right: auto; }
+#mod-root .mod-alert-body p { margin-bottom: 0; }
+#mod-root .mod-alert-body ul { padding-top: 4px; }
+#mod-root .mod-alert-body a { opacity: .8; color: inherit; }
+#mod-root .mod-alert--success { background: var(--mod-leaf); color: #fff; }
+#mod-root .mod-alert--info { background: var(--mod-sky); color: #fff; }
+#mod-root .mod-alert--warning { background: var(--mod-orange); color: #fff; }
+#mod-root .mod-alert--danger { background: var(--mod-red); color: #fff; }
+#mod-root .mod-alert--success.mod-alert--soft { background: #eef8ee; color: var(--mod-green); }
+#mod-root .mod-alert--info.mod-alert--soft { border: 1px solid #c1d8e2; background: #e4f2f9; color: #325a6b; }
+#mod-root .mod-alert--warning.mod-alert--soft { background: #ffe3cc; color: var(--mod-orange); }
+#mod-root .mod-alert--danger.mod-alert--soft { background: #fee6e6; color: #d91e18; }
+@media (max-width: 751px) {
+    #mod-root .mod-alert { flex-direction: column; align-items: flex-start; }
+}
+
+/* ---------- "loading" ---------- */
+
+#mod-root .mod-spinner-box { display: flex; align-items: center; justify-content: center; width: 100%; height: 1px; min-height: 100%; }
+#mod-root .mod-spinner { position: relative; display: inline-block; width: 24px; height: 24px; }
+#mod-root .mod-spinner::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    margin: auto;
+    border: 2px solid #d7d8de;
+    border-top-color: var(--mod-blue);
+    border-radius: 100%;
+    animation: mod-turn .6s infinite linear;
+}

@@ -12,19 +12,19 @@
     {elseif $block.kind === 'source'}
         {include file='admin/migration/source.tpl' src=$block}
     {elseif $block.kind === 'none'}
-        <div class="lu-widget">
-            <div class="lu-widget__header">
-                <div class="lu-widget__top lu-top">
-                    <span class="lu-widget__icon">{icon name='database-outline'}</span>
-                    <div class="lu-top__title"> {t key='admin.migration.title'} </div>
+        <div class="mod-box">
+            <div class="mod-box-head">
+                <div class="mod-box-top mod-bar">
+                    <span class="mod-box-icon">{icon name='database-outline'}</span>
+                    <div class="mod-bar-title"> {t key='admin.migration.title'} </div>
                 </div>
             </div>
-            <div class="lu-widget__body"><div class="lu-widget__content"><span class="tssggs-html"><p class="tssggs-muted">{t key='admin.migration.none_found'}</p></span></div></div>
+            <div class="mod-box-body"><div class="mod-box-content"><span class="tssggs-html"><p class="tssggs-muted">{t key='admin.migration.none_found'}</p></span></div></div>
         </div>
     {elseif $block.kind === 'done'}
         <span class="tssggs-html">
             <div class="tssggs-note is-ok">{t key='admin.migration.wizard_done'}</div>
-            <div class="tssggs-actions"><a class="lu-btn lu-btn--success" href="{$block.next}">{t key='admin.migration.wizard_continue'}</a></div>
+            <div class="tssggs-actions"><a class="mod-btn mod-btn--success" href="{$block.next}">{t key='admin.migration.wizard_continue'}</a></div>
         </span>
     {elseif $block.kind === 'later'}
         <span class="tssggs-html"><p class="tssggs-muted">{t key='admin.migration.wizard_later_hint'} <a href="{$block.next}">{t key='admin.migration.wizard_later'}</a></p></span>

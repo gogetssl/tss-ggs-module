@@ -11,19 +11,19 @@
     action answers with ->closesDialog(). An action that fails answers with the dialog again (->intoDialog()), with
     $error set.  $size: sm | lg | xlg (default: medium).  $submit: text of the green button.
 *}
-<div class="lu-modal show modal--zoomIn{if $size|default:'' !== ''} lu-modal--{$size}{/if}" data-dialog>
-    <div class="lu-modal__dialog">
-        <div class="lu-modal__content">
-            <div class="lu-modal__top lu-top">
-                <div class="lu-top__title lu-type-6"><span class="lu-text-faded lu-font-weight-normal">{$title nofilter}</span></div>
-                <div class="lu-top__toolbar">
-                    <button type="button" class="lu-btn lu-btn--xs lu-btn--default lu-btn--icon lu-btn--link lu-btn--plain closeModal" aria-label="{t key='admin.kernel.cancel'}" data-dialog-close>
-                        <span class="lu-btn__icon tssggs-icobox">{icon name='close'}</span>
+<div class="mod-modal show mod-modal--zoom{if $size|default:'' !== ''} mod-modal--{$size}{/if}" data-dialog>
+    <div class="mod-modal-frame">
+        <div class="mod-modal-sheet">
+            <div class="mod-modal-head mod-bar">
+                <div class="mod-bar-title mod-text-md"><span class="mod-text-dim mod-text-regular">{$title nofilter}</span></div>
+                <div class="mod-bar-tools">
+                    <button type="button" class="mod-btn mod-btn--xs mod-btn--default mod-btn--icon mod-btn--link mod-btn--plain mod-modal-close" aria-label="{t key='admin.kernel.cancel'}" data-dialog-close>
+                        <span class="mod-btn-icon tssggs-icobox">{icon name='close'}</span>
                     </button>
                 </div>
             </div>
-            <div class="lu-modal__body lu-single-element">
-                <form id="tssggs-dialog-form" method="post" action="{$action nofilter}" class="lu-w-100"
+            <div class="mod-modal-body mod-solo">
+                <form id="tssggs-dialog-form" method="post" action="{$action nofilter}" class="mod-w-full"
                       hx-post="{$action nofilter}" hx-target="{$target}" hx-swap="innerHTML">
                     <input type="hidden" name="token" value="{$token}">
                     {if $error|default:'' !== ''}<div class="tssggs-note is-bad">{$error}</div>{/if}

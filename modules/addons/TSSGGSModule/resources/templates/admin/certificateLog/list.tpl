@@ -35,11 +35,11 @@
     <div class="tssggs-log__pager" hx-target="#tssggs-log-list" hx-push-url="true">
         {t key='page' page=$pageNo pages=$pages total=$total}
         {if $pageNo > 1}
-            <a class="lu-btn lu-btn--default" href="{url service=$filter.service type=$filter.type search=$filter.search p=$pageNo-1}"
+            <a class="mod-btn mod-btn--default" href="{url service=$filter.service type=$filter.type search=$filter.search p=$pageNo-1}"
                hx-get="{url service=$filter.service type=$filter.type search=$filter.search p=$pageNo-1}">&laquo;</a>
         {/if}
         {if $pageNo < $pages}
-            <a class="lu-btn lu-btn--default" href="{url service=$filter.service type=$filter.type search=$filter.search p=$pageNo+1}"
+            <a class="mod-btn mod-btn--default" href="{url service=$filter.service type=$filter.type search=$filter.search p=$pageNo+1}"
                hx-get="{url service=$filter.service type=$filter.type search=$filter.search p=$pageNo+1}">&raquo;</a>
         {/if}
     </div>

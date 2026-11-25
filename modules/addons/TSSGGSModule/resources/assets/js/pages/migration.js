@@ -26,7 +26,7 @@ function moduleMigrationRunner(config) {
         step: function () {
             var self = this;
             var form = new FormData();
-            var root = document.getElementById('layers2');
+            var root = document.getElementById('mod-root');
             form.append('id', this.id);
             form.append('token', root ? root.getAttribute('data-token') : '');
 

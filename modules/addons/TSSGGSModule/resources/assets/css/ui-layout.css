@@ -1,0 +1,592 @@
+/*
+ * The module's admin pages, part 3 of 3: the page frame, the main menu, menus that open, title bars, boxes, lists
+ * (table, search, pages), dialogs and tabs. Colours come from ui-base.css.
+ */
+
+/* ---------- page frame ---------- */
+
+#mod-root .mod-shell {
+    position: relative;
+    margin: 0;
+    padding: 0;
+    background: var(--mod-line);
+    color: var(--mod-ink);
+    font-family: Roboto, sans-serif;
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 140%;
+}
+.mod-shell { height: 100%; min-height: auto; border-radius: 6px; }
+.mod-shell-head { position: relative; z-index: 99; }
+#mod-root .mod-shell-menu { border-top-left-radius: 6px; border-top-right-radius: 6px; }
+.mod-shell-menu .mod-menubar-items { border-top: 1px solid rgba(0, 0, 0, .05); }
+
+#mod-root .mod-main-body:not(.mod-main-body--client) { padding: 24px; }
+#mod-root .mod-main-top { min-height: 44px; }
+.mod-shell .mod-main-top { min-height: 36px; margin-bottom: 18px; }
+#mod-root .mod-main-body .mod-main-content,
+#mod-root .mod-main .mod-main-content { text-align: left; }
+#mod-root .mod-main-body .mod-main-content .mod-bar-tools { flex-wrap: wrap; }
+
+@media (min-width: 1012px) {
+    #mod-root .mod-shell-head--compact { display: none; padding: 0; }
+}
+@media (max-width: 1200px) {
+    #mod-root .mod-main-body .mod-main-content .mod-bar-tools .mod-btn { margin: 0 4px 4px 0; }
+}
+@media (max-width: 1011px) {
+    .mod-shell .mod-main-top { margin-bottom: 16px; padding: 0; }
+    .mod-shell .mod-main-body { padding: 16px; }
+    .mod-shell .mod-shell-head--compact { border-top-left-radius: 6px; border-top-right-radius: 6px; }
+    #mod-root .mod-shell-head + .mod-shell-menu { top: 56px !important; }
+}
+@media (max-width: 751px) {
+    #mod-root .mod-main-top { padding: 8px 0; }
+}
+
+/* ---------- main menu ---------- */
+
+#mod-root .mod-menubar {
+    display: flex;
+    flex-flow: row wrap;
+    align-content: start;
+    width: 100%;
+    min-height: 56px;
+    margin: 0;
+    border: none;
+    border-radius: 0;
+    background: var(--mod-paper);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, .05);
+}
+#mod-root .mod-menubar .mod-wrap { display: flex; padding: 0; }
+#mod-root .mod-menubar-items { display: flex; flex-grow: 1; flex-shrink: 0; max-width: 100%; }
+
+#mod-root .mod-nav { display: flex; flex-direction: column; flex-shrink: 0; margin-bottom: 0; }
+#mod-root .mod-nav-item { position: relative; display: flex; flex-direction: column; flex-shrink: 0; justify-content: center; min-height: 36px; }
+#mod-root .mod-nav-link {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    min-height: inherit;
+    padding: 6px 16px;
+    color: var(--mod-ink);
+    transition: color .3s;
+}
+#mod-root .mod-nav-icon { margin-right: 5px; color: var(--mod-ink-dim); text-align: center; transition: color .3s; }
+#mod-root .mod-nav-item.is-active > .mod-nav-link,
+#mod-root .mod-nav-item.is-active > .mod-nav-link > .mod-nav-icon { color: var(--mod-green); }
+#mod-root .mod-nav-link:hover,
+#mod-root .mod-nav-link:hover > .mod-nav-icon { color: var(--mod-green-light); text-decoration: none; }
+#mod-root .mod-nav-item > .mod-btn { margin: 6px 16px; }
+
+#mod-root .mod-nav--md .mod-nav-item { min-height: 48px; }
+#mod-root .mod-nav--md .mod-nav-link { padding: 8px 16px; font-size: 14px; }
+
+/* a menu inside a menu: indented with a thin line when stacked, a floating sheet when the menu is a row */
+#mod-root .mod-nav--sub { position: relative; margin: 8px 0; padding: 0 0 0 16px; }
+#mod-root .mod-nav--sub::before {
+    content: "";
+    position: absolute;
+    top: 8px;
+    bottom: 8px;
+    left: 16px;
+    display: block;
+    width: 1px;
+    background: rgba(0, 0, 0, .1);
+}
+#mod-root .mod-nav .mod-has-menu > .mod-nav-link::after {
+    content: "";
+    width: 24px;
+    height: 24px;
+    margin-right: -8px;
+    margin-left: 8px;
+    font-size: 19px;
+    line-height: 24px;
+    text-align: center;
+}
+#mod-root .mod-nav .mod-has-menu .mod-nav--sub { display: none; }
+#mod-root .mod-has-menu { position: relative; }
+#mod-root .mod-has-menu .mod-pop-owner.mod-pop--on.mod-pop--open { z-index: 99; }
+
+#mod-root .mod-nav--row { flex-direction: row; margin: 0; }
+#mod-root .mod-nav--row .mod-nav--sub {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 999;
+    display: none;
+    min-width: 255px;
+    margin: 0;
+    padding: 8px 0;
+    background: var(--mod-paper);
+    box-shadow: 0 5px 30px rgba(0, 0, 0, .15);
+    animation: mod-rise .3s both;
+}
+#mod-root .mod-nav--row .mod-nav--sub::before { display: none; }
+#mod-root .mod-nav--row .mod-nav--sub .mod-nav-link { color: var(--mod-ink); }
+#mod-root .mod-nav--row .mod-nav--sub .mod-nav-link:hover { color: var(--mod-blue-light); }
+#mod-root .mod-nav--row .mod-nav--sub .mod-nav-link:focus,
+#mod-root .mod-nav--row .mod-nav--sub .mod-nav-link:active { color: var(--mod-blue-dark); }
+
+/* the entries of the bar itself */
+#mod-root .mod-menubar-items .mod-nav:not(.mod-nav--sub) > .mod-nav-item,
+#mod-root .mod-menubar-items .mod-nav:not(.mod-nav--sub) > .mod-nav-item > .mod-nav-link { min-height: 56px; }
+#mod-root .mod-menubar-items .mod-nav:not(.mod-nav--sub) > .mod-nav-item > .mod-nav-link { color: var(--mod-ink); font-size: 14px; font-weight: 500; }
+#mod-root .mod-menubar-items .mod-nav:not(.mod-nav--sub) > .mod-nav-item > .mod-nav-link:hover,
+#mod-root .mod-menubar-items .mod-nav:not(.mod-nav--sub) > .mod-nav-item > .mod-nav-link:hover > .mod-nav-icon { color: var(--mod-green); }
+#mod-root .mod-menubar-items .mod-nav:not(.mod-nav--sub) > .mod-nav-item > .mod-nav-link:active,
+#mod-root .mod-menubar-items .mod-nav:not(.mod-nav--sub) > .mod-nav-item > .mod-nav-link:active > .mod-nav-icon { color: #88d785; }
+#mod-root .mod-menubar-items .mod-nav:not(.mod-nav--sub) > .mod-nav-item.is-active > .mod-nav-link,
+#mod-root .mod-menubar-items .mod-nav:not(.mod-nav--sub) > .mod-nav-item.is-active > .mod-nav-link > .mod-nav-icon { color: var(--mod-green); }
+
+/* tabs: a row of entries, the open one underlined */
+#mod-root .mod-nav--tabs .mod-nav-item { position: relative; width: auto !important; white-space: nowrap; }
+#mod-root .mod-nav--tabs .mod-nav-item.is-active > .mod-nav-link,
+#mod-root .mod-nav--tabs .mod-nav-link.is-active { position: relative; }
+#mod-root .mod-nav--tabs .mod-nav-item.is-active > .mod-nav-link::after,
+#mod-root .mod-nav--tabs .mod-nav-link.is-active::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1;
+    display: block;
+    height: 2px;
+    background: var(--mod-leaf);
+}
+#mod-root .mod-nav--tabs.mod-nav--row .mod-nav-item.is-active .mod-nav-link::after,
+#mod-root .mod-nav--tabs.mod-nav--row .mod-nav-link.is-active::after { right: 8px; left: 8px; }
+#mod-root .mod-nav--arrow .mod-nav-item.is-active .mod-nav-link::after {
+    content: "";
+    position: absolute;
+    bottom: -16px;
+    left: 50% !important;
+    display: block;
+    width: 20px;
+    height: 20px;
+    margin-left: -10px;
+    border: 1px solid #e4e6f0;
+    background: var(--mod-paper);
+    transform: rotate(45deg);
+}
+
+/* a menu at the side (the screens of Settings) */
+#mod-root .mod-sidenav { margin: 7px 0 !important; }
+#mod-root .mod-sidenav .is-active { border-left: 3px solid var(--mod-green); }
+#mod-root .mod-sidenav .is-active .mod-nav-link { padding: 6px 16px 6px 13px !important; }
+
+/* the small pointer under an entry of the bar */
+#mod-root .mod-pop-arrow {
+    position: absolute;
+    right: 16px;
+    bottom: 0;
+    z-index: 1000;
+    display: none;
+    width: 16px;
+    height: 8px;
+    overflow: hidden;
+}
+#mod-root .mod-pop-arrow::after {
+    content: "";
+    position: absolute;
+    top: 6px;
+    left: -2px;
+    display: block;
+    width: 20px;
+    height: 20px;
+    background: var(--mod-paper);
+    box-shadow: 0 0 1px 0 rgba(0, 0, 0, .2);
+    transform: rotate(45deg);
+}
+#mod-root .is-open > .mod-nav-link > .mod-pop-arrow,
+#mod-root .is-open > .mod-pop-arrow { display: block; }
+#mod-root .mod-menubar-items > .mod-nav > .mod-nav-item > .mod-nav-link > .mod-pop-arrow {
+    right: 50%;
+    bottom: -18px;
+    width: 32px;
+    height: 32px;
+    margin-right: -24px;
+}
+#mod-root .mod-menubar-items > .mod-nav > .mod-nav-item > .mod-nav-link > .mod-pop-arrow::after {
+    top: 8px;
+    left: 8px;
+    width: 16px;
+    height: 16px;
+    border-radius: 3px;
+    background: var(--mod-line);
+    box-shadow: 3px 3px 3px -1px rgba(0, 0, 0, .05) inset;
+}
+#mod-root .mod-menubar-items > .mod-nav > .mod-nav-item.mod-has-menu > .mod-nav-link > .mod-pop-arrow { z-index: 99; display: none; }
+#mod-root .mod-menubar-items > .mod-nav > .mod-nav-item:not(.mod-has-menu).is-active .mod-pop-arrow { z-index: 99; display: block; }
+#mod-root .mod-menubar-items > .mod-nav > .mod-nav-item.mod-has-menu.is-active .mod-pop-arrow { z-index: 99; display: block; animation: none; }
+
+/* narrow windows: the bar's entries are stacked and the bar slides in from the right */
+#mod-root .mod-slide--right:not(.is-open) { margin-right: -5000px; }
+@media (max-width: 1011px) {
+    #mod-root .mod-menubar.mod-menubar--compact .mod-menubar-items { flex-direction: column; padding: 8px 0; }
+    #mod-root .mod-menubar--compact .mod-menubar-items .mod-nav:not(.mod-nav--sub) { flex-direction: column; width: 100%; }
+    #mod-root .mod-menubar--compact .mod-menubar-items .mod-nav--sub {
+        position: relative;
+        top: auto;
+        left: auto;
+        margin: 0;
+        background: transparent;
+        box-shadow: none;
+        animation: none;
+    }
+    #mod-root .mod-menubar--compact .mod-menubar-items .mod-nav--sub::before { display: none; }
+    #mod-root .mod-menubar--compact .mod-menubar-items .mod-nav--sub .mod-nav-link { color: var(--mod-ink); }
+    #mod-root .mod-menubar--compact .mod-menubar-items .mod-nav--sub .mod-nav-link:hover { color: var(--mod-blue-light); }
+    #mod-root .mod-menubar--compact .mod-menubar-items .mod-nav--sub .mod-nav-link:focus,
+    #mod-root .mod-menubar--compact .mod-menubar-items .mod-nav--sub .mod-nav-link:active { color: var(--mod-blue-dark); }
+    #mod-root .mod-menubar.mod-menubar--compact .mod-menubar-items .mod-nav .mod-has-menu.is-open { background: rgba(0, 0, 0, .1); }
+    #mod-root .mod-menubar--compact .mod-menubar-items .mod-nav-item.is-open > .mod-nav-link > .mod-pop-arrow,
+    .mod-shell .mod-menubar-items > .mod-nav > .mod-nav-item:not(.mod-has-menu) > .mod-nav-link > .mod-pop-arrow { display: none; }
+
+    #mod-root .mod-menubar.mod-slide .mod-menubar-items .mod-nav-item { position: static; }
+    #mod-root .mod-menubar.mod-slide .mod-menubar-items .mod-nav--sub {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 54px;
+        display: block;
+        width: calc(100% - 54px);
+        margin: 0;
+        padding: 0;
+        overflow-y: auto;
+        background: var(--mod-paper);
+        transform: translateX(100%);
+        transition: transform 200ms;
+    }
+    #mod-root .mod-menubar.mod-slide .mod-menubar-items .mod-nav--sub::before { display: none; }
+
+    #mod-root .mod-slide {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 1000;
+        max-width: 350px;
+        overflow: hidden;
+        background: var(--mod-paper);
+        box-shadow: none;
+        transform: translateX(-100%);
+        transition: transform .3s, box-shadow .3s;
+    }
+    #mod-root .mod-slide--right { right: 0; left: auto; transform: translateX(100%); }
+    #mod-root .mod-slide.is-open { box-shadow: 0 20px 30px rgba(0, 0, 0, .05); transform: translateX(0); }
+    .mod-shell .mod-shell-menu.mod-slide {
+        border-top: 1px solid rgba(0, 0, 0, .05);
+        border-radius: 0;
+        box-shadow: 0 10px 20px 0 rgba(0, 0, 0, .05) !important;
+        transform: translateX(110%);
+    }
+    .mod-shell .mod-shell-menu.mod-slide.is-open { transform: translateX(0%); }
+}
+
+/* ---------- a menu that opens on a click (the "Actions" of a list) ---------- */
+
+#mod-root .mod-menu {
+    display: none;
+    min-width: 255px;
+    max-width: 320px;
+    padding: 8px 0;
+    background: var(--mod-paper);
+    box-shadow: 0 5px 30px rgba(0, 0, 0, .15);
+    animation: mod-rise .3s both;
+}
+#mod-root .mod-pop { position: absolute; display: none; }
+#mod-root .mod-pop--open,
+#mod-root .mod-pop-body .mod-menu { display: block; }
+#mod-root .mod-menu-list { bottom: 100%; margin: 0; padding: 0; }
+#mod-root .mod-menu-item { position: relative; display: flex; flex-direction: column; flex-shrink: 0; justify-content: center; min-height: 36px; }
+#mod-root .mod-menu-link {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    min-height: inherit;
+    padding: 6px 16px;
+    color: var(--mod-ink);
+    transition: color .3s;
+}
+#mod-root .mod-menu-icon { margin-right: 16px; color: var(--mod-ink-dim); text-align: center; transition: color .3s; }
+#mod-root .mod-menu-icon:last-child { margin-right: 0; }
+#mod-root .mod-menu-link:hover,
+#mod-root .mod-menu-link:hover > .mod-menu-icon,
+#mod-root .mod-menu-item.is-active > .mod-menu-link,
+#mod-root .mod-menu-item.is-active > .mod-menu-link > .mod-menu-icon { color: var(--mod-leaf); text-decoration: none; }
+#mod-root .mod-menu-head { display: flex; align-items: center; min-height: 36px; margin-bottom: 8px; padding: 8px 16px; }
+#mod-root .mod-menu-list .mod-menu-head { padding: 6px 16px; color: var(--mod-ink-dim); }
+#mod-root .mod-menu-title { margin: 0; font-size: 14px; font-weight: 500; }
+#mod-root .mod-menu-item > .mod-btn { margin: 6px 16px; }
+
+/* ---------- title bars and rows of things ---------- */
+
+#mod-root .mod-bar { display: flex; align-items: center; }
+#mod-root .mod-bar > * + * { margin: 2px 0 0 5px; }
+#mod-root .mod-bar-title { display: flex; flex-grow: 1; align-items: center; max-width: 100%; height: 100%; }
+#mod-root .mod-bar-tools { display: flex; flex-grow: 0; align-items: center; white-space: nowrap; }
+#mod-root .mod-bar-tools > * + * { margin-left: 16px; }
+#mod-root .mod-bar-tools:last-child { margin-left: auto; }
+#mod-root .mod-bar-search.mod-inputbox .mod-inputbox-icon { display: flex; align-items: center; }
+/* link buttons at an edge line up with the edge by their text, not by their padding */
+#mod-root .mod-bar-tools:last-child > .mod-btn--link:last-child,
+#mod-root .mod-table-actions > .mod-btn--link:last-child { margin-right: -6px; }
+#mod-root .mod-bar-tools:last-child > .mod-btn--link:first-child,
+#mod-root .mod-table-actions > .mod-btn--link:first-child { margin-left: -6px; }
+#mod-root .mod-bar-tools:last-child > .mod-btn--sm.mod-btn--link:last-child,
+#mod-root .mod-table-actions > .mod-btn--sm.mod-btn--link:last-child { margin-right: -4px; }
+#mod-root .mod-bar-tools:last-child > .mod-btn--sm:first-child,
+#mod-root .mod-table-actions > .mod-btn--sm:first-child { margin-left: -4px; }
+#mod-root .mod-bar-tools:last-child > .mod-btn--xs.mod-btn--link:last-child,
+#mod-root .mod-table-actions > .mod-btn--xs.mod-btn--link:last-child { margin-right: -2px; }
+#mod-root .mod-bar-tools:last-child > .mod-btn--xs:first-child,
+#mod-root .mod-table-actions > .mod-btn--xs:first-child { margin-left: -2px; }
+@media (max-width: 751px) {
+    #mod-root .mod-bar-tools .mod-btn + .mod-btn { margin-left: 0; }
+}
+
+#mod-root .mod-line { display: flex; align-items: center; }
+#mod-root .mod-line > * { margin-right: 16px; }
+#mod-root .mod-line > *:last-child { margin-right: 0; }
+#mod-root .mod-line--apart { justify-content: space-between; }
+
+/* ---------- boxes ---------- */
+
+#mod-root .mod-box {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin-bottom: 16px;
+    border-radius: 4px;
+    background: var(--mod-paper);
+    box-shadow: 0 2px 9px rgba(0, 0, 0, .05);
+}
+#mod-root .mod-box-head,
+#mod-root .mod-box-top,
+#mod-root .mod-box-body,
+#mod-root .mod-box-foot { border: solid var(--mod-line); border-width: 0 0 1px; }
+.mod-box > *:last-child { border-bottom-width: 0; }
+#mod-root .mod-box-head { display: flex; flex-direction: column; }
+#mod-root .mod-box-top { position: relative; display: flex; align-items: center; height: 55px; min-height: 55px; padding: 0 20px; }
+#mod-root .mod-box-top .mod-bar-title { font-size: 14px; font-weight: 500; }
+.mod-box .mod-box-top .mod-bar-title { font-size: 18px !important; }
+#mod-root .mod-box .mod-box-body .mod-box-top,
+#mod-root .mod-box .mod-box-head .mod-box-top { border: 0; }
+#mod-root .mod-box-nav { margin-bottom: -1px; }
+#mod-root .mod-box-body { display: flex; flex: 1 0 auto; flex-direction: column; }
+#mod-root .mod-box-head + .mod-box-body { border-top: 0; }
+#mod-root .mod-box .mod-box-body { border-bottom: 0; }
+#mod-root .mod-box-content { padding: 20px 20px 30px !important; }
+#mod-root .mod-box-head + .mod-box-body .mod-box-content { padding-top: 16px; }
+#mod-root .mod-box-content > *:last-child { margin-bottom: 0; }
+#mod-root .mod-box-foot { display: flex; min-height: 32px; margin-top: -1px; }
+#mod-root .mod-box-foot--pad { padding: 10px 16px; }
+#mod-root .mod-box-body .mod-box-foot { margin: auto -1px -1px; border-top: 0; }
+#mod-root .mod-box-head + .mod-box-foot .mod-btn { background: transparent; }
+#mod-root .mod-box-foot:not(.mod-box-foot--pad) .mod-btn { min-width: 0; padding: 0 15px; }
+#mod-root .mod-box-foot .mod-btn + .mod-btn { margin-left: 8px; }
+#mod-root .mod-box .mod-bar-tools .mod-btn:last-child { margin-right: 0; }
+#mod-root .mod-box-body .mod-list-top { padding: 16px; }
+
+/* ---------- lists: search on top, the table, pages below ---------- */
+
+#mod-root .mod-list { position: relative; width: 100%; }
+#mod-root .mod-list-top { position: relative; }
+.mod-list .mod-list-top { padding: 16px; }
+#mod-root .mod-list-top .mod-bar-tools { display: flex; }
+#mod-root .mod-list-top .mod-bar-tools > * + * { margin: 2px 0 0 5px; }
+#mod-root .mod-list-top .mod-bar-search { width: 262px; }
+
+/* what can be done with the ticked rows: lies over the search while rows are ticked */
+#mod-root .mod-list-mass {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    left: 8px;
+    z-index: 900;
+    display: none !important;
+    padding: 8px;
+    border-radius: 3px;
+    background: var(--mod-line);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, .05);
+    animation: mod-rise .3s both;
+}
+#mod-root .mod-list-mass.is-open { display: flex !important; }
+#mod-root .mod-list-mass .mod-value { margin-right: 8px; }
+#mod-root .mod-list-mass .mod-pop-arrow { bottom: -8px; left: -5px; display: none; }
+#mod-root .mod-list-mass .mod-pop-arrow::after { top: -18px; left: -2px; background: var(--mod-line); }
+
+.mod-list-scroll > .mod-grid { overflow-x: auto; }
+#mod-root .mod-table { width: 100%; max-width: 100%; }
+#mod-root table.mod-table--list { clear: both; max-width: none !important; margin-top: 0 !important; margin-bottom: 0 !important; border-collapse: separate !important; }
+#mod-root .mod-table thead th,
+#mod-root .mod-table tbody td { height: 48px; padding: 8px; border-top: 1px solid var(--mod-line-soft); }
+#mod-root .mod-table thead th { border-bottom: 2px solid var(--mod-line-soft); font-size: 11px; }
+#mod-root .mod-table tbody td { border-bottom: 1px solid var(--mod-line-soft); font-size: 15px; line-height: 145%; }
+#mod-root .mod-table td { overflow-wrap: anywhere; }
+#mod-root .mod-table--plain tbody tr:first-child > td { border-top: none; }
+#mod-root .mod-table:not(.mod-table--plain) thead tr th,
+#mod-root .mod-table tbody tr td { border-bottom: none; vertical-align: middle; }
+#mod-root .mod-table thead tr th:first-child,
+#mod-root .mod-table tbody tr td:first-child { padding-left: 16px; }
+#mod-root .mod-table thead tr th:last-child,
+#mod-root .mod-table tbody tr td:last-child { padding-right: 16px; }
+#mod-root .mod-table thead tr th:hover,
+#mod-root .mod-table thead tr th:focus,
+#mod-root .mod-table tbody tr td:hover,
+#mod-root .mod-table tbody tr td:focus { outline: 0; }
+#mod-root .mod-table thead tr th { border-top: none; border-bottom-width: 2px; text-transform: uppercase; white-space: normal; }
+#mod-root .mod-table thead tr th::after { display: none; }
+#mod-root .mod-table thead tr th span.mod-sortable { white-space: nowrap; }
+#mod-root .mod-sortable { cursor: pointer; }
+#mod-root .mod-table label { height: 24px; margin-bottom: 0; font-weight: normal; }
+#mod-root .mod-table td label.mod-solo { display: flex; }
+#mod-root .mod-table td .mod-tag { white-space: nowrap; }
+#mod-root .mod-table thead .mod-check,
+#mod-root .mod-table tbody .mod-check,
+#mod-root .mod-table tfoot .mod-check { margin-bottom: 0; }
+#mod-root .mod-table .mod-table-actions { text-align: right; white-space: nowrap; }
+#mod-root .mod-table .mod-table-actions .mod-btn + .mod-btn { margin-left: 8px; }
+#mod-root .mod-table .mod-table-actions .mod-btn .mod-btn-icon i { font-size: 24px; }
+/* a sortable column of a table that is sorted on the page (the dashboard's report) */
+#mod-root .mod-table thead .sorting { position: relative; cursor: pointer; }
+#mod-root .mod-table thead .sorting > span,
+#mod-root .mod-table thead .sorting .mod-table-title { display: block; }
+#mod-root .mod-table thead .sorting > span::after,
+#mod-root .mod-table thead .sorting .mod-table-title::after {
+    content: "";
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    margin-left: 8px;
+    font-size: 14px;
+    line-height: 1;
+    vertical-align: middle;
+}
+
+#mod-root .mod-list-foot { display: flex; justify-content: space-between; padding: 8px 16px; border-top: 1px solid var(--mod-line); }
+#mod-root .mod-list-foot span a { margin-right: 4px; }
+#mod-root .mod-list-foot span a:last-child { margin-right: 0; }
+#mod-root .mod-list-foot .mod-pager { display: flex; margin: 0 -4px; padding: 0; text-align: right; white-space: nowrap; }
+#mod-root .mod-list-foot .mod-pager-btn,
+#mod-root .mod-list-foot .mod-list-size {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 40px;
+    color: var(--mod-ink-dim);
+    font-weight: 500;
+    cursor: pointer;
+}
+#mod-root .mod-list-foot .mod-list-size { display: inline-flex !important; margin-left: 8px; border: none; background: none; }
+#mod-root .mod-list-foot .mod-pager-btn:active,
+#mod-root .mod-list-foot .mod-pager-btn:focus,
+#mod-root .mod-list-foot .mod-pager-btn:hover,
+#mod-root .mod-list-foot .mod-list-size:active,
+#mod-root .mod-list-foot .mod-list-size:focus,
+#mod-root .mod-list-foot .mod-list-size:hover { outline: 0; text-decoration: none; }
+#mod-root .mod-list-foot .mod-pager-btn.current,
+#mod-root .mod-list-foot .mod-list-size.active { color: var(--mod-blue); }
+#mod-root .mod-list-foot .mod-pager-btn.previous,
+#mod-root .mod-list-foot .mod-pager-btn.next { color: var(--mod-ink); font-size: 24px; }
+#mod-root .mod-list-foot .mod-pager-btn.previous { margin-right: 8px; }
+#mod-root .mod-list-foot .mod-pager-btn.next { margin-right: 0; margin-left: 8px; }
+#mod-root .mod-list-foot .mod-pager-btn.disabled { opacity: .3; }
+#mod-root .mod-list-foot .mod-list-sizes { display: flex; align-items: center; }
+
+@media (max-width: 1360px) {
+    #mod-root .mod-list-foot { flex-direction: column; align-items: center; border-top: 0; }
+    #mod-root .mod-table td div.mod-line .mod-check { display: flex; width: auto; overflow: unset; }
+}
+@media (max-width: 992px) {
+    #mod-root .mod-list-top .mod-bar-search { width: 180px; }
+}
+@media (max-width: 751px) {
+    #mod-root .mod-list-top { height: 48px; margin-bottom: 0; padding: 0 16px; border-bottom: 1px solid var(--mod-line-soft); }
+    #mod-root .mod-list-top .mod-field { position: static; }
+    #mod-root .mod-list-top .mod-bar-tools:last-child .mod-btn { padding: 0; background: transparent; box-shadow: none; }
+    #mod-root .mod-list-top .mod-bar-tools:last-child .mod-btn .mod-btn-icon { margin: 0; color: var(--mod-blue); }
+    #mod-root .mod-list-top .mod-bar-tools:last-child .mod-btn .mod-btn-text { display: none; }
+    #mod-root .mod-list-mass { top: 0; right: 0; left: 0; }
+    #mod-root .mod-list-foot { justify-content: center; margin: 0; padding-right: 0; padding-left: 0; border: 0; }
+    #mod-root .mod-list-foot .mod-pager { align-items: center; justify-content: space-between; width: 100%; padding: 0 8px; }
+    #mod-root .mod-list-foot .mod-pager-btn.previous,
+    #mod-root .mod-list-foot .mod-pager-btn.next { width: 40px; height: 40px; }
+    #mod-root .mod-list-foot .mod-list-sizes { display: none; }
+}
+
+/* ---------- dialogs ---------- */
+
+#mod-root .mod-modal {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1050;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    outline: 0;
+    opacity: 0;
+    visibility: hidden;
+}
+#mod-root .mod-modal.show { overflow: auto; background-color: rgba(80, 84, 89, .5); opacity: 1; visibility: visible; }
+#mod-root .mod-modal-frame { width: 568px; margin: auto; transform: scale(.5); transition: all .3s; }
+#mod-root .mod-modal.show .mod-modal-frame { transform: scale(1); }
+#mod-root .mod-modal--lg .mod-modal-frame { width: 792px; }
+#mod-root .mod-modal-sheet { background-color: var(--mod-paper); box-shadow: 0 5px 30px rgba(0, 0, 0, .2); }
+#mod-root .mod-modal-head { height: 48px; min-height: 48px; padding: 8px 16px; }
+#mod-root .mod-modal-head .mod-bar-title { word-break: break-all; }
+#mod-root .mod-modal-body { padding: 16px; border-top: 1px solid var(--mod-line); border-bottom: 1px solid var(--mod-line); }
+#mod-root .mod-modal-body p { margin-bottom: 0; line-height: 23px; }
+#mod-root .mod-modal-foot { padding: 16px; }
+#mod-root .mod-modal-foot .mod-btn { margin-right: 8px; }
+#mod-root .mod-modal-foot .mod-btn:last-child { margin-right: 0; }
+
+/* a question or a short notice: no lines, more air */
+#mod-root .mod-modal--info .mod-modal-sheet { padding: 14px 24px 24px; }
+#mod-root .mod-modal--lg.mod-modal--info .mod-modal-sheet { padding: 22px 32px 32px; }
+#mod-root .mod-modal--info .mod-modal-sheet .mod-bar { padding: 0; }
+#mod-root .mod-modal--info .mod-modal-sheet .mod-bar-title { overflow: initial; font-size: 18px; text-overflow: initial; white-space: initial; }
+#mod-root .mod-modal--info .mod-modal-body { margin: 22px 0 32px; padding: 0; border: 0; }
+#mod-root .mod-modal--info .mod-modal-body p { line-height: 23px; }
+#mod-root .mod-modal--info .mod-modal-foot { padding: 0; }
+#mod-root .mod-modal--info form .mod-field:last-of-type { margin-bottom: 0; }
+
+/* a box or a list inside a dialog has no frame of its own */
+#mod-root .mod-modal .mod-solo > .mod-box { border: 0; box-shadow: none; }
+.mod-modal-body:has(> .mod-box > .mod-box-body > .mod-list-form) { padding: 0 !important; }
+.mod-modal-body.mod-solo > .mod-box:has(.mod-list-form) { margin: 0 !important; }
+.mod-modal-body.mod-solo:has(div[data-component="tabs-container"]) { padding: 0 !important; }
+.mod-modal-body.mod-solo div[data-component="tabs-container"] { margin-bottom: 0 !important; padding: 0 !important; border: 0 !important; }
+.mod-modal-body.mod-solo > div[data-component="tabs-container"] > .mod-box-body { border: 0 !important; }
+
+@media (max-width: 992px) {
+    #mod-root .mod-modal { display: block !important; }
+    #mod-root .mod-modal-frame { margin: 0 auto; padding: 24px; }
+}
+@media (max-width: 513px) {
+    #mod-root .mod-modal .mod-modal-frame,
+    #mod-root .mod-modal--lg .mod-modal-frame { width: 100%; }
+}
+@media (max-width: 480px) {
+    #mod-root .mod-modal form .mod-box:has(table) { overflow: hidden; }
+    #mod-root .mod-modal form .mod-box:has(table) table { min-width: 500px; }
+}
+
+/* ---------- tabs: only the open pane is shown ---------- */
+
+#mod-root .mod-panes > .mod-pane { display: none; }
+#mod-root .mod-panes > .mod-pane.is-active { display: block; }
+#mod-root .mod-pane:has(> div:not(.mod-field):only-child) { padding: 0 !important; }
+#mod-root .mod-pane:has(> div:not(.mod-field):only-child) > .mod-box { border: 0 !important; box-shadow: none !important; }
+#mod-root .mod-panes .mod-pane.mod-solo > .mod-box { margin-bottom: 0 !important; }
+
+p.report-header.rh-second { padding: 5px 0 0; }

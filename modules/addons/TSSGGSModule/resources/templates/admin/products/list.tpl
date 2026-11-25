@@ -9,7 +9,7 @@
         {foreach $filters as $filter}
             <div class="tssggs-show" role="group" aria-label="{$filter.label}">
                 {foreach $filter.choices as $choice}
-                    <a class="lu-btn lu-btn--sm {if $choice.current}lu-btn--primary{else}lu-btn--default lu-btn--outline{/if}" href="{$choice.url}"
+                    <a class="mod-btn mod-btn--sm {if $choice.current}mod-btn--primary{else}mod-btn--default mod-btn--outline{/if}" href="{$choice.url}"
                        hx-get="{$choice.url}" hx-target="#tssggs-products" hx-swap="innerHTML" hx-push-url="true"{if $choice.current} aria-current="page"{/if}>{$choice.text} <b>{$choice.count}</b></a>
                 {/foreach}
             </div>

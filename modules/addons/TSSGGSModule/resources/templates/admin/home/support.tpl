@@ -39,8 +39,8 @@
                 {icon name='file-document-outline'}
                 <span class="tssggs-row__name">{t key="{$w}.report"}<small>{t key="{$w}.report_detail"}</small></span>
             </span>
-            <button type="button" class="lu-btn lu-btn--default" hx-get="{url action='report'}" hx-target="#tssggs-dialog" hx-swap="innerHTML">
-                <span class="lu-btn__text">{t key="{$w}.report_button"}</span>
+            <button type="button" class="mod-btn mod-btn--default" hx-get="{url action='report'}" hx-target="#tssggs-dialog" hx-swap="innerHTML">
+                <span class="mod-btn-text">{t key="{$w}.report_button"}</span>
             </button>
         </div>
     </div>

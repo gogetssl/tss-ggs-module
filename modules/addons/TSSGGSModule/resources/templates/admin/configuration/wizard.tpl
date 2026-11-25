@@ -4,7 +4,7 @@
     (admin/configuration/step<N>.tpl, $page). Styles: resources/assets/css/wizard.css, scoped to .tssggs-wizard.
     Texts of a page: "step<N>.<key>" (group admin.configuration.content); of the frame: instalation.wizard.*
 *}
-<div class="lu-app-main__top lu-top tssggs-pagehead">
+<div class="mod-main-top mod-bar tssggs-pagehead">
     <div class="tssggs-pagehead__crumb">
         <span>{$module}</span>
         {icon name='chevron-right'}
@@ -65,9 +65,9 @@
         </span>
 
         <div class="tssggs-wizard__section">
-            <div class="lu-widget tssggs-step">
-                <div class="lu-widget__body">
-                    <div class="lu-widget__content">
+            <div class="mod-box tssggs-step">
+                <div class="mod-box-body">
+                    <div class="mod-box-content">
                         <span class="tssggs-html">
                             <div class="tssggs-step__eyebrow">{$stepOf}</div>
                             <h2 class="tssggs-step__title">{$stepTitle}</h2>

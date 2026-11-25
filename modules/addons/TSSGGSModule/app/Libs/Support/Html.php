@@ -4,7 +4,7 @@ namespace TSSGGSModule\App\Libs\Support;
 
 /**
  * The small pieces of HTML the module's pages build by hand, in one place: escaping, notices, hint boxes.
- * Styles: theme.css (#layers2 .tssggs-note, .tssggs-renewal-check). Use these instead of writing the markup again.
+ * Styles: theme.css (#mod-root .tssggs-note, .tssggs-renewal-check). Use these instead of writing the markup again.
  *
  *   Html::e($text)                         escaped text
  *   Html::notice($html, 'ok')              notice box; tone '' (info) | ok | warn | bad; $html must be escaped already

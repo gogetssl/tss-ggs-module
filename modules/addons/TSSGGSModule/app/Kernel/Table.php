@@ -250,7 +250,7 @@ class Table
         {
             $sorted    = $column['name'] === $state['sort'];
             $columns[] = $column + [
-                'class'   => $column['sortable'] ? 'sorting' . ($sorted ? ' sorting_' . $state['dir'] : '') : '',
+                'class'   => $column['sortable'] ? 'sorting' . ($sorted ? ' mod-sort-' . $state['dir'] : '') : '',
                 // a click on the sorted column turns the direction round
                 'nextDir' => $sorted && $state['dir'] === 'asc' ? 'desc' : 'asc',
             ];

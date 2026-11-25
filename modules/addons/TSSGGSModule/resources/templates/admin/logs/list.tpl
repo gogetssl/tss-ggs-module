@@ -12,26 +12,26 @@
     </span>
 {/if}
 
-<div class="lu-row">
+<div class="mod-row">
     {foreach $cards as $card}
-        <div class="lu-col-md lu-single-element">
-            <div class="lu-widget">
-                <div class="lu-widget__body">
-                    <div class="lu-widget__content">
-                        <span class="lu-heading">{$card.title}</span>
-                        <div class="lu-rail lu-rail--space-between">
-                            <div class="lu-type-3 lu-text-truncate">
+        <div class="mod-col mod-solo">
+            <div class="mod-box">
+                <div class="mod-box-body">
+                    <div class="mod-box-content">
+                        <span class="mod-text-caption">{$card.title}</span>
+                        <div class="mod-line mod-line--apart">
+                            <div class="mod-text-xl mod-text-cut">
                                 {$card.count}
                                 {if $card.note !== ''}
-                                    <div class="lu-single-element"><span class="tssggs-html tssggs-cardnote"><small>{$card.note}</small></span></div>
+                                    <div class="mod-solo"><span class="tssggs-html tssggs-cardnote"><small>{$card.note}</small></span></div>
                                 {/if}
                             </div>
-                            <div><div class="lu-single-element"><i class="tssggs-icobox lu-d-flex lu-justify-content-center">{icon name=$card.icon}</i></div></div>
+                            <div><div class="mod-solo"><i class="tssggs-icobox mod-flex mod-flex-center">{icon name=$card.icon}</i></div></div>
                         </div>
                     </div>
-                    <div class="lu-widget__actions lu-widget__actions--raised">
-                        <a class="lu-btn{if $card.button !== ''} lu-btn--{$card.button}{/if} lu-w-100{if $card.type === $type || ($card.type === 'total' && $type === '')} is-active{/if}" href="{$card.url}"
-                           hx-get="{$card.url}" hx-target="#tssggs-logs" hx-swap="innerHTML"><span class="lu-btn__text">{t key='show'}</span></a>
+                    <div class="mod-box-foot mod-box-foot--pad">
+                        <a class="mod-btn{if $card.button !== ''} mod-btn--{$card.button}{/if} mod-w-full{if $card.type === $type || ($card.type === 'total' && $type === '')} is-active{/if}" href="{$card.url}"
+                           hx-get="{$card.url}" hx-target="#tssggs-logs" hx-swap="innerHTML"><span class="mod-btn-text">{t key='show'}</span></a>
                     </div>
                 </div>
             </div>

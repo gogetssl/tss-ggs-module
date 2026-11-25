@@ -5,15 +5,15 @@
     module as it is. In the wizard the start comes back to the wizard's migration step.
 *}
 {$m = 'admin.migration'}
-<div class="lu-widget tssggs-migration__source">
-    <div class="lu-widget__header">
-        <div class="lu-widget__top lu-top">
-            <span class="lu-widget__icon">{icon name='package-variant-closed'}</span>
-            <div class="lu-top__title"> {$src.title} </div>
+<div class="mod-box tssggs-migration__source">
+    <div class="mod-box-head">
+        <div class="mod-box-top mod-bar">
+            <span class="mod-box-icon">{icon name='package-variant-closed'}</span>
+            <div class="mod-bar-title"> {$src.title} </div>
         </div>
     </div>
-    <div class="lu-widget__body">
-        <div class="lu-widget__content">
+    <div class="mod-box-body">
+        <div class="mod-box-content">
             <span class="tssggs-html">
                 <div class="tssggs-cards">
                     {foreach $src.cards as $card}
@@ -51,7 +51,7 @@
                                             <td>{$item.label}{if $item.unsupported}<br><span class="tssggs-muted">{t key="{$m}.map_unsupported"}</span>{/if}</td>
                                             <td>{$item.services}</td>
                                             <td>
-                                                <select class="lu-form-control" name="map[{$item.ref}]" required data-native>
+                                                <select class="mod-input" name="map[{$item.ref}]" required data-native>
                                                     <option value="">{t key="{$m}.map_choose"}</option>
                                                     <option value="record">{t key="{$m}.map_record"}</option>
                                                     {if $item.same}
@@ -78,13 +78,13 @@
 
                         <p class="tssggs-muted">{t key="{$m}.start_defaults"}</p>
                         <div class="tssggs-actions">
-                            <a class="lu-btn lu-btn--default" href="{url page='migration' action='report' source=$src.source}">{t key="{$m}.btn_report"}</a>
-                            <button type="submit" class="lu-btn lu-btn--success" name="variant" value="default">{t key="{$m}.btn_start"}</button>
-                            <button type="submit" class="lu-btn lu-btn--default" name="variant" value="nokeys">{t key="{$m}.btn_start_nokeys"}</button>
+                            <a class="mod-btn mod-btn--default" href="{url page='migration' action='report' source=$src.source}">{t key="{$m}.btn_report"}</a>
+                            <button type="submit" class="mod-btn mod-btn--success" name="variant" value="default">{t key="{$m}.btn_start"}</button>
+                            <button type="submit" class="mod-btn mod-btn--default" name="variant" value="nokeys">{t key="{$m}.btn_start_nokeys"}</button>
                             {if !$wizard}
-                                <button type="submit" class="lu-btn lu-btn--default" name="variant" value="keeplegacy">{t key="{$m}.btn_start_keeplegacy"}</button>
+                                <button type="submit" class="mod-btn mod-btn--default" name="variant" value="keeplegacy">{t key="{$m}.btn_start_keeplegacy"}</button>
                                 {* leaves the legacy module as it is: not a start, so the choices above are not asked for *}
-                                <button type="submit" class="lu-btn lu-btn--default" formaction="{url page='migration' action='skip'}" formnovalidate data-no-confirm>{t key="{$m}.btn_skip"}</button>
+                                <button type="submit" class="mod-btn mod-btn--default" formaction="{url page='migration' action='skip'}" formnovalidate data-no-confirm>{t key="{$m}.btn_skip"}</button>
                             {/if}
                         </div>
                     </form>

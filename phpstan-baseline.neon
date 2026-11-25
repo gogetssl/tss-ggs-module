@@ -179,27 +179,3 @@ parameters:
 			identifier: variable.undefined
 			count: 1
 			path: modules/servers/TSSGGSModule/app/controllers/server/clientarea/home.php
-
-		-
-			message: '#^Call to static method factory\(\) on an unknown class MultibrandFunctionality\\app\\models\\Brand\.$#'
-			identifier: class.notFound
-			count: 2
-			path: modules/servers/TSSGGSModule/app/repository/whmcs/Config.php
-
-		-
-			message: '#^Call to static method factory\(\) on an unknown class MultibrandFunctionality\\app\\models\\BrandRelations\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/servers/TSSGGSModule/app/repository/whmcs/Config.php
-
-		-
-			message: '#^Call to static method getSystemURL\(\) on an unknown class MGModule\\Multibrand\\Core\\Server\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/servers/TSSGGSModule/app/repository/whmcs/Config.php
-
-		-
-			message: '#^Instantiated class MGModule\\Multibrand\\Loader not found\.$#'
-			identifier: class.notFound
-			count: 1
-			path: modules/servers/TSSGGSModule/app/repository/whmcs/Config.php

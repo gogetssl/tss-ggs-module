@@ -4,7 +4,7 @@
  * Everything is scoped to .tssggs-dash so WHMCS and the other module pages are not affected.
  */
 
-#layers2 .tssggs-dash {
+#mod-root .tssggs-dash {
     --tw-primary: #007136;
     --tw-primary-soft: #e4f8e8;
     --tw-fg: #020618;
@@ -21,36 +21,36 @@
     font-size: 14px;
 }
 
-#layers2 .lu-app-main__body:has(.tssggs-dash) > .lu-app-main__top,
-#layers2 .lu-app-main__body:has(.tssggs-dash) > .lu-app-main__footer {
+#mod-root .mod-main-body:has(.tssggs-dash) > .mod-main-top,
+#mod-root .mod-main-body:has(.tssggs-dash) > .mod-main-foot {
     display: none;
 }
 
-#layers2 .tssggs-dash .tssggs-html {
+#mod-root .tssggs-dash .tssggs-html {
     display: block;
     min-width: 0;
 }
 
-#layers2 .tssggs-dash h2,
-#layers2 .tssggs-dash h3,
-#layers2 .tssggs-dash h4,
-#layers2 .tssggs-dash p {
+#mod-root .tssggs-dash h2,
+#mod-root .tssggs-dash h3,
+#mod-root .tssggs-dash h4,
+#mod-root .tssggs-dash p {
     margin: 0;
 }
 
-#layers2 .tssggs-dash .mdi {
+#mod-root .tssggs-dash .mdi {
     display: inline-flex;
     align-items: center;
     line-height: 1;
 }
 
-#layers2 .tssggs-dash .mdi::before {
+#mod-root .tssggs-dash .mdi::before {
     line-height: 1;
 }
 
 /* ---- heading ---- */
 
-#layers2 .tssggs-dash__head {
+#mod-root .tssggs-dash__head {
     display: flex;
     flex-wrap: wrap;
     align-items: flex-end;
@@ -59,7 +59,7 @@
     padding: 4px 0 24px;
 }
 
-#layers2 .tssggs-dash__crumb {
+#mod-root .tssggs-dash__crumb {
     display: flex;
     align-items: center;
     gap: 4px;
@@ -68,7 +68,7 @@
     font-size: 12px;
 }
 
-#layers2 .tssggs-dash__head h2 {
+#mod-root .tssggs-dash__head h2 {
     font-size: 24px;
     font-weight: 600;
     line-height: 1.25;
@@ -76,7 +76,7 @@
 
 /* ---- attention banner ---- */
 
-#layers2 .tssggs-dash__alert {
+#mod-root .tssggs-dash__alert {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -88,21 +88,21 @@
     background: rgba(231, 0, 11, .05);
 }
 
-#layers2 .tssggs-dash__alert > .mdi {
+#mod-root .tssggs-dash__alert > .mdi {
     color: var(--tw-danger);
     font-size: 20px;
 }
 
-#layers2 .tssggs-dash__alert > div {
+#mod-root .tssggs-dash__alert > div {
     flex: 1;
     min-width: 200px;
 }
 
-#layers2 .tssggs-dash__alert strong {
+#mod-root .tssggs-dash__alert strong {
     font-size: 14px;
 }
 
-#layers2 .tssggs-dash__alert p {
+#mod-root .tssggs-dash__alert p {
     margin-top: 2px;
     color: var(--tw-muted);
     font-size: 12px;
@@ -110,38 +110,38 @@
 
 /* ---- KPI tiles ---- */
 
-#layers2 .tssggs-dash__kpis {
+#mod-root .tssggs-dash__kpis {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 12px;
 }
 
-#layers2 .tssggs-kpi {
+#mod-root .tssggs-kpi {
     padding: 20px;
     border: 1px solid var(--tw-border);
     border-radius: var(--tw-radius);
     background: var(--tw-surface);
 }
 
-#layers2 .tssggs-kpi__top {
+#mod-root .tssggs-kpi__top {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 8px;
 }
 
-#layers2 .tssggs-kpi__top h3 {
+#mod-root .tssggs-kpi__top h3 {
     color: var(--tw-muted);
     font-size: 12px;
     font-weight: 500;
 }
 
-#layers2 .tssggs-kpi__top .mdi {
+#mod-root .tssggs-kpi__top .mdi {
     color: var(--tw-primary);
     font-size: 16px;
 }
 
-#layers2 .tssggs-kpi__value {
+#mod-root .tssggs-kpi__value {
     margin-top: 16px !important;
     font-size: 28px;
     font-weight: 600;
@@ -150,7 +150,7 @@
     overflow-wrap: anywhere;
 }
 
-#layers2 .tssggs-kpi__detail {
+#mod-root .tssggs-kpi__detail {
     margin-top: 8px !important;
     color: var(--tw-muted);
     font-size: 12px;
@@ -158,7 +158,7 @@
 
 /* ---- columns ---- */
 
-#layers2 .tssggs-dash__grid {
+#mod-root .tssggs-dash__grid {
     display: grid;
     grid-template-columns: minmax(0, 1.65fr) minmax(290px, 1fr);
     align-items: start;
@@ -166,7 +166,7 @@
     margin-top: 20px;
 }
 
-#layers2 .tssggs-dash__col {
+#mod-root .tssggs-dash__col {
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -174,24 +174,24 @@
 }
 
 @media (max-width: 1279px) {
-    #layers2 .tssggs-dash__kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    #layers2 .tssggs-dash__grid { grid-template-columns: minmax(0, 1fr); }
+    #mod-root .tssggs-dash__kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    #mod-root .tssggs-dash__grid { grid-template-columns: minmax(0, 1fr); }
 }
 
 @media (max-width: 639px) {
-    #layers2 .tssggs-dash__kpis { grid-template-columns: minmax(0, 1fr); }
+    #mod-root .tssggs-dash__kpis { grid-template-columns: minmax(0, 1fr); }
 }
 
 /* ---- card ---- */
 
-#layers2 .tssggs-dcard {
+#mod-root .tssggs-dcard {
     border: 1px solid var(--tw-border);
     border-radius: var(--tw-radius);
     background: var(--tw-surface);
     overflow: hidden;
 }
 
-#layers2 .tssggs-dcard__head {
+#mod-root .tssggs-dcard__head {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -200,7 +200,7 @@
     border-bottom: 1px solid var(--tw-border);
 }
 
-#layers2 .tssggs-dcard__head h3 {
+#mod-root .tssggs-dcard__head h3 {
     display: flex;
     align-items: center;
     gap: 8px;
@@ -208,21 +208,21 @@
     font-weight: 600;
 }
 
-#layers2 .tssggs-dcard__head h3 .mdi {
+#mod-root .tssggs-dcard__head h3 .mdi {
     color: var(--tw-muted);
     font-size: 16px;
 }
 
-#layers2 .tssggs-dcard__aside {
+#mod-root .tssggs-dcard__aside {
     color: var(--tw-muted);
     font-size: 12px;
 }
 
-#layers2 .tssggs-dcard__body {
+#mod-root .tssggs-dcard__body {
     padding: 16px 20px 20px;
 }
 
-#layers2 .tssggs-dcard__note {
+#mod-root .tssggs-dcard__note {
     display: flex;
     align-items: center;
     gap: 8px;
@@ -233,7 +233,7 @@
     font-size: 12px;
 }
 
-#layers2 .tssggs-dcard__status {
+#mod-root .tssggs-dcard__status {
     margin-top: 16px;
     padding-top: 12px;
     border-top: 1px solid var(--tw-border);
@@ -241,18 +241,18 @@
     font-size: 12px;
 }
 
-#layers2 .tssggs-dcard__status p {
+#mod-root .tssggs-dcard__status p {
     margin-top: 4px;
 }
 
-#layers2 .tssggs-dash .tssggs-muted {
+#mod-root .tssggs-dash .tssggs-muted {
     margin: 0;
     color: var(--tw-muted);
     font-size: 12px;
     line-height: 1.6;
 }
 
-#layers2 .tssggs-dash .tssggs-label {
+#mod-root .tssggs-dash .tssggs-label {
     margin-bottom: 12px;
     color: var(--tw-muted);
     font-size: 12px;
@@ -261,8 +261,8 @@
 
 /* ---- buttons ---- */
 
-#layers2 .tssggs-dbtn,
-#layers2 .tssggs-dcard__body > button {
+#mod-root .tssggs-dbtn,
+#mod-root .tssggs-dcard__body > button {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -281,43 +281,43 @@
     transition: background .15s, border-color .15s;
 }
 
-#layers2 .tssggs-dbtn:hover,
-#layers2 .tssggs-dcard__body > button:hover {
+#mod-root .tssggs-dbtn:hover,
+#mod-root .tssggs-dcard__body > button:hover {
     border-color: #cbd5e1;
     background: var(--tw-surface-alt);
 }
 
-#layers2 .tssggs-dbtn .mdi {
+#mod-root .tssggs-dbtn .mdi {
     font-size: 15px;
 }
 
-#layers2 .tssggs-dbtn.is-ghost {
+#mod-root .tssggs-dbtn.is-ghost {
     border-color: transparent;
     color: var(--tw-primary) !important;
 }
 
-#layers2 .tssggs-dbtn.is-ghost:hover {
+#mod-root .tssggs-dbtn.is-ghost:hover {
     background: var(--tw-primary-soft);
 }
 
-#layers2 .tssggs-dbtn.is-danger {
+#mod-root .tssggs-dbtn.is-danger {
     border-color: rgba(231, 0, 11, .25);
     color: var(--tw-danger) !important;
 }
 
-#layers2 .tssggs-dbtn.is-block {
+#mod-root .tssggs-dbtn.is-block {
     display: flex;
     width: 100%;
     margin-top: 20px;
 }
 
-#layers2 .tssggs-dcard__body > button {
+#mod-root .tssggs-dcard__body > button {
     margin-top: 16px;
 }
 
 /* ---- status pill ---- */
 
-#layers2 .tssggs-pill {
+#mod-root .tssggs-pill {
     display: inline-flex;
     align-items: center;
     gap: 6px;
@@ -325,59 +325,59 @@
     font-weight: 600;
 }
 
-#layers2 .tssggs-pill__dot {
+#mod-root .tssggs-pill__dot {
     width: 6px;
     height: 6px;
     border-radius: 50%;
     background: currentColor;
 }
 
-#layers2 .tssggs-pill.is-ok    { color: var(--tw-primary); }
-#layers2 .tssggs-pill.is-bad   { color: var(--tw-danger); }
-#layers2 .tssggs-pill.is-warn  { color: var(--tw-warning); }
-#layers2 .tssggs-pill.is-muted { color: var(--tw-muted); }
+#mod-root .tssggs-pill.is-ok    { color: var(--tw-primary); }
+#mod-root .tssggs-pill.is-bad   { color: var(--tw-danger); }
+#mod-root .tssggs-pill.is-warn  { color: var(--tw-warning); }
+#mod-root .tssggs-pill.is-muted { color: var(--tw-muted); }
 
 /* ---- sales overview ---- */
 
-#layers2 .tssggs-split {
+#mod-root .tssggs-split {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     padding: 20px 0;
 }
 
-#layers2 .tssggs-split > div {
+#mod-root .tssggs-split > div {
     padding: 0 20px;
     min-width: 0;
 }
 
-#layers2 .tssggs-split > div + div {
+#mod-root .tssggs-split > div + div {
     border-left: 1px solid var(--tw-border);
 }
 
-#layers2 .tssggs-split .tssggs-label {
+#mod-root .tssggs-split .tssggs-label {
     margin-bottom: 8px;
 }
 
-#layers2 .tssggs-amount {
+#mod-root .tssggs-amount {
     font-size: 15px;
     font-weight: 600;
     overflow-wrap: anywhere;
 }
 
-#layers2 .tssggs-amount.is-ok  { color: var(--tw-primary); }
-#layers2 .tssggs-amount.is-bad { color: var(--tw-danger); }
+#mod-root .tssggs-amount.is-ok  { color: var(--tw-primary); }
+#mod-root .tssggs-amount.is-bad { color: var(--tw-danger); }
 
 /* ---- announcements ---- */
 
-#layers2 .tssggs-news {
+#mod-root .tssggs-news {
     padding: 20px;
 }
 
-#layers2 .tssggs-news + .tssggs-news {
+#mod-root .tssggs-news + .tssggs-news {
     border-top: 1px solid var(--tw-border);
 }
 
-#layers2 .tssggs-news__meta {
+#mod-root .tssggs-news__meta {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -388,7 +388,7 @@
     font-size: 12px;
 }
 
-#layers2 .tssggs-news__tag {
+#mod-root .tssggs-news__tag {
     color: var(--tw-primary);
     font-size: 10px;
     font-weight: 600;
@@ -396,33 +396,33 @@
     text-transform: uppercase;
 }
 
-#layers2 .tssggs-news.is-critical .tssggs-news__tag {
+#mod-root .tssggs-news.is-critical .tssggs-news__tag {
     color: var(--tw-danger);
 }
 
-#layers2 .tssggs-news.is-warning .tssggs-news__tag {
+#mod-root .tssggs-news.is-warning .tssggs-news__tag {
     color: var(--tw-warning);
 }
 
-#layers2 .tssggs-news h4 {
+#mod-root .tssggs-news h4 {
     font-size: 14px;
     font-weight: 600;
 }
 
-#layers2 .tssggs-news__body {
+#mod-root .tssggs-news__body {
     margin-top: 8px;
     color: var(--tw-muted);
     font-size: 12px;
     line-height: 1.8;
 }
 
-#layers2 .tssggs-news__body p + p {
+#mod-root .tssggs-news__body p + p {
     margin-top: 8px;
 }
 
 /* ---- support ---- */
 
-#layers2 .tssggs-support__row {
+#mod-root .tssggs-support__row {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -430,7 +430,7 @@
     padding: 20px;
 }
 
-#layers2 .tssggs-support__icon {
+#mod-root .tssggs-support__icon {
     display: grid;
     place-items: center;
     flex-shrink: 0;
@@ -442,23 +442,23 @@
     font-size: 20px;
 }
 
-#layers2 .tssggs-support__text {
+#mod-root .tssggs-support__text {
     flex: 1;
     min-width: 160px;
 }
 
-#layers2 .tssggs-support__text h3 {
+#mod-root .tssggs-support__text h3 {
     font-size: 15px;
     font-weight: 600;
 }
 
-#layers2 .tssggs-support__text p {
+#mod-root .tssggs-support__text p {
     margin-top: 4px;
     color: var(--tw-muted);
     font-size: 12px;
 }
 
-#layers2 .tssggs-support__actions {
+#mod-root .tssggs-support__actions {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
@@ -466,13 +466,13 @@
 
 /* ---- system health ---- */
 
-#layers2 .tssggs-tasks {
+#mod-root .tssggs-tasks {
     margin: 0;
     padding: 0;
     list-style: none;
 }
 
-#layers2 .tssggs-tasks li {
+#mod-root .tssggs-tasks li {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -480,27 +480,27 @@
     font-size: 12px;
 }
 
-#layers2 .tssggs-tasks li + li {
+#mod-root .tssggs-tasks li + li {
     margin-top: 12px;
 }
 
-#layers2 .tssggs-tasks__name {
+#mod-root .tssggs-tasks__name {
     min-width: 0;
     overflow-wrap: anywhere;
 }
 
-#layers2 .tssggs-tasks li > span:last-child:not(.tssggs-tasks__name) {
+#mod-root .tssggs-tasks li > span:last-child:not(.tssggs-tasks__name) {
     display: inline-flex;
     flex-shrink: 0;
     align-items: center;
     gap: 4px;
 }
 
-#layers2 .tssggs-tasks .is-ok   { color: var(--tw-primary); }
-#layers2 .tssggs-tasks .is-bad  { color: var(--tw-danger); }
-#layers2 .tssggs-tasks .is-warn { color: var(--tw-warning); }
+#mod-root .tssggs-tasks .is-ok   { color: var(--tw-primary); }
+#mod-root .tssggs-tasks .is-bad  { color: var(--tw-danger); }
+#mod-root .tssggs-tasks .is-warn { color: var(--tw-warning); }
 
-#layers2 .tssggs-tasks li.tssggs-tasks__error {
+#mod-root .tssggs-tasks li.tssggs-tasks__error {
     margin-top: 4px;
     color: var(--tw-warning);
     font-size: 11px;
@@ -509,32 +509,32 @@
 
 /* ---- migration ---- */
 
-#layers2 .tssggs-rows {
+#mod-root .tssggs-rows {
     margin: 16px 0 0;
 }
 
-#layers2 .tssggs-rows > div {
+#mod-root .tssggs-rows > div {
     display: flex;
     justify-content: space-between;
     gap: 8px;
     font-size: 12px;
 }
 
-#layers2 .tssggs-rows > div + div {
+#mod-root .tssggs-rows > div + div {
     margin-top: 8px;
 }
 
-#layers2 .tssggs-rows dt {
+#mod-root .tssggs-rows dt {
     font-weight: 400;
 }
 
-#layers2 .tssggs-rows dd {
+#mod-root .tssggs-rows dd {
     margin: 0;
     font-weight: 500;
     text-align: right;
 }
 
-#layers2 .tssggs-rows dd small {
+#mod-root .tssggs-rows dd small {
     display: block;
     color: var(--tw-muted);
     font-size: 11px;
@@ -543,17 +543,17 @@
 
 /* ---- partner manager ---- */
 
-#layers2 .tssggs-person {
+#mod-root .tssggs-person {
     display: flex;
     align-items: center;
     gap: 12px;
 }
 
-#layers2 .tssggs-person + .tssggs-person {
+#mod-root .tssggs-person + .tssggs-person {
     margin-top: 16px;
 }
 
-#layers2 .tssggs-person__avatar {
+#mod-root .tssggs-person__avatar {
     position: relative;
     display: grid;
     place-items: center;
@@ -567,7 +567,7 @@
     overflow: hidden;
 }
 
-#layers2 .tssggs-person__avatar img {
+#mod-root .tssggs-person__avatar img {
     position: absolute;
     inset: 0;
     width: 100%;
@@ -575,19 +575,19 @@
     object-fit: cover;
 }
 
-#layers2 .tssggs-person__name {
+#mod-root .tssggs-person__name {
     font-size: 14px;
     font-weight: 500;
 }
 
-#layers2 .tssggs-person a {
+#mod-root .tssggs-person a {
     color: var(--tw-primary);
     font-size: 12px;
 }
 
 /* ---- footer ---- */
 
-#layers2 .tssggs-dash__foot {
+#mod-root .tssggs-dash__foot {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -598,14 +598,14 @@
     font-size: 11px;
 }
 
-#layers2 .tssggs-dash__foot span {
+#mod-root .tssggs-dash__foot span {
     display: inline-flex;
     align-items: center;
     gap: 6px;
 }
 
 /* ---- next steps guide + documentation links ---- */
-#layers2 .tssggs-steps {
+#mod-root .tssggs-steps {
     margin-bottom: 20px;
     padding: 20px;
     border: 1px solid rgba(0, 113, 54, .25);
@@ -613,7 +613,7 @@
     background: linear-gradient(135deg, rgba(0, 113, 54, .09), rgba(0, 113, 54, .03) 60%, transparent);
 }
 
-#layers2 .tssggs-steps__head {
+#mod-root .tssggs-steps__head {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -622,7 +622,7 @@
     margin-bottom: 16px;
 }
 
-#layers2 .tssggs-steps__head h3 {
+#mod-root .tssggs-steps__head h3 {
     display: flex;
     align-items: center;
     gap: 10px;
@@ -631,7 +631,7 @@
     font-weight: 600;
 }
 
-#layers2 .tssggs-steps__badge {
+#mod-root .tssggs-steps__badge {
     display: grid;
     place-items: center;
     width: 36px;
@@ -642,7 +642,7 @@
     font-size: 18px;
 }
 
-#layers2 .tssggs-steps__chip {
+#mod-root .tssggs-steps__chip {
     padding: 3px 12px;
     border: 1px solid rgba(0, 113, 54, .3);
     border-radius: 999px;
@@ -654,13 +654,13 @@
     text-transform: uppercase;
 }
 
-#layers2 .tssggs-steps__grid {
+#mod-root .tssggs-steps__grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
     gap: 12px;
 }
 
-#layers2 .tssggs-step {
+#mod-root .tssggs-step {
     display: flex;
     align-items: flex-start;
     gap: 12px;
@@ -672,11 +672,11 @@
     text-decoration: none;
 }
 
-#layers2 .tssggs-step:hover {
+#mod-root .tssggs-step:hover {
     border-color: var(--tw-primary);
 }
 
-#layers2 .tssggs-step__num {
+#mod-root .tssggs-step__num {
     display: grid;
     flex: 0 0 auto;
     place-items: center;
@@ -689,28 +689,28 @@
     font-weight: 600;
 }
 
-#layers2 .tssggs-step.is-done .tssggs-step__num {
+#mod-root .tssggs-step.is-done .tssggs-step__num {
     background: var(--tw-primary-soft);
     color: var(--tw-primary);
 }
 
-#layers2 .tssggs-step__text {
+#mod-root .tssggs-step__text {
     flex: 1;
     min-width: 0;
 }
 
-#layers2 .tssggs-step__text strong {
+#mod-root .tssggs-step__text strong {
     display: flex;
     align-items: center;
     gap: 6px;
     font-size: 14px;
 }
 
-#layers2 .tssggs-step__text strong .mdi {
+#mod-root .tssggs-step__text strong .mdi {
     color: var(--tw-primary);
 }
 
-#layers2 .tssggs-step__text small {
+#mod-root .tssggs-step__text small {
     display: block;
     margin-top: 4px;
     color: var(--tw-muted);
@@ -718,11 +718,11 @@
     line-height: 1.5;
 }
 
-#layers2 .tssggs-step > .mdi {
+#mod-root .tssggs-step > .mdi {
     color: var(--tw-muted);
 }
 
-#layers2 .tssggs-steps__note {
+#mod-root .tssggs-steps__note {
     display: flex;
     align-items: center;
     gap: 8px;
@@ -734,11 +734,11 @@
     font-size: 12px;
 }
 
-#layers2 .tssggs-steps__note .mdi {
+#mod-root .tssggs-steps__note .mdi {
     color: var(--tw-primary);
 }
 
-#layers2 .tssggs-dcard__links {
+#mod-root .tssggs-dcard__links {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;

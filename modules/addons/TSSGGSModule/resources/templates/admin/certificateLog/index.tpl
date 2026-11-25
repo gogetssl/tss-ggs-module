@@ -34,10 +34,10 @@
             {/foreach}
         </select>
         <input class="form-control" style="width:260px" name="search" placeholder="{t key='search'}" value="{$filter.search}">
-        <button class="lu-btn lu-btn--primary" type="submit">{t key='filter'}</button>
+        <button class="mod-btn mod-btn--primary" type="submit">{t key='filter'}</button>
         <span style="flex:1"></span>
         {foreach ['30', 'all'] as $older}
-            <button class="lu-btn lu-btn--default" type="button"
+            <button class="mod-btn mod-btn--default" type="button"
                     hx-post="{url action='clear'}" hx-vals='{ "older": "{$older}" }' hx-target="#tssggs-log-list"
                     hx-confirm="{t key="confirm_clear_$older"}">{t key="clear_$older"}</button>
         {/foreach}

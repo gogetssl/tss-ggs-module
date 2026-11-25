@@ -1,0 +1,315 @@
+/*
+ * The module's admin pages, part 1 of 3: colours, the defaults of plain elements inside #mod-root, text helpers,
+ * spacing helpers and the column grid. Everything is scoped to #mod-root (resources/templates/admin/layout.tpl),
+ * so nothing of it reaches the rest of the WHMCS admin area.
+ *
+ * Parts 2 and 3: ui-controls.css (buttons, form fields, marks) and ui-layout.css (frame, menus, boxes, lists, dialogs).
+ * The files after them (shell.css, theme.css, ...) hold the look of single pages and refine what is set here.
+ */
+
+#mod-root {
+    --mod-ink: #505459;
+    --mod-ink-strong: #45484c;
+    --mod-ink-dim: #737880;
+    --mod-paper: #fff;
+    --mod-line: #e9ebf0;
+    --mod-line-soft: #edeff2;
+    --mod-line-strong: #dadde6;
+    --mod-blue: #2368ad;
+    --mod-blue-light: #2e82d5;
+    --mod-blue-dark: #1a4f83;
+    --mod-green: #017638;
+    --mod-green-light: #01ad53;
+    --mod-leaf: #62ca5f;
+    --mod-orange: #ff8f33;
+    --mod-red: #f55656;
+    --mod-sky: #50bfff;
+
+    margin: 0;
+    padding: 0;
+    color: var(--mod-ink);
+    font-family: Roboto, sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 20px;
+}
+
+/* the page may be shorter than the window: the admin area's background still fills it */
+html,
+body { min-height: 100vh; }
+
+/* ---------- plain elements ---------- */
+
+#mod-root * { box-sizing: border-box; }
+#mod-root ::before,
+#mod-root ::after { box-sizing: inherit; }
+
+#mod-root article,
+#mod-root details,
+#mod-root nav,
+#mod-root section,
+#mod-root summary { display: block; }
+#mod-root template { display: none; }
+#mod-root [hidden] { display: none !important; }
+
+#mod-root a {
+    background-color: transparent;
+    color: var(--mod-blue);
+    text-decoration: none;
+    transition: color .3s;
+}
+#mod-root a:hover { color: var(--mod-blue-light); outline-width: 0; }
+#mod-root a:focus,
+#mod-root a:active { color: var(--mod-blue-dark); }
+#mod-root a:active { outline-width: 0; }
+#mod-root a:not([href]):not([tabindex]),
+#mod-root a:not([href]):not([tabindex]):hover,
+#mod-root a:not([href]):not([tabindex]):focus { text-decoration: none; }
+#mod-root a:not([href]):not([tabindex]):focus { outline: none; }
+#mod-root p a { color: var(--mod-blue); text-decoration: underline; }
+
+#mod-root b,
+#mod-root strong { font-weight: 500; }
+#mod-root small { font-size: 80%; }
+
+#mod-root h1,
+#mod-root h2,
+#mod-root h3,
+#mod-root h4,
+#mod-root h5,
+#mod-root h6 { color: var(--mod-ink-strong); }
+#mod-root h1 { margin: 0 0 24px; font-size: 42px; font-weight: 300; line-height: 52px; }
+#mod-root h2 { margin: 0 0 24px; font-size: 38px; font-weight: 300; line-height: 48px; }
+#mod-root h3 { margin: 0 0 15px; font-size: 32px; font-weight: 300; line-height: 42px; }
+#mod-root h4 { margin: 0 0 16px; font-size: 24px; font-weight: 400; line-height: 34px; }
+#mod-root h5 { margin: 0 0 16px; font-size: 18px; font-weight: 500; line-height: 28px; }
+#mod-root h6 { margin: 0 0 16px; font-size: 16px; font-weight: 500; line-height: 22px; }
+@media (max-width: 1011px) {
+    #mod-root h2 { line-height: 1.26316; }
+    #mod-root h3 { font-size: 24px; line-height: 1.41667; }
+    #mod-root h4 { line-height: 1.41667; }
+    #mod-root h5 { line-height: 1.55556; }
+    #mod-root h6 { line-height: 1.375; }
+}
+@media (max-width: 751px) {
+    #mod-root h1 { font-size: 28px; line-height: 1.28571; }
+    #mod-root h2 { font-size: 26px; line-height: 1.30769; }
+    #mod-root h3 { line-height: 1.08333; }
+    #mod-root h4 { font-size: 18px; line-height: 1.33333; }
+    #mod-root h5 { font-size: 16px; line-height: 1.375; }
+    #mod-root h6 { font-size: 14px; line-height: 1.57143; }
+}
+#mod-root * + h1 { margin-top: 32px; }
+#mod-root * + h2,
+#mod-root * + h3,
+#mod-root * + h4,
+#mod-root * + h5,
+#mod-root * + h6 { margin-top: 24px; }
+
+#mod-root p { margin-top: 0; margin-bottom: 1rem; }
+#mod-root ol,
+#mod-root dl { margin-top: 0; margin-bottom: 1rem; }
+#mod-root ul { margin-top: 0; margin-bottom: 16px; padding: 0; list-style: none; }
+#mod-root ul ul { margin-bottom: 0; }
+#mod-root dd { margin-bottom: .5rem; margin-left: 0; }
+
+#mod-root hr {
+    box-sizing: content-box;
+    height: 0;
+    margin: 30px 0;
+    padding: 0;
+    overflow: visible;
+    border: 0;
+    border-bottom: 1px solid var(--mod-line);
+}
+#mod-root svg:not(:root) { overflow: hidden; }
+
+#mod-root table { border-collapse: collapse; }
+#mod-root th { text-align: left; }
+/* a cell is as wide as its content needs; the list's table (ui-layout.css) spreads the columns */
+#mod-root th,
+#mod-root td,
+#mod-root td > span { width: max-content !important; }
+
+#mod-root pre { white-space: pre-wrap; overflow-wrap: break-word; }
+#mod-root code {
+    padding: .25em .5em;
+    background-color: whitesmoke;
+    color: #ff3860;
+    font-family: monospace, monospace;
+    font-size: .875em;
+    font-weight: normal;
+}
+
+/* ---------- form elements ---------- */
+
+#mod-root button,
+#mod-root input,
+#mod-root optgroup,
+#mod-root select,
+#mod-root textarea { margin: 0; font: inherit; line-height: inherit; }
+#mod-root optgroup { font-weight: bold; }
+#mod-root button,
+#mod-root input { overflow: visible; }
+#mod-root button,
+#mod-root select { text-transform: none; }
+#mod-root button,
+#mod-root [type="submit"] { -webkit-appearance: button; appearance: button; }
+#mod-root button:focus { outline: 5px auto -webkit-focus-ring-color; }
+#mod-root textarea { overflow: auto; resize: vertical; }
+#mod-root [type="checkbox"],
+#mod-root [type="radio"] { box-sizing: border-box; padding: 0; }
+#mod-root [type="number"]::-webkit-inner-spin-button,
+#mod-root [type="number"]::-webkit-outer-spin-button { height: auto; }
+#mod-root input[type="date"] { -webkit-appearance: listbox; appearance: listbox; }
+#mod-root ::-webkit-input-placeholder { opacity: .54; color: inherit; }
+#mod-root ::-webkit-file-upload-button { font: inherit; -webkit-appearance: button; appearance: button; }
+#mod-root label { display: inline-block; margin-bottom: .5rem; }
+#mod-root a,
+#mod-root button,
+#mod-root input,
+#mod-root label,
+#mod-root select,
+#mod-root summary,
+#mod-root textarea { touch-action: manipulation; }
+
+/* ---------- states ---------- */
+
+#mod-root .hidden { display: none !important; }
+#mod-root .disabled,
+#mod-root :disabled,
+#mod-root [disabled] { opacity: .5; cursor: not-allowed; pointer-events: none; }
+
+/* ---------- text ---------- */
+
+#mod-root .mod-text-xl,
+#mod-root .mod-text-lg,
+#mod-root .mod-text-md { color: var(--mod-ink-strong); }
+#mod-root .mod-text-xl { font-size: 32px !important; font-weight: 300 !important; line-height: 42px !important; }
+#mod-root .mod-text-lg { font-size: 24px !important; font-weight: 400 !important; line-height: 34px !important; }
+#mod-root .mod-text-md { font-size: 16px !important; font-weight: 500 !important; line-height: 22px !important; }
+#mod-root .mod-text-xl small,
+#mod-root .mod-text-lg small { font-size: 50%; }
+#mod-root .mod-text-xl .mod-text-caption { display: block; color: var(--mod-ink-dim); font-size: 13px; line-height: 16px; }
+#mod-root .mod-text-lg .mod-text-caption,
+#mod-root .mod-text-md .mod-text-caption { display: block; color: var(--mod-ink-dim); font-size: 11px; line-height: 16px; }
+
+.mod-text-dim { color: #737880; }
+.mod-text-white { color: #fff !important; }
+.mod-text-warning { color: #ff8f33 !important; }
+.mod-text-regular { font-weight: 400 !important; }
+.mod-text-cut { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* a JSON document shown as text (the log's details) */
+#mod-root pre.mod-code {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    padding: 16px;
+    overflow: auto;
+    border: none;
+    background: #edeff2;
+    color: var(--mod-ink);
+    font-family: monospace, monospace;
+    font-size: 13px;
+}
+#mod-root pre.mod-code .string { color: green; }
+#mod-root pre.mod-code .number { color: darkorange; }
+#mod-root pre.mod-code .boolean { color: blue; }
+#mod-root pre.mod-code .null { color: magenta; }
+#mod-root pre.mod-code .key { color: red; }
+#mod-root pre.mod-code.tssggs-json {
+    max-height: 65vh;
+    padding: 18px 20px;
+    overflow: auto;
+    overflow-x: hidden;
+    border: 1px solid #1e293b;
+    border-radius: 8px;
+    background: #0f172a;
+    color: #64748b;
+    font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+    font-size: 13px;
+    line-height: 1.65;
+    white-space: pre-wrap;
+    word-break: normal;
+    overflow-wrap: anywhere;
+}
+#mod-root pre.mod-code.tssggs-json span { font-family: inherit; font-size: inherit; word-break: normal; overflow-wrap: anywhere; }
+#mod-root pre.mod-code.tssggs-json .key { color: #7dd3fc; }
+#mod-root pre.mod-code.tssggs-json .punct { color: #64748b; }
+#mod-root pre.mod-code.tssggs-json .string { color: #a7f3d0; }
+#mod-root pre.mod-code.tssggs-json .string.alert {
+    padding: 1px 3px;
+    border-radius: 3px;
+    background: rgba(248, 113, 113, .14);
+    color: #fca5a5;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+}
+#mod-root pre.mod-code.tssggs-json .number { color: #fcd34d; }
+#mod-root pre.mod-code.tssggs-json .boolean { color: #c4b5fd; }
+#mod-root pre.mod-code.tssggs-json .null { color: #94a3b8; font-style: italic; }
+
+/* ---------- spacing and display helpers ---------- */
+
+#mod-root .mod-w-full { width: 100%; }
+.mod-gap-b { margin-bottom: 16px !important; }
+.mod-gap-r { margin-right: 8px !important; }
+.mod-pad { padding: 16px !important; }
+.mod-pad-r0 { padding-right: 0 !important; }
+.mod-pad-l0 { padding-left: 0 !important; }
+.mod-flex { display: flex !important; }
+.mod-flex-inline { display: inline-flex !important; }
+.mod-flex-center { justify-content: center !important; }
+.mod-grid { display: grid !important; }
+#mod-root .mod-left { justify-content: start; margin-right: auto !important; }
+
+/* a square that holds one icon */
+.mod-ico-16 {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    min-width: 16px;
+    height: 16px;
+    color: #737880;
+    font-size: 16px;
+    line-height: 1;
+}
+
+/* ---------- column grid: a row of twelve parts, columns side by side from 752px ---------- */
+
+.mod-wrap,
+.mod-wrap--wide { margin-right: auto; margin-left: auto; }
+@media (min-width: 514px) { .mod-wrap { width: 496px; max-width: 100%; } }
+@media (min-width: 752px) { .mod-wrap { width: 716px; max-width: 100%; } }
+@media (min-width: 1012px) { .mod-wrap { width: 972px; max-width: 100%; } }
+@media (min-width: 1232px) { .mod-wrap { width: 1200px; max-width: 100%; } }
+
+.mod-row { display: flex; flex: 1 1 100%; flex-wrap: wrap; margin-right: -8px; margin-left: -8px; }
+.mod-col,
+.mod-col-2,
+.mod-col-6,
+.mod-col-10,
+.mod-col-12 { position: relative; width: 100%; min-height: 1px; padding-right: 8px; padding-left: 8px; }
+@media (min-width: 752px) {
+    .mod-col { flex-basis: 0; flex-grow: 1; max-width: 100%; }
+    .mod-col-2 { flex: 0 0 16.66667%; max-width: 16.66667%; }
+    .mod-col-6 { flex: 0 0 50%; max-width: 50%; }
+    .mod-col-10 { flex: 0 0 83.33333%; max-width: 83.33333%; }
+    .mod-col-12 { flex: 0 0 100%; max-width: 100%; }
+}
+
+/* ---------- small animations ---------- */
+
+@keyframes mod-rise {
+    from { opacity: 0; transform: translate3d(0, 10px, 0); }
+    to { opacity: 1; transform: none; }
+}
+@keyframes mod-turn {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(359deg); }
+}
+
+/* the two fields of "certificate issued for" (the product's settings) */
+.tssggs-issued-for { display: flex; flex-wrap: wrap; gap: 0 16px; }
+.tssggs-issued-for__field { flex: 1 1 220px; max-width: 320px; }

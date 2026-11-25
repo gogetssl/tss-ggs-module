@@ -15,7 +15,7 @@
     }
 
     function saveButton(bar) {
-        return bar.querySelector('.lu-btn--success');
+        return bar.querySelector('.mod-btn--success');
     }
 
     function render(bar, state) {

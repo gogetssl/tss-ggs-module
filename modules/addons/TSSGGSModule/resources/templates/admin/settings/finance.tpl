@@ -18,7 +18,7 @@
     {include file='admin/settings/field.tpl' type='number' name='profitMargin' class='tssggs-percent' min=0 max=1000}
     {if $extra.baseCurrency !== ''}
         {* the amount field shows the currency after the number: USD comes from settings.css, another base currency from here *}
-        <style>#layers2 .tssggs-settings form .tssggs-sec .lu-form-group:has(> .tssggs-money)::after {ldelim} content: "{$extra.baseCurrency}"; {rdelim}</style>
+        <style>#mod-root .tssggs-settings form .tssggs-sec .mod-field:has(> .tssggs-money)::after {ldelim} content: "{$extra.baseCurrency}"; {rdelim}</style>
     {/if}
     {include file='admin/settings/field.tpl' type='text' name='minProfit' class='tssggs-money'}
     {include file='admin/settings/field.tpl' type='number' name='termMarginStep' class='tssggs-percent' min=0 max=100}
