@@ -1,3 +1,23 @@
+2.0.1 (2026-11-25)
+Setup wizard and migration fixes
+- Setup wizard, API connection step: only the account of the module's own
+  vendor is tested and saved there. With a second vendor connected, the
+  step could refuse to continue and had no fields to correct it.
+- Statistics: amounts of clients are converted from the client's own
+  currency. The conversion did not get the client's currency before.
+- Migration rollback also removes what the module noted for a service
+  after the migration (for example an incomplete order).
+- Setup wizard: the page heading shows the same step number as the
+  progress line; finishing the wizard after a completed migration opens
+  the dashboard.
+- Migration page: a rolled-back migration no longer shows the check
+  result and the legacy module switch-off; "Reload to see the result"
+  appears only when a migration ended on the open page; the questions
+  before start, rollback and deleting backups are titled "Legacy module
+  migration"; clearer wording of the check line.
+- No PHP warnings in the WHMCS error log from the order status sync of a
+  module that is not connected yet, and from the update work folder.
+
 2.0.0 (2026-11-25)
 New admin interface base, third-party framework removed
 - The admin area runs on the module's own small base (plain Smarty
