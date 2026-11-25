@@ -9,6 +9,7 @@ use ModulesGarden\TSSGGSModule\Components\Text\Text;
 use ModulesGarden\TSSGGSModule\Components\Widget\Widget;
 use ModulesGarden\TSSGGSModule\Core\Contracts\Components\AjaxComponentInterface;
 use ModulesGarden\TSSGGSModule\Core\Translation\TranslatorTrait;
+use ModulesGarden\TSSGGSModule\App\UI\Shared\Html;
 
 class Step4 extends Widget implements AjaxComponentInterface
 {
@@ -24,7 +25,7 @@ class Step4 extends Widget implements AjaxComponentInterface
             $names = array_map(function($s) { return $s === 'ggs' ? 'GoGetSSL' : 'TheSSLStore'; }, $filled);
             $note  = new Text();
             $note->setCss('tssggs-html');
-            $note->setText('<div class="tssggs-note is-ok">' . htmlspecialchars($this->translate('credentials_prefilled', ['modules' => implode(', ', $names)])) . '</div>');
+            $note->setText(Html::notice(htmlspecialchars($this->translate('credentials_prefilled', ['modules' => implode(', ', $names)])), 'ok'));
             $this->addElement($note);
         }
 

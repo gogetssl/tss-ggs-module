@@ -72,10 +72,7 @@ class EmailCatalog
         $defaults = [];
         foreach(EmailTemplates::TEMPLATE_NAMES as $name)
         {
-            $defaults[constant(EmailTemplates::class . '::' . $name . '_TEMPLATE')] = [
-                constant(EmailTemplates::class . '::' . $name . '_SUBJECT'),
-                constant(EmailTemplates::class . '::' . $name . '_MESSAGE'),
-            ];
+            $defaults[constant(EmailTemplates::class . '::' . $name . '_TEMPLATE')] = EmailTemplates::defaults($name);
         }
         foreach(AutoInstallEmailTemplates::definitions() as $key => $definition)
         {

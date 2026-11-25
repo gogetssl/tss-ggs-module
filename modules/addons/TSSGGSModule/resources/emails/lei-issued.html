@@ -1,0 +1,13 @@
+<!-- subject: Your LEI code - {$lei_legal_name} -->
+<p>Dear {$client_name},</p>
+                             <p>
+                                {if $lei_is_renewal}The LEI code of {$lei_legal_name} is renewed.{else}The LEI code of
+                                {$lei_legal_name} is issued.{/if}
+                             </p>
+                             <p>LEI: <strong>{$lei_number}</strong><br>Registered until: {$lei_valid_till}</p>
+                             <p>
+                                The record is public in the global LEI index (GLEIF) and can be checked at
+                                https://search.gleif.org/#/record/{$lei_number}
+                             </p>
+                             <p>Order details: {$order_url}</p>
+                             <p>{$signature}</p>

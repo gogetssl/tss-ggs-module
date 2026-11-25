@@ -14,6 +14,7 @@ use ModulesGarden\TSSGGSModule\Components\Text\Text;
 use ModulesGarden\TSSGGSModule\Components\Widget\Widget;
 use ModulesGarden\TSSGGSModule\Core\Contracts\Components\AdminAreaInterface;
 use ModulesGarden\TSSGGSModule\Core\Translation\TranslatorTrait;
+use ModulesGarden\TSSGGSModule\App\UI\Shared\Html;
 
 /**
  * Admin page "Migration": legacy modules found, dry-run summary, start / progress / result, backups and rollback.
@@ -39,7 +40,7 @@ class MigrationContainer extends Container implements AdminAreaInterface
 
         if(!empty($_SESSION['tssggs_migration_error']))
         {
-            $this->addElement($this->html('<div class="tssggs-note is-bad">' . htmlspecialchars($_SESSION['tssggs_migration_error']) . '</div>'));
+            $this->addElement($this->html(Html::notice(htmlspecialchars($_SESSION['tssggs_migration_error']), 'bad')));
             unset($_SESSION['tssggs_migration_error']);
         }
 
@@ -107,7 +108,7 @@ class MigrationContainer extends Container implements AdminAreaInterface
         if($latest && $latest['status'] === Store::RUN_COMPLETED)
         {
             $this->addElement($this->runWidget($latest, false));
-            $this->addElement($this->html('<div class="tssggs-note is-ok">' . htmlspecialchars($this->t('wizard_done')) . '</div>'
+            $this->addElement($this->html(Html::notice(htmlspecialchars($this->t('wizard_done')), 'ok')
                 . '<div class="tssggs-actions"><a class="lu-btn lu-btn--success" href="' . htmlspecialchars($next) . '">' . htmlspecialchars($this->t('wizard_continue')) . '</a></div>'));
 
             return;
@@ -156,7 +157,7 @@ class MigrationContainer extends Container implements AdminAreaInterface
         $unsupported = array_filter((array)$c['unsupported']);
         if($unsupported)
         {
-            $html .= '<div class="tssggs-note is-warn">' . htmlspecialchars($this->t('unsupported_found')) . ' ' . htmlspecialchars(implode(', ', array_map(function($k, $v) { return $v . ' ' . $k; }, array_keys($unsupported), $unsupported))) . '</div>';
+            $html .= Html::notice(htmlspecialchars($this->t('unsupported_found')) . ' ' . htmlspecialchars(implode(', ', array_map(function($k, $v) { return $v . ' ' . $k; }, array_keys($unsupported), $unsupported))), 'warn');
         }
         if($c['other_ssl_modules'])
         {
@@ -169,7 +170,7 @@ class MigrationContainer extends Container implements AdminAreaInterface
         if((int)$c['products']['total'] === 0 && array_sum(array_map('intval', (array)$c['services'])) === 0)
         {
             // everything was moved by an earlier run
-            $html .= '<div class="tssggs-note is-ok">' . htmlspecialchars($this->t('nothing_left')) . '</div>';
+            $html .= Html::notice(htmlspecialchars($this->t('nothing_left')), 'ok');
         }
         elseif($info['support']['supported'])
         {
@@ -205,7 +206,7 @@ class MigrationContainer extends Container implements AdminAreaInterface
         }
         else
         {
-            $html .= '<div class="tssggs-note is-bad">' . htmlspecialchars($this->t('unsupported_version_hint')) . '</div>';
+            $html .= Html::notice(htmlspecialchars($this->t('unsupported_version_hint')), 'bad');
         }
 
         $widget->addElement($this->html($html));
@@ -244,7 +245,7 @@ class MigrationContainer extends Container implements AdminAreaInterface
         $html = '';
         if($status['stale'])
         {
-            $html .= '<div class="tssggs-note is-warn">' . htmlspecialchars($this->t('run_stale')) . '</div>';
+            $html .= Html::notice(htmlspecialchars($this->t('run_stale')), 'warn');
         }
         $summary = $run['summary'] ?? [];
         if(!empty($summary['verify']))
@@ -278,7 +279,7 @@ class MigrationContainer extends Container implements AdminAreaInterface
         $runBase = 'addonmodules.php?module=TSSGGSModule&mg-page=migration&id=' . (int)$run['id'] . '&token=' . rawurlencode($token);
         if(!empty($summary['auto_rollback']))
         {
-            $html .= '<div class="tssggs-note is-bad">' . htmlspecialchars($this->t('auto_rollback', ['reason' => (string)$summary['auto_rollback']['reason']])) . '</div>';
+            $html .= Html::notice(htmlspecialchars($this->t('auto_rollback', ['reason' => (string)$summary['auto_rollback']['reason']])), 'bad');
         }
         $html .= '<div class="tssggs-actions">';
         if(!empty($summary['auto_rollback']) || $run['status'] === Store::RUN_FAILED)

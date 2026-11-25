@@ -10,6 +10,7 @@ use ModulesGarden\TSSGGSModule\Components\Container\Container;
 use ModulesGarden\TSSGGSModule\Components\Text\Text;
 use ModulesGarden\TSSGGSModule\Core\Contracts\Components\AdminAreaInterface;
 use ModulesGarden\TSSGGSModule\Core\Translation\TranslatorTrait;
+use ModulesGarden\TSSGGSModule\App\UI\Shared\Html;
 
 /**
  * Admin page "Emails": the module's client e-mails by event, edited per language where WHMCS keeps them.
@@ -42,7 +43,7 @@ class EmailsContainer extends Container implements AdminAreaInterface
     {
         if(!EmailsController::can(EmailsController::VIEW))
         {
-            return '<div class="tssggs-note is-bad">' . $this->e($this->t('no_permission', ['permission' => EmailsController::VIEW])) . '</div>';
+            return Html::notice($this->e($this->t('no_permission', ['permission' => EmailsController::VIEW])), 'bad');
         }
 
         $session = $_SESSION[EmailsController::SESSION] ?? [];
@@ -57,11 +58,11 @@ class EmailsContainer extends Container implements AdminAreaInterface
         $html = '';
         if(!empty($session['error']))
         {
-            $html .= '<div class="tssggs-note is-bad">' . $this->e($session['error']) . '</div>';
+            $html .= Html::notice($this->e($session['error']), 'bad');
         }
         if(!empty($session['notice']))
         {
-            $html .= '<div class="tssggs-note is-ok">' . $this->e($this->t('notice_' . $session['notice'], ['count' => (int)($session['count'] ?? 0)])) . '</div>';
+            $html .= Html::notice($this->e($this->t('notice_' . $session['notice'], ['count' => (int)($session['count'] ?? 0)])), 'ok');
         }
 
         return $html . (\ModulesGarden\TSSGGSModule\App\Libs\Support\GeneralSettings::enabled('hideInfoMessages') ? '' : $this->explanation())
@@ -128,7 +129,7 @@ class EmailsContainer extends Container implements AdminAreaInterface
 
         if($language !== '' && !$data['own'])
         {
-            $html .= '<div class="tssggs-note is-warn">' . $this->e($this->t('language_new', ['language' => ucfirst($language)])) . '</div>';
+            $html .= Html::notice($this->e($this->t('language_new', ['language' => ucfirst($language)])), 'warn');
         }
         elseif($language === '')
         {
@@ -255,7 +256,7 @@ class EmailsContainer extends Container implements AdminAreaInterface
 
     protected function e($value): string
     {
-        return htmlspecialchars((string)$value, ENT_QUOTES);
+        return Html::e($value);
     }
 
     protected function t(string $key, array $replace = []): string

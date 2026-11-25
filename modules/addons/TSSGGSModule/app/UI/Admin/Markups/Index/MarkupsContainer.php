@@ -10,6 +10,7 @@ use ModulesGarden\TSSGGSModule\Components\Text\Text;
 use ModulesGarden\TSSGGSModule\Core\Contracts\Components\AdminAreaInterface;
 use ModulesGarden\TSSGGSModule\Core\Translation\TranslatorTrait;
 use WHMCS\Database\Capsule;
+use ModulesGarden\TSSGGSModule\App\UI\Shared\Html;
 
 /**
  * Admin page "Markups": the % the reseller adds to the price per client and product
@@ -30,11 +31,11 @@ class MarkupsContainer extends Container implements AdminAreaInterface
         $html = '';
         if(!empty($session['error']))
         {
-            $html .= '<div class="tssggs-note is-bad">' . $this->e($session['error']) . '</div>';
+            $html .= Html::notice($this->e($session['error']), 'bad');
         }
         if(!empty($session['notice']))
         {
-            $html .= '<div class="tssggs-note is-ok">' . $this->e($this->t('notice_' . $session['notice'])) . '</div>';
+            $html .= Html::notice($this->e($this->t('notice_' . $session['notice'])), 'ok');
         }
 
         $html .= $this->form($token) . $this->table($token);
@@ -95,7 +96,7 @@ class MarkupsContainer extends Container implements AdminAreaInterface
 
     protected function e($value): string
     {
-        return htmlspecialchars((string)$value, ENT_QUOTES);
+        return Html::e($value);
     }
 
     protected function t(string $key, array $replace = []): string

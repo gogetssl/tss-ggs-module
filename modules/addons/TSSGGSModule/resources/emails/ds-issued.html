@@ -1,0 +1,10 @@
+<!-- subject: Your document signing certificate is issued - {$ds_organization} -->
+<p>Dear {$client_name},</p>
+                             <p>Your document signing certificate for {$ds_organization} is issued. It is valid until {$ds_valid_till}.</p>
+                             <p>
+                                {if $ds_method == 'ship-token'}The certificate authority ships the hardware token with the
+                                certificate to the shipping address of your order.{else}The certificate authority emails the
+                                administrator instructions to install the certificate on your token.{/if}
+                             </p>
+                             <p>Order details: {$order_url}</p>
+                             <p>{$signature}</p>

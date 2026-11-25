@@ -5,6 +5,7 @@ namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Shared;
 use ModulesGarden\TSSGGSModule\App\Libs\Support\Icons;
 use ModulesGarden\TSSGGSModule\Components\Container\Container;
 use ModulesGarden\TSSGGSModule\Components\Text\Text;
+use ModulesGarden\TSSGGSModule\App\UI\Shared\Html;
 
 /**
  * Dashboard panel: a header (icon tile, title, aside), then HTML blocks and, where needed, framework components
@@ -60,7 +61,7 @@ abstract class Card extends Container
 
     public static function e($value): string
     {
-        return htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8');
+        return Html::e($value);
     }
 
     /** Outline button link with a trailing arrow */

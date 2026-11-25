@@ -1,0 +1,13 @@
+<!-- subject: Important: your certificate has been revoked - {$service_product_name} -->
+<p>Dear {$client_name},</p>
+                             <p>
+                                Your certificate {$service_product_name}{if $domain} for <strong>{$domain}</strong>{/if}
+                                {if $serial_number}(serial number {$serial_number}){/if} has been revoked by the certificate
+                                authority. It is no longer trusted: browsers and other software show a warning or refuse it.
+                             </p>
+                             <p>
+                                The service has been cancelled. Please contact our support team, so that we can find out why
+                                it was revoked and arrange a replacement.
+                             </p>
+                             <p>Order details: {$order_url}</p>
+                             <p>{$signature}</p>

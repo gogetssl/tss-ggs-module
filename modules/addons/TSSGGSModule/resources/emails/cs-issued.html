@@ -1,0 +1,12 @@
+<!-- subject: Your code signing certificate is issued - {$cs_organization} -->
+<p>Dear {$client_name},</p>
+                                 <p>Your code signing certificate for {$cs_organization} is issued. It is valid until {$cs_valid_till}.</p>
+                                 <p>
+                                    {if $cs_method == 'ship-token'}The certificate authority ships the hardware token with the
+                                    certificate to the shipping address of your order.{elseif $cs_method == 'existing-token'}The
+                                    certificate authority emails the administrator instructions to install the certificate on your
+                                    hardware token.{else}The certificate authority emails the administrator instructions to download
+                                    the certificate for your HSM.{/if}
+                                 </p>
+                                 <p>Order details: {$order_url}</p>
+                                 <p>{$signature}</p>

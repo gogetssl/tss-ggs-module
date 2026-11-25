@@ -8,6 +8,7 @@ use ModulesGarden\TSSGGSModule\Components\Widget\Widget;
 use ModulesGarden\TSSGGSModule\Core\Contracts\Components\AjaxComponentInterface;
 use ModulesGarden\TSSGGSModule\Components\Text\Text;
 use ModulesGarden\TSSGGSModule\Core\Translation\TranslatorTrait;
+use ModulesGarden\TSSGGSModule\App\UI\Shared\Html;
 
 class Step6 extends Widget implements AjaxComponentInterface
 {
@@ -29,7 +30,7 @@ class Step6 extends Widget implements AjaxComponentInterface
         {
             $text = new Text();
             $text->setCss('api_alert');
-            $text->setText('<div class="tssggs-note is-warn">' . $this->translate('migration_pending') . '</div>');
+            $text->setText(Html::notice($this->translate('migration_pending'), 'warn'));
             $this->addElement($text);
         }
 

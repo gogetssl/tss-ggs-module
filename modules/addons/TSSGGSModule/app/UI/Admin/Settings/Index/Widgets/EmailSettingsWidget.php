@@ -7,6 +7,7 @@ use ModulesGarden\TSSGGSModule\App\Libs\Emails\EmailCatalog;
 use ModulesGarden\TSSGGSModule\App\Libs\Emails\EmailManager;
 use ModulesGarden\TSSGGSModule\Components\Text\Text;
 use ModulesGarden\TSSGGSModule\Components\Widget\Widget;
+use ModulesGarden\TSSGGSModule\App\UI\Shared\Html;
 
 /**
  * Settings > Email notifications: every e-mail the module has, whether it is on, one-click enable / disable.
@@ -32,7 +33,7 @@ class EmailSettingsWidget extends Widget
     {
         if(!EmailsController::can(EmailsController::VIEW))
         {
-            return '<div class="tssggs-note is-bad">' . $this->e($this->t('no_permission', ['permission' => EmailsController::VIEW])) . '</div>';
+            return Html::notice($this->e($this->t('no_permission', ['permission' => EmailsController::VIEW])), 'bad');
         }
 
         $session = $_SESSION[EmailsController::SESSION] ?? [];
@@ -40,11 +41,11 @@ class EmailSettingsWidget extends Widget
         $html = '';
         if(!empty($session['error']))
         {
-            $html .= '<div class="tssggs-note is-bad">' . $this->e($session['error']) . '</div>';
+            $html .= Html::notice($this->e($session['error']), 'bad');
         }
         if(!empty($session['notice']))
         {
-            $html .= '<div class="tssggs-note is-ok">' . $this->e($this->t('notice_' . $session['notice'])) . '</div>';
+            $html .= Html::notice($this->e($this->t('notice_' . $session['notice'])), 'ok');
         }
 
         $can   = EmailsController::can(EmailsController::EDIT);
@@ -104,7 +105,7 @@ class EmailSettingsWidget extends Widget
 
     protected function e($value): string
     {
-        return htmlspecialchars((string)$value, ENT_QUOTES);
+        return Html::e($value);
     }
 
     /** texts shared with the Emails page */

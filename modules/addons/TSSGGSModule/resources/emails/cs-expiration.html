@@ -1,0 +1,10 @@
+<!-- subject: Your code signing certificate expires in {$expireDaysLeft} days - {$domain} -->
+<p>Dear {$client_name},</p>
+                                 <p>Your code signing certificate for {$domain} expires in {$expireDaysLeft} days ({$cert_expiry_date}).</p>
+                                 <p>
+                                    To keep signing your software, renew the service. After the renewal is paid you order the next
+                                    certificate in the client area for your existing hardware token or HSM, and the certificate
+                                    authority validates the organization again. Your current certificate stays valid until it expires.
+                                 </p>
+                                 <p>{$order_url}</p>
+                                 <p>{$signature}</p>

@@ -10,6 +10,7 @@ use ModulesGarden\TSSGGSModule\Components\Container\Container;
 use ModulesGarden\TSSGGSModule\Components\Text\Text;
 use ModulesGarden\TSSGGSModule\Core\Contracts\Components\AdminAreaInterface;
 use ModulesGarden\TSSGGSModule\Core\Translation\TranslatorTrait;
+use ModulesGarden\TSSGGSModule\App\UI\Shared\Html;
 
 /**
  * Admin page "Pricing": one editable grid per currency (product + SAN options x 1/2/3 years) with the reseller cost,
@@ -34,7 +35,7 @@ class PricingContainer extends Container implements AdminAreaInterface
         // notes sit right under the page header, the grid in its own card
         $notes = new Text();
         $notes->setCss('tssggs-html tssggs-notes');
-        $notes->setText($this->notices($session) . $this->markupNote() . (\ModulesGarden\TSSGGSModule\App\Libs\Support\GeneralSettings::enabled('hideInfoMessages') ? '' : '<div class="tssggs-note">' . $this->e($this->t('grid_help')) . '</div>'));
+        $notes->setText($this->notices($session) . $this->markupNote() . (\ModulesGarden\TSSGGSModule\App\Libs\Support\GeneralSettings::enabled('hideInfoMessages') ? '' : Html::notice($this->e($this->t('grid_help')))));
         $this->addElement($notes);
         unset($_SESSION[PricingController::SESSION]['notice'], $_SESSION[PricingController::SESSION]['error']);
 
@@ -87,11 +88,11 @@ class PricingContainer extends Container implements AdminAreaInterface
         $html = '';
         if(!empty($session['error']))
         {
-            $html .= '<div class="tssggs-note is-bad">' . $this->e($session['error']) . '</div>';
+            $html .= Html::notice($this->e($session['error']), 'bad');
         }
         foreach((array)($session['notice'] ?? []) as $key => $count)
         {
-            $html .= '<div class="tssggs-note is-ok">' . $this->e($this->t('notice_' . $key, ['count' => (int)$count])) . '</div>';
+            $html .= Html::notice($this->e($this->t('notice_' . $key, ['count' => (int)$count])), 'ok');
         }
 
         return $html;
@@ -236,7 +237,7 @@ class PricingContainer extends Container implements AdminAreaInterface
 
     protected function e($value): string
     {
-        return htmlspecialchars((string)$value, ENT_QUOTES);
+        return Html::e($value);
     }
 
     protected function t(string $key, array $replace = []): string

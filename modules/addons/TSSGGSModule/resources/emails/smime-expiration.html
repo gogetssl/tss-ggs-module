@@ -1,0 +1,10 @@
+<!-- subject: Your S/MIME certificate expires in {$expireDaysLeft} days - {$domain} -->
+<p>Dear {$client_name},</p>
+                                 <p>Your S/MIME certificate for {$domain} expires in {$expireDaysLeft} days ({$cert_expiry_date}).</p>
+                                 <p>
+                                    To keep signing and encrypting your email, renew the service. After the renewal is paid you
+                                    order the next certificate in the client area, and the certificate authority confirms the
+                                    mailbox again. Your current certificate stays valid until it expires.
+                                 </p>
+                                 <p>{$order_url}</p>
+                                 <p>{$signature}</p>

@@ -9,6 +9,7 @@ use ModulesGarden\TSSGGSModule\Components\Text\Text;
 use ModulesGarden\TSSGGSModule\Core\Contracts\Components\AdminAreaInterface;
 use ModulesGarden\TSSGGSModule\Core\Translation\TranslatorTrait;
 use WHMCS\Database\Capsule;
+use ModulesGarden\TSSGGSModule\App\UI\Shared\Html;
 
 /**
  * Admin page "Certificate Log": filterable list of the certificate events (the AutoInstallLogs table)
@@ -54,7 +55,7 @@ class CertificateLogContainer extends Container implements AdminAreaInterface
         $html = '';
         if(isset($_SESSION['tssggs_log_notice']))
         {
-            $html .= '<div class="tssggs-note is-ok">' . $this->e($this->t('cleared', ['count' => (int)$_SESSION['tssggs_log_notice']])) . '</div>';
+            $html .= Html::notice($this->e($this->t('cleared', ['count' => (int)$_SESSION['tssggs_log_notice']])), 'ok');
             unset($_SESSION['tssggs_log_notice']);
         }
 
@@ -87,7 +88,7 @@ class CertificateLogContainer extends Container implements AdminAreaInterface
             . '<p>' . $this->e($this->t('about_intro')) . '</p>'
             . '<ul>' . $item('about_service') . $item('about_steps') . $item('about_types') . '</ul>'
             . '</div></div>'
-            . '<div class="tssggs-note">' . $this->t('about_other', ['logs' => $logs]) . '</div>';
+            . Html::notice($this->t('about_other', ['logs' => $logs]));
     }
 
     protected function filters($service, $type, $search)
@@ -159,7 +160,7 @@ class CertificateLogContainer extends Container implements AdminAreaInterface
 
     protected function e($value): string
     {
-        return htmlspecialchars((string)$value, ENT_QUOTES);
+        return Html::e($value);
     }
 
     protected function t(string $key, array $replace = []): string

@@ -1,0 +1,11 @@
+<!-- subject: Your certificate has expired - {$service_product_name} -->
+<p>Dear {$client_name},</p>
+                             <p>
+                                Your certificate {$service_product_name}{if $domain} for <strong>{$domain}</strong>{/if}
+                                expired{if $cert_expiry} on {$cert_expiry}{/if} and was not renewed. Websites and software
+                                that use it now show a security warning.
+                             </p>
+                             <p>
+                                To restore the protection, order a new certificate in our client area: {$whmcs_url}cart.php
+                             </p>
+                             <p>{$signature}</p>

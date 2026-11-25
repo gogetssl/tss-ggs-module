@@ -9,6 +9,7 @@ use ModulesGarden\TSSGGSModule\Components\Text\Text;
 use ModulesGarden\TSSGGSModule\Components\Widget\Widget;
 use ModulesGarden\TSSGGSModule\Core\Contracts\Components\AjaxComponentInterface;
 use ModulesGarden\TSSGGSModule\Core\Translation\TranslatorTrait;
+use ModulesGarden\TSSGGSModule\App\UI\Shared\Html;
 
 /**
  * Wizard step "Legacy modules found": what was detected and, per module, the decision Migrate / Install standalone.
@@ -48,7 +49,7 @@ class Step3 extends Widget implements AjaxComponentInterface
             }
             if(!$info['support']['supported'])
             {
-                $html .= '<div class="tssggs-note is-bad">' . htmlspecialchars($this->translate('unsupported_hint')) . '</div>';
+                $html .= Html::notice(htmlspecialchars($this->translate('unsupported_hint')), 'bad');
             }
             $html .= '</div>';
         }

@@ -1,0 +1,11 @@
+<!-- subject: Your S/MIME certificate is issued - {$smime_emails} -->
+<p>Dear {$client_name},</p>
+                                 <p>Your S/MIME certificate for {$smime_emails} is issued. It is valid until {$smime_valid_till}.</p>
+                                 <p>
+                                    {if $smime_csr_provided}The certificate is issued for the CSR you sent: install it in your email
+                                    client together with the private key you created.{else}The certificate authority emails you how to
+                                    collect the certificate and its private key. Keep the private key safe: without it you can not read
+                                    the emails encrypted for this certificate.{/if}
+                                 </p>
+                                 <p>Order details: {$order_url}</p>
+                                 <p>{$signature}</p>
