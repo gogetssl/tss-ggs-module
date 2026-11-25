@@ -45,11 +45,11 @@ class View
             return htmlspecialchars($target !== '' ? Page::pageUrl($target, $action, $params) : $page->url($action, $params), ENT_QUOTES, 'UTF-8');
         });
 
-        $smarty->assign($data);
-        $smarty->assign('page', $page);
+        // in every template; a page's own data of the same name wins
         $smarty->assign('moduleName', Kernel::module());
         // for <input type="hidden" name="token"> of a form that also works without htmx
-        $smarty->assign('token', function_exists('generate_token') ? (string)generate_token('plain') : '');
+        $smarty->assign('token', function_exists('generate_token') ? (string)\generate_token('plain') : '');
+        $smarty->assign($data);
 
         return $smarty->fetch($template . '.tpl');
     }
