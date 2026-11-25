@@ -44,7 +44,7 @@
 
             {* rows can be ticked (Table::selectable): the number of ticked rows and what can be done with them *}
             {if $table.mass !== ''}
-                <div class="lu-t-c__mass-actions lu-top is-open" x-show="ticked" x-cloak>
+                <div class="lu-t-c__mass-actions lu-top" :class="ticked && 'is-open'">
                     <div class="lu-top__title"><span class="lu-badge lu-badge--primary lu-value" x-text="ticked"></span> {t key='admin.kernel.selected'}</div>
                     <div class="lu-top__toolbar lu-single-element">{include file="{$table.mass}.tpl"}</div>
                 </div>
