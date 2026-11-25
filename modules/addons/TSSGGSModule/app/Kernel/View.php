@@ -55,7 +55,18 @@ class View
         $smarty->assign('token', function_exists('generate_token') ? (string)\generate_token('plain') : '');
         $smarty->assign($data);
 
-        return $smarty->fetch($template . '.tpl');
+        try
+        {
+            return $smarty->fetch($template . '.tpl');
+        }
+        catch(\Throwable $e)
+        {
+            // several parts of a page asked for at once (lazy blocks) can compile the same new template at the same
+            // moment, right after an update: the second look finds it compiled
+            usleep(150000);
+
+            return $smarty->fetch($template . '.tpl');
+        }
     }
 
     protected static function compileDir(): string

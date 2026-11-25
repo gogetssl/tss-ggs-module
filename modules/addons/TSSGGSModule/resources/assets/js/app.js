@@ -111,11 +111,23 @@
 
     /* ---- htmx answers ---- */
 
-    // the kernel answers an error (expired token, exception) with a notice: show it in the target too
+    // Only the kernel's own answers go into the page (header X-Module-Kernel): its errors (expired token, exception)
+    // are notices and are shown like any other answer. Anything else - an error page of WHMCS or of the web server -
+    // is kept out; a part that loads by itself (hx-trigger="load") is asked for once more.
     document.addEventListener('htmx:beforeSwap', function (event) {
-        if (event.detail.xhr.status >= 400 && event.detail.xhr.responseText) {
-            event.detail.shouldSwap = true;
-            event.detail.isError = false;
+        var xhr = event.detail.xhr;
+        if (xhr.getResponseHeader('X-Module-Kernel')) {
+            if (xhr.status >= 400 && xhr.responseText) {
+                event.detail.shouldSwap = true;
+                event.detail.isError = false;
+            }
+            return;
+        }
+        event.detail.shouldSwap = false;
+        var element = event.detail.requestConfig ? event.detail.requestConfig.elt : null;
+        if (element && /\bload\b/.test(element.getAttribute('hx-trigger') || '') && !element.askedAgain) {
+            element.askedAgain = true;
+            window.setTimeout(function () { window.htmx.trigger(element, 'load'); }, 800);
         }
     });
 

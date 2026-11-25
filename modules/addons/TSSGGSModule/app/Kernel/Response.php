@@ -84,6 +84,9 @@ final class Response
             exit;
         }
         http_response_code($this->status);
+        // tells app.js that this answer is the kernel's own (an error page of WHMCS or the web server is not put
+        // into the page)
+        header('X-Module-Kernel: 1');
         if($this->type === self::DOWNLOAD)
         {
             header('Content-Type: ' . $this->mime);
