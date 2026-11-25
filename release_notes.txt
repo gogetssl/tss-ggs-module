@@ -1,3 +1,60 @@
+2.0.0 (2026-11-25)
+New admin interface base, third-party framework removed
+- The admin area runs on the module's own small base (plain Smarty
+  templates, htmx, Alpine.js) instead of the ModulesGarden framework and
+  Vue 2. Every page looks and works as before: Dashboard, Products,
+  Pricing, Markups, Certificate Log, Emails, Statistics, Reports, Import,
+  Automation Queue, Module Update, Settings, Logs, the setup wizard and
+  the Migration page. Slow blocks (vendor balance, charts) load after the
+  page is shown.
+- The framework is gone from the package: no Composer vendor folder, no
+  Vue. The package has about 740 files instead of 2,750 and the ZIP is
+  3.6 MB instead of 9.5 MB. Scheduled jobs, hooks, logging and the
+  database tables work as before; nothing is removed from the database.
+- Templates can be customised without tools: copy a file from
+  resources/templates to the same path under overrides/templates and edit
+  the copy. An update never touches the overrides folder.
+- Order status sync: runs every 5 minutes by default (5 minutes to 1 day),
+  reads only orders that are processing or active, and an order waiting
+  for its validation method is no longer a failed order.
+- Certificates bought at payment get a certificate token; an incomplete
+  order keeps its details, so an automatic renewal can reuse them.
+- Low balance warning: the module reads the reseller balance and e-mails
+  the administrators when it falls below the amount set per account
+  (Settings > Finance). Credit accounts show their available credit line.
+- Settings > CRON shows what starts the module's jobs (its own cron line,
+  the WHMCS cron, or nothing and why) with a live panel per job.
+- Settings > Logs: one Logs group; the WHMCS Module Log switch mirrors
+  WHMCS and turns it on there. The dashboard says when it is off.
+- Settings: catalogue sync moved from Finance to a new Products page;
+  percent and currency fields show their unit; clearer hints for the
+  renewal settings.
+- REMOVED: "Terminate unpaid services on expiry". Unpaid certificates are
+  now terminated only by WHMCS (Automation Settings, "Terminate after X
+  days") - turn that on if you relied on the module's setting. Also
+  removed: "Set The Unpaid Status For Renewal Invoices" (it was never
+  applied) and the "Other certificate authorities" agreement.
+- LEI: the client confirms the submitted data, the service shows the
+  stage of the order, renewal is offered inside the renewal window; the
+  company search splits one-line register addresses.
+- Dashboard period (Settings > General): last month, last 90 days, last
+  year or total for the KPI tiles and the sales overview. The header
+  shows the edition's own logo.
+- Products: filters All / Imported / Not imported and by validation type,
+  with counts; Certificate Term lists the product's own terms.
+- Client area: Awaiting Configuration tab and sidebar entry; status
+  labels coloured like the reports.
+- Support report: sent from the General Settings e-mail address, with the
+  activity log attached.
+- API token fields are no longer filled in by the browser with the saved
+  WHMCS password.
+- A product saved in WHMCS no longer gets a sample custom field "Text"
+  (a leftover of the framework). Fields added earlier stay; delete them
+  under the product's Custom Fields tab if you do not use them.
+- Removed command line commands: module:activate, module:deactivate,
+  module:upgrade and testCommand. WHMCS activates and upgrades the module
+  as before.
+
 1.18.0 (2026-11-21)
 LEI codes, connect the other vendor's products
 - GoGetSSL LEI codes (1 to 5 years) can be imported and sold. After
