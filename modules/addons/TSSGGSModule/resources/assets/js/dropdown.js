@@ -201,8 +201,11 @@
         select.addEventListener('invalid', function (event) {
             event.preventDefault();
             box.classList.add('lu-is-error');
-            open();
-            search.focus();
+            // several can be missing at once: all are marked, the first one opens
+            if (!openOne) {
+                open();
+                search.focus();
+            }
         });
         select.addEventListener('change', function () {
             box.classList.remove('lu-is-error');
