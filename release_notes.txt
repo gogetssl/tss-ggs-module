@@ -1,5 +1,5 @@
 2.0.1 (2026-11-25)
-Setup wizard and migration fixes
+Setup wizard and migration fixes, security hardening
 - Setup wizard, API connection step: only the account of the module's own
   vendor is tested and saved there. With a second vendor connected, the
   step could refuse to continue and had no fields to correct it.
@@ -17,6 +17,28 @@ Setup wizard and migration fixes
   migration"; clearer wording of the check line.
 - No PHP warnings in the WHMCS error log from the order status sync of a
   module that is not connected yet, and from the update work folder.
+
+Security hardening (found in a review of the whole code, none reported
+as used):
+- Client area: the number of domain slots can be changed only on an
+  active Automated SSL service; it could be called on other certificate
+  services, outside their price rules.
+- Client area: a renewal invoice is made only as the Renew button offers
+  it (Settings > SSL Certificates), for an active service with a price.
+- Client area: a certificate is ordered only for an active service;
+  every action works on the service WHMCS checked the owner of; two
+  cancellations at once can not both credit a refund.
+- CSV downloads (Reports, Logs, migration files): a cell that a
+  spreadsheet would run as a formula is written as text.
+- One-click update: the work folder is never more open than the module
+  folder; the downloaded files are verified again right before they are
+  installed; backups have a name that can not be guessed, hold the
+  module files only, and a rollback takes only a backup this install
+  made; an older release than one already seen is not offered.
+- Admin: the vendor API re-check runs by button only; the pricing export
+  link no longer carries the session token; the e-mail preview needs the
+  permission to edit templates; setup links and codes of code signing
+  and document signing orders are masked in logs.
 
 2.0.0 (2026-11-25)
 New admin interface base, third-party framework removed
