@@ -151,3 +151,19 @@ namespace {
     /** checks the CSRF token of the request (dies on a wrong one) @return mixed */
     function check_token(string $type = 'WHMCS.default') {}
 }
+
+namespace {
+    /** The Smarty that WHMCS ships (3.1 / 4.x) - only what the module's kernel calls */
+    class Smarty
+    {
+        /** @param string|string[] $dir */
+        public function setTemplateDir($dir) {}
+        public function setCompileDir(string $dir) {}
+        public function setEscapeHtml(bool $escape) {}
+        public function setErrorReporting(int $level) {}
+        public function registerPlugin(string $type, string $name, callable $callback) {}
+        /** @param string|array $name */
+        public function assign($name, $value = null) {}
+        public function fetch(string $template): string { return ''; }
+    }
+}
