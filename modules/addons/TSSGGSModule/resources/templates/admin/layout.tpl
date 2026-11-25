@@ -40,6 +40,8 @@
                 </div>
             </div>
         </div>
+        {* where a dialog with a form is put (admin/partials/dialog_start.tpl) *}
+        <div id="tssggs-dialog"></div>
     </div>
 </div>
 

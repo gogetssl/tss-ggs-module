@@ -297,6 +297,12 @@ parameters:
 			path: modules/addons/TSSGGSModule/app/UI/Admin/Products/Index/DataTables/Products/Providers/ImportProvider.php
 
 		-
+			message: '#^Call to an undefined method ModulesGarden\\TSSGGSModule\\Core\\WHMCS\\Models\\ProductGroup\:\:save\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: modules/addons/TSSGGSModule/app/Libs/Products/ProductImport.php
+
+		-
 			message: '#^Call to an undefined method ModulesGarden\\TSSGGSModule\\Core\\Components\\AbstractComponent\:\:setDefaultValueAsFirstOption\(\)\.$#'
 			identifier: method.notFound
 			count: 3

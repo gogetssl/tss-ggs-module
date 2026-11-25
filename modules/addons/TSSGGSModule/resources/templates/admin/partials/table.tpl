@@ -6,7 +6,7 @@
     Give the button its own hx-target AND hx-swap (it would inherit hx-swap="outerHTML" from the form).
 *}
 <div id="tssggs-table-{$table.id}" class="lu-widget"
-     x-data="{ go(values) { var refs = this.$refs; Object.keys(values).forEach(function (name) { refs[name].value = values[name] }); refs.form.requestSubmit() } }">
+     x-data="{ ticked: 0, go(values) { var refs = this.$refs; Object.keys(values).forEach(function (name) { refs[name].value = values[name] }); refs.form.requestSubmit() }, count() { this.ticked = this.$root.querySelectorAll('[data-row-check]:checked').length }, tickAll(on) { this.$root.querySelectorAll('[data-row-check]:not(:disabled)').forEach(function (box) { box.checked = on }); this.count() } }">
     <div class="lu-widget__body">
         <form method="get" action="addonmodules.php" x-ref="form" class="lu-t-c datatableLoader"
               hx-get="addonmodules.php" hx-target="#tssggs-table-{$table.id}" hx-swap="outerHTML"
@@ -42,6 +42,14 @@
                 </div>
             {/if}
 
+            {* rows can be ticked (Table::selectable): the number of ticked rows and what can be done with them *}
+            {if $table.mass !== ''}
+                <div class="lu-t-c__mass-actions lu-top is-open" x-show="ticked" x-cloak>
+                    <div class="lu-top__title"><span class="lu-badge lu-badge--primary lu-value" x-text="ticked"></span> {t key='admin.kernel.selected'}</div>
+                    <div class="lu-top__toolbar lu-single-element">{include file="{$table.mass}.tpl"}</div>
+                </div>
+            {/if}
+
             <div class="dataTables_wrapper no-footer">
                 <div class="lu-d-grid">
                     <table class="lu-table lu-table--mob-collapsible dataTable no-footer dtr-column">
@@ -49,7 +57,17 @@
                             <tr role="row">
                                 {foreach $table.columns as $column}
                                     <th class="{$column.class}">
-                                        {if $column.sortable}
+                                        {if $column@first && $table.mass !== ''}
+                                            <div class="lu-rail">
+                                                <div class="lu-form-check">
+                                                    <label>
+                                                        <input class="lu-form-checkbox" type="checkbox" @change="tickAll($el.checked)">
+                                                        <span class="lu-form-indicator"></span>
+                                                    </label>
+                                                </div>
+                                                <span class="lu-table__text{if $column.sortable} lu-is-sortable{/if}" {if $column.sortable}@click="go({ ts: '{$column.name}', td: '{$column.nextDir}', tp: 1 })"{/if}>{$column.title}</span>
+                                            </div>
+                                        {elseif $column.sortable}
                                             <span class="lu-table__text lu-is-sortable" @click="go({ ts: '{$column.name}', td: '{$column.nextDir}', tp: 1 })">{$column.title}</span>
                                         {else}
                                             <span class="lu-table__text">{$column.title}</span>
@@ -59,7 +77,7 @@
                                 {if $table.actions}<th class="mgTableActionsHeader"></th>{/if}
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody @change="count()">
                             {foreach $table.rows as $row}
                                 <tr class="lu-table-row">
                                     {include file="{$table.rowTemplate}.tpl" row=$row}

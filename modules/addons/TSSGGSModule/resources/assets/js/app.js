@@ -109,6 +109,40 @@
         });
     }, true);
 
+    /* ---- dialogs with a form (admin/partials/dialog_start.tpl, put into the layout's dialog place) ---- */
+
+    function dialogPlace() {
+        return root() ? root().querySelector('[data-dialog]') : null;
+    }
+
+    function closeDialog() {
+        var dialog = dialogPlace();
+        if (dialog && dialog.parentNode) {
+            dialog.parentNode.textContent = '';
+        }
+    }
+
+    document.addEventListener('click', function (event) {
+        if (!event.target.closest) {
+            return;
+        }
+        // the X, Cancel, or a click on the dark area around the dialog
+        if (event.target.closest('[data-dialog-close]') || event.target === dialogPlace()) {
+            closeDialog();
+        }
+    });
+    document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape' && dialogPlace() && !document.querySelector('.lu-selectize-dropdown[style*="block"]')) {
+            closeDialog();
+        }
+    });
+    // the action says when the dialog's work is done (Response::closesDialog)
+    document.addEventListener('htmx:afterRequest', function (event) {
+        if (event.detail.xhr && event.detail.xhr.getResponseHeader('X-Module-Dialog') === 'close') {
+            closeDialog();
+        }
+    });
+
     /* ---- htmx answers ---- */
 
     // Only the kernel's own answers go into the page (header X-Module-Kernel): its errors (expired token, exception)

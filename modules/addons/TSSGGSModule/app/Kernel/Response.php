@@ -18,6 +18,7 @@ final class Response
     protected $status;
     protected $fileName = '';
     protected $mime = '';
+    protected $headers = [];
 
     protected function __construct(string $type, string $body, int $status = 200)
     {
@@ -50,6 +51,29 @@ final class Response
         $response->mime     = $mime;
 
         return $response;
+    }
+
+    /**
+     * The answer of a dialog's form that worked: the fragment goes where the form says (the list behind the dialog)
+     * and the dialog closes (app.js).
+     */
+    public function closesDialog(): self
+    {
+        $this->headers['X-Module-Dialog'] = 'close';
+
+        return $this;
+    }
+
+    /**
+     * The answer of a dialog's form that did not work, or the dialog itself: the fragment (the dialog again, with the
+     * error) goes into the dialog's place instead of the form's target.
+     */
+    public function intoDialog(): self
+    {
+        $this->headers['HX-Retarget'] = '#tssggs-dialog';
+        $this->headers['HX-Reswap']   = 'innerHTML';
+
+        return $this;
     }
 
     public function type(): string
@@ -87,6 +111,10 @@ final class Response
         // tells app.js that this answer is the kernel's own (an error page of WHMCS or the web server is not put
         // into the page)
         header('X-Module-Kernel: 1');
+        foreach($this->headers as $name => $value)
+        {
+            header($name . ': ' . $value);
+        }
         if($this->type === self::DOWNLOAD)
         {
             header('Content-Type: ' . $this->mime);

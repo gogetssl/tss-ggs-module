@@ -491,20 +491,7 @@ class CatalogueSync
     protected static function import(RemoteProduct $remote, $groupId)
     {
         $finance  = (array)((new \ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository())->getModuleConfiguration()['financeSettings'] ?? []);
-        $provider = new class extends \ModulesGarden\TSSGGSModule\App\UI\Admin\Products\Index\DataTables\Products\Providers\ImportProvider {
-            public function importWith(array $data)
-            {
-                $this->formData = new \ModulesGarden\TSSGGSModule\Core\DataProviders\DataContainer($data);
-                $this->create();
-            }
-        };
-        $provider->importWith([
-            'productGroup'       => (int)$groupId,
-            'id'                 => (string)$remote->id,
-            'rate'               => FinancePolicy::refreshRate() ?: 1,
-            'pricingTypePercent' => 1,
-            'profitMargin'       => (float)($finance['profitMargin'] ?? 0),
-        ]);
+        ProductImport::run([(int)$remote->id], (int)$groupId, '', (float)(FinancePolicy::refreshRate() ?: 1), (float)($finance['profitMargin'] ?? 0));
 
         return (int)($remote->getWhmcsProduct()->id ?? 0);
     }

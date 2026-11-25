@@ -35,6 +35,7 @@ class Table
     protected $actions     = false;
     protected $keep        = [];
     protected $toolbar     = '';
+    protected $mass        = null;
 
     public static function make(Request $request, string $id): self
     {
@@ -85,6 +86,18 @@ class Table
     public function toolbar(string $template): self
     {
         $this->toolbar = $template;
+
+        return $this;
+    }
+
+    /**
+     * Rows can be ticked: the title of the first column gets a "tick all" box, and while rows are ticked a bar
+     * with their number and the buttons of $template is shown. The row template prints the row's own box in its
+     * first cell: <input type="checkbox" name="ids[]" value="..." data-row-check> (see admin/products/row.tpl).
+     */
+    public function selectable(string $template): self
+    {
+        $this->mass = $template;
 
         return $this;
     }
@@ -231,6 +244,7 @@ class Table
             'actions'     => $this->actions,
             'keep'        => $this->keep,
             'toolbar'     => $this->toolbar,
+            'mass'        => (string)$this->mass,
             'searchable'  => (bool)array_filter($this->columns, function($column) {
                 return $column['search'] !== '';
             }),
