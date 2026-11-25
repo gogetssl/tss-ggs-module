@@ -42,7 +42,7 @@ class SmokeKernelPages extends \ModulesGarden\__MODULE__\Core\CommandLine\Comman
                     if(!$htmx)
                     {
                         $html = Layout::render($page, $response->body());
-                        foreach(['id="layers2"', 'lu-nav__item', 'tssggs-pagehead__title', 'vendor/htmx.js', 'vendor/alpine.js'] as $must)
+                        foreach(['id="layers2"', 'lu-nav__item', 'pagehead__title', 'vendor/htmx.js', 'vendor/alpine.js'] as $must)
                         {
                             if(strpos($html, $must) === false)
                             {
