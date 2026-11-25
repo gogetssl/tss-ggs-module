@@ -45,7 +45,7 @@ class SalesReport
                 // the table cells are HTML: a file gets the plain text
                 $row[] = html_entity_decode(strip_tags(str_replace('<br>', ' ', (string)$record[$field])), ENT_QUOTES, 'UTF-8');
             }
-            fputcsv($output, $row);
+            fputcsv($output, \TSSGGSModule\App\Libs\Support\Csv::row($row));
         }
         rewind($output);
 

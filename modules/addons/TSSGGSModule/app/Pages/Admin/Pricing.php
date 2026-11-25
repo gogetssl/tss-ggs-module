@@ -130,16 +130,9 @@ class Pricing extends Page
         });
     }
 
-    /** GET token: CSV of all prices and costs (a link, so the token comes in the address) */
+    /** CSV of all prices and costs (a download: nothing is changed, so no token in the address) */
     public function export()
     {
-        if(!\TSSGGSModule\App\Libs\Support\CsrfToken::valid($this->request->string('token')))
-        {
-            $_SESSION[self::SESSION]['error'] = $this->lang->get('admin.kernel.tokenExpired');
-
-            return $this->redirect();
-        }
-
         return Response::download((new PricingService())->exportCsv(), 'ssl-pricing-' . date('Y-m-d') . '.csv');
     }
 

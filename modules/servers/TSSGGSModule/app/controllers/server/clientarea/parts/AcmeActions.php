@@ -534,6 +534,8 @@ trait AcmeActions
     public function upgradeConfigOptionsJSON($input, $vars = [])
     {
         $this->requireCsrfToken();
+        // the slots of an Automated SSL subscription only: on any other product this would change its paid options
+        $this->requireOrderableService($input, AcmeHelpers::isAcmeWhmcsProduct((int)$input['params']['packageid']));
         $params    = $input['params'];
         $serviceId = (int)$input['id'];
         $service   = Service::find($serviceId);
@@ -708,6 +710,7 @@ trait AcmeActions
     public function removeDomainJSON($input, $vars = [])
     {
         $this->requireCsrfToken();
+        $this->requireProduct(AcmeHelpers::isAcmeWhmcsProduct((int)$input['params']['packageid']));
         $serviceId = (int)$input['id'];
         $domain    = isset($input['domain']) ? strtolower(trim($input['domain'])) : '';
         if(empty($domain))
@@ -757,6 +760,9 @@ trait AcmeActions
     public function cancelSubscriptionJSON($input, $vars = [])
     {
         $this->requireCsrfToken();
+        $this->requireProduct(AcmeHelpers::isAcmeWhmcsProduct((int)$input['params']['packageid']));
+        // one cancellation at a time: two at once would both credit the refund
+        $this->requireServiceLock((int)$input['id']);
         $serviceId    = (int)$input['id'];
         $subscription = AcmeSubscription::getByServiceId($serviceId);
 
@@ -805,6 +811,7 @@ trait AcmeActions
     public function stopAutoRenewalJSON($input, $vars = [])
     {
         $this->requireCsrfToken();
+        $this->requireProduct(AcmeHelpers::isAcmeWhmcsProduct((int)$input['params']['packageid']));
         $serviceId    = (int)$input['id'];
         $subscription = AcmeSubscription::getByServiceId($serviceId);
 

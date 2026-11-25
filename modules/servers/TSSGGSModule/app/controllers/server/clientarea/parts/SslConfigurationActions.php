@@ -364,6 +364,12 @@ trait SslConfigurationActions
         $serviceId = (int)$params['serviceid'];
         $userId    = (int)$params['userid'];
 
+        // a cancelled, suspended or fraud service must not order at the vendor
+        if(($params['status'] ?? '') !== 'Active')
+        {
+            throw new \Exception(Lang::absoluteT('smimeServiceNotActive'));
+        }
+
         // a migrated order bought at payment: completed with its token (read once)
         \TSSGGSModule\App\Libs\Certificates\IncompleteOrder::claimMigrated($serviceId);
         $ssl = SSL::getByServiceId($serviceId);

@@ -13,7 +13,7 @@ class SecretValue
 
     /** names of fields whose value is replaced in logs */
     const SENSITIVE = ['eab_hmac_key', 'eab_mac_key', 'hmac_key', 'password', 'passwd', 'secret', 'api_key', 'apikey', 'authtoken', 'auth_token', 'token', 'private_key', 'privatekey',
-                       'login_sso_link', 'manage_sso_link', 'sso_link', 'sso_url', 'partnercode', 'testpartnercode', 'testauthtoken', 'authorization'];
+                       'login_sso_link', 'manage_sso_link', 'sso_link', 'sso_url', 'token_init_code', 'init_code', 'token_setup_link', 'enrollment_link', 'partnercode', 'testpartnercode', 'testauthtoken', 'authorization'];
 
     public static function seal($value)
     {

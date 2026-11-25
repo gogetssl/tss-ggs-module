@@ -50,6 +50,14 @@ class Lifecycle
                 throw new \Exception('No version specified');
             }
             self::tables();
+            try
+            {
+                \TSSGGSModule\App\Libs\Update\Installer::adoptBackups();
+            }
+            catch(\Throwable $e)
+            {
+                // the update work folder can not be read: a rollback is then refused, nothing else depends on it
+            }
         });
     }
 

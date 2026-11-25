@@ -73,7 +73,7 @@ class Swap
         $handle = $handle ?: (is_readable($file) ? @fopen($file, 'r') : false);
         if($handle && !$exists)
         {
-            @chmod($file, 0664);
+            Workdir::share($file);
         }
 
         return $handle ?: null;
@@ -283,6 +283,11 @@ if(function_exists('opcache_reset')) @opcache_reset();
 flock($lock, LOCK_UN);
 if(PHP_SAPI === 'cli') echo $back ? "Repaired: the previous version of the module is back in place.\n" : "Repair incomplete: the module folders could not all be moved back (permissions?). Run this as the owner of the module files.\n";
 PHP;
-        file_put_contents(Workdir::path('recover.php'), $script . "\n");
+        // a fresh file of this user, writable by nobody else: hooks.php runs it only when the owner of the module
+        // files owns it too
+        $file = Workdir::path('recover.php');
+        @unlink($file);
+        file_put_contents($file, $script . "\n");
+        @chmod($file, 0644);
     }
 }

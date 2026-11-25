@@ -137,6 +137,24 @@ class home extends AbstractController
         }
     }
 
+    /** An action of one product type called on a service of another */
+    private function requireProduct($rightProduct)
+    {
+        if(!$rightProduct)
+        {
+            throw new \Exception(Lang::absoluteT('smimeServiceNotActive'));
+        }
+    }
+
+    /** One request at a time for the service (the lock is released when the request ends) */
+    private function requireServiceLock($serviceId)
+    {
+        if(!$this->acquireServiceLock((int)$serviceId))
+        {
+            throw new \Exception(Lang::absoluteT('requestInProgress'));
+        }
+    }
+
     private function requireCsrfToken()
     {
         if($_SERVER['REQUEST_METHOD'] !== 'POST' || !\TSSGGSModule\App\Libs\Support\CsrfToken::valid($_POST['token'] ?? ''))

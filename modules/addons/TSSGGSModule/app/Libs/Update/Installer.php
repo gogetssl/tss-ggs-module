@@ -234,7 +234,8 @@ class Installer
         @set_time_limit(0);
         self::release();
         $version = State::installedVersion();
-        $file    = Workdir::ensure('backups') . '/' . Edition::folder() . '-' . $version . '-' . date('Ymd-His') . '.zip';
+        // the random part keeps the name from being guessed where the web server does not read .htaccess
+        $file    = Workdir::ensure('backups') . '/' . Edition::folder() . '-' . $version . '-' . date('Ymd-His') . '-' . bin2hex(random_bytes(8)) . '.zip';
 
         $zip = new \ZipArchive();
         if($zip->open($file, \ZipArchive::CREATE | \ZipArchive::OVERWRITE) !== true)
@@ -255,9 +256,7 @@ class Installer
                 $zip->addFile($item->getPathname(), $path);
             }
         }
-        // settings, for a manual recovery only: nothing restores them automatically
-        $settings = Capsule::table('tbladdonmodules')->whereIn('module', [Edition::folder(), 'configuration_' . Edition::folder()])->get(['module', 'setting', 'value']);
-        $zip->addFromString('settings.json', json_encode($settings));
+        // the module's files only: its settings stay in the database (an update does not change them)
         $zip->setArchiveComment(json_encode(['version' => $version, 'created' => date('c')]));
         if(!$zip->close())
         {
@@ -265,6 +264,7 @@ class Installer
             throw new \RuntimeException('Cannot write the backup');
         }
         Workdir::share($file);
+        self::rememberBackup($file);
 
         // the last few are kept
         $backups = glob(Workdir::path('backups') . '/' . Edition::folder() . '-*.zip') ?: [];
@@ -291,8 +291,93 @@ class Installer
         {
             throw new \RuntimeException('Run the backup step first');
         }
+        // the files were verified when they were unpacked; they are verified again now, right before they become the
+        // module: nothing changed in the work folder since may be installed
+        self::verifyStaging($manifest['edition']['files']);
 
         return self::swapTo($manifest['version'], $adminId, 'update', $manifest['rollback_safe']);
+    }
+
+    /**
+     * new/ holds exactly the files of the signed release, each with its hash (storage/ is not part of the swap; the
+     * version note is the updater's own)
+     */
+    protected static function verifyStaging(array $files)
+    {
+        $staging = Workdir::path('new');
+        $storage = 'modules/addons/' . Edition::folder() . '/storage/';
+        $seen    = 0;
+        $iterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($staging, \FilesystemIterator::SKIP_DOTS));
+        foreach($iterator as $item)
+        {
+            $name = 'modules/' . str_replace('\\', '/', substr($item->getPathname(), strlen($staging) + 1));
+            if($name === 'modules/version.txt')
+            {
+                continue;
+            }
+            if($item->isLink() || !$item->isFile() || !isset($files[$name]) || !hash_equals((string)$files[$name], (string)hash_file('sha256', $item->getPathname())))
+            {
+                throw new \RuntimeException('The downloaded files changed since they were verified (' . $name . '). Run the download step again.');
+            }
+            $seen++;
+        }
+        $expected = 0;
+        foreach($files as $name => $hash)
+        {
+            $expected += strpos($name, $storage) === 0 ? 0 : 1;
+        }
+        if($seen !== $expected)
+        {
+            throw new \RuntimeException('The downloaded files are incomplete (' . $seen . ' of ' . $expected . '). Run the download step again.');
+        }
+    }
+
+    /** setting that keeps the SHA-256 of every backup ZIP this install made (file name => hash) */
+    const BACKUP_HASHES = 'moduleUpdateBackups';
+
+    /** Notes the hash of a backup ZIP, and forgets backups that are gone */
+    protected static function rememberBackup($file)
+    {
+        $known = State::get(self::BACKUP_HASHES);
+        foreach(array_keys($known) as $name)
+        {
+            if($name !== '_adopted' && !is_file(Workdir::path('backups', $name)))
+            {
+                unset($known[$name]);
+            }
+        }
+        $known[basename($file)] = hash_file('sha256', $file);
+        $known['_adopted']      = true;
+        State::set($known, self::BACKUP_HASHES);
+    }
+
+    /**
+     * Run once by the first version that keeps backup hashes (module upgrade): the backups an earlier version made
+     * are noted as they are now, so that version can still be rolled back to. After that only backups made and
+     * noted by backup() are accepted.
+     */
+    public static function adoptBackups()
+    {
+        $known = State::get(self::BACKUP_HASHES);
+        if(!empty($known['_adopted']))
+        {
+            return;
+        }
+        foreach(glob(Workdir::path('backups') . '/' . Edition::folder() . '-*.zip') ?: [] as $file)
+        {
+            $known[basename($file)] = hash_file('sha256', $file);
+        }
+        $known['_adopted'] = true;
+        State::set($known, self::BACKUP_HASHES);
+    }
+
+    /** A backup ZIP is the one this install made, unchanged */
+    protected static function backupIntact($file)
+    {
+        $known = State::get(self::BACKUP_HASHES);
+        $hash  = (string)($known[basename($file)] ?? '');
+
+        return $hash !== '' && hash_equals($hash, (string)hash_file('sha256', $file));
     }
 
     /**
@@ -399,8 +484,12 @@ class Installer
             throw new \RuntimeException('No backup of an earlier version');
         }
         $target = self::backupVersion($backup);
+        if(!self::backupIntact($backup))
+        {
+            throw new \RuntimeException('The backup ' . basename($backup) . ' is not the file this install saved (it was changed or put there by hand): it is not installed');
+        }
 
-        // the backup is unpacked like a release, without the hash list: it is this install's own file
+        // the backup is unpacked like a release, without the hash list: it is this install's own file, checked above
         $staging = Workdir::path('new');
         Workdir::removeTree($staging);
         Workdir::ensure('new');

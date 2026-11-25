@@ -9,10 +9,16 @@ if(!defined('WHMCS'))
 
 // an update of the module that stopped half way (its process died) is undone here (App\Libs\Update\Swap)
 $moduleUpdateJournal = dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . '.' . strtolower(basename(__DIR__)) . '-update' . DIRECTORY_SEPARATOR . 'journal.json';
-if(is_file($moduleUpdateJournal) && is_file(dirname($moduleUpdateJournal) . DIRECTORY_SEPARATOR . 'recover.php'))
+$moduleUpdateRecover = dirname($moduleUpdateJournal) . DIRECTORY_SEPARATOR . 'recover.php';
+// the script is run only as the updater wrote it: owned by the owner of the module files (or by the user PHP runs as,
+// who made the update) and writable by nobody else
+if(is_file($moduleUpdateJournal) && is_file($moduleUpdateRecover) && !is_link($moduleUpdateRecover)
+    && in_array(@fileowner($moduleUpdateRecover), [@fileowner(__FILE__), function_exists('posix_geteuid') ? posix_geteuid() : @fileowner(__FILE__)], true)
+    && (@fileperms($moduleUpdateRecover) & 0022) === 0)
 {
-    include dirname($moduleUpdateJournal) . DIRECTORY_SEPARATOR . 'recover.php';
+    include $moduleUpdateRecover;
 }
+unset($moduleUpdateRecover);
 
 
 use WHMCS\Database\Capsule;

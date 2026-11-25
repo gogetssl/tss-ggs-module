@@ -77,6 +77,8 @@ class Server extends AbstractMainDriver {
                 $action = empty($input['mod-action'])?'index':$input['mod-action'];
 
                 $input['params'] = $params;
+                // the service WHMCS checked the owner of, never the request's own "id"
+                $input['id']     = (int)$params['serviceid'];
 
                 $output = ['templatefile' => self::I()->getModuleTemplatesDir(true).'/main'];
 
@@ -136,6 +138,8 @@ class Server extends AbstractMainDriver {
             $action = empty($input['mod-action'])?'index':$input['mod-action'];
             
             $input['params'] = $params;
+            // the service WHMCS checked the owner of, never the request's own "id"
+            $input['id']     = (int)$params['serviceid'];
             
             try{
                 

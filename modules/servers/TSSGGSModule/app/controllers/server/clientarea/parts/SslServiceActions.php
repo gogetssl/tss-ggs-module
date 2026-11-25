@@ -53,6 +53,32 @@ trait SslServiceActions
         redir('action=productdetails&id=' . $serviceId, 'clientarea.php');
     }
 
+    /**
+     * The Renew button's rules, checked again when it is used: an open service, a renewal the settings offer
+     * (before / after the due date), and a price. A renewal for 0.00 would be paid at once and order again at the
+     * vendor, as often as it is asked for.
+     */
+    private function requireRenewable($serviceId)
+    {
+        $unavailable = ClientText::get('renewNotAvailable', 'This certificate can not be renewed here at the moment.');
+        if(!CertificateService::serviceOpen($serviceId))
+        {
+            throw new \Exception(ClientText::get('certificateNotAvailable', 'The certificate is not available: the service has been cancelled or terminated.'));
+        }
+        $service = Service::where('id', $serviceId)->first(['nextduedate', 'amount']);
+        if(!$service || (float)$service->amount <= 0)
+        {
+            throw new \Exception($unavailable);
+        }
+        $settings = (array)((new \TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository())->getModuleConfiguration()['sslSettings'] ?? []);
+        $due      = strtotime((string)$service->nextduedate);
+        $past     = $due !== false && $due > 0 && strtotime(date('Y-m-d')) > $due;
+        if(empty($settings[$past ? 'visibleRenewButtonAfterExpiration' : 'visibleRenewButtonBeforeExpiration']))
+        {
+            throw new \Exception($unavailable);
+        }
+    }
+
     public function renewHTML($input, $vars = [])
     {
         global $CONFIG;
@@ -60,6 +86,7 @@ trait SslServiceActions
         try
         {
             $this->requireCsrfToken();
+            $this->requireRenewable((int)$input['id']);
 
             list($invoiceId, $created) = (new InvoiceRenew())->getOrCreateInvoice((int)$input['id']);
 

@@ -1380,7 +1380,7 @@ class Engine
         fputcsv($out, ['time', 'level', 'phase', 'service_id', 'message', 'context']);
         foreach(Store::logRows($runId, 100000) as $row)
         {
-            fputcsv($out, [$row['created_at'], $row['level'], $row['phase'], $row['service_id'], $row['message'], (string)$row['context']]);
+            fputcsv($out, \TSSGGSModule\App\Libs\Support\Csv::row([$row['created_at'], $row['level'], $row['phase'], $row['service_id'], $row['message'], (string)$row['context']]));
         }
         rewind($out);
 

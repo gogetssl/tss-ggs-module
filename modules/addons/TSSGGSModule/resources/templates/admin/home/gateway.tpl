@@ -41,6 +41,6 @@
         </div>
     </span>
     <span class="tssggs-html">
-        <a class="tssggs-dcard__foot" href="#" hx-get="{url action='panel' name='gateway' recheck=1}" hx-target="#tssggs-gateway" hx-swap="outerHTML">{icon name='refresh'}<span>{t key="{$w}.recheck"}</span></a>
+        <a class="tssggs-dcard__foot" href="#" hx-post="{url action='panel' name='gateway'}" hx-target="#tssggs-gateway" hx-swap="outerHTML">{icon name='refresh'}<span>{t key="{$w}.recheck"}</span></a>
     </span>
 </div>

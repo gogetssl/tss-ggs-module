@@ -77,6 +77,12 @@ class Home extends Page
     }
 
     /** GET name: one of the panels that are loaded after the page, as the fragment that replaces its spinner */
+    /** POST: a panel built again with fresh data ("Check again" of the API connection) */
+    public function postPanel()
+    {
+        return $this->panel();
+    }
+
     public function panel()
     {
         $name = $this->request->oneOf('name', self::PANELS);
@@ -327,7 +333,8 @@ class Home extends Page
     /** Reachability and response time of the vendor API(s); recheck=1 asks again instead of using the last answer */
     protected function gateway(): array
     {
-        $results = GatewayHealth::check($this->request->int('recheck') === 1);
+        // asking the vendor again is the button's POST only: a link on another site must not start it
+        $results = GatewayHealth::check($this->request->isPost());
         $allOk   = true;
         $vendors = [];
         foreach(Edition::vendors() as $key)

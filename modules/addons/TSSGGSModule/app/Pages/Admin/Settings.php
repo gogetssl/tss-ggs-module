@@ -88,7 +88,7 @@ class Settings extends Page
         }
         catch(\Throwable $e)
         {
-            $result = (new Result())->setError($e->getMessage());
+            $result = (new Result())->setError(htmlspecialchars($e->getMessage()));
         }
 
         if(!$this->request->isHtmx())

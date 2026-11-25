@@ -23,12 +23,24 @@ class Workdir
     const TEMPORARY = ['download', 'new'];
 
     /**
-     * Group-writable, like the folders: the web server and the cron (command line) may run as different users of one
-     * group, and each must be able to replace what the other wrote
+     * Folder and file mode of the work folder: those of the module folder. Where the module is group-writable (the
+     * web server and the cron run as different users of one group) the work folder is too, so each can replace what
+     * the other wrote; where the module is closed to the group, so is the work folder. What lies in it becomes the
+     * module's code, so it must never be easier to write than the module.
+     * @return int[] [folder mode, file mode]
      */
+    public static function modes()
+    {
+        $dir = @fileperms(self::addonDir());
+        $dir = $dir !== false ? (($dir & 0775) | 0700) : 0755;
+
+        return [$dir, $dir & 0664];
+    }
+
     public static function share($path)
     {
-        @chmod($path, is_dir($path) ? 0775 : 0664);
+        list($dirMode, $fileMode) = self::modes();
+        @chmod($path, is_dir($path) ? $dirMode : $fileMode);
     }
 
     /**
@@ -82,12 +94,11 @@ class Workdir
         $base = self::path();
         if(!is_dir($base))
         {
-            if(!@mkdir($base, 0775) && !is_dir($base))
+            if(!@mkdir($base, self::modes()[0]) && !is_dir($base))
             {
                 throw new \RuntimeException('Cannot create ' . $base);
             }
-            // the cron (command line) and the web server may run as different users of one group
-            @chmod($base, 0775);
+            @chmod($base, self::modes()[0]);
         }
         if(!is_file($base . '/.htaccess'))
         {
@@ -104,18 +115,17 @@ class Workdir
         }
         if($parts && !is_dir($dir))
         {
-            // group-writable like the folder itself: the web server and the cron may run as different users
             $path = $base;
             foreach($parts as $part)
             {
                 $path .= DIRECTORY_SEPARATOR . $part;
                 if(!is_dir($path))
                 {
-                    if(!@mkdir($path, 0775) && !is_dir($path))
+                    if(!@mkdir($path, self::modes()[0]) && !is_dir($path))
                     {
                         throw new \RuntimeException('Cannot create ' . $path);
                     }
-                    @chmod($path, 0775);
+                    @chmod($path, self::modes()[0]);
                 }
             }
         }

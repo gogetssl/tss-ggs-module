@@ -210,6 +210,8 @@ trait AisActions
     public function cancelAisSubscriptionJSON($input, $vars = [])
     {
         $this->requireCsrfToken();
+        // one cancellation at a time: two at once would both credit the refund
+        $this->requireServiceLock((int)$input['id']);
         $serviceId    = (int)$input['id'];
         $subscription = AisSubscription::getByServiceId($serviceId);
 

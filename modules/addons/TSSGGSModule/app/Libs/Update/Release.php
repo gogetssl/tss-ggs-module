@@ -134,6 +134,16 @@ class Release
                     }
                     Workdir::saveManifest($body, $signature);
                 }
+                // a source that goes back to an older signed release (one with a known fault, say) is not followed
+                $seen = State::get('moduleUpdateSeen');
+                if(!empty($seen['version']) && version_compare($stored['version'], (string)$seen['version'], '<'))
+                {
+                    throw new \RuntimeException('offers ' . $stored['version'] . ', older than the release ' . $seen['version'] . ' seen before');
+                }
+                if(empty($seen['version']) || version_compare($stored['version'], (string)$seen['version'], '>'))
+                {
+                    State::set(['version' => $stored['version'], 'released' => (string)$stored['released']], 'moduleUpdateSeen');
+                }
 
                 return $found + ['verified' => true, 'notes' => mb_substr($stored['notes'], 0, 20000), 'released' => $stored['released'],
                                  'min_php' => $stored['min_php'], 'min_whmcs' => $stored['min_whmcs'], 'manual_only' => $stored['manual_only'],

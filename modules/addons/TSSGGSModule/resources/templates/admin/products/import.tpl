@@ -6,7 +6,7 @@
 {include file='admin/partials/dialog_start.tpl' title={t key='index.data_tables.products.modals.import_modal.title'} action={url action='import'} target='#tssggs-products' size='xlg'}
     <input type="hidden" name="ids" value="{$ids}">
 
-    <div class="mod-wrap mod-w-full" x-data="{ percent: {if $percent}true{else}false{/if}, group: '{$group}' }">
+    <div class="mod-wrap mod-w-full" x-data="{ percent: {if $percent}true{else}false{/if}, group: {$group|json_encode} }">
         <div class="mod-row">
             <div class="mod-col-6">
                 <div class="mod-field mod-check mod-gap-b mod-solo" @change="percent = $event.target.value === 'on'">

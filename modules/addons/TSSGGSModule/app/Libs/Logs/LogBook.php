@@ -435,7 +435,7 @@ class LogBook
         $query->chunk(500, function($rows) use ($out, &$count) {
             foreach($rows as $row)
             {
-                fputcsv($out, [(int)$row->id, (string)$row->type, (string)$row->date, (string)$row->message, (string)$row->data]);
+                fputcsv($out, \TSSGGSModule\App\Libs\Support\Csv::row([(int)$row->id, (string)$row->type, (string)$row->date, (string)$row->message, (string)$row->data]));
                 $count++;
             }
         });

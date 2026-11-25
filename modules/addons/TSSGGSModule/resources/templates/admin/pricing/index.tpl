@@ -46,7 +46,7 @@
 
         <span class="tssggs-toolbar__space"></span>
 
-        <a class="mod-btn mod-btn--default" href="{url action='export' token=$token}">{t key='export'}</a>
+        <a class="mod-btn mod-btn--default" href="{url action='export'}">{t key='export'}</a>
         <form method="post" enctype="multipart/form-data" action="{url action='importPreview'}" class="tssggs-toolbar__group is-centered">
             <input type="hidden" name="token" value="{$token}">
             <input type="hidden" name="currency" value="{$currencyId}">

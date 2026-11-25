@@ -107,7 +107,7 @@ class Health
         $token = bin2hex(random_bytes(32));
         Workdir::ensure();
         file_put_contents(Workdir::path('health.json'), json_encode(['hash' => hash('sha256', $token), 'mode' => $mode, 'expires' => time() + 300] + $params));
-        @chmod(Workdir::path('health.json'), 0664);
+        Workdir::share(Workdir::path('health.json'));
 
         return $token;
     }

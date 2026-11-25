@@ -133,7 +133,9 @@ final class Kernel
         // only the page's own public actions: nothing inherited from Page, nothing starting with "post" on a GET
         $ref = new \ReflectionClass($page);
         if(!$ref->hasMethod($method) || !$ref->getMethod($method)->isPublic() || $ref->getMethod($method)->getDeclaringClass()->getName() === Page::class
-            || (!$request->isPost() && stripos($method, 'post') === 0))
+            || (!$request->isPost() && stripos($method, 'post') === 0)
+            // an action is an instance method without arguments: a public helper of the page is not an address
+            || $ref->getMethod($method)->isStatic() || $ref->getMethod($method)->getNumberOfParameters() > 0)
         {
             return Response::html(Layout::notFound($page), 404);
         }

@@ -16,7 +16,7 @@
 
         {if $errors}
             <div class="alert alert-danger">
-                {$errors}
+                {$errors|escape}
             </div>
         {/if}
 
@@ -30,7 +30,7 @@
                 <label for="inputCsr" class="text-md-right">{$MGLANG->T('reissue_page', 'Certificate Signing Request')}</label>
 
                 {if $post_csr}
-                    <textarea name="csr" id="inputCsr" rows="7" class="form-control">{$post_csr}</textarea>
+                    <textarea name="csr" id="inputCsr" rows="7" class="form-control">{$post_csr|escape}</textarea>
                 {else}
                     <textarea name="csr" id="inputCsr" rows="7" class="form-control">-----BEGIN CERTIFICATE REQUEST-----
 

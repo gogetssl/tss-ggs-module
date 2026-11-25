@@ -5,6 +5,7 @@ namespace TSSGGSModule\App\Pages\Admin;
 use TSSGGSModule\App\Kernel\Page;
 use TSSGGSModule\App\Kernel\Response;
 use TSSGGSModule\App\Libs\Setup\MigrationScreen;
+use TSSGGSModule\App\Libs\Support\Csv;
 use TSSGGSModule\App\Libs\Support\Edition;
 use TSSGGSModule\App\Migration\Choice;
 use TSSGGSModule\App\Migration\Engine;
@@ -153,12 +154,12 @@ class Migration extends Page
         {
             foreach($rows as $r)
             {
-                fputcsv($out, [$group, $r['service_id'], $r['product_id'], $r['kind'], $r['legacy_status'], $r['target_status'], $r['remote_id'], $r['autoinstall'] ? 'yes' : '', (string)$r['reason'], implode(' | ', $r['warnings'])]);
+                fputcsv($out, Csv::row([$group, $r['service_id'], $r['product_id'], $r['kind'], $r['legacy_status'], $r['target_status'], $r['remote_id'], $r['autoinstall'] ? 'yes' : '', (string)$r['reason'], implode(' | ', $r['warnings'])]));
             }
         }
         foreach($report['products'] as $p)
         {
-            fputcsv($out, ['product', '', $p['pid'], $p['mapped'] ? 'mapped' : 'not mapped', '', '', $p['remote_product']['id'] ?? '', '', $p['legacy_product_ref'], implode(' | ', $p['warnings'])]);
+            fputcsv($out, Csv::row(['product', '', $p['pid'], $p['mapped'] ? 'mapped' : 'not mapped', '', '', $p['remote_product']['id'] ?? '', '', $p['legacy_product_ref'], implode(' | ', $p['warnings'])]));
         }
         fputcsv($out, ['credentials', '', '', $report['summary']['credentials'], '', '', '', '', '', '']);
         rewind($out);

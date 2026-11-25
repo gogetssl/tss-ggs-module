@@ -104,7 +104,8 @@ class Emails extends Page
     public function postPreview()
     {
         return $this->run(function($key, $language) {
-            $this->need(self::VIEW);
+            // the preview renders what was typed, with a client's data: for those who may edit the templates
+            $this->need(self::EDIT);
             $this->keepDraft($key, $language);
             $rendered = EmailManager::render($key, $language, $this->posted('subject'), $this->posted('message'));
             $_SESSION[self::SESSION]['preview'] = ['subject' => $rendered['subject'], 'body' => $rendered['body']];
