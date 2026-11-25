@@ -1,6 +1,6 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\Settings;
+namespace TSSGGSModule\App\Libs\Settings;
 
 /**
  * Values by name, read and written like an array ($bag['name']); a missing name reads as null.

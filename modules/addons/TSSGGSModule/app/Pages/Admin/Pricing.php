@@ -1,15 +1,15 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Pages\Admin;
+namespace TSSGGSModule\App\Pages\Admin;
 
-use ModulesGarden\TSSGGSModule\App\Kernel\Page;
-use ModulesGarden\TSSGGSModule\App\Kernel\Response;
-use ModulesGarden\TSSGGSModule\App\Libs\Billing\Markups;
-use ModulesGarden\TSSGGSModule\App\Libs\Billing\PricingService;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\GeneralSettings;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\Helpers;
-use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\ProductRepository;
-use ModulesGarden\TSSGGSModule\App\Libs\Dashboard\NextSteps;
+use TSSGGSModule\App\Kernel\Page;
+use TSSGGSModule\App\Kernel\Response;
+use TSSGGSModule\App\Libs\Billing\Markups;
+use TSSGGSModule\App\Libs\Billing\PricingService;
+use TSSGGSModule\App\Libs\Support\GeneralSettings;
+use TSSGGSModule\App\Libs\Support\Helpers;
+use TSSGGSModule\App\Repositories\Whmcs\ProductRepository;
+use TSSGGSModule\App\Libs\Dashboard\NextSteps;
 
 /**
  * Admin page "Pricing": one editable grid per currency (product + SAN options x 1/2/3 years) with the reseller
@@ -133,7 +133,7 @@ class Pricing extends Page
     /** GET token: CSV of all prices and costs (a link, so the token comes in the address) */
     public function export()
     {
-        if(!\ModulesGarden\TSSGGSModule\App\Libs\Support\CsrfToken::valid($this->request->string('token')))
+        if(!\TSSGGSModule\App\Libs\Support\CsrfToken::valid($this->request->string('token')))
         {
             $_SESSION[self::SESSION]['error'] = $this->lang->get('admin.kernel.tokenExpired');
 

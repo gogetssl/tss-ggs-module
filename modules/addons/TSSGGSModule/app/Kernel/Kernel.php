@@ -1,19 +1,18 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Kernel;
+namespace TSSGGSModule\App\Kernel;
 
 /**
- * The module's own small kernel (replaces the ModulesGarden framework page by page).
+ * The module's own small kernel: it serves the admin pages.
  *
- * A page is one class in app/Pages/<Area>/<Page>.php (Area: Admin). The request names it with mg-page and the
- * action with mg-action (default "index"):
+ * A page is one class in app/Pages/<Area>/<Page>.php (Area: Admin). The request names it with mod-page and the
+ * action with mod-action (default "index"):
  *
- *   GET  ...&mg-page=certificateLog                 -> Pages\Admin\CertificateLog::index()
- *   GET  ...&mg-page=certificateLog&mg-action=x     -> ::x()
- *   POST ...&mg-page=certificateLog&mg-action=clear -> ::postClear()   (the WHMCS token is checked first)
+ *   GET  ...&mod-page=certificateLog                 -> Pages\Admin\CertificateLog::index()
+ *   GET  ...&mod-page=certificateLog&mod-action=x     -> ::x()
+ *   POST ...&mod-page=certificateLog&mod-action=clear -> ::postClear()   (the WHMCS token is checked first)
  *
- * A page that has no class here is still served by the old framework (see Configuration/Addon/base.php), so pages
- * move over one at a time. Templates: resources/templates, a copy in overrides/templates wins (View).
+ * A page that has no class here answers "This page does not exist". Templates: resources/templates, a copy in overrides/templates wins (View).
  */
 final class Kernel
 {
@@ -105,7 +104,7 @@ final class Kernel
     /** The setup wizard has tested the API credentials successfully */
     public static function connected(): bool
     {
-        $configuration = (new \ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository())->getModuleConfiguration();
+        $configuration = (new \TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository())->getModuleConfiguration();
 
         return !empty($configuration) && ($configuration['test_connection'] ?? 'error') !== 'error';
     }

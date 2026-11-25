@@ -1,9 +1,9 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\Certificates;
+namespace TSSGGSModule\App\Libs\Certificates;
 
-use ModulesGarden\TSSGGSModule\App\Libs\AutoInstall\AutoInstallHelpers;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\GeneralSettings;
+use TSSGGSModule\App\Libs\AutoInstall\AutoInstallHelpers;
+use TSSGGSModule\App\Libs\Support\GeneralSettings;
 
 /**
  * Certificate download formats built from the files the gateway returns (certificate + intermediates).

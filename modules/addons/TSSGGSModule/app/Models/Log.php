@@ -1,6 +1,6 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Models;
+namespace TSSGGSModule\App\Models;
 
 /**
  * An entry of the module log (table <prefix>_Logs): type (info, error, ...), date, message and the data stored with

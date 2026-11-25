@@ -1,6 +1,6 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\Support;
+namespace TSSGGSModule\App\Libs\Support;
 
 /**
  * WHMCS's internal API (localAPI) with an exception instead of an error result:

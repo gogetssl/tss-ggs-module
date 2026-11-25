@@ -1,15 +1,15 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\Setup;
+namespace TSSGGSModule\App\Libs\Setup;
 
-use ModulesGarden\TSSGGSModule\App\Kernel\Lang;
-use ModulesGarden\TSSGGSModule\App\Kernel\Page;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\Edition;
-use ModulesGarden\TSSGGSModule\App\Migration\Choice;
-use ModulesGarden\TSSGGSModule\App\Migration\Credentials;
-use ModulesGarden\TSSGGSModule\App\Migration\Detector;
-use ModulesGarden\TSSGGSModule\App\Migration\Engine;
-use ModulesGarden\TSSGGSModule\App\Migration\Store;
+use TSSGGSModule\App\Kernel\Lang;
+use TSSGGSModule\App\Kernel\Page;
+use TSSGGSModule\App\Libs\Support\Edition;
+use TSSGGSModule\App\Migration\Choice;
+use TSSGGSModule\App\Migration\Credentials;
+use TSSGGSModule\App\Migration\Detector;
+use TSSGGSModule\App\Migration\Engine;
+use TSSGGSModule\App\Migration\Store;
 use WHMCS\Database\Capsule;
 
 /**
@@ -233,7 +233,7 @@ class MigrationScreen
         $status  = (new Engine($run['source']))->status((int)$run['id']);
         $summary = (array)($run['summary'] ?? []);
         $id      = (int)$run['id'];
-        $module  = \ModulesGarden\TSSGGSModule\App\Kernel\Kernel::module();
+        $module  = \TSSGGSModule\App\Kernel\Kernel::module();
 
         $block = [
             'kind'   => 'run',

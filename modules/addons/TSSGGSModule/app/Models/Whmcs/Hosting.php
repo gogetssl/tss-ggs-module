@@ -1,6 +1,6 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Models\Whmcs;
+namespace TSSGGSModule\App\Models\Whmcs;
 
 use Illuminate\Database\Eloquent\Model as EloquentModel;
 
@@ -51,27 +51,27 @@ class Hosting extends EloquentModel
 
     public function addons()
     {
-        return $this->hasMany('ModulesGarden\\TSSGGSModule\\App\\Models\\Whmcs\\HostingAddon', 'hostingid');
+        return $this->hasMany('TSSGGSModule\\App\\Models\\Whmcs\\HostingAddon', 'hostingid');
     }
 
     public function cancelation()
     {
-        return $this->hasOne('ModulesGarden\\TSSGGSModule\\App\\Models\\Whmcs\\CancelRequest', 'relid');
+        return $this->hasOne('TSSGGSModule\\App\\Models\\Whmcs\\CancelRequest', 'relid');
     }
 
     public function client()
     {
-        return $this->belongsTo('ModulesGarden\\TSSGGSModule\\App\\Models\\Whmcs\\Client', 'userid');
+        return $this->belongsTo('TSSGGSModule\\App\\Models\\Whmcs\\Client', 'userid');
     }
 
     public function configOptions()
     {
-        return $this->hasMany('ModulesGarden\\TSSGGSModule\\App\\Models\\Whmcs\\HostingConfigOption', 'relid');
+        return $this->hasMany('TSSGGSModule\\App\\Models\\Whmcs\\HostingConfigOption', 'relid');
     }
 
     public function customFieldValues()
     {
-        return $this->hasMany('ModulesGarden\\TSSGGSModule\\App\\Models\\Whmcs\\CustomFieldValue', "relid");
+        return $this->hasMany('TSSGGSModule\\App\\Models\\Whmcs\\CustomFieldValue', "relid");
     }
 
     public function getBillingcycleFriendlyAttribute()
@@ -81,7 +81,7 @@ class Hosting extends EloquentModel
 
     public function order()
     {
-        return $this->belongsTo('ModulesGarden\\TSSGGSModule\\App\\Models\\Whmcs\\Order', 'orderid');
+        return $this->belongsTo('TSSGGSModule\\App\\Models\\Whmcs\\Order', 'orderid');
     }
 
     /**
@@ -91,11 +91,11 @@ class Hosting extends EloquentModel
      */
     public function product()
     {
-        return $this->belongsTo('ModulesGarden\\TSSGGSModule\\App\\Models\\Whmcs\\Product', 'packageid');
+        return $this->belongsTo('TSSGGSModule\\App\\Models\\Whmcs\\Product', 'packageid');
     }
 
     public function server()
     {
-        return $this->belongsTo('ModulesGarden\\TSSGGSModule\\App\\Models\\Whmcs\\Server', 'server');
+        return $this->belongsTo('TSSGGSModule\\App\\Models\\Whmcs\\Server', 'server');
     }
 }

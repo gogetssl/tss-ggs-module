@@ -1,9 +1,9 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\Gateway\Endpoints;
+namespace TSSGGSModule\App\Libs\Gateway\Endpoints;
 
-use ModulesGarden\TSSGGSModule\App\Libs\ProductLines\DocumentSigningService;
-use ModulesGarden\TSSGGSModule\App\Libs\Gateway\SSLTrustCenterApi;
+use TSSGGSModule\App\Libs\ProductLines\DocumentSigningService;
+use TSSGGSModule\App\Libs\Gateway\SSLTrustCenterApi;
 
 /**
  * Orders of the other certificate products: S/MIME, code signing, document signing, PCI, LEI.

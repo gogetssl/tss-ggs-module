@@ -1,10 +1,10 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\Billing;
+namespace TSSGGSModule\App\Libs\Billing;
 
-use ModulesGarden\TSSGGSModule\App\Libs\Gateway\SSLTrustCenterApi;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\Edition;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\GeneralSettings;
+use TSSGGSModule\App\Libs\Gateway\SSLTrustCenterApi;
+use TSSGGSModule\App\Libs\Support\Edition;
+use TSSGGSModule\App\Libs\Support\GeneralSettings;
 
 /**
  * Low reseller balance warning: GET /profile of every connected vendor account (Edition::vendors) is read once an

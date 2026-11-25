@@ -2,7 +2,7 @@
 
 namespace Tests\Unit\Support;
 
-use ModulesGarden\TSSGGSModule\App\Libs\Support\Html;
+use TSSGGSModule\App\Libs\Support\Html;
 use PHPUnit\Framework\TestCase;
 
 /** The shared HTML pieces: escaping, notices, hints - unknown tones fall back, text is escaped */

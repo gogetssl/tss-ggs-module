@@ -1,6 +1,6 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\Products\ConfigOptions;
+namespace TSSGGSModule\App\Libs\Products\ConfigOptions;
 
 /** A quantity option ("how many additional SANs"): setRange(0, 250); max 0 = no limit */
 class Quantity extends ConfigurableOption

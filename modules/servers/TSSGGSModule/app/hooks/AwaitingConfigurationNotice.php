@@ -1,6 +1,6 @@
 <?php
 
-namespace ModulesGarden\Servers\TSSGGSModule\app\hooks;
+namespace TSSGGSModule\Server\app\hooks;
 
 use WHMCS\Database\Capsule;
 
@@ -15,7 +15,7 @@ class AwaitingConfigurationNotice
         if($params['clientareaaction'] == 'services' || $params['clientareaaction'] == 'products')
         {
 
-            $moduleName = (new \ModulesGarden\Servers\TSSGGSModule\Configuration())->systemName;
+            $moduleName = (new \TSSGGSModule\Server\Configuration())->systemName;
             $services   = Capsule::table('tblhosting')
                                  ->select(['tblhosting.id'])
                                  ->join('tblproducts', 'tblproducts.id', '=', 'tblhosting.packageid')

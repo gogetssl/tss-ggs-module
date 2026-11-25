@@ -1,8 +1,8 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\Update;
+namespace TSSGGSModule\App\Libs\Update;
 
-use ModulesGarden\TSSGGSModule\App\Kernel\Layout;
+use TSSGGSModule\App\Kernel\Layout;
 use WHMCS\Database\Capsule;
 
 /**

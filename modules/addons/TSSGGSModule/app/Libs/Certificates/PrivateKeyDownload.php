@@ -1,6 +1,6 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\Certificates;
+namespace TSSGGSModule\App\Libs\Certificates;
 
 /**
  * Private keys generated for the client in the browser (CSR generator, manual enrollment) are never put in a URL or

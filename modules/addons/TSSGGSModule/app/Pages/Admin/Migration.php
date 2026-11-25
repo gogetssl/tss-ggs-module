@@ -1,14 +1,14 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Pages\Admin;
+namespace TSSGGSModule\App\Pages\Admin;
 
-use ModulesGarden\TSSGGSModule\App\Kernel\Page;
-use ModulesGarden\TSSGGSModule\App\Kernel\Response;
-use ModulesGarden\TSSGGSModule\App\Libs\Setup\MigrationScreen;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\Edition;
-use ModulesGarden\TSSGGSModule\App\Migration\Choice;
-use ModulesGarden\TSSGGSModule\App\Migration\Engine;
-use ModulesGarden\TSSGGSModule\App\Migration\Store;
+use TSSGGSModule\App\Kernel\Page;
+use TSSGGSModule\App\Kernel\Response;
+use TSSGGSModule\App\Libs\Setup\MigrationScreen;
+use TSSGGSModule\App\Libs\Support\Edition;
+use TSSGGSModule\App\Migration\Choice;
+use TSSGGSModule\App\Migration\Engine;
+use TSSGGSModule\App\Migration\Store;
 use WHMCS\Database\Capsule;
 
 /**

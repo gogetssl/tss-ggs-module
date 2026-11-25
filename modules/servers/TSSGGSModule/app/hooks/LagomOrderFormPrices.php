@@ -1,6 +1,6 @@
 <?php
 
-namespace ModulesGarden\Servers\TSSGGSModule\app\hooks;
+namespace TSSGGSModule\Server\app\hooks;
 
 use WHMCS\Database\Capsule;
 
@@ -23,7 +23,7 @@ class LagomOrderFormPrices
             $markups = [];
             foreach(Capsule::table('tblproducts')->where('servertype', 'TSSGGSModule')->pluck('id') as $pid)
             {
-                $markup = \ModulesGarden\TSSGGSModule\App\Libs\Billing\Markups::forProduct($clientId, $pid);
+                $markup = \TSSGGSModule\App\Libs\Billing\Markups::forProduct($clientId, $pid);
                 if($markup !== null)
                 {
                     $markups[(int)$pid] = 1 + $markup / 100;

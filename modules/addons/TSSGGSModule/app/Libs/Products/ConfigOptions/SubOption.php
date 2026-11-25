@@ -1,11 +1,11 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\Products\ConfigOptions;
+namespace TSSGGSModule\App\Libs\Products\ConfigOptions;
 
-use ModulesGarden\TSSGGSModule\App\Models\Whmcs\Currency;
-use ModulesGarden\TSSGGSModule\App\Models\Whmcs\Pricing;
-use ModulesGarden\TSSGGSModule\App\Models\Whmcs\ProductConfigOption;
-use ModulesGarden\TSSGGSModule\App\Models\Whmcs\ProductConfigOptionSub;
+use TSSGGSModule\App\Models\Whmcs\Currency;
+use TSSGGSModule\App\Models\Whmcs\Pricing;
+use TSSGGSModule\App\Models\Whmcs\ProductConfigOption;
+use TSSGGSModule\App\Models\Whmcs\ProductConfigOptionSub;
 
 /** A sub-option of a configurable option (for a quantity: the unit the price is set on) */
 class SubOption

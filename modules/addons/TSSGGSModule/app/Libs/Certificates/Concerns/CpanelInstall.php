@@ -1,11 +1,11 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\Certificates\Concerns;
+namespace TSSGGSModule\App\Libs\Certificates\Concerns;
 
-use ModulesGarden\TSSGGSModule\App\Libs\AutoInstall\AutoInstallHelpers;
-use ModulesGarden\TSSGGSModule\App\Libs\AutoInstall\Cpanel;
-use ModulesGarden\TSSGGSModule\App\Libs\Certificates\CertificateService;
-use ModulesGarden\TSSGGSModule\App\Models\Request;
+use TSSGGSModule\App\Libs\AutoInstall\AutoInstallHelpers;
+use TSSGGSModule\App\Libs\AutoInstall\Cpanel;
+use TSSGGSModule\App\Libs\Certificates\CertificateService;
+use TSSGGSModule\App\Models\Request;
 use WHMCS\Database\Capsule;
 
 /**

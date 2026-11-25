@@ -1,6 +1,6 @@
-<div class="mg-module">
+<div class="mod-module">
     <link rel="stylesheet" href="{$assetsURL}/css/theme.css">
-    <div id="mg-wrapper" class="module-container">
+    <div id="mod-wrapper" class="module-container">
         <div class="row" id="MGAlerts" style="display: block;">
             {if $error}
                 <div class="alert alert-danger">
@@ -28,7 +28,7 @@
                 </div>
             </div>
         </div>
-        <div id="mg-container">
+        <div id="mod-container">
             {* The module output is HTML. WHMCS 9 HTML-escapes the variables a module returns before this template
                runs, so nofilter alone shows the page as text: decode that one layer back. Only when it arrived
                escaped - decoding raw HTML would undo the |escape the page templates use for client data. *}
@@ -42,11 +42,11 @@
             <script type="text/javascript">
                 $(window).on('resize', function () {
                     var height = $('.module-sidebar').height();
-                    $('#mg-wrapper').css('min-height', height);
+                    $('#mod-wrapper').css('min-height', height);
                 });
                 $(document).ready(function (){
-                    let mgContent = $('.mg-module').parent('div').clone();
-                    $('#domain').html(mgContent);
+                    let modContent = $('.mod-module').parent('div').clone();
+                    $('#domain').html(modContent);
                 });
             </script>
         {/literal}

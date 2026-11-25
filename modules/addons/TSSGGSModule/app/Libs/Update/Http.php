@@ -1,6 +1,6 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\Update;
+namespace TSSGGSModule\App\Libs\Update;
 
 /**
  * HTTPS for the updater: certificate checks always on, redirects followed by hand and only to the hosts releases are

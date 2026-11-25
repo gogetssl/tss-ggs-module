@@ -1,6 +1,6 @@
 <?php
 
-namespace ModulesGarden\Servers\TSSGGSModule\app\hooks;
+namespace TSSGGSModule\Server\app\hooks;
 
 
 /**
@@ -15,7 +15,7 @@ class CartPriceOverride
         try
         {
             list($clientId, $currencyId) = ClientCurrency::get();
-            $price = \ModulesGarden\TSSGGSModule\App\Libs\Billing\Markups::price($clientId, (int)$vars['pid'], $vars['proddata']['billingcycle'] ?? 'annually', $currencyId);
+            $price = \TSSGGSModule\App\Libs\Billing\Markups::price($clientId, (int)$vars['pid'], $vars['proddata']['billingcycle'] ?? 'annually', $currencyId);
 
             return $price === null ? [] : ['recurring' => $price];
         }

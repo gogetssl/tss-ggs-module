@@ -115,49 +115,49 @@ parameters:
 			path: modules/addons/TSSGGSModule/app/Libs/Dashboard/SupportReport.php
 
 		-
-			message: '#^Call to an undefined method ModulesGarden\\TSSGGSModule\\App\\Models\\Whmcs\\Pricing\:\:priceFields\(\)\.$#'
+			message: '#^Call to an undefined method TSSGGSModule\\App\\Models\\Whmcs\\Pricing\:\:priceFields\(\)\.$#'
 			identifier: method.notFound
 			count: 1
 			path: modules/addons/TSSGGSModule/app/Libs/Products/ConfigOptions/SubOption.php
 
 		-
-			message: '#^Call to an undefined method ModulesGarden\\TSSGGSModule\\App\\Models\\Whmcs\\Pricing\:\:setupFields\(\)\.$#'
+			message: '#^Call to an undefined method TSSGGSModule\\App\\Models\\Whmcs\\Pricing\:\:setupFields\(\)\.$#'
 			identifier: method.notFound
 			count: 1
 			path: modules/addons/TSSGGSModule/app/Libs/Products/ConfigOptions/SubOption.php
 
 		-
-			message: '#^Call to an undefined method ModulesGarden\\TSSGGSModule\\App\\Models\\Whmcs\\ProductConfigOption\:\:save\(\)\.$#'
+			message: '#^Call to an undefined method TSSGGSModule\\App\\Models\\Whmcs\\ProductConfigOption\:\:save\(\)\.$#'
 			identifier: method.notFound
 			count: 1
 			path: modules/addons/TSSGGSModule/app/Libs/Products/ProductEditor.php
 
 		-
-			message: '#^Call to an undefined method ModulesGarden\\TSSGGSModule\\App\\Models\\Whmcs\\ProductGroup\:\:save\(\)\.$#'
+			message: '#^Call to an undefined method TSSGGSModule\\App\\Models\\Whmcs\\ProductGroup\:\:save\(\)\.$#'
 			identifier: method.notFound
 			count: 1
 			path: modules/addons/TSSGGSModule/app/Libs/Products/ProductImport.php
 
 		-
-			message: '#^Call to an undefined method ModulesGarden\\TSSGGSModule\\App\\Models\\Whmcs\\ProductConfigOption\:\:save\(\)\.$#'
+			message: '#^Call to an undefined method TSSGGSModule\\App\\Models\\Whmcs\\ProductConfigOption\:\:save\(\)\.$#'
 			identifier: method.notFound
 			count: 1
 			path: modules/addons/TSSGGSModule/app/Libs/Support/Helpers.php
 
 		-
-			message: '#^Call to an undefined method ModulesGarden\\TSSGGSModule\\App\\Migration\\Readers\\LegacyReaderInterface\:\:filesPresent\(\)\.$#'
+			message: '#^Call to an undefined method TSSGGSModule\\App\\Migration\\Readers\\LegacyReaderInterface\:\:filesPresent\(\)\.$#'
 			identifier: method.notFound
 			count: 1
 			path: modules/addons/TSSGGSModule/app/Migration/Detector.php
 
 		-
-			message: '#^Call to an undefined method ModulesGarden\\TSSGGSModule\\App\\Migration\\Readers\\LegacyReaderInterface\:\:isAddonActive\(\)\.$#'
+			message: '#^Call to an undefined method TSSGGSModule\\App\\Migration\\Readers\\LegacyReaderInterface\:\:isAddonActive\(\)\.$#'
 			identifier: method.notFound
 			count: 1
 			path: modules/addons/TSSGGSModule/app/Migration/Detector.php
 
 		-
-			message: '#^Call to an undefined method ModulesGarden\\TSSGGSModule\\App\\Migration\\Readers\\LegacyReaderInterface\:\:productIds\(\)\.$#'
+			message: '#^Call to an undefined method TSSGGSModule\\App\\Migration\\Readers\\LegacyReaderInterface\:\:productIds\(\)\.$#'
 			identifier: method.notFound
 			count: 1
 			path: modules/addons/TSSGGSModule/app/Migration/Detector.php

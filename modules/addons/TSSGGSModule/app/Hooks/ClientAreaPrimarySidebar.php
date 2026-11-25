@@ -7,7 +7,7 @@ if(!defined('WHMCS'))
     exit;
 }
 
-use ModulesGarden\TSSGGSModule\App\Kernel\Kernel;
+use TSSGGSModule\App\Kernel\Kernel;
 use WHMCS\Database\Capsule;
 
 // Service page of one of the module's products: "Information" in the sidebar opens the service page itself

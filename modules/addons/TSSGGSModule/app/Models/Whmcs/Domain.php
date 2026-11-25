@@ -1,6 +1,6 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Models\Whmcs;
+namespace TSSGGSModule\App\Models\Whmcs;
 
 /**
  * Description of Domain
@@ -37,17 +37,17 @@ class Domain extends \WHMCS\Domain\Domain
 {
     public function client()
     {
-        return $this->belongsTo('ModulesGarden\\TSSGGSModule\\App\\Models\\Whmcs\\Client', 'userid');
+        return $this->belongsTo('TSSGGSModule\\App\\Models\\Whmcs\\Client', 'userid');
     }
 
     public function order()
     {
-        return $this->belongsTo('ModulesGarden\\TSSGGSModule\\App\\Models\\Whmcs\\Order', 'orderid');
+        return $this->belongsTo('TSSGGSModule\\App\\Models\\Whmcs\\Order', 'orderid');
     }
 
     public function invoiceItems()
     {
-        return $this->hasMany('ModulesGarden\\TSSGGSModule\\App\\Models\\Whmcs\\InvoiceItem', "relid")
+        return $this->hasMany('TSSGGSModule\\App\\Models\\Whmcs\\InvoiceItem', "relid")
             ->whereIn("type", ["DomainRegister", "DomainTransfer", "Domain", "DomainAddonDNS", "DomainAddonEMF", "DomainAddonIDP", "DomainGraceFee", "DomainRedemptionFee"]);
     }
 }

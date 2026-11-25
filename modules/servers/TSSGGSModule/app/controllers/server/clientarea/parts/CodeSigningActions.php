@@ -1,14 +1,14 @@
 <?php
 
-namespace ModulesGarden\Servers\TSSGGSModule\app\controllers\server\clientarea\parts;
+namespace TSSGGSModule\Server\app\controllers\server\clientarea\parts;
 
-use ModulesGarden\Servers\TSSGGSModule\app\models\whmcs\Client;
-use ModulesGarden\Servers\TSSGGSModule\app\models\whmcs\Order;
-use ModulesGarden\Servers\TSSGGSModule\app\models\whmcs\Service;
-use ModulesGarden\Servers\TSSGGSModule\app\models\whmcs\SSL;
-use ModulesGarden\Servers\TSSGGSModule\core\Lang;
-use ModulesGarden\TSSGGSModule\App\Libs\Certificates\CertificateService;
-use ModulesGarden\TSSGGSModule\App\Libs\ProductLines\CodeSigningService;
+use TSSGGSModule\Server\app\models\whmcs\Client;
+use TSSGGSModule\Server\app\models\whmcs\Order;
+use TSSGGSModule\Server\app\models\whmcs\Service;
+use TSSGGSModule\Server\app\models\whmcs\SSL;
+use TSSGGSModule\Server\core\Lang;
+use TSSGGSModule\App\Libs\Certificates\CertificateService;
+use TSSGGSModule\App\Libs\ProductLines\CodeSigningService;
 use WHMCS\Database\Capsule;
 
 /**
@@ -189,7 +189,7 @@ trait CodeSigningActions
                 'shipping'      => is_array($input['ship'] ?? null) ? $input['ship'] : [],
             ]);
         }
-        catch(\ModulesGarden\TSSGGSModule\App\Libs\ProductLines\CodeSigningInputException $e)
+        catch(\TSSGGSModule\App\Libs\ProductLines\CodeSigningInputException $e)
         {
             $argument = (string)$e->argument;
             $argument = strpos($argument, 'cs') === 0 ? Lang::absoluteT('serverCA', 'home', $argument) : htmlspecialchars($argument);

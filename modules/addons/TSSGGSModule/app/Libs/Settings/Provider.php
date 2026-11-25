@@ -1,8 +1,8 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\Settings;
+namespace TSSGGSModule\App\Libs\Settings;
 
-use ModulesGarden\TSSGGSModule\App\Kernel\Lang;
+use TSSGGSModule\App\Kernel\Lang;
 
 /**
  * Base of a settings screen's data: read() fills $data (the values the screen shows) and $availableValues (the

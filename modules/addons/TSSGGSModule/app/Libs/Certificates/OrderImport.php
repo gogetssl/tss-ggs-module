@@ -1,17 +1,17 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\Certificates;
+namespace TSSGGSModule\App\Libs\Certificates;
 
-use ModulesGarden\TSSGGSModule\App\Libs\Gateway\SSLTrustCenterApi;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\Helpers;
-use ModulesGarden\TSSGGSModule\App\Models\RemoteProduct;
-use ModulesGarden\TSSGGSModule\App\Models\Request as RequestModel;
-use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\WhmcsApi;
-use ModulesGarden\TSSGGSModule\App\Models\Whmcs\Client;
-use ModulesGarden\TSSGGSModule\App\Models\Whmcs\PaymentGateway;
-use ModulesGarden\TSSGGSModule\App\Models\Whmcs\Service;
-use ModulesGarden\TSSGGSModule\App\Libs\Logs\Logger;
+use TSSGGSModule\App\Libs\Gateway\SSLTrustCenterApi;
+use TSSGGSModule\App\Libs\Support\Helpers;
+use TSSGGSModule\App\Models\RemoteProduct;
+use TSSGGSModule\App\Models\Request as RequestModel;
+use TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
+use TSSGGSModule\App\Libs\Support\WhmcsApi;
+use TSSGGSModule\App\Models\Whmcs\Client;
+use TSSGGSModule\App\Models\Whmcs\PaymentGateway;
+use TSSGGSModule\App\Models\Whmcs\Service;
+use TSSGGSModule\App\Libs\Logs\Logger;
 use WHMCS\Database\Capsule;
 
 /**
@@ -193,7 +193,7 @@ class OrderImport
                 }
                 catch(\Throwable $e)
                 {
-                    Logger::error($e->getMessage(), \ModulesGarden\TSSGGSModule\App\Libs\Support\LogContext::exception($e, $localOrderData));
+                    Logger::error($e->getMessage(), \TSSGGSModule\App\Libs\Support\LogContext::exception($e, $localOrderData));
                     $errorsCount++;
                     continue;
                 }
@@ -232,7 +232,7 @@ class OrderImport
                 }
                 catch(\Throwable $e)
                 {
-                    Logger::error($e->getMessage(), \ModulesGarden\TSSGGSModule\App\Libs\Support\LogContext::exception($e, $localOrderData));
+                    Logger::error($e->getMessage(), \TSSGGSModule\App\Libs\Support\LogContext::exception($e, $localOrderData));
                     $errorsCount++;
                     continue;
                 }

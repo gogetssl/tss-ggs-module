@@ -1,18 +1,18 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\Gateway\Endpoints;
+namespace TSSGGSModule\App\Libs\Gateway\Endpoints;
 
-use ModulesGarden\TSSGGSModule\App\Libs\Gateway\AwaitingConfigurationException;
-use ModulesGarden\TSSGGSModule\App\Libs\Gateway\GatewayException;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\ClientText;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\Edition;
-use ModulesGarden\TSSGGSModule\App\Libs\Billing\FinancePolicy;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\GeneralSettings;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\LogPolicy;
-use ModulesGarden\TSSGGSModule\App\Libs\Gateway\SSLTrustCenterApi;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\SecretValue;
-use ModulesGarden\TSSGGSModule\App\Models\Request;
-use ModulesGarden\TSSGGSModule\App\Libs\Logs\Logger;
+use TSSGGSModule\App\Libs\Gateway\AwaitingConfigurationException;
+use TSSGGSModule\App\Libs\Gateway\GatewayException;
+use TSSGGSModule\App\Libs\Support\ClientText;
+use TSSGGSModule\App\Libs\Support\Edition;
+use TSSGGSModule\App\Libs\Billing\FinancePolicy;
+use TSSGGSModule\App\Libs\Support\GeneralSettings;
+use TSSGGSModule\App\Libs\Support\LogPolicy;
+use TSSGGSModule\App\Libs\Gateway\SSLTrustCenterApi;
+use TSSGGSModule\App\Libs\Support\SecretValue;
+use TSSGGSModule\App\Models\Request;
+use TSSGGSModule\App\Libs\Logs\Logger;
 
 /**
  * HTTP transport of the gateway API: the request, its log entries, and errors as readable texts / typed exceptions.

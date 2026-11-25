@@ -1,19 +1,19 @@
 <?php
 
-namespace ModulesGarden\Servers\TSSGGSModule\app\controllers\server\clientarea\parts;
+namespace TSSGGSModule\Server\app\controllers\server\clientarea\parts;
 
-use ModulesGarden\Servers\TSSGGSModule\app\models\whmcs\Client;
-use ModulesGarden\Servers\TSSGGSModule\app\models\whmcs\Product;
-use ModulesGarden\Servers\TSSGGSModule\app\models\whmcs\SSL;
-use ModulesGarden\Servers\TSSGGSModule\app\repository\whmcs\Domain;
-use ModulesGarden\Servers\TSSGGSModule\app\repository\whmcs\ProductConfigOptions;
-use ModulesGarden\Servers\TSSGGSModule\core\Lang;
-use ModulesGarden\TSSGGSModule\App\Libs\AutoInstall\AutoInstallHelpers;
-use ModulesGarden\TSSGGSModule\App\Libs\Certificates\CertificateService;
-use ModulesGarden\TSSGGSModule\App\Libs\Gateway\SSLTrustCenterApi;
-use ModulesGarden\TSSGGSModule\App\Models\Request;
-use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
-use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\ProductRepository;
+use TSSGGSModule\Server\app\models\whmcs\Client;
+use TSSGGSModule\Server\app\models\whmcs\Product;
+use TSSGGSModule\Server\app\models\whmcs\SSL;
+use TSSGGSModule\Server\app\repository\whmcs\Domain;
+use TSSGGSModule\Server\app\repository\whmcs\ProductConfigOptions;
+use TSSGGSModule\Server\core\Lang;
+use TSSGGSModule\App\Libs\AutoInstall\AutoInstallHelpers;
+use TSSGGSModule\App\Libs\Certificates\CertificateService;
+use TSSGGSModule\App\Libs\Gateway\SSLTrustCenterApi;
+use TSSGGSModule\App\Models\Request;
+use TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
+use TSSGGSModule\App\Repositories\Whmcs\ProductRepository;
 
 /**
  * Reissue of an SSL certificate (three steps) and the CSR helpers it uses.
@@ -102,7 +102,7 @@ trait SslReissueActions
 
         // a certificate for public IPs (App\Libs\Certificates\IpCertificate): CSR without common name, the main name stays and
         // uses one of the product's SANs - the field takes the other names only
-        $vars['ipProduct'] = \ModulesGarden\TSSGGSModule\App\Libs\Certificates\IpCertificate::isProduct($params['packageid']);
+        $vars['ipProduct'] = \TSSGGSModule\App\Libs\Certificates\IpCertificate::isProduct($params['packageid']);
         if($vars['ipProduct'])
         {
             $vars['sans']          = max(0, (int)$vars['sans'] - 1);
@@ -118,7 +118,7 @@ trait SslReissueActions
         $vars['lang_san']          = sprintf(Lang::absoluteT('sans_additional'), $vars['sans']);
         $vars['lang_san_wildcard'] = sprintf(Lang::absoluteT('sans_additional_wildcard'), $vars['sans_wildcard']);
 
-        $vars['errors']            = isset($_SESSION['mg-error']) ? $_SESSION['mg-error'] : false;
+        $vars['errors']            = isset($_SESSION['mod-error']) ? $_SESSION['mod-error'] : false;
         $vars['post_csr']          = isset($_SESSION['post_csr']) ? $_SESSION['post_csr'] : false;
         $vars['post_san']          = isset($_SESSION['post_san']) ? $_SESSION['post_san'] : false;
         $vars['post_san_wildcard'] = isset($_SESSION['post_san_wildcard']) ? $_SESSION['post_san_wildcard'] : false;
@@ -130,9 +130,9 @@ trait SslReissueActions
             $vars['post_san_wildcard'] = implode(', ', $current['wildcard']);
         }
 
-        if(isset($_SESSION['mg-error']))
+        if(isset($_SESSION['mod-error']))
         {
-            unset($_SESSION['mg-error']);
+            unset($_SESSION['mod-error']);
         }
         if(isset($_SESSION['post_csr']))
         {
@@ -181,7 +181,7 @@ trait SslReissueActions
             $decode  = $this->decodeCSR($input['csr']);
             $mainName = (string)($decode['CN'] ?? '');
             // a certificate for public IPs (App\Libs\Certificates\IpCertificate): CSR without common name, the main name stays
-            $ipCertificate = \ModulesGarden\TSSGGSModule\App\Libs\Certificates\IpCertificate::isProduct($input['params']['packageid']);
+            $ipCertificate = \TSSGGSModule\App\Libs\Certificates\IpCertificate::isProduct($input['params']['packageid']);
             if($ipCertificate)
             {
                 if($mainName !== '')
@@ -246,8 +246,8 @@ trait SslReissueActions
             $_SESSION['post_csr']          = $input['csr'];
             $_SESSION['post_san']          = $input['sans_domains'];
             $_SESSION['post_san_wildcard'] = $input['sans_domains_wildcard'];
-            $_SESSION['mg-error']          = $e->getMessage();
-            redir('action=productdetails&id=' . $input['id'] . '&mg-action=reissueSSL', 'clientarea.php');
+            $_SESSION['mod-error']          = $e->getMessage();
+            redir('action=productdetails&id=' . $input['id'] . '&mod-action=reissueSSL', 'clientarea.php');
 
         }
 
@@ -270,7 +270,7 @@ trait SslReissueActions
 
             // CN first - for a certificate for public IPs (CSR without CN) the current main name
             $commonName = (string)(openssl_csr_get_subject($input['csr'])['CN'] ?? '');
-            if($commonName === '' && \ModulesGarden\TSSGGSModule\App\Libs\Certificates\IpCertificate::isProduct($input['params']['packageid']))
+            if($commonName === '' && \TSSGGSModule\App\Libs\Certificates\IpCertificate::isProduct($input['params']['packageid']))
             {
                 $commonName = strtolower(trim((string)$input['params']['domain']));
             }
@@ -281,7 +281,7 @@ trait SslReissueActions
 
             CertificateService::reissue($serviceId, $input['csr'], $methods);
 
-            $_SESSION['mg-success'] = Lang::absoluteT('reissue_success');
+            $_SESSION['mod-success'] = Lang::absoluteT('reissue_success');
             redir('action=productdetails&id=' . $serviceId, 'clientarea.php');
         }
         catch(\Exception $e)
@@ -411,7 +411,7 @@ trait SslReissueActions
             openssl_pkey_export($privateKey, $pKeyOut);
 
             // a certificate for public IPs (App\Libs\Certificates\IpCertificate): the CSR has no common name
-            $ipProduct = \ModulesGarden\TSSGGSModule\App\Libs\Certificates\IpCertificate::isProduct($input['params']['packageid'] ?? 0);
+            $ipProduct = \TSSGGSModule\App\Libs\Certificates\IpCertificate::isProduct($input['params']['packageid'] ?? 0);
             $csr = openssl_csr_new(array_filter([
                 'countryName' => strtoupper((string)$input['country']),
                 'stateOrProvinceName' => (string)$input['state'],
@@ -429,7 +429,7 @@ trait SslReissueActions
 
             openssl_csr_export($csr, $csrOut);
 
-            return ['json' => ['status' => 'success', 'data' => ['csr' => $csrOut, 'private_key' => \ModulesGarden\TSSGGSModule\App\Libs\Certificates\PrivateKeyDownload::store((int)$input['id'], $pKeyOut)]]];
+            return ['json' => ['status' => 'success', 'data' => ['csr' => $csrOut, 'private_key' => \TSSGGSModule\App\Libs\Certificates\PrivateKeyDownload::store((int)$input['id'], $pKeyOut)]]];
 
         }
         catch(\Exception $e)

@@ -1,8 +1,8 @@
 <?php
 
-namespace ModulesGarden\Servers\TSSGGSModule;
+namespace TSSGGSModule\Server;
 
-use ModulesGarden\Servers\TSSGGSModule\core\process\AbstractConfiguration;
+use TSSGGSModule\Server\core\process\AbstractConfiguration;
 
 class Configuration extends AbstractConfiguration
 {
@@ -26,13 +26,13 @@ class Configuration extends AbstractConfiguration
         // neither edition can ever show the other one's name.
         $edition = dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . 'addons' . DIRECTORY_SEPARATOR . basename(__DIR__)
             . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'Libs' . DIRECTORY_SEPARATOR . 'Support' . DIRECTORY_SEPARATOR . 'Edition.php';
-        if(!class_exists('\ModulesGarden\TSSGGSModule\App\Libs\Support\Edition', false) && is_file($edition))
+        if(!class_exists('\TSSGGSModule\App\Libs\Support\Edition', false) && is_file($edition))
         {
             require_once $edition;
         }
-        if(class_exists('\ModulesGarden\TSSGGSModule\App\Libs\Support\Edition', false))
+        if(class_exists('\TSSGGSModule\App\Libs\Support\Edition', false))
         {
-            $this->name           = \ModulesGarden\TSSGGSModule\App\Libs\Support\Edition::name();
+            $this->name           = \TSSGGSModule\App\Libs\Support\Edition::name();
             $this->clientareaName = $this->name;
         }
     }

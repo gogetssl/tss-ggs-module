@@ -21,7 +21,7 @@
     <div class="tssggs-toolbar" x-data>
         <form method="get" action="addonmodules.php">
             <input type="hidden" name="module" value="{$moduleName}">
-            <input type="hidden" name="mg-page" value="pricing">
+            <input type="hidden" name="mod-page" value="pricing">
             <label>{t key='currency'}</label>
             <select name="currency" class="form-control" @change="$el.form.submit()">
                 {foreach $currencies as $currency}

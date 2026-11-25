@@ -1,11 +1,11 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Pages\Admin;
+namespace TSSGGSModule\App\Pages\Admin;
 
-use ModulesGarden\TSSGGSModule\App\Kernel\Page;
-use ModulesGarden\TSSGGSModule\App\Libs\AutoInstall\AutoInstallQueue;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\GeneralSettings;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\Html;
+use TSSGGSModule\App\Kernel\Page;
+use TSSGGSModule\App\Libs\AutoInstall\AutoInstallQueue;
+use TSSGGSModule\App\Libs\Support\GeneralSettings;
+use TSSGGSModule\App\Libs\Support\Html;
 use WHMCS\Database\Capsule;
 
 /**

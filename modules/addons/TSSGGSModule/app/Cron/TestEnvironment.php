@@ -1,9 +1,9 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Cron;
+namespace TSSGGSModule\App\Cron;
 
-use ModulesGarden\TSSGGSModule\App\Migration\TestEnvironment as Env;
-use ModulesGarden\TSSGGSModule\App\Kernel\Console\Command;
+use TSSGGSModule\App\Migration\TestEnvironment as Env;
+use TSSGGSModule\App\Kernel\Console\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;

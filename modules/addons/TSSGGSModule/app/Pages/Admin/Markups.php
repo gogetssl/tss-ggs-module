@@ -1,11 +1,11 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Pages\Admin;
+namespace TSSGGSModule\App\Pages\Admin;
 
-use ModulesGarden\TSSGGSModule\App\Kernel\Kernel;
-use ModulesGarden\TSSGGSModule\App\Kernel\Page;
-use ModulesGarden\TSSGGSModule\App\Libs\Billing\Markups as MarkupRules;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\GeneralSettings;
+use TSSGGSModule\App\Kernel\Kernel;
+use TSSGGSModule\App\Kernel\Page;
+use TSSGGSModule\App\Libs\Billing\Markups as MarkupRules;
+use TSSGGSModule\App\Libs\Support\GeneralSettings;
 use WHMCS\Database\Capsule;
 
 /**

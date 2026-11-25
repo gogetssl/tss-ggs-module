@@ -1,12 +1,12 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Pages\Admin;
+namespace TSSGGSModule\App\Pages\Admin;
 
-use ModulesGarden\TSSGGSModule\App\Kernel\Page;
-use ModulesGarden\TSSGGSModule\App\Kernel\Response;
-use ModulesGarden\TSSGGSModule\App\Libs\Emails\EmailCatalog;
-use ModulesGarden\TSSGGSModule\App\Libs\Emails\EmailManager;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\GeneralSettings;
+use TSSGGSModule\App\Kernel\Page;
+use TSSGGSModule\App\Kernel\Response;
+use TSSGGSModule\App\Libs\Emails\EmailCatalog;
+use TSSGGSModule\App\Libs\Emails\EmailManager;
+use TSSGGSModule\App\Libs\Support\GeneralSettings;
 use WHMCS\User\Admin\Permission;
 
 /**

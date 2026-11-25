@@ -25,7 +25,7 @@
           hx-get="addonmodules.php" hx-target="#tssggs-log-list" hx-push-url="true"
           hx-trigger="submit, change from:find select, input delay:400ms from:find input[name=search]">
         <input type="hidden" name="module" value="{$moduleName}">
-        <input type="hidden" name="mg-page" value="certificateLog">
+        <input type="hidden" name="mod-page" value="certificateLog">
         <input class="form-control" style="width:130px" name="service" type="number" min="1" placeholder="{t key='service_id'}" value="{if $filter.service}{$filter.service}{/if}">
         <select class="form-control" style="width:150px" name="type">
             <option value="">{t key='all_types'}</option>

@@ -24,8 +24,8 @@
                         <form method="get" action="addonmodules.php" class="lu-w-100"
                               hx-get="addonmodules.php" hx-target="#tssggs-report-{$name}" hx-swap="innerHTML">
                             <input type="hidden" name="module" value="{$moduleName}">
-                            <input type="hidden" name="mg-page" value="{$pageName}">
-                            <input type="hidden" name="mg-action" value="report">
+                            <input type="hidden" name="mod-page" value="{$pageName}">
+                            <input type="hidden" name="mod-action" value="report">
                             <input type="hidden" name="name" value="{$name}">
                             <div class="lu-container-fluid">
                                 <div class="lu-row">

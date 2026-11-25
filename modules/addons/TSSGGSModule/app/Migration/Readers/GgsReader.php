@@ -1,10 +1,10 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Migration\Readers;
+namespace TSSGGSModule\App\Migration\Readers;
 
-use ModulesGarden\TSSGGSModule\App\Migration\ProductMapper;
-use ModulesGarden\TSSGGSModule\App\Migration\Support\Configdata;
-use ModulesGarden\TSSGGSModule\App\Migration\Support\Schema;
+use TSSGGSModule\App\Migration\ProductMapper;
+use TSSGGSModule\App\Migration\Support\Configdata;
+use TSSGGSModule\App\Migration\Support\Schema;
 use WHMCS\Database\Capsule;
 
 /**
@@ -127,7 +127,7 @@ class GgsReader extends AbstractReader
         // its renewal invoice was created L days before a due date that lay D days before the order end (D only with
         // the subscription invoice switch on). The 1.5.0 pair keeps the due date where it was: the invoice is
         // created D + L days before the end (at most 30), due D days before it.
-        $maxLead  = \ModulesGarden\TSSGGSModule\App\Libs\Billing\RenewalPolicy::MAX_LEAD;
+        $maxLead  = \TSSGGSModule\App\Libs\Billing\RenewalPolicy::MAX_LEAD;
         $prior    = !empty($s['auto_renew_invoice_subscription']) ? max(0, (int)$val('renew_invoice_days_subscription', '0')) : 0;
         $lead     = min($maxLead, max(1, $prior + max(0, (int)$val('renew_invoice_days_reccuring', '30'))));
         // subscriptions: the same lead; due early enough that an unpaid renewal is cancelled before the vendor renews
@@ -143,7 +143,7 @@ class GgsReader extends AbstractReader
             'oneTimeSendExpirationNotifications'                 => $on('send_expiration_notification_one_time') ? '30,15,7,3,1' : '',
             'recurringCreateAutomaticRenewalInvoiceSubscription' => $on('auto_renew_invoice_subscription'),
             'recurringDaysBeforeExpirySubscription'              => (string)$leadSub,
-            'recurringPaymentTermSubscription'                   => (string)min(\ModulesGarden\TSSGGSModule\App\Libs\Billing\RenewalPolicy::DEFAULT_TERM, \ModulesGarden\TSSGGSModule\App\Libs\Billing\RenewalPolicy::safeTerm(\ModulesGarden\TSSGGSModule\App\Libs\Billing\RenewalPolicy::SUBSCRIPTION, $leadSub)),
+            'recurringPaymentTermSubscription'                   => (string)min(\TSSGGSModule\App\Libs\Billing\RenewalPolicy::DEFAULT_TERM, \TSSGGSModule\App\Libs\Billing\RenewalPolicy::safeTerm(\TSSGGSModule\App\Libs\Billing\RenewalPolicy::SUBSCRIPTION, $leadSub)),
             'recurringSendExpirationNotificationsSubscription'   => $on('send_expiration_notification_subscription') ? '30,15,7,3,1' : '',
             'renewOrderViaExistingOrder'                         => empty($s['renew_new_order']) ? 'on' : '',
             'automaticProcessingOfRenewalOrders'                 => $on('automatic_processing_of_renewal_orders'),

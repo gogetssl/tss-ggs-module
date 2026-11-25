@@ -1,6 +1,6 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\Support;
+namespace TSSGGSModule\App\Libs\Support;
 
 /**
  * Client-area texts of shared code (errors and messages a client sees) from the server module language files
@@ -34,7 +34,7 @@ class ClientText
      */
     public static function lookup(string ...$path)
     {
-        $lang = '\ModulesGarden\Servers\TSSGGSModule\core\Lang';
+        $lang = '\TSSGGSModule\Server\core\Lang';
         try
         {
             // only a language the server module kernel has loaded: calling Lang before it would start it without

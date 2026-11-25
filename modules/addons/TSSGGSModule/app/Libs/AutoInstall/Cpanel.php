@@ -1,12 +1,12 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\AutoInstall;
+namespace TSSGGSModule\App\Libs\AutoInstall;
 
-use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
-use ModulesGarden\TSSGGSModule\App\Kernel\Kernel;
+use TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
+use TSSGGSModule\App\Kernel\Kernel;
 use WHMCS\Database\Capsule;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\GeneralSettings;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\SecretValue;
+use TSSGGSModule\App\Libs\Support\GeneralSettings;
+use TSSGGSModule\App\Libs\Support\SecretValue;
 
 /**
  * cPanel / WHM client used by the SSL AutoInstall feature.

@@ -1,6 +1,6 @@
 /*
  * Dropdowns of the module's forms. Every <select class="lu-form-control"> of a page on the new kernel is shown as
- * the module's own dropdown (the look of the old framework: classes lu-selectize-*), with a search: type to
+ * the module's own dropdown (classes lu-selectize-*), with a search: type to
  * narrow the list. The <select> stays in the page, hidden, and keeps the value - forms, htmx and Alpine work with
  * it as with any select (a choice fires its "change" event).
  *

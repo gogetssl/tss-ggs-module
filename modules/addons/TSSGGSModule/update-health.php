@@ -71,7 +71,7 @@ try
     {
         require_once $server . DIRECTORY_SEPARATOR . 'TSSGGSModule.php';
     }
-    $version = \ModulesGarden\TSSGGSModule\App\Kernel\Layout::version();
+    $version = \TSSGGSModule\App\Kernel\Layout::version();
 
     if(($stored['mode'] ?? '') === 'upgrade')
     {
@@ -87,7 +87,7 @@ try
     }
 
     $answer = ['ok' => true, 'version' => $version, 'php' => PHP_VERSION,
-               'opcache_ok' => \ModulesGarden\TSSGGSModule\App\Libs\Update\Preflight::opcacheOk()];
+               'opcache_ok' => \TSSGGSModule\App\Libs\Update\Preflight::opcacheOk()];
 }
 catch(\Throwable $e)
 {

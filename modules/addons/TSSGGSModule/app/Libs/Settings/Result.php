@@ -1,6 +1,6 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\Settings;
+namespace TSSGGSModule\App\Libs\Settings;
 
 /**
  * What a settings save says back: a message for the screen, as success or as an error (the save did not happen).

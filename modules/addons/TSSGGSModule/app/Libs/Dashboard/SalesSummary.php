@@ -1,12 +1,12 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\Dashboard;
+namespace TSSGGSModule\App\Libs\Dashboard;
 
-use ModulesGarden\TSSGGSModule\App\Libs\Support\Edition;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\GeneralSettings;
-use ModulesGarden\TSSGGSModule\App\Kernel\Lang;
+use TSSGGSModule\App\Libs\Support\Edition;
+use TSSGGSModule\App\Libs\Support\GeneralSettings;
+use TSSGGSModule\App\Kernel\Lang;
 
-use ModulesGarden\TSSGGSModule\App\Libs\Billing\SalesReport;
+use TSSGGSModule\App\Libs\Billing\SalesReport;
 
 /**
  * Sales figures of the Dashboard period (Settings > General > Admin Area); computed once per request (KPI tiles + Sales overview card)

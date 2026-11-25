@@ -1,11 +1,11 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\Billing;
+namespace TSSGGSModule\App\Libs\Billing;
 
 use WHMCS\Database\Capsule;
-use ModulesGarden\TSSGGSModule\App\Libs\Certificates\CertificateService;
-use ModulesGarden\TSSGGSModule\App\Libs\Subscriptions\AcmeHelpers;
-use ModulesGarden\TSSGGSModule\App\Libs\Subscriptions\SubscriptionBilling;
+use TSSGGSModule\App\Libs\Certificates\CertificateService;
+use TSSGGSModule\App\Libs\Subscriptions\AcmeHelpers;
+use TSSGGSModule\App\Libs\Subscriptions\SubscriptionBilling;
 
 /**
  * Additional SANs bought after the order (WHMCS "Upgrade/Downgrade Options") cost their full price for the billing
@@ -313,7 +313,7 @@ class UpgradePricing
     public static function fixInvoice($invoiceId)
     {
         $invoiceId = (int)$invoiceId;
-        if(!$invoiceId || \ModulesGarden\TSSGGSModule\App\Models\Request::where('name', self::DONE)->where('serviceid', $invoiceId)->exists())
+        if(!$invoiceId || \TSSGGSModule\App\Models\Request::where('name', self::DONE)->where('serviceid', $invoiceId)->exists())
         {
             return false;
         }
@@ -394,7 +394,7 @@ class UpgradePricing
         {
             updateInvoiceTotal($invoiceId);
         }
-        \ModulesGarden\TSSGGSModule\App\Models\Request::insert([
+        \TSSGGSModule\App\Models\Request::insert([
             'serviceid' => $invoiceId, 'name' => self::DONE, 'request' => json_encode(['service' => $serviceId, 'order' => $orderId, 'lines' => $changed, 'set' => $set]),
             'status' => 'done', 'created_at' => date('Y-m-d H:i:s'), 'updated_at' => date('Y-m-d H:i:s'),
         ]);
@@ -409,7 +409,7 @@ class UpgradePricing
     /** InvoiceCreated: the upgrade order's amount follows the corrected invoice */
     public static function syncOrder($invoiceId)
     {
-        $row = \ModulesGarden\TSSGGSModule\App\Models\Request::where('name', self::DONE)->where('serviceid', (int)$invoiceId)->first();
+        $row = \TSSGGSModule\App\Models\Request::where('name', self::DONE)->where('serviceid', (int)$invoiceId)->first();
         $data = $row ? (json_decode((string)$row->request, true) ?: []) : [];
         if(empty($data['order']))
         {

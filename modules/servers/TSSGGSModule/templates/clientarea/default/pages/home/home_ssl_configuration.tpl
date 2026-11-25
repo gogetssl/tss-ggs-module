@@ -1,4 +1,4 @@
-<script type="text/javascript" src="{$assetsURL}/js/mgLibs.js"></script>
+<script type="text/javascript" src="{$assetsURL}/js/modLibs.js"></script>
 
 {if $allOk === true}
 <style>
@@ -568,7 +568,7 @@
     function loadApproverEmails(domain, $select, $wrap, emptyOptionText) {
         $wrap.show();
         $select.html($('<option>').val('').text(lang.loading));
-        $.post(serviceUrl, { 'mg-action': 'getApproverEmails', 'domain': domain }, function (ret) {
+        $.post(serviceUrl, { 'mod-action': 'getApproverEmails', 'domain': domain }, function (ret) {
             var emails = [];
             try {
                 var payload = parseResponse(ret);
@@ -780,7 +780,7 @@
         }
 
         var postData = {
-            'mg-action':          'submitSslConfiguration',
+            'mod-action':          'submitSslConfiguration',
             'token':              '{$csrfToken}',
             'install_type':       installType,
             'dcv_method':         dcvMethod,
@@ -894,7 +894,7 @@
                 $('#ssl-private-key-download').attr('href', '#').off('click').on('click', function (e) {
                     e.preventDefault();
                     var f = $('<form></form>').attr({ method: 'post', target: '_blank' }).attr('action', 'clientarea.php?action=productdetails&id={$serviceid}');
-                    f.append($('<input type="hidden" name="mg-action" value="downloadKey">'));
+                    f.append($('<input type="hidden" name="mod-action" value="downloadKey">'));
                     f.append($('<input type="hidden" name="token">').val('{$csrfToken}'));
                     f.append($('<input type="hidden" name="handle">').val(keyHandle));
                     f.appendTo('body').submit().remove();
@@ -923,7 +923,7 @@
 
 <script type="text/javascript">
     $(document).ready(function () {
-        var block  = $('#mg-wrapper');
+        var block  = $('#mod-wrapper');
         var target = $('.product-details');
         if (!block.length || !target.length) {
             return;

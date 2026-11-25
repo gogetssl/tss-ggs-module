@@ -1,6 +1,6 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\Support;
+namespace TSSGGSModule\App\Libs\Support;
 
 /**
  * The small pieces of HTML the module's pages build by hand, in one place: escaping, notices, hint boxes.

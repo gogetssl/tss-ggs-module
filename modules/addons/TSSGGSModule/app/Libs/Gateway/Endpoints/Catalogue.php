@@ -1,10 +1,10 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\Gateway\Endpoints;
+namespace TSSGGSModule\App\Libs\Gateway\Endpoints;
 
-use ModulesGarden\TSSGGSModule\App\Libs\Gateway\GatewayException;
-use ModulesGarden\TSSGGSModule\App\Libs\Gateway\SSLTrustCenterApi;
-use ModulesGarden\TSSGGSModule\App\Models\Request;
+use TSSGGSModule\App\Libs\Gateway\GatewayException;
+use TSSGGSModule\App\Libs\Gateway\SSLTrustCenterApi;
+use TSSGGSModule\App\Models\Request;
 
 /**
  * Account and catalogue: profile, products, credentials check, account manager, announcements.

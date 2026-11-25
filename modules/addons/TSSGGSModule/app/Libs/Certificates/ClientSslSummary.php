@@ -1,11 +1,11 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\Certificates;
+namespace TSSGGSModule\App\Libs\Certificates;
 
-use ModulesGarden\TSSGGSModule\App\Models\Request;
+use TSSGGSModule\App\Models\Request;
 use WHMCS\Database\Capsule;
-use ModulesGarden\TSSGGSModule\App\Libs\AutoInstall\AutoInstallHelpers;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\GeneralSettings;
+use TSSGGSModule\App\Libs\AutoInstall\AutoInstallHelpers;
+use TSSGGSModule\App\Libs\Support\GeneralSettings;
 
 /**
  * Client's SSL orders for the client area summary (home panel, sidebar) and the module's client pages

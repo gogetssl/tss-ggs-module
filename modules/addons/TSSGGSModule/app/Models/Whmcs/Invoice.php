@@ -1,27 +1,27 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Models\Whmcs;
+namespace TSSGGSModule\App\Models\Whmcs;
 
 class Invoice extends \WHMCS\Billing\Invoice
 {
     public function client()
     {
-        return $this->belongsTo('ModulesGarden\\TSSGGSModule\\App\\Models\\Whmcs\\Client', 'userid');
+        return $this->belongsTo('TSSGGSModule\\App\\Models\\Whmcs\\Client', 'userid');
     }
 
     public function items()
     {
-        return $this->hasMany('ModulesGarden\\TSSGGSModule\\App\\Models\\Whmcs\\InvoiceItem', 'invoiceid');
+        return $this->hasMany('TSSGGSModule\\App\\Models\\Whmcs\\InvoiceItem', 'invoiceid');
     }
 
     public function order()
     {
-        return $this->belongsTo('ModulesGarden\\TSSGGSModule\\App\\Models\\Whmcs\\Order', 'id', 'invoiceid');
+        return $this->belongsTo('TSSGGSModule\\App\\Models\\Whmcs\\Order', 'id', 'invoiceid');
     }
 
     public function transactions()
     {
-        return $this->hasMany('ModulesGarden\\TSSGGSModule\\App\\Models\\Whmcs\\Transaction', 'invoiceid');
+        return $this->hasMany('TSSGGSModule\\App\\Models\\Whmcs\\Transaction', 'invoiceid');
     }
 
     public function getAmountpaidAttribute()

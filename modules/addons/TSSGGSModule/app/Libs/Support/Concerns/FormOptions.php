@@ -1,14 +1,14 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\Support\Concerns;
+namespace TSSGGSModule\App\Libs\Support\Concerns;
 
-use ModulesGarden\TSSGGSModule\App\Libs\Support\Helpers;
-use ModulesGarden\TSSGGSModule\App\Kernel\Lang;
-use ModulesGarden\TSSGGSModule\App\Models\Whmcs\Client;
-use ModulesGarden\TSSGGSModule\App\Models\Whmcs\Currency;
-use ModulesGarden\TSSGGSModule\App\Models\Whmcs\PaymentGateway;
-use ModulesGarden\TSSGGSModule\App\Models\Whmcs\Product;
-use ModulesGarden\TSSGGSModule\App\Models\Whmcs\ProductGroup;
+use TSSGGSModule\App\Libs\Support\Helpers;
+use TSSGGSModule\App\Kernel\Lang;
+use TSSGGSModule\App\Models\Whmcs\Client;
+use TSSGGSModule\App\Models\Whmcs\Currency;
+use TSSGGSModule\App\Models\Whmcs\PaymentGateway;
+use TSSGGSModule\App\Models\Whmcs\Product;
+use TSSGGSModule\App\Models\Whmcs\ProductGroup;
 
 /**
  * Choices for admin form fields: currencies, products, brands, groups, days, clients, payment methods, countries.

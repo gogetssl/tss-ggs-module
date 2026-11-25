@@ -1,6 +1,6 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Models\Whmcs;
+namespace TSSGGSModule\App\Models\Whmcs;
 
 /**
  * Description of Servers
@@ -42,12 +42,12 @@ class Server extends \WHMCS\Product\Server
 
     public function services()
     {
-        return $this->hasMany('ModulesGarden\\TSSGGSModule\\App\\Models\\Whmcs\\Service', "server");
+        return $this->hasMany('TSSGGSModule\\App\\Models\\Whmcs\\Service', "server");
     }
 
     public function addons()
     {
-        return $this->hasMany('ModulesGarden\\TSSGGSModule\\App\\Models\\Whmcs\\ServiceAddon', "server");
+        return $this->hasMany('TSSGGSModule\\App\\Models\\Whmcs\\ServiceAddon', "server");
     }
 
     public function serverRelationPivot()

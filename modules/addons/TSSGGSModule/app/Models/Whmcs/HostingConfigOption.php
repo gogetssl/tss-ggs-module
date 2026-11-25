@@ -1,6 +1,6 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Models\Whmcs;
+namespace TSSGGSModule\App\Models\Whmcs;
 
 use Illuminate\Database\Eloquent\Model as EloquentModel;
 
@@ -51,11 +51,11 @@ class HostingConfigOption extends EloquentModel
 
     public function configOption()
     {
-        return $this->belongsTo('ModulesGarden\\TSSGGSModule\\App\\Models\\Whmcs\\ProductConfigOption', 'configid');
+        return $this->belongsTo('TSSGGSModule\\App\\Models\\Whmcs\\ProductConfigOption', 'configid');
     }
 
     public function subOption()
     {
-        return $this->belongsTo('ModulesGarden\\TSSGGSModule\\App\\Models\\Whmcs\\ProductConfigOption', 'optionid');
+        return $this->belongsTo('TSSGGSModule\\App\\Models\\Whmcs\\ProductConfigOption', 'optionid');
     }
 }

@@ -1,11 +1,11 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\Certificates;
+namespace TSSGGSModule\App\Libs\Certificates;
 
-use ModulesGarden\TSSGGSModule\App\Helpers\EmailTemplates;
-use ModulesGarden\TSSGGSModule\App\Models\Request;
+use TSSGGSModule\App\Helpers\EmailTemplates;
+use TSSGGSModule\App\Models\Request;
 use WHMCS\Database\Capsule;
-use ModulesGarden\TSSGGSModule\App\Libs\ProductLines\GatewayOrderService;
+use TSSGGSModule\App\Libs\ProductLines\GatewayOrderService;
 
 /**
  * OV / EV orders: the certificate authority verifies the organization before it issues the certificate and contacts

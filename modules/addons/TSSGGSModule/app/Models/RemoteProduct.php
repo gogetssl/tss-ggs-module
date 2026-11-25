@@ -1,11 +1,11 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Models;
+namespace TSSGGSModule\App\Models;
 
-use ModulesGarden\TSSGGSModule\App\Libs\Products\CatalogueSync;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\Helpers;
-use ModulesGarden\TSSGGSModule\App\Libs\Products\ProductCatalog;
-use ModulesGarden\TSSGGSModule\App\Models\Whmcs\Product;
+use TSSGGSModule\App\Libs\Products\CatalogueSync;
+use TSSGGSModule\App\Libs\Support\Helpers;
+use TSSGGSModule\App\Libs\Products\ProductCatalog;
+use TSSGGSModule\App\Models\Whmcs\Product;
 
 class RemoteProduct extends Model
 {

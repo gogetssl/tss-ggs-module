@@ -1,26 +1,26 @@
 <?php
 
-namespace ModulesGarden\Servers\TSSGGSModule\app\controllers\server\clientarea\parts;
+namespace TSSGGSModule\Server\app\controllers\server\clientarea\parts;
 
-use ModulesGarden\Servers\TSSGGSModule\Server;
-use ModulesGarden\Servers\TSSGGSModule\app\models\whmcs\Client;
-use ModulesGarden\Servers\TSSGGSModule\app\models\whmcs\Order;
-use ModulesGarden\Servers\TSSGGSModule\app\models\whmcs\Product;
-use ModulesGarden\Servers\TSSGGSModule\app\models\whmcs\SSL;
-use ModulesGarden\Servers\TSSGGSModule\app\models\whmcs\Service;
-use ModulesGarden\Servers\TSSGGSModule\app\repository\whmcs\Config;
-use ModulesGarden\Servers\TSSGGSModule\app\repository\whmcs\Domain;
-use ModulesGarden\Servers\TSSGGSModule\app\repository\whmcs\ProductConfigOptions;
-use ModulesGarden\Servers\TSSGGSModule\core\Lang;
-use ModulesGarden\TSSGGSModule\App\Libs\AutoInstall\AutoInstallHelpers;
-use ModulesGarden\TSSGGSModule\App\Libs\AutoInstall\Cpanel;
-use ModulesGarden\TSSGGSModule\App\Libs\Certificates\CertificateBundle;
-use ModulesGarden\TSSGGSModule\App\Libs\Certificates\CertificateService;
-use ModulesGarden\TSSGGSModule\App\Libs\Certificates\IssuedMessage;
-use ModulesGarden\TSSGGSModule\App\Libs\Products\ProductSettings;
-use ModulesGarden\TSSGGSModule\App\Models\RemoteProduct;
-use ModulesGarden\TSSGGSModule\App\Models\Request;
-use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
+use TSSGGSModule\Server\Server;
+use TSSGGSModule\Server\app\models\whmcs\Client;
+use TSSGGSModule\Server\app\models\whmcs\Order;
+use TSSGGSModule\Server\app\models\whmcs\Product;
+use TSSGGSModule\Server\app\models\whmcs\SSL;
+use TSSGGSModule\Server\app\models\whmcs\Service;
+use TSSGGSModule\Server\app\repository\whmcs\Config;
+use TSSGGSModule\Server\app\repository\whmcs\Domain;
+use TSSGGSModule\Server\app\repository\whmcs\ProductConfigOptions;
+use TSSGGSModule\Server\core\Lang;
+use TSSGGSModule\App\Libs\AutoInstall\AutoInstallHelpers;
+use TSSGGSModule\App\Libs\AutoInstall\Cpanel;
+use TSSGGSModule\App\Libs\Certificates\CertificateBundle;
+use TSSGGSModule\App\Libs\Certificates\CertificateService;
+use TSSGGSModule\App\Libs\Certificates\IssuedMessage;
+use TSSGGSModule\App\Libs\Products\ProductSettings;
+use TSSGGSModule\App\Models\RemoteProduct;
+use TSSGGSModule\App\Models\Request;
+use TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
 
 /**
  * SSL certificate page by order state: awaiting configuration, submitted (validation, DNS record), active (details, subscription progress).
@@ -49,13 +49,13 @@ trait SslStatusPages
         ];
 
         // a paid renewal waiting for these details: the client is told so, and until when the current certificate holds
-        $renewalUntil         = \ModulesGarden\TSSGGSModule\App\Libs\Billing\RenewalPolicy::pendingRenewalUntil((int)$serviceId);
+        $renewalUntil         = \TSSGGSModule\App\Libs\Billing\RenewalPolicy::pendingRenewalUntil((int)$serviceId);
         $vars['renewalNotice'] = $renewalUntil !== '' ? sprintf(Lang::absoluteT('sslRenewalPendingNotice'), $this->smimeDate($renewalUntil)) : '';
 
         // the certificate is bought already: its token completes the order here or in a hosting panel plugin (a
         // migrated order bought at payment: the token is read once)
-        \ModulesGarden\TSSGGSModule\App\Libs\Certificates\IncompleteOrder::claimMigrated((int)$serviceId);
-        $vars['certificateToken'] = \ModulesGarden\TSSGGSModule\App\Libs\Certificates\IncompleteOrder::token((int)$serviceId);
+        \TSSGGSModule\App\Libs\Certificates\IncompleteOrder::claimMigrated((int)$serviceId);
+        $vars['certificateToken'] = \TSSGGSModule\App\Libs\Certificates\IncompleteOrder::token((int)$serviceId);
         $vars['serviceid']        = (int)$serviceId;
 
         return ['tpl' => 'awaiting_configuration', 'vars' => $vars];
@@ -110,9 +110,9 @@ trait SslStatusPages
         $vars['domain']                              = $service->domain;
         $vars['status']                              = $order['order']['status'];
         // the order waits at the vendor side (failed, unpaid, new order): an orange message, no API call
-        $vars['vendorNotice']                        = in_array(\ModulesGarden\TSSGGSModule\App\Libs\Certificates\CertificateSyncHelpers::normalizeStatus($vars['status']), \ModulesGarden\TSSGGSModule\App\Libs\Certificates\CertificateSyncHelpers::NOTICE_STATUSES, true)
-            ? Lang::absoluteT('vendor_notice_' . \ModulesGarden\TSSGGSModule\App\Libs\Certificates\CertificateSyncHelpers::normalizeStatus($vars['status'])) : '';
-        $vars['statusLabel']                         = $vars['vendorNotice'] !== '' ? Lang::absoluteT('vendor_status_' . \ModulesGarden\TSSGGSModule\App\Libs\Certificates\CertificateSyncHelpers::normalizeStatus($vars['status'])) : '';
+        $vars['vendorNotice']                        = in_array(\TSSGGSModule\App\Libs\Certificates\CertificateSyncHelpers::normalizeStatus($vars['status']), \TSSGGSModule\App\Libs\Certificates\CertificateSyncHelpers::NOTICE_STATUSES, true)
+            ? Lang::absoluteT('vendor_notice_' . \TSSGGSModule\App\Libs\Certificates\CertificateSyncHelpers::normalizeStatus($vars['status'])) : '';
+        $vars['statusLabel']                         = $vars['vendorNotice'] !== '' ? Lang::absoluteT('vendor_status_' . \TSSGGSModule\App\Libs\Certificates\CertificateSyncHelpers::normalizeStatus($vars['status'])) : '';
         $vars['valid_from']                          = '';
         $vars['valid_till']                          = '';
         $vars['subscribtion_starts']                 = '';
@@ -174,15 +174,15 @@ trait SslStatusPages
             strpos((string)$name, '*.') === 0 ? $vars['countSANWildcard']++ : $vars['countSAN']++;
         }
 
-        if(isset($_SESSION['mg-success']))
+        if(isset($_SESSION['mod-success']))
         {
-            $vars['success'] = $_SESSION['mg-success'];
-            unset($_SESSION['mg-success']);
+            $vars['success'] = $_SESSION['mod-success'];
+            unset($_SESSION['mod-success']);
         }
-        if(isset($_SESSION['mg-error']))
+        if(isset($_SESSION['mod-error']))
         {
-            $vars['error'] = htmlspecialchars($_SESSION['mg-error']);
-            unset($_SESSION['mg-error']);
+            $vars['error'] = htmlspecialchars($_SESSION['mod-error']);
+            unset($_SESSION['mod-error']);
         }
 
         $vars['autoinstall']      = AutoInstallHelpers::getStatusForView($service->id);
@@ -197,7 +197,7 @@ trait SslStatusPages
                 $waiting[] = (string)$domain['name'];
             }
         }
-        $vars['caa_warning'] = \ModulesGarden\Servers\TSSGGSModule\app\services\CaaWarning::pending((int)$service->id, $waiting);
+        $vars['caa_warning'] = \TSSGGSModule\Server\app\services\CaaWarning::pending((int)$service->id, $waiting);
 
         return ['tpl' => 'configuration_submitted', 'vars' => $vars];
     }
@@ -313,7 +313,7 @@ trait SslStatusPages
         // cancelled / terminated: the page stays readable, but no downloads, sending, reissue or install
         $vars['certificateUsable']                  = CertificateService::usable((int)$params['service']->id);
         // a product addon's certificate: billed on the addon, no upgrades or extra SANs on the free service (M-14)
-        $vars['addonNotice']                        = \ModulesGarden\TSSGGSModule\App\Libs\Certificates\AddonCertificates::clientNotice((int)$params['service']->id);
+        $vars['addonNotice']                        = \TSSGGSModule\App\Libs\Certificates\AddonCertificates::clientNotice((int)$params['service']->id);
         $vars['order_details']['registration_date'] = date('F j, Y', strtotime($params['service']->regdate));
         $vars['order_details']['expiration_date']   = $params['service']->nextduedate != '0000-00-00' ? date('F j, Y', strtotime($params['service']->nextduedate)) : "";
         $vars['order_details']['reccuring_amount']  = formatCurrency($params['service']->amount, $params['client']->currency);
@@ -350,16 +350,16 @@ trait SslStatusPages
 
         $vars['next_reissue'] = sprintf(Lang::absoluteT('next_reissue'), abs(round($datediff / (60 * 60 * 24))));
 
-        if(isset($_SESSION['mg-error']))
+        if(isset($_SESSION['mod-error']))
         {
-            $vars['errors'] = $_SESSION['mg-error'];
-            unset($_SESSION['mg-error']);
+            $vars['errors'] = $_SESSION['mod-error'];
+            unset($_SESSION['mod-error']);
         }
 
-        if(isset($_SESSION['mg-success']))
+        if(isset($_SESSION['mod-success']))
         {
-            $vars['success'] = $_SESSION['mg-success'];
-            unset($_SESSION['mg-success']);
+            $vars['success'] = $_SESSION['mod-success'];
+            unset($_SESSION['mod-success']);
         }
 
         $vars['autoinstall'] = AutoInstallHelpers::getStatusForView($params['service']->id);
@@ -419,7 +419,7 @@ trait SslStatusPages
         $vars['install_domain']      = !empty($aiState['domain']) ? $aiState['domain'] : (CertificateService::installTarget($params['service']->id) ?: ltrim((string)$params['service']->domain, '*.'));
         // a certificate for public IPs is not installed on a cPanel account by domain
         $vars['install_available']   = !empty($vars['cpanel_services']) && (empty($vars['autoinstall']) || $vars['autoinstall']['status'] !== 'installed')
-            && !\ModulesGarden\TSSGGSModule\App\Libs\Certificates\IpCertificate::isProduct((int)$params['service']->packageid);
+            && !\TSSGGSModule\App\Libs\Certificates\IpCertificate::isProduct((int)$params['service']->packageid);
 
         // Subscription status bar at the top of the page (same rules as the my.gogetssl.com SSL page)
         $vars['progress'] = $vars['certificateUsable'] ? self::subscriptionProgress(

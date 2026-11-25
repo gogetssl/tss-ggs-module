@@ -86,7 +86,7 @@
     $(document).ready(function () {
         var clone = $('.validate-ssl-unified').clone();
         $('.product-details').html(clone);
-        $('.mg-module .validate-ssl-unified').remove();
+        $('.mod-module .validate-ssl-unified').remove();
         // the module's stylesheet lives in the block below and has to survive it
         $('head').append($('link[href*="theme.css"]').first());
         // WHMCS's own tab strip under the page: the module shows everything above it

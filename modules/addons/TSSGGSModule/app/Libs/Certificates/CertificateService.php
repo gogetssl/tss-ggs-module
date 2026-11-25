@@ -1,24 +1,24 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\Certificates;
+namespace TSSGGSModule\App\Libs\Certificates;
 
-use ModulesGarden\TSSGGSModule\App\Models\RemoteProduct;
-use ModulesGarden\TSSGGSModule\App\Models\Request;
-use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
-use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\ProductRepository;
+use TSSGGSModule\App\Models\RemoteProduct;
+use TSSGGSModule\App\Models\Request;
+use TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
+use TSSGGSModule\App\Repositories\Whmcs\ProductRepository;
 use WHMCS\Database\Capsule;
-use ModulesGarden\TSSGGSModule\App\Libs\Gateway\SSLTrustCenterApi;
-use ModulesGarden\TSSGGSModule\App\Libs\ProductLines\CodeGuardService;
-use ModulesGarden\TSSGGSModule\App\Libs\ProductLines\CodeSigningService;
-use ModulesGarden\TSSGGSModule\App\Libs\ProductLines\DocumentSigningService;
-use ModulesGarden\TSSGGSModule\App\Libs\ProductLines\LeiService;
-use ModulesGarden\TSSGGSModule\App\Libs\ProductLines\PciService;
-use ModulesGarden\TSSGGSModule\App\Libs\ProductLines\SmimeService;
-use ModulesGarden\TSSGGSModule\App\Libs\Subscriptions\AcmeHelpers;
-use ModulesGarden\TSSGGSModule\App\Libs\Subscriptions\AisHelpers;
-use ModulesGarden\TSSGGSModule\App\Libs\AutoInstall\AutoInstallQueue;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\ClientText;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\GeneralSettings;
+use TSSGGSModule\App\Libs\Gateway\SSLTrustCenterApi;
+use TSSGGSModule\App\Libs\ProductLines\CodeGuardService;
+use TSSGGSModule\App\Libs\ProductLines\CodeSigningService;
+use TSSGGSModule\App\Libs\ProductLines\DocumentSigningService;
+use TSSGGSModule\App\Libs\ProductLines\LeiService;
+use TSSGGSModule\App\Libs\ProductLines\PciService;
+use TSSGGSModule\App\Libs\ProductLines\SmimeService;
+use TSSGGSModule\App\Libs\Subscriptions\AcmeHelpers;
+use TSSGGSModule\App\Libs\Subscriptions\AisHelpers;
+use TSSGGSModule\App\Libs\AutoInstall\AutoInstallQueue;
+use TSSGGSModule\App\Libs\Support\ClientText;
+use TSSGGSModule\App\Libs\Support\GeneralSettings;
 
 /**
  * Certificate operations shared by the admin service buttons, the WHMCS SSL module functions and the client area

@@ -37,7 +37,7 @@
                 </div>
                 {/if}
                 <div></div>
-                <div class="modulesgarden-app-main-container lu-single-element">
+                <div class="module-app-main-container lu-single-element">
                     <div class="{$bodyClass} lu-single-element">
                         {$body nofilter}
                     </div>

@@ -1,6 +1,6 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\Support;
+namespace TSSGGSModule\App\Libs\Support;
 
 /**
  * Secrets kept in the database (EAB HMAC keys, SSO links) and secrets that must never reach the module log.

@@ -1,11 +1,11 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\Logs;
+namespace TSSGGSModule\App\Libs\Logs;
 
-use ModulesGarden\TSSGGSModule\App\Libs\Support\GeneralSettings;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\LogPolicy;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\ModuleSettings;
-use ModulesGarden\TSSGGSModule\App\Models\Log;
+use TSSGGSModule\App\Libs\Support\GeneralSettings;
+use TSSGGSModule\App\Libs\Support\LogPolicy;
+use TSSGGSModule\App\Libs\Support\ModuleSettings;
+use TSSGGSModule\App\Models\Log;
 
 /**
  * Writes the module log (admin page "Logs"):

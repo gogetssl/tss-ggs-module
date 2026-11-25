@@ -1,21 +1,21 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Pages\Admin;
+namespace TSSGGSModule\App\Pages\Admin;
 
-use ModulesGarden\TSSGGSModule\App\Kernel\Layout;
-use ModulesGarden\TSSGGSModule\App\Kernel\Page;
-use ModulesGarden\TSSGGSModule\App\Kernel\Response;
-use ModulesGarden\TSSGGSModule\App\Libs\Settings\ApiSettingsProvider;
-use ModulesGarden\TSSGGSModule\App\Libs\Settings\Result;
-use ModulesGarden\TSSGGSModule\App\Libs\Setup\MigrationScreen;
-use ModulesGarden\TSSGGSModule\App\Libs\Setup\Wizard;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\Edition;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\SystemRequirements;
-use ModulesGarden\TSSGGSModule\App\Migration\Choice;
-use ModulesGarden\TSSGGSModule\App\Migration\Credentials;
-use ModulesGarden\TSSGGSModule\App\Migration\Detector;
-use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
-use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\ProductRepository;
+use TSSGGSModule\App\Kernel\Layout;
+use TSSGGSModule\App\Kernel\Page;
+use TSSGGSModule\App\Kernel\Response;
+use TSSGGSModule\App\Libs\Settings\ApiSettingsProvider;
+use TSSGGSModule\App\Libs\Settings\Result;
+use TSSGGSModule\App\Libs\Setup\MigrationScreen;
+use TSSGGSModule\App\Libs\Setup\Wizard;
+use TSSGGSModule\App\Libs\Support\Edition;
+use TSSGGSModule\App\Libs\Support\SystemRequirements;
+use TSSGGSModule\App\Migration\Choice;
+use TSSGGSModule\App\Migration\Credentials;
+use TSSGGSModule\App\Migration\Detector;
+use TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
+use TSSGGSModule\App\Repositories\Whmcs\ProductRepository;
 
 /**
  * The setup wizard ("Module Installation"): welcome, system check, legacy modules found (only when there is one),

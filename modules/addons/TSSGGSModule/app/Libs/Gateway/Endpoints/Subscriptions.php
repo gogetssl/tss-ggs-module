@@ -1,9 +1,9 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\Gateway\Endpoints;
+namespace TSSGGSModule\App\Libs\Gateway\Endpoints;
 
-use ModulesGarden\TSSGGSModule\App\Libs\Subscriptions\AisHelpers;
-use ModulesGarden\TSSGGSModule\App\Libs\Gateway\SSLTrustCenterApi;
+use TSSGGSModule\App\Libs\Subscriptions\AisHelpers;
+use TSSGGSModule\App\Libs\Gateway\SSLTrustCenterApi;
 
 /**
  * Subscriptions: ACME (Automated SSL) and AIS / Plan + Automate.

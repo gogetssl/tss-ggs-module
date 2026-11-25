@@ -1,6 +1,6 @@
 <?php
 
-namespace ModulesGarden\Servers\TSSGGSModule\app\hooks;
+namespace TSSGGSModule\Server\app\hooks;
 
 use WHMCS\Database\Capsule;
 
@@ -17,7 +17,7 @@ class OrderFormPrices
         {
             list($clientId, $currencyId) = ClientCurrency::get();
             $scale = function($pricing, $pid) use ($clientId, $currencyId) {
-                $markup = \ModulesGarden\TSSGGSModule\App\Libs\Billing\Markups::forProduct($clientId, $pid);
+                $markup = \TSSGGSModule\App\Libs\Billing\Markups::forProduct($clientId, $pid);
                 if($markup === null || !is_array($pricing) || !Capsule::table('tblproducts')->where('id', (int)$pid)->where('servertype', 'TSSGGSModule')->exists())
                 {
                     return $pricing;
@@ -28,7 +28,7 @@ class OrderFormPrices
                     {
                         continue;
                     }
-                    $new = \ModulesGarden\TSSGGSModule\App\Libs\Billing\Markups::apply($amount, $markup);
+                    $new = \TSSGGSModule\App\Libs\Billing\Markups::apply($amount, $markup);
                     $pricing['rawpricing'][$cycle] = number_format($new, 2, '.', '');
                     if(isset($pricing['cycles'][$cycle]))
                     {

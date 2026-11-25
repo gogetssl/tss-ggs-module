@@ -1,9 +1,9 @@
 <?php
 
-namespace ModulesGarden\Servers\TSSGGSModule\app\services;
+namespace TSSGGSModule\Server\app\services;
 
-use ModulesGarden\Servers\TSSGGSModule\core\Lang;
-use ModulesGarden\TSSGGSModule\App\Libs\Certificates\CaaCheck;
+use TSSGGSModule\Server\core\Lang;
+use TSSGGSModule\App\Libs\Certificates\CaaCheck;
 
 /** The CAA warning box on the client's pending certificate page (texts in the client's language) - see App\Libs\Certificates\CaaCheck */
 class CaaWarning

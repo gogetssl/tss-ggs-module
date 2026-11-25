@@ -1,9 +1,9 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Kernel;
+namespace TSSGGSModule\App\Kernel;
 
 /**
- * Base of a page. A page class holds the actions (public methods) of one mg-page; each returns a Response:
+ * Base of a page. A page class holds the actions (public methods) of one mod-page; each returns a Response:
  *
  *   return $this->view('admin/certificateLog/index', $data);   full page; htmx gets the same template's fragment
  *   return $this->fragment('admin/certificateLog/list', $data); a part of the page
@@ -36,7 +36,7 @@ abstract class Page
         return $this->lang;
     }
 
-    /** @return string page name as used in mg-page ("certificateLog") */
+    /** @return string page name as used in mod-page ("certificateLog") */
     public function name(): string
     {
         return lcfirst(substr(strrchr(static::class, '\\'), 1));
@@ -101,7 +101,7 @@ abstract class Page
             return $value !== null && $value !== '' && $value !== 0;
         });
 
-        return 'addonmodules.php?' . http_build_query(['module' => Kernel::module(), 'mg-page' => $page] + ($action !== 'index' ? ['mg-action' => $action] : []) + $query);
+        return 'addonmodules.php?' . http_build_query(['module' => Kernel::module(), 'mod-page' => $page] + ($action !== 'index' ? ['mod-action' => $action] : []) + $query);
     }
 
     protected function view(string $template, array $data = []): Response

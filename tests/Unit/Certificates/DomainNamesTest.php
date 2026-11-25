@@ -2,8 +2,8 @@
 
 namespace Tests\Unit\Certificates;
 
-use ModulesGarden\TSSGGSModule\App\Libs\Certificates\FreeName;
-use ModulesGarden\TSSGGSModule\App\Libs\Certificates\IpCertificate;
+use TSSGGSModule\App\Libs\Certificates\FreeName;
+use TSSGGSModule\App\Libs\Certificates\IpCertificate;
 use PHPUnit\Framework\TestCase;
 
 /** The free www / base-domain name the CA adds itself, and public IP detection */

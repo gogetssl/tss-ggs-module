@@ -1,8 +1,8 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Database;
+namespace TSSGGSModule\App\Database;
 
-use ModulesGarden\TSSGGSModule\App\Libs\Support\Edition;
+use TSSGGSModule\App\Libs\Support\Edition;
 use WHMCS\Database\Capsule;
 
 /**
@@ -217,11 +217,11 @@ class Schema
      */
     protected static function afterUpgrade(array &$done)
     {
-        if(!class_exists('\\ModulesGarden\\TSSGGSModule\\App\\Helpers\\EmailTemplates'))
+        if(!class_exists('\\TSSGGSModule\\App\\Helpers\\EmailTemplates'))
         {
             return;
         }
-        foreach(\ModulesGarden\TSSGGSModule\App\Helpers\EmailTemplates::REMOVED_TEMPLATES as $key)
+        foreach(\TSSGGSModule\App\Helpers\EmailTemplates::REMOVED_TEMPLATES as $key)
         {
             if(Capsule::table('tblemailtemplates')->where('name', Edition::templateName($key))->delete())
             {

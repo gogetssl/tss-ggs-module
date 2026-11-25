@@ -1,14 +1,14 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Pages\Admin;
+namespace TSSGGSModule\App\Pages\Admin;
 
-use ModulesGarden\TSSGGSModule\App\Kernel\Page;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\Edition;
-use ModulesGarden\TSSGGSModule\App\Libs\Update\Installer;
-use ModulesGarden\TSSGGSModule\App\Libs\Update\Preflight;
-use ModulesGarden\TSSGGSModule\App\Libs\Update\Release;
-use ModulesGarden\TSSGGSModule\App\Libs\Update\State;
-use ModulesGarden\TSSGGSModule\App\Libs\Update\Workdir;
+use TSSGGSModule\App\Kernel\Page;
+use TSSGGSModule\App\Libs\Support\Edition;
+use TSSGGSModule\App\Libs\Update\Installer;
+use TSSGGSModule\App\Libs\Update\Preflight;
+use TSSGGSModule\App\Libs\Update\Release;
+use TSSGGSModule\App\Libs\Update\State;
+use TSSGGSModule\App\Libs\Update\Workdir;
 use WHMCS\Database\Capsule;
 
 /**

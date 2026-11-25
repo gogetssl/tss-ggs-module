@@ -1,6 +1,6 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\ProductLines;
+namespace TSSGGSModule\App\Libs\ProductLines;
 
 /**
  * A client input error of a code signing order: the message is a language key, the argument fills its "%s"

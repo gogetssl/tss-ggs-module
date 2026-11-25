@@ -1,11 +1,11 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Kernel;
+namespace TSSGGSModule\App\Kernel;
 
-use ModulesGarden\TSSGGSModule\App\Database\Schema;
-use ModulesGarden\TSSGGSModule\App\Database\SqlFile;
-use ModulesGarden\TSSGGSModule\App\Helpers\EmailTemplates;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\Edition;
+use TSSGGSModule\App\Database\Schema;
+use TSSGGSModule\App\Database\SqlFile;
+use TSSGGSModule\App\Helpers\EmailTemplates;
+use TSSGGSModule\App\Libs\Support\Edition;
 
 /**
  * What WHMCS asks an addon module for (the functions of the addon's entry file call these):

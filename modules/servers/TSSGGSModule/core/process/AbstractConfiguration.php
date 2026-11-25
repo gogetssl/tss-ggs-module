@@ -1,6 +1,6 @@
 <?php
 
-namespace ModulesGarden\Servers\TSSGGSModule\core\process;
+namespace TSSGGSModule\Server\core\process;
 
 abstract class AbstractConfiguration{
     public $debug = false;
@@ -17,7 +17,7 @@ abstract class AbstractConfiguration{
 
     public $version = false;
 
-    public $author = '<a href="http://www.modulesgarden.com" targer="_blank">ModulesGarden</a>';
+    public $author = '';
 
     public $tablePrefix = false;
 

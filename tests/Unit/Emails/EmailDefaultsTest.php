@@ -2,8 +2,8 @@
 
 namespace Tests\Unit\Emails;
 
-use ModulesGarden\TSSGGSModule\App\Helpers\AutoInstallEmailTemplates;
-use ModulesGarden\TSSGGSModule\App\Helpers\EmailTemplates;
+use TSSGGSModule\App\Helpers\AutoInstallEmailTemplates;
+use TSSGGSModule\App\Helpers\EmailTemplates;
 use PHPUnit\Framework\TestCase;
 
 /** Every e-mail the module ships has its default text in resources/emails, with a subject line */

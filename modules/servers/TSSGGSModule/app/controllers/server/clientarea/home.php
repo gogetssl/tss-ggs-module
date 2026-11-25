@@ -1,19 +1,19 @@
 <?php
 
-namespace ModulesGarden\Servers\TSSGGSModule\app\controllers\server\clientarea;
+namespace TSSGGSModule\Server\app\controllers\server\clientarea;
 
-use ModulesGarden\Servers\TSSGGSModule\app\models\whmcs\Client;
-use ModulesGarden\Servers\TSSGGSModule\app\models\whmcs\Order;
-use ModulesGarden\Servers\TSSGGSModule\app\models\whmcs\Product;
-use ModulesGarden\Servers\TSSGGSModule\app\models\whmcs\Service;
-use ModulesGarden\Servers\TSSGGSModule\app\models\whmcs\SSL;
-use ModulesGarden\Servers\TSSGGSModule\core\Lang;
-use ModulesGarden\Servers\TSSGGSModule\core\process\AbstractController;
-use ModulesGarden\TSSGGSModule\App\Libs\Subscriptions\AcmeHelpers;
-use ModulesGarden\TSSGGSModule\App\Libs\Subscriptions\AisHelpers;
-use ModulesGarden\TSSGGSModule\App\Libs\ProductLines\SmimeService;
-use ModulesGarden\TSSGGSModule\App\Libs\ProductLines\CodeSigningService;
-use ModulesGarden\TSSGGSModule\App\Models\Request;
+use TSSGGSModule\Server\app\models\whmcs\Client;
+use TSSGGSModule\Server\app\models\whmcs\Order;
+use TSSGGSModule\Server\app\models\whmcs\Product;
+use TSSGGSModule\Server\app\models\whmcs\Service;
+use TSSGGSModule\Server\app\models\whmcs\SSL;
+use TSSGGSModule\Server\core\Lang;
+use TSSGGSModule\Server\core\process\AbstractController;
+use TSSGGSModule\App\Libs\Subscriptions\AcmeHelpers;
+use TSSGGSModule\App\Libs\Subscriptions\AisHelpers;
+use TSSGGSModule\App\Libs\ProductLines\SmimeService;
+use TSSGGSModule\App\Libs\ProductLines\CodeSigningService;
+use TSSGGSModule\App\Models\Request;
 use WHMCS\Database\Capsule;
 
 class home extends AbstractController
@@ -53,21 +53,21 @@ class home extends AbstractController
                 return $this->indexCodeSigningHTML($input, $vars);
             }
 
-            if(\ModulesGarden\TSSGGSModule\App\Libs\ProductLines\CodeGuardService::isCodeGuardWhmcsProduct($service->packageid))
+            if(\TSSGGSModule\App\Libs\ProductLines\CodeGuardService::isCodeGuardWhmcsProduct($service->packageid))
             {
                 return $this->indexCodeGuardHTML($input, $vars);
             }
 
-            if(\ModulesGarden\TSSGGSModule\App\Libs\ProductLines\DocumentSigningService::isDocumentSigningWhmcsProduct($service->packageid))
+            if(\TSSGGSModule\App\Libs\ProductLines\DocumentSigningService::isDocumentSigningWhmcsProduct($service->packageid))
             {
                 return $this->indexDocumentSigningHTML($input, $vars);
             }
 
-            if(\ModulesGarden\TSSGGSModule\App\Libs\ProductLines\PciService::isPciWhmcsProduct($service->packageid))
+            if(\TSSGGSModule\App\Libs\ProductLines\PciService::isPciWhmcsProduct($service->packageid))
             {
                 return $this->indexPciHTML($input, $vars);
             }
-            if(\ModulesGarden\TSSGGSModule\App\Libs\ProductLines\LeiService::isLeiWhmcsProduct($service->packageid))
+            if(\TSSGGSModule\App\Libs\ProductLines\LeiService::isLeiWhmcsProduct($service->packageid))
             {
                 return $this->indexLeiHTML($input, $vars);
             }
@@ -139,7 +139,7 @@ class home extends AbstractController
 
     private function requireCsrfToken()
     {
-        if($_SERVER['REQUEST_METHOD'] !== 'POST' || !\ModulesGarden\TSSGGSModule\App\Libs\Support\CsrfToken::valid($_POST['token'] ?? ''))
+        if($_SERVER['REQUEST_METHOD'] !== 'POST' || !\TSSGGSModule\App\Libs\Support\CsrfToken::valid($_POST['token'] ?? ''))
         {
             throw new \Exception(Lang::absoluteT('invalidCsrfToken'));
         }

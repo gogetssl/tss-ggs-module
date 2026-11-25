@@ -1,11 +1,11 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\Dashboard;
+namespace TSSGGSModule\App\Libs\Dashboard;
 
-use ModulesGarden\TSSGGSModule\App\Kernel\Layout;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\Edition;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\Helpers;
-use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
+use TSSGGSModule\App\Kernel\Layout;
+use TSSGGSModule\App\Libs\Support\Edition;
+use TSSGGSModule\App\Libs\Support\Helpers;
+use TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
 use WHMCS\Database\Capsule;
 
 /**

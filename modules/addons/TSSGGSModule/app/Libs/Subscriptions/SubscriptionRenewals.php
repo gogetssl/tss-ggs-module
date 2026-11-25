@@ -1,15 +1,15 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\Subscriptions;
+namespace TSSGGSModule\App\Libs\Subscriptions;
 
-use ModulesGarden\TSSGGSModule\App\Helpers\EmailTemplates;
-use ModulesGarden\TSSGGSModule\App\Models\AcmeSubscription;
-use ModulesGarden\TSSGGSModule\App\Models\AisSubscription;
-use ModulesGarden\TSSGGSModule\App\Models\Whmcs\Service;
+use TSSGGSModule\App\Helpers\EmailTemplates;
+use TSSGGSModule\App\Models\AcmeSubscription;
+use TSSGGSModule\App\Models\AisSubscription;
+use TSSGGSModule\App\Models\Whmcs\Service;
 use WHMCS\Database\Capsule;
-use ModulesGarden\TSSGGSModule\App\Libs\Certificates\CertificateService;
-use ModulesGarden\TSSGGSModule\App\Libs\Billing\RenewalPolicy;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\GeneralSettings;
+use TSSGGSModule\App\Libs\Certificates\CertificateService;
+use TSSGGSModule\App\Libs\Billing\RenewalPolicy;
+use TSSGGSModule\App\Libs\Support\GeneralSettings;
 
 /**
  * Renewal of the subscription products (ACME and Plan + Automate), the same for both vendors. The vendor renews a

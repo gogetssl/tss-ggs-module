@@ -1,12 +1,12 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\Dashboard;
+namespace TSSGGSModule\App\Libs\Dashboard;
 
 
-use ModulesGarden\TSSGGSModule\App\Libs\Support\Helpers;
-use ModulesGarden\TSSGGSModule\App\Models\CronCheck;
+use TSSGGSModule\App\Libs\Support\Helpers;
+use TSSGGSModule\App\Models\CronCheck;
 
-use ModulesGarden\TSSGGSModule\App\Models\Log;
+use TSSGGSModule\App\Models\Log;
 
 class LogProvider
 {

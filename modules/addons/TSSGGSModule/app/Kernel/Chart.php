@@ -1,6 +1,6 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Kernel;
+namespace TSSGGSModule\App\Kernel;
 
 /**
  * Options of a chart for ApexCharts (resources/assets/js/vendor/apexcharts.min.js, drawn by resources/assets/js/

@@ -1,14 +1,14 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\AutoInstall\Concerns;
+namespace TSSGGSModule\App\Libs\AutoInstall\Concerns;
 
-use ModulesGarden\TSSGGSModule\App\Helpers\AutoInstallEmailTemplates;
-use ModulesGarden\TSSGGSModule\App\Libs\AutoInstall\AutoInstallHelpers;
-use ModulesGarden\TSSGGSModule\App\Models\Request;
-use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
+use TSSGGSModule\App\Helpers\AutoInstallEmailTemplates;
+use TSSGGSModule\App\Libs\AutoInstall\AutoInstallHelpers;
+use TSSGGSModule\App\Models\Request;
+use TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
 use WHMCS\Database\Capsule;
-use ModulesGarden\TSSGGSModule\App\Libs\AutoInstall\AutoInstallQueue;
-use ModulesGarden\TSSGGSModule\App\Libs\AutoInstall\AutoInstallReport;
+use TSSGGSModule\App\Libs\AutoInstall\AutoInstallQueue;
+use TSSGGSModule\App\Libs\AutoInstall\AutoInstallReport;
 
 /**
  * What starts AutoInstall work: configuration, manual reissue, renewal, the automatic reissue scan and its settings.

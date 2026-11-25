@@ -1,6 +1,6 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\Gateway;
+namespace TSSGGSModule\App\Libs\Gateway;
 
 /**
  * The order is placed, but its domain validation method is not set yet: the gateway refuses to show it

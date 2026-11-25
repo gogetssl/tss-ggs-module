@@ -1,14 +1,14 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\Billing;
+namespace TSSGGSModule\App\Libs\Billing;
 
-use ModulesGarden\TSSGGSModule\App\Models\Request;
+use TSSGGSModule\App\Models\Request;
 use WHMCS\Database\Capsule;
-use ModulesGarden\TSSGGSModule\App\Libs\Certificates\CertificateService;
-use ModulesGarden\TSSGGSModule\App\Libs\Certificates\FreeName;
-use ModulesGarden\TSSGGSModule\App\Libs\Subscriptions\AcmeHelpers;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\ClientText;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\GeneralSettings;
+use TSSGGSModule\App\Libs\Certificates\CertificateService;
+use TSSGGSModule\App\Libs\Certificates\FreeName;
+use TSSGGSModule\App\Libs\Subscriptions\AcmeHelpers;
+use TSSGGSModule\App\Libs\Support\ClientText;
+use TSSGGSModule\App\Libs\Support\GeneralSettings;
 
 /**
  * SAN configurable options upgraded after the order: the difference is bought on the issued certificate (add-san),
@@ -26,7 +26,7 @@ class SanUpgrade
 
     public static function pricing()
     {
-        $settings = (new \ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository())->getModuleConfiguration()['sslSettings'] ?? [];
+        $settings = (new \TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository())->getModuleConfiguration()['sslSettings'] ?? [];
 
         return ($settings['sanUpgradePricing'] ?? self::PRICING_FULL) === self::PRICING_PRORATED ? self::PRICING_PRORATED : self::PRICING_FULL;
     }

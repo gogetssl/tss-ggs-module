@@ -1,16 +1,16 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\Subscriptions;
+namespace TSSGGSModule\App\Libs\Subscriptions;
 
 
-use ModulesGarden\Servers\TSSGGSModule\app\models\whmcs\SSL;
-use ModulesGarden\Servers\TSSGGSModule\core\Lang;
-use ModulesGarden\TSSGGSModule\App\Models\AcmeSubscription;
-use ModulesGarden\TSSGGSModule\App\Models\RemoteProduct;
-use ModulesGarden\TSSGGSModule\App\Models\Whmcs\Product;
+use TSSGGSModule\Server\app\models\whmcs\SSL;
+use TSSGGSModule\Server\core\Lang;
+use TSSGGSModule\App\Models\AcmeSubscription;
+use TSSGGSModule\App\Models\RemoteProduct;
+use TSSGGSModule\App\Models\Whmcs\Product;
 use WHMCS\Database\Capsule;
-use ModulesGarden\TSSGGSModule\App\Libs\Billing\ZeroInvoice;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\Helpers;
+use TSSGGSModule\App\Libs\Billing\ZeroInvoice;
+use TSSGGSModule\App\Libs\Support\Helpers;
 
 class AcmeHelpers
 {
@@ -155,7 +155,7 @@ class AcmeHelpers
             'date'             => $dateInvoice,
             // due the payment term after it is created (App\Libs\Billing\RenewalPolicy): an unpaid renewal is cancelled at the
             // vendor once overdue, so a term that ends before the renewal day keeps the vendor from charging for it
-            'duedate'          => \ModulesGarden\TSSGGSModule\App\Libs\Billing\RenewalPolicy::invoiceDueDate(\ModulesGarden\TSSGGSModule\App\Libs\Billing\RenewalPolicy::SUBSCRIPTION, $dateInvoice),
+            'duedate'          => \TSSGGSModule\App\Libs\Billing\RenewalPolicy::invoiceDueDate(\TSSGGSModule\App\Libs\Billing\RenewalPolicy::SUBSCRIPTION, $dateInvoice),
             'itemdescription1' => $description,
             'itemamount1'      => $amount,
             'itemtaxed1'       => isset($product->tax) ? $product->tax : 0,

@@ -1,13 +1,13 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Pages\Admin;
+namespace TSSGGSModule\App\Pages\Admin;
 
-use ModulesGarden\TSSGGSModule\App\Kernel\Page;
-use ModulesGarden\TSSGGSModule\App\Kernel\Response;
-use ModulesGarden\TSSGGSModule\App\Kernel\Table;
-use ModulesGarden\TSSGGSModule\App\Libs\Logs\LogBook;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\GeneralSettings;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\LogPolicy;
+use TSSGGSModule\App\Kernel\Page;
+use TSSGGSModule\App\Kernel\Response;
+use TSSGGSModule\App\Kernel\Table;
+use TSSGGSModule\App\Libs\Logs\LogBook;
+use TSSGGSModule\App\Libs\Support\GeneralSettings;
+use TSSGGSModule\App\Libs\Support\LogPolicy;
 
 /**
  * Admin page "Logs": the technical log of the module - a card per type with its number of entries, then the list

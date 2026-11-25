@@ -1,9 +1,9 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Models;
+namespace TSSGGSModule\App\Models;
 
 use Illuminate\Database\Eloquent\Model as EloquentModel;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\Edition;
+use TSSGGSModule\App\Libs\Support\Edition;
 
 /**
  * Base of the module's own tables: the table name gets the edition's prefix ("CronsCheck" is GGSModule_CronsCheck or

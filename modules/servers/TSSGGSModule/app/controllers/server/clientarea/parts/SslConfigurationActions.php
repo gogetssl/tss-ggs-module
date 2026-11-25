@@ -1,24 +1,24 @@
 <?php
 
-namespace ModulesGarden\Servers\TSSGGSModule\app\controllers\server\clientarea\parts;
+namespace TSSGGSModule\Server\app\controllers\server\clientarea\parts;
 
-use ModulesGarden\Servers\TSSGGSModule\app\models\whmcs\Client;
-use ModulesGarden\Servers\TSSGGSModule\app\models\whmcs\Order;
-use ModulesGarden\Servers\TSSGGSModule\app\models\whmcs\Product;
-use ModulesGarden\Servers\TSSGGSModule\app\models\whmcs\Service;
-use ModulesGarden\Servers\TSSGGSModule\app\models\whmcs\SSL;
-use ModulesGarden\Servers\TSSGGSModule\app\repository\whmcs\Domain;
-use ModulesGarden\Servers\TSSGGSModule\app\services\SSLStepThree;
-use ModulesGarden\Servers\TSSGGSModule\core\Lang;
-use ModulesGarden\Servers\TSSGGSModule\Server;
-use ModulesGarden\TSSGGSModule\App\Libs\AutoInstall\AutoInstallHelpers;
-use ModulesGarden\TSSGGSModule\App\Libs\Certificates\CertificateService;
-use ModulesGarden\TSSGGSModule\App\Libs\AutoInstall\Cpanel;
-use ModulesGarden\TSSGGSModule\App\Libs\Products\SslProductHelpers;
-use ModulesGarden\TSSGGSModule\App\Libs\Gateway\SSLTrustCenterApi;
-use ModulesGarden\TSSGGSModule\App\Models\RemoteProduct;
-use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
-use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\ProductRepository;
+use TSSGGSModule\Server\app\models\whmcs\Client;
+use TSSGGSModule\Server\app\models\whmcs\Order;
+use TSSGGSModule\Server\app\models\whmcs\Product;
+use TSSGGSModule\Server\app\models\whmcs\Service;
+use TSSGGSModule\Server\app\models\whmcs\SSL;
+use TSSGGSModule\Server\app\repository\whmcs\Domain;
+use TSSGGSModule\Server\app\services\SSLStepThree;
+use TSSGGSModule\Server\core\Lang;
+use TSSGGSModule\Server\Server;
+use TSSGGSModule\App\Libs\AutoInstall\AutoInstallHelpers;
+use TSSGGSModule\App\Libs\Certificates\CertificateService;
+use TSSGGSModule\App\Libs\AutoInstall\Cpanel;
+use TSSGGSModule\App\Libs\Products\SslProductHelpers;
+use TSSGGSModule\App\Libs\Gateway\SSLTrustCenterApi;
+use TSSGGSModule\App\Models\RemoteProduct;
+use TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
+use TSSGGSModule\App\Repositories\Whmcs\ProductRepository;
 use WHMCS\Database\Capsule;
 
 /**
@@ -198,7 +198,7 @@ trait SslConfigurationActions
         $vars['assetsURL']          = Server::I()->getAssetsURL();
         $vars['productName']        = $settings['productName'];
         // a certificate for public IPs (CSR without common name): its names are entered as a list, no AutoInstall
-        $vars['ipProduct']          = \ModulesGarden\TSSGGSModule\App\Libs\Certificates\IpCertificate::isProduct($params['packageid']);
+        $vars['ipProduct']          = \TSSGGSModule\App\Libs\Certificates\IpCertificate::isProduct($params['packageid']);
         $vars['domainGroups']       = $vars['ipProduct'] ? [] : $domainGroups;
         $vars['hasCpanel']          = !$vars['ipProduct'] && !empty($domainGroups);
         $vars['dcvMethods']         = $settings['dcvMethods'];
@@ -254,7 +254,7 @@ trait SslConfigurationActions
         ] : [];
 
         // a paid renewal waiting for these details: the client is told so, and until when the current certificate holds
-        $renewalUntil          = \ModulesGarden\TSSGGSModule\App\Libs\Billing\RenewalPolicy::pendingRenewalUntil((int)$serviceId);
+        $renewalUntil          = \TSSGGSModule\App\Libs\Billing\RenewalPolicy::pendingRenewalUntil((int)$serviceId);
         $vars['renewalNotice'] = $renewalUntil !== '' ? sprintf(Lang::absoluteT('sslRenewalPendingNotice'), $this->smimeDate($renewalUntil)) : '';
 
         return [
@@ -365,7 +365,7 @@ trait SslConfigurationActions
         $userId    = (int)$params['userid'];
 
         // a migrated order bought at payment: completed with its token (read once)
-        \ModulesGarden\TSSGGSModule\App\Libs\Certificates\IncompleteOrder::claimMigrated($serviceId);
+        \TSSGGSModule\App\Libs\Certificates\IncompleteOrder::claimMigrated($serviceId);
         $ssl = SSL::getByServiceId($serviceId);
         if(!$ssl || $ssl->status !== 'Awaiting Configuration' || !empty($ssl->remoteid))
         {
@@ -380,7 +380,7 @@ trait SslConfigurationActions
         $settings    = $this->getSslConfigurationSettings($params);
         $installType = (isset($input['install_type']) && $input['install_type'] === 'autoinstall') ? 'autoinstall' : 'manual';
         // a certificate for public IPs (CSR without common name, App\Libs\Certificates\IpCertificate): manual enrollment only
-        $ipProduct = \ModulesGarden\TSSGGSModule\App\Libs\Certificates\IpCertificate::isProduct($params['packageid']);
+        $ipProduct = \TSSGGSModule\App\Libs\Certificates\IpCertificate::isProduct($params['packageid']);
         if($ipProduct)
         {
             $installType = 'manual';
@@ -583,9 +583,9 @@ trait SslConfigurationActions
                 : [];
         }
 
-        \ModulesGarden\TSSGGSModule\App\Libs\Billing\SanUpgrade::assertWithinLimits($serviceId, $commonName, $allDomains, \ModulesGarden\TSSGGSModule\App\Libs\Billing\SanUpgrade::paidQuantities($params));
+        \TSSGGSModule\App\Libs\Billing\SanUpgrade::assertWithinLimits($serviceId, $commonName, $allDomains, \TSSGGSModule\App\Libs\Billing\SanUpgrade::paidQuantities($params));
         // *. only on a wildcard product, or a FLEX product with the Wildcard choice paid
-        \ModulesGarden\TSSGGSModule\App\Libs\Certificates\MainDomain::assertCommonName((int)$serviceId, (string)$commonName);
+        \TSSGGSModule\App\Libs\Certificates\MainDomain::assertCommonName((int)$serviceId, (string)$commonName);
 
         foreach($allDomains as $domain)
         {
@@ -733,7 +733,7 @@ trait SslConfigurationActions
         if($installType === 'manual' && !empty($privateKey))
         {
             $response['private_key']     = $privateKey;
-            $response['private_key_handle'] = \ModulesGarden\TSSGGSModule\App\Libs\Certificates\PrivateKeyDownload::store((int)$serviceId, $privateKey);
+            $response['private_key_handle'] = \TSSGGSModule\App\Libs\Certificates\PrivateKeyDownload::store((int)$serviceId, $privateKey);
         }
 
         return $response;

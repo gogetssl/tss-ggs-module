@@ -1,6 +1,6 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\Support;
+namespace TSSGGSModule\App\Libs\Support;
 
 /**
  * What the Module Log records. Three settings decide it (Settings > Logs, and Actions > Settings on the Logs page):

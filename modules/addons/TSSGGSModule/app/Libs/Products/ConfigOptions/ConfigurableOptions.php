@@ -1,9 +1,9 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\Products\ConfigOptions;
+namespace TSSGGSModule\App\Libs\Products\ConfigOptions;
 
-use ModulesGarden\TSSGGSModule\App\Models\Whmcs\Product;
-use ModulesGarden\TSSGGSModule\App\Models\Whmcs\ProductConfigOption;
+use TSSGGSModule\App\Models\Whmcs\Product;
+use TSSGGSModule\App\Models\Whmcs\ProductConfigOption;
 
 /**
  * The configurable options of a WHMCS product (the SAN counts of a certificate product):

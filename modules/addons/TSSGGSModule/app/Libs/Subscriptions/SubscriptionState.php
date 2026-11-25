@@ -1,8 +1,8 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\Subscriptions;
+namespace TSSGGSModule\App\Libs\Subscriptions;
 
-use ModulesGarden\TSSGGSModule\App\Libs\Support\GeneralSettings;
+use TSSGGSModule\App\Libs\Support\GeneralSettings;
 
 
 /**

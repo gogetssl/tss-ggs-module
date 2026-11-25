@@ -1,6 +1,6 @@
 <?php
 
-namespace ModulesGarden\Servers\TSSGGSModule\app\hooks;
+namespace TSSGGSModule\Server\app\hooks;
 
 use WHMCS\Database\Capsule;
 
@@ -50,11 +50,11 @@ class AcceptOrderAfterSetup
             $result = localAPI('AcceptOrder', ['orderid' => $orderId, 'autosetup' => false, 'sendemail' => false]);
             if(($result['result'] ?? '') === 'success')
             {
-                \ModulesGarden\TSSGGSModule\App\Libs\Support\GeneralSettings::activity('Order #' . $orderId . ' accepted automatically: service #' . $serviceId . ' was set up (automatic setup on ' . $service->autosetup . ')');
+                \TSSGGSModule\App\Libs\Support\GeneralSettings::activity('Order #' . $orderId . ' accepted automatically: service #' . $serviceId . ' was set up (automatic setup on ' . $service->autosetup . ')');
             }
             else
             {
-                \ModulesGarden\TSSGGSModule\App\Libs\Support\GeneralSettings::activity('Order #' . $orderId . ' could not be accepted automatically: ' . ($result['message'] ?? 'unknown error'));
+                \TSSGGSModule\App\Libs\Support\GeneralSettings::activity('Order #' . $orderId . ' could not be accepted automatically: ' . ($result['message'] ?? 'unknown error'));
             }
         }
         catch(\Throwable $e)

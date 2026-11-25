@@ -1,8 +1,8 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\ProductLines;
+namespace TSSGGSModule\App\Libs\ProductLines;
 
-use ModulesGarden\TSSGGSModule\App\Libs\Support\GeneralSettings;
+use TSSGGSModule\App\Libs\Support\GeneralSettings;
 
 /**
  * Company search of the LEI order form: fills in the legal entity from a public register.

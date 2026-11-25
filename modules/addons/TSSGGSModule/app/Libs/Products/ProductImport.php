@@ -1,19 +1,19 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\Products;
+namespace TSSGGSModule\App\Libs\Products;
 
-use ModulesGarden\TSSGGSModule\App\Libs\Subscriptions\AcmeHelpers;
-use ModulesGarden\TSSGGSModule\App\Libs\Billing\FinancePolicy;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\Helpers;
-use ModulesGarden\TSSGGSModule\App\Models\RemoteProduct;
-use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\ProductRepository;
-use ModulesGarden\TSSGGSModule\App\Models\Whmcs\Currency;
-use ModulesGarden\TSSGGSModule\App\Models\Whmcs\Pricing;
-use ModulesGarden\TSSGGSModule\App\Models\Whmcs\Product;
-use ModulesGarden\TSSGGSModule\App\Models\Whmcs\ProductGroup;
-use ModulesGarden\TSSGGSModule\App\Libs\Products\ConfigOptions\Quantity;
-use ModulesGarden\TSSGGSModule\App\Libs\Products\ConfigOptions\SubOption;
-use ModulesGarden\TSSGGSModule\App\Libs\Products\ConfigOptions\ConfigurableOptions;
+use TSSGGSModule\App\Libs\Subscriptions\AcmeHelpers;
+use TSSGGSModule\App\Libs\Billing\FinancePolicy;
+use TSSGGSModule\App\Libs\Support\Helpers;
+use TSSGGSModule\App\Models\RemoteProduct;
+use TSSGGSModule\App\Repositories\Whmcs\ProductRepository;
+use TSSGGSModule\App\Models\Whmcs\Currency;
+use TSSGGSModule\App\Models\Whmcs\Pricing;
+use TSSGGSModule\App\Models\Whmcs\Product;
+use TSSGGSModule\App\Models\Whmcs\ProductGroup;
+use TSSGGSModule\App\Libs\Products\ConfigOptions\Quantity;
+use TSSGGSModule\App\Libs\Products\ConfigOptions\SubOption;
+use TSSGGSModule\App\Libs\Products\ConfigOptions\ConfigurableOptions;
 
 /**
  * Import of vendor products into WHMCS (admin page Products, the setup wizard, the nightly catalogue sync): for each
@@ -90,7 +90,7 @@ class ProductImport
             $remoteProduct = RemoteProduct::find($localId);
 
             // an imported product is never created a second time (ticked again, or the form sent twice)
-            if(!$remoteProduct || !\ModulesGarden\TSSGGSModule\App\Libs\Products\ProductCatalog::importable($remoteProduct) || $remoteProduct->getWhmcsProduct())
+            if(!$remoteProduct || !\TSSGGSModule\App\Libs\Products\ProductCatalog::importable($remoteProduct) || $remoteProduct->getWhmcsProduct())
             {
                 continue;
             }
@@ -133,7 +133,7 @@ class ProductImport
                 {
                     $pricing[$currency->id][$billingPeriod] = FinancePolicy::sell($baseCost, $importMargin, (int)$remotePriceData['term'], $currency->id, true);
 
-                    if(\ModulesGarden\TSSGGSModule\App\Libs\Subscriptions\SubscriptionBilling::isSubscriptionRemote($remoteProduct) && $billingPeriod == 'annually')
+                    if(\TSSGGSModule\App\Libs\Subscriptions\SubscriptionBilling::isSubscriptionRemote($remoteProduct) && $billingPeriod == 'annually')
                     {
                         $pricing[$currency->id]['monthly'] = FinancePolicy::sell($baseCost, $importMargin, (int)$remotePriceData['term'], $currency->id, true);
                     }
@@ -168,9 +168,9 @@ class ProductImport
             }
 
             // code signing: the "Certificate Delivery" option (token shipping as a one-time fee)
-            if(strtolower((string)$remoteProduct->category) === \ModulesGarden\TSSGGSModule\App\Libs\ProductLines\CodeSigningService::CATEGORY)
+            if(strtolower((string)$remoteProduct->category) === \TSSGGSModule\App\Libs\ProductLines\CodeSigningService::CATEGORY)
             {
-                \ModulesGarden\TSSGGSModule\App\Libs\ProductLines\CodeSigningService::createDeliveryOption($productId, (array)$remoteProductData);
+                \TSSGGSModule\App\Libs\ProductLines\CodeSigningService::createDeliveryOption($productId, (array)$remoteProductData);
             }
 
             //create configOptions
@@ -178,7 +178,7 @@ class ProductImport
             $product = Product::find($productId);
 
             // subscriptions: one-time products, the module bills the yearly renewal (SubscriptionRenewals)
-            if(\ModulesGarden\TSSGGSModule\App\Libs\Subscriptions\SubscriptionBilling::isSubscriptionProduct($productId))
+            if(\TSSGGSModule\App\Libs\Subscriptions\SubscriptionBilling::isSubscriptionProduct($productId))
             {
                 $product->paytype = 'onetime';
                 $product->configoptionsupgrade = AcmeHelpers::isAcmeWhmcsProduct($productId) ? 1 : $product->configoptionsupgrade;
@@ -197,7 +197,7 @@ class ProductImport
             {
                 $optionNames['single'] = [
                     'name'         => 'sans',
-                    'nameFriendly' => \ModulesGarden\TSSGGSModule\App\Libs\Products\ProductCatalog::optionLabel('single', $includedSan),
+                    'nameFriendly' => \TSSGGSModule\App\Libs\Products\ProductCatalog::optionLabel('single', $includedSan),
                     'unit'         => 'SAN'
                 ];
             }
@@ -206,7 +206,7 @@ class ProductImport
             {
                 $optionNames['wildcard'] = [
                     'name'         => 'sans_wildcard',
-                    'nameFriendly' => \ModulesGarden\TSSGGSModule\App\Libs\Products\ProductCatalog::optionLabel('wildcard', $includedSanWildcard),
+                    'nameFriendly' => \TSSGGSModule\App\Libs\Products\ProductCatalog::optionLabel('wildcard', $includedSanWildcard),
                     'unit'         => 'SAN'
                 ];
             }
@@ -281,7 +281,7 @@ class ProductImport
                         {
                             $pricingArray[$currency->id][$billingPeriod] = FinancePolicy::sell($baseCost, $importMargin, (int)$remotePriceData['term'], $currency->id, false);
 
-                            if(\ModulesGarden\TSSGGSModule\App\Libs\Subscriptions\SubscriptionBilling::isSubscriptionRemote($remoteProduct) && $billingPeriod == 'annually')
+                            if(\TSSGGSModule\App\Libs\Subscriptions\SubscriptionBilling::isSubscriptionRemote($remoteProduct) && $billingPeriod == 'annually')
                             {
                                 $pricingArray[$currency->id]['monthly'] = FinancePolicy::sell($baseCost, $importMargin, (int)$remotePriceData['term'], $currency->id, false);
                             }
@@ -296,10 +296,10 @@ class ProductImport
             }
 
             // FLEX products: the client chooses a standard or a wildcard main domain (the wildcard costs more)
-            \ModulesGarden\TSSGGSModule\App\Libs\Certificates\MainDomain::ensureOption((int)$productId, (array)$remoteProductData, $importMargin, (float)$baseCurrencyRate);
+            \TSSGGSModule\App\Libs\Certificates\MainDomain::ensureOption((int)$productId, (array)$remoteProductData, $importMargin, (float)$baseCurrencyRate);
         }
 
         // CodeGuard plans can be upgraded to the dearer ones (the only product type that switches plans at the vendor)
-        \ModulesGarden\TSSGGSModule\App\Libs\ProductLines\CodeGuardService::linkUpgradePaths();
+        \TSSGGSModule\App\Libs\ProductLines\CodeGuardService::linkUpgradePaths();
     }
 }

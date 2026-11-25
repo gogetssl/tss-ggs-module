@@ -1,8 +1,8 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\Dashboard;
+namespace TSSGGSModule\App\Libs\Dashboard;
 
-use ModulesGarden\TSSGGSModule\App\Models\CronCheck;
+use TSSGGSModule\App\Models\CronCheck;
 
 /**
  * Last run of the module cron and its scheduled tasks; read once per request (attention banner + System health card)

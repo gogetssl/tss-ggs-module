@@ -1,18 +1,18 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\Certificates\Concerns;
+namespace TSSGGSModule\App\Libs\Certificates\Concerns;
 
-use ModulesGarden\TSSGGSModule\App\Libs\AutoInstall\AutoInstallHelpers;
-use ModulesGarden\TSSGGSModule\App\Libs\AutoInstall\AutoInstallQueue;
-use ModulesGarden\TSSGGSModule\App\Libs\Billing\SanUpgrade;
-use ModulesGarden\TSSGGSModule\App\Libs\Certificates\CertificateService;
-use ModulesGarden\TSSGGSModule\App\Libs\Gateway\SSLTrustCenterApi;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\ClientText;
-use ModulesGarden\TSSGGSModule\App\Models\Request;
+use TSSGGSModule\App\Libs\AutoInstall\AutoInstallHelpers;
+use TSSGGSModule\App\Libs\AutoInstall\AutoInstallQueue;
+use TSSGGSModule\App\Libs\Billing\SanUpgrade;
+use TSSGGSModule\App\Libs\Certificates\CertificateService;
+use TSSGGSModule\App\Libs\Gateway\SSLTrustCenterApi;
+use TSSGGSModule\App\Libs\Support\ClientText;
+use TSSGGSModule\App\Models\Request;
 use WHMCS\Database\Capsule;
-use ModulesGarden\TSSGGSModule\App\Libs\Certificates\FreeName;
-use ModulesGarden\TSSGGSModule\App\Libs\Certificates\IpCertificate;
-use ModulesGarden\TSSGGSModule\App\Libs\Certificates\MainDomain;
+use TSSGGSModule\App\Libs\Certificates\FreeName;
+use TSSGGSModule\App\Libs\Certificates\IpCertificate;
+use TSSGGSModule\App\Libs\Certificates\MainDomain;
 
 /**
  * Reissue and extra SANs: CSR / key checks, the SANs on the certificate now, the reissue call.

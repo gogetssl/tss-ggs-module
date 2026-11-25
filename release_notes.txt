@@ -1,7 +1,7 @@
 2.0.0 (2026-11-25)
 New admin interface base, third-party framework removed
 - The admin area runs on the module's own small base (plain Smarty
-  templates, htmx, Alpine.js) instead of the ModulesGarden framework and
+  templates, htmx, Alpine.js) instead of a third-party framework and
   Vue 2. Every page looks and works as before: Dashboard, Products,
   Pricing, Markups, Certificate Log, Emails, Statistics, Reports, Import,
   Automation Queue, Module Update, Settings, Logs, the setup wizard and
@@ -51,6 +51,9 @@ New admin interface base, third-party framework removed
 - A product saved in WHMCS no longer gets a sample custom field "Text"
   (a leftover of the framework). Fields added earlier stay; delete them
   under the product's Custom Fields tab if you do not use them.
+- The page and action in the module's URLs are now named mod-page and
+  mod-action. Bookmarks of admin pages made before 2.0.0 open the
+  dashboard; open the page from the menu and bookmark it again.
 - Removed command line commands: module:activate, module:deactivate,
   module:upgrade and testCommand. WHMCS activates and upgrades the module
   as before.
@@ -620,7 +623,7 @@ feature adds a percentage to the price a client is charged, so it is called
 what it is. The page, the menu entry, the stored rules and the texts follow,
 and the per-product field keeps its meaning as the profit margin. Rules and
 their percentages carry over untouched. A bookmark of the old page address
-needs updating: mg-page=commissions became mg-page=markups.
+needs updating: the page commissions became markups.
 
 1.2.0 (2026-11-13)
 Every page a client sees now uses one design. The SSL order pages - waiting

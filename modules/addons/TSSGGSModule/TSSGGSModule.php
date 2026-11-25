@@ -22,7 +22,7 @@ require_once __DIR__ . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'Kern
 function TSSGGSModule_adoptAnOlderInstall()
 {
     // older names first, then the database changes since schema.sql (App\Database\Schema)
-    foreach (['\\ModulesGarden\\TSSGGSModule\\App\\Libs\\Support\\TablePrefix', '\\ModulesGarden\\TSSGGSModule\\App\\Libs\\Support\\ModuleRename', '\\ModulesGarden\\TSSGGSModule\\App\\Database\\Schema'] as $step)
+    foreach (['\\TSSGGSModule\\App\\Libs\\Support\\TablePrefix', '\\TSSGGSModule\\App\\Libs\\Support\\ModuleRename', '\\TSSGGSModule\\App\\Database\\Schema'] as $step)
     {
         try
         {
@@ -39,32 +39,32 @@ function TSSGGSModule_config()
 {
     TSSGGSModule_adoptAnOlderInstall();
 
-    return \ModulesGarden\TSSGGSModule\App\Kernel\Lifecycle::config();
+    return \TSSGGSModule\App\Kernel\Lifecycle::config();
 }
 
 function TSSGGSModule_activate()
 {
     TSSGGSModule_adoptAnOlderInstall();
 
-    return \ModulesGarden\TSSGGSModule\App\Kernel\Lifecycle::activate();
+    return \TSSGGSModule\App\Kernel\Lifecycle::activate();
 }
 
 function TSSGGSModule_deactivate()
 {
-    return \ModulesGarden\TSSGGSModule\App\Kernel\Lifecycle::deactivate();
+    return \TSSGGSModule\App\Kernel\Lifecycle::deactivate();
 }
 
 function TSSGGSModule_upgrade($params)
 {
     TSSGGSModule_adoptAnOlderInstall();
 
-    return \ModulesGarden\TSSGGSModule\App\Kernel\Lifecycle::upgrade((array)$params);
+    return \TSSGGSModule\App\Kernel\Lifecycle::upgrade((array)$params);
 }
 
-/** The admin area of the module: addonmodules.php?module=...&mg-page=<page>&mg-action=<action> */
+/** The admin area of the module: addonmodules.php?module=...&mod-page=<page>&mod-action=<action> */
 function TSSGGSModule_output($params)
 {
-    \ModulesGarden\TSSGGSModule\App\Kernel\Kernel::run('admin');
+    \TSSGGSModule\App\Kernel\Kernel::run('admin');
 }
 
 if (defined('CLIENTAREA'))
@@ -72,6 +72,6 @@ if (defined('CLIENTAREA'))
     function TSSGGSModule_clientarea($params)
     {
         // Client's SSL certificates (summary filters) and "SSL Certificates by Domain" - plain Smarty pages
-        return \ModulesGarden\TSSGGSModule\App\ClientArea\SslPages::render($_GET);
+        return \TSSGGSModule\App\ClientArea\SslPages::render($_GET);
     }
 }

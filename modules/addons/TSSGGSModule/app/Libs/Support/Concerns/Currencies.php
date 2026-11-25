@@ -1,10 +1,10 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\Support\Concerns;
+namespace TSSGGSModule\App\Libs\Support\Concerns;
 
-use ModulesGarden\TSSGGSModule\App\Libs\Support\Helpers;
-use ModulesGarden\TSSGGSModule\App\Models\Whmcs\Client;
-use ModulesGarden\TSSGGSModule\App\Models\Whmcs\Currency;
+use TSSGGSModule\App\Libs\Support\Helpers;
+use TSSGGSModule\App\Models\Whmcs\Client;
+use TSSGGSModule\App\Models\Whmcs\Currency;
 
 /**
  * Currencies: the default currency, conversion, formatting, tax.

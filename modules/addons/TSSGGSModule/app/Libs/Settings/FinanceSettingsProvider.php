@@ -1,12 +1,12 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\Settings;
+namespace TSSGGSModule\App\Libs\Settings;
 
-use ModulesGarden\TSSGGSModule\App\Libs\Billing\FinancePolicy;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\GeneralSettings;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\Helpers;
-use ModulesGarden\TSSGGSModule\App\Libs\Billing\RenewalPrices;
-use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
+use TSSGGSModule\App\Libs\Billing\FinancePolicy;
+use TSSGGSModule\App\Libs\Support\GeneralSettings;
+use TSSGGSModule\App\Libs\Support\Helpers;
+use TSSGGSModule\App\Libs\Billing\RenewalPrices;
+use TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
 
 /**
  * Settings > Finance. The margin and the exchange rate live in "financeSettings" (read by the price update and the
@@ -92,6 +92,6 @@ class FinanceSettingsProvider extends Provider
         GeneralSettings::save($general);
 
         // the balance is read again now: the page shows it fresh and a new warning amount is checked at once
-        \ModulesGarden\TSSGGSModule\App\Libs\Billing\BalanceMonitor::run(true, \ModulesGarden\TSSGGSModule\App\Libs\Gateway\SSLTrustCenterApi::PAGE_TIMEOUT);
+        \TSSGGSModule\App\Libs\Billing\BalanceMonitor::run(true, \TSSGGSModule\App\Libs\Gateway\SSLTrustCenterApi::PAGE_TIMEOUT);
     }
 }

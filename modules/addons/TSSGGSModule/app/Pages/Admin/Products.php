@@ -1,20 +1,20 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Pages\Admin;
+namespace TSSGGSModule\App\Pages\Admin;
 
-use ModulesGarden\TSSGGSModule\App\Kernel\Kernel;
-use ModulesGarden\TSSGGSModule\App\Kernel\Page;
-use ModulesGarden\TSSGGSModule\App\Kernel\Response;
-use ModulesGarden\TSSGGSModule\App\Kernel\Table;
-use ModulesGarden\TSSGGSModule\App\Libs\Products\CatalogueList;
-use ModulesGarden\TSSGGSModule\App\Libs\Products\CatalogueSync;
-use ModulesGarden\TSSGGSModule\App\Libs\Products\ProductAddons;
-use ModulesGarden\TSSGGSModule\App\Libs\Products\ProductCatalog;
-use ModulesGarden\TSSGGSModule\App\Libs\Products\ProductEditor;
-use ModulesGarden\TSSGGSModule\App\Libs\Products\ProductImport;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\Edition;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\GeneralSettings;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\Helpers;
+use TSSGGSModule\App\Kernel\Kernel;
+use TSSGGSModule\App\Kernel\Page;
+use TSSGGSModule\App\Kernel\Response;
+use TSSGGSModule\App\Kernel\Table;
+use TSSGGSModule\App\Libs\Products\CatalogueList;
+use TSSGGSModule\App\Libs\Products\CatalogueSync;
+use TSSGGSModule\App\Libs\Products\ProductAddons;
+use TSSGGSModule\App\Libs\Products\ProductCatalog;
+use TSSGGSModule\App\Libs\Products\ProductEditor;
+use TSSGGSModule\App\Libs\Products\ProductImport;
+use TSSGGSModule\App\Libs\Support\Edition;
+use TSSGGSModule\App\Libs\Support\GeneralSettings;
+use TSSGGSModule\App\Libs\Support\Helpers;
 use WHMCS\Database\Capsule;
 
 /**

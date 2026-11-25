@@ -1,6 +1,6 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Kernel;
+namespace TSSGGSModule\App\Kernel;
 
 /**
  * Registers the addon's WHMCS hooks. Every file in app/Hooks is one hook point, named after the file

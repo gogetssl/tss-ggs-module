@@ -1,11 +1,11 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\Billing;
+namespace TSSGGSModule\App\Libs\Billing;
 
-use ModulesGarden\TSSGGSModule\App\Libs\Logs\Logger;
+use TSSGGSModule\App\Libs\Logs\Logger;
 use WHMCS\Database\Capsule;
-use ModulesGarden\TSSGGSModule\App\Libs\Certificates\MainDomain;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\GeneralSettings;
+use TSSGGSModule\App\Libs\Certificates\MainDomain;
+use TSSGGSModule\App\Libs\Support\GeneralSettings;
 
 /**
  * Renewal prices of existing services (Settings > Finance > Renewal prices of existing services).

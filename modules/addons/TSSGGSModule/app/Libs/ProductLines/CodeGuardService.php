@@ -1,11 +1,11 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\ProductLines;
+namespace TSSGGSModule\App\Libs\ProductLines;
 
 use WHMCS\Database\Capsule;
-use ModulesGarden\TSSGGSModule\App\Libs\Gateway\SSLTrustCenterApi;
-use ModulesGarden\TSSGGSModule\App\Libs\Certificates\CertificateService;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\Edition;
+use TSSGGSModule\App\Libs\Gateway\SSLTrustCenterApi;
+use TSSGGSModule\App\Libs\Certificates\CertificateService;
+use TSSGGSModule\App\Libs\Support\Edition;
 
 /**
  * CodeGuard website backup of TheSSLStore, ordered through the gateway (/code-guard).
@@ -42,7 +42,7 @@ class CodeGuardService extends GatewayOrderService
     /** nothing has to be configured: the e-mail only points the client at the dashboard */
     public static function configurationTemplate()
     {
-        return \ModulesGarden\TSSGGSModule\App\Helpers\EmailTemplates::CODE_GUARD_READY_TEMPLATE;
+        return \TSSGGSModule\App\Helpers\EmailTemplates::CODE_GUARD_READY_TEMPLATE;
     }
 
     /**

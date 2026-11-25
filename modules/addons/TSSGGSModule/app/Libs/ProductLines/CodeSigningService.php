@@ -1,13 +1,13 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\ProductLines;
+namespace TSSGGSModule\App\Libs\ProductLines;
 
-use ModulesGarden\TSSGGSModule\App\Helpers\EmailTemplates;
-use ModulesGarden\TSSGGSModule\App\Models\Whmcs\Product;
-use ModulesGarden\TSSGGSModule\App\Libs\Products\ConfigOptions\ConfigurableOptionsGroup;
+use TSSGGSModule\App\Helpers\EmailTemplates;
+use TSSGGSModule\App\Models\Whmcs\Product;
+use TSSGGSModule\App\Libs\Products\ConfigOptions\ConfigurableOptionsGroup;
 use WHMCS\Database\Capsule;
-use ModulesGarden\TSSGGSModule\App\Libs\Certificates\CertificateService;
-use ModulesGarden\TSSGGSModule\App\Libs\Billing\FinancePolicy;
+use TSSGGSModule\App\Libs\Certificates\CertificateService;
+use TSSGGSModule\App\Libs\Billing\FinancePolicy;
 
 /**
  * Hardware code signing certificates of GoGetSSL and TheSSLStore, ordered through the gateway (/certificates/cs).
@@ -398,7 +398,7 @@ class CodeSigningService extends GatewayOrderService
      */
     protected static function oneTimeFee($cost, $currencyId)
     {
-        $rate = (float)((new \ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository())->getModuleConfiguration()['financeSettings']['rate'] ?? 1) ?: 1;
+        $rate = (float)((new \TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository())->getModuleConfiguration()['financeSettings']['rate'] ?? 1) ?: 1;
         $fee  = number_format(FinancePolicy::toCurrency((float)$cost * $rate, $currencyId), 2, '.', '');
 
         $pricing = [];

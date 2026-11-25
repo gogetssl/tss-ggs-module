@@ -1,8 +1,8 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\Support;
+namespace TSSGGSModule\App\Libs\Support;
 
-use ModulesGarden\TSSGGSModule\App\Models\ModuleSetting;
+use TSSGGSModule\App\Models\ModuleSetting;
 
 /**
  * Small settings of the module kept one per row (table <prefix>_ModuleSettings), e.g. what the module log records:

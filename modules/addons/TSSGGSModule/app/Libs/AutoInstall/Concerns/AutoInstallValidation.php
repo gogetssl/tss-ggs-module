@@ -1,12 +1,12 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\AutoInstall\Concerns;
+namespace TSSGGSModule\App\Libs\AutoInstall\Concerns;
 
-use ModulesGarden\TSSGGSModule\App\Helpers\AutoInstallEmailTemplates;
-use ModulesGarden\TSSGGSModule\App\Libs\AutoInstall\AutoInstallHelpers;
-use ModulesGarden\TSSGGSModule\App\Libs\Gateway\SSLTrustCenterApi;
-use ModulesGarden\TSSGGSModule\App\Models\Request;
-use ModulesGarden\TSSGGSModule\App\Libs\AutoInstall\Cpanel;
+use TSSGGSModule\App\Helpers\AutoInstallEmailTemplates;
+use TSSGGSModule\App\Libs\AutoInstall\AutoInstallHelpers;
+use TSSGGSModule\App\Libs\Gateway\SSLTrustCenterApi;
+use TSSGGSModule\App\Models\Request;
+use TSSGGSModule\App\Libs\AutoInstall\Cpanel;
 
 /**
  * Domain validation done by AutoInstall: DNS records, HTTP files, the switch to e-mail validation.

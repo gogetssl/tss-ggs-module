@@ -1,13 +1,12 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Kernel;
+namespace TSSGGSModule\App\Kernel;
 
-use ModulesGarden\TSSGGSModule\App\Libs\Support\Edition;
+use TSSGGSModule\App\Libs\Support\Edition;
 
 /**
  * The module's admin layout around a page: header, main menu, page title, the page's content and the assets
- * (template admin/layout.tpl). The menu is read from app/Config/menu/admin.yml, the same file the old framework
- * uses, so both show the same menu while pages move over.
+ * (template admin/layout.tpl). The menu is read from app/Config/menu/admin.yml.
  */
 class Layout
 {
@@ -92,7 +91,7 @@ class Layout
     /** @return string content of a page that only says something (tone: '' | ok | warn | bad) */
     public static function message(Page $page, string $text, string $tone = ''): string
     {
-        return \ModulesGarden\TSSGGSModule\App\Libs\Support\Html::noticeText($text, $tone);
+        return \TSSGGSModule\App\Libs\Support\Html::noticeText($text, $tone);
     }
 
     public static function notFound(Page $page): string

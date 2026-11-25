@@ -1,6 +1,6 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Models\Whmcs;
+namespace TSSGGSModule\App\Models\Whmcs;
 
 class Pricing extends \WHMCS\Billing\Pricing
 {
@@ -15,7 +15,7 @@ class Pricing extends \WHMCS\Billing\Pricing
 
     public function currencyModel()
     {
-        return $this->belongsTo('ModulesGarden\\TSSGGSModule\\App\\Models\\Whmcs\\Currency', 'currency');
+        return $this->belongsTo('TSSGGSModule\\App\\Models\\Whmcs\\Currency', 'currency');
     }
 
     /**

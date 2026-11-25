@@ -114,7 +114,7 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <form method="post" action="clientarea.php?action=productdetails&id={$serviceid}">
-                    <input type="hidden" name="mg-action" value="renewOrder">
+                    <input type="hidden" name="mod-action" value="renewOrder">
                     <input type="hidden" name="token" value="{$csrfToken}">
                     <div class="modal-header" style="display:block;">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -171,7 +171,7 @@
     $(document).ready(function () {
         var clone = $('.validate-ssl-unified').clone();
         $('.product-details').html(clone);
-        $('.mg-module .validate-ssl-unified').remove();
+        $('.mod-module .validate-ssl-unified').remove();
         // the module's stylesheet lives in the block below and has to survive it
         $('head').append($('link[href*="theme.css"]').first());
         // WHMCS's own tab strip under the page: the module shows everything above it
@@ -181,7 +181,7 @@
     $(document).on('click', '#tssggs-smime-refresh', function () {
         var btn = $(this), alerts = $('#tssggs-smime-alerts');
         btn.prop('disabled', true);
-        $.post('clientarea.php?action=productdetails&id={$serviceid}&json=1', {ldelim}'mg-action': 'refreshSmimeDetails', token: '{$csrfToken}'{rdelim}, function (ret) {
+        $.post('clientarea.php?action=productdetails&id={$serviceid}&json=1', {ldelim}'mod-action': 'refreshSmimeDetails', token: '{$csrfToken}'{rdelim}, function (ret) {
             var payload;
             try {
                 payload = typeof ret === 'object' ? ret : JSON.parse(String(ret).replace('<JSONRESPONSE#', '').replace('#ENDJSONRESPONSE>', ''));

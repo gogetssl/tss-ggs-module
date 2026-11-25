@@ -99,7 +99,7 @@
                         </button>
                     {/if}
                     {if $download_formats}
-                        <a class="tssggs-btn{if !$install_available} tssggs-btn--primary{/if}" href="{$whmcs_url}/clientarea.php?action=productdetails&id={$serviceid}&mg-action=download&format={$download_formats[0]}">
+                        <a class="tssggs-btn{if !$install_available} tssggs-btn--primary{/if}" href="{$whmcs_url}/clientarea.php?action=productdetails&id={$serviceid}&mod-action=download&format={$download_formats[0]}">
                             <svg class="tssggs-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></svg>
                             {$MGLANG->T('validation_page', 'Download')}
                         </a>
@@ -162,13 +162,13 @@
                         {$MGLANG->T('validation_page', 'View Certificate')}
                     </button>
                     <form method="post" action="{$whmcs_url}/clientarea.php?action=productdetails&id={$serviceid}">
-                        <input type="hidden" name="mg-action" value="sendCertificate"><input type="hidden" name="token" value="{$csrfToken}">
+                        <input type="hidden" name="mod-action" value="sendCertificate"><input type="hidden" name="token" value="{$csrfToken}">
                         <button type="submit" class="tssggs-link">
                             <svg class="tssggs-ic" viewBox="0 0 24 24" aria-hidden="true"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
                             {$MGLANG->T('validation_page', 'linkSendCertificate')}
                         </button>
                     </form>
-                    <a class="tssggs-link" href="{$whmcs_url}/clientarea.php?action=productdetails&id={$serviceid}&mg-action=reissueSSL">
+                    <a class="tssggs-link" href="{$whmcs_url}/clientarea.php?action=productdetails&id={$serviceid}&mod-action=reissueSSL">
                         <svg class="tssggs-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
                         {$MGLANG->T('validation_page', 'Reissue SSL')}
                     </a>
@@ -196,7 +196,7 @@
                 <ul class="tssggs-files">
                     {foreach $download_formats as $format}
                         <li>
-                            <a href="{$whmcs_url}/clientarea.php?action=productdetails&id={$serviceid}&mg-action=download&format={$format}">
+                            <a href="{$whmcs_url}/clientarea.php?action=productdetails&id={$serviceid}&mod-action=download&format={$format}">
                                 <span>{$MGLANG->T('download_formats', $format)}</span>
                                 <svg class="tssggs-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></svg>
                             </a>
@@ -313,7 +313,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <form method="POST" action="{$whmcs_url}/clientarea.php?action=productdetails&id={$serviceid}">
-                <input type="hidden" name="mg-action" value="installCertificate">
+                <input type="hidden" name="mod-action" value="installCertificate">
                 <input type="hidden" name="token" value="{$csrfToken}">
                 <div class="modal-header" style="display: block;">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -347,7 +347,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <form method="POST">
-                <input type="hidden" name="mg-action" value="cancel">
+                <input type="hidden" name="mod-action" value="cancel">
                 <input type="hidden" name="token" value="{$csrfToken}">
                 <input type="hidden" name="remoteid" value="{$api_order_id}">
                 <div class="modal-header" style="display: block;">
@@ -370,7 +370,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <form method="POST">
-                <input type="hidden" name="mg-action" value="renew">
+                <input type="hidden" name="mod-action" value="renew">
                 <input type="hidden" name="token" value="{$csrfToken}">
                 <input type="hidden" name="remoteid" value="{$api_order_id}">
                 <div class="modal-header" style="display: block;">
@@ -394,7 +394,7 @@
     $(document).ready(function (){
         let clone_element = $('.validate-ssl-unified').clone();
         $('.product-details').html(clone_element);
-        $('.mg-module .validate-ssl-unified').remove();
+        $('.mod-module .validate-ssl-unified').remove();
         // the module's stylesheet lives in the block below and has to survive it
         $('head').append($('link[href*="theme.css"]').first());
         // WHMCS's own tab strip under the page: the module shows everything above it

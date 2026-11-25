@@ -1,22 +1,22 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Pages\Admin;
+namespace TSSGGSModule\App\Pages\Admin;
 
-use ModulesGarden\TSSGGSModule\App\Kernel\Page;
-use ModulesGarden\TSSGGSModule\App\Libs\Settings\ApiScreen;
-use ModulesGarden\TSSGGSModule\App\Libs\Settings\ApiSettingsProvider;
-use ModulesGarden\TSSGGSModule\App\Libs\Settings\CronScreen;
-use ModulesGarden\TSSGGSModule\App\Libs\Settings\CronSettingsProvider;
-use ModulesGarden\TSSGGSModule\App\Libs\Settings\EmailScreen;
-use ModulesGarden\TSSGGSModule\App\Libs\Settings\FinanceScreen;
-use ModulesGarden\TSSGGSModule\App\Libs\Settings\FinanceSettingsProvider;
-use ModulesGarden\TSSGGSModule\App\Libs\Settings\GeneralSettingsProvider;
-use ModulesGarden\TSSGGSModule\App\Libs\Settings\ProductsSettingsProvider;
-use ModulesGarden\TSSGGSModule\App\Libs\Settings\Result;
-use ModulesGarden\TSSGGSModule\App\Libs\Settings\SslScreen;
-use ModulesGarden\TSSGGSModule\App\Libs\Settings\SslSettingsProvider;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\Edition;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\GeneralSettings;
+use TSSGGSModule\App\Kernel\Page;
+use TSSGGSModule\App\Libs\Settings\ApiScreen;
+use TSSGGSModule\App\Libs\Settings\ApiSettingsProvider;
+use TSSGGSModule\App\Libs\Settings\CronScreen;
+use TSSGGSModule\App\Libs\Settings\CronSettingsProvider;
+use TSSGGSModule\App\Libs\Settings\EmailScreen;
+use TSSGGSModule\App\Libs\Settings\FinanceScreen;
+use TSSGGSModule\App\Libs\Settings\FinanceSettingsProvider;
+use TSSGGSModule\App\Libs\Settings\GeneralSettingsProvider;
+use TSSGGSModule\App\Libs\Settings\ProductsSettingsProvider;
+use TSSGGSModule\App\Libs\Settings\Result;
+use TSSGGSModule\App\Libs\Settings\SslScreen;
+use TSSGGSModule\App\Libs\Settings\SslSettingsProvider;
+use TSSGGSModule\App\Libs\Support\Edition;
+use TSSGGSModule\App\Libs\Support\GeneralSettings;
 
 /**
  * Admin page "Settings": a menu of screens on the left, the chosen screen (settings-page=...) on the right - one

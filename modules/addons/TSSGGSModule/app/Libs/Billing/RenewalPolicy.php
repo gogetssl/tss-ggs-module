@@ -1,10 +1,10 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\Billing;
+namespace TSSGGSModule\App\Libs\Billing;
 
-use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
-use ModulesGarden\TSSGGSModule\App\Libs\Certificates\CertificateService;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\GeneralSettings;
+use TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
+use TSSGGSModule\App\Libs\Certificates\CertificateService;
+use TSSGGSModule\App\Libs\Support\GeneralSettings;
 
 /**
  * When a renewal is billed, and how it is placed. Everything counts from the END OF THE ORDER - for a certificate
@@ -193,7 +193,7 @@ class RenewalPolicy
      */
     public static function awaitDetails(int $serviceId, int $priorServiceId, string $priorItemId, string $priorEnd): void
     {
-        \ModulesGarden\TSSGGSModule\App\Models\Request::updateOrInsert(
+        \TSSGGSModule\App\Models\Request::updateOrInsert(
             ['serviceid' => $serviceId, 'name' => 'renewalPending'],
             [
                 'request'    => json_encode(['prior_service' => $priorServiceId, 'prior_item' => $priorItemId, 'prior_end' => substr($priorEnd, 0, 19)]),
@@ -210,7 +210,7 @@ class RenewalPolicy
      */
     public static function pendingRenewal(int $serviceId)
     {
-        $value = \ModulesGarden\TSSGGSModule\App\Models\Request::where('serviceid', $serviceId)->where('name', 'renewalPending')->value('request');
+        $value = \TSSGGSModule\App\Models\Request::where('serviceid', $serviceId)->where('name', 'renewalPending')->value('request');
         $data  = $value ? (json_decode((string)$value, true) ?: []) : [];
         if(empty($data['prior_item']))
         {
@@ -232,7 +232,7 @@ class RenewalPolicy
      */
     public static function pendingRenewalUntil(int $serviceId): string
     {
-        $value = \ModulesGarden\TSSGGSModule\App\Models\Request::where('serviceid', $serviceId)->where('name', 'renewalPending')->value('request');
+        $value = \TSSGGSModule\App\Models\Request::where('serviceid', $serviceId)->where('name', 'renewalPending')->value('request');
         $data  = $value ? (json_decode((string)$value, true) ?: []) : [];
         $end   = !empty($data['prior_end']) ? strtotime((string)$data['prior_end']) : false;
 
@@ -242,7 +242,7 @@ class RenewalPolicy
     /** The renewal was ordered with the client's details */
     public static function renewalPlaced(int $serviceId): void
     {
-        \ModulesGarden\TSSGGSModule\App\Models\Request::where('serviceid', $serviceId)->where('name', 'renewalPending')->delete();
+        \TSSGGSModule\App\Models\Request::where('serviceid', $serviceId)->where('name', 'renewalPending')->delete();
     }
 
     /**

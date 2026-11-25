@@ -1,17 +1,17 @@
 <?php
 
-namespace ModulesGarden\Servers\TSSGGSModule\app\services;
+namespace TSSGGSModule\Server\app\services;
 
-use ModulesGarden\Servers\TSSGGSModule\app\models\whmcs\Service;
-use ModulesGarden\Servers\TSSGGSModule\app\models\whmcs\SSL;
-use ModulesGarden\TSSGGSModule\App\Libs\AutoInstall\AutoInstallHelpers;
-use ModulesGarden\TSSGGSModule\App\Libs\Certificates\CertificateService;
-use ModulesGarden\TSSGGSModule\App\Libs\Billing\RenewalPolicy;
-use ModulesGarden\TSSGGSModule\App\Libs\Gateway\SSLTrustCenterApi;
-use ModulesGarden\TSSGGSModule\App\Models\Request;
-use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
-use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\ProductRepository;
-use ModulesGarden\TSSGGSModule\App\Models\Whmcs\InvoiceItem;
+use TSSGGSModule\Server\app\models\whmcs\Service;
+use TSSGGSModule\Server\app\models\whmcs\SSL;
+use TSSGGSModule\App\Libs\AutoInstall\AutoInstallHelpers;
+use TSSGGSModule\App\Libs\Certificates\CertificateService;
+use TSSGGSModule\App\Libs\Billing\RenewalPolicy;
+use TSSGGSModule\App\Libs\Gateway\SSLTrustCenterApi;
+use TSSGGSModule\App\Models\Request;
+use TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
+use TSSGGSModule\App\Repositories\Whmcs\ProductRepository;
+use TSSGGSModule\App\Models\Whmcs\InvoiceItem;
 
 class Renew
 {
@@ -39,19 +39,19 @@ class Renew
 
         $service = Service::find($serviceId);
         // subscriptions are renewed by the vendor (SubscriptionRenewals bills them): nothing to order
-        if($service && \ModulesGarden\TSSGGSModule\App\Libs\Subscriptions\SubscriptionBilling::isSubscriptionProduct($service->packageid)) {
+        if($service && \TSSGGSModule\App\Libs\Subscriptions\SubscriptionBilling::isSubscriptionProduct($service->packageid)) {
             return 'success';
         }
 
         // S/MIME: a renewal is a new certificate order - the service goes back to Awaiting Configuration and the client
         // gets the configuration link (the current certificate stays valid until it expires)
-        $gatewayType = $service ? \ModulesGarden\TSSGGSModule\App\Libs\ProductLines\GatewayOrderService::typeOfProduct($service->packageid) : null;
+        $gatewayType = $service ? \TSSGGSModule\App\Libs\ProductLines\GatewayOrderService::typeOfProduct($service->packageid) : null;
         if($gatewayType) {
             // "ordered": placed with the previous details; "form": the client gets the order details e-mail
             if($gatewayType::renewal($serviceId) === 'form') {
                 $sslOrder = SSL::getByServiceId($serviceId);
-                \ModulesGarden\TSSGGSModule\App\Helpers\EmailTemplates::sendEmail($gatewayType::configurationTemplate(), $serviceId, [
-                    'ssl_configuration_link' => (new \ModulesGarden\Servers\TSSGGSModule\app\repository\whmcs\Config())->getConfigureSSLUrl($sslOrder ? $sslOrder->id : 0, $serviceId),
+                \TSSGGSModule\App\Helpers\EmailTemplates::sendEmail($gatewayType::configurationTemplate(), $serviceId, [
+                    'ssl_configuration_link' => (new \TSSGGSModule\Server\app\repository\whmcs\Config())->getConfigureSSLUrl($sslOrder ? $sslOrder->id : 0, $serviceId),
                 ]);
             }
 
@@ -67,7 +67,7 @@ class Renew
         // ordered with the previous details at once or the client submits them again
         $serviceId   = (int)$serviceId;
         // the certificate service of a product addon is billed on the addon: its renewal always stays on it
-        $sameService = RenewalPolicy::sameService() || \ModulesGarden\TSSGGSModule\App\Libs\Certificates\AddonCertificates::isCertificateService($serviceId);
+        $sameService = RenewalPolicy::sameService() || \TSSGGSModule\App\Libs\Certificates\AddonCertificates::isCertificateService($serviceId);
         $target      = $sameService ? $serviceId : $this->renewalService($params);
         $amount      = $sameService ? (float)$params['model']->amount : (float)Service::where('id', $target)->value('amount');
 
@@ -158,8 +158,8 @@ class Renew
         RenewalPolicy::awaitDetails($target, $serviceId, $priorItem, $priorEnd);
 
         $targetOrder = SSL::getByServiceId($target);
-        \ModulesGarden\TSSGGSModule\App\Helpers\EmailTemplates::sendEmail(\ModulesGarden\TSSGGSModule\App\Helpers\EmailTemplates::RENEWAL_DETAILS_TEMPLATE, $target, [
-            'ssl_configuration_link' => (new \ModulesGarden\Servers\TSSGGSModule\app\repository\whmcs\Config())->getConfigureSSLUrl($targetOrder ? $targetOrder->id : 0, $target),
+        \TSSGGSModule\App\Helpers\EmailTemplates::sendEmail(\TSSGGSModule\App\Helpers\EmailTemplates::RENEWAL_DETAILS_TEMPLATE, $target, [
+            'ssl_configuration_link' => (new \TSSGGSModule\Server\app\repository\whmcs\Config())->getConfigureSSLUrl($targetOrder ? $targetOrder->id : 0, $target),
         ]);
         CertificateService::event($target, 'info', '[Renewal] Paid: waiting for the client to submit the renewal details');
     }
@@ -171,13 +171,13 @@ class Renew
     protected function buyIncomplete(int $serviceId, int $target)
     {
         $service = Service::find($target);
-        if(!$service || !\ModulesGarden\TSSGGSModule\App\Libs\Certificates\IncompleteOrder::appliesTo($service->packageid))
+        if(!$service || !\TSSGGSModule\App\Libs\Certificates\IncompleteOrder::appliesTo($service->packageid))
         {
             return null;
         }
 
-        return \ModulesGarden\TSSGGSModule\App\Libs\Certificates\IncompleteOrder::ensure($target, $service->packageid, $service->billingcycle,
-            \ModulesGarden\TSSGGSModule\App\Libs\Billing\SanUpgrade::currentQuantities($serviceId), $serviceId === $target ? 'renewOrder' : 'addOrder');
+        return \TSSGGSModule\App\Libs\Certificates\IncompleteOrder::ensure($target, $service->packageid, $service->billingcycle,
+            \TSSGGSModule\App\Libs\Billing\SanUpgrade::currentQuantities($serviceId), $serviceId === $target ? 'renewOrder' : 'addOrder');
     }
 
     /**
@@ -191,7 +191,7 @@ class Renew
             return;
         }
         Service::where('id', $serviceId)->update(['billingcycle' => 'One Time']);
-        \ModulesGarden\TSSGGSModule\App\Models\Request::updateOrInsert(
+        \TSSGGSModule\App\Models\Request::updateOrInsert(
             ['serviceid' => $serviceId, 'name' => 'renewedTo'],
             ['request' => (string)$target, 'status' => 'renewed', 'created_at' => date('Y-m-d H:i:s'), 'updated_at' => date('Y-m-d H:i:s')]
         );
@@ -220,7 +220,7 @@ class Renew
 
         // FLEX products: the provider charges the renewal by its main domain - it must match what the client pays for
         // (refused: the caller asks the client for new details instead)
-        \ModulesGarden\TSSGGSModule\App\Libs\Certificates\MainDomain::assertCommonName((int)$serviceId, (string)($requestRenew['common_name']['name'] ?? ''));
+        \TSSGGSModule\App\Libs\Certificates\MainDomain::assertCommonName((int)$serviceId, (string)($requestRenew['common_name']['name'] ?? ''));
 
         $requestRenew['renewal']['prior_certificate_id'] = $sslOrder->remoteid;
         $requestRenew['renewal']['remaining_days'] = CertificateService::renewalDays($serviceId, $days > 0 ? $days + 1 : 0);
@@ -250,7 +250,7 @@ class Renew
         $newItemId = SSLTrustCenterApi::getItemId($newOrder, $incomplete ? $incomplete['item_id'] : null);
         if($incomplete)
         {
-            \ModulesGarden\TSSGGSModule\App\Libs\Certificates\IncompleteOrder::markCompleted($targetServiceId);
+            \TSSGGSModule\App\Libs\Certificates\IncompleteOrder::markCompleted($targetServiceId);
         }
 
         // from here the order exists at the vendor: what follows is stored on a best effort, a failure never reports the
@@ -273,7 +273,7 @@ class Renew
             $apiPrice = $newOrder['order']['total_amount'] ?? 0;
             $invoice  = !empty($item->invoiceid) ? $item->invoiceid : 0;
             // a product addon's certificate: the renewal was paid on the addon's invoice, at the addon's price
-            $addonBilling = \ModulesGarden\TSSGGSModule\App\Libs\Certificates\AddonCertificates::billing((int)$targetServiceId);
+            $addonBilling = \TSSGGSModule\App\Libs\Certificates\AddonCertificates::billing((int)$targetServiceId);
             if($addonBilling)
             {
                 $amount  = $addonBilling['amount'];
@@ -318,7 +318,7 @@ class Renew
         }
 
         // OV / EV: the certificate authority may confirm the organization again
-        \ModulesGarden\TSSGGSModule\App\Libs\Certificates\OrganizationValidation::notify((int)$targetServiceId, $newItemId, true);
+        \TSSGGSModule\App\Libs\Certificates\OrganizationValidation::notify((int)$targetServiceId, $newItemId, true);
 
         // AutoInstall: install the renewed certificate (same CSR / private key) + "Renewal Started"; otherwise "Autorenewed" email
         try

@@ -1,16 +1,16 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\Settings;
+namespace TSSGGSModule\App\Libs\Settings;
 
-use ModulesGarden\TSSGGSModule\App\Kernel\Lang;
-use ModulesGarden\TSSGGSModule\App\Libs\Billing\BalanceMonitor;
-use ModulesGarden\TSSGGSModule\App\Libs\Billing\FinancePolicy;
-use ModulesGarden\TSSGGSModule\App\Libs\Billing\Markups;
-use ModulesGarden\TSSGGSModule\App\Libs\Billing\PricingService;
-use ModulesGarden\TSSGGSModule\App\Libs\Gateway\SSLTrustCenterApi;
-use ModulesGarden\TSSGGSModule\App\Libs\Products\ProductSettings;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\Edition;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\Helpers;
+use TSSGGSModule\App\Kernel\Lang;
+use TSSGGSModule\App\Libs\Billing\BalanceMonitor;
+use TSSGGSModule\App\Libs\Billing\FinancePolicy;
+use TSSGGSModule\App\Libs\Billing\Markups;
+use TSSGGSModule\App\Libs\Billing\PricingService;
+use TSSGGSModule\App\Libs\Gateway\SSLTrustCenterApi;
+use TSSGGSModule\App\Libs\Products\ProductSettings;
+use TSSGGSModule\App\Libs\Support\Edition;
+use TSSGGSModule\App\Libs\Support\Helpers;
 
 /**
  * What Settings > Finance shows besides its fields: where else prices are decided (with what is set there now), the

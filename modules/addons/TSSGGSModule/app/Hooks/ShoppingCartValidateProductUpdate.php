@@ -8,7 +8,7 @@ if(!defined('WHMCS'))
 }
 
 
-use ModulesGarden\TSSGGSModule\App\Libs\Subscriptions\AcmeHelpers;
+use TSSGGSModule\App\Libs\Subscriptions\AcmeHelpers;
 use WHMCS\Database\Capsule;
 
 $hookManager->register(
@@ -17,10 +17,10 @@ $hookManager->register(
         $pid = isset($_SESSION['cart']['products'][$params['i']]['pid']) ? (int)$_SESSION['cart']['products'][$params['i']]['pid'] : 0;
 
         // code signing: 2 / 3 years only on an own HSM
-        $csError = $pid ? \ModulesGarden\TSSGGSModule\App\Libs\ProductLines\CodeSigningService::cartError($pid, $params['billingcycle'] ?? ($_SESSION['cart']['products'][$params['i']]['billingcycle'] ?? ''), (array)($params['configoption'] ?? [])) : null;
+        $csError = $pid ? \TSSGGSModule\App\Libs\ProductLines\CodeSigningService::cartError($pid, $params['billingcycle'] ?? ($_SESSION['cart']['products'][$params['i']]['billingcycle'] ?? ''), (array)($params['configoption'] ?? [])) : null;
         if ($csError)
         {
-            return [\ModulesGarden\TSSGGSModule\App\Kernel\Lang::text($csError)];
+            return [\TSSGGSModule\App\Kernel\Lang::text($csError)];
         }
 
         if (!$pid || !AcmeHelpers::isAcmeWhmcsProduct($pid))
@@ -52,7 +52,7 @@ $hookManager->register(
 
         if ($sansCount <= 0 && $wildcardCount <= 0)
         {
-            return [\ModulesGarden\TSSGGSModule\App\Kernel\Lang::text('acme_order_requires_at_least_one_san')];
+            return [\TSSGGSModule\App\Kernel\Lang::text('acme_order_requires_at_least_one_san')];
         }
     },
     1

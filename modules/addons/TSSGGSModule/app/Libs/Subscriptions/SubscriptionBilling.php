@@ -1,14 +1,14 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\Subscriptions;
+namespace TSSGGSModule\App\Libs\Subscriptions;
 
-use ModulesGarden\TSSGGSModule\App\Models\AcmeSubscription;
-use ModulesGarden\TSSGGSModule\App\Models\AcmeSubscriptionDomain;
-use ModulesGarden\TSSGGSModule\App\Models\AisSubscription;
+use TSSGGSModule\App\Models\AcmeSubscription;
+use TSSGGSModule\App\Models\AcmeSubscriptionDomain;
+use TSSGGSModule\App\Models\AisSubscription;
 use WHMCS\Database\Capsule;
-use ModulesGarden\TSSGGSModule\App\Libs\Gateway\SSLTrustCenterApi;
-use ModulesGarden\TSSGGSModule\App\Libs\Certificates\CertificateService;
-use ModulesGarden\TSSGGSModule\App\Libs\Billing\RenewalPolicy;
+use TSSGGSModule\App\Libs\Gateway\SSLTrustCenterApi;
+use TSSGGSModule\App\Libs\Certificates\CertificateService;
+use TSSGGSModule\App\Libs\Billing\RenewalPolicy;
 
 /**
  * Money rules of the subscription products (ACME and Plan + Automate), the same for both vendors:
@@ -230,7 +230,7 @@ class SubscriptionBilling
 
         // what each purchase bought, from the row the module wrote with the invoice (not from the invoice wording)
         $purchases = [];
-        foreach(\ModulesGarden\TSSGGSModule\App\Models\Request::where('serviceid', (int)$serviceId)->where('name', self::SLOT_PURCHASE)->get() as $row)
+        foreach(\TSSGGSModule\App\Models\Request::where('serviceid', (int)$serviceId)->where('name', self::SLOT_PURCHASE)->get() as $row)
         {
             $data      = json_decode((string)$row->request, true) ?: [];
             $invoiceId = (int)($data['invoice'] ?? 0);
@@ -402,7 +402,7 @@ class SubscriptionBilling
 
     public static function slotPricing()
     {
-        $settings = (new \ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository())->getModuleConfiguration()['sslSettings'] ?? [];
+        $settings = (new \TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository())->getModuleConfiguration()['sslSettings'] ?? [];
 
         return ($settings['subscriptionSlotPricing'] ?? self::SLOT_PRICING_PRORATED) === self::SLOT_PRICING_FULL ? self::SLOT_PRICING_FULL : self::SLOT_PRICING_PRORATED;
     }
@@ -434,7 +434,7 @@ class SubscriptionBilling
     /** a purchase of domains of the service waits for its payment */
     public static function pendingSlotPurchase($serviceId)
     {
-        foreach(\ModulesGarden\TSSGGSModule\App\Models\Request::where('serviceid', (int)$serviceId)->where('name', self::SLOT_PURCHASE)->where('status', 'pending')->get() as $row)
+        foreach(\TSSGGSModule\App\Models\Request::where('serviceid', (int)$serviceId)->where('name', self::SLOT_PURCHASE)->where('status', 'pending')->get() as $row)
         {
             $data   = json_decode((string)$row->request, true) ?: [];
             $status = (string)Capsule::table('tblinvoices')->where('id', (int)($data['invoice'] ?? 0))->value('status');
@@ -551,7 +551,7 @@ class SubscriptionBilling
         $invoiceId = (int)$result['invoiceid'];
         // the lines belong to the service (reports, refunds), not to a WHMCS upgrade order
         Capsule::table('tblinvoiceitems')->where('invoiceid', $invoiceId)->update(['type' => self::SLOT_PURCHASE, 'relid' => (int)$serviceId]);
-        \ModulesGarden\TSSGGSModule\App\Models\Request::insert([
+        \TSSGGSModule\App\Models\Request::insert([
             'serviceid'  => (int)$serviceId,
             'name'       => self::SLOT_PURCHASE,
             'request'    => json_encode(['invoice' => $invoiceId, 'bought' => $bought, 'pricing' => self::slotPricing()]),
@@ -568,14 +568,14 @@ class SubscriptionBilling
     public static function applySlotPurchase($invoiceId)
     {
         $applied = 0;
-        foreach(\ModulesGarden\TSSGGSModule\App\Models\Request::where('name', self::SLOT_PURCHASE)->where('status', 'pending')->get() as $row)
+        foreach(\TSSGGSModule\App\Models\Request::where('name', self::SLOT_PURCHASE)->where('status', 'pending')->get() as $row)
         {
             $data = json_decode((string)$row->request, true) ?: [];
             if((int)($data['invoice'] ?? 0) !== (int)$invoiceId)
             {
                 continue;
             }
-            \ModulesGarden\TSSGGSModule\App\Models\Request::where('id', (int)$row->id)->update(['status' => 'paid', 'updated_at' => date('Y-m-d H:i:s')]);
+            \TSSGGSModule\App\Models\Request::where('id', (int)$row->id)->update(['status' => 'paid', 'updated_at' => date('Y-m-d H:i:s')]);
             self::addSlots((int)$row->serviceid, (array)($data['bought'] ?? []));
             $applied++;
         }

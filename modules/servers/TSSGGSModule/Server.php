@@ -1,10 +1,10 @@
 <?php
 
-namespace ModulesGarden\Servers\TSSGGSModule;
+namespace TSSGGSModule\Server;
 
-use ModulesGarden\Servers\TSSGGSModule\core\process\AbstractMainDriver;
-use ModulesGarden\Servers\TSSGGSModule\core\Lang;
-use ModulesGarden\Servers\TSSGGSModule\core\Smarty;
+use TSSGGSModule\Server\core\process\AbstractMainDriver;
+use TSSGGSModule\Server\core\Lang;
+use TSSGGSModule\Server\core\Smarty;
 
 class Server extends AbstractMainDriver {
 
@@ -73,8 +73,8 @@ class Server extends AbstractMainDriver {
             self::I()->isAdmin(false);
             self::I()->setMainLangContext();
             try{
-                $page   = empty($input['mg-page'])?'home':$input['mg-page']; 
-                $action = empty($input['mg-action'])?'index':$input['mg-action'];
+                $page   = empty($input['mod-page'])?'home':$input['mod-page']; 
+                $action = empty($input['mod-action'])?'index':$input['mod-action'];
 
                 $input['params'] = $params;
 
@@ -132,8 +132,8 @@ class Server extends AbstractMainDriver {
             self::I()->setMainLangContext();
             $content = [];
 
-            $page   = empty($input['mg-page'])?'home':$input['mg-page'];
-            $action = empty($input['mg-action'])?'index':$input['mg-action'];
+            $page   = empty($input['mod-page'])?'home':$input['mod-page'];
+            $action = empty($input['mod-action'])?'index':$input['mod-action'];
             
             $input['params'] = $params;
             
@@ -236,8 +236,8 @@ class Server extends AbstractMainDriver {
             self::I()->isAdmin(true);
             self::I()->setMainLangContext();
             
-            $page   = empty($input['mg-page'])?'configuration':$input['mg-page']; 
-            $action = empty($input['mg-action'])?'index':$input['mg-action'];
+            $page   = empty($input['mod-page'])?'configuration':$input['mod-page']; 
+            $action = empty($input['mod-action'])?'index':$input['mod-action'];
             
             $input['params'] = ['pid' => $input['id']];
             
@@ -251,7 +251,7 @@ class Server extends AbstractMainDriver {
             foreach(self::I()->configuration()->getServerMenu() as $pageName => $pageConfig){
                 $pageConf = [
                     'title' => Lang::absoluteT('pages',$pageName,'title'),
-                    'url'  => 'configproducts.php?action=edit&id='.$input['id'].'&tab=2&mg-page='.$pageName
+                    'url'  => 'configproducts.php?action=edit&id='.$input['id'].'&tab=2&mod-page='.$pageName
                 ];
                 
                 if(!empty($pageConfig['icon']))
@@ -322,8 +322,8 @@ class Server extends AbstractMainDriver {
             
             $content = array();
 
-            $page   = empty($input['mg-page'])?'configuration':$input['mg-page']; 
-            $action = empty($input['mg-action'])?'index':$input['mg-action'];
+            $page   = empty($input['mod-page'])?'configuration':$input['mod-page']; 
+            $action = empty($input['mod-action'])?'index':$input['mod-action'];
 
             $input['params'] = ['pid' => $input['id']];
             

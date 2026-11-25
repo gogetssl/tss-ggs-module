@@ -1,11 +1,11 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Migration;
+namespace TSSGGSModule\App\Migration;
 
-use ModulesGarden\TSSGGSModule\App\Libs\Support\Edition;
-use ModulesGarden\TSSGGSModule\App\Migration\Readers\GgsReader;
-use ModulesGarden\TSSGGSModule\App\Migration\Readers\LegacyReaderInterface;
-use ModulesGarden\TSSGGSModule\App\Migration\Readers\TssReader;
+use TSSGGSModule\App\Libs\Support\Edition;
+use TSSGGSModule\App\Migration\Readers\GgsReader;
+use TSSGGSModule\App\Migration\Readers\LegacyReaderInterface;
+use TSSGGSModule\App\Migration\Readers\TssReader;
 
 /**
  * Finds legacy modules on this WHMCS install. Read-only.

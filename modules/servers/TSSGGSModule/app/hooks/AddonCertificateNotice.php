@@ -1,6 +1,6 @@
 <?php
 
-namespace ModulesGarden\Servers\TSSGGSModule\app\hooks;
+namespace TSSGGSModule\Server\app\hooks;
 
 
 /**
@@ -16,11 +16,11 @@ class AddonCertificateNotice
         try
         {
             $serviceId = (int)($vars['service']->id ?? ($vars['serviceid'] ?? 0));
-            if($serviceId <= 0 || !class_exists('\ModulesGarden\TSSGGSModule\App\Libs\Certificates\AddonCertificates'))
+            if($serviceId <= 0 || !class_exists('\TSSGGSModule\App\Libs\Certificates\AddonCertificates'))
             {
                 return '';
             }
-            $notice = \ModulesGarden\TSSGGSModule\App\Libs\Certificates\AddonCertificates::clientNotice($serviceId);
+            $notice = \TSSGGSModule\App\Libs\Certificates\AddonCertificates::clientNotice($serviceId);
 
             return $notice !== '' ? '<div class="alert alert-info" style="text-align:left">' . htmlspecialchars($notice) . '</div>' : '';
         }

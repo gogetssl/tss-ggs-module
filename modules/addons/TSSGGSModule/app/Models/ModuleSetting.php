@@ -1,6 +1,6 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Models;
+namespace TSSGGSModule\App\Models;
 
 /** A value of App\Libs\Support\ModuleSettings (table <prefix>_ModuleSettings: setting, value as JSON) */
 class ModuleSetting extends Model

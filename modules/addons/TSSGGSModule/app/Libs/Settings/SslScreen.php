@@ -1,12 +1,12 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\Settings;
+namespace TSSGGSModule\App\Libs\Settings;
 
-use ModulesGarden\TSSGGSModule\App\Kernel\Lang;
-use ModulesGarden\TSSGGSModule\App\Libs\Billing\RenewalPolicy;
-use ModulesGarden\TSSGGSModule\App\Libs\Certificates\CertificateService;
-use ModulesGarden\TSSGGSModule\App\Libs\Certificates\IssuedMessage;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\Edition;
+use TSSGGSModule\App\Kernel\Lang;
+use TSSGGSModule\App\Libs\Billing\RenewalPolicy;
+use TSSGGSModule\App\Libs\Certificates\CertificateService;
+use TSSGGSModule\App\Libs\Certificates\IssuedMessage;
+use TSSGGSModule\App\Libs\Support\Edition;
 
 /**
  * What Settings > SSL Certificates and Settings > Automated SSL show besides their fields: the certificate

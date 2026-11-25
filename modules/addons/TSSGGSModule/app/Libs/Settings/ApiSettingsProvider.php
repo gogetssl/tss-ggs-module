@@ -1,12 +1,12 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\Settings;
+namespace TSSGGSModule\App\Libs\Settings;
 
-use ModulesGarden\TSSGGSModule\App\Libs\Gateway\CrossVendor;
-use ModulesGarden\TSSGGSModule\App\Libs\Gateway\SSLTrustCenterApi;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\Edition;
-use ModulesGarden\TSSGGSModule\App\Migration\Credentials;
-use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
+use TSSGGSModule\App\Libs\Gateway\CrossVendor;
+use TSSGGSModule\App\Libs\Gateway\SSLTrustCenterApi;
+use TSSGGSModule\App\Libs\Support\Edition;
+use TSSGGSModule\App\Migration\Credentials;
+use TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
 
 /**
  * Settings > API: the partner codes and auth tokens of the vendor accounts, and the switch that connects the other

@@ -163,7 +163,7 @@
     $(document).ready(function () {
         var clone = $('.validate-ssl-unified').clone();
         $('.product-details').html(clone);
-        $('.mg-module .validate-ssl-unified').remove();
+        $('.mod-module .validate-ssl-unified').remove();
         // the module's stylesheet lives in the block below and has to survive it
         $('head').append($('link[href*="theme.css"]').first());
         // WHMCS's own tab strip under the page: the module shows everything above it
@@ -208,7 +208,7 @@
         btn.prop('disabled', true);
         box.html('<p class="tssggs-note tssggs-note--plain">{$MGLANG->T('leiSearching')|escape:'javascript'}</p>');
         tssggsLeiPost([
-            {ldelim}name: 'mg-action', value: 'searchLeiCompany'{rdelim},
+            {ldelim}name: 'mod-action', value: 'searchLeiCompany'{rdelim},
             {ldelim}name: 'token', value: '{$csrfToken}'{rdelim},
             {ldelim}name: 'query', value: $('#tssggs-lei-q').val(){rdelim},
             {ldelim}name: 'country', value: $('#tssggs-lei-qc').val()|| ''{rdelim}
@@ -275,7 +275,7 @@
         var data = $(form).find(':input').filter(function () {
             return !$(this).closest('[hidden]').length;
         }).serializeArray();
-        data.push({ldelim}name: 'mg-action', value: 'createLei'{rdelim});
+        data.push({ldelim}name: 'mod-action', value: 'createLei'{rdelim});
         data.push({ldelim}name: 'token', value: '{$csrfToken}'{rdelim});
 
         function fail(message) {

@@ -1,8 +1,8 @@
 <?php
 
-namespace ModulesGarden\Servers\TSSGGSModule\app\repository\whmcs;
+namespace TSSGGSModule\Server\app\repository\whmcs;
 
-use ModulesGarden\Servers\TSSGGSModule\core\Lang;
+use TSSGGSModule\Server\core\Lang;
 
 class Domain {
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Migration\Readers;
+namespace TSSGGSModule\App\Migration\Readers;
 
 /**
  * A reader knows one legacy module's database layout and produces vendor-neutral records.

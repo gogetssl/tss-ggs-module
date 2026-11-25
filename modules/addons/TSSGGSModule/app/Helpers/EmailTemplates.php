@@ -1,9 +1,9 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Helpers;
+namespace TSSGGSModule\App\Helpers;
 
-use ModulesGarden\TSSGGSModule\App\Libs\Support\Edition;
-use ModulesGarden\TSSGGSModule\App\Models\Whmcs\EmailTemplate;
+use TSSGGSModule\App\Libs\Support\Edition;
+use TSSGGSModule\App\Models\Whmcs\EmailTemplate;
 
 class EmailTemplates
 {

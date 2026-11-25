@@ -1,10 +1,10 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\Emails;
+namespace TSSGGSModule\App\Libs\Emails;
 
-use ModulesGarden\TSSGGSModule\App\Helpers\AutoInstallEmailTemplates;
-use ModulesGarden\TSSGGSModule\App\Helpers\EmailTemplates;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\Edition;
+use TSSGGSModule\App\Helpers\AutoInstallEmailTemplates;
+use TSSGGSModule\App\Helpers\EmailTemplates;
+use TSSGGSModule\App\Libs\Support\Edition;
 
 /**
  * The client e-mails the module sends: key (WHMCS template name suffix), group, merge fields the code passes,
@@ -167,7 +167,7 @@ class EmailCatalog
             'ds_method'              => 'ship-token',
             'pci_organization'       => 'Example Ltd',
             'pci_username'           => 'exampl3ab',
-            'pci_login_url'          => \ModulesGarden\TSSGGSModule\App\Libs\ProductLines\PciService::LOGIN_URL,
+            'pci_login_url'          => \TSSGGSModule\App\Libs\ProductLines\PciService::LOGIN_URL,
             'lei_number'             => '529900T8BM49AURSDO55',
             'lei_legal_name'         => 'Example SIA',
             'lei_valid_till'         => date('Y-m-d', strtotime('+1 year')),

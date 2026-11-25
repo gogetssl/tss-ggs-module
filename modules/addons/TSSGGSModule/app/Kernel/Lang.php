@@ -1,6 +1,6 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Kernel;
+namespace TSSGGSModule\App\Kernel;
 
 /**
  * Texts of the module: langs/english.php, then the language of the logged in admin (or the client), then the

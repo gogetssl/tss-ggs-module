@@ -1,11 +1,11 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\Settings;
+namespace TSSGGSModule\App\Libs\Settings;
 
-use ModulesGarden\TSSGGSModule\App\Kernel\Lang;
-use ModulesGarden\TSSGGSModule\App\Libs\Emails\EmailCatalog;
-use ModulesGarden\TSSGGSModule\App\Libs\Emails\EmailManager;
-use ModulesGarden\TSSGGSModule\App\Pages\Admin\Emails;
+use TSSGGSModule\App\Kernel\Lang;
+use TSSGGSModule\App\Libs\Emails\EmailCatalog;
+use TSSGGSModule\App\Libs\Emails\EmailManager;
+use TSSGGSModule\App\Pages\Admin\Emails;
 
 /**
  * Settings > Email notifications: every e-mail the module has, by group, with its state. The Enable / Disable buttons

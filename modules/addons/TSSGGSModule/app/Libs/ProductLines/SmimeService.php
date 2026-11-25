@@ -1,11 +1,11 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\ProductLines;
+namespace TSSGGSModule\App\Libs\ProductLines;
 
-use ModulesGarden\TSSGGSModule\App\Helpers\EmailTemplates;
+use TSSGGSModule\App\Helpers\EmailTemplates;
 use WHMCS\Database\Capsule;
-use ModulesGarden\TSSGGSModule\App\Libs\Certificates\AddonCertificates;
-use ModulesGarden\TSSGGSModule\App\Libs\Certificates\CertificateService;
+use TSSGGSModule\App\Libs\Certificates\AddonCertificates;
+use TSSGGSModule\App\Libs\Certificates\CertificateService;
 
 /**
  * S/MIME (email signing) certificates of GoGetSSL and TheSSLStore, ordered through the gateway (/certificates/smime).

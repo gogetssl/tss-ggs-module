@@ -1,9 +1,9 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Repositories\Whmcs;
+namespace TSSGGSModule\App\Repositories\Whmcs;
 
-use ModulesGarden\TSSGGSModule\App\Models\CronCheck;
-use ModulesGarden\TSSGGSModule\App\Models\Whmcs\AddonModule;
+use TSSGGSModule\App\Models\CronCheck;
+use TSSGGSModule\App\Models\Whmcs\AddonModule;
 
 class AddonModuleRepository
 {
@@ -27,8 +27,8 @@ class AddonModuleRepository
             if($setting['setting'] == 'vendors')
             {
                 // only the vendors of this edition (TheSSLStore Plugin: TheSSLStore only)
-                $vendors = array_values(array_intersect(explode(',', $setting['value']), \ModulesGarden\TSSGGSModule\App\Libs\Support\Edition::vendors()));
-                $result[$setting['setting']] = $vendors ?: \ModulesGarden\TSSGGSModule\App\Libs\Support\Edition::vendors();
+                $vendors = array_values(array_intersect(explode(',', $setting['value']), \TSSGGSModule\App\Libs\Support\Edition::vendors()));
+                $result[$setting['setting']] = $vendors ?: \TSSGGSModule\App\Libs\Support\Edition::vendors();
             }
             if($setting['setting'] == 'sslSettings')
             {
@@ -49,12 +49,12 @@ class AddonModuleRepository
         }
 
         // the edition's own vendor, plus the connected one (Settings > API, "Connect ... products")
-        $result['vendors'] = \ModulesGarden\TSSGGSModule\App\Libs\Support\Edition::vendors();
+        $result['vendors'] = \TSSGGSModule\App\Libs\Support\Edition::vendors();
 
         // credentials of a vendor that is not used (not connected) stay stored but are not used
         if(isset($result['credentials']) && is_array($result['credentials']))
         {
-            $result['credentials'] = array_intersect_key($result['credentials'], array_flip(\ModulesGarden\TSSGGSModule\App\Libs\Support\Edition::vendors()));
+            $result['credentials'] = array_intersect_key($result['credentials'], array_flip(\TSSGGSModule\App\Libs\Support\Edition::vendors()));
         }
 
         return $result;
@@ -215,7 +215,7 @@ class AddonModuleRepository
         $stored = $stored ? (json_decode(\decrypt($stored), true) ?: []) : [];
         foreach(array_keys($credentials) as $vendor)
         {
-            if(!in_array($vendor, \ModulesGarden\TSSGGSModule\App\Libs\Support\Edition::vendors(), true) && isset($stored[$vendor]))
+            if(!in_array($vendor, \TSSGGSModule\App\Libs\Support\Edition::vendors(), true) && isset($stored[$vendor]))
             {
                 $credentials[$vendor] = $stored[$vendor];
             }

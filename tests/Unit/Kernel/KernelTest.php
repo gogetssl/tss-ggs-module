@@ -2,10 +2,10 @@
 
 namespace Tests\Unit\Kernel;
 
-use ModulesGarden\TSSGGSModule\App\Kernel\Kernel;
-use ModulesGarden\TSSGGSModule\App\Kernel\Lang;
-use ModulesGarden\TSSGGSModule\App\Kernel\Page;
-use ModulesGarden\TSSGGSModule\App\Kernel\Request;
+use TSSGGSModule\App\Kernel\Kernel;
+use TSSGGSModule\App\Kernel\Lang;
+use TSSGGSModule\App\Kernel\Page;
+use TSSGGSModule\App\Kernel\Request;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -16,7 +16,7 @@ class KernelTest extends TestCase
     public function testOnlyPagesWithAClassAreHandled(): void
     {
         $this->assertTrue(Kernel::handles('admin', 'certificateLog'));
-        $this->assertFalse(Kernel::handles('admin', 'noSuchPage'), 'a page without a class stays on the old framework');
+        $this->assertFalse(Kernel::handles('admin', 'noSuchPage'), 'a page without a class is not served');
         $this->assertFalse(Kernel::handles('admin', '../Kernel/Kernel'));
         $this->assertFalse(Kernel::handles('admin', null));
         $this->assertFalse(Kernel::handles('admin', ['certificateLog']));
@@ -24,7 +24,7 @@ class KernelTest extends TestCase
 
     public function testRequestReadsTypedInput(): void
     {
-        $request = new Request(['mg-page' => 'certificateLog', 'service' => '12', 'type' => 'bogus', 'p' => '2x'], ['search' => ' abc '], ['REQUEST_METHOD' => 'post', 'HTTP_HX_REQUEST' => 'true']);
+        $request = new Request(['mod-page' => 'certificateLog', 'service' => '12', 'type' => 'bogus', 'p' => '2x'], ['search' => ' abc '], ['REQUEST_METHOD' => 'post', 'HTTP_HX_REQUEST' => 'true']);
 
         $this->assertSame('certificateLog', $request->page());
         $this->assertSame('index', $request->action());
@@ -41,8 +41,8 @@ class KernelTest extends TestCase
     {
         $url = Page::pageUrl('certificateLog', 'index', ['service' => 0, 'type' => '', 'search' => 'a b', 'p' => 2]);
 
-        $this->assertSame('addonmodules.php?module=' . Kernel::module() . '&mg-page=certificateLog&search=a+b&p=2', $url);
-        $this->assertStringContainsString('&mg-action=clear', Page::pageUrl('certificateLog', 'clear'));
+        $this->assertSame('addonmodules.php?module=' . Kernel::module() . '&mod-page=certificateLog&search=a+b&p=2', $url);
+        $this->assertStringContainsString('&mod-action=clear', Page::pageUrl('certificateLog', 'clear'));
     }
 
     public function testLangReplacesNamesAndFallsBackToEnglish(): void

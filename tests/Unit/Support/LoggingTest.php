@@ -2,9 +2,9 @@
 
 namespace Tests\Unit\Support;
 
-use ModulesGarden\TSSGGSModule\App\Libs\Support\CronErrors;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\LogPolicy;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\SecretValue;
+use TSSGGSModule\App\Libs\Support\CronErrors;
+use TSSGGSModule\App\Libs\Support\LogPolicy;
+use TSSGGSModule\App\Libs\Support\SecretValue;
 use PHPUnit\Framework\TestCase;
 
 /** What goes into logs: secrets masked, cron failures summed up, debug service lists parsed */

@@ -1,8 +1,8 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\Products;
+namespace TSSGGSModule\App\Libs\Products;
 
-use ModulesGarden\TSSGGSModule\App\Models\RemoteProduct;
+use TSSGGSModule\App\Models\RemoteProduct;
 
 class SslProductHelpers
 {

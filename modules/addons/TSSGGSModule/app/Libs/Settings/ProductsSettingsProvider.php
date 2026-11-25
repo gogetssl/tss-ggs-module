@@ -1,9 +1,9 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\Settings;
+namespace TSSGGSModule\App\Libs\Settings;
 
-use ModulesGarden\TSSGGSModule\App\Libs\Products\CatalogueSync;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\GeneralSettings;
+use TSSGGSModule\App\Libs\Products\CatalogueSync;
+use TSSGGSModule\App\Libs\Support\GeneralSettings;
 
 /**
  * Settings > Products: the catalogue sync mode and its e-mail, both in the general settings (the same keys the

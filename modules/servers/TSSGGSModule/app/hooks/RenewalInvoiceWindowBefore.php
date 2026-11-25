@@ -1,6 +1,6 @@
 <?php
 
-namespace ModulesGarden\Servers\TSSGGSModule\app\hooks;
+namespace TSSGGSModule\Server\app\hooks;
 
 use WHMCS\Database\Capsule;
 
@@ -21,7 +21,7 @@ class RenewalInvoiceWindowBefore
         {
             // the "Create Automatic Renewal Invoice" switch decides who invoices: off, WHMCS does, as it always did -
             // except for certificates kept as a record of the legacy module (App\Libs\Certificates\RecordOnly): never invoiced
-            $moduleInvoices = \ModulesGarden\TSSGGSModule\App\Libs\Billing\RenewalPolicy::invoicing(\ModulesGarden\TSSGGSModule\App\Libs\Billing\RenewalPolicy::CERTIFICATE);
+            $moduleInvoices = \TSSGGSModule\App\Libs\Billing\RenewalPolicy::invoicing(\TSSGGSModule\App\Libs\Billing\RenewalPolicy::CERTIFICATE);
 
             $query = Capsule::table('tblhosting')
                 ->join('tblproducts', 'tblproducts.id', '=', 'tblhosting.packageid')
@@ -31,7 +31,7 @@ class RenewalInvoiceWindowBefore
                 ->where('tblhosting.nextinvoicedate', '<', '2099-01-01');
             if(!$moduleInvoices)
             {
-                \ModulesGarden\TSSGGSModule\App\Libs\Certificates\RecordOnly::only($query);
+                \TSSGGSModule\App\Libs\Certificates\RecordOnly::only($query);
             }
             $rows = $query->get(['tblhosting.id', 'tblhosting.nextinvoicedate']);
 

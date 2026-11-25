@@ -1,6 +1,6 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\Support;
+namespace TSSGGSModule\App\Libs\Support;
 
 /**
  * WHMCS CSRF token check for the module's own forms and links. Pages print generate_token('plain'), which is

@@ -1,8 +1,8 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\Settings;
+namespace TSSGGSModule\App\Libs\Settings;
 
-use ModulesGarden\TSSGGSModule\App\Libs\Support\GeneralSettings;
+use TSSGGSModule\App\Libs\Support\GeneralSettings;
 
 class GeneralSettingsProvider extends Provider
 {
@@ -38,28 +38,28 @@ class GeneralSettingsProvider extends Provider
         $this->data['openCorporates']      = (string)GeneralSettings::get('openCorporatesToken') !== '';
         $this->data['openCorporatesToken'] = '';
         // WHMCS Module Log: YES only while WHMCS records it too (switched off in WHMCS = nothing is written, so NO)
-        $this->data['moduleLog']     = GeneralSettings::enabled('moduleLog') && \ModulesGarden\TSSGGSModule\App\Libs\Support\WhmcsModuleLog::enabled();
-        $this->data['debugServices'] = implode(', ', \ModulesGarden\TSSGGSModule\App\Libs\Support\LogPolicy::debugServices());
+        $this->data['moduleLog']     = GeneralSettings::enabled('moduleLog') && \TSSGGSModule\App\Libs\Support\WhmcsModuleLog::enabled();
+        $this->data['debugServices'] = implode(', ', \TSSGGSModule\App\Libs\Support\LogPolicy::debugServices());
         $this->data['debugHours']    = 4;
         $this->availableValues['apiLogMode'] = self::apiModeOptions($this);
         $this->availableValues['debugHours'] = self::debugHourOptions($this);
         $this->availableValues['expiresSoonDays'] = ['10' => '10', '15' => '15', '30' => '30', '60' => '60', '90' => '90'];
         // availableValues is an ArrayAccess container: the options are built first, then set at once
         $periods = [];
-        foreach(array_keys(\ModulesGarden\TSSGGSModule\App\Libs\Dashboard\SalesSummary::PERIODS) as $period)
+        foreach(array_keys(\TSSGGSModule\App\Libs\Dashboard\SalesSummary::PERIODS) as $period)
         {
-            $periods[$period] = \ModulesGarden\TSSGGSModule\App\Libs\Dashboard\SalesSummary::periodLabel($period);
+            $periods[$period] = \TSSGGSModule\App\Libs\Dashboard\SalesSummary::periodLabel($period);
         }
         $this->availableValues['dashboardPeriod'] = $periods;
 
         // the module template, the administrator's own Product/Service templates (CertificateService::certificateTemplates)
         // and the saved one, so a choice made before stays visible
         $templates = ['' => $this->translate('moduleTemplate')];
-        foreach(\ModulesGarden\TSSGGSModule\App\Libs\Certificates\CertificateService::certificateTemplates() as $name)
+        foreach(\TSSGGSModule\App\Libs\Certificates\CertificateService::certificateTemplates() as $name)
         {
             $templates[$name] = $name;
         }
-        $saved = trim((string)\ModulesGarden\TSSGGSModule\App\Libs\Support\GeneralSettings::get('certificateEmailTemplate'));
+        $saved = trim((string)\TSSGGSModule\App\Libs\Support\GeneralSettings::get('certificateEmailTemplate'));
         if($saved !== '' && !isset($templates[$saved]))
         {
             $templates[$saved] = $saved;
@@ -78,14 +78,14 @@ class GeneralSettingsProvider extends Provider
         }
         // WHMCS Module Log YES: WHMCS has to record it too, so it is switched on there (WHMCS-wide, logged in the activity
         // log). NO only stops this module sending; WHMCS keeps its own setting for the other modules
-        if(array_key_exists('moduleLog', $data) && self::on($data['moduleLog']) && !\ModulesGarden\TSSGGSModule\App\Libs\Support\WhmcsModuleLog::enabled())
+        if(array_key_exists('moduleLog', $data) && self::on($data['moduleLog']) && !\TSSGGSModule\App\Libs\Support\WhmcsModuleLog::enabled())
         {
-            if(!\ModulesGarden\TSSGGSModule\App\Libs\Support\WhmcsModuleLog::canEnable())
+            if(!\TSSGGSModule\App\Libs\Support\WhmcsModuleLog::canEnable())
             {
                 return (new Result())->setError($this->translate('whmcsModuleLogNoPermission',
-                    [':permission' => \ModulesGarden\TSSGGSModule\App\Libs\Support\WhmcsModuleLog::PERMISSION]));
+                    [':permission' => \TSSGGSModule\App\Libs\Support\WhmcsModuleLog::PERMISSION]));
             }
-            \ModulesGarden\TSSGGSModule\App\Libs\Support\WhmcsModuleLog::enable();
+            \TSSGGSModule\App\Libs\Support\WhmcsModuleLog::enable();
         }
         self::saveGeneral($data);
     }
@@ -107,7 +107,7 @@ class GeneralSettingsProvider extends Provider
                 $data[$key] = !empty($data[$key]) && !in_array($data[$key], ['off', 'false', '0'], true);
             }
         }
-        if(array_key_exists('dashboardPeriod', $data) && !array_key_exists((string)$data['dashboardPeriod'], \ModulesGarden\TSSGGSModule\App\Libs\Dashboard\SalesSummary::PERIODS))
+        if(array_key_exists('dashboardPeriod', $data) && !array_key_exists((string)$data['dashboardPeriod'], \TSSGGSModule\App\Libs\Dashboard\SalesSummary::PERIODS))
         {
             unset($data['dashboardPeriod']);
         }
@@ -149,7 +149,7 @@ class GeneralSettingsProvider extends Provider
         // debug mode: the service list and for how long (the hours are not stored, only the end time)
         if(array_key_exists('debugServices', $data))
         {
-            $data = array_merge($data, \ModulesGarden\TSSGGSModule\App\Libs\Support\LogPolicy::debugSettings($data['debugServices'], $data['debugHours'] ?? 0));
+            $data = array_merge($data, \TSSGGSModule\App\Libs\Support\LogPolicy::debugSettings($data['debugServices'], $data['debugHours'] ?? 0));
         }
 
         GeneralSettings::save($data);
@@ -158,7 +158,7 @@ class GeneralSettingsProvider extends Provider
     public static function apiModeOptions($provider): array
     {
         $options = [];
-        foreach(\ModulesGarden\TSSGGSModule\App\Libs\Support\LogPolicy::API_MODES as $mode)
+        foreach(\TSSGGSModule\App\Libs\Support\LogPolicy::API_MODES as $mode)
         {
             $options[$mode] = $provider->translate('apiMode_' . $mode, [], ['admin.log_policy']);
         }
@@ -169,7 +169,7 @@ class GeneralSettingsProvider extends Provider
     public static function debugHourOptions($provider): array
     {
         $options = [];
-        foreach(\ModulesGarden\TSSGGSModule\App\Libs\Support\LogPolicy::DEBUG_HOURS as $hours)
+        foreach(\TSSGGSModule\App\Libs\Support\LogPolicy::DEBUG_HOURS as $hours)
         {
             $options[(string)$hours] = $provider->translate('hours_' . $hours, [], ['admin.log_policy']);
         }

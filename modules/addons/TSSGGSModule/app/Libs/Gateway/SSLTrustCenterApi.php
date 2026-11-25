@@ -1,9 +1,9 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\Gateway;
+namespace TSSGGSModule\App\Libs\Gateway;
 
-use ModulesGarden\TSSGGSModule\App\Models\Request;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\Helpers;
+use TSSGGSModule\App\Models\Request;
+use TSSGGSModule\App\Libs\Support\Helpers;
 
 /**
  * Client of the gateway API (TheSSLStore / GoGetSSL reseller API v2), one instance per vendor account and product
@@ -92,7 +92,7 @@ class SSLTrustCenterApi
     public static function credentialsOf($vendor)
     {
         $vendor      = strtolower((string)$vendor);
-        $credentials = (new \ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository())->getModuleConfiguration()['credentials'][$vendor] ?? [];
+        $credentials = (new \TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository())->getModuleConfiguration()['credentials'][$vendor] ?? [];
         $sandbox     = $vendor === 'tss' && ($credentials['OperationMode'] ?? '') === 'sandbox';
         $code        = trim((string)($credentials[$sandbox ? 'TestPartnerCode' : 'PartnerCode'] ?? ''));
         $token       = (string)($credentials[$sandbox ? 'TestAuthToken' : 'AuthToken'] ?? '');

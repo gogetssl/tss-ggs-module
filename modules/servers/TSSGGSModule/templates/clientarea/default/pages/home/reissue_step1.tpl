@@ -20,7 +20,7 @@
             </div>
         {/if}
 
-        <form method="post" action="clientarea.php?action=productdetails&id={$serviceid}&mg-action=reissueSSL&step=two">
+        <form method="post" action="clientarea.php?action=productdetails&id={$serviceid}&mod-action=reissueSSL&step=two">
 
     
             <div class="alert alert-info">{$MGLANG->T('reissue_page', 'desc_page')}</div>
@@ -203,7 +203,7 @@
 <script>
 
     $(document).ready(function (){
-        let clone_element = $('.mg-module').clone();
+        let clone_element = $('.mod-module').clone();
         $('.product-details').html(clone_element);
 
 
@@ -328,7 +328,7 @@
             let EA = $('#emailAddress').val();
 
             $.ajax({
-                url: "clientarea.php?action=productdetails&id={$serviceid}&mg-page=home&mg-action=generateCSR&json=1",
+                url: "clientarea.php?action=productdetails&id={$serviceid}&mod-page=home&mod-action=generateCSR&json=1",
                 method: "POST",
                 dataType: "json",
                 data: {
@@ -372,7 +372,7 @@
         function downloadPkey()
         {
             var f = $('<form></form>').attr({ method: 'post', target: '_blank' }).attr('action', 'clientarea.php?action=productdetails&id={$serviceid}');
-            f.append($('<input type="hidden" name="mg-action" value="downloadKey">'));
+            f.append($('<input type="hidden" name="mod-action" value="downloadKey">'));
             f.append($('<input type="hidden" name="token">').val(typeof csrfToken !== 'undefined' ? csrfToken : '{$csrfToken}'));
             f.append($('<input type="hidden" name="handle">').val($('#pkeyField').val()));
             f.appendTo('body').submit().remove();
@@ -381,7 +381,7 @@
 
         function checkCSR(csrValue) {
             $.ajax({
-                url: "clientarea.php?action=productdetails&id={$serviceid}&mg-page=home&mg-action=checkCSR&json=1",
+                url: "clientarea.php?action=productdetails&id={$serviceid}&mod-page=home&mod-action=checkCSR&json=1",
                 method: "POST",
                 dataType: "json",
                 data: {

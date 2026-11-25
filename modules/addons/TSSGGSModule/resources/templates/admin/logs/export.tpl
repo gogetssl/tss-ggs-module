@@ -18,8 +18,8 @@
                 <form id="tssggs-export-form" method="get" action="addonmodules.php" class="lu-w-100" x-data
                       @submit="setTimeout(function () { var close = document.querySelector('#tssggs-dialog [data-dialog-close]'); if (close) { close.click() } }, 400)">
                     <input type="hidden" name="module" value="{$moduleName}">
-                    <input type="hidden" name="mg-page" value="logs">
-                    <input type="hidden" name="mg-action" value="download">
+                    <input type="hidden" name="mod-page" value="logs">
+                    <input type="hidden" name="mod-action" value="download">
                     <div class="lu-form-group">
                         <label class="lu-form-label lu-single-element"><span>{t key='exportFrom'}</span>{tip key='exportFrom_description'}</label>
                         <input type="date" name="from" class="lu-form-control" value="{$from}">

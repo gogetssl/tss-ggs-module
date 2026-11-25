@@ -1,6 +1,6 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Models\Whmcs;
+namespace TSSGGSModule\App\Models\Whmcs;
 
 use Illuminate\Database\Eloquent\Model as EloquentModel;
 
@@ -51,11 +51,11 @@ class ProductUpgrade extends EloquentModel
 
     public function newproduct()
     {
-        return $this->belongsTo('ModulesGarden\\TSSGGSModule\\App\\Models\\Whmcs\\Product', 'upgrade_product_id');
+        return $this->belongsTo('TSSGGSModule\\App\\Models\\Whmcs\\Product', 'upgrade_product_id');
     }
 
     public function product()
     {
-        return $this->belongsTo('ModulesGarden\\TSSGGSModule\\App\\Models\\Whmcs\\Product', 'product_id');
+        return $this->belongsTo('TSSGGSModule\\App\\Models\\Whmcs\\Product', 'product_id');
     }
 }

@@ -110,7 +110,7 @@
     $(document).ready(function () {
         var clone = $('.validate-ssl-unified').clone();
         $('.product-details').html(clone);
-        $('.mg-module .validate-ssl-unified').remove();
+        $('.mod-module .validate-ssl-unified').remove();
         // the module's stylesheet lives in the block below and has to survive it
         $('head').append($('link[href*="theme.css"]').first());
         // WHMCS's own tab strip under the page: the module shows everything above it
@@ -143,7 +143,7 @@
     $(document).on('click', '#tssggs-pci-refresh', function () {
         var btn = $(this), alerts = $('#tssggs-pci-alerts');
         btn.prop('disabled', true);
-        $.post('clientarea.php?action=productdetails&id={$serviceid}&json=1', {ldelim}'mg-action': 'refreshPciDetails', token: '{$csrfToken}'{rdelim}, function (ret) {
+        $.post('clientarea.php?action=productdetails&id={$serviceid}&json=1', {ldelim}'mod-action': 'refreshPciDetails', token: '{$csrfToken}'{rdelim}, function (ret) {
             var payload;
             try {
                 payload = typeof ret === 'object' ? ret : JSON.parse(String(ret).replace('<JSONRESPONSE#', '').replace('#ENDJSONRESPONSE>', ''));

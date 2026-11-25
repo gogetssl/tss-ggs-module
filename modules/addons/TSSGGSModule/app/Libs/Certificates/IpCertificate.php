@@ -1,9 +1,9 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\Certificates;
+namespace TSSGGSModule\App\Libs\Certificates;
 
-use ModulesGarden\TSSGGSModule\App\Models\RemoteProduct;
-use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\ProductRepository;
+use TSSGGSModule\App\Models\RemoteProduct;
+use TSSGGSModule\App\Repositories\Whmcs\ProductRepository;
 
 /**
  * Certificates for public IP addresses whose CSR has no common name (M-19): GoGetSSL "Public IP SAN" (product 144).

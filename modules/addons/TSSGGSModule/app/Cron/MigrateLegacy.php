@@ -1,11 +1,11 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Cron;
+namespace TSSGGSModule\App\Cron;
 
-use ModulesGarden\TSSGGSModule\App\Migration\Detector;
-use ModulesGarden\TSSGGSModule\App\Migration\Engine;
-use ModulesGarden\TSSGGSModule\App\Migration\Store;
-use ModulesGarden\TSSGGSModule\App\Kernel\Console\Command;
+use TSSGGSModule\App\Migration\Detector;
+use TSSGGSModule\App\Migration\Engine;
+use TSSGGSModule\App\Migration\Store;
+use TSSGGSModule\App\Kernel\Console\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -142,9 +142,9 @@ class MigrateLegacy extends Command
     protected function source(InputInterface $input): string
     {
         $source = strtolower((string)$input->getOption('source'));
-        if(!in_array($source, [\ModulesGarden\TSSGGSModule\App\Libs\Support\Edition::get()], true))
+        if(!in_array($source, [\TSSGGSModule\App\Libs\Support\Edition::get()], true))
         {
-            throw new \InvalidArgumentException('--source=' . \ModulesGarden\TSSGGSModule\App\Libs\Support\Edition::get() . ' is required');
+            throw new \InvalidArgumentException('--source=' . \TSSGGSModule\App\Libs\Support\Edition::get() . ' is required');
         }
 
         return $source;

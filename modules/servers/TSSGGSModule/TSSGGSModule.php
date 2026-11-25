@@ -1,12 +1,12 @@
 <?php
 
-use ModulesGarden\Servers\TSSGGSModule\app\controllers\server\admin\Actions;
-use ModulesGarden\Servers\TSSGGSModule\Server;
+use TSSGGSModule\Server\app\controllers\server\admin\Actions;
+use TSSGGSModule\Server\Server;
 
 if(!defined('DS'))define('DS',DIRECTORY_SEPARATOR);
 
 require_once __DIR__.DS.'Loader.php';
-new \ModulesGarden\Servers\TSSGGSModule\Loader();
+new \TSSGGSModule\Server\Loader();
 
 // Edition name (GoGetSSL Module / TheSSLStore Plugin) - loaded directly, without booting the addon framework
 if(file_exists(dirname(__DIR__, 2).DS.'addons'.DS.'TSSGGSModule'.DS.'app'.DS.'Libs'.DS.'Support'.DS.'Edition.php'))
@@ -14,15 +14,15 @@ if(file_exists(dirname(__DIR__, 2).DS.'addons'.DS.'TSSGGSModule'.DS.'app'.DS.'Li
     require_once dirname(__DIR__, 2).DS.'addons'.DS.'TSSGGSModule'.DS.'app'.DS.'Libs'.DS.'Support'.DS.'Edition.php';
 }
 
-\ModulesGarden\Servers\TSSGGSModule\Server::I();
+\TSSGGSModule\Server\Server::I();
 
 // files updated by copying, without the addon upgrade: the database changes (App\Database\Schema) are applied here
 // too; once current it is one query per request
 try
 {
-    if(class_exists('\ModulesGarden\TSSGGSModule\App\Database\Schema'))
+    if(class_exists('\TSSGGSModule\App\Database\Schema'))
     {
-        \ModulesGarden\TSSGGSModule\App\Database\Schema::migrate();
+        \TSSGGSModule\App\Database\Schema::migrate();
     }
 }
 catch(\Throwable $e)
@@ -42,11 +42,11 @@ if (!defined("WHMCS")) {
  *  - a certificate kept as a record of the legacy module (App\Libs\Certificates\RecordOnly)
  */
 function TSSGGSModule_recordOnlyGuard($function, $params) {
-    if(!empty($params['addonId']) && class_exists('\ModulesGarden\TSSGGSModule\App\Libs\Certificates\AddonCertificates')) {
-        return \ModulesGarden\TSSGGSModule\App\Libs\Certificates\AddonCertificates::guard($function, (array)$params);
+    if(!empty($params['addonId']) && class_exists('\TSSGGSModule\App\Libs\Certificates\AddonCertificates')) {
+        return \TSSGGSModule\App\Libs\Certificates\AddonCertificates::guard($function, (array)$params);
     }
     try {
-        return class_exists('\ModulesGarden\TSSGGSModule\App\Libs\Certificates\RecordOnly') ? \ModulesGarden\TSSGGSModule\App\Libs\Certificates\RecordOnly::guard($function, $params) : null;
+        return class_exists('\TSSGGSModule\App\Libs\Certificates\RecordOnly') ? \TSSGGSModule\App\Libs\Certificates\RecordOnly::guard($function, $params) : null;
     } catch(\Throwable $e) {
         return null;
     }
@@ -54,7 +54,7 @@ function TSSGGSModule_recordOnlyGuard($function, $params) {
 
 function TSSGGSModule_MetaData() {
     return array(
-        'DisplayName' => class_exists('\ModulesGarden\TSSGGSModule\App\Libs\Support\Edition', false) ? \ModulesGarden\TSSGGSModule\App\Libs\Support\Edition::name() : 'GoGetSSL Module',
+        'DisplayName' => class_exists('\TSSGGSModule\App\Libs\Support\Edition', false) ? \TSSGGSModule\App\Libs\Support\Edition::name() : 'GoGetSSL Module',
         'APIVersion' => '1.0',
     );
 }
@@ -164,7 +164,7 @@ function TSSGGSModule_AdminServicesTabFields(array $params) {
 
 function TSSGGSModule_AdminServicesTabFieldsSave(array $params) {
     if(($recordOnly = TSSGGSModule_recordOnlyGuard('AdminServicesTabFieldsSave', $params)) !== null) return $recordOnly;
-    (new \ModulesGarden\Servers\TSSGGSModule\app\services\AdminServicesTabFields())->save($params);
+    (new \TSSGGSModule\Server\app\services\AdminServicesTabFields())->save($params);
 }
 
 function TSSGGSModule_SSLAdminGetCertificate($params) {

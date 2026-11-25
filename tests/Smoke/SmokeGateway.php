@@ -1,10 +1,10 @@
 <?php
 
-namespace ModulesGarden\__MODULE__\App\Cron;
+namespace __MODULE__\App\Cron;
 
-use ModulesGarden\__MODULE__\App\Libs\Support\Edition;
-use ModulesGarden\__MODULE__\App\Libs\Gateway\GatewayException;
-use ModulesGarden\__MODULE__\App\Libs\Gateway\SSLTrustCenterApi;
+use __MODULE__\App\Libs\Support\Edition;
+use __MODULE__\App\Libs\Gateway\GatewayException;
+use __MODULE__\App\Libs\Gateway\SSLTrustCenterApi;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -14,7 +14,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  * vendor - credentials check, product list, and an order that does not exist (must come back as a GatewayException
  * with its HTTP status and the gateway's error code). Nothing is ordered or changed. Exit code 1 on any failure.
  */
-class SmokeGateway extends \ModulesGarden\__MODULE__\App\Kernel\Console\Command
+class SmokeGateway extends \__MODULE__\App\Kernel\Console\Command
 {
     protected $name = 'SmokeGateway';
     protected $description = 'Smoke test of the gateway client (read-only)';

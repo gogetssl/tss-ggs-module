@@ -1,11 +1,11 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\Setup;
+namespace TSSGGSModule\App\Libs\Setup;
 
-use ModulesGarden\TSSGGSModule\App\Libs\Support\Edition;
-use ModulesGarden\TSSGGSModule\App\Migration\Choice;
-use ModulesGarden\TSSGGSModule\App\Migration\Detector;
-use ModulesGarden\TSSGGSModule\App\Migration\Store;
+use TSSGGSModule\App\Libs\Support\Edition;
+use TSSGGSModule\App\Migration\Choice;
+use TSSGGSModule\App\Migration\Detector;
+use TSSGGSModule\App\Migration\Store;
 use WHMCS\Database\Capsule;
 
 /**

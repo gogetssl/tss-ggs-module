@@ -48,7 +48,7 @@ callers always use the class name.
 
 The module has no third-party PHP code of its own: Eloquent, Symfony Console and Smarty are the ones WHMCS ships.
 
-- `app/Kernel/Boot.php` registers the autoloader: `ModulesGarden\TSSGGSModule\App\X\Y` is `app/X/Y.php`. It does
+- `app/Kernel/Boot.php` registers the autoloader: `TSSGGSModule\App\X\Y` is `app/X/Y.php`. It does
   nothing else. The server module has its own loader for its own namespace and reaches `App\...` through this one.
 - `app/Kernel/Lifecycle.php`: what WHMCS asks an addon for - description, activate (e-mail templates, tables),
   deactivate (keeps everything), upgrade (tables). Tables: `app/Database/schema.sql` (run by `Database/SqlFile`), then
@@ -66,16 +66,16 @@ The module has no third-party PHP code of its own: Eloquent, Symfony Console and
 
 ```
 app/Kernel/                 Kernel (dispatch), Request, Response, Page (base), View (Smarty), Layout, Lang
-app/Pages/Admin/<Page>.php  one class per mg-page; public methods are the actions
+app/Pages/Admin/<Page>.php  one class per mod-page; public methods are the actions
 resources/templates/        Smarty templates: admin/layout.tpl, admin/partials, admin/<page>/*.tpl
 overrides/templates/        a reseller's copy of a template at the same path wins; updates never touch it
 resources/assets/js/vendor  htmx.js, alpine.js (readable, shipped with the module, no CDN, no build step)
 resources/assets/js/app.js  the module's own script (token header for htmx, loading state)
 ```
 
-- A page is a class in `app/Pages/Admin` (`mg-page=certificateLog` is `CertificateLog`); a page that does not exist
+- A page is a class in `app/Pages/Admin` (`mod-page=certificateLog` is `CertificateLog`); a page that does not exist
   answers "This page does not exist" inside the layout.
-- Actions: `GET mg-action=x` calls `x()`, `POST mg-action=x` calls `postX()` after the WHMCS token check. Anything
+- Actions: `GET mod-action=x` calls `x()`, `POST mod-action=x` calls `postX()` after the WHMCS token check. Anything
   that changes data is a POST action.
 - An action returns `$this->view(template, data)` (full page in the layout), `$this->fragment(...)` (a part, for
   htmx) or `$this->redirect(...)`. For an htmx request (`$this->request->isHtmx()`) answer with the fragment.

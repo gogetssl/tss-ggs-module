@@ -1,14 +1,14 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Pages\Admin;
+namespace TSSGGSModule\App\Pages\Admin;
 
-use ModulesGarden\TSSGGSModule\App\Kernel\Layout;
-use ModulesGarden\TSSGGSModule\App\Kernel\Page;
-use ModulesGarden\TSSGGSModule\App\Kernel\Response;
-use ModulesGarden\TSSGGSModule\App\Kernel\Table;
-use ModulesGarden\TSSGGSModule\App\Libs\Billing\SalesReport;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\GeneralSettings;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\Helpers;
+use TSSGGSModule\App\Kernel\Layout;
+use TSSGGSModule\App\Kernel\Page;
+use TSSGGSModule\App\Kernel\Response;
+use TSSGGSModule\App\Kernel\Table;
+use TSSGGSModule\App\Libs\Billing\SalesReport;
+use TSSGGSModule\App\Libs\Support\GeneralSettings;
+use TSSGGSModule\App\Libs\Support\Helpers;
 
 /**
  * Admin page "Reports": three reports on the invoiced services of this module's products (App\Libs\Billing\
@@ -90,7 +90,7 @@ class Reports extends Page
 
         $table = Table::make($this->request, $name)->sortBy('date', 'desc')->perPage([10, 25])
             ->rowTemplate('admin/reports/row')->toolbar('admin/reports/toolbar')
-            ->keep(['mg-action' => 'report', 'name' => $name] + $filters);
+            ->keep(['mod-action' => 'report', 'name' => $name] + $filters);
         foreach($report['columns'] as $column)
         {
             $table->column($column, $this->t($report['texts'] . '.array_data_provider.data_table.' . $column), true, Table::SEARCH_TEXT);

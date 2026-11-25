@@ -1,6 +1,6 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\Gateway;
+namespace TSSGGSModule\App\Libs\Gateway;
 
 /**
  * The gateway answered with an error. getMessage() is the text a client may see (SSLTrustCenterApi::readableError);

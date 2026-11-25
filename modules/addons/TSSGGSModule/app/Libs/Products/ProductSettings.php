@@ -1,10 +1,10 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\Products;
+namespace TSSGGSModule\App\Libs\Products;
 
-use ModulesGarden\TSSGGSModule\App\Models\Whmcs\AddonModule;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\GeneralSettings;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\MessageHtml;
+use TSSGGSModule\App\Models\Whmcs\AddonModule;
+use TSSGGSModule\App\Libs\Support\GeneralSettings;
+use TSSGGSModule\App\Libs\Support\MessageHtml;
 
 /**
  * Per-product settings of the Products page (stored in tbladdonmodules as "product_<pid>"):

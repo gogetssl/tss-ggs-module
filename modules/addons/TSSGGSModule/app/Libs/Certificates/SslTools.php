@@ -1,8 +1,8 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\Certificates;
+namespace TSSGGSModule\App\Libs\Certificates;
 
-use ModulesGarden\TSSGGSModule\App\Libs\Support\ClientText;
+use TSSGGSModule\App\Libs\Support\ClientText;
 
 /**
  * Stand-alone SSL tools for the client area: everything runs on this server with PHP's OpenSSL, no gateway call and

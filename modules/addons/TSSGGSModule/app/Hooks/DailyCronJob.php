@@ -8,7 +8,7 @@ if(!defined('WHMCS'))
 }
 
 
-use ModulesGarden\TSSGGSModule\App\Models\RemoteProduct;
+use TSSGGSModule\App\Models\RemoteProduct;
 
 
 $hookManager->register(
@@ -31,7 +31,7 @@ $hookManager->register(
     function($args) {
         try
         {
-            \ModulesGarden\TSSGGSModule\App\Libs\AutoInstall\AutoInstallReport::notify();
+            \TSSGGSModule\App\Libs\AutoInstall\AutoInstallReport::notify();
         }
         catch(\Throwable $e)
         {
@@ -46,7 +46,7 @@ $hookManager->register(
     function($args) {
         try
         {
-            \ModulesGarden\TSSGGSModule\App\Libs\Logs\Logger::prune();
+            \TSSGGSModule\App\Libs\Logs\Logger::prune();
         }
         catch(\Throwable $e)
         {

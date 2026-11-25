@@ -1,9 +1,9 @@
 <?php
 
-namespace ModulesGarden\__MODULE__\App\Cron;
+namespace __MODULE__\App\Cron;
 
-use ModulesGarden\__MODULE__\App\Database\Schema;
-use ModulesGarden\__MODULE__\App\Libs\Support\Edition;
+use __MODULE__\App\Database\Schema;
+use __MODULE__\App\Libs\Support\Edition;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -13,7 +13,7 @@ use WHMCS\Database\Capsule;
  * Smoke test (tools/qa.sh smoke): the database is at the latest App\Database\Schema version and every table and
  * column the steps add is there. Read-only. Exit code 1 when anything is missing.
  */
-class SmokeSchema extends \ModulesGarden\__MODULE__\App\Kernel\Console\Command
+class SmokeSchema extends \__MODULE__\App\Kernel\Console\Command
 {
     protected $name = 'SmokeSchema';
     protected $description = 'Smoke test of the database schema';

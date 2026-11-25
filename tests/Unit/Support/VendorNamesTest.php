@@ -2,7 +2,7 @@
 
 namespace Tests\Unit\Support;
 
-use ModulesGarden\TSSGGSModule\App\Libs\Support\Helpers;
+use TSSGGSModule\App\Libs\Support\Helpers;
 use PHPUnit\Framework\TestCase;
 
 /** Vendor names in messages: the keys are stored lower case, older code passes them upper case */

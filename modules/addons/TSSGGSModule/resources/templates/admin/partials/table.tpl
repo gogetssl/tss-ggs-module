@@ -12,7 +12,7 @@
               hx-get="addonmodules.php" hx-target="#tssggs-table-{$table.id}" hx-swap="outerHTML"
               hx-trigger="submit, input delay:400ms from:find input[name=tq]">
             <input type="hidden" name="module" value="{$moduleName}">
-            <input type="hidden" name="mg-page" value="{$pageName}">
+            <input type="hidden" name="mod-page" value="{$pageName}">
             <input type="hidden" name="table" value="{$table.id}">
             <input type="hidden" name="ts" value="{$table.sort}" x-ref="ts">
             <input type="hidden" name="td" value="{$table.dir}" x-ref="td">
@@ -74,7 +74,7 @@
                                         {/if}
                                     </th>
                                 {/foreach}
-                                {if $table.actions}<th class="mgTableActionsHeader"></th>{/if}
+                                {if $table.actions}<th class="modTableActionsHeader"></th>{/if}
                             </tr>
                         </thead>
                         <tbody @change="count()">

@@ -1,11 +1,11 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\Support;
+namespace TSSGGSModule\App\Libs\Support;
 
-use ModulesGarden\TSSGGSModule\App\Models\Whmcs\Product;
-use ModulesGarden\TSSGGSModule\App\Models\Whmcs\Service;
-use ModulesGarden\TSSGGSModule\App\Libs\Products\ConfigOptions\ConfigurableOptions;
-use ModulesGarden\TSSGGSModule\App\Libs\Gateway\SSLTrustCenterApi;
+use TSSGGSModule\App\Models\Whmcs\Product;
+use TSSGGSModule\App\Models\Whmcs\Service;
+use TSSGGSModule\App\Libs\Products\ConfigOptions\ConfigurableOptions;
+use TSSGGSModule\App\Libs\Gateway\SSLTrustCenterApi;
 
 class Helpers
 {

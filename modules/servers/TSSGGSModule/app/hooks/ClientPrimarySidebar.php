@@ -1,8 +1,8 @@
 <?php
 
-namespace ModulesGarden\Servers\TSSGGSModule\app\hooks;
+namespace TSSGGSModule\Server\app\hooks;
 
-use ModulesGarden\Servers\TSSGGSModule\core\Lang;
+use TSSGGSModule\Server\core\Lang;
 
 /**
  * WHMCS hook ClientAreaPrimarySidebar (registered in hooks.php).
@@ -16,10 +16,10 @@ class ClientPrimarySidebar
         if($_REQUEST['action'] == 'productdetails' && $_REQUEST['id'] > 0)
         {
             $serviceId = (int)$_REQUEST['id'];
-            $orderData = \ModulesGarden\TSSGGSModule\App\Libs\Certificates\CertificateService::stored($serviceId);
+            $orderData = \TSSGGSModule\App\Libs\Certificates\CertificateService::stored($serviceId);
 
             // a cancelled / terminated service keeps "active" in its stored order: no downloads or reissue for it
-            $serviceOpen = \ModulesGarden\TSSGGSModule\App\Libs\Certificates\CertificateService::serviceOpen($serviceId);
+            $serviceOpen = \TSSGGSModule\App\Libs\Certificates\CertificateService::serviceOpen($serviceId);
 
             if($serviceOpen && isset($orderData['orderData']['order']['status']) && $orderData['orderData']['order']['status'] == 'active')
             {
@@ -27,13 +27,13 @@ class ClientPrimarySidebar
                 if($myAccount)
                 {
                     // only the formats the admin offers (Settings > General > Certificate Downloads)
-                    $formats = \ModulesGarden\TSSGGSModule\App\Libs\Certificates\CertificateBundle::enabledFormats();
+                    $formats = \TSSGGSModule\App\Libs\Certificates\CertificateBundle::enabledFormats();
                     if(in_array('crt', $formats, true))
                     {
                         $myAccount->addChild('DownloadCRT', [
                             'name'  => 'DownloadCRT',
                             'label' => Lang::absoluteT('Download CRT'),
-                            'uri'   => 'clientarea.php?action=productdetails&id=' . $serviceId . '&mg-action=download&format=crt',
+                            'uri'   => 'clientarea.php?action=productdetails&id=' . $serviceId . '&mod-action=download&format=crt',
                             'order' => 10,
                             'icon'  => 'fas fa-cogs',
                         ]);
@@ -43,7 +43,7 @@ class ClientPrimarySidebar
                         $myAccount->addChild('DownloadICRT', [
                             'name'  => 'DownloadICRT',
                             'label' => Lang::absoluteT('Download Intermediate CRT'),
-                            'uri'   => 'clientarea.php?action=productdetails&id=' . $serviceId . '&mg-action=download&format=ca',
+                            'uri'   => 'clientarea.php?action=productdetails&id=' . $serviceId . '&mod-action=download&format=ca',
                             'order' => 20,
                             'icon'  => 'fas fa-cogs',
                         ]);
@@ -53,7 +53,7 @@ class ClientPrimarySidebar
                         $myAccount->addChild('DownloadSSL', [
                             'name'  => 'DownloadSSL',
                             'label' => Lang::absoluteT('Download SSL'),
-                            'uri'   => 'clientarea.php?action=productdetails&id=' . $serviceId . '&mg-action=download&format=zip',
+                            'uri'   => 'clientarea.php?action=productdetails&id=' . $serviceId . '&mod-action=download&format=zip',
                             'order' => 30,
                             'icon'  => 'fas fa-cogs',
                         ]);
@@ -61,7 +61,7 @@ class ClientPrimarySidebar
                     $myAccount->addChild('ReissueSSL', [
                         'name'  => 'ReissueSSL',
                         'label' => Lang::absoluteT('Reissue SSL'),
-                        'uri'   => 'clientarea.php?action=productdetails&id=' . $serviceId . '&mg-action=reissueSSL',
+                        'uri'   => 'clientarea.php?action=productdetails&id=' . $serviceId . '&mod-action=reissueSSL',
                         'order' => 40,
                         'icon'  => 'fas fa-cogs',
                     ]);
@@ -94,7 +94,7 @@ class ClientPrimarySidebar
                     $myAccount->addChild('DownloadCSR', [
                         'name'  => 'DownloadCSR',
                         'label' => Lang::absoluteT('Download CSR'),
-                        'uri'   => 'clientarea.php?action=productdetails&id=' . $serviceId . '&mg-action=downloadCSR',
+                        'uri'   => 'clientarea.php?action=productdetails&id=' . $serviceId . '&mod-action=downloadCSR',
                         'order' => 10,
                         'icon'  => 'fas fa-cogs'
                     ]);
@@ -103,7 +103,7 @@ class ClientPrimarySidebar
                         $myAccount->addChild('DownloadAuthFile', [
                             'name'  => 'DownloadAuthFile',
                             'label' => Lang::absoluteT('Download Auth File'),
-                            'uri'   => 'clientarea.php?action=productdetails&id=' . $serviceId . '&mg-action=downloadAuthFile',
+                            'uri'   => 'clientarea.php?action=productdetails&id=' . $serviceId . '&mod-action=downloadAuthFile',
                             'order' => 20,
                             'icon'  => 'fas fa-cogs'
                         ]);
@@ -111,7 +111,7 @@ class ClientPrimarySidebar
                     $myAccount->addChild('ChangeApprovalMethod', [
                         'name'  => 'ChangeApprovalMethod',
                         'label' => Lang::absoluteT('Change Approval Method'),
-                        'uri'   => 'clientarea.php?action=productdetails&id=' . $serviceId . '&mg-action=changeApprovalMethod',
+                        'uri'   => 'clientarea.php?action=productdetails&id=' . $serviceId . '&mod-action=changeApprovalMethod',
                         'order' => 30,
                         'icon'  => 'fas fa-cogs'
                     ]);

@@ -56,9 +56,6 @@ You are welcome to send us requests for new features, suggestions, or report any
 - SSL Import
 - And Much Much More!
 
-### Sub-Reseller network
-At the end of September 2025, we will release the ["Products Reseller For WHMCS"](https://www.modulesgarden.com/products/whmcs/products-reseller#features) module from Modules Garden. It will allow you to have your own Sub-Resellers using WHMCS to expand your network. Please review [documentation](https://github.com/gogetssl/tss-ggs-module/wiki/Products-Reseller) for more details
-
 ### cPanel AutoSSL Installation 
 At the end of September 2025, we will release ["AutoInstall SSL™](https://github.com/gogetssl/tss-ggs-module/wiki/AutoInstall-SSL%E2%84%A2) plugin, allowing users to validate and install SSL certificates automatically. 
 

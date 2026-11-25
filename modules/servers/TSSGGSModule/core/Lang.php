@@ -1,6 +1,6 @@
 <?php
 
-namespace ModulesGarden\Servers\TSSGGSModule\core;
+namespace TSSGGSModule\Server\core;
 
 use WHMCS\Database\Capsule as DataBase;
 

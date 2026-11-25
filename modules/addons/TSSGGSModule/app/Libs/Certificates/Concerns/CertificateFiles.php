@@ -1,15 +1,15 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\Certificates\Concerns;
+namespace TSSGGSModule\App\Libs\Certificates\Concerns;
 
-use ModulesGarden\TSSGGSModule\App\Helpers\EmailTemplates;
-use ModulesGarden\TSSGGSModule\App\Libs\Certificates\CertificateService;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\ClientText;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\Edition;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\GeneralSettings;
-use ModulesGarden\TSSGGSModule\App\Models\Request;
+use TSSGGSModule\App\Helpers\EmailTemplates;
+use TSSGGSModule\App\Libs\Certificates\CertificateService;
+use TSSGGSModule\App\Libs\Support\ClientText;
+use TSSGGSModule\App\Libs\Support\Edition;
+use TSSGGSModule\App\Libs\Support\GeneralSettings;
+use TSSGGSModule\App\Models\Request;
 use WHMCS\Database\Capsule;
-use ModulesGarden\TSSGGSModule\App\Libs\Certificates\CertificateBundle;
+use TSSGGSModule\App\Libs\Certificates\CertificateBundle;
 
 /**
  * Certificate files: the previous certificate kept during a reissue, the downloadable bundle, the certificate e-mail.

@@ -1,9 +1,9 @@
 <?php
 
-namespace ModulesGarden\Servers\TSSGGSModule\app\hooks;
+namespace TSSGGSModule\Server\app\hooks;
 
 use WHMCS\Database\Capsule;
-use ModulesGarden\TSSGGSModule\App\Models\Request;
+use TSSGGSModule\App\Models\Request;
 
 /**
  * Admin downloads (certificate ZIP, validation file) from the module tab of the service page: a normal request, not
@@ -27,6 +27,6 @@ class AdminDownloads
             return; // another module's service (both editions can be installed side by side)
         }
         \check_token('WHMCS.admin.default');
-        \ModulesGarden\Servers\TSSGGSModule\app\controllers\server\admin\Actions::adminDownload($serviceId, (string)$_GET['tssggs_download']);
+        \TSSGGSModule\Server\app\controllers\server\admin\Actions::adminDownload($serviceId, (string)$_GET['tssggs_download']);
     }
 }

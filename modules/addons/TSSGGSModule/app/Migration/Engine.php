@@ -1,14 +1,14 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Migration;
+namespace TSSGGSModule\App\Migration;
 
-use ModulesGarden\TSSGGSModule\App\Libs\Billing\Markups;
-use ModulesGarden\TSSGGSModule\App\Libs\AutoInstall\Cpanel;
-use ModulesGarden\TSSGGSModule\App\Libs\Emails\EmailCatalog;
-use ModulesGarden\TSSGGSModule\App\Libs\Emails\EmailManager;
-use ModulesGarden\TSSGGSModule\App\Libs\Emails\LegacyEmailImport;
-use ModulesGarden\TSSGGSModule\App\Migration\Readers\LegacyReaderInterface;
-use ModulesGarden\TSSGGSModule\App\Migration\Support\Schema;
+use TSSGGSModule\App\Libs\Billing\Markups;
+use TSSGGSModule\App\Libs\AutoInstall\Cpanel;
+use TSSGGSModule\App\Libs\Emails\EmailCatalog;
+use TSSGGSModule\App\Libs\Emails\EmailManager;
+use TSSGGSModule\App\Libs\Emails\LegacyEmailImport;
+use TSSGGSModule\App\Migration\Readers\LegacyReaderInterface;
+use TSSGGSModule\App\Migration\Support\Schema;
 use WHMCS\Database\Capsule;
 
 /**
@@ -872,7 +872,7 @@ class Engine
                 $productRemote = trim((string)Capsule::table('tblproducts')->where('id', $pid)->value('configoption2'));
                 if($productRemote !== '')
                 {
-                    $rec['order_payload']['product']['id'] = \ModulesGarden\TSSGGSModule\App\Migration\Readers\AbstractReader::productIdValue($productRemote);
+                    $rec['order_payload']['product']['id'] = \TSSGGSModule\App\Migration\Readers\AbstractReader::productIdValue($productRemote);
                     if(isset($rec['certificate']) && is_array($rec['certificate']) && array_key_exists('remote_product_id', $rec['certificate']) && (string)$rec['certificate']['remote_product_id'] === '')
                     {
                         $rec['certificate']['remote_product_id'] = $productRemote;
@@ -1321,7 +1321,7 @@ class Engine
         $mysql   = Capsule::selectOne('SELECT VERSION() AS v');
         $summary = $run['summary'] ?? [];
         $lines   = [
-            \ModulesGarden\TSSGGSModule\App\Libs\Support\Edition::name() . ' - migration error report',
+            \TSSGGSModule\App\Libs\Support\Edition::name() . ' - migration error report',
             str_repeat('=', 60),
             'Run:            #' . $runId . ' (' . strtoupper((string)$run['source']) . ', legacy module ' . ($run['source_version'] ?: '?') . ')',
             'Status:         ' . $run['status'],

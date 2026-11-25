@@ -1,10 +1,10 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\Subscriptions;
+namespace TSSGGSModule\App\Libs\Subscriptions;
 
-use ModulesGarden\TSSGGSModule\App\Models\RemoteProduct;
+use TSSGGSModule\App\Models\RemoteProduct;
 use WHMCS\Database\Capsule;
-use ModulesGarden\TSSGGSModule\App\Libs\Certificates\CertificateService;
+use TSSGGSModule\App\Libs\Certificates\CertificateService;
 
 /**
  * Whether the Automated SSL products are on sale: at least one CaaS (ACME) product and at least one AIS product of

@@ -1,14 +1,14 @@
 <?php
 
-namespace ModulesGarden\Servers\TSSGGSModule\app\controllers\server\clientarea\parts;
+namespace TSSGGSModule\Server\app\controllers\server\clientarea\parts;
 
-use ModulesGarden\Servers\TSSGGSModule\app\models\whmcs\Client;
-use ModulesGarden\Servers\TSSGGSModule\app\models\whmcs\SSL;
-use ModulesGarden\Servers\TSSGGSModule\app\models\whmcs\Service;
-use ModulesGarden\Servers\TSSGGSModule\core\Lang;
-use ModulesGarden\TSSGGSModule\App\Libs\Certificates\CertificateBundle;
-use ModulesGarden\TSSGGSModule\App\Libs\Certificates\CertificateService;
-use ModulesGarden\TSSGGSModule\App\Models\Request;
+use TSSGGSModule\Server\app\models\whmcs\Client;
+use TSSGGSModule\Server\app\models\whmcs\SSL;
+use TSSGGSModule\Server\app\models\whmcs\Service;
+use TSSGGSModule\Server\core\Lang;
+use TSSGGSModule\App\Libs\Certificates\CertificateBundle;
+use TSSGGSModule\App\Libs\Certificates\CertificateService;
+use TSSGGSModule\App\Models\Request;
 
 /**
  * Downloads and sending of an SSL certificate: files, bundle, private key, CSR, validation file.
@@ -26,7 +26,7 @@ trait SslDownloadActions
         }
         catch(\Exception $e)
         {
-            $_SESSION['mg-error'] = $e->getMessage();
+            $_SESSION['mod-error'] = $e->getMessage();
             redir('action=productdetails&id=' . (int)$input['id'], 'clientarea.php');
         }
     }
@@ -49,7 +49,7 @@ trait SslDownloadActions
         }
         catch(\Exception $e)
         {
-            $_SESSION['mg-error'] = $e->getMessage();
+            $_SESSION['mod-error'] = $e->getMessage();
             redir('action=productdetails&id=' . (int)$input['id'], 'clientarea.php');
         }
     }
@@ -75,7 +75,7 @@ trait SslDownloadActions
         try
         {
             $this->requireCsrfToken();
-            $decodeKey = \ModulesGarden\TSSGGSModule\App\Libs\Certificates\PrivateKeyDownload::fetch((int)$input['id'], (string)($_POST['handle'] ?? ''));
+            $decodeKey = \TSSGGSModule\App\Libs\Certificates\PrivateKeyDownload::fetch((int)$input['id'], (string)($_POST['handle'] ?? ''));
             if($decodeKey === null)
             {
                 throw new \Exception(Lang::absoluteT('private_key_expired'));
@@ -83,7 +83,7 @@ trait SslDownloadActions
         }
         catch(\Exception $e)
         {
-            $_SESSION['mg-error'] = $e->getMessage();
+            $_SESSION['mod-error'] = $e->getMessage();
             redir('action=productdetails&id=' . (int)$input['id'], 'clientarea.php');
         }
         $keyDomain = (string)Service::where('id', (int)$input['id'])->value('domain');

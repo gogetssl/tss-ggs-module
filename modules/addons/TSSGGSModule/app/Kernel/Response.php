@@ -1,6 +1,6 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Kernel;
+namespace TSSGGSModule\App\Kernel;
 
 /**
  * What an action returns: a full page (inside the module layout), a fragment (a part of a page, for htmx) or a

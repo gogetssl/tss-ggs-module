@@ -1,9 +1,9 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\Products;
+namespace TSSGGSModule\App\Libs\Products;
 
-use ModulesGarden\TSSGGSModule\App\Libs\Support\Edition;
-use ModulesGarden\TSSGGSModule\App\Models\RemoteProduct;
+use TSSGGSModule\App\Libs\Support\Edition;
+use TSSGGSModule\App\Models\RemoteProduct;
 
 /**
  * The vendor products the Products page lists, and the two filters of the list (imported or not, validation level).

@@ -1,9 +1,9 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\Gateway;
+namespace TSSGGSModule\App\Libs\Gateway;
 
 use WHMCS\Database\Capsule;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\Edition;
+use TSSGGSModule\App\Libs\Support\Edition;
 
 /**
  * The second vendor an edition can connect (Settings > API, "Connect ... products").

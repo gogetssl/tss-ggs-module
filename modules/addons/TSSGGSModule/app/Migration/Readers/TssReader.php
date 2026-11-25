@@ -1,10 +1,10 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Migration\Readers;
+namespace TSSGGSModule\App\Migration\Readers;
 
-use ModulesGarden\TSSGGSModule\App\Migration\ProductMapper;
-use ModulesGarden\TSSGGSModule\App\Migration\Support\Configdata;
-use ModulesGarden\TSSGGSModule\App\Migration\Support\Schema;
+use TSSGGSModule\App\Migration\ProductMapper;
+use TSSGGSModule\App\Migration\Support\Configdata;
+use TSSGGSModule\App\Migration\Support\Schema;
 use WHMCS\Database\Capsule;
 
 /**
@@ -209,7 +209,7 @@ class TssReader extends AbstractReader
         // was: the invoice is created P + W days before the end (at most 30), due P days before it.
         $prior     = max(0, (int)$val('no_of_days_prior_to_expirationdate', '0'));
         $whmcsLead = (int)(Capsule::table('tblconfiguration')->where('setting', 'CreateInvoiceDaysBefore')->value('value') ?: 30);
-        $lead      = min(\ModulesGarden\TSSGGSModule\App\Libs\Billing\RenewalPolicy::MAX_LEAD, max(1, $prior + max(0, $whmcsLead)));
+        $lead      = min(\TSSGGSModule\App\Libs\Billing\RenewalPolicy::MAX_LEAD, max(1, $prior + max(0, $whmcsLead)));
 
         $ssl = [
             'recurringCreateAutomaticRenewalInvoice' => in_array($autorenew, ['full', 'autorenew', 'yes', 'on', '1'], true) ? 'on' : '',
@@ -306,7 +306,7 @@ class TssReader extends AbstractReader
     /** Hardware code signing products the unified module sells through the gateway */
     public function isCodeSigningCode(string $code): bool
     {
-        return in_array($code, \ModulesGarden\TSSGGSModule\App\Libs\ProductLines\CodeSigningService::SUPPORTED_PRODUCTS['TSS'], true);
+        return in_array($code, \TSSGGSModule\App\Libs\ProductLines\CodeSigningService::SUPPORTED_PRODUCTS['TSS'], true);
     }
 
     /** CodeGuard products (website backup): the gateway category decides, the code prefix is the fallback */
@@ -315,7 +315,7 @@ class TssReader extends AbstractReader
         $remote = $this->mapper && $code !== '' ? $this->mapper->forTss($code) : null;
         if($remote)
         {
-            return strtolower((string)$remote->category) === \ModulesGarden\TSSGGSModule\App\Libs\ProductLines\CodeGuardService::CATEGORY;
+            return strtolower((string)$remote->category) === \TSSGGSModule\App\Libs\ProductLines\CodeGuardService::CATEGORY;
         }
 
         // without a mapped gateway product the code itself decides: TheSSLStore sells them as cg_basic, cg_professional,
@@ -653,7 +653,7 @@ class TssReader extends AbstractReader
      */
     protected function readCodeSigning(array $rec, array $svc, array $order, string $code): array
     {
-        $cs          = \ModulesGarden\TSSGGSModule\App\Libs\ProductLines\CodeSigningService::class;
+        $cs          = \TSSGGSModule\App\Libs\ProductLines\CodeSigningService::class;
         $rec['kind'] = 'codesigning';
         $remote      = $this->mapper ? $this->mapper->forTss($code) : null;
         $rec['remote_product_id'] = $remote ? (string)$remote->remoteId : $code;

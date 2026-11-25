@@ -50,11 +50,11 @@ var JSONParser = {
             data = {};
         }
         
-        data['mg-action'] = action;
+        data['mod-action'] = action;
         
         if(this.currentPage)
         {
-            data['mg-page']    = this.currentPage;
+            data['mod-page']    = this.currentPage;
         }
         
         if(loader === undefined)

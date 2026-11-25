@@ -1,20 +1,20 @@
 <?php
 
-namespace ModulesGarden\Servers\TSSGGSModule\app\controllers\server\clientarea\parts;
+namespace TSSGGSModule\Server\app\controllers\server\clientarea\parts;
 
-use ModulesGarden\Servers\TSSGGSModule\app\models\whmcs\Order;
-use ModulesGarden\Servers\TSSGGSModule\app\models\whmcs\Product;
-use ModulesGarden\Servers\TSSGGSModule\app\models\whmcs\SSL;
-use ModulesGarden\Servers\TSSGGSModule\app\models\whmcs\Service;
-use ModulesGarden\Servers\TSSGGSModule\app\repository\whmcs\Domain;
-use ModulesGarden\Servers\TSSGGSModule\core\Lang;
-use ModulesGarden\TSSGGSModule\App\Libs\Certificates\CertificateService;
-use ModulesGarden\TSSGGSModule\App\Libs\Certificates\CertificateSyncHelpers;
-use ModulesGarden\TSSGGSModule\App\Libs\Gateway\SSLTrustCenterApi;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\ClientText;
-use ModulesGarden\TSSGGSModule\App\Models\Request;
-use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
-use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\ProductRepository;
+use TSSGGSModule\Server\app\models\whmcs\Order;
+use TSSGGSModule\Server\app\models\whmcs\Product;
+use TSSGGSModule\Server\app\models\whmcs\SSL;
+use TSSGGSModule\Server\app\models\whmcs\Service;
+use TSSGGSModule\Server\app\repository\whmcs\Domain;
+use TSSGGSModule\Server\core\Lang;
+use TSSGGSModule\App\Libs\Certificates\CertificateService;
+use TSSGGSModule\App\Libs\Certificates\CertificateSyncHelpers;
+use TSSGGSModule\App\Libs\Gateway\SSLTrustCenterApi;
+use TSSGGSModule\App\Libs\Support\ClientText;
+use TSSGGSModule\App\Models\Request;
+use TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
+use TSSGGSModule\App\Repositories\Whmcs\ProductRepository;
 
 /**
  * Domain validation actions of a pending SSL order: recheck, resend the approval e-mail, change the method.
@@ -47,11 +47,11 @@ trait SslValidationActions
                 $status = CertificateSyncHelpers::syncCertificate($certificate->toArray(), (new AddonModuleRepository())->getModuleConfiguration());
             }
 
-            $_SESSION['mg-success'] = Lang::absoluteT($status === 'active' ? 'revalidate_success_active' : 'revalidate_success_pending');
+            $_SESSION['mod-success'] = Lang::absoluteT($status === 'active' ? 'revalidate_success_active' : 'revalidate_success_pending');
         }
         catch(\Exception $e)
         {
-            $_SESSION['mg-error'] = Lang::absoluteT('revalidate_error') . ' ' . $e->getMessage();
+            $_SESSION['mod-error'] = Lang::absoluteT('revalidate_error') . ' ' . $e->getMessage();
         }
 
         redir('action=productdetails&id=' . $serviceId, 'clientarea.php');
@@ -74,11 +74,11 @@ trait SslValidationActions
 
             $this->getSslApiForProduct($service->packageid)->resendValidationEmail($ssl->remoteid);
 
-            $_SESSION['mg-success'] = Lang::absoluteT('resend_dcv_success');
+            $_SESSION['mod-success'] = Lang::absoluteT('resend_dcv_success');
         }
         catch(\Exception $e)
         {
-            $_SESSION['mg-error'] = Lang::absoluteT('resend_dcv_error') . ' ' . $e->getMessage();
+            $_SESSION['mod-error'] = Lang::absoluteT('resend_dcv_error') . ' ' . $e->getMessage();
         }
 
         redir('action=productdetails&id=' . $serviceId, 'clientarea.php');
@@ -151,7 +151,7 @@ trait SslValidationActions
             }
             catch(\Exception $exception)
             {
-                $_SESSION['mg-error'] = $exception->getMessage();
+                $_SESSION['mod-error'] = $exception->getMessage();
                 redir('action=productdetails&id=' . $serviceId, 'clientarea.php');
             }
             foreach((array)($_POST['method'] ?? []) as $domainName => $methodDomain)
@@ -187,12 +187,12 @@ trait SslValidationActions
                 $certificate['orderData']['items']     = $newData['items'];
                 Request::updateOrderData($serviceId, $certificate);
                 CertificateService::event($serviceId, 'info', '[Validation] Validation method changed by the client');
-                $_SESSION['mg-success'] = Lang::absoluteT('validation_method_changed');
+                $_SESSION['mod-success'] = Lang::absoluteT('validation_method_changed');
 
             }
             catch(\Exception $exception)
             {
-                $_SESSION['mg-error'] = $exception->getMessage();
+                $_SESSION['mod-error'] = $exception->getMessage();
             }
 
             redir('action=productdetails&id=' . $serviceId, 'clientarea.php');
@@ -232,7 +232,7 @@ trait SslValidationActions
         }, $current);
 
         // IP addresses have no approver mailboxes (IP certificates validate by file only)
-        $approvers         = \ModulesGarden\TSSGGSModule\App\Libs\Certificates\IpCertificate::isProduct((int)\WHMCS\Database\Capsule::table('tblhosting')->where('id', (int)$serviceId)->value('packageid'))
+        $approvers         = \TSSGGSModule\App\Libs\Certificates\IpCertificate::isProduct((int)\WHMCS\Database\Capsule::table('tblhosting')->where('id', (int)$serviceId)->value('packageid'))
             ? array_map(function($name) { return ['domain' => $name, 'emails' => []]; }, $domains)
             : $api->getDomainEmails($domains);
         $vars['approvers'] = $this->approversToOptions($approvers);

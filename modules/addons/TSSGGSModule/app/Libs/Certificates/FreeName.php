@@ -1,8 +1,8 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\Certificates;
+namespace TSSGGSModule\App\Libs\Certificates;
 
-use ModulesGarden\TSSGGSModule\App\Models\RemoteProduct;
+use TSSGGSModule\App\Models\RemoteProduct;
 use WHMCS\Database\Capsule;
 
 /**
@@ -84,7 +84,7 @@ class FreeName
             {
                 return ['', ''];
             }
-            $product = (new \ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\ProductRepository())->getProductConfiguration($packageId);
+            $product = (new \TSSGGSModule\App\Repositories\Whmcs\ProductRepository())->getProductConfiguration($packageId);
 
             return [(string)($product['provider'] ?? ''), (string)($product['product_id'] ?? '')];
         }

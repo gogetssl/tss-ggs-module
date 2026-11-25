@@ -1,22 +1,22 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\Certificates\Concerns;
+namespace TSSGGSModule\App\Libs\Certificates\Concerns;
 
-use ModulesGarden\TSSGGSModule\App\Libs\AutoInstall\AutoInstallHelpers;
-use ModulesGarden\TSSGGSModule\App\Libs\AutoInstall\AutoInstallQueue;
-use ModulesGarden\TSSGGSModule\App\Libs\Certificates\CertificateService;
-use ModulesGarden\TSSGGSModule\App\Libs\ProductLines\CodeGuardService;
-use ModulesGarden\TSSGGSModule\App\Libs\ProductLines\CodeSigningService;
-use ModulesGarden\TSSGGSModule\App\Libs\ProductLines\DocumentSigningService;
-use ModulesGarden\TSSGGSModule\App\Libs\ProductLines\LeiService;
-use ModulesGarden\TSSGGSModule\App\Libs\ProductLines\PciService;
-use ModulesGarden\TSSGGSModule\App\Libs\ProductLines\SmimeService;
-use ModulesGarden\TSSGGSModule\App\Models\AcmeSubscription;
-use ModulesGarden\TSSGGSModule\App\Models\AisSubscription;
-use ModulesGarden\TSSGGSModule\App\Models\Request;
-use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
+use TSSGGSModule\App\Libs\AutoInstall\AutoInstallHelpers;
+use TSSGGSModule\App\Libs\AutoInstall\AutoInstallQueue;
+use TSSGGSModule\App\Libs\Certificates\CertificateService;
+use TSSGGSModule\App\Libs\ProductLines\CodeGuardService;
+use TSSGGSModule\App\Libs\ProductLines\CodeSigningService;
+use TSSGGSModule\App\Libs\ProductLines\DocumentSigningService;
+use TSSGGSModule\App\Libs\ProductLines\LeiService;
+use TSSGGSModule\App\Libs\ProductLines\PciService;
+use TSSGGSModule\App\Libs\ProductLines\SmimeService;
+use TSSGGSModule\App\Models\AcmeSubscription;
+use TSSGGSModule\App\Models\AisSubscription;
+use TSSGGSModule\App\Models\Request;
+use TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
 use WHMCS\Database\Capsule;
-use ModulesGarden\TSSGGSModule\App\Libs\Certificates\IncompleteOrder;
+use TSSGGSModule\App\Libs\Certificates\IncompleteOrder;
 
 /**
  * Cancellation and the renewal reminder lead time of a certificate service.

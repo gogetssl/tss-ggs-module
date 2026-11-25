@@ -1,9 +1,9 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\Products;
+namespace TSSGGSModule\App\Libs\Products;
 
 use WHMCS\Database\Capsule;
-use ModulesGarden\TSSGGSModule\App\Libs\ProductLines\GatewayOrderService;
+use TSSGGSModule\App\Libs\ProductLines\GatewayOrderService;
 
 /**
  * Certificates sold as WHMCS product addons (M-14), the catalogue side: which certificate product a product addon

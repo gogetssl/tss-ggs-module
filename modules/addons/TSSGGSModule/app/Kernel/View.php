@@ -1,8 +1,8 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Kernel;
+namespace TSSGGSModule\App\Kernel;
 
-use ModulesGarden\TSSGGSModule\App\Libs\Support\Icons;
+use TSSGGSModule\App\Libs\Support\Icons;
 
 /**
  * Smarty templates of the module (the Smarty that WHMCS ships).

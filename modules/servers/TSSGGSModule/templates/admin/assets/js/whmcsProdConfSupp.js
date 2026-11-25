@@ -15,7 +15,7 @@ jQuery(document).ready(function(){
         }).change();
     });
     
-    $('*[data-is-form] button[name="mg-action"]').click(function(){
+    $('*[data-is-form] button[name="mod-action"]').click(function(){
         data = jQuery(this).closest('*[data-is-form]').MGGetForms();
         JSONParser.request(jQuery(this).val(),data,function(result){
             if(result.success){

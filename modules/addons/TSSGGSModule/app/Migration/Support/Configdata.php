@@ -1,6 +1,6 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Migration\Support;
+namespace TSSGGSModule\App\Migration\Support;
 
 /**
  * tblsslorders.configdata is JSON on WHMCS 7.3+, PHP-serialized on older installs and in very old module versions.

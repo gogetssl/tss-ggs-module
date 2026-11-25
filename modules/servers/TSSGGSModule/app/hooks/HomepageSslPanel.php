@@ -1,6 +1,6 @@
 <?php
 
-namespace ModulesGarden\Servers\TSSGGSModule\app\hooks;
+namespace TSSGGSModule\Server\app\hooks;
 
 
 /**
@@ -14,18 +14,18 @@ class HomepageSslPanel
     {
         try
         {
-            if(empty($_SESSION['uid']) || !\ModulesGarden\TSSGGSModule\App\Libs\Support\GeneralSettings::enabled('clientSummary'))
+            if(empty($_SESSION['uid']) || !\TSSGGSModule\App\Libs\Support\GeneralSettings::enabled('clientSummary'))
             {
                 return;
             }
 
-            $counts = (new \ModulesGarden\TSSGGSModule\App\Libs\Certificates\ClientSslSummary($_SESSION['uid']))->counts();
+            $counts = (new \TSSGGSModule\App\Libs\Certificates\ClientSslSummary($_SESSION['uid']))->counts();
             if(!$counts['total'])
             {
                 return;
             }
 
-            $t     = \ModulesGarden\TSSGGSModule\App\ClientArea\SslPages::texts();
+            $t     = \TSSGGSModule\App\ClientArea\SslPages::texts();
             $icons = ['unpaid' => 'fa-credit-card', 'awaiting' => 'fa-edit', 'processing' => 'fa-cogs', 'expires_soon' => 'fa-hourglass-half'];
             $body  = '<div class="tssggs-summary" style="display:flex;flex-wrap:wrap;text-align:center;">';
             foreach($icons as $type => $icon)
@@ -48,7 +48,7 @@ class HomepageSslPanel
                 ],
                 'bodyHtml' => $body,
             ]);
-            unifiedSslLabelBlock($panel, $t['summaryTitle'], \ModulesGarden\TSSGGSModule\App\Libs\Support\Edition::brand(), 'panel');
+            unifiedSslLabelBlock($panel, $t['summaryTitle'], \TSSGGSModule\App\Libs\Support\Edition::brand(), 'panel');
         }
         catch(\Throwable $e)
         {

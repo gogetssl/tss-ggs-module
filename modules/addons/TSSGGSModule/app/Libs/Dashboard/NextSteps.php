@@ -1,9 +1,9 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\Dashboard;
+namespace TSSGGSModule\App\Libs\Dashboard;
 
-use ModulesGarden\TSSGGSModule\App\Kernel\Kernel;
-use ModulesGarden\TSSGGSModule\App\Kernel\Page;
+use TSSGGSModule\App\Kernel\Kernel;
+use TSSGGSModule\App\Kernel\Page;
 use WHMCS\Database\Capsule;
 
 /**

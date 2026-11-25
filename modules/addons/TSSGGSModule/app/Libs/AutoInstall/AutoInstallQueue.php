@@ -1,11 +1,11 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\AutoInstall;
+namespace TSSGGSModule\App\Libs\AutoInstall;
 
 
 use WHMCS\Database\Capsule;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\Edition;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\GeneralSettings;
+use TSSGGSModule\App\Libs\Support\Edition;
+use TSSGGSModule\App\Libs\Support\GeneralSettings;
 
 /**
  * AutoInstall cron queue (validate / install / reissue tasks) and service logs.

@@ -1,13 +1,13 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\Emails;
+namespace TSSGGSModule\App\Libs\Emails;
 
-use ModulesGarden\TSSGGSModule\App\Helpers\EmailTemplates;
+use TSSGGSModule\App\Helpers\EmailTemplates;
 use WHMCS\Database\Capsule;
 use WHMCS\Mail\Emailer;
 use WHMCS\Mail\Message;
 use WHMCS\Mail\Template;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\Edition;
+use TSSGGSModule\App\Libs\Support\Edition;
 
 /**
  * Edits the module's e-mails where WHMCS keeps them (tblemailtemplates, one row per language, language '' = default)

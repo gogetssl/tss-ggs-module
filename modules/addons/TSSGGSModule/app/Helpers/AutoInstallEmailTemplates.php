@@ -1,6 +1,6 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Helpers;
+namespace TSSGGSModule\App\Helpers;
 
 use WHMCS\Database\Capsule;
 

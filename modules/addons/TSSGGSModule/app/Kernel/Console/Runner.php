@@ -1,8 +1,8 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Kernel\Console;
+namespace TSSGGSModule\App\Kernel\Console;
 
-use ModulesGarden\TSSGGSModule\App\Kernel\Kernel;
+use TSSGGSModule\App\Kernel\Kernel;
 
 /**
  * Runs a cron job of the module from the command line (cron/cron.php):
@@ -21,7 +21,7 @@ class Runner extends \Symfony\Component\Console\Application
 
         foreach(glob(Kernel::path('app', 'Cron', '*.php')) ?: [] as $file)
         {
-            $class = 'ModulesGarden\\TSSGGSModule\\App\\Cron\\' . basename($file, '.php');
+            $class = 'TSSGGSModule\\App\\Cron\\' . basename($file, '.php');
             if(class_exists($class) && is_subclass_of($class, Command::class) && !(new \ReflectionClass($class))->isAbstract())
             {
                 $this->add(new $class());

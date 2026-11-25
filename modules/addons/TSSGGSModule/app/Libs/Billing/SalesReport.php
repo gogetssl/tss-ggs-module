@@ -1,17 +1,17 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\Billing;
+namespace TSSGGSModule\App\Libs\Billing;
 
-use ModulesGarden\TSSGGSModule\App\Libs\Support\Edition;
+use TSSGGSModule\App\Libs\Support\Edition;
 
 
-use ModulesGarden\TSSGGSModule\App\Libs\Subscriptions\AcmeHelpers;
-use ModulesGarden\TSSGGSModule\App\Libs\Subscriptions\AisHelpers;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\Helpers;
-use ModulesGarden\TSSGGSModule\App\Models\AcmeSubscription;
-use ModulesGarden\TSSGGSModule\App\Models\AisSubscription;
-use ModulesGarden\TSSGGSModule\App\Kernel\Lang;
-use ModulesGarden\TSSGGSModule\App\Models\Whmcs\Service;
+use TSSGGSModule\App\Libs\Subscriptions\AcmeHelpers;
+use TSSGGSModule\App\Libs\Subscriptions\AisHelpers;
+use TSSGGSModule\App\Libs\Support\Helpers;
+use TSSGGSModule\App\Models\AcmeSubscription;
+use TSSGGSModule\App\Models\AisSubscription;
+use TSSGGSModule\App\Kernel\Lang;
+use TSSGGSModule\App\Models\Whmcs\Service;
 use Illuminate\Database\Capsule\Manager as Capsule;
 
 /**
@@ -251,7 +251,7 @@ class SalesReport
         if(!isset($productTypes[$item->productId]))
         {
             $productTypes[$item->productId] = AcmeHelpers::isAcmeWhmcsProduct($item->productId) ? 'acme' : (AisHelpers::isAisWhmcsProduct($item->productId) ? 'ais'
-                : (\ModulesGarden\TSSGGSModule\App\Libs\ProductLines\GatewayOrderService::typeOfProduct($item->productId) ?: 'ssl'));
+                : (\TSSGGSModule\App\Libs\ProductLines\GatewayOrderService::typeOfProduct($item->productId) ?: 'ssl'));
         }
         $type = $productTypes[$item->productId];
 
@@ -269,7 +269,7 @@ class SalesReport
             return $value ? date('Y-m-d', strtotime((string)$value)) : '-';
         };
 
-        if($type !== 'ssl' && is_subclass_of($type, \ModulesGarden\TSSGGSModule\App\Libs\ProductLines\GatewayOrderService::class))
+        if($type !== 'ssl' && is_subclass_of($type, \TSSGGSModule\App\Libs\ProductLines\GatewayOrderService::class))
         {
             $stored         = $type::stored($serviceId);
             $orderStatus    = !empty($stored['status']) ? ucfirst($stored['status']) : $orderStatus;

@@ -142,7 +142,7 @@ function build(edition) {
     // inside a double-quoted PHP string a namespace right after a backslash can turn into an escape sequence
     // (\t = tab, \n = newline), which only happens when the folder name starts with one of those letters
     if (/^[nrtvefxu0-7]/.test(name)) {
-        const unsafe = new RegExp('"\\\\?ModulesGarden\\\\' + name);
+        const unsafe = new RegExp('"\\\\' + name + '\\\\');
         walk(dir, (file) => {
             if (file.endsWith('.php') && unsafe.test(fs.readFileSync(file, 'utf8'))) fail('unsafe escape in ' + path.relative(dir, file));
         });

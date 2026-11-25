@@ -1,8 +1,8 @@
 <?php
 
-namespace ModulesGarden\Servers\TSSGGSModule\app\repository\whmcs;
+namespace TSSGGSModule\Server\app\repository\whmcs;
 
-use ModulesGarden\Servers\TSSGGSModule\app\models\whmcs\ProductConfigOption;
+use TSSGGSModule\Server\app\models\whmcs\ProductConfigOption;
 
 class ProductConfigOptions {
     public static function get($pid, $serviceid, $billingCycle)

@@ -1,27 +1,27 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Pages\Admin;
+namespace TSSGGSModule\App\Pages\Admin;
 
-use ModulesGarden\TSSGGSModule\App\Kernel\Layout;
-use ModulesGarden\TSSGGSModule\App\Kernel\Page;
-use ModulesGarden\TSSGGSModule\App\Kernel\Response;
-use ModulesGarden\TSSGGSModule\App\Libs\Dashboard\Announcements;
-use ModulesGarden\TSSGGSModule\App\Libs\Dashboard\CronStatus;
-use ModulesGarden\TSSGGSModule\App\Libs\Dashboard\NextSteps;
-use ModulesGarden\TSSGGSModule\App\Libs\Dashboard\Pipeline;
-use ModulesGarden\TSSGGSModule\App\Libs\Dashboard\SalesSummary;
-use ModulesGarden\TSSGGSModule\App\Libs\Dashboard\SupportReport;
-use ModulesGarden\TSSGGSModule\App\Libs\Gateway\GatewayHealth;
-use ModulesGarden\TSSGGSModule\App\Libs\Subscriptions\AutomatedSsl;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\Edition;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\GeneralSettings;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\Helpers;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\WhmcsModuleLog;
-use ModulesGarden\TSSGGSModule\App\Libs\Update\Release;
-use ModulesGarden\TSSGGSModule\App\Libs\Update\State;
-use ModulesGarden\TSSGGSModule\App\Migration\Choice;
-use ModulesGarden\TSSGGSModule\App\Migration\Detector;
-use ModulesGarden\TSSGGSModule\App\Migration\Store;
+use TSSGGSModule\App\Kernel\Layout;
+use TSSGGSModule\App\Kernel\Page;
+use TSSGGSModule\App\Kernel\Response;
+use TSSGGSModule\App\Libs\Dashboard\Announcements;
+use TSSGGSModule\App\Libs\Dashboard\CronStatus;
+use TSSGGSModule\App\Libs\Dashboard\NextSteps;
+use TSSGGSModule\App\Libs\Dashboard\Pipeline;
+use TSSGGSModule\App\Libs\Dashboard\SalesSummary;
+use TSSGGSModule\App\Libs\Dashboard\SupportReport;
+use TSSGGSModule\App\Libs\Gateway\GatewayHealth;
+use TSSGGSModule\App\Libs\Subscriptions\AutomatedSsl;
+use TSSGGSModule\App\Libs\Support\Edition;
+use TSSGGSModule\App\Libs\Support\GeneralSettings;
+use TSSGGSModule\App\Libs\Support\Helpers;
+use TSSGGSModule\App\Libs\Support\WhmcsModuleLog;
+use TSSGGSModule\App\Libs\Update\Release;
+use TSSGGSModule\App\Libs\Update\State;
+use TSSGGSModule\App\Migration\Choice;
+use TSSGGSModule\App\Migration\Detector;
+use TSSGGSModule\App\Migration\Store;
 
 /**
  * The module dashboard: heading, "new version" note, setup strip, KPI tiles, then rows of a wide and a narrow panel:

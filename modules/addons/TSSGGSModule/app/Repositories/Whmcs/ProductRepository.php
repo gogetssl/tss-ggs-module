@@ -1,8 +1,8 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Repositories\Whmcs;
+namespace TSSGGSModule\App\Repositories\Whmcs;
 
-use ModulesGarden\TSSGGSModule\App\Models\Whmcs\Product;
+use TSSGGSModule\App\Models\Whmcs\Product;
 
 class ProductRepository
 {

@@ -1,16 +1,16 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\Certificates;
+namespace TSSGGSModule\App\Libs\Certificates;
 
 use Exception;
-use ModulesGarden\TSSGGSModule\App\Models\Request;
-use ModulesGarden\TSSGGSModule\App\Models\Whmcs\Service;
-use ModulesGarden\TSSGGSModule\App\Libs\Logs\Logger;
+use TSSGGSModule\App\Models\Request;
+use TSSGGSModule\App\Models\Whmcs\Service;
+use TSSGGSModule\App\Libs\Logs\Logger;
 use WHMCS\Database\Capsule;
-use ModulesGarden\TSSGGSModule\App\Libs\Gateway\SSLTrustCenterApi;
-use ModulesGarden\TSSGGSModule\App\Libs\Products\SslProductHelpers;
-use ModulesGarden\TSSGGSModule\App\Libs\ProductLines\GatewayOrderService;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\Edition;
+use TSSGGSModule\App\Libs\Gateway\SSLTrustCenterApi;
+use TSSGGSModule\App\Libs\Products\SslProductHelpers;
+use TSSGGSModule\App\Libs\ProductLines\GatewayOrderService;
+use TSSGGSModule\App\Libs\Support\Edition;
 
 /**
  * Certificate details sync shared by the SSLCertificates cron (services reported by /services/updates)
@@ -256,7 +256,7 @@ class CertificateSyncHelpers
             try {
                 $orderFiles = $api->getCertificateFiles($certificate['remoteid']);
             } catch (Exception $exception) {
-                Logger::error('Get Certificate Files Error:' . $exception->getMessage(), \ModulesGarden\TSSGGSModule\App\Libs\Support\LogContext::exception($exception, ['service' => $certificate['id']]));
+                Logger::error('Get Certificate Files Error:' . $exception->getMessage(), \TSSGGSModule\App\Libs\Support\LogContext::exception($exception, ['service' => $certificate['id']]));
             }
         }
 

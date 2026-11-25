@@ -3,14 +3,14 @@
     top: 6px !important;
 }
 
-#layers2 .mg-copy-component-field {
+#layers2 .mod-copy-component-field {
     position: absolute;
     top: -9999px;
     left: -9999px;
     opacity: 0;
 }
 
-#layers2 .mg-copy-component-span:hover {
+#layers2 .mod-copy-component-span:hover {
     cursor: pointer;
 }
 
@@ -36,14 +36,14 @@
     color: #505459;
 }
 
-/*#layers2 .vueDatatableTable .mgTableActions label {*/
+/*#layers2 .vueDatatableTable .modTableActions label {*/
 /*    display: block;*/
 /*    margin-bottom: auto;*/
 /*    margin-top: auto;*/
 /*}*/
 
 /*FIX PRELOADER IN SUBMIT BUTTON*/
-#layers2 .lu-btn.mg-submit-form .lu-btn__icon.lu-preloader {
+#layers2 .lu-btn.mod-submit-form .lu-btn__icon.lu-preloader {
     margin: 0 0 0 0;
 }
 
@@ -304,11 +304,11 @@
 /* End of breadcumbrs styles */
 
 /* Form in tab styles */
-#layers2 .mg-form-in-tab .ui-form-submit {
+#layers2 .mod-form-in-tab .ui-form-submit {
     padding-bottom: 20px;
 }
 
-#layers2 .mg-form-in-tab .mg-tab-form-wrapper {
+#layers2 .mod-form-in-tab .mod-tab-form-wrapper {
     padding-left: 8px;
     margin-right: 8px;
 }
@@ -373,14 +373,14 @@
 /* End of Category Menu Dynamic Content - content */
 
 /* Fixes for TabsWidget widget Form */
-#layers2 .lu-app .lu-widget__body .mg-tabs-form-wrapper {
+#layers2 .lu-app .lu-widget__body .mod-tabs-form-wrapper {
     padding: 16px;
 }
 
 /* End of Fixes for TabsWidget widget Form */
 
 /* FormTabsWidget */
-#layers2 .mg-form-tabs-widget .ui-form-submit {
+#layers2 .mod-form-tabs-widget .ui-form-submit {
     margin-bottom: 16px;
     padding-left: 16px;
 }
@@ -399,24 +399,24 @@
 /* END of ServicePricingWidget */
 
 /* Datatable Filters */
-#layers2 .vueDatatableTable .mg-dt-filters-container .mg-filters-wrapper {
+#layers2 .vueDatatableTable .mod-dt-filters-container .mod-filters-wrapper {
     padding-top: 10px;
     padding-right: 8px;
     padding-left: 8px;
 }
 
-#layers2 .vueDatatableTable .mg-dt-filters-container .mg-filter-search-wrapper a {
+#layers2 .vueDatatableTable .mod-dt-filters-container .mod-filter-search-wrapper a {
     float: right;
 }
 
-#layers2 .vueDatatableTable .mg-dt-filters-container .mg-filter-search-wrapper {
+#layers2 .vueDatatableTable .mod-dt-filters-container .mod-filter-search-wrapper {
     min-height: 36px;
 }
 
 /* end of Datatable Filters */
 
 /* Loaders for selectize */
-#layers2 .mg-selectize-loader {
+#layers2 .mod-selectize-loader {
     position: absolute;
     right: 35px;
 }
@@ -441,7 +441,7 @@
     border: 0;
 }
 
-#layers2 #mgModalContainer > div.lu-modal__top.lu-top {
+#layers2 #modModalContainer > div.lu-modal__top.lu-top {
     height: auto;
 }
 
@@ -487,36 +487,36 @@
     flex-direction: column;
 }
 
-#layers2 .lu-app--media-manager .lu-app-main__body .modulesgarden-app-main-container {
+#layers2 .lu-app--media-manager .lu-app-main__body .module-app-main-container {
     height: 100%;
 }
 
-#layers2 .lu-app-main__body .modulesgarden-app-main-container,
-#layers2 .lu-app-main .modulesgarden-app-main-container {
+#layers2 .lu-app-main__body .module-app-main-container,
+#layers2 .lu-app-main .module-app-main-container {
     text-align: left;
 }
 
-.product-details-tab-container #layers2 .lu-app-main__body .modulesgarden-app-main-container .h4,
-.product-details-tab-container #layers2 .lu-app-main .modulesgarden-app-main-container .h4 {
+.product-details-tab-container #layers2 .lu-app-main__body .module-app-main-container .h4,
+.product-details-tab-container #layers2 .lu-app-main .module-app-main-container .h4 {
     text-align: center;
 }
 
-#layers2 .lu-app--media-manager .lu-app-main__body .modulesgarden-app-main-container > .lu-widget {
+#layers2 .lu-app--media-manager .lu-app-main__body .module-app-main-container > .lu-widget {
     height: 100%;
 }
 
-#layers2 .lu-app-main__body .modulesgarden-app-main-container .lu-top__toolbar {
+#layers2 .lu-app-main__body .module-app-main-container .lu-top__toolbar {
     flex-wrap: wrap;
 }
 
 @media (max-width: 1200px) {
-    #layers2 .lu-app-main__body .modulesgarden-app-main-container .lu-top__toolbar .lu-btn {
+    #layers2 .lu-app-main__body .module-app-main-container .lu-top__toolbar .lu-btn {
         margin: 0 4px 4px 0;
     }
 }
 
 @media (max-width: 480px) {
-    #layers2 .lu-app-main__body .modulesgarden-app-main-container .lu-top__toolbar .lu-btn {
+    #layers2 .lu-app-main__body .module-app-main-container .lu-top__toolbar .lu-btn {
         /*margin: 8px 0 0;*/
         /*flex: 100%;*/
     }
@@ -777,7 +777,7 @@ div.lu-selectize-control.multi.plugin-directionDetector.plugin-remove_button.plu
     display: inline-block;
 }
 
-#layers2 .modulesgarden-connection-button {
+#layers2 .module-connection-button {
     width: 34%;
     display: block;
     padding: 30px;
@@ -1723,11 +1723,11 @@ html:has(#layers2-body) {
     }
 }
 
-#layers2[data-modulesgarden-module-type="integration"] .lu-app {
+#layers2[data-module-module-type="integration"] .lu-app {
     background: transparent;
 }
 
-#layers2[data-modulesgarden-module-type="integration"] .lu-app .lu-app-main__body {
+#layers2[data-module-module-type="integration"] .lu-app .lu-app-main__body {
     padding: 14px 0 14px;
 }
 

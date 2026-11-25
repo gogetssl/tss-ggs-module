@@ -1,11 +1,11 @@
 <?php
 
-namespace ModulesGarden\__MODULE__\App\Cron;
+namespace __MODULE__\App\Cron;
 
-use ModulesGarden\__MODULE__\App\Kernel\Lang;
-use ModulesGarden\__MODULE__\App\Kernel\Layout;
-use ModulesGarden\__MODULE__\App\Kernel\Request;
-use ModulesGarden\__MODULE__\App\Kernel\Response;
+use __MODULE__\App\Kernel\Lang;
+use __MODULE__\App\Kernel\Layout;
+use __MODULE__\App\Kernel\Request;
+use __MODULE__\App\Kernel\Response;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -15,7 +15,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  * the full page in the layout and the htmx answer of its index action. Read-only. Exit code 1 when a page fails
  * or its HTML is not what the layout / a fragment must be.
  */
-class SmokeKernelPages extends \ModulesGarden\__MODULE__\App\Kernel\Console\Command
+class SmokeKernelPages extends \__MODULE__\App\Kernel\Console\Command
 {
     protected $name = 'SmokeKernelPages';
     protected $description = 'Smoke test of the pages on the own kernel';
@@ -27,12 +27,12 @@ class SmokeKernelPages extends \ModulesGarden\__MODULE__\App\Kernel\Console\Comm
         foreach(glob(dirname(__DIR__) . '/Pages/Admin/*.php') as $file)
         {
             $name  = basename($file, '.php');
-            $class = 'ModulesGarden\\__MODULE__\\App\\Pages\\Admin\\' . $name;
+            $class = '__MODULE__\\App\\Pages\\Admin\\' . $name;
             try
             {
                 foreach([false, true] as $htmx)
                 {
-                    $request  = new Request(['mg-page' => lcfirst($name)], [], ['REQUEST_METHOD' => 'GET'] + ($htmx ? ['HTTP_HX_REQUEST' => 'true'] : []));
+                    $request  = new Request(['mod-page' => lcfirst($name)], [], ['REQUEST_METHOD' => 'GET'] + ($htmx ? ['HTTP_HX_REQUEST' => 'true'] : []));
                     $page     = new $class($request, new Lang('admin', 'english'));
                     $response = $page->index();
                     if(!$response instanceof Response || trim($response->body()) === '')
@@ -66,7 +66,7 @@ class SmokeKernelPages extends \ModulesGarden\__MODULE__\App\Kernel\Console\Comm
                     $parts = constant($class . '::' . $const);
                     foreach(array_keys($parts) === range(0, count($parts) - 1) ? $parts : array_keys($parts) as $part)
                     {
-                        $request  = new Request(['mg-page' => lcfirst($name), 'mg-action' => $action, 'name' => $part], [], ['REQUEST_METHOD' => 'GET', 'HTTP_HX_REQUEST' => 'true']);
+                        $request  = new Request(['mod-page' => lcfirst($name), 'mod-action' => $action, 'name' => $part], [], ['REQUEST_METHOD' => 'GET', 'HTTP_HX_REQUEST' => 'true']);
                         $response = (new $class($request, new Lang('admin', 'english')))->$action();
                         if(!$response instanceof Response || trim($response->body()) === '')
                         {
@@ -79,9 +79,9 @@ class SmokeKernelPages extends \ModulesGarden\__MODULE__\App\Kernel\Console\Comm
                     }
                 }
                 // every page of the setup wizard (a finalized wizard answers with a redirect to the dashboard)
-                foreach(defined($class . '::WIZARD') ? \ModulesGarden\__MODULE__\App\Libs\Setup\Wizard::PAGES : [] as $step)
+                foreach(defined($class . '::WIZARD') ? \__MODULE__\App\Libs\Setup\Wizard::PAGES : [] as $step)
                 {
-                    $request  = new Request(['mg-page' => lcfirst($name), 'mg-action' => 'step' . $step], [], ['REQUEST_METHOD' => 'GET']);
+                    $request  = new Request(['mod-page' => lcfirst($name), 'mod-action' => 'step' . $step], [], ['REQUEST_METHOD' => 'GET']);
                     $response = (new $class($request, new Lang('admin', 'english')))->{'step' . $step}();
                     if(!$response instanceof Response || trim($response->body()) === '')
                     {
@@ -91,7 +91,7 @@ class SmokeKernelPages extends \ModulesGarden\__MODULE__\App\Kernel\Console\Comm
                 // every screen of a page with screens (Settings)
                 foreach(defined($class . '::SCREENS') ? array_keys(constant($class . '::SCREENS')) : [] as $screen)
                 {
-                    $request  = new Request(['mg-page' => lcfirst($name), 'settings-page' => $screen], [], ['REQUEST_METHOD' => 'GET']);
+                    $request  = new Request(['mod-page' => lcfirst($name), 'settings-page' => $screen], [], ['REQUEST_METHOD' => 'GET']);
                     $response = (new $class($request, new Lang('admin', 'english')))->index();
                     if(!$response instanceof Response || strpos($response->body(), 'lu-widget__body') === false)
                     {

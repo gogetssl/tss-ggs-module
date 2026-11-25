@@ -2,7 +2,7 @@
 
 namespace Tests\Unit\Support;
 
-use ModulesGarden\TSSGGSModule\App\Libs\Support\Edition;
+use TSSGGSModule\App\Libs\Support\Edition;
 use PHPUnit\Framework\TestCase;
 
 /**

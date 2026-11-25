@@ -1,6 +1,6 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Models;
+namespace TSSGGSModule\App\Models;
 
 
 class CronCheck extends Model

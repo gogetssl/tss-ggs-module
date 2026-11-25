@@ -1,6 +1,6 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\app\controllers\server\admin;
+namespace TSSGGSModule\app\controllers\server\admin;
 
 
 class configuration {

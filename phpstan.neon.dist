@@ -32,10 +32,10 @@ parameters:
     ignoreErrors:
         # Eloquent models and the Capsule facade answer static calls through __callStatic (where, insert, select ...);
         # plain PHPStan can not see them (Larastan would, but needs Composer)
-        - '#^Call to an undefined static method (ModulesGarden\\[A-Za-z\\]+\\[Mm]odels\\[A-Za-z\\]+|WHMCS\\Database\\Capsule|WHMCS\\(Service|User|Mail)\\[A-Za-z]+)::[a-zA-Z]+\(\)\.$#'
-        - '#^Access to an undefined property (ModulesGarden\\[A-Za-z\\]+\\[Mm]odels\\[A-Za-z\\]+|Illuminate\\Database\\Eloquent\\Builder\|Illuminate\\Database\\Eloquent\\Model)::\$[a-zA-Z_]+\.$#'
+        - '#^Call to an undefined static method (TSSGGSModule\\[A-Za-z\\]+\\[Mm]odels\\[A-Za-z\\]+|WHMCS\\Database\\Capsule|WHMCS\\(Service|User|Mail)\\[A-Za-z]+)::[a-zA-Z]+\(\)\.$#'
+        - '#^Access to an undefined property (TSSGGSModule\\[A-Za-z\\]+\\[Mm]odels\\[A-Za-z\\]+|Illuminate\\Database\\Eloquent\\Builder\|Illuminate\\Database\\Eloquent\\Model)::\$[a-zA-Z_]+\.$#'
         # the framework's facades: static calls forwarded to an instance
-        - '#^Static call to instance method ModulesGarden\\TSSGGSModule\\(Core\\Support\\Facades|Packages\\[A-Za-z]+\\Support\\Facades)\\[A-Za-z]+::[a-zA-Z]+\(\)\.$#'
+        - '#^Static call to instance method TSSGGSModule\\(Core\\Support\\Facades|Packages\\[A-Za-z]+\\Support\\Facades)\\[A-Za-z]+::[a-zA-Z]+\(\)\.$#'
         # WHMCS's own function files, loaded at runtime from the WHMCS root (ROOTDIR/includes/...)
         - '#^Path in require_once\(\) "[^"]*/includes/[a-z]+\.php" is not a file or it does not exist\.$#'
     reportUnmatchedIgnoredErrors: false

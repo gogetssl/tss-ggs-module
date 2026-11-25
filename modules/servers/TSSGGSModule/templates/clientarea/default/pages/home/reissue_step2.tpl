@@ -107,7 +107,7 @@
 {/literal}
 <script>
     $(document).ready(function (){
-        let clone_element = $('.mg-module').clone();
+        let clone_element = $('.mod-module').clone();
         $('.product-details').html(clone_element);
 
 

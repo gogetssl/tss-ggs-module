@@ -1,6 +1,6 @@
 <?php
 
-namespace ModulesGarden\Servers\TSSGGSModule\app\hooks;
+namespace TSSGGSModule\Server\app\hooks;
 
 
 /**
@@ -14,8 +14,8 @@ class UpgradeInvoiceCreation
     {
         try
         {
-            \ModulesGarden\TSSGGSModule\App\Libs\Billing\UpgradePricing::cleanOneTimePeriods(isset($vars['invoiceid']) ? (int)$vars['invoiceid'] : 0);
-            \ModulesGarden\TSSGGSModule\App\Libs\Billing\UpgradePricing::fixInvoice(isset($vars['invoiceid']) ? (int)$vars['invoiceid'] : 0);
+            \TSSGGSModule\App\Libs\Billing\UpgradePricing::cleanOneTimePeriods(isset($vars['invoiceid']) ? (int)$vars['invoiceid'] : 0);
+            \TSSGGSModule\App\Libs\Billing\UpgradePricing::fixInvoice(isset($vars['invoiceid']) ? (int)$vars['invoiceid'] : 0);
         }
         catch(\Throwable $e)
         {

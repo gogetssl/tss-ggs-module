@@ -1,6 +1,6 @@
 <?php
 
-namespace ModulesGarden\Servers\TSSGGSModule\app\hooks;
+namespace TSSGGSModule\Server\app\hooks;
 
 
 /**
@@ -12,7 +12,7 @@ class UpgradeInvoiceCreated
     {
         try
         {
-            \ModulesGarden\TSSGGSModule\App\Libs\Billing\UpgradePricing::syncOrder(isset($vars['invoiceid']) ? (int)$vars['invoiceid'] : 0);
+            \TSSGGSModule\App\Libs\Billing\UpgradePricing::syncOrder(isset($vars['invoiceid']) ? (int)$vars['invoiceid'] : 0);
         }
         catch(\Throwable $e)
         {

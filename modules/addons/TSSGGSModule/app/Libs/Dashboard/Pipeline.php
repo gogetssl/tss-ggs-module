@@ -1,11 +1,11 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\Dashboard;
+namespace TSSGGSModule\App\Libs\Dashboard;
 
-use ModulesGarden\TSSGGSModule\App\Libs\Support\Edition;
+use TSSGGSModule\App\Libs\Support\Edition;
 
-use ModulesGarden\TSSGGSModule\App\Models\AcmeSubscription;
-use ModulesGarden\TSSGGSModule\App\Models\AisSubscription;
+use TSSGGSModule\App\Models\AcmeSubscription;
+use TSSGGSModule\App\Models\AisSubscription;
 use WHMCS\Database\Capsule;
 
 /**
@@ -39,7 +39,7 @@ class Pipeline
                 ->leftJoin($requests, function($join) use ($requests) {
                     // SSL orders keep their state in "certificate", every other product type in its own row
                     $join->on($requests . '.serviceid', '=', 'tblhosting.id')
-                        ->whereIn($requests . '.name', array_merge(['certificate'], \ModulesGarden\TSSGGSModule\App\Libs\ProductLines\GatewayOrderService::requestNames()));
+                        ->whereIn($requests . '.name', array_merge(['certificate'], \TSSGGSModule\App\Libs\ProductLines\GatewayOrderService::requestNames()));
                 })
                 ->where('tblproducts.servertype', 'TSSGGSModule')
                 ->whereNotIn('tblhosting.id', $subscriptions ?: [0])

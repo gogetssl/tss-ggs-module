@@ -1,10 +1,10 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\Support;
+namespace TSSGGSModule\App\Libs\Support;
 
-use ModulesGarden\TSSGGSModule\App\Models\CronCheck;
-use ModulesGarden\TSSGGSModule\App\Libs\Dashboard\CronStatus;
-use ModulesGarden\TSSGGSModule\App\Kernel\Kernel;
+use TSSGGSModule\App\Models\CronCheck;
+use TSSGGSModule\App\Libs\Dashboard\CronStatus;
+use TSSGGSModule\App\Kernel\Kernel;
 
 /**
  * Resellers without shell access (or without the module's own cron entry) still get the module's jobs: WHMCS's system

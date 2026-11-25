@@ -1,9 +1,9 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\Certificates\Concerns;
+namespace TSSGGSModule\App\Libs\Certificates\Concerns;
 
-use ModulesGarden\TSSGGSModule\App\Libs\Certificates\CertificateService;
-use ModulesGarden\TSSGGSModule\App\Models\Request;
+use TSSGGSModule\App\Libs\Certificates\CertificateService;
+use TSSGGSModule\App\Models\Request;
 
 /**
  * Domain validation of a pending order: missing validation data, approver e-mail, recheck, method change.
@@ -20,7 +20,7 @@ trait CertificateValidation
         $status = isset($stored['orderData']['order']['status']) ? (string)$stored['orderData']['order']['status'] : '';
         // only an order the vendor is processing has validation details to wait for: any other status (issued,
         // ended, or waiting at the vendor side: new_order, unpaid, failed) is not read again from the client page
-        if(!in_array(\ModulesGarden\TSSGGSModule\App\Libs\Certificates\CertificateSyncHelpers::normalizeStatus($status), ['', 'pending', 'processing'], true))
+        if(!in_array(\TSSGGSModule\App\Libs\Certificates\CertificateSyncHelpers::normalizeStatus($status), ['', 'pending', 'processing'], true))
         {
             return false;
         }

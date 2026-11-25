@@ -1,6 +1,6 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\Support;
+namespace TSSGGSModule\App\Libs\Support;
 
 /**
  * Distribution edition (GoGetSSL Module / TheSSLStore Plugin) - see app/Config/edition.php.

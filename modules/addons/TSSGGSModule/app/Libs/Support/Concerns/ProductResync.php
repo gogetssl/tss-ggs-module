@@ -1,22 +1,22 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\Support\Concerns;
+namespace TSSGGSModule\App\Libs\Support\Concerns;
 
-use ModulesGarden\TSSGGSModule\App\Libs\Billing\FinancePolicy;
-use ModulesGarden\TSSGGSModule\App\Libs\Products\CatalogueSync;
-use ModulesGarden\TSSGGSModule\App\Libs\Products\ProductCatalog;
-use ModulesGarden\TSSGGSModule\App\Libs\Products\ProductSettings;
-use ModulesGarden\TSSGGSModule\App\Libs\Subscriptions\SubscriptionBilling;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\Helpers;
-use ModulesGarden\TSSGGSModule\App\Models\RemoteProduct;
-use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
-use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\ProductRepository;
-use ModulesGarden\TSSGGSModule\App\Models\Whmcs\Currency;
-use ModulesGarden\TSSGGSModule\App\Models\Whmcs\Pricing;
-use ModulesGarden\TSSGGSModule\App\Libs\Products\ConfigOptions\Quantity;
-use ModulesGarden\TSSGGSModule\App\Libs\Products\ConfigOptions\SubOption;
-use ModulesGarden\TSSGGSModule\App\Libs\Products\ConfigOptions\ConfigurableOptions;
-use ModulesGarden\TSSGGSModule\App\Libs\Products\ConfigOptions\ConfigurableOptionsGroup;
+use TSSGGSModule\App\Libs\Billing\FinancePolicy;
+use TSSGGSModule\App\Libs\Products\CatalogueSync;
+use TSSGGSModule\App\Libs\Products\ProductCatalog;
+use TSSGGSModule\App\Libs\Products\ProductSettings;
+use TSSGGSModule\App\Libs\Subscriptions\SubscriptionBilling;
+use TSSGGSModule\App\Libs\Support\Helpers;
+use TSSGGSModule\App\Models\RemoteProduct;
+use TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
+use TSSGGSModule\App\Repositories\Whmcs\ProductRepository;
+use TSSGGSModule\App\Models\Whmcs\Currency;
+use TSSGGSModule\App\Models\Whmcs\Pricing;
+use TSSGGSModule\App\Libs\Products\ConfigOptions\Quantity;
+use TSSGGSModule\App\Libs\Products\ConfigOptions\SubOption;
+use TSSGGSModule\App\Libs\Products\ConfigOptions\ConfigurableOptions;
+use TSSGGSModule\App\Libs\Products\ConfigOptions\ConfigurableOptionsGroup;
 
 /**
  * Re-reads the catalogue of a vendor and brings the configurable options of the products up to date.

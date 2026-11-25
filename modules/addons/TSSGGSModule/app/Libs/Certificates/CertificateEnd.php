@@ -1,8 +1,8 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\Certificates;
+namespace TSSGGSModule\App\Libs\Certificates;
 
-use ModulesGarden\TSSGGSModule\App\Helpers\EmailTemplates;
+use TSSGGSModule\App\Helpers\EmailTemplates;
 use WHMCS\Database\Capsule;
 
 /**

@@ -1,8 +1,8 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Models;
+namespace TSSGGSModule\App\Models;
 
-use ModulesGarden\TSSGGSModule\App\Libs\Support\SecretValue;
+use TSSGGSModule\App\Libs\Support\SecretValue;
 
 class AcmeSubscription extends Model
 {

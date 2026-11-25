@@ -1,6 +1,6 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Models\Whmcs;
+namespace TSSGGSModule\App\Models\Whmcs;
 
 class ProductConfigLink extends \WHMCS\Product\ConfigOptionGroupLinks
 {

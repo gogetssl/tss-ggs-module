@@ -1,9 +1,9 @@
 <?php
 
-namespace ModulesGarden\Servers\TSSGGSModule\core\process;
+namespace TSSGGSModule\Server\core\process;
 
-use ModulesGarden\Servers\TSSGGSModule\core\Lang;
-use ModulesGarden\Servers\TSSGGSModule\core\Smarty;
+use TSSGGSModule\Server\core\Lang;
+use TSSGGSModule\Server\core\Smarty;
 
 abstract class AbstractMainDriver{
 
@@ -58,7 +58,7 @@ abstract class AbstractMainDriver{
                 self::$_instance->_debug = true;
             }
 
-            //main\mgLibs\MySQL\Query::useCurrentConnection();
+            //main\modLibs\MySQL\Query::useCurrentConnection();
             Lang::getInstance(self::$_instance->_mainDIR.DS.'langs');
         }
 

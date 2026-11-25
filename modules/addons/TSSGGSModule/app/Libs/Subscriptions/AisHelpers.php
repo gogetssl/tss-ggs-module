@@ -1,12 +1,12 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\Subscriptions;
+namespace TSSGGSModule\App\Libs\Subscriptions;
 
-use ModulesGarden\Servers\TSSGGSModule\app\models\whmcs\SSL;
-use ModulesGarden\TSSGGSModule\App\Models\AisSubscription;
-use ModulesGarden\TSSGGSModule\App\Models\RemoteProduct;
-use ModulesGarden\TSSGGSModule\App\Models\Whmcs\Product;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\Helpers;
+use TSSGGSModule\Server\app\models\whmcs\SSL;
+use TSSGGSModule\App\Models\AisSubscription;
+use TSSGGSModule\App\Models\RemoteProduct;
+use TSSGGSModule\App\Models\Whmcs\Product;
+use TSSGGSModule\App\Libs\Support\Helpers;
 
 class AisHelpers
 {

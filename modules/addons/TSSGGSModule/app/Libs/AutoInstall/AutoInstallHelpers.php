@@ -1,10 +1,10 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\AutoInstall;
+namespace TSSGGSModule\App\Libs\AutoInstall;
 
-use ModulesGarden\TSSGGSModule\App\Models\Request;
-use ModulesGarden\TSSGGSModule\App\Libs\Logs\Logger;
-use ModulesGarden\TSSGGSModule\App\Libs\Certificates\CertificateService;
+use TSSGGSModule\App\Models\Request;
+use TSSGGSModule\App\Libs\Logs\Logger;
+use TSSGGSModule\App\Libs\Certificates\CertificateService;
 
 /**
  * SSL AutoInstall (via cPanel).

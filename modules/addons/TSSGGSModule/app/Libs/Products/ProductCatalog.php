@@ -1,21 +1,21 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\Products;
+namespace TSSGGSModule\App\Libs\Products;
 
 
 use WHMCS\Database\Capsule;
-use ModulesGarden\TSSGGSModule\App\Libs\Gateway\CrossVendor;
-use ModulesGarden\TSSGGSModule\App\Libs\Certificates\CertificateService;
-use ModulesGarden\TSSGGSModule\App\Libs\Certificates\MainDomain;
-use ModulesGarden\TSSGGSModule\App\Libs\Billing\PricingService;
-use ModulesGarden\TSSGGSModule\App\Libs\ProductLines\CodeGuardService;
-use ModulesGarden\TSSGGSModule\App\Libs\ProductLines\CodeSigningService;
-use ModulesGarden\TSSGGSModule\App\Libs\ProductLines\DocumentSigningService;
-use ModulesGarden\TSSGGSModule\App\Libs\ProductLines\LeiService;
-use ModulesGarden\TSSGGSModule\App\Libs\ProductLines\PciService;
-use ModulesGarden\TSSGGSModule\App\Libs\ProductLines\SmimeService;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\Edition;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\GeneralSettings;
+use TSSGGSModule\App\Libs\Gateway\CrossVendor;
+use TSSGGSModule\App\Libs\Certificates\CertificateService;
+use TSSGGSModule\App\Libs\Certificates\MainDomain;
+use TSSGGSModule\App\Libs\Billing\PricingService;
+use TSSGGSModule\App\Libs\ProductLines\CodeGuardService;
+use TSSGGSModule\App\Libs\ProductLines\CodeSigningService;
+use TSSGGSModule\App\Libs\ProductLines\DocumentSigningService;
+use TSSGGSModule\App\Libs\ProductLines\LeiService;
+use TSSGGSModule\App\Libs\ProductLines\PciService;
+use TSSGGSModule\App\Libs\ProductLines\SmimeService;
+use TSSGGSModule\App\Libs\Support\Edition;
+use TSSGGSModule\App\Libs\Support\GeneralSettings;
 
 /**
  * Lifecycle of the imported products: status badges, hide / show, retire / un-retire,
@@ -153,7 +153,7 @@ class ProductCatalog
         {
             return true;
         }
-        $remote = \ModulesGarden\TSSGGSModule\App\Models\RemoteProduct::where('remoteId', $product->configoption2)->first();
+        $remote = \TSSGGSModule\App\Models\RemoteProduct::where('remoteId', $product->configoption2)->first();
 
         return $remote && is_array($remote->rawData) && !empty($remote->rawData['missing_since']);
     }
@@ -176,7 +176,7 @@ class ProductCatalog
         CertificateService::event((int)$serviceId, 'warning', $text);
         try
         {
-            \ModulesGarden\TSSGGSModule\App\Helpers\EmailTemplates::sendEmail(\ModulesGarden\TSSGGSModule\App\Helpers\EmailTemplates::DISCONTINUED_TEMPLATE, (int)$serviceId);
+            \TSSGGSModule\App\Helpers\EmailTemplates::sendEmail(\TSSGGSModule\App\Helpers\EmailTemplates::DISCONTINUED_TEMPLATE, (int)$serviceId);
         }
         catch(\Throwable $e)
         {

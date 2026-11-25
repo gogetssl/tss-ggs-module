@@ -1,8 +1,8 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\Certificates;
+namespace TSSGGSModule\App\Libs\Certificates;
 
-use ModulesGarden\TSSGGSModule\App\Models\Request;
+use TSSGGSModule\App\Models\Request;
 
 /**
  * CAA DNS records (RFC 8659): a domain owner lists the certificate authorities that may issue for the domain. A record

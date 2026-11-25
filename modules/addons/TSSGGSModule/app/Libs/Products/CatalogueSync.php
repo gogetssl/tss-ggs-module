@@ -1,12 +1,12 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\Products;
+namespace TSSGGSModule\App\Libs\Products;
 
-use ModulesGarden\TSSGGSModule\App\Models\RemoteProduct;
+use TSSGGSModule\App\Models\RemoteProduct;
 use WHMCS\Database\Capsule;
-use ModulesGarden\TSSGGSModule\App\Libs\Billing\FinancePolicy;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\Edition;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\GeneralSettings;
+use TSSGGSModule\App\Libs\Billing\FinancePolicy;
+use TSSGGSModule\App\Libs\Support\Edition;
+use TSSGGSModule\App\Libs\Support\GeneralSettings;
 
 /**
  * Catalogue changes (M-16): what changed in the provider's product list since the last sync, what the module did
@@ -157,7 +157,7 @@ class CatalogueSync
         catch(\Throwable $e)
         {
             // the sync itself must never fail because of the report
-            \ModulesGarden\TSSGGSModule\App\Libs\Logs\Logger::error('Catalogue changes: ' . $e->getMessage());
+            \TSSGGSModule\App\Libs\Logs\Logger::error('Catalogue changes: ' . $e->getMessage());
         }
     }
 
@@ -202,7 +202,7 @@ class CatalogueSync
         }
         catch(\Throwable $e)
         {
-            \ModulesGarden\TSSGGSModule\App\Libs\Logs\Logger::error('Catalogue changes: ' . $e->getMessage());
+            \TSSGGSModule\App\Libs\Logs\Logger::error('Catalogue changes: ' . $e->getMessage());
         }
     }
 
@@ -490,7 +490,7 @@ class CatalogueSync
 
     protected static function import(RemoteProduct $remote, $groupId)
     {
-        $finance  = (array)((new \ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository())->getModuleConfiguration()['financeSettings'] ?? []);
+        $finance  = (array)((new \TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository())->getModuleConfiguration()['financeSettings'] ?? []);
         ProductImport::run([(int)$remote->id], (int)$groupId, '', (float)(FinancePolicy::refreshRate() ?: 1), (float)($finance['profitMargin'] ?? 0));
 
         return (int)($remote->getWhmcsProduct()->id ?? 0);

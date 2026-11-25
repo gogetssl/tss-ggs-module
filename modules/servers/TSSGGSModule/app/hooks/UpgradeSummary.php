@@ -1,6 +1,6 @@
 <?php
 
-namespace ModulesGarden\Servers\TSSGGSModule\app\hooks;
+namespace TSSGGSModule\Server\app\hooks;
 
 
 /**
@@ -17,7 +17,7 @@ class UpgradeSummary
         {
             $step = isset($_POST['step']) ? (int)$_POST['step'] : 0;
 
-            return $step === 2 ? \ModulesGarden\TSSGGSModule\App\Libs\Billing\UpgradePricing::summary($vars) : [];
+            return $step === 2 ? \TSSGGSModule\App\Libs\Billing\UpgradePricing::summary($vars) : [];
         }
         catch(\Throwable $e)
         {

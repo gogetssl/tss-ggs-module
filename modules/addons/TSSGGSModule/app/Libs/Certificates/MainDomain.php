@@ -1,13 +1,13 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\Certificates;
+namespace TSSGGSModule\App\Libs\Certificates;
 
 use WHMCS\Database\Capsule;
-use ModulesGarden\TSSGGSModule\App\Libs\Billing\FinancePolicy;
-use ModulesGarden\TSSGGSModule\App\Libs\Billing\PricingService;
-use ModulesGarden\TSSGGSModule\App\Libs\Billing\SanUpgrade;
-use ModulesGarden\TSSGGSModule\App\Libs\Products\ProductCatalog;
-use ModulesGarden\TSSGGSModule\App\Libs\ProductLines\GatewayOrderService;
+use TSSGGSModule\App\Libs\Billing\FinancePolicy;
+use TSSGGSModule\App\Libs\Billing\PricingService;
+use TSSGGSModule\App\Libs\Billing\SanUpgrade;
+use TSSGGSModule\App\Libs\Products\ProductCatalog;
+use TSSGGSModule\App\Libs\ProductLines\GatewayOrderService;
 
 /**
  * The main domain (common name) of a certificate: a normal domain or a wildcard (*.example.com).
@@ -138,7 +138,7 @@ class MainDomain
             $name   = trim((string)($stored['orderData']['orderData']['common_name']['name'] ?? ''));
             if($name === '')
             {
-                $request = \ModulesGarden\TSSGGSModule\App\Models\Request::currentOrder($serviceId);
+                $request = \TSSGGSModule\App\Models\Request::currentOrder($serviceId);
                 $sent    = $request && $request->request ? (json_decode(\decrypt($request->request), true) ?: []) : [];
                 $name    = trim((string)($sent['common_name']['name'] ?? ''));
             }
@@ -315,9 +315,9 @@ class MainDomain
         $text = '';
         try
         {
-            if(class_exists('\ModulesGarden\Servers\TSSGGSModule\core\Lang'))
+            if(class_exists('\TSSGGSModule\Server\core\Lang'))
             {
-                $text = html_entity_decode((string)\ModulesGarden\Servers\TSSGGSModule\core\Lang::absoluteT('mainDomain', $key), ENT_QUOTES, 'UTF-8');
+                $text = html_entity_decode((string)\TSSGGSModule\Server\core\Lang::absoluteT('mainDomain', $key), ENT_QUOTES, 'UTF-8');
             }
         }
         catch(\Throwable $e)

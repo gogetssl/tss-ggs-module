@@ -1,10 +1,10 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Cron;
+namespace TSSGGSModule\App\Cron;
 
-use ModulesGarden\TSSGGSModule\App\Libs\Dashboard\CronStatus;
-use ModulesGarden\TSSGGSModule\App\Kernel\Console\Command;
-use ModulesGarden\TSSGGSModule\App\Kernel\Kernel;
+use TSSGGSModule\App\Libs\Dashboard\CronStatus;
+use TSSGGSModule\App\Kernel\Console\Command;
+use TSSGGSModule\App\Kernel\Kernel;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -32,7 +32,7 @@ class RunAll extends Command
         // a new module release: looked for once a day (the dashboard shows it)
         try
         {
-            \ModulesGarden\TSSGGSModule\App\Libs\Update\Release::check();
+            \TSSGGSModule\App\Libs\Update\Release::check();
         }
         catch(\Throwable $e)
         {
@@ -41,7 +41,7 @@ class RunAll extends Command
         // the reseller balance: read once an hour, the administrators are warned when it is low
         try
         {
-            \ModulesGarden\TSSGGSModule\App\Libs\Billing\BalanceMonitor::run();
+            \TSSGGSModule\App\Libs\Billing\BalanceMonitor::run();
         }
         catch(\Throwable $e)
         {

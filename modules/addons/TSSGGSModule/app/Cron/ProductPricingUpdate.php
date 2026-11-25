@@ -1,29 +1,29 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Cron;
+namespace TSSGGSModule\App\Cron;
 
-use ModulesGarden\TSSGGSModule\App\Libs\Support\Helpers;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\GeneralSettings;
-use ModulesGarden\TSSGGSModule\App\Libs\Billing\FinancePolicy;
-use ModulesGarden\TSSGGSModule\App\Libs\Billing\RenewalPrices;
-use ModulesGarden\TSSGGSModule\App\Libs\Billing\PricingService;
-use ModulesGarden\TSSGGSModule\App\Libs\Products\ProductSettings;
-use ModulesGarden\TSSGGSModule\App\Models\CronCheck;
-use ModulesGarden\TSSGGSModule\App\Models\RemoteProduct;
-use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
-use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\ProductRepository;
-use ModulesGarden\TSSGGSModule\App\Kernel\Console\Command;
-use ModulesGarden\TSSGGSModule\App\Models\Whmcs\Currency;
-use ModulesGarden\TSSGGSModule\App\Models\Whmcs\Pricing;
-use ModulesGarden\TSSGGSModule\App\Libs\Logs\Logger;
-use ModulesGarden\TSSGGSModule\App\Libs\Products\ConfigOptions\ConfigurableOptions;
+use TSSGGSModule\App\Libs\Support\Helpers;
+use TSSGGSModule\App\Libs\Support\GeneralSettings;
+use TSSGGSModule\App\Libs\Billing\FinancePolicy;
+use TSSGGSModule\App\Libs\Billing\RenewalPrices;
+use TSSGGSModule\App\Libs\Billing\PricingService;
+use TSSGGSModule\App\Libs\Products\ProductSettings;
+use TSSGGSModule\App\Models\CronCheck;
+use TSSGGSModule\App\Models\RemoteProduct;
+use TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
+use TSSGGSModule\App\Repositories\Whmcs\ProductRepository;
+use TSSGGSModule\App\Kernel\Console\Command;
+use TSSGGSModule\App\Models\Whmcs\Currency;
+use TSSGGSModule\App\Models\Whmcs\Pricing;
+use TSSGGSModule\App\Libs\Logs\Logger;
+use TSSGGSModule\App\Libs\Products\ConfigOptions\ConfigurableOptions;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 /**
  * Class Sample
- * @package ModulesGarden\TSSGGSModule\App\Cron
+ * @package TSSGGSModule\App\Cron
  */
 class ProductPricingUpdate extends Command
 {
@@ -81,7 +81,7 @@ class ProductPricingUpdate extends Command
             Helpers::reSyncProducts();
 
             // catalogue sync mode (M-16): retire / hide discontinued products, show returned ones, import new ones
-            $catalogue = \ModulesGarden\TSSGGSModule\App\Libs\Products\CatalogueSync::apply();
+            $catalogue = \TSSGGSModule\App\Libs\Products\CatalogueSync::apply();
             if(array_sum($catalogue))
             {
                 Logger::info('Catalogue sync: ' . json_encode($catalogue));
@@ -184,9 +184,9 @@ class ProductPricingUpdate extends Command
                 }
 
                 // code signing: token shipping fees of the "Certificate Delivery" option
-                if(strtolower((string)$remoteProduct->category) === \ModulesGarden\TSSGGSModule\App\Libs\ProductLines\CodeSigningService::CATEGORY)
+                if(strtolower((string)$remoteProduct->category) === \TSSGGSModule\App\Libs\ProductLines\CodeSigningService::CATEGORY)
                 {
-                    \ModulesGarden\TSSGGSModule\App\Libs\ProductLines\CodeSigningService::syncDeliveryPrices($whmcsProduct->id, (array)$remoteProductData);
+                    \TSSGGSModule\App\Libs\ProductLines\CodeSigningService::syncDeliveryPrices($whmcsProduct->id, (array)$remoteProductData);
                 }
 
                 $expectedOptionNames = [
@@ -255,22 +255,22 @@ class ProductPricingUpdate extends Command
                 }
 
                 // FLEX products: the wildcard main domain surcharge (created when missing, then priced like a SAN option)
-                if(\ModulesGarden\TSSGGSModule\App\Libs\Certificates\MainDomain::isChoice((array)$remoteProductData, (string)$whmcsProduct->configoption1))
+                if(\TSSGGSModule\App\Libs\Certificates\MainDomain::isChoice((array)$remoteProductData, (string)$whmcsProduct->configoption1))
                 {
-                    \ModulesGarden\TSSGGSModule\App\Libs\Certificates\MainDomain::ensureOption((int)$whmcsProduct->id, (array)$remoteProductData);
+                    \TSSGGSModule\App\Libs\Certificates\MainDomain::ensureOption((int)$whmcsProduct->id, (array)$remoteProductData);
                     $wildcardSub = \WHMCS\Database\Capsule::table('tblproductconfiglinks')
                         ->join('tblproductconfigoptions', 'tblproductconfigoptions.gid', '=', 'tblproductconfiglinks.gid')
                         ->join('tblproductconfigoptionssub', 'tblproductconfigoptionssub.configid', '=', 'tblproductconfigoptions.id')
                         ->where('tblproductconfiglinks.pid', (int)$whmcsProduct->id)
-                        ->where('tblproductconfigoptions.optionname', 'like', \ModulesGarden\TSSGGSModule\App\Libs\Certificates\MainDomain::OPTION . '|%')
-                        ->where('tblproductconfigoptionssub.optionname', 'like', \ModulesGarden\TSSGGSModule\App\Libs\Certificates\MainDomain::WILDCARD . '|%')
+                        ->where('tblproductconfigoptions.optionname', 'like', \TSSGGSModule\App\Libs\Certificates\MainDomain::OPTION . '|%')
+                        ->where('tblproductconfigoptionssub.optionname', 'like', \TSSGGSModule\App\Libs\Certificates\MainDomain::WILDCARD . '|%')
                         ->value('tblproductconfigoptionssub.id');
                     if($wildcardSub)
                     {
                         foreach($remoteProductData['prices'] as $remotePriceData)
                         {
                             $billingPeriod = Helpers::monthsToBillingPeriod($remotePriceData['term']);
-                            $extra         = \ModulesGarden\TSSGGSModule\App\Libs\Certificates\MainDomain::wildcardCost((array)$remoteProductData, (int)$remotePriceData['term']);
+                            $extra         = \TSSGGSModule\App\Libs\Certificates\MainDomain::wildcardCost((array)$remoteProductData, (int)$remotePriceData['term']);
                             if($billingPeriod === false || $extra === null)
                             {
                                 continue;
@@ -311,7 +311,7 @@ class ProductPricingUpdate extends Command
             }
 
             // product addons that sell a certificate product (M-14) keep its prices
-            $addons = \ModulesGarden\TSSGGSModule\App\Libs\Products\ProductAddons::syncAll();
+            $addons = \TSSGGSModule\App\Libs\Products\ProductAddons::syncAll();
             if($addons)
             {
                 Logger::info('Product addon prices updated from their certificate products: ' . $addons);
@@ -325,11 +325,11 @@ class ProductPricingUpdate extends Command
             }
 
             // what changed in the provider's catalogue since the last e-mail, to the administrators (M-16)
-            \ModulesGarden\TSSGGSModule\App\Libs\Products\CatalogueSync::notify();
+            \TSSGGSModule\App\Libs\Products\CatalogueSync::notify();
         }
         catch(\Throwable $exception)
         {
-            Logger::error('ProductPricingUpdate Cron Error: ' . $exception->getMessage(), \ModulesGarden\TSSGGSModule\App\Libs\Support\LogContext::exception($exception));
+            Logger::error('ProductPricingUpdate Cron Error: ' . $exception->getMessage(), \TSSGGSModule\App\Libs\Support\LogContext::exception($exception));
             $errorToDB = $exception->getMessage();
         }
 

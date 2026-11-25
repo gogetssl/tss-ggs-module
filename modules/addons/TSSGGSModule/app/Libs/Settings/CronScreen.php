@@ -1,11 +1,11 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\Settings;
+namespace TSSGGSModule\App\Libs\Settings;
 
-use ModulesGarden\TSSGGSModule\App\Kernel\Kernel;
-use ModulesGarden\TSSGGSModule\App\Kernel\Lang;
-use ModulesGarden\TSSGGSModule\App\Libs\Dashboard\CronStatus;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\CronLauncher;
+use TSSGGSModule\App\Kernel\Kernel;
+use TSSGGSModule\App\Kernel\Lang;
+use TSSGGSModule\App\Libs\Dashboard\CronStatus;
+use TSSGGSModule\App\Libs\Support\CronLauncher;
 
 /**
  * What Settings > CRON shows besides the frequency fields: the live panel (is the cron running, what starts it, the

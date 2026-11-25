@@ -1,4 +1,4 @@
-<div class="mg-wrapper body" data-target=".body" data-spy="scroll" data-twttr-rendered="true" id="MGNextIsWHMCSConfig">
+<div class="mod-wrapper body" data-target=".body" data-spy="scroll" data-twttr-rendered="true" id="MGNextIsWHMCSConfig">
     <!--
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,300,600&subset=all" rel="stylesheet" type="text/css"/>
      
@@ -11,9 +11,9 @@
     <link rel="stylesheet" type="text/css" href="{$assetsURL}/css/jquery.dataTables.css" />
     <link rel="stylesheet" type="text/css" href="{$assetsURL}/css/select2.css" />
     <link rel="stylesheet" type="text/css" href="{$assetsURL}/css/onoffswitch.css" />
-    <link rel="stylesheet" type="text/css" href="{$assetsURL}/css/mg-style.css" rel="stylesheet">  
+    <link rel="stylesheet" type="text/css" href="{$assetsURL}/css/mod-style.css" rel="stylesheet">  
     <script type="text/javascript" src="{$assetsURL}/js/whmcsProdConfSupp.js"></script>
-    <script type="text/javascript" src="{$assetsURL}/js/mgLibs.js"></script>
+    <script type="text/javascript" src="{$assetsURL}/js/modLibs.js"></script>
     <script type="text/javascript" src="{$assetsURL}/js/bootstrap.js"></script>
     <script type="text/javascript" src="{$assetsURL}/js/jquery.dataTables.js"></script>
     <script type="text/javascript" src="{$assetsURL}/js/dataTables.bootstrap.js"></script>

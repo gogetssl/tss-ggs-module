@@ -113,7 +113,7 @@
 
         let clone_element = $('.change-approver-ssl-unified').clone();
         $('.product-details').html(clone_element);
-        $('.mg-module .change-approver-ssl-unified').remove();
+        $('.mod-module .change-approver-ssl-unified').remove();
         $('.product-details-tab-container').hide();
         $('#tabOverview .nav-tabs').hide();
     });

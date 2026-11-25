@@ -1,6 +1,6 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Kernel;
+namespace TSSGGSModule\App\Kernel;
 
 /**
  * The current request: page, action, input, and whether htmx sent it.
@@ -25,12 +25,12 @@ final class Request
 
     public function page(): string
     {
-        return (string)($this->query['mg-page'] ?? 'home');
+        return (string)($this->query['mod-page'] ?? 'home');
     }
 
     public function action(): string
     {
-        return (string)($this->input('mg-action') ?: 'index');
+        return (string)($this->input('mod-action') ?: 'index');
     }
 
     public function isPost(): bool
@@ -60,7 +60,7 @@ final class Request
             return is_array($value) ? array_map($decode, $value) : html_entity_decode((string)$value, ENT_QUOTES | ENT_HTML5, 'UTF-8');
         };
 
-        return $decode(array_diff_key($this->post, array_flip(['token', 'module', 'mg-page', 'mg-action'])));
+        return $decode(array_diff_key($this->post, array_flip(['token', 'module', 'mod-page', 'mod-action'])));
     }
 
     public function string(string $name, string $default = ''): string
@@ -90,6 +90,6 @@ final class Request
     {
         $token = (string)($this->post['token'] ?? $this->server['HTTP_X_CSRF_TOKEN'] ?? '');
 
-        return \ModulesGarden\TSSGGSModule\App\Libs\Support\CsrfToken::valid($token);
+        return \TSSGGSModule\App\Libs\Support\CsrfToken::valid($token);
     }
 }

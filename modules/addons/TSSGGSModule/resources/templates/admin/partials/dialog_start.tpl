@@ -1,5 +1,5 @@
 {*
-    A dialog with a form (the old framework's "modal"). $title and $submit are escaped HTML (from {t}).
+    A dialog with a form. $title and $submit are escaped HTML (from {t}).
     A page's dialog template is:
 
         {include file='admin/partials/dialog_start.tpl' title=... action={url action='save'} target='#tssggs-products'}

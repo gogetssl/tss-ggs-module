@@ -1,10 +1,10 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\Certificates;
+namespace TSSGGSModule\App\Libs\Certificates;
 
-use ModulesGarden\TSSGGSModule\App\Models\Request;
+use TSSGGSModule\App\Models\Request;
 use WHMCS\Database\Capsule;
-use ModulesGarden\TSSGGSModule\App\Libs\Products\ProductAddons;
+use TSSGGSModule\App\Libs\Products\ProductAddons;
 
 /**
  * Certificates sold as WHMCS product addons (M-14), the running side.
@@ -445,9 +445,9 @@ class AddonCertificates
         $text = '';
         try
         {
-            if(class_exists('\ModulesGarden\Servers\TSSGGSModule\core\Lang'))
+            if(class_exists('\TSSGGSModule\Server\core\Lang'))
             {
-                $text = html_entity_decode((string)\ModulesGarden\Servers\TSSGGSModule\core\Lang::absoluteT('addonCertificate', $key), ENT_QUOTES, 'UTF-8');
+                $text = html_entity_decode((string)\TSSGGSModule\Server\core\Lang::absoluteT('addonCertificate', $key), ENT_QUOTES, 'UTF-8');
             }
         }
         catch(\Throwable $e)

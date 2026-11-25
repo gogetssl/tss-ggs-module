@@ -1,8 +1,8 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\Gateway;
+namespace TSSGGSModule\App\Libs\Gateway;
 
-use ModulesGarden\TSSGGSModule\App\Libs\Support\Helpers;
+use TSSGGSModule\App\Libs\Support\Helpers;
 
 /**
  * Connectivity check of the configured APIs (GET /authentication/validate), cached in the admin session for 10 minutes

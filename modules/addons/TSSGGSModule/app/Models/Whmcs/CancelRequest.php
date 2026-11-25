@@ -1,6 +1,6 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Models\Whmcs;
+namespace TSSGGSModule\App\Models\Whmcs;
 
 /**
  * Description of Cancel Request
@@ -17,6 +17,6 @@ class CancelRequest extends \WHMCS\Service\CancellationRequest
 {
     public function service()
     {
-        return $this->belongsTo('ModulesGarden\\TSSGGSModule\\App\\Models\\Whmcs\\Service', "relid");
+        return $this->belongsTo('TSSGGSModule\\App\\Models\\Whmcs\\Service', "relid");
     }
 }

@@ -1,13 +1,13 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Cron;
+namespace TSSGGSModule\App\Cron;
 
-use ModulesGarden\TSSGGSModule\App\Libs\Update\Installer;
-use ModulesGarden\TSSGGSModule\App\Libs\Update\Preflight;
-use ModulesGarden\TSSGGSModule\App\Libs\Update\Release;
-use ModulesGarden\TSSGGSModule\App\Libs\Update\State;
-use ModulesGarden\TSSGGSModule\App\Libs\Update\Workdir;
-use ModulesGarden\TSSGGSModule\App\Kernel\Console\Command;
+use TSSGGSModule\App\Libs\Update\Installer;
+use TSSGGSModule\App\Libs\Update\Preflight;
+use TSSGGSModule\App\Libs\Update\Release;
+use TSSGGSModule\App\Libs\Update\State;
+use TSSGGSModule\App\Libs\Update\Workdir;
+use TSSGGSModule\App\Kernel\Console\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;

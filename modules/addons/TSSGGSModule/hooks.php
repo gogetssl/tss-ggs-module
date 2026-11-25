@@ -18,7 +18,7 @@ if(is_file($moduleUpdateJournal) && is_file(dirname($moduleUpdateJournal) . DIRE
 require_once __DIR__ . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'Kernel' . DIRECTORY_SEPARATOR . 'Boot.php';
 
 // the addon's own hooks: one file per hook point in app/Hooks
-\ModulesGarden\TSSGGSModule\App\Kernel\Hooks::load(__DIR__ . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'Hooks');
+\TSSGGSModule\App\Kernel\Hooks::load(__DIR__ . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'Hooks');
 
 // Client area hooks of the server module (sidebar actions, SSL summary, SAN upgrades)
 $serverHooks = dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . 'servers' . DIRECTORY_SEPARATOR . 'TSSGGSModule' . DIRECTORY_SEPARATOR . 'hooks.php';
@@ -28,4 +28,4 @@ if(file_exists($serverHooks))
 }
 
 // while a migration moves the legacy module's services, that module is paused for them (requests, commands, crons)
-\ModulesGarden\TSSGGSModule\App\Migration\LegacyBlock::register();
+\TSSGGSModule\App\Migration\LegacyBlock::register();

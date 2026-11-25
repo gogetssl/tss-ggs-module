@@ -1,17 +1,17 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\AutoInstall\Concerns;
+namespace TSSGGSModule\App\Libs\AutoInstall\Concerns;
 
-use ModulesGarden\TSSGGSModule\App\Helpers\AutoInstallEmailTemplates;
-use ModulesGarden\TSSGGSModule\App\Libs\AutoInstall\AutoInstallHelpers;
-use ModulesGarden\TSSGGSModule\App\Libs\Billing\SanUpgrade;
-use ModulesGarden\TSSGGSModule\App\Libs\Certificates\FreeName;
-use ModulesGarden\TSSGGSModule\App\Libs\Gateway\SSLTrustCenterApi;
-use ModulesGarden\TSSGGSModule\App\Models\Request;
+use TSSGGSModule\App\Helpers\AutoInstallEmailTemplates;
+use TSSGGSModule\App\Libs\AutoInstall\AutoInstallHelpers;
+use TSSGGSModule\App\Libs\Billing\SanUpgrade;
+use TSSGGSModule\App\Libs\Certificates\FreeName;
+use TSSGGSModule\App\Libs\Gateway\SSLTrustCenterApi;
+use TSSGGSModule\App\Models\Request;
 use WHMCS\Database\Capsule;
-use ModulesGarden\TSSGGSModule\App\Libs\AutoInstall\AutoInstallQueue;
-use ModulesGarden\TSSGGSModule\App\Libs\AutoInstall\AutoInstallReport;
-use ModulesGarden\TSSGGSModule\App\Libs\AutoInstall\Cpanel;
+use TSSGGSModule\App\Libs\AutoInstall\AutoInstallQueue;
+use TSSGGSModule\App\Libs\AutoInstall\AutoInstallReport;
+use TSSGGSModule\App\Libs\AutoInstall\Cpanel;
 
 /**
  * The AutoInstall queue: picking tasks and running validate / install / reissue tasks.

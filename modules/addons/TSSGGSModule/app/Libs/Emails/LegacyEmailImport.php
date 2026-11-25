@@ -1,6 +1,6 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\Emails;
+namespace TSSGGSModule\App\Libs\Emails;
 
 use WHMCS\Database\Capsule;
 

@@ -1,18 +1,18 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Libs\ProductLines;
+namespace TSSGGSModule\App\Libs\ProductLines;
 
-use ModulesGarden\TSSGGSModule\App\Models\RemoteProduct;
-use ModulesGarden\TSSGGSModule\App\Models\Request;
+use TSSGGSModule\App\Models\RemoteProduct;
+use TSSGGSModule\App\Models\Request;
 use WHMCS\Database\Capsule;
-use ModulesGarden\TSSGGSModule\App\Libs\Gateway\CrossVendor;
-use ModulesGarden\TSSGGSModule\App\Libs\Certificates\AddonCertificates;
-use ModulesGarden\TSSGGSModule\App\Libs\Certificates\CertificateEnd;
-use ModulesGarden\TSSGGSModule\App\Libs\Certificates\CertificateService;
-use ModulesGarden\TSSGGSModule\App\Libs\Certificates\OrganizationValidation;
-use ModulesGarden\TSSGGSModule\App\Libs\Billing\RenewalPolicy;
-use ModulesGarden\TSSGGSModule\App\Libs\Products\SslProductHelpers;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\GeneralSettings;
+use TSSGGSModule\App\Libs\Gateway\CrossVendor;
+use TSSGGSModule\App\Libs\Certificates\AddonCertificates;
+use TSSGGSModule\App\Libs\Certificates\CertificateEnd;
+use TSSGGSModule\App\Libs\Certificates\CertificateService;
+use TSSGGSModule\App\Libs\Certificates\OrganizationValidation;
+use TSSGGSModule\App\Libs\Billing\RenewalPolicy;
+use TSSGGSModule\App\Libs\Products\SslProductHelpers;
+use TSSGGSModule\App\Libs\Support\GeneralSettings;
 
 /**
  * Certificates the module orders through the gateway outside the SSL flow (S/MIME, code signing): one order per
@@ -473,7 +473,7 @@ abstract class GatewayOrderService
     {
         $service   = Capsule::table('tblhosting')->where('id', (int)$serviceId)->first(['amount', 'firstpaymentamount']);
         $invoiceId = (int)Capsule::table('tblinvoiceitems')->where('relid', (int)$serviceId)->where('type', 'Hosting')->orderBy('invoiceid', 'desc')->value('invoiceid');
-        $rate      = (float)((new \ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository())->getModuleConfiguration()['financeSettings']['rate'] ?? 1) ?: 1;
+        $rate      = (float)((new \TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository())->getModuleConfiguration()['financeSettings']['rate'] ?? 1) ?: 1;
         // the first order is paid with the first payment (it includes one-time fees such as the token shipping),
         // the order after a renewal with the recurring amount
         $first     = empty(static::stored($serviceId)['previous']);
@@ -605,7 +605,7 @@ abstract class GatewayOrderService
     /** Days before the due date the client can renew: the renewal invoice days or the "expires soon" days */
     public static function renewalWindowDays()
     {
-        $ssl = (array)((new \ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository())->getModuleConfiguration()['sslSettings'] ?? []);
+        $ssl = (array)((new \TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository())->getModuleConfiguration()['sslSettings'] ?? []);
 
         return max(30, (int)($ssl['recurringDaysBeforeExpiry'] ?? 0), (int)GeneralSettings::get('expiresSoonDays'));
     }

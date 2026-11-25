@@ -1,4 +1,4 @@
-<script type="text/javascript" src="{$assetsURL}/js/mgLibs.js"></script>
+<script type="text/javascript" src="{$assetsURL}/js/modLibs.js"></script>
 
 {if $allOk === true}
 <div class="validate-ssl-unified tssggs-cert tssggs-smime">
@@ -53,7 +53,7 @@
     $(document).ready(function () {
         var clone = $('.validate-ssl-unified').clone();
         $('.product-details').html(clone);
-        $('.mg-module .validate-ssl-unified').remove();
+        $('.mod-module .validate-ssl-unified').remove();
         // the module's stylesheet lives in the block below and has to survive it
         $('head').append($('link[href*="theme.css"]').first());
         // WHMCS's own tab strip under the page: the module shows everything above it
@@ -78,7 +78,7 @@
 
             btn.prop('disabled', true).text('...');
 
-            $.post(serviceUrl, {ldelim}'mg-action': 'createAis', token: '{$csrfToken}', domain: domain, install_method: $('#ais-install-method').val() || 'autoinstall'{rdelim}, function (ret) {
+            $.post(serviceUrl, {ldelim}'mod-action': 'createAis', token: '{$csrfToken}', domain: domain, install_method: $('#ais-install-method').val() || 'autoinstall'{rdelim}, function (ret) {
                 // the JSON answer comes with an application/json header, so jQuery may already have parsed it
                 var payload = typeof ret === 'object' ? ret : JSON.parse(String(ret).replace('<JSONRESPONSE#', '').replace('#ENDJSONRESPONSE>', ''));
                 if (payload.result === 'error') {

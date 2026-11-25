@@ -1,6 +1,6 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\Models\Whmcs;
+namespace TSSGGSModule\App\Models\Whmcs;
 
 use Illuminate\Database\Eloquent\Model as EloquentModel;
 
@@ -50,7 +50,7 @@ class HostingAddon extends EloquentModel
 
     public function addon()
     {
-        return $this->belongsTo('ModulesGarden\\TSSGGSModule\\App\\Models\\Whmcs\\Addon', 'addonid');
+        return $this->belongsTo('TSSGGSModule\\App\\Models\\Whmcs\\Addon', 'addonid');
     }
 
     public function getBillingcycleFriendlyAttribute()
@@ -60,11 +60,11 @@ class HostingAddon extends EloquentModel
 
     public function hosting()
     {
-        return $this->belongsTo('ModulesGarden\\TSSGGSModule\\App\\Models\\Whmcs\\Hosting', 'hostingid');
+        return $this->belongsTo('TSSGGSModule\\App\\Models\\Whmcs\\Hosting', 'hostingid');
     }
 
     public function order()
     {
-        return $this->belongsTo('ModulesGarden\\TSSGGSModule\\App\\Models\\Whmcs\\Order', 'orderid');
+        return $this->belongsTo('TSSGGSModule\\App\\Models\\Whmcs\\Order', 'orderid');
     }
 }

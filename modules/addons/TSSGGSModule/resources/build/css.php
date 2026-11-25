@@ -7,19 +7,14 @@
  */
 
 $files = [
-    'products-icons.css',
-    'simplemde.min.css',
     'layers2-ui.css',
-    'module_styles.css',
-    'mg_styles.css',
-    'vue2-datepicker.min.css',
+    'mod_styles.css',
     'wizard.css',
     'migration.css',
     'dashboard.css',
     'shell.css',
     'settings.css',
     'icons.css',
-    'tinymce-icons.css',
     'yesno.css',
     'theme.css',
 ];

@@ -109,7 +109,7 @@
                 <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{$MGLANG->T('validation_page', 'Download')} <span class="caret"></span></button>
                 <ul class="dropdown-menu">
                     {foreach $download_formats as $format}
-                        <li><a class="dropdown-item" href="clientarea.php?action=productdetails&id={$serviceid}&mg-action=download&format={$format}">{$MGLANG->T('download_formats', $format)}</a></li>
+                        <li><a class="dropdown-item" href="clientarea.php?action=productdetails&id={$serviceid}&mod-action=download&format={$format}">{$MGLANG->T('download_formats', $format)}</a></li>
                     {/foreach}
                 </ul>
             </div>
@@ -254,22 +254,22 @@
         </tbody>
     </table>
 
-    <a href="clientarea.php?action=productdetails&id={$serviceid}&mg-action=downloadCSR" class="btn btn-default">{$MGLANG->T('validation_page', 'Download CSR')}</a>
+    <a href="clientarea.php?action=productdetails&id={$serviceid}&mod-action=downloadCSR" class="btn btn-default">{$MGLANG->T('validation_page', 'Download CSR')}</a>
     {if $serviceOpen}
     {if $mainDomainMethod == 'http' || $mainDomainMethod == 'https'}
-        <a href="clientarea.php?action=productdetails&id={$serviceid}&mg-action=downloadAuthFile" class="btn btn-default">{$MGLANG->T('validation_page', 'Download Auth File')}</a>
+        <a href="clientarea.php?action=productdetails&id={$serviceid}&mod-action=downloadAuthFile" class="btn btn-default">{$MGLANG->T('validation_page', 'Download Auth File')}</a>
     {/if}
-    <a href="clientarea.php?action=productdetails&id={$serviceid}&mg-action=changeApprovalMethod" class="btn btn-default">{$MGLANG->T('validation_page', 'Change Approval Method')}</a>
+    <a href="clientarea.php?action=productdetails&id={$serviceid}&mod-action=changeApprovalMethod" class="btn btn-default">{$MGLANG->T('validation_page', 'Change Approval Method')}</a>
     {if $status == 'pending' || $status == 'processing'}
         <form method="POST" style="display:inline;">
-            <input type="hidden" name="mg-action" value="revalidate">
+            <input type="hidden" name="mod-action" value="revalidate">
             <input type="hidden" name="token" value="{$csrfToken}">
             <button type="submit" class="btn btn-primary" title="{$MGLANG->T('validation_page', 'RevalidateDesc')}">{$MGLANG->T('validation_page', 'Revalidate')}</button>
         </form>
     {/if}
     {if $hasEmailValidation && ($status == 'pending' || $status == 'processing')}
         <form method="POST" style="display:inline;">
-            <input type="hidden" name="mg-action" value="resendValidationEmail">
+            <input type="hidden" name="mod-action" value="resendValidationEmail">
             <input type="hidden" name="token" value="{$csrfToken}">
             <button type="submit" class="btn btn-default" title="{$MGLANG->T('validation_page', 'ResendDcvEmailDesc')}">{$MGLANG->T('validation_page', 'Resend DCV email')}</button>
         </form>
@@ -411,7 +411,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <form method="POST">
-                <input type="hidden" name="mg-action" value="cancel">
+                <input type="hidden" name="mod-action" value="cancel">
                 <input type="hidden" name="token" value="{$csrfToken}">
                 <input type="hidden" name="remoteid" value="{$api_order_id}">
                 <div class="modal-header" style="display: block;">
@@ -435,7 +435,7 @@
     $(document).ready(function (){
         let clone_element = $('.validate-ssl-unified').clone();
         $('.product-details').html(clone_element);
-        $('.mg-module .validate-ssl-unified').remove();
+        $('.mod-module .validate-ssl-unified').remove();
         // the module's stylesheet lives in the block below and has to survive it
         $('head').append($('link[href*="theme.css"]').first());
         // WHMCS's own tab strip under the page: the module shows everything above it
