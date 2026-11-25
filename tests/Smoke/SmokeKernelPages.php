@@ -42,7 +42,8 @@ class SmokeKernelPages extends \ModulesGarden\__MODULE__\Core\CommandLine\Comman
                     if(!$htmx)
                     {
                         $html = Layout::render($page, $response->body());
-                        foreach(['id="layers2"', 'lu-nav__item', 'pagehead__title', 'vendor/htmx.js', 'vendor/alpine.js'] as $must)
+                        // a page with its own heading (the dashboard) gets none from the layout
+                        foreach(array_merge(['id="layers2"', 'lu-nav__item', 'vendor/htmx.js', 'vendor/alpine.js'], $page::HEADING ? ['pagehead__title'] : []) as $must)
                         {
                             if(strpos($html, $must) === false)
                             {
@@ -53,6 +54,28 @@ class SmokeKernelPages extends \ModulesGarden\__MODULE__\Core\CommandLine\Comman
                     elseif($response->type() === Response::PAGE && strpos($response->body(), 'id="layers2"') !== false)
                     {
                         throw new \RuntimeException('htmx answer contains the layout');
+                    }
+                }
+                // the parts a page loads after it is shown (the dashboard panels, the reports, the charts)
+                foreach(['PANELS' => 'panel', 'REPORTS' => 'report', 'CHARTS' => 'chart'] as $const => $action)
+                {
+                    if(!defined($class . '::' . $const))
+                    {
+                        continue;
+                    }
+                    $parts = constant($class . '::' . $const);
+                    foreach(array_keys($parts) === range(0, count($parts) - 1) ? $parts : array_keys($parts) as $part)
+                    {
+                        $request  = new Request(['mg-page' => lcfirst($name), 'mg-action' => $action, 'name' => $part], [], ['REQUEST_METHOD' => 'GET', 'HTTP_HX_REQUEST' => 'true']);
+                        $response = (new $class($request, new Lang('admin', 'english')))->$action();
+                        if(!$response instanceof Response || trim($response->body()) === '')
+                        {
+                            throw new \RuntimeException($action . ' "' . $part . '" gave no content');
+                        }
+                        if(strpos($response->body(), '-note is-warn') !== false && strpos($response->body(), 'does not exist') !== false)
+                        {
+                            throw new \RuntimeException($action . ' "' . $part . '" is not known to the page');
+                        }
                     }
                 }
                 $ok++;
