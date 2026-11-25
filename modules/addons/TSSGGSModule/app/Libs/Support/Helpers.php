@@ -219,7 +219,8 @@ class Helpers
 
     public static function vendorToDisplay($vendor)
     {
-        return ($vendor == 'GGS') ? 'GoGetSSL' : 'TheSSLSTORE';
+        // vendor keys are stored lower case ("ggs", "tss"); older callers pass them upper case
+        return strtolower((string)$vendor) === 'ggs' ? 'GoGetSSL' : 'TheSSLSTORE';
     }
 
     public static function getCurrencyOptions()
