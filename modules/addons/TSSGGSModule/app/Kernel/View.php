@@ -47,6 +47,9 @@ class View
 
         // in every template; a page's own data of the same name wins
         $smarty->assign('moduleName', Kernel::module());
+        // {$assets}/assets/js/..., {$assets}/assets/img/...; {$version} for cache busting
+        $smarty->assign('assets', Kernel::assetsUrl());
+        $smarty->assign('version', Layout::version());
         // for <input type="hidden" name="token"> of a form that also works without htmx
         $smarty->assign('token', function_exists('generate_token') ? (string)\generate_token('plain') : '');
         $smarty->assign($data);

@@ -664,3 +664,5 @@
 #layers2 small.tssggs-pricing__client { color: #1a6fb5 !important; font-weight: 600; }
 #layers2 .tssggs-pricing__preview { margin-bottom: 16px; }
 #layers2 .tssggs-pricing__preview h4 { margin-top: 0; }
+#layers2 [hidden] { display: none !important; }
+#layers2 .em-hint { margin-top: 0; }

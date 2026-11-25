@@ -32,6 +32,12 @@ final class Kernel
         return dirname(__DIR__, 2) . ($parts ? DIRECTORY_SEPARATOR . implode(DIRECTORY_SEPARATOR, $parts) : '');
     }
 
+    /** @return string URL of the module's resources folder (assets/css, assets/js, assets/img, build) */
+    public static function assetsUrl(): string
+    {
+        return rtrim((string)($GLOBALS['CONFIG']['SystemURL'] ?? ''), '/') . '/modules/addons/' . self::module() . '/resources';
+    }
+
     public static function pageClass(string $area, string $page): ?string
     {
         if(!preg_match('/^[A-Za-z][A-Za-z0-9]*$/', $page))

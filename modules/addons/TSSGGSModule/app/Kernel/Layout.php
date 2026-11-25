@@ -16,8 +16,6 @@ class Layout
 
     public static function render(Page $page, string $body): string
     {
-        $assets = rtrim((string)($GLOBALS['CONFIG']['SystemURL'] ?? ''), '/') . '/modules/addons/' . Kernel::module() . '/resources';
-
         return View::render('admin/layout', [
             'body'      => $body,
             'bodyClass' => $page::BODY_CLASS,
@@ -26,8 +24,6 @@ class Layout
             'edition'   => Edition::get(),
             'homeUrl'   => Page::pageUrl('home'),
             'menu'      => self::menu($page),
-            'assets'    => $assets,
-            'version'   => self::version(),
             'token'     => function_exists('generate_token') ? (string)\generate_token('plain') : '',
         ], $page);
     }

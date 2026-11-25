@@ -3,7 +3,7 @@
  *
  * - every htmx request carries the WHMCS token (the layout prints it as data-token on #layers2), so a POST action
  *   is accepted by the kernel
- * - a form with data-confirm="question" asks before it is sent
+ * - a form or a button with data-confirm="question" asks before it is sent
  * - a failed request shows its answer instead of failing silently
  */
 (function () {
@@ -21,6 +21,14 @@
     document.addEventListener('submit', function (event) {
         var question = event.target.getAttribute('data-confirm');
         if (question && !window.confirm(question)) {
+            event.preventDefault();
+            event.stopImmediatePropagation();
+        }
+    }, true);
+
+    document.addEventListener('click', function (event) {
+        var button = event.target.closest ? event.target.closest('button[data-confirm]') : null;
+        if (button && !window.confirm(button.getAttribute('data-confirm'))) {
             event.preventDefault();
             event.stopImmediatePropagation();
         }

@@ -2,7 +2,7 @@
 
 namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Widgets;
 
-use ModulesGarden\TSSGGSModule\App\Http\Admin\Emails as EmailsController;
+use ModulesGarden\TSSGGSModule\App\Pages\Admin\Emails as EmailsController;
 use ModulesGarden\TSSGGSModule\App\Libs\Emails\EmailCatalog;
 use ModulesGarden\TSSGGSModule\App\Libs\Emails\EmailManager;
 use ModulesGarden\TSSGGSModule\Components\Text\Text;
