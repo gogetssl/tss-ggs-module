@@ -41,6 +41,30 @@ Classes in `Libs` are mostly static services. A large one keeps its public metho
 bodies by responsibility in traits under `Concerns/` (e.g. `CertificateService` + `Concerns/CertificateReissue`), so
 callers always use the class name.
 
+## Own kernel: Smarty + htmx + Alpine.js (replaces the ModulesGarden framework page by page)
+
+```
+app/Kernel/                 Kernel (dispatch), Request, Response, Page (base), View (Smarty), Layout, Lang
+app/Pages/Admin/<Page>.php  one class per mg-page; public methods are the actions
+resources/templates/        Smarty templates: admin/layout.tpl, admin/partials, admin/<page>/*.tpl
+overrides/templates/        a reseller's copy of a template at the same path wins; updates never touch it
+resources/assets/js/vendor  htmx.js, alpine.js (readable, shipped with the module, no CDN, no build step)
+resources/assets/js/app.js  the module's own script (token header for htmx, loading state)
+```
+
+- A page with a class in `app/Pages/Admin` is served by the kernel (`Configuration/Addon/base.php`); every other
+  page still runs on the old framework. To move a page: write the class and templates, delete its
+  `app/Http/Admin/<Page>.php` and `app/UI/Admin/<Page>`, run `tools/qa.sh all` and `smoke`.
+- Actions: `GET mg-action=x` calls `x()`, `POST mg-action=x` calls `postX()` after the WHMCS token check. Anything
+  that changes data is a POST action.
+- An action returns `$this->view(template, data)` (full page in the layout), `$this->fragment(...)` (a part, for
+  htmx) or `$this->redirect(...)`. For an htmx request (`$this->request->isHtmx()`) answer with the fragment.
+- Templates escape every `{$variable}`; ready HTML needs `{$variable nofilter}`. Helpers: `{t key=...}`,
+  `{icon name=...}`, `{url action=... page=...}`.
+- Behaviour goes into the template as attributes (`hx-get`, `hx-post`, `hx-target`, `x-data`, `@click`), not into
+  new JavaScript files. No inline styles: classes in `theme.css`.
+- Read input through `Request` (`int`, `string`, `oneOf`), never `$_GET` / `$_POST` directly.
+
 ## Rules that keep it maintainable
 
 - **Gateway errors**: catch `Gateway\GatewayException` and compare `getGatewayCode()` / `getHttpCode()` /
