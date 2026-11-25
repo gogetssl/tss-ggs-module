@@ -1,92 +1,81 @@
 <?php
 
-namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Import\Index\Providers;
+namespace ModulesGarden\TSSGGSModule\App\Libs\Certificates;
 
-use ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Service;
-use WHMCS\Database\Capsule;
-use ModulesGarden\TSSGGSModule\App\Libs\Support\Helpers;
 use ModulesGarden\TSSGGSModule\App\Libs\Gateway\SSLTrustCenterApi;
+use ModulesGarden\TSSGGSModule\App\Libs\Support\Helpers;
 use ModulesGarden\TSSGGSModule\App\Models\RemoteProduct;
+use ModulesGarden\TSSGGSModule\App\Models\Request as RequestModel;
 use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
-use ModulesGarden\TSSGGSModule\Core\DataProviders\CrudProvider;
-use ModulesGarden\TSSGGSModule\Core\Support\Facades\Request;
 use ModulesGarden\TSSGGSModule\Core\Support\Facades\WhmcsApi;
 use ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Client;
 use ModulesGarden\TSSGGSModule\Core\WHMCS\Models\PaymentGateway;
+use ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Service;
 use ModulesGarden\TSSGGSModule\Packages\Logs\Support\Facades\Logger;
-use ModulesGarden\TSSGGSModule\App\Models\Request as RequestModel;
+use WHMCS\Database\Capsule;
 
-
-class ImportProvider extends CrudProvider
+/**
+ * Import of certificates that were ordered outside WHMCS (admin page Import): each vendor order becomes a service
+ * of the chosen client - a new WHMCS order, or an existing service of the client - linked to its certificate.
+ * What could not be imported is written to the module log; run() returns how many orders that were.
+ */
+class OrderImport
 {
-    public function read()
+    /** columns of the CSV file => keys of an order to import */
+    const CSV_COLUMNS = ['API order ID' => 'remoteOrderId', 'Customer ID' => 'clientId', 'Payment method' => 'payMethod', 'Service ID' => 'serviceId'];
+
+    /** @return array[] remote order ID => [remoteOrderId, clientId, payMethod, serviceId], from an uploaded CSV file */
+    public static function fromCsv(string $file): array
     {
-        $this->data = $this->formData;
+        $rows   = array_map('str_getcsv', file($file) ?: []);
+        $header = [];
+        foreach((array)array_shift($rows) as $name)
+        {
+            $header[] = self::CSV_COLUMNS[trim((string)$name)] ?? trim((string)$name);
+        }
+        $orders = [];
+        foreach($rows as $row)
+        {
+            if(count($row) != count($header))
+            {
+                continue;
+            }
+            $order = array_combine($header, $row);
+            if(isset($order['remoteOrderId']))
+            {
+                $orders[$order['remoteOrderId']] = $order;
+            }
+        }
 
-        $this->availableValues['clientId']  = Helpers::getClientOptions();
-        $this->availableValues['payMethod'] = Helpers::getPayMethodOptions();
-
+        return $orders;
     }
 
-
-    public function create()
+    /** The CSV file to fill in: its header line */
+    public static function csvTemplate(): string
     {
-        $addonConfig     = (new AddonModuleRepository())->getModuleConfiguration();
-        $mode            = $this->formData['mode'];
-                $generateInvoice = (bool)$this->formData['generateInvoice'];
-        $configuredApis  = Helpers::getConfiguredApis();
-        // the provider is no longer asked: the order is looked up at the configured gateway
-        $vendor          = trim($this->formData['vendor'] ?? '') ?: (string)key($configuredApis);
+        $out = fopen('php://temp', 'w+');
+        fputcsv($out, array_keys(self::CSV_COLUMNS));
+        rewind($out);
 
+        return (string)stream_get_contents($out);
+    }
+
+    /**
+     * @param array[] $localOrdersData remote order ID => [remoteOrderId, clientId, payMethod, serviceId]
+     * @return int orders that could not be imported (the reasons are in the module log)
+     * @throws \Exception when the vendor API is not configured or does not answer
+     */
+    public static function run(array $localOrdersData, bool $generateInvoice, string $vendor = ''): int
+    {
+        $addonConfig    = (new AddonModuleRepository())->getModuleConfiguration();
+        $configuredApis = Helpers::getConfiguredApis();
+        // the provider is not asked for: the order is looked up at the configured gateway
+        $vendor         = trim($vendor) ?: (string)key($configuredApis);
         if(!isset($configuredApis[$vendor]))
         {
             throw new \Exception('apiNotConfigured');
         }
-
-        $configuredApi   = $configuredApis[$vendor];
-        $localOrdersData = [];
-
-        if($mode == 'single')
-        {
-            $remoteOrderId = $this->formData['remoteOrderId'];
-            $clientId      = (int)$this->formData['clientId'];
-            $payMethod     = trim($this->formData['payMethod']);
-
-            $localOrdersData[$remoteOrderId] = [
-                'remoteOrderId' => $remoteOrderId,
-                'clientId'      => $clientId,
-                'payMethod'     => $payMethod,
-                'serviceId'     => (int)$this->formData['serviceId'],
-            ];
-        }
-        else
-        {
-            $file       = Request::getFacadeRoot()->files->all()['formData']['csv'];
-            $csvRows    = array_map('str_getcsv', file($file));
-            $header     = array_shift($csvRows);
-            $dictionary = [
-                'API order ID'   => 'remoteOrderId',
-                'Customer ID'    => 'clientId',
-                'Payment method' => 'payMethod',
-                'Service ID'     => 'serviceId',
-            ];
-
-            foreach($header as $index => $name)
-            {
-                $header[$index] = $dictionary[$name];
-            }
-
-            foreach($csvRows as $csvRow)
-            {
-                if(count($csvRow) != count($header))
-                {
-                    continue;
-                }
-
-                $localOrderData                                    = array_combine($header, $csvRow);
-                $localOrdersData[$localOrderData['remoteOrderId']] = $localOrderData;
-            }
-        }
+        $configuredApi = $configuredApis[$vendor];
 
         $remoteOrderIds = array_keys($localOrdersData);
         $errorsCount    = 0;
@@ -320,9 +309,6 @@ class ImportProvider extends CrudProvider
             );
         }
 
-        if($errorsCount)
-        {
-            throw new \Exception('productImportErrors');
-        }
+        return $errorsCount;
     }
 }
