@@ -22,11 +22,14 @@ modules/addons/TSSGGSModule/          addon module (admin pages, settings, crons
       Update/                         one-click module update
     Database/Schema.php               every database change after schema.sql, as numbered steps (see below)
     Cron/                             console commands (cron/cron.php <Command>), RunAll starts every job when due
-    UI/Admin/...                      admin pages (ModulesGarden framework: Widgets, Forms, Providers, Containers)
-    UI/Shared/Html.php                escaping, notices, hints - use it instead of writing the markup again
-    Http/, Hooks/, Models/            framework controllers, addon hooks, Eloquent models
+    Kernel/                           the module's own runtime: boot, admin pages, hooks, cron runner (see below)
+    Pages/Admin/                      the admin pages, one class per page
+    Hooks/                            the addon's WHMCS hooks, one file per hook point
+    Models/                           the module's tables (extend Models/Model); Models/Whmcs wraps WHMCS's own models
+  TSSGGSModule.php                    the functions WHMCS calls (config, activate, upgrade, output, clientarea)
+  hooks.php, cron/cron.php            the other two entry points; all three load app/Kernel/Boot.php first
+  resources/templates/                Smarty templates of the admin pages
   resources/emails/*.html             default e-mail texts, subject in the first line
-  core/, components/, packages/       bundled ModulesGarden framework - not ours, avoid changing it
 modules/servers/TSSGGSModule/         server (provisioning) module: WHMCS product actions and the client area
   TSSGGSModule.php                    entry points WHMCS calls (CreateAccount, ClientArea, ...)
   hooks.php                           registers the WHMCS hooks; each hook is a class in app/hooks
@@ -41,7 +44,25 @@ Classes in `Libs` are mostly static services. A large one keeps its public metho
 bodies by responsibility in traits under `Concerns/` (e.g. `CertificateService` + `Concerns/CertificateReissue`), so
 callers always use the class name.
 
-## Own kernel: Smarty + htmx + Alpine.js (replaces the ModulesGarden framework page by page)
+## Runtime (no framework, no Composer)
+
+The module has no third-party PHP code of its own: Eloquent, Symfony Console and Smarty are the ones WHMCS ships.
+
+- `app/Kernel/Boot.php` registers the autoloader: `ModulesGarden\TSSGGSModule\App\X\Y` is `app/X/Y.php`. It does
+  nothing else. The server module has its own loader for its own namespace and reaches `App\...` through this one.
+- `app/Kernel/Lifecycle.php`: what WHMCS asks an addon for - description, activate (e-mail templates, tables),
+  deactivate (keeps everything), upgrade (tables). Tables: `app/Database/schema.sql` (run by `Database/SqlFile`), then
+  the numbered changes in `Database/Schema.php`.
+- `app/Kernel/Hooks.php` loads `app/Hooks/*.php`; the file name is the hook point, the file calls
+  `$hookManager->register(function($vars) { ... }, $priority)`.
+- `app/Kernel/Console/`: `Command` is the base of a cron job (one run at a time, `--force`), `Runner` finds the jobs
+  in `app/Cron`.
+- Logging: `App\Libs\Logs\Logger::info($message, $data)` (table `<prefix>_Logs`, admin page Logs). Small settings
+  kept one per row: `App\Libs\Support\ModuleSettings`. WHMCS's API: `App\Libs\Support\WhmcsApi::run()`.
+- A text outside a page (a hook answering with an error): `App\Kernel\Lang::text($key)`.
+- HTML built in PHP (notices, hints): `App\Libs\Support\Html`.
+
+## Admin pages: Smarty + htmx + Alpine.js
 
 ```
 app/Kernel/                 Kernel (dispatch), Request, Response, Page (base), View (Smarty), Layout, Lang
@@ -52,9 +73,8 @@ resources/assets/js/vendor  htmx.js, alpine.js (readable, shipped with the modul
 resources/assets/js/app.js  the module's own script (token header for htmx, loading state)
 ```
 
-- A page with a class in `app/Pages/Admin` is served by the kernel (`Configuration/Addon/base.php`); every other
-  page still runs on the old framework. To move a page: write the class and templates, delete its
-  `app/Http/Admin/<Page>.php` and `app/UI/Admin/<Page>`, run `tools/qa.sh all` and `smoke`.
+- A page is a class in `app/Pages/Admin` (`mg-page=certificateLog` is `CertificateLog`); a page that does not exist
+  answers "This page does not exist" inside the layout.
 - Actions: `GET mg-action=x` calls `x()`, `POST mg-action=x` calls `postX()` after the WHMCS token check. Anything
   that changes data is a POST action.
 - An action returns `$this->view(template, data)` (full page in the layout), `$this->fragment(...)` (a part, for
@@ -73,8 +93,6 @@ resources/assets/js/app.js  the module's own script (token header for htmx, load
 - Pages in `Kernel::SETUP_FIRST` lead to the setup wizard until the vendor API is connected.
 - A page whose action replaces the module's files or sends a file (module update, CSV export) uses plain form
   posts and redirects, not htmx.
-- **Every admin page is on the kernel.** The old framework (`core`, `components`, `packages`) still serves the
-  client area and the server module (`app/Http/Client`, `app/UI/Client`, the hooks); it can go once those are moved.
 - **Setup wizard** (`app/Pages/Admin/Configuration.php`): one action per page (`step1` ... `step7`), their order in
   `app/Libs/Setup/Wizard.php`; `admin/configuration/wizard.tpl` is the frame, `stepN.tpl` the page. `Page::CHROME =
   false`: no module header and menu. Step 4 uses the API settings provider, step 5 loads the Products list, step 7
