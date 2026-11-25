@@ -644,3 +644,6 @@
 #layers2 .tssggs-log td.tssggs-log__type--success { color: #1f7a4d !important; }
 #layers2 .tssggs-log td.tssggs-log__type--error { color: #a8322d !important; }
 #layers2 .tssggs-log td.tssggs-log__type--info { color: #5b6673 !important; }
+#layers2 .tssggs-inline-form { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; margin-bottom: 18px; }
+#layers2 .tssggs-inline-form label { display: block; font-weight: 600; }
+#layers2 .tssggs-lazy { min-height: 64px; position: relative; }

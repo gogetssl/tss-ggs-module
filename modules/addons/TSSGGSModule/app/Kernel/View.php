@@ -48,6 +48,8 @@ class View
         $smarty->assign($data);
         $smarty->assign('page', $page);
         $smarty->assign('moduleName', Kernel::module());
+        // for <input type="hidden" name="token"> of a form that also works without htmx
+        $smarty->assign('token', function_exists('generate_token') ? (string)generate_token('plain') : '');
 
         return $smarty->fetch($template . '.tpl');
     }

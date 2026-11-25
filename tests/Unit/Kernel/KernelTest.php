@@ -16,7 +16,7 @@ class KernelTest extends TestCase
     public function testOnlyPagesWithAClassAreHandled(): void
     {
         $this->assertTrue(Kernel::handles('admin', 'certificateLog'));
-        $this->assertFalse(Kernel::handles('admin', 'home'), 'a page without a class stays on the old framework');
+        $this->assertFalse(Kernel::handles('admin', 'noSuchPage'), 'a page without a class stays on the old framework');
         $this->assertFalse(Kernel::handles('admin', '../Kernel/Kernel'));
         $this->assertFalse(Kernel::handles('admin', null));
         $this->assertFalse(Kernel::handles('admin', ['certificateLog']));

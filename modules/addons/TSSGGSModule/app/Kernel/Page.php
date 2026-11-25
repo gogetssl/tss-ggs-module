@@ -39,7 +39,41 @@ abstract class Page
     /** Title in the page header and the breadcrumb */
     public function title(): string
     {
-        return $this->lang->get('admin.menu.' . $this->name());
+        foreach(['admin.menu.' . $this->name(), 'admin.breadcrumbs.' . ucfirst($this->name()) . '_index', 'admin.breadcrumbs.' . ucfirst($this->name()), static::LANG . '.title'] as $key)
+        {
+            if($this->lang->has($key))
+            {
+                return $this->lang->get($key);
+            }
+        }
+
+        return ucfirst($this->name());
+    }
+
+    /**
+     * Runs a change and leaves its result as the message of the next view: $done when it worked, the exception's
+     * text when it did not.
+     *
+     * @return bool whether it worked
+     */
+    protected function attempt(callable $change, string $done = ''): bool
+    {
+        try
+        {
+            $change();
+            if($done !== '')
+            {
+                $this->flash($done);
+            }
+
+            return true;
+        }
+        catch(\Throwable $e)
+        {
+            $this->flash($e->getMessage(), 'bad');
+
+            return false;
+        }
     }
 
     /** Text of the page's own group; a key that exists as written is used as it is */
