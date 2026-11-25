@@ -2,8 +2,8 @@
     A list with search, sorting and paging ($table from App\Kernel\Table::run). The cells of a row come from the
     page's own template ($table.rowTemplate, variable $row). Search, a click on a column title, a page or a length
     reloads only this block (htmx; the request carries table=<id>).
-    Buttons inside a row post with hx-post + hx-target="#tssggs-table-<id>" hx-swap="outerHTML": the enclosing form
-    sends the current search, sorting and page along.
+    A button inside a row posts with hx-post; the enclosing form sends the current search, sorting and page along.
+    Give the button its own hx-target AND hx-swap (it would inherit hx-swap="outerHTML" from the form).
 *}
 <div id="tssggs-table-{$table.id}" class="lu-widget"
      x-data="{ go(values) { var refs = this.$refs; Object.keys(values).forEach(function (name) { refs[name].value = values[name] }); refs.form.requestSubmit() } }">

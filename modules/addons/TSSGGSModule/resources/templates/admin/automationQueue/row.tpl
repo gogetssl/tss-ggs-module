@@ -11,7 +11,7 @@
     {if $row.canReset}
         <button type="button" class="lu-btn lu-btn--link lu-btn--plain lu-tooltip lu-btn--icon lu-btn--warning"
                 aria-label="{t key='data_tables.queue.buttons.reset_task_button.resetTask'}" data-title="{t key='data_tables.queue.buttons.reset_task_button.resetTask'}"
-                hx-post="{url action='reset' id=$row.id}" hx-target="#tssggs-queue"
+                hx-post="{url action='reset' id=$row.id}" hx-target="#tssggs-queue" hx-swap="innerHTML"
                 hx-confirm="{t key='data_tables.queue.modals.reset_task_modal.description'}"
                 data-confirm-title="{t key='data_tables.queue.modals.reset_task_modal.title'}">
             <span class="lu-btn__icon tssggs-icobox">{icon name='restore'}</span>
