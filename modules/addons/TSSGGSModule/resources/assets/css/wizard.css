@@ -577,3 +577,6 @@ a.tssggs-wizard__item:focus-visible {
     display: block;
     min-width: 0;
 }
+
+/* API connection page: the account card keeps its width when the result of the connection test appears above it */
+.tssggs-wizard .tssggs-wizard__api { width: 366px; max-width: 100%; }
