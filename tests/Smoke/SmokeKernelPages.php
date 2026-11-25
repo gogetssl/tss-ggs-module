@@ -78,6 +78,16 @@ class SmokeKernelPages extends \ModulesGarden\__MODULE__\Core\CommandLine\Comman
                         }
                     }
                 }
+                // every screen of a page with screens (Settings)
+                foreach(defined($class . '::SCREENS') ? array_keys(constant($class . '::SCREENS')) : [] as $screen)
+                {
+                    $request  = new Request(['mg-page' => lcfirst($name), 'settings-page' => $screen], [], ['REQUEST_METHOD' => 'GET']);
+                    $response = (new $class($request, new Lang('admin', 'english')))->index();
+                    if(!$response instanceof Response || strpos($response->body(), 'lu-widget__body') === false)
+                    {
+                        throw new \RuntimeException('screen "' . $screen . '" gave no content');
+                    }
+                }
                 $ok++;
             }
             catch(\Throwable $e)

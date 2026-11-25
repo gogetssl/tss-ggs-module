@@ -15,6 +15,13 @@
     </div>
     <div class="lu-widget__body">
         <div class="lu-widget__content lu-single-element">
+            {* a plain screen (no provider): no form and no Save bar, only its template *}
+            {if $plain}
+                <div class="lu-w-100">
+                    {if $flash}<div class="tssggs-note is-{$flash.tone}" role="status">{$flash.text nofilter}</div>{/if}
+                    {include file="admin/settings/{$template}.tpl"}
+                </div>
+            {else}
             <form method="post" action="{$saveUrl}" class="lu-w-100" data-saved="{if $saved}1{else}0{/if}"
                   hx-post="{$saveUrl}" hx-target="#tssggs-settings-screen" hx-swap="innerHTML">
                 <input type="hidden" name="token" value="{$token}">
@@ -32,6 +39,7 @@
                     </span>
                 </div>
             </form>
+            {/if}
         </div>
     </div>
 </div>

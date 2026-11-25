@@ -3,7 +3,6 @@
 namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index;
 
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Widgets\ApiSettingsWidget;
-use ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Widgets\EmailSettingsWidget;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Widgets\Sidebar;
 use ModulesGarden\TSSGGSModule\Components\Container\Container;
 use ModulesGarden\TSSGGSModule\Components\Grid\Grid;
@@ -20,10 +19,6 @@ class SettingsContainer extends Container implements AdminAreaInterface
         if(Request::get('settings-page') == 'apiSettings')
         {
             $mainWidget = new ApiSettingsWidget();
-        }
-        elseif(Request::get('settings-page') == 'emailSettings')
-        {
-            $mainWidget = new EmailSettingsWidget();
         }
         else
         {

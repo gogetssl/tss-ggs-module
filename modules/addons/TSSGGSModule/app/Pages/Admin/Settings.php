@@ -5,6 +5,7 @@ namespace ModulesGarden\TSSGGSModule\App\Pages\Admin;
 use ModulesGarden\TSSGGSModule\App\Kernel\Page;
 use ModulesGarden\TSSGGSModule\App\Libs\Settings\CronScreen;
 use ModulesGarden\TSSGGSModule\App\Libs\Settings\CronSettingsProvider;
+use ModulesGarden\TSSGGSModule\App\Libs\Settings\EmailScreen;
 use ModulesGarden\TSSGGSModule\App\Libs\Settings\FinanceScreen;
 use ModulesGarden\TSSGGSModule\App\Libs\Settings\FinanceSettingsProvider;
 use ModulesGarden\TSSGGSModule\App\Libs\Settings\GeneralSettingsProvider;
@@ -45,7 +46,8 @@ class Settings extends Page
      * the screens on the kernel: provider (values, choices, save), template, and the groups of its texts -
      * "form" for the fields and sections, "widget" for the title and subtitle of the screen; "extra": a class whose
      * data($lang) gives what the screen shows besides its fields ($extra in the template); "switch": what a Yes / No
-     * posts when the store of the screen keeps another pair than on / off
+     * posts when the store of the screen keeps another pair than on / off. A screen without a provider has no form
+     * of its own and no Save bar: its template shows what "extra" gives.
      */
     const SCREENS = [
         'generalSettings'  => ['provider' => GeneralSettingsProvider::class, 'template' => 'general', 'form' => 'general_settings_form', 'widget' => 'general_settings_widget'],
@@ -53,6 +55,7 @@ class Settings extends Page
         'automatedSettings' => ['provider' => SslSettingsProvider::class, 'template' => 'automated', 'form' => 'ssl_settings_form', 'widget' => 'automated_settings_widget', 'extra' => SslScreen::class, 'switch' => ['1', '0']],
         'productsSettings' => ['provider' => ProductsSettingsProvider::class, 'template' => 'products', 'form' => 'products_settings_form', 'widget' => 'products_settings_widget'],
         'financeSettings'  => ['provider' => FinanceSettingsProvider::class, 'template' => 'finance', 'form' => 'finance_settings_form', 'widget' => 'finance_settings_widget', 'extra' => FinanceScreen::class],
+        'emailSettings'    => ['template' => 'email', 'widget' => 'email_settings_widget', 'extra' => EmailScreen::class],
         'cronSettings'     => ['provider' => CronSettingsProvider::class, 'template' => 'cron', 'form' => 'cron_configuration_form', 'widget' => 'cron_settings_widget', 'extra' => CronScreen::class, 'css' => 'tssggs-cronpanel'],
         'logsSettings'     => ['provider' => GeneralSettingsProvider::class, 'template' => 'logs', 'form' => 'logs_settings_form', 'widget' => 'logs_settings_widget'],
     ];
@@ -73,8 +76,12 @@ class Settings extends Page
     /** POST the screen's fields: saves them and shows the screen again with the result */
     public function postSave()
     {
-        $screen   = $this->screen();
-        $class    = self::SCREENS[$screen]['provider'];
+        $screen = $this->screen();
+        $class  = self::SCREENS[$screen]['provider'] ?? null;
+        if($class === null)
+        {
+            return $this->redirect('index', ['settings-page' => $screen]);
+        }
         $provider = new $class($this->request->posted(), $this->lang);
         try
         {
@@ -119,22 +126,27 @@ class Settings extends Page
     protected function screenData(string $screen, ?Result $result): array
     {
         $config   = self::SCREENS[$screen];
-        $class    = $config['provider'];
-        $provider = new $class([], $this->lang);
-        $provider->read();
+        $class    = $config['provider'] ?? null;
+        $provider = $class ? new $class([], $this->lang) : null;
+        if($provider)
+        {
+            $provider->read();
+        }
         $flash    = $result ? ['text' => $result->message(), 'tone' => $result->isError() ? 'bad' : 'ok'] : $this->takeFlash();
 
         return [
             'screen'   => $screen,
             'template' => $config['template'],
             // groups of the texts: {t key="{$f}.clientSummary"}
-            'f'        => 'forms.' . $config['form'],
+            'f'        => 'forms.' . ($config['form'] ?? ''),
             'w'        => 'widgets.' . $config['widget'],
             'icon'     => self::MENU[$screen],
-            'data'     => $provider->values(),
+            'data'     => $provider ? $provider->values() : [],
+            // a screen without a provider: no form, no Save bar
+            'plain'    => $provider === null,
             // after a failed save the screen shows what was typed
             'typed'    => $result && $result->isError() ? $this->request->posted() : [],
-            'options'  => $provider->options(),
+            'options'  => $provider ? $provider->options() : [],
             'extra'    => isset($config['extra']) ? $config['extra']::data($this->lang) : [],
             'css'      => $config['css'] ?? '',
             'switchOn'  => $config['switch'][0] ?? 'on',
