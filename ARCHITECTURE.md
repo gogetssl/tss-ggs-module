@@ -73,9 +73,15 @@ resources/assets/js/app.js  the module's own script (token header for htmx, load
 - Pages in `Kernel::SETUP_FIRST` lead to the setup wizard until the vendor API is connected.
 - A page whose action replaces the module's files or sends a file (module update, CSV export) uses plain form
   posts and redirects, not htmx.
-- **Still on the old framework**: the setup wizard (`mg-page=configuration`) and the Migration page; they keep
-  `app/Http/Admin/{Configuration,Migration}.php`, `app/UI/Admin/{Configuration,Migration}` and the old API / SSL
-  settings forms under `app/UI/Admin/Settings`. Everything else is on the kernel.
+- **Every admin page is on the kernel.** The old framework (`core`, `components`, `packages`) still serves the
+  client area and the server module (`app/Http/Client`, `app/UI/Client`, the hooks); it can go once those are moved.
+- **Setup wizard** (`app/Pages/Admin/Configuration.php`): one action per page (`step1` ... `step7`), their order in
+  `app/Libs/Setup/Wizard.php`; `admin/configuration/wizard.tpl` is the frame, `stepN.tpl` the page. `Page::CHROME =
+  false`: no module header and menu. Step 4 uses the API settings provider, step 5 loads the Products list, step 7
+  shows the blocks of the Migration page.
+- **Migration** (`app/Pages/Admin/Migration.php`): what it shows is built by `app/Libs/Setup/MigrationScreen.php`;
+  the runner (`assets/js/pages/migration.js`, Alpine) posts `batch` until the run is finished (`Response::json`).
+- `{t key=... html=true}` prints a text that holds its own HTML (`<b>`); everything else is escaped.
 - **Settings** (`app/Pages/Admin/Settings.php`): one entry per screen in `SCREENS` - a provider from
   `app/Libs/Settings` (`read()` gives values and choices, `update()` saves and may return a `Result`), a template
   `admin/settings/<name>.tpl` built from `section_start.tpl` / `field.tpl` / `section_end.tpl`, optional `extra`
