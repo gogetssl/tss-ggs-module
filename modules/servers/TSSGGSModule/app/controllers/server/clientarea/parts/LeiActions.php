@@ -4,8 +4,8 @@ namespace ModulesGarden\Servers\TSSGGSModule\app\controllers\server\clientarea\p
 
 use ModulesGarden\Servers\TSSGGSModule\app\models\whmcs\SSL;
 use ModulesGarden\Servers\TSSGGSModule\core\Lang;
-use ModulesGarden\TSSGGSModule\App\Libs\LeiCompanySearch;
-use ModulesGarden\TSSGGSModule\App\Libs\LeiService;
+use ModulesGarden\TSSGGSModule\App\Libs\ProductLines\LeiCompanySearch;
+use ModulesGarden\TSSGGSModule\App\Libs\ProductLines\LeiService;
 use WHMCS\Database\Capsule;
 
 /**

@@ -3,7 +3,7 @@
 namespace ModulesGarden\TSSGGSModule\App\Libs\Gateway\Endpoints;
 
 use ModulesGarden\TSSGGSModule\App\Libs\Gateway\GatewayException;
-use ModulesGarden\TSSGGSModule\App\Libs\SSLTrustCenterApi;
+use ModulesGarden\TSSGGSModule\App\Libs\Gateway\SSLTrustCenterApi;
 use ModulesGarden\TSSGGSModule\App\Models\Request;
 
 /**
@@ -14,7 +14,7 @@ trait Catalogue
 {
     /**
      * GET /profile: the reseller account - status (null for TheSSLStore), organization / contact / address and
-     * billing {currency, balance, terms prepaid|credit|invoice, credit_limit, plan}. Used by App\Libs\BalanceMonitor.
+     * billing {currency, balance, terms prepaid|credit|invoice, credit_limit, plan}. Used by App\Libs\Billing\BalanceMonitor.
      */
     public function getProfile()
     {

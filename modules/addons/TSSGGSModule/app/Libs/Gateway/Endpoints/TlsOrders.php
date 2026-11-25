@@ -2,10 +2,10 @@
 
 namespace ModulesGarden\TSSGGSModule\App\Libs\Gateway\Endpoints;
 
-use ModulesGarden\TSSGGSModule\App\Libs\FreeName;
-use ModulesGarden\TSSGGSModule\App\Libs\LeiService;
-use ModulesGarden\TSSGGSModule\App\Libs\PciService;
-use ModulesGarden\TSSGGSModule\App\Libs\SSLTrustCenterApi;
+use ModulesGarden\TSSGGSModule\App\Libs\Certificates\FreeName;
+use ModulesGarden\TSSGGSModule\App\Libs\ProductLines\LeiService;
+use ModulesGarden\TSSGGSModule\App\Libs\ProductLines\PciService;
+use ModulesGarden\TSSGGSModule\App\Libs\Gateway\SSLTrustCenterApi;
 use ModulesGarden\TSSGGSModule\App\Models\Request;
 
 /**

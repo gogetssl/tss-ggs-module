@@ -4,7 +4,7 @@ namespace Tests\Unit\Gateway;
 
 use ModulesGarden\TSSGGSModule\App\Libs\Gateway\AwaitingConfigurationException;
 use ModulesGarden\TSSGGSModule\App\Libs\Gateway\GatewayException;
-use ModulesGarden\TSSGGSModule\App\Libs\SSLTrustCenterApi;
+use ModulesGarden\TSSGGSModule\App\Libs\Gateway\SSLTrustCenterApi;
 use PHPUnit\Framework\TestCase;
 
 /** How gateway errors become texts a client can read, and which of them mean "waiting for configuration" */

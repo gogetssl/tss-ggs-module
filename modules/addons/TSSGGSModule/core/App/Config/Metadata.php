@@ -18,8 +18,8 @@ class Metadata
      */
     protected function loadEdition(Container $container)
     {
-        $container->set('configuration.systemName', \ModulesGarden\TSSGGSModule\App\Libs\Edition::name());
-        $container->set('configuration.description', \ModulesGarden\TSSGGSModule\App\Libs\Edition::description());
+        $container->set('configuration.systemName', \ModulesGarden\TSSGGSModule\App\Libs\Support\Edition::name());
+        $container->set('configuration.description', \ModulesGarden\TSSGGSModule\App\Libs\Support\Edition::description());
     }
 
     protected function loadModuleVersion(Container $container)

@@ -7,8 +7,8 @@ use ModulesGarden\Servers\TSSGGSModule\app\models\whmcs\Order;
 use ModulesGarden\Servers\TSSGGSModule\app\models\whmcs\Service;
 use ModulesGarden\Servers\TSSGGSModule\app\services\InvoiceRenew;
 use ModulesGarden\Servers\TSSGGSModule\core\Lang;
-use ModulesGarden\TSSGGSModule\App\Libs\CertificateService;
-use ModulesGarden\TSSGGSModule\App\Libs\CodeSigningService;
+use ModulesGarden\TSSGGSModule\App\Libs\Certificates\CertificateService;
+use ModulesGarden\TSSGGSModule\App\Libs\ProductLines\CodeSigningService;
 use ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Invoice;
 
 /**
@@ -29,9 +29,9 @@ trait GatewayRenewalActions
         $vars['renewNeedsModel'] = $type === CodeSigningService::class && CodeSigningService::renewalNeedsTokenModel($stored);
         $vars['renewIsCs']       = $type === CodeSigningService::class;
         // document signing renews onto the token the client already has, so "same details" asks no model
-        $vars['renewIsDs']       = $type === \ModulesGarden\TSSGGSModule\App\Libs\DocumentSigningService::class;
+        $vars['renewIsDs']       = $type === \ModulesGarden\TSSGGSModule\App\Libs\ProductLines\DocumentSigningService::class;
         // LEI: "same details" renews with the legal entity data and the signing authority unchanged
-        $vars['renewIsLei']      = $type === \ModulesGarden\TSSGGSModule\App\Libs\LeiService::class;
+        $vars['renewIsLei']      = $type === \ModulesGarden\TSSGGSModule\App\Libs\ProductLines\LeiService::class;
         $vars['renewModels']     = CodeSigningService::TOKEN_MODELS;
         $vars['renewAgreement']  = CertificateService::agreement((int)$input['params']['pid']);
         $vars['csrfToken']       = $vars['csrfToken'] ?? \generate_token('plain');
@@ -55,7 +55,7 @@ trait GatewayRenewalActions
         try
         {
             $this->requireCsrfToken();
-            $type = \ModulesGarden\TSSGGSModule\App\Libs\GatewayOrderService::typeOfService($serviceId);
+            $type = \ModulesGarden\TSSGGSModule\App\Libs\ProductLines\GatewayOrderService::typeOfService($serviceId);
             if(!$type || !$type::renewalOpen($serviceId))
             {
                 throw new \Exception(Lang::absoluteT('renewNotAvailable'));

@@ -3,8 +3,8 @@
 namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Products\Index\DataTables\Products\ArrayDataProvider;
 
 
-use ModulesGarden\TSSGGSModule\App\Libs\Helpers;
-use ModulesGarden\TSSGGSModule\App\Libs\ProductCatalog;
+use ModulesGarden\TSSGGSModule\App\Libs\Support\Helpers;
+use ModulesGarden\TSSGGSModule\App\Libs\Products\ProductCatalog;
 
 use ModulesGarden\TSSGGSModule\App\Models\RemoteProduct;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Products\Index\DataTables\Products\Modals\ImportModal;
@@ -146,7 +146,7 @@ class DataTable extends \ModulesGarden\TSSGGSModule\Components\DataTable\DataTab
         ];
 
         // only the edition's own vendor (a catalogue copied from the other edition is not offered)
-        $vendors        = array_map('strtoupper', \ModulesGarden\TSSGGSModule\App\Libs\Edition::vendors());
+        $vendors        = array_map('strtoupper', \ModulesGarden\TSSGGSModule\App\Libs\Support\Edition::vendors());
         $remoteProducts = RemoteProduct::whereIn('vendor', $vendors)->get()->sortBy(function($product) use ($brandWeights) {
             return ($brandWeights[$product->brand] ?? 50) . $product->name;
         });
@@ -155,7 +155,7 @@ class DataTable extends \ModulesGarden\TSSGGSModule\Components\DataTable\DataTab
         foreach($remoteProducts as $remoteProduct)
         {
             $whmcsProduct = $remoteProduct->getWhmcsProduct();
-            if(!$whmcsProduct && !\ModulesGarden\TSSGGSModule\App\Libs\ProductCatalog::importable($remoteProduct))
+            if(!$whmcsProduct && !\ModulesGarden\TSSGGSModule\App\Libs\Products\ProductCatalog::importable($remoteProduct))
             {
                 continue;
             }
@@ -240,9 +240,9 @@ class DataTable extends \ModulesGarden\TSSGGSModule\Components\DataTable\DataTab
         }
         $actions['cancelRenewals'] = 'confirm_cancel_renewals';
 
-        // sold as a WHMCS product addon (App\Libs\ProductAddons): one link per such addon, or the action that creates one
-        $addons = \ModulesGarden\TSSGGSModule\App\Libs\ProductAddons::addonsOf((int)$whmcsProduct->id);
-        if(!$addons && !$whmcsProduct->retired && \ModulesGarden\TSSGGSModule\App\Libs\ProductAddons::refusal((int)$whmcsProduct->id) === '')
+        // sold as a WHMCS product addon (App\Libs\Products\ProductAddons): one link per such addon, or the action that creates one
+        $addons = \ModulesGarden\TSSGGSModule\App\Libs\Products\ProductAddons::addonsOf((int)$whmcsProduct->id);
+        if(!$addons && !$whmcsProduct->retired && \ModulesGarden\TSSGGSModule\App\Libs\Products\ProductAddons::refusal((int)$whmcsProduct->id) === '')
         {
             $actions['sellAsAddon'] = 'confirm_sell_as_addon';
         }

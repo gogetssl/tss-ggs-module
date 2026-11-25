@@ -3,7 +3,7 @@
 namespace ModulesGarden\TSSGGSModule\App\UI\Admin\AutomationQueue\Index;
 
 use ModulesGarden\TSSGGSModule\App\UI\Admin\AutomationQueue\Index\DataTables\Queue\DataTable;
-use ModulesGarden\TSSGGSModule\App\Libs\Icons;
+use ModulesGarden\TSSGGSModule\App\Libs\Support\Icons;
 use ModulesGarden\TSSGGSModule\Components\Container\Container;
 use ModulesGarden\TSSGGSModule\Components\Text\Text;
 use ModulesGarden\TSSGGSModule\Core\Contracts\Components\AdminAreaInterface;
@@ -12,7 +12,7 @@ class AutomationQueueContainer extends Container implements AdminAreaInterface
 {
     public function loadHtml(): void
     {
-        if(!\ModulesGarden\TSSGGSModule\App\Libs\GeneralSettings::enabled('hideInfoMessages'))
+        if(!\ModulesGarden\TSSGGSModule\App\Libs\Support\GeneralSettings::enabled('hideInfoMessages'))
         {
             $text = new Text();
             $text->setCss('tssggs-html');

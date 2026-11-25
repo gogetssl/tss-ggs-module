@@ -3,12 +3,12 @@
 namespace ModulesGarden\Servers\TSSGGSModule\app\services;
 
 use ModulesGarden\Servers\TSSGGSModule\app\models\whmcs\SSL;
-use ModulesGarden\TSSGGSModule\App\Libs\AdminText;
-use ModulesGarden\TSSGGSModule\App\Libs\AutoInstallHelpers;
-use ModulesGarden\TSSGGSModule\App\Libs\AutoInstallQueue;
-use ModulesGarden\TSSGGSModule\App\Libs\CertificateService;
-use ModulesGarden\TSSGGSModule\App\Libs\Cpanel;
-use ModulesGarden\TSSGGSModule\App\Libs\Helpers;
+use ModulesGarden\TSSGGSModule\App\Libs\Support\AdminText;
+use ModulesGarden\TSSGGSModule\App\Libs\AutoInstall\AutoInstallHelpers;
+use ModulesGarden\TSSGGSModule\App\Libs\AutoInstall\AutoInstallQueue;
+use ModulesGarden\TSSGGSModule\App\Libs\Certificates\CertificateService;
+use ModulesGarden\TSSGGSModule\App\Libs\AutoInstall\Cpanel;
+use ModulesGarden\TSSGGSModule\App\Libs\Support\Helpers;
 use ModulesGarden\TSSGGSModule\App\Models\Request;
 
 /**
@@ -19,7 +19,7 @@ class AdminServicesTabFields
 {
     const DCV_METHODS = ['email', 'http', 'https', 'dns'];
 
-    /** admin text as HTML (langs/admin/<language>.php, see App\Libs\AdminText) */
+    /** admin text as HTML (langs/admin/<language>.php, see App\Libs\Support\AdminText) */
     private static function t($key, $english, array $replace = [])
     {
         return AdminText::html($key, $english, $replace);
@@ -42,20 +42,20 @@ class AdminServicesTabFields
     }
 
     /**
-     * The tab's fields. A service of the connected second vendor (App\Libs\CrossVendor) names its own vendor in the
+     * The tab's fields. A service of the connected second vendor (App\Libs\Gateway\CrossVendor) names its own vendor in the
      * labels: "GoGetSSL Order" in TheSSLStore Plugin, not "TheSSLStore Order".
      */
     public function run($params)
     {
         $fields = $this->fields($params);
-        $vendor = \ModulesGarden\TSSGGSModule\App\Libs\CrossVendor::vendorOfService((int)$params['serviceid']);
-        if(!is_array($fields) || $vendor === \ModulesGarden\TSSGGSModule\App\Libs\Edition::primaryVendor())
+        $vendor = \ModulesGarden\TSSGGSModule\App\Libs\Gateway\CrossVendor::vendorOfService((int)$params['serviceid']);
+        if(!is_array($fields) || $vendor === \ModulesGarden\TSSGGSModule\App\Libs\Support\Edition::primaryVendor())
         {
             return $fields;
         }
 
-        $own    = \ModulesGarden\TSSGGSModule\App\Libs\Edition::brand();
-        $theirs = \ModulesGarden\TSSGGSModule\App\Libs\Edition::brandOf($vendor);
+        $own    = \ModulesGarden\TSSGGSModule\App\Libs\Support\Edition::brand();
+        $theirs = \ModulesGarden\TSSGGSModule\App\Libs\Support\Edition::brandOf($vendor);
         $result = [];
         foreach($fields as $label => $value)
         {
@@ -71,7 +71,7 @@ class AdminServicesTabFields
         {
             $sslService = SSL::getByServiceId($params['serviceid']);
             // a migrated order bought at payment: its token is read once (it may turn out completed meanwhile)
-            if($sslService && $sslService->status === 'Awaiting Configuration' && \ModulesGarden\TSSGGSModule\App\Libs\IncompleteOrder::claimMigrated((int)$params['serviceid']))
+            if($sslService && $sslService->status === 'Awaiting Configuration' && \ModulesGarden\TSSGGSModule\App\Libs\Certificates\IncompleteOrder::claimMigrated((int)$params['serviceid']))
             {
                 $sslService = SSL::getByServiceId($params['serviceid']);
             }
@@ -84,7 +84,7 @@ class AdminServicesTabFields
             {
                 $fields = [AdminText::get('configuration_status', 'Configuration Status') => '<span class="label label-warning">' . self::t('status_awaiting_configuration', 'Awaiting Configuration') . '</span>'];
                 // a certificate bought at payment: its order and the token that completes it (IncompleteOrder)
-                $incomplete = \ModulesGarden\TSSGGSModule\App\Libs\IncompleteOrder::pending((int)$params['serviceid']);
+                $incomplete = \ModulesGarden\TSSGGSModule\App\Libs\Certificates\IncompleteOrder::pending((int)$params['serviceid']);
                 if($incomplete)
                 {
                     $fields[AdminText::get('vendor_order', '%%VENDOR%% Order')] = self::orderLine($incomplete['order_id'] ?? 0, $incomplete['item_id'])
@@ -94,15 +94,15 @@ class AdminServicesTabFields
                         . '<small class="text-muted">' . self::t('certificate_token_hint', 'Completes the order: the client can use it in the cPanel, Plesk and other plugins, or submit the details on the configuration page.') . '</small>';
                 }
                 // a migrated order bought at payment whose token could not be read (tried again an hour later)
-                $record = \ModulesGarden\TSSGGSModule\App\Libs\IncompleteOrder::get((int)$params['serviceid']);
-                if(!$incomplete && $record && $record['status'] === \ModulesGarden\TSSGGSModule\App\Libs\IncompleteOrder::STATUS_UNREAD)
+                $record = \ModulesGarden\TSSGGSModule\App\Libs\Certificates\IncompleteOrder::get((int)$params['serviceid']);
+                if(!$incomplete && $record && $record['status'] === \ModulesGarden\TSSGGSModule\App\Libs\Certificates\IncompleteOrder::STATUS_UNREAD)
                 {
                     $fields[AdminText::get('vendor_order', '%%VENDOR%% Order')] = htmlspecialchars((string)($record['migrated'] ?? ''), ENT_QUOTES);
                     $fields[AdminText::get('certificate_token', 'Certificate Token')] = '<span class="text-warning">'
                         . self::t('certificate_token_unread', 'Not read yet from %%VENDOR%%, tried again within an hour') . ': ' . htmlspecialchars((string)($record['error'] ?? ''), ENT_QUOTES) . '</span>';
                 }
                 // S/MIME after a renewal: the orders placed before
-                $gatewayType = \ModulesGarden\TSSGGSModule\App\Libs\GatewayOrderService::typeOfService((int)$params['serviceid']);
+                $gatewayType = \ModulesGarden\TSSGGSModule\App\Libs\ProductLines\GatewayOrderService::typeOfService((int)$params['serviceid']);
                 if($gatewayType)
                 {
                     $fields += $this->getSmimePreviousOrders($gatewayType::stored((int)$params['serviceid']));
@@ -167,7 +167,7 @@ class AdminServicesTabFields
         }
     }
 
-    /** CAA warning of a pending TLS certificate (App\Libs\CaaCheck), '' when nothing blocks it */
+    /** CAA warning of a pending TLS certificate (App\Libs\Certificates\CaaCheck), '' when nothing blocks it */
     private function caaWarning($serviceId)
     {
         try
@@ -181,9 +181,9 @@ class AdminServicesTabFields
                     $waiting[] = (string)$domain['name'];
                 }
             }
-            $warning = \ModulesGarden\TSSGGSModule\App\Libs\CaaCheck::forService($serviceId, $waiting);
+            $warning = \ModulesGarden\TSSGGSModule\App\Libs\Certificates\CaaCheck::forService($serviceId, $waiting);
 
-            return $warning ? \ModulesGarden\TSSGGSModule\App\Libs\CaaCheck::html($warning, [
+            return $warning ? \ModulesGarden\TSSGGSModule\App\Libs\Certificates\CaaCheck::html($warning, [
                 'title'       => AdminText::get('caa_title', 'A CAA DNS record does not allow this certificate'),
                 'intro'       => AdminText::get('caa_intro', '%s will not issue for these domains: their CAA DNS record allows other certificate authorities only. The client sees the same notice.'),
                 'inherited'   => AdminText::get('caa_inherited', 'record set on %s'),
@@ -205,7 +205,7 @@ class AdminServicesTabFields
      */
     private function getSmimeDetails($serviceId, $sslService)
     {
-        $stored = \ModulesGarden\TSSGGSModule\App\Libs\SmimeService::stored($serviceId);
+        $stored = \ModulesGarden\TSSGGSModule\App\Libs\ProductLines\SmimeService::stored($serviceId);
         $status = (string)($stored['status'] ?? '');
         $labels = ['active' => 'label-success', 'processing' => 'label-info', 'pending' => 'label-info', 'cancelled' => 'label-danger',
                    'rejected' => 'label-danger', 'failed' => 'label-danger', 'revoked' => 'label-danger', 'expired' => 'label-default'];
@@ -243,7 +243,7 @@ class AdminServicesTabFields
      */
     private function getDocumentSigningDetails($serviceId, $sslService)
     {
-        $ds     = \ModulesGarden\TSSGGSModule\App\Libs\DocumentSigningService::class;
+        $ds     = \ModulesGarden\TSSGGSModule\App\Libs\ProductLines\DocumentSigningService::class;
         $stored = $ds::stored($serviceId);
         $status = (string)($stored['status'] ?? '');
         $labels = ['active' => 'label-success', 'processing' => 'label-info', 'pending' => 'label-info', 'invited' => 'label-warning',
@@ -274,7 +274,7 @@ class AdminServicesTabFields
      */
     private function getPciDetails($serviceId, $sslService)
     {
-        $pci    = \ModulesGarden\TSSGGSModule\App\Libs\PciService::class;
+        $pci    = \ModulesGarden\TSSGGSModule\App\Libs\ProductLines\PciService::class;
         $stored = $pci::stored($serviceId);
         $status = (string)($stored['status'] ?? '');
         $labels = ['active' => 'label-success', 'processing' => 'label-info', 'pending' => 'label-info', 'incomplete' => 'label-warning',
@@ -306,7 +306,7 @@ class AdminServicesTabFields
      */
     private function getLeiDetails($serviceId, $sslService)
     {
-        $lei    = \ModulesGarden\TSSGGSModule\App\Libs\LeiService::class;
+        $lei    = \ModulesGarden\TSSGGSModule\App\Libs\ProductLines\LeiService::class;
         $stored = $lei::stored($serviceId);
         $status = (string)($stored['status'] ?? '');
         $labels = ['active' => 'label-success', 'processing' => 'label-info', 'pending' => 'label-info', 'incomplete' => 'label-warning', 'unpaid' => 'label-warning',
@@ -343,7 +343,7 @@ class AdminServicesTabFields
      */
     private function getCodeGuardDetails($serviceId, $sslService)
     {
-        $cg      = \ModulesGarden\TSSGGSModule\App\Libs\CodeGuardService::class;
+        $cg      = \ModulesGarden\TSSGGSModule\App\Libs\ProductLines\CodeGuardService::class;
         $stored  = $cg::stored($serviceId);
         $status  = (string)($stored['status'] ?? '');
         $labels  = ['active' => 'label-success', 'suspended' => 'label-warning', 'cancelled' => 'label-danger', 'refunded' => 'label-default'];
@@ -380,7 +380,7 @@ class AdminServicesTabFields
      */
     private function getCodeSigningDetails($serviceId, $sslService)
     {
-        $cs     = \ModulesGarden\TSSGGSModule\App\Libs\CodeSigningService::class;
+        $cs     = \ModulesGarden\TSSGGSModule\App\Libs\ProductLines\CodeSigningService::class;
         $stored = $cs::stored($serviceId);
         $status = (string)($stored['status'] ?? '');
         $labels = ['active' => 'label-success', 'processing' => 'label-info', 'pending' => 'label-info', 'cancelled' => 'label-danger',
@@ -452,8 +452,8 @@ class AdminServicesTabFields
         $fields[AdminText::get('vendor_status', 'Vendor Status')] = self::vendorStatus($status, $labels, $order['order']['date'] ?? '', '')
             . ($synced ? ' &nbsp;| ' . self::t('last_synchronized', 'last synchronized :date:', ['date' => $synced]) : '');
         // the order waits at the vendor side: the client sees an orange message too (CertificateSyncHelpers::NOTICE_STATUSES)
-        $noticeStatus = \ModulesGarden\TSSGGSModule\App\Libs\CertificateSyncHelpers::normalizeStatus($status);
-        if(in_array($noticeStatus, \ModulesGarden\TSSGGSModule\App\Libs\CertificateSyncHelpers::NOTICE_STATUSES, true))
+        $noticeStatus = \ModulesGarden\TSSGGSModule\App\Libs\Certificates\CertificateSyncHelpers::normalizeStatus($status);
+        if(in_array($noticeStatus, \ModulesGarden\TSSGGSModule\App\Libs\Certificates\CertificateSyncHelpers::NOTICE_STATUSES, true))
         {
             $english = [
                 'failed'    => 'Something is wrong with this order at %%VENDOR%%: it could not be processed. Contact %%VENDOR%% support to check the reason. The client is asked to contact your support.',
@@ -600,7 +600,7 @@ class AdminServicesTabFields
         if(!$autoInstall)
         {
             // a certificate for public IPs is not installed on a cPanel account by domain
-            if(\ModulesGarden\TSSGGSModule\App\Libs\IpCertificate::isProduct((int)\WHMCS\Database\Capsule::table('tblhosting')->where('id', (int)$serviceId)->value('packageid')))
+            if(\ModulesGarden\TSSGGSModule\App\Libs\Certificates\IpCertificate::isProduct((int)\WHMCS\Database\Capsule::table('tblhosting')->where('id', (int)$serviceId)->value('packageid')))
             {
                 return [$installType => self::t('install_type_manual', 'Manual')];
             }
@@ -724,7 +724,7 @@ class AdminServicesTabFields
         $order   = $stored['orderData']['orderData'] ?? [];
         $cn      = openssl_csr_get_subject($csr)['CN'] ?? '';
         $default = $order['common_name']['validation_method'] ?? 'dns';
-        // a CSR without common name (IP certificates, App\Libs\IpCertificate): the current main name stays first
+        // a CSR without common name (IP certificates, App\Libs\Certificates\IpCertificate): the current main name stays first
         if($cn === '')
         {
             $cn = (string)($order['common_name']['name'] ?? '');

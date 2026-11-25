@@ -2,8 +2,8 @@
 
 namespace ModulesGarden\TSSGGSModule\App\Libs\Update;
 
-use ModulesGarden\TSSGGSModule\App\Libs\Edition;
-use ModulesGarden\TSSGGSModule\App\Libs\GeneralSettings;
+use ModulesGarden\TSSGGSModule\App\Libs\Support\Edition;
+use ModulesGarden\TSSGGSModule\App\Libs\Support\GeneralSettings;
 use WHMCS\Database\Capsule;
 
 /**

@@ -8,7 +8,7 @@ use ModulesGarden\TSSGGSModule\App\UI\Admin\Configuration\Pages\ConfigurationSte
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Configuration\Pages\ConfigurationStep4;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Configuration\Pages\ConfigurationStep5;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Configuration\Pages\ConfigurationStep6;
-use ModulesGarden\TSSGGSModule\App\Libs\Edition;
+use ModulesGarden\TSSGGSModule\App\Libs\Support\Edition;
 use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Configuration\Shared\WizardLayout;
 use ModulesGarden\TSSGGSModule\Core\Contracts\Controllers\AdminAreaInterface;

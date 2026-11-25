@@ -2,7 +2,7 @@
 
 namespace ModulesGarden\TSSGGSModule\Components\BlockZeroData;
 
-use ModulesGarden\TSSGGSModule\App\Libs\Icons;
+use ModulesGarden\TSSGGSModule\App\Libs\Support\Icons;
 use ModulesGarden\TSSGGSModule\Components\Container\Container;
 use ModulesGarden\TSSGGSModule\Core\Components\Traits\DescriptionTrait;
 use ModulesGarden\TSSGGSModule\Core\Components\Traits\TitleTrait;

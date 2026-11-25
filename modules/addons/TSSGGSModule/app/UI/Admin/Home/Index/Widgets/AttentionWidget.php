@@ -2,8 +2,8 @@
 
 namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Widgets;
 
-use ModulesGarden\TSSGGSModule\App\Libs\GatewayHealth;
-use ModulesGarden\TSSGGSModule\App\Libs\Helpers;
+use ModulesGarden\TSSGGSModule\App\Libs\Gateway\GatewayHealth;
+use ModulesGarden\TSSGGSModule\App\Libs\Support\Helpers;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Shared\Card;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Shared\CronStatus;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Shared\Pipeline;
@@ -60,7 +60,7 @@ class AttentionWidget extends Card
         }
 
         // the edition's vendor and the connected one: unreachable, or its credentials are not entered
-        foreach(\ModulesGarden\TSSGGSModule\App\Libs\Edition::vendors() as $key)
+        foreach(\ModulesGarden\TSSGGSModule\App\Libs\Support\Edition::vendors() as $key)
         {
             $vendor  = strtoupper($key);
             $gateway = GatewayHealth::check()[$vendor] ?? null;

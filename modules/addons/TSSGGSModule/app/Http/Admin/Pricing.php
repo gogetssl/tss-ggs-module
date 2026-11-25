@@ -2,7 +2,7 @@
 
 namespace ModulesGarden\TSSGGSModule\App\Http\Admin;
 
-use ModulesGarden\TSSGGSModule\App\Libs\PricingService;
+use ModulesGarden\TSSGGSModule\App\Libs\Billing\PricingService;
 use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\ProductRepository;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Widgets\NextStepsWidget;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Pricing\Index\PricingContainer;
@@ -172,7 +172,7 @@ class Pricing extends AbstractController implements AdminAreaInterface
 
     protected function requireToken(): void
     {
-        if(!\ModulesGarden\TSSGGSModule\App\Libs\CsrfToken::valid($_REQUEST['token'] ?? ''))
+        if(!\ModulesGarden\TSSGGSModule\App\Libs\Support\CsrfToken::valid($_REQUEST['token'] ?? ''))
         {
             throw new \RuntimeException('Invalid or expired security token. Reload the page and try again.');
         }

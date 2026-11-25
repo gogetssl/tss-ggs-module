@@ -3,7 +3,7 @@
 namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Markups\Index;
 
 use ModulesGarden\TSSGGSModule\App\Http\Admin\Markups as MarkupsController;
-use ModulesGarden\TSSGGSModule\App\Libs\Markups;
+use ModulesGarden\TSSGGSModule\App\Libs\Billing\Markups;
 use ModulesGarden\TSSGGSModule\Components\Alert\AlertInfo;
 use ModulesGarden\TSSGGSModule\Components\Container\Container;
 use ModulesGarden\TSSGGSModule\Components\Text\Text;
@@ -39,7 +39,7 @@ class MarkupsContainer extends Container implements AdminAreaInterface
 
         $html .= $this->form($token) . $this->table($token);
 
-        if(!\ModulesGarden\TSSGGSModule\App\Libs\GeneralSettings::enabled('hideInfoMessages'))
+        if(!\ModulesGarden\TSSGGSModule\App\Libs\Support\GeneralSettings::enabled('hideInfoMessages'))
         {
             $alert = new AlertInfo();
             $alert->setText($this->t('intro'));

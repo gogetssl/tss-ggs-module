@@ -2,7 +2,7 @@
 
 namespace ModulesGarden\TSSGGSModule\App\Migration;
 
-use ModulesGarden\TSSGGSModule\App\Libs\Edition;
+use ModulesGarden\TSSGGSModule\App\Libs\Support\Edition;
 use ModulesGarden\TSSGGSModule\App\Migration\Readers\GgsReader;
 use ModulesGarden\TSSGGSModule\App\Migration\Readers\LegacyReaderInterface;
 use ModulesGarden\TSSGGSModule\App\Migration\Readers\TssReader;

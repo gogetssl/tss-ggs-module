@@ -2,7 +2,7 @@
 
 namespace ModulesGarden\TSSGGSModule\App\UI\Admin\AutomationQueue\Index\DataTables\Queue\Providers;
 
-use ModulesGarden\TSSGGSModule\App\Libs\AutoInstallQueue;
+use ModulesGarden\TSSGGSModule\App\Libs\AutoInstall\AutoInstallQueue;
 use ModulesGarden\TSSGGSModule\Core\DataProviders\CrudProvider;
 
 class ResetTaskProvider extends CrudProvider

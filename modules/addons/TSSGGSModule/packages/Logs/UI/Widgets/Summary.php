@@ -4,9 +4,9 @@ namespace ModulesGarden\TSSGGSModule\Packages\Logs\UI\Widgets;
 
 use ModulesGarden\TSSGGSModule\Components\Button\ButtonBasic;
 use ModulesGarden\TSSGGSModule\Components\Card\CardButton;
-use ModulesGarden\TSSGGSModule\App\Libs\GeneralSettings;
-use ModulesGarden\TSSGGSModule\App\Libs\Icons;
-use ModulesGarden\TSSGGSModule\App\Libs\LogPolicy;
+use ModulesGarden\TSSGGSModule\App\Libs\Support\GeneralSettings;
+use ModulesGarden\TSSGGSModule\App\Libs\Support\Icons;
+use ModulesGarden\TSSGGSModule\App\Libs\Support\LogPolicy;
 use ModulesGarden\TSSGGSModule\Components\Container\Container;
 use ModulesGarden\TSSGGSModule\Components\Text\Text;
 use ModulesGarden\TSSGGSModule\Components\Grid\Grid;

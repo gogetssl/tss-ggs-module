@@ -58,10 +58,10 @@ add_hook('ClientAreaPrimarySidebar', 1, function($primarySidebar) {
     if($_REQUEST['action'] == 'productdetails' && $_REQUEST['id'] > 0)
     {
         $serviceId = (int)$_REQUEST['id'];
-        $orderData = \ModulesGarden\TSSGGSModule\App\Libs\CertificateService::stored($serviceId);
+        $orderData = \ModulesGarden\TSSGGSModule\App\Libs\Certificates\CertificateService::stored($serviceId);
 
         // a cancelled / terminated service keeps "active" in its stored order: no downloads or reissue for it
-        $serviceOpen = \ModulesGarden\TSSGGSModule\App\Libs\CertificateService::serviceOpen($serviceId);
+        $serviceOpen = \ModulesGarden\TSSGGSModule\App\Libs\Certificates\CertificateService::serviceOpen($serviceId);
 
         if($serviceOpen && isset($orderData['orderData']['order']['status']) && $orderData['orderData']['order']['status'] == 'active')
         {
@@ -69,7 +69,7 @@ add_hook('ClientAreaPrimarySidebar', 1, function($primarySidebar) {
             if($myAccount)
             {
                 // only the formats the admin offers (Settings > General > Certificate Downloads)
-                $formats = \ModulesGarden\TSSGGSModule\App\Libs\CertificateBundle::enabledFormats();
+                $formats = \ModulesGarden\TSSGGSModule\App\Libs\Certificates\CertificateBundle::enabledFormats();
                 if(in_array('crt', $formats, true))
                 {
                     $myAccount->addChild('DownloadCRT', [
@@ -208,8 +208,8 @@ add_hook('ClientAreaPage', 1, function($params) {
     $page = basename($_SERVER['PHP_SELF']);
 
     // a product addon's certificate is free: an upgrade or more SANs would bypass the addon's billing (M-14)
-    if($page == 'upgrade.php' && !empty($_GET['id']) && class_exists('\ModulesGarden\TSSGGSModule\App\Libs\AddonCertificates')
-        && \ModulesGarden\TSSGGSModule\App\Libs\AddonCertificates::isCertificateService((int)$_GET['id']))
+    if($page == 'upgrade.php' && !empty($_GET['id']) && class_exists('\ModulesGarden\TSSGGSModule\App\Libs\Certificates\AddonCertificates')
+        && \ModulesGarden\TSSGGSModule\App\Libs\Certificates\AddonCertificates::isCertificateService((int)$_GET['id']))
     {
         header('Location: clientarea.php?action=productdetails&id=' . (int)$_GET['id']);
         exit;
@@ -225,7 +225,7 @@ add_hook('ClientAreaPage', 1, function($params) {
             return [];
         }
 
-        if(\ModulesGarden\TSSGGSModule\App\Libs\AcmeHelpers::isAcmeWhmcsProduct($service->product->id))
+        if(\ModulesGarden\TSSGGSModule\App\Libs\Subscriptions\AcmeHelpers::isAcmeWhmcsProduct($service->product->id))
         {
             header('Location: clientarea.php?action=productdetails&id=' . $serviceId);
             exit;
@@ -233,17 +233,17 @@ add_hook('ClientAreaPage', 1, function($params) {
 
         // a certificate bought at payment is bought with its number of SANs: more can be added once it is enrolled
         // (its details submitted), not while it waits for them
-        $notEnrolled = \ModulesGarden\TSSGGSModule\App\Libs\IncompleteOrder::pending($serviceId)
-            ? \ModulesGarden\TSSGGSModule\App\Libs\ClientText::get('sanUpgradeNotEnrolled', 'Additional domains can be added after the certificate details are submitted.')
+        $notEnrolled = \ModulesGarden\TSSGGSModule\App\Libs\Certificates\IncompleteOrder::pending($serviceId)
+            ? \ModulesGarden\TSSGGSModule\App\Libs\Support\ClientText::get('sanUpgradeNotEnrolled', 'Additional domains can be added after the certificate details are submitted.')
             : '';
 
         // SANs of an ordered certificate can only be added; the main domain type of a FLEX certificate is fixed
         if(isset($_POST['step']) && $_POST['step'] == '2' && isset($_POST['configoption']) && is_array($_POST['configoption']))
         {
-            $error = $notEnrolled !== '' ? $notEnrolled : \ModulesGarden\TSSGGSModule\App\Libs\SanUpgrade::downgradeError($serviceId, $_POST['configoption']);
+            $error = $notEnrolled !== '' ? $notEnrolled : \ModulesGarden\TSSGGSModule\App\Libs\Billing\SanUpgrade::downgradeError($serviceId, $_POST['configoption']);
             if($error === '')
             {
-                $error = \ModulesGarden\TSSGGSModule\App\Libs\MainDomain::changeError((int)$serviceId, $_POST['configoption']);
+                $error = \ModulesGarden\TSSGGSModule\App\Libs\Certificates\MainDomain::changeError((int)$serviceId, $_POST['configoption']);
             }
             if($error !== '')
             {
@@ -269,14 +269,14 @@ add_hook('ClientAreaPage', 1, function($params) {
     return [];
 });
 
-// Additional SANs cost their full price, not WHMCS's prorated one (App\Libs\UpgradePricing): the summary the client
+// Additional SANs cost their full price, not WHMCS's prorated one (App\Libs\Billing\UpgradePricing): the summary the client
 // confirms, then the upgrade invoice
 add_hook('ClientAreaPageUpgrade', 1, function($vars) {
     try
     {
         $step = isset($_POST['step']) ? (int)$_POST['step'] : 0;
 
-        return $step === 2 ? \ModulesGarden\TSSGGSModule\App\Libs\UpgradePricing::summary($vars) : [];
+        return $step === 2 ? \ModulesGarden\TSSGGSModule\App\Libs\Billing\UpgradePricing::summary($vars) : [];
     }
     catch(\Throwable $e)
     {
@@ -289,8 +289,8 @@ add_hook('ClientAreaPageUpgrade', 1, function($vars) {
 add_hook('InvoiceCreation', 1, function($vars) {
     try
     {
-        \ModulesGarden\TSSGGSModule\App\Libs\UpgradePricing::cleanOneTimePeriods(isset($vars['invoiceid']) ? (int)$vars['invoiceid'] : 0);
-        \ModulesGarden\TSSGGSModule\App\Libs\UpgradePricing::fixInvoice(isset($vars['invoiceid']) ? (int)$vars['invoiceid'] : 0);
+        \ModulesGarden\TSSGGSModule\App\Libs\Billing\UpgradePricing::cleanOneTimePeriods(isset($vars['invoiceid']) ? (int)$vars['invoiceid'] : 0);
+        \ModulesGarden\TSSGGSModule\App\Libs\Billing\UpgradePricing::fixInvoice(isset($vars['invoiceid']) ? (int)$vars['invoiceid'] : 0);
     }
     catch(\Throwable $e)
     {
@@ -300,7 +300,7 @@ add_hook('InvoiceCreation', 1, function($vars) {
 add_hook('InvoiceCreated', 1, function($vars) {
     try
     {
-        \ModulesGarden\TSSGGSModule\App\Libs\UpgradePricing::syncOrder(isset($vars['invoiceid']) ? (int)$vars['invoiceid'] : 0);
+        \ModulesGarden\TSSGGSModule\App\Libs\Billing\UpgradePricing::syncOrder(isset($vars['invoiceid']) ? (int)$vars['invoiceid'] : 0);
     }
     catch(\Throwable $e)
     {
@@ -311,7 +311,7 @@ add_hook('InvoiceCreated', 1, function($vars) {
 add_hook('AfterConfigOptionsUpgrade', 1, function($vars) {
     try
     {
-        \ModulesGarden\TSSGGSModule\App\Libs\SanUpgrade::afterUpgrade(isset($vars['upgradeid']) ? (int)$vars['upgradeid'] : 0);
+        \ModulesGarden\TSSGGSModule\App\Libs\Billing\SanUpgrade::afterUpgrade(isset($vars['upgradeid']) ? (int)$vars['upgradeid'] : 0);
     }
     catch(\Throwable $e)
     {
@@ -323,12 +323,12 @@ add_hook('AfterConfigOptionsUpgrade', 1, function($vars) {
 add_hook('ClientAreaHomepagePanels', 1, function($homePagePanels) {
     try
     {
-        if(empty($_SESSION['uid']) || !\ModulesGarden\TSSGGSModule\App\Libs\GeneralSettings::enabled('clientSummary'))
+        if(empty($_SESSION['uid']) || !\ModulesGarden\TSSGGSModule\App\Libs\Support\GeneralSettings::enabled('clientSummary'))
         {
             return;
         }
 
-        $counts = (new \ModulesGarden\TSSGGSModule\App\Libs\ClientSslSummary($_SESSION['uid']))->counts();
+        $counts = (new \ModulesGarden\TSSGGSModule\App\Libs\Certificates\ClientSslSummary($_SESSION['uid']))->counts();
         if(!$counts['total'])
         {
             return;
@@ -357,7 +357,7 @@ add_hook('ClientAreaHomepagePanels', 1, function($homePagePanels) {
             ],
             'bodyHtml' => $body,
         ]);
-        unifiedSslLabelBlock($panel, $t['summaryTitle'], \ModulesGarden\TSSGGSModule\App\Libs\Edition::brand(), 'panel');
+        unifiedSslLabelBlock($panel, $t['summaryTitle'], \ModulesGarden\TSSGGSModule\App\Libs\Support\Edition::brand(), 'panel');
     }
     catch(\Throwable $e)
     {
@@ -387,20 +387,20 @@ if(!function_exists('unifiedSslLabelBlock'))
 add_hook('ClientAreaSecondarySidebar', 1, function($secondarySidebar) {
     try
     {
-        if(empty($_SESSION['uid']) || !\ModulesGarden\TSSGGSModule\App\Libs\GeneralSettings::enabled('clientSummary'))
+        if(empty($_SESSION['uid']) || !\ModulesGarden\TSSGGSModule\App\Libs\Support\GeneralSettings::enabled('clientSummary'))
         {
             return;
         }
 
         global $smarty;
         $template = is_object($smarty) && isset($smarty->tpl_vars['templatefile']) ? (string)$smarty->tpl_vars['templatefile']->value : '';
-        $allowed  = array_filter(array_map('trim', explode(',', (string)\ModulesGarden\TSSGGSModule\App\Libs\GeneralSettings::get('sidebarTemplates'))));
+        $allowed  = array_filter(array_map('trim', explode(',', (string)\ModulesGarden\TSSGGSModule\App\Libs\Support\GeneralSettings::get('sidebarTemplates'))));
         if($allowed ? !in_array($template, $allowed, true) : $template === 'clientareahome')
         {
             return;
         }
 
-        $counts = (new \ModulesGarden\TSSGGSModule\App\Libs\ClientSslSummary($_SESSION['uid']))->counts();
+        $counts = (new \ModulesGarden\TSSGGSModule\App\Libs\Certificates\ClientSslSummary($_SESSION['uid']))->counts();
         if(!$counts['total'])
         {
             return;
@@ -412,9 +412,9 @@ add_hook('ClientAreaSecondarySidebar', 1, function($secondarySidebar) {
             'icon'  => 'fa-lock',
             'order' => 99,
         ]);
-        unifiedSslLabelBlock($menu, $t['summaryTitle'], \ModulesGarden\TSSGGSModule\App\Libs\Edition::brand());
+        unifiedSslLabelBlock($menu, $t['summaryTitle'], \ModulesGarden\TSSGGSModule\App\Libs\Support\Edition::brand());
         $order = 10;
-        foreach(\ModulesGarden\TSSGGSModule\App\Libs\ClientSslSummary::TYPES as $type)
+        foreach(\ModulesGarden\TSSGGSModule\App\Libs\Certificates\ClientSslSummary::TYPES as $type)
         {
             $menu->addChild('tssggsSsl_' . $type, [
                 'label' => $t[$type],
@@ -423,7 +423,7 @@ add_hook('ClientAreaSecondarySidebar', 1, function($secondarySidebar) {
                 'order' => $order++,
             ]);
         }
-        if(\ModulesGarden\TSSGGSModule\App\Libs\GeneralSettings::enabled('certificatesByDomain'))
+        if(\ModulesGarden\TSSGGSModule\App\Libs\Support\GeneralSettings::enabled('certificatesByDomain'))
         {
             $menu->addChild('tssggsSsl_domains', [
                 'label' => $t['byDomain'],
@@ -431,7 +431,7 @@ add_hook('ClientAreaSecondarySidebar', 1, function($secondarySidebar) {
                 'order' => $order++,
             ]);
         }
-        if(\ModulesGarden\TSSGGSModule\App\Libs\GeneralSettings::enabled('sslTools'))
+        if(\ModulesGarden\TSSGGSModule\App\Libs\Support\GeneralSettings::enabled('sslTools'))
         {
             $menu->addChild('tssggsSsl_tools', [
                 'label' => $t['sslTools'],
@@ -466,7 +466,7 @@ add_hook('OrderProductPricingOverride', 1, function($vars) {
     try
     {
         list($clientId, $currencyId) = tssggs_markup_client_currency();
-        $price = \ModulesGarden\TSSGGSModule\App\Libs\Markups::price($clientId, (int)$vars['pid'], $vars['proddata']['billingcycle'] ?? 'annually', $currencyId);
+        $price = \ModulesGarden\TSSGGSModule\App\Libs\Billing\Markups::price($clientId, (int)$vars['pid'], $vars['proddata']['billingcycle'] ?? 'annually', $currencyId);
 
         return $price === null ? [] : ['recurring' => $price];
     }
@@ -482,7 +482,7 @@ add_hook('ClientAreaPageCart', 1, function($vars) {
     {
         list($clientId, $currencyId) = tssggs_markup_client_currency();
         $scale = function($pricing, $pid) use ($clientId, $currencyId) {
-            $markup = \ModulesGarden\TSSGGSModule\App\Libs\Markups::forProduct($clientId, $pid);
+            $markup = \ModulesGarden\TSSGGSModule\App\Libs\Billing\Markups::forProduct($clientId, $pid);
             if($markup === null || !is_array($pricing) || !Capsule::table('tblproducts')->where('id', (int)$pid)->where('servertype', 'TSSGGSModule')->exists())
             {
                 return $pricing;
@@ -493,7 +493,7 @@ add_hook('ClientAreaPageCart', 1, function($vars) {
                 {
                     continue;
                 }
-                $new = \ModulesGarden\TSSGGSModule\App\Libs\Markups::apply($amount, $markup);
+                $new = \ModulesGarden\TSSGGSModule\App\Libs\Billing\Markups::apply($amount, $markup);
                 $pricing['rawpricing'][$cycle] = number_format($new, 2, '.', '');
                 if(isset($pricing['cycles'][$cycle]))
                 {
@@ -546,7 +546,7 @@ add_hook('ClientAreaHeadOutput', 1, function($vars) {
         $markups = [];
         foreach(Capsule::table('tblproducts')->where('servertype', 'TSSGGSModule')->pluck('id') as $pid)
         {
-            $markup = \ModulesGarden\TSSGGSModule\App\Libs\Markups::forProduct($clientId, $pid);
+            $markup = \ModulesGarden\TSSGGSModule\App\Libs\Billing\Markups::forProduct($clientId, $pid);
             if($markup !== null)
             {
                 $markups[(int)$pid] = 1 + $markup / 100;
@@ -644,11 +644,11 @@ add_hook('AfterModuleCreate', 1, function($vars) {
         $result = localAPI('AcceptOrder', ['orderid' => $orderId, 'autosetup' => false, 'sendemail' => false]);
         if(($result['result'] ?? '') === 'success')
         {
-            \ModulesGarden\TSSGGSModule\App\Libs\GeneralSettings::activity('Order #' . $orderId . ' accepted automatically: service #' . $serviceId . ' was set up (automatic setup on ' . $service->autosetup . ')');
+            \ModulesGarden\TSSGGSModule\App\Libs\Support\GeneralSettings::activity('Order #' . $orderId . ' accepted automatically: service #' . $serviceId . ' was set up (automatic setup on ' . $service->autosetup . ')');
         }
         else
         {
-            \ModulesGarden\TSSGGSModule\App\Libs\GeneralSettings::activity('Order #' . $orderId . ' could not be accepted automatically: ' . ($result['message'] ?? 'unknown error'));
+            \ModulesGarden\TSSGGSModule\App\Libs\Support\GeneralSettings::activity('Order #' . $orderId . ' could not be accepted automatically: ' . ($result['message'] ?? 'unknown error'));
         }
     }
     catch(\Throwable $e)
@@ -657,7 +657,7 @@ add_hook('AfterModuleCreate', 1, function($vars) {
     }
 });
 
-// ---- Renewal invoices: the module creates them, never WHMCS (App\Libs\RenewalPolicy) ---- //
+// ---- Renewal invoices: the module creates them, never WHMCS (App\Libs\Billing\RenewalPolicy) ---- //
 // WHMCS invoices a service when its next invoice date enters the generation window. Right before it generates
 // invoices, the module's recurring services have that date moved out of the window; right after, it is put back.
 // So a renewal is billed once, on the module's terms (N days before the order end, at most 30), and the dates the
@@ -666,8 +666,8 @@ add_hook('PreInvoicingGenerateInvoiceItems', 1, function($vars) {
     try
     {
         // the "Create Automatic Renewal Invoice" switch decides who invoices: off, WHMCS does, as it always did -
-        // except for certificates kept as a record of the legacy module (App\Libs\RecordOnly): never invoiced
-        $moduleInvoices = \ModulesGarden\TSSGGSModule\App\Libs\RenewalPolicy::invoicing(\ModulesGarden\TSSGGSModule\App\Libs\RenewalPolicy::CERTIFICATE);
+        // except for certificates kept as a record of the legacy module (App\Libs\Certificates\RecordOnly): never invoiced
+        $moduleInvoices = \ModulesGarden\TSSGGSModule\App\Libs\Billing\RenewalPolicy::invoicing(\ModulesGarden\TSSGGSModule\App\Libs\Billing\RenewalPolicy::CERTIFICATE);
 
         $query = Capsule::table('tblhosting')
             ->join('tblproducts', 'tblproducts.id', '=', 'tblhosting.packageid')
@@ -677,7 +677,7 @@ add_hook('PreInvoicingGenerateInvoiceItems', 1, function($vars) {
             ->where('tblhosting.nextinvoicedate', '<', '2099-01-01');
         if(!$moduleInvoices)
         {
-            \ModulesGarden\TSSGGSModule\App\Libs\RecordOnly::only($query);
+            \ModulesGarden\TSSGGSModule\App\Libs\Certificates\RecordOnly::only($query);
         }
         $rows = $query->get(['tblhosting.id', 'tblhosting.nextinvoicedate']);
 
@@ -722,11 +722,11 @@ add_hook('ClientAreaProductDetailsOutput', 1, function($vars) {
     try
     {
         $serviceId = (int)($vars['service']->id ?? ($vars['serviceid'] ?? 0));
-        if($serviceId <= 0 || !class_exists('\ModulesGarden\TSSGGSModule\App\Libs\AddonCertificates'))
+        if($serviceId <= 0 || !class_exists('\ModulesGarden\TSSGGSModule\App\Libs\Certificates\AddonCertificates'))
         {
             return '';
         }
-        $notice = \ModulesGarden\TSSGGSModule\App\Libs\AddonCertificates::clientNotice($serviceId);
+        $notice = \ModulesGarden\TSSGGSModule\App\Libs\Certificates\AddonCertificates::clientNotice($serviceId);
 
         return $notice !== '' ? '<div class="alert alert-info" style="text-align:left">' . htmlspecialchars($notice) . '</div>' : '';
     }

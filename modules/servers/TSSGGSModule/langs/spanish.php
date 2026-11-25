@@ -970,7 +970,7 @@ $_LANG['addonCertificate']['managed_elsewhere'] = 'Este certificado se gestiona 
 $_LANG['addonCertificate']['service_notice'] = 'Este certificado se factura con el complemento de producto ":addon:" de :service:. Se renueva y se cancela allí.';
 $_LANG['addonCertificate']['upgrade_blocked'] = 'Este certificado se factura con un complemento de producto: no se puede mejorar ni añadirle dominios. Pida en su lugar un certificado con más dominios.';
 
-// CAA DNS record warning (App\Libs\CaaCheck)
+// CAA DNS record warning (App\Libs\Certificates\CaaCheck)
 $_LANG['caa_title'] = 'Un registro DNS CAA no permite este certificado';
 $_LANG['caa_intro'] = '%s no emitirá el certificado para estos dominios: su registro DNS CAA solo permite otras autoridades de certificación.';
 $_LANG['caa_inherited'] = 'registro en %s';
@@ -979,7 +979,7 @@ $_LANG['caa_add'] = 'Añada este registro';
 $_LANG['caa_fix'] = 'Añada el registro en la zona DNS del dominio (o elimine sus registros CAA). Los cambios de DNS pueden tardar hasta una hora.';
 $_LANG['caa_gateway'] = 'La autoridad de certificación informa de que su comprobación CAA falló para este pedido. Vuelve a comprobarlo cuando el registro CAA lo permita.';
 $_LANG['caa_gateway_fix'] = 'Para corregirlo, añada %s en la zona DNS del dominio (o elimine sus registros CAA). Los cambios de DNS pueden tardar hasta una hora.';
-// IP certificates: CSR without common name (App\Libs\IpCertificate)
+// IP certificates: CSR without common name (App\Libs\Certificates\IpCertificate)
 $_LANG['serverCA']['home']['sslConfigIpCsrHint'] = 'Pegue un CSR sin common name: este certificado protege las direcciones IP y nombres de dominio que indique abajo. O marque «Generar CSR automáticamente».';
 $_LANG['sslConfigIpCsrHint'] = 'Pegue un CSR sin common name: este certificado protege las direcciones IP y nombres de dominio que indique abajo. O marque «Generar CSR automáticamente».';
 $_LANG['serverCA']['home']['sslConfigIpNames'] = 'Direcciones IP públicas o nombres de dominio, uno por línea';

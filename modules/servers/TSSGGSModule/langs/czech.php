@@ -970,7 +970,7 @@ $_LANG['addonCertificate']['managed_elsewhere'] = 'Tento certifikát se spravuje
 $_LANG['addonCertificate']['service_notice'] = 'Tento certifikát se účtuje s doplňkem produktu ":addon:" služby :service:. Prodlužuje se a ruší tam.';
 $_LANG['addonCertificate']['upgrade_blocked'] = 'Tento certifikát se účtuje s doplňkem produktu: nelze jej povýšit ani k němu přidat domény. Objednejte místo toho certifikát s více doménami.';
 
-// CAA DNS record warning (App\Libs\CaaCheck)
+// CAA DNS record warning (App\Libs\Certificates\CaaCheck)
 $_LANG['caa_title'] = 'Záznam CAA v DNS tento certifikát nepovoluje';
 $_LANG['caa_intro'] = '%s certifikát pro tyto domény nevydá: jejich záznam CAA v DNS povoluje pouze jiné certifikační autority.';
 $_LANG['caa_inherited'] = 'záznam na %s';
@@ -979,7 +979,7 @@ $_LANG['caa_add'] = 'Přidejte tento záznam';
 $_LANG['caa_fix'] = 'Přidejte záznam do DNS zóny domény (nebo její záznamy CAA odstraňte). Projevení změn v DNS může trvat až hodinu.';
 $_LANG['caa_gateway'] = 'Certifikační autorita hlásí, že kontrola CAA pro tuto objednávku selhala. Zkontroluje ji znovu, jakmile to záznam CAA povolí.';
 $_LANG['caa_gateway_fix'] = 'Opravíte to přidáním %s do DNS zóny domény (nebo odstraněním jejích záznamů CAA). Projevení změn v DNS může trvat až hodinu.';
-// IP certificates: CSR without common name (App\Libs\IpCertificate)
+// IP certificates: CSR without common name (App\Libs\Certificates\IpCertificate)
 $_LANG['serverCA']['home']['sslConfigIpCsrHint'] = 'Vložte CSR bez Common Name: certifikát zabezpečí IP adresy a doménová jména zadaná níže. Nebo zaškrtněte „Vygenerovat CSR automaticky“.';
 $_LANG['sslConfigIpCsrHint'] = 'Vložte CSR bez Common Name: certifikát zabezpečí IP adresy a doménová jména zadaná níže. Nebo zaškrtněte „Vygenerovat CSR automaticky“.';
 $_LANG['serverCA']['home']['sslConfigIpNames'] = 'Veřejné IP adresy nebo doménová jména, jedno na řádek';

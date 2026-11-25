@@ -38,7 +38,7 @@ if (!$moduleUpdateCommand && is_dir(\ModulesGarden\TSSGGSModule\App\Libs\Update\
 }
 
 // an install upgraded by copying files, where WHMCS never ran the addon upgrade, is still moved over
-foreach (['\\ModulesGarden\\TSSGGSModule\\App\\Libs\\TablePrefix', '\\ModulesGarden\\TSSGGSModule\\App\\Libs\\ModuleRename', '\\ModulesGarden\\TSSGGSModule\\App\\Database\\Schema'] as $step)
+foreach (['\\ModulesGarden\\TSSGGSModule\\App\\Libs\\Support\\TablePrefix', '\\ModulesGarden\\TSSGGSModule\\App\\Libs\\Support\\ModuleRename', '\\ModulesGarden\\TSSGGSModule\\App\\Database\\Schema'] as $step)
 {
     try
     {

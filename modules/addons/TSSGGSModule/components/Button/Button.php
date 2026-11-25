@@ -2,7 +2,7 @@
 
 namespace ModulesGarden\TSSGGSModule\Components\Button;
 
-use ModulesGarden\TSSGGSModule\App\Libs\Icons;
+use ModulesGarden\TSSGGSModule\App\Libs\Support\Icons;
 use ModulesGarden\TSSGGSModule\Core\Components\FallbackTraits\ButtonFallbackTrait;
 use ModulesGarden\TSSGGSModule\Core\Components\FormFields\FormField;
 use ModulesGarden\TSSGGSModule\Core\Components\Traits\ActionOnClickTrait;

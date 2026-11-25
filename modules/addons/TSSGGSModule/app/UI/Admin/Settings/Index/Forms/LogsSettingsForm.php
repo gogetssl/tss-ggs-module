@@ -13,10 +13,10 @@ use ModulesGarden\TSSGGSModule\Core\Contracts\Components\AdminAreaInterface;
 use ModulesGarden\TSSGGSModule\Core\Contracts\Components\AjaxComponentInterface;
 
 /**
- * Every log in one group, one switch each (values in App\Libs\GeneralSettings), then "Debug one order":
+ * Every log in one group, one switch each (values in App\Libs\Support\GeneralSettings), then "Debug one order":
  *   Certificate Log, Technical log (Logs page), Events, API requests - kept in the module
  *   WHMCS Module Log - shows YES only while WHMCS has its Module Log on too; YES switches it on in WHMCS
- *                      (GeneralSettingsProvider, App\Libs\WhmcsModuleLog)
+ *                      (GeneralSettingsProvider, App\Libs\Support\WhmcsModuleLog)
  *   WHMCS Activity Log - certificate events in the WHMCS activity log (WHMCS has no switch of its own for that log)
  */
 class LogsSettingsForm extends Form implements AdminAreaInterface, AjaxComponentInterface

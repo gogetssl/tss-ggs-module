@@ -2,8 +2,8 @@
 
 namespace ModulesGarden\TSSGGSModule\App\Http\Admin;
 
-use ModulesGarden\TSSGGSModule\App\Libs\Markups as MarkupRules;
-use ModulesGarden\TSSGGSModule\App\Libs\CsrfToken;
+use ModulesGarden\TSSGGSModule\App\Libs\Billing\Markups as MarkupRules;
+use ModulesGarden\TSSGGSModule\App\Libs\Support\CsrfToken;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Markups\Index\MarkupsContainer;
 use ModulesGarden\TSSGGSModule\Core\Contracts\Controllers\AdminAreaInterface;
 use ModulesGarden\TSSGGSModule\Core\Helper;

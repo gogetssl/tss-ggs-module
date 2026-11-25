@@ -2,11 +2,11 @@
 
 namespace ModulesGarden\TSSGGSModule\App\Migration;
 
-use ModulesGarden\TSSGGSModule\App\Libs\Markups;
-use ModulesGarden\TSSGGSModule\App\Libs\Cpanel;
-use ModulesGarden\TSSGGSModule\App\Libs\EmailCatalog;
-use ModulesGarden\TSSGGSModule\App\Libs\EmailManager;
-use ModulesGarden\TSSGGSModule\App\Libs\LegacyEmailImport;
+use ModulesGarden\TSSGGSModule\App\Libs\Billing\Markups;
+use ModulesGarden\TSSGGSModule\App\Libs\AutoInstall\Cpanel;
+use ModulesGarden\TSSGGSModule\App\Libs\Emails\EmailCatalog;
+use ModulesGarden\TSSGGSModule\App\Libs\Emails\EmailManager;
+use ModulesGarden\TSSGGSModule\App\Libs\Emails\LegacyEmailImport;
 use ModulesGarden\TSSGGSModule\App\Migration\Readers\LegacyReaderInterface;
 use ModulesGarden\TSSGGSModule\App\Migration\Support\Schema;
 use WHMCS\Database\Capsule;
@@ -245,7 +245,7 @@ class Engine
     /**
      * Legacy products (and TSS order codes) the gateway has no product for, with the services that use them.
      * Each needs a choice before a run: an alternative gateway product (renewals are ordered as that product) or
-     * "keep as a record" (App\Libs\RecordOnly). Read without the run's choices.
+     * "keep as a record" (App\Libs\Certificates\RecordOnly). Read without the run's choices.
      * [['ref', 'label', 'names' => [], 'pids' => [], 'unsupported' => bool, 'services' => ['active', 'awaiting', 'other']]]
      */
     public function unmatched(): array
@@ -1321,7 +1321,7 @@ class Engine
         $mysql   = Capsule::selectOne('SELECT VERSION() AS v');
         $summary = $run['summary'] ?? [];
         $lines   = [
-            \ModulesGarden\TSSGGSModule\App\Libs\Edition::name() . ' - migration error report',
+            \ModulesGarden\TSSGGSModule\App\Libs\Support\Edition::name() . ' - migration error report',
             str_repeat('=', 60),
             'Run:            #' . $runId . ' (' . strtoupper((string)$run['source']) . ', legacy module ' . ($run['source_version'] ?: '?') . ')',
             'Status:         ' . $run['status'],

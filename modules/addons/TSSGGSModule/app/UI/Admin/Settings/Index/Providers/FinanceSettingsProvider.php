@@ -2,10 +2,10 @@
 
 namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Providers;
 
-use ModulesGarden\TSSGGSModule\App\Libs\FinancePolicy;
-use ModulesGarden\TSSGGSModule\App\Libs\GeneralSettings;
-use ModulesGarden\TSSGGSModule\App\Libs\Helpers;
-use ModulesGarden\TSSGGSModule\App\Libs\RenewalPrices;
+use ModulesGarden\TSSGGSModule\App\Libs\Billing\FinancePolicy;
+use ModulesGarden\TSSGGSModule\App\Libs\Support\GeneralSettings;
+use ModulesGarden\TSSGGSModule\App\Libs\Support\Helpers;
+use ModulesGarden\TSSGGSModule\App\Libs\Billing\RenewalPrices;
 use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
 use ModulesGarden\TSSGGSModule\Core\DataProviders\CrudProvider;
 
@@ -91,6 +91,6 @@ class FinanceSettingsProvider extends CrudProvider
         GeneralSettings::save($general);
 
         // the balance is read again now: the page shows it fresh and a new warning amount is checked at once
-        \ModulesGarden\TSSGGSModule\App\Libs\BalanceMonitor::run(true, \ModulesGarden\TSSGGSModule\App\Libs\SSLTrustCenterApi::PAGE_TIMEOUT);
+        \ModulesGarden\TSSGGSModule\App\Libs\Billing\BalanceMonitor::run(true, \ModulesGarden\TSSGGSModule\App\Libs\Gateway\SSLTrustCenterApi::PAGE_TIMEOUT);
     }
 }

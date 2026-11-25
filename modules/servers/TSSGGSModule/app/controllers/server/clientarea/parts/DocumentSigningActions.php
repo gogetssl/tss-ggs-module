@@ -4,8 +4,8 @@ namespace ModulesGarden\Servers\TSSGGSModule\app\controllers\server\clientarea\p
 
 use ModulesGarden\Servers\TSSGGSModule\app\models\whmcs\SSL;
 use ModulesGarden\Servers\TSSGGSModule\core\Lang;
-use ModulesGarden\TSSGGSModule\App\Libs\CertificateService;
-use ModulesGarden\TSSGGSModule\App\Libs\DocumentSigningService;
+use ModulesGarden\TSSGGSModule\App\Libs\Certificates\CertificateService;
+use ModulesGarden\TSSGGSModule\App\Libs\ProductLines\DocumentSigningService;
 use WHMCS\Database\Capsule;
 
 /**

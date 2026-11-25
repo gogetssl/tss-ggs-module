@@ -2,7 +2,7 @@
 
 namespace ModulesGarden\TSSGGSModule\App\Libs\Gateway\Endpoints;
 
-use ModulesGarden\TSSGGSModule\App\Libs\SSLTrustCenterApi;
+use ModulesGarden\TSSGGSModule\App\Libs\Gateway\SSLTrustCenterApi;
 
 /**
  * CodeGuard website backup licences.

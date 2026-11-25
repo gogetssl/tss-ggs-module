@@ -9,8 +9,8 @@ use ModulesGarden\Servers\TSSGGSModule\app\models\whmcs\Service;
 use ModulesGarden\Servers\TSSGGSModule\app\models\whmcs\SSL;
 use ModulesGarden\Servers\TSSGGSModule\core\Lang;
 use ModulesGarden\Servers\TSSGGSModule\Server;
-use ModulesGarden\TSSGGSModule\App\Libs\CertificateService;
-use ModulesGarden\TSSGGSModule\App\Libs\SmimeService;
+use ModulesGarden\TSSGGSModule\App\Libs\Certificates\CertificateService;
+use ModulesGarden\TSSGGSModule\App\Libs\ProductLines\SmimeService;
 use WHMCS\Database\Capsule;
 
 /**

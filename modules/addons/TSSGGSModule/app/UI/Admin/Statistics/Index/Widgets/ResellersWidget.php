@@ -2,7 +2,7 @@
 
 namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Statistics\Index\Widgets;
 
-use ModulesGarden\TSSGGSModule\App\Libs\Helpers;
+use ModulesGarden\TSSGGSModule\App\Libs\Support\Helpers;
 use ModulesGarden\TSSGGSModule\Components\TableSimple\Column\Column;
 use ModulesGarden\TSSGGSModule\Components\TableSimple\Record\Record;
 use ModulesGarden\TSSGGSModule\Components\TableSimple\TableSimple;

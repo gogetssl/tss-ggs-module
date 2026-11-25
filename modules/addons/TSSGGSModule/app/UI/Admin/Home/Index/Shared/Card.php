@@ -2,7 +2,7 @@
 
 namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Shared;
 
-use ModulesGarden\TSSGGSModule\App\Libs\Icons;
+use ModulesGarden\TSSGGSModule\App\Libs\Support\Icons;
 use ModulesGarden\TSSGGSModule\Components\Container\Container;
 use ModulesGarden\TSSGGSModule\Components\Text\Text;
 

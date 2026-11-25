@@ -3,8 +3,8 @@
 namespace ModulesGarden\Servers\TSSGGSModule\app\repository\whmcs;
 
 use ModulesGarden\Servers\TSSGGSModule\app\models\whmcs\Service;
-use ModulesGarden\TSSGGSModule\App\Libs\AcmeHelpers;
-use ModulesGarden\TSSGGSModule\App\Libs\AisHelpers;
+use ModulesGarden\TSSGGSModule\App\Libs\Subscriptions\AcmeHelpers;
+use ModulesGarden\TSSGGSModule\App\Libs\Subscriptions\AisHelpers;
 use WHMCS\Database\Capsule as DataBase;
 
 class Config
@@ -19,7 +19,7 @@ class Config
             return $WHMCSUrl . '/clientarea.php?action=productdetails&id=' . $service->id . '&acmeconfig=1';
         }
 
-        if($service && \ModulesGarden\TSSGGSModule\App\Libs\GatewayOrderService::typeOfProduct($service->packageid))
+        if($service && \ModulesGarden\TSSGGSModule\App\Libs\ProductLines\GatewayOrderService::typeOfProduct($service->packageid))
         {
             return $this->getBrandURL($serviceID) . '/clientarea.php?action=productdetails&id=' . $service->id . '&smimeconfig=1';
         }

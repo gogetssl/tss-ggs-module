@@ -2,7 +2,7 @@
 
 namespace ModulesGarden\TSSGGSModule\App\Http\Admin;
 
-use ModulesGarden\TSSGGSModule\App\Libs\CsrfToken;
+use ModulesGarden\TSSGGSModule\App\Libs\Support\CsrfToken;
 use ModulesGarden\TSSGGSModule\App\Libs\Update\Installer;
 use ModulesGarden\TSSGGSModule\App\Libs\Update\Release;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\ModuleUpdate\UpdateContainer;

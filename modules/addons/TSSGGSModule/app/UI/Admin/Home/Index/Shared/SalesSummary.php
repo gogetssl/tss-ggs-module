@@ -2,8 +2,8 @@
 
 namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Shared;
 
-use ModulesGarden\TSSGGSModule\App\Libs\Edition;
-use ModulesGarden\TSSGGSModule\App\Libs\GeneralSettings;
+use ModulesGarden\TSSGGSModule\App\Libs\Support\Edition;
+use ModulesGarden\TSSGGSModule\App\Libs\Support\GeneralSettings;
 use ModulesGarden\TSSGGSModule\Core\Support\Facades\Translator;
 
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Reports\Index\DataTables\Shared\RecordsProvider;

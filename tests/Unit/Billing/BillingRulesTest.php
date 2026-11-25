@@ -2,9 +2,9 @@
 
 namespace Tests\Unit\Billing;
 
-use ModulesGarden\TSSGGSModule\App\Libs\BalanceMonitor;
-use ModulesGarden\TSSGGSModule\App\Libs\FinancePolicy;
-use ModulesGarden\TSSGGSModule\App\Libs\Markups;
+use ModulesGarden\TSSGGSModule\App\Libs\Billing\BalanceMonitor;
+use ModulesGarden\TSSGGSModule\App\Libs\Billing\FinancePolicy;
+use ModulesGarden\TSSGGSModule\App\Libs\Billing\Markups;
 use PHPUnit\Framework\TestCase;
 
 /** Money rules that do not need the database */

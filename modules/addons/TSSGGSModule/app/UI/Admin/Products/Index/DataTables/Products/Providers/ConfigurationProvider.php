@@ -2,7 +2,7 @@
 
 namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Products\Index\DataTables\Products\Providers;
 
-use ModulesGarden\TSSGGSModule\App\Libs\ProductSettings;
+use ModulesGarden\TSSGGSModule\App\Libs\Products\ProductSettings;
 use ModulesGarden\TSSGGSModule\App\Models\RemoteProduct;
 use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\ProductRepository;
 use ModulesGarden\TSSGGSModule\Core\DataProviders\CrudProvider;

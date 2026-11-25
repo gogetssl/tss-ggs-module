@@ -2,7 +2,7 @@
 
 namespace ModulesGarden\TSSGGSModule\App\Http\Admin;
 
-use ModulesGarden\TSSGGSModule\App\Libs\AutoInstallQueue;
+use ModulesGarden\TSSGGSModule\App\Libs\AutoInstall\AutoInstallQueue;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\CertificateLog\Index\CertificateLogContainer;
 use ModulesGarden\TSSGGSModule\Core\Contracts\Controllers\AdminAreaInterface;
 use ModulesGarden\TSSGGSModule\Core\Helper;
@@ -22,7 +22,7 @@ class CertificateLog extends AbstractController implements AdminAreaInterface
     /** GET older=<days>|all with the admin link token */
     public function clear()
     {
-        if(\ModulesGarden\TSSGGSModule\App\Libs\CsrfToken::valid($_REQUEST['token'] ?? ''))
+        if(\ModulesGarden\TSSGGSModule\App\Libs\Support\CsrfToken::valid($_REQUEST['token'] ?? ''))
         {
             $query = Capsule::table(AutoInstallQueue::logsTable());
             $older = (string)($_REQUEST['older'] ?? '');

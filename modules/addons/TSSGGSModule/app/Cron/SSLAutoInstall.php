@@ -2,7 +2,7 @@
 
 namespace ModulesGarden\TSSGGSModule\App\Cron;
 
-use ModulesGarden\TSSGGSModule\App\Libs\AutoInstallHelpers;
+use ModulesGarden\TSSGGSModule\App\Libs\AutoInstall\AutoInstallHelpers;
 use ModulesGarden\TSSGGSModule\App\Models\CronCheck;
 use ModulesGarden\TSSGGSModule\Core\CommandLine\AbstractCommand;
 use Symfony\Component\Console\Input\InputInterface;

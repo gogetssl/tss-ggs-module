@@ -2,7 +2,7 @@
 
 namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Configuration\Shared\Providers;
 
-use ModulesGarden\TSSGGSModule\App\Libs\Edition;
+use ModulesGarden\TSSGGSModule\App\Libs\Support\Edition;
 use ModulesGarden\TSSGGSModule\App\Migration\Choice;
 use ModulesGarden\TSSGGSModule\App\Migration\Detector;
 use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;

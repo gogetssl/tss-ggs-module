@@ -2,7 +2,7 @@
 
 namespace ModulesGarden\TSSGGSModule\App\UI\Admin\AutomationQueue\Index\DataTables\Queue;
 
-use ModulesGarden\TSSGGSModule\App\Libs\AutoInstallQueue;
+use ModulesGarden\TSSGGSModule\App\Libs\AutoInstall\AutoInstallQueue;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\AutomationQueue\Index\DataTables\Queue\Buttons\ResetTaskButton;
 use ModulesGarden\TSSGGSModule\Components\DataTable\Column;
 use ModulesGarden\TSSGGSModule\Components\Label\Label;

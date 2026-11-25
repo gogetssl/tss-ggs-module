@@ -26,12 +26,12 @@ $hookManager->register(
     100
 );
 
-// the AutoInstall report e-mail to the administrators (App\Libs\AutoInstallReport), once a day
+// the AutoInstall report e-mail to the administrators (App\Libs\AutoInstall\AutoInstallReport), once a day
 $hookManager->register(
     function($args) {
         try
         {
-            \ModulesGarden\TSSGGSModule\App\Libs\AutoInstallReport::notify();
+            \ModulesGarden\TSSGGSModule\App\Libs\AutoInstall\AutoInstallReport::notify();
         }
         catch(\Throwable $e)
         {

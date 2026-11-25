@@ -3,7 +3,7 @@
 namespace ModulesGarden\TSSGGSModule\App\Cron;
 
 use ModulesGarden\TSSGGSModule\App\Helpers\EmailTemplates;
-use ModulesGarden\TSSGGSModule\App\Libs\AutoInstallHelpers;
+use ModulesGarden\TSSGGSModule\App\Libs\AutoInstall\AutoInstallHelpers;
 use ModulesGarden\TSSGGSModule\App\Models\CronCheck;
 use ModulesGarden\TSSGGSModule\App\Models\Request;
 use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
@@ -67,9 +67,9 @@ class RenewalNotifyCertificate extends AbstractCommand
         $addonConfig = (new AddonModuleRepository())->getModuleConfiguration();
         $sslSettings = $addonConfig['sslSettings'];
 
-        // renewal invoices: from N days before the order end (App\Libs\RenewalPolicy); the module is the only one
+        // renewal invoices: from N days before the order end (App\Libs\Billing\RenewalPolicy); the module is the only one
         // that creates them, whichever way a paid renewal is placed
-        $auto_renew_invoice_reccuring           = \ModulesGarden\TSSGGSModule\App\Libs\RenewalPolicy::invoicing(\ModulesGarden\TSSGGSModule\App\Libs\RenewalPolicy::CERTIFICATE);
+        $auto_renew_invoice_reccuring           = \ModulesGarden\TSSGGSModule\App\Libs\Billing\RenewalPolicy::invoicing(\ModulesGarden\TSSGGSModule\App\Libs\Billing\RenewalPolicy::CERTIFICATE);
         $send_expiration_notification_reccuring = $sslSettings['recurringSendExpirationNotifications'];
 
         $daysNotify = explode(',', $send_expiration_notification_reccuring);
@@ -83,12 +83,12 @@ class RenewalNotifyCertificate extends AbstractCommand
                                     ->where(function($query) {
                                         $query->where('tblsslorders.status', 'Configuration Submitted')
                                               ->orWhere(function($smime) {
-                                                  $smime->whereIn('tblproducts.configoption9', \ModulesGarden\TSSGGSModule\App\Libs\GatewayOrderService::categories())
+                                                  $smime->whereIn('tblproducts.configoption9', \ModulesGarden\TSSGGSModule\App\Libs\ProductLines\GatewayOrderService::categories())
                                                         ->where('tblsslorders.status', 'Completed');
                                               });
                                     });
-        // certificates kept as a record of the legacy module are never renewed (App\Libs\RecordOnly)
-        \ModulesGarden\TSSGGSModule\App\Libs\RecordOnly::exclude($certificatesQuery);
+        // certificates kept as a record of the legacy module are never renewed (App\Libs\Certificates\RecordOnly)
+        \ModulesGarden\TSSGGSModule\App\Libs\Certificates\RecordOnly::exclude($certificatesQuery);
 
 
         $output->write('Start checking certificates...') .
@@ -109,12 +109,12 @@ class RenewalNotifyCertificate extends AbstractCommand
         foreach($certificatesQuery->get() as $srv)
         {
             // subscriptions have their own renewal (SubscriptionRenewals)
-            if(\ModulesGarden\TSSGGSModule\App\Libs\SubscriptionBilling::isSubscriptionProduct($srv->packageid))
+            if(\ModulesGarden\TSSGGSModule\App\Libs\Subscriptions\SubscriptionBilling::isSubscriptionProduct($srv->packageid))
             {
                 continue;
             }
             // S/MIME: its own expiry e-mail, no reissue reminder (a renewal is a new order)
-            $gatewayType = \ModulesGarden\TSSGGSModule\App\Libs\GatewayOrderService::typeOfProduct($srv->packageid);
+            $gatewayType = \ModulesGarden\TSSGGSModule\App\Libs\ProductLines\GatewayOrderService::typeOfProduct($srv->packageid);
             $isSmime     = $gatewayType !== null;
 
             $io->progressAdvance(1);
@@ -145,11 +145,11 @@ class RenewalNotifyCertificate extends AbstractCommand
                         // code signing and S/MIME have their own expiry text; a CodeGuard licence is not a certificate,
                         // so it gets the general service expiry e-mail
                         $expiryTemplate = EmailTemplates::EXPIRATION_TEMPLATE;
-                        if($gatewayType === \ModulesGarden\TSSGGSModule\App\Libs\CodeSigningService::class)
+                        if($gatewayType === \ModulesGarden\TSSGGSModule\App\Libs\ProductLines\CodeSigningService::class)
                         {
                             $expiryTemplate = EmailTemplates::CS_EXPIRATION_TEMPLATE;
                         }
-                        elseif($gatewayType === \ModulesGarden\TSSGGSModule\App\Libs\SmimeService::class)
+                        elseif($gatewayType === \ModulesGarden\TSSGGSModule\App\Libs\ProductLines\SmimeService::class)
                         {
                             $expiryTemplate = EmailTemplates::SMIME_EXPIRATION_TEMPLATE;
                         }
@@ -162,7 +162,7 @@ class RenewalNotifyCertificate extends AbstractCommand
                 // the service falls due on the order end: its renewal invoice is created from N days before it, on or
                 // after that day (a day without a cron run loses nothing; an invoice that exists is not made again)
                 if($auto_renew_invoice_reccuring && !in_array($srv->billingcycle, ['One Time', 'Free Account'], true)
-                    && \ModulesGarden\TSSGGSModule\App\Libs\RenewalPolicy::invoiceDue(\ModulesGarden\TSSGGSModule\App\Libs\RenewalPolicy::CERTIFICATE, $srv->nextduedate))
+                    && \ModulesGarden\TSSGGSModule\App\Libs\Billing\RenewalPolicy::invoiceDue(\ModulesGarden\TSSGGSModule\App\Libs\Billing\RenewalPolicy::CERTIFICATE, $srv->nextduedate))
                 {
                     $packageLists[$srv->packageid][] = $srv;
                     $serviceIDs[]                    = $srv->id;
@@ -178,7 +178,7 @@ class RenewalNotifyCertificate extends AbstractCommand
                     $failedIds[] = (int)$srv->id;
                 }
                 $errorToDB = $e->getMessage();
-                Logger::error("The notification error " . $e->getMessage(), \ModulesGarden\TSSGGSModule\App\Libs\LogContext::exception($e, ['service' => $srv->id]));
+                Logger::error("The notification error " . $e->getMessage(), \ModulesGarden\TSSGGSModule\App\Libs\Support\LogContext::exception($e, ['service' => $srv->id]));
 
             }
         }
@@ -210,7 +210,7 @@ class RenewalNotifyCertificate extends AbstractCommand
                 {
 
                     $errorToDB = $e->getMessage();
-                    Logger::error("The renewal invoice generate error " . $e->getMessage(), \ModulesGarden\TSSGGSModule\App\Libs\LogContext::exception($e, ['service' => $serviceID]));
+                    Logger::error("The renewal invoice generate error " . $e->getMessage(), \ModulesGarden\TSSGGSModule\App\Libs\Support\LogContext::exception($e, ['service' => $serviceID]));
 
                 }
             }
@@ -220,7 +220,7 @@ class RenewalNotifyCertificate extends AbstractCommand
         $io->progressFinish();
         try
         {
-            foreach(\ModulesGarden\TSSGGSModule\App\Libs\SubscriptionRenewals::run($sslSettings) as $serviceId => $error)
+            foreach(\ModulesGarden\TSSGGSModule\App\Libs\Subscriptions\SubscriptionRenewals::run($sslSettings) as $serviceId => $error)
             {
                 $errorToDB = $error;
                 Logger::error('Subscription renewal error ' . $error, ['service' => $serviceId]);
@@ -229,7 +229,7 @@ class RenewalNotifyCertificate extends AbstractCommand
         catch(\Throwable $e)
         {
             $errorToDB = $e->getMessage();
-            Logger::error('Subscription renewal error ' . $e->getMessage(), \ModulesGarden\TSSGGSModule\App\Libs\LogContext::exception($e));
+            Logger::error('Subscription renewal error ' . $e->getMessage(), \ModulesGarden\TSSGGSModule\App\Libs\Support\LogContext::exception($e));
         }
 
         // each step on its own: the time of this run is always saved, or the job would start again every 5 minutes
@@ -242,7 +242,7 @@ class RenewalNotifyCertificate extends AbstractCommand
             catch(\Throwable $e)
             {
                 $errorToDB = $e->getMessage();
-                Logger::error('RenewalNotifyCertificate ' . $step . ' error ' . $e->getMessage(), \ModulesGarden\TSSGGSModule\App\Libs\LogContext::exception($e));
+                Logger::error('RenewalNotifyCertificate ' . $step . ' error ' . $e->getMessage(), \ModulesGarden\TSSGGSModule\App\Libs\Support\LogContext::exception($e));
             }
         }
 
@@ -268,12 +268,12 @@ class RenewalNotifyCertificate extends AbstractCommand
             {
                 continue;
             }
-            $stored = \ModulesGarden\TSSGGSModule\App\Libs\CertificateService::stored($serviceId);
-            $end    = \ModulesGarden\TSSGGSModule\App\Libs\SslProductHelpers::getServiceDueDate((array)($stored['orderData'] ?? []));
+            $stored = \ModulesGarden\TSSGGSModule\App\Libs\Certificates\CertificateService::stored($serviceId);
+            $end    = \ModulesGarden\TSSGGSModule\App\Libs\Products\SslProductHelpers::getServiceDueDate((array)($stored['orderData'] ?? []));
             if($end && $end < $today)
             {
                 \WHMCS\Database\Capsule::table('tblhosting')->where('id', $serviceId)->update(['domainstatus' => 'Completed']);
-                \ModulesGarden\TSSGGSModule\App\Libs\CertificateService::event($serviceId, 'info', '[Renewal] Order ended on ' . $end . ': service completed, renewed as service #' . (int)$row->request);
+                \ModulesGarden\TSSGGSModule\App\Libs\Certificates\CertificateService::event($serviceId, 'info', '[Renewal] Order ended on ' . $end . ': service completed, renewed as service #' . (int)$row->request);
             }
         }
     }

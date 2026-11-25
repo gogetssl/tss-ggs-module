@@ -2,12 +2,12 @@
 
 namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Reports\Index\DataTables\Shared;
 
-use ModulesGarden\TSSGGSModule\App\Libs\Edition;
+use ModulesGarden\TSSGGSModule\App\Libs\Support\Edition;
 
 
-use ModulesGarden\TSSGGSModule\App\Libs\AcmeHelpers;
-use ModulesGarden\TSSGGSModule\App\Libs\AisHelpers;
-use ModulesGarden\TSSGGSModule\App\Libs\Helpers;
+use ModulesGarden\TSSGGSModule\App\Libs\Subscriptions\AcmeHelpers;
+use ModulesGarden\TSSGGSModule\App\Libs\Subscriptions\AisHelpers;
+use ModulesGarden\TSSGGSModule\App\Libs\Support\Helpers;
 use ModulesGarden\TSSGGSModule\App\Models\AcmeSubscription;
 use ModulesGarden\TSSGGSModule\App\Models\AisSubscription;
 use ModulesGarden\TSSGGSModule\Core\Translation\TranslatorTrait;
@@ -251,7 +251,7 @@ class RecordsProvider
         if(!isset($productTypes[$item->productId]))
         {
             $productTypes[$item->productId] = AcmeHelpers::isAcmeWhmcsProduct($item->productId) ? 'acme' : (AisHelpers::isAisWhmcsProduct($item->productId) ? 'ais'
-                : (\ModulesGarden\TSSGGSModule\App\Libs\GatewayOrderService::typeOfProduct($item->productId) ?: 'ssl'));
+                : (\ModulesGarden\TSSGGSModule\App\Libs\ProductLines\GatewayOrderService::typeOfProduct($item->productId) ?: 'ssl'));
         }
         $type = $productTypes[$item->productId];
 
@@ -269,7 +269,7 @@ class RecordsProvider
             return $value ? date('Y-m-d', strtotime((string)$value)) : '-';
         };
 
-        if($type !== 'ssl' && is_subclass_of($type, \ModulesGarden\TSSGGSModule\App\Libs\GatewayOrderService::class))
+        if($type !== 'ssl' && is_subclass_of($type, \ModulesGarden\TSSGGSModule\App\Libs\ProductLines\GatewayOrderService::class))
         {
             $stored         = $type::stored($serviceId);
             $orderStatus    = !empty($stored['status']) ? ucfirst($stored['status']) : $orderStatus;

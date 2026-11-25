@@ -5,7 +5,7 @@ namespace ModulesGarden\Servers\TSSGGSModule\app\services;
 use ModulesGarden\Servers\TSSGGSModule\app\repository\whmcs\Domain;
 use ModulesGarden\Servers\TSSGGSModule\core\Lang;
 use ModulesGarden\Servers\TSSGGSModule\core\Smarty;
-use ModulesGarden\TSSGGSModule\App\Libs\SSLTrustCenterApi;
+use ModulesGarden\TSSGGSModule\App\Libs\Gateway\SSLTrustCenterApi;
 use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
 use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\ProductRepository;
 

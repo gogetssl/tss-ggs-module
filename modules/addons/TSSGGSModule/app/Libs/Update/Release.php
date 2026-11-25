@@ -2,7 +2,7 @@
 
 namespace ModulesGarden\TSSGGSModule\App\Libs\Update;
 
-use ModulesGarden\TSSGGSModule\App\Libs\Edition;
+use ModulesGarden\TSSGGSModule\App\Libs\Support\Edition;
 use ModulesGarden\TSSGGSModule\Core\ModuleConstants;
 
 /**

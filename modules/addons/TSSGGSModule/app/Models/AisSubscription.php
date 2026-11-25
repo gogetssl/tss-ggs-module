@@ -2,7 +2,7 @@
 
 namespace ModulesGarden\TSSGGSModule\App\Models;
 
-use ModulesGarden\TSSGGSModule\App\Libs\SecretValue;
+use ModulesGarden\TSSGGSModule\App\Libs\Support\SecretValue;
 use ModulesGarden\TSSGGSModule\Core\Models\ExtendedEloquentModel;
 
 class AisSubscription extends ExtendedEloquentModel

@@ -54,16 +54,16 @@ class ApiSettingsForm extends Form implements AdminAreaInterface, AjaxComponentI
         };
 
         // the edition's own vendor, then (not in the setup wizard) the other vendor the administrator can connect:
-        // a switch plus its credentials - only its exclusive products are offered then (App\Libs\CrossVendor)
-        $vendors = [\ModulesGarden\TSSGGSModule\App\Libs\Edition::primaryVendor()];
+        // a switch plus its credentials - only its exclusive products are offered then (App\Libs\Gateway\CrossVendor)
+        $vendors = [\ModulesGarden\TSSGGSModule\App\Libs\Support\Edition::primaryVendor()];
         if($this->configuration !== true)
         {
-            $vendors[] = \ModulesGarden\TSSGGSModule\App\Libs\Edition::otherVendor();
+            $vendors[] = \ModulesGarden\TSSGGSModule\App\Libs\Support\Edition::otherVendor();
         }
 
         foreach($vendors as $vendor)
         {
-            if($vendor === \ModulesGarden\TSSGGSModule\App\Libs\Edition::primaryVendor())
+            if($vendor === \ModulesGarden\TSSGGSModule\App\Libs\Support\Edition::primaryVendor())
             {
                 $widget = $this->section($vendor, 'key-outline');
             }
@@ -90,9 +90,9 @@ class ApiSettingsForm extends Form implements AdminAreaInterface, AjaxComponentI
         {
             $this->addElement((new \ModulesGarden\TSSGGSModule\Components\Text\Text())->setText(
                 '<div class="tssggs-sec__desc tssggs-api-scope" data-switch="connectOther"'
-                . (\ModulesGarden\TSSGGSModule\App\Libs\Edition::connectedVendor() === '' ? ' style="display:none"' : '') . '><p>' . htmlspecialchars($this->translate('buttonsScope', [
-                    'primary' => \ModulesGarden\TSSGGSModule\App\Libs\Edition::brandOf($vendors[0]),
-                    'other'   => \ModulesGarden\TSSGGSModule\App\Libs\Edition::brandOf($vendors[1]),
+                . (\ModulesGarden\TSSGGSModule\App\Libs\Support\Edition::connectedVendor() === '' ? ' style="display:none"' : '') . '><p>' . htmlspecialchars($this->translate('buttonsScope', [
+                    'primary' => \ModulesGarden\TSSGGSModule\App\Libs\Support\Edition::brandOf($vendors[0]),
+                    'other'   => \ModulesGarden\TSSGGSModule\App\Libs\Support\Edition::brandOf($vendors[1]),
                 ])) . '</p></div>'
             ));
         }

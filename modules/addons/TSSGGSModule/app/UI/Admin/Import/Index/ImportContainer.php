@@ -6,7 +6,7 @@ use ModulesGarden\TSSGGSModule\App\UI\Admin\Import\Index\Widgets\ImportWidget;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Import\Index\Widgets\ImportWidgetCsv;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Import\Index\Widgets\TemplateDownloadWidget;
 use ModulesGarden\TSSGGSModule\Components\Container\Container;
-use ModulesGarden\TSSGGSModule\App\Libs\Icons;
+use ModulesGarden\TSSGGSModule\App\Libs\Support\Icons;
 use ModulesGarden\TSSGGSModule\Components\Text\Text;
 use ModulesGarden\TSSGGSModule\Components\Tab\Tab;
 use ModulesGarden\TSSGGSModule\Components\TabsWidget\TabsWidget;
@@ -17,7 +17,7 @@ class ImportContainer extends Container implements AdminAreaInterface
     public function loadHtml(): void
     {
         $this->setCss('tssggs-import');
-        if(!\ModulesGarden\TSSGGSModule\App\Libs\GeneralSettings::enabled('hideInfoMessages'))
+        if(!\ModulesGarden\TSSGGSModule\App\Libs\Support\GeneralSettings::enabled('hideInfoMessages'))
         {
             $text = new Text();
             $text->setCss('tssggs-html');

@@ -115,12 +115,12 @@ class ModuleConstants
     public static function loadDataBasePrefix(): string
     {
         // the edition names its own tables (TSSPlugin_, GGSModule_); they do not follow the folder the module sits in
-        $edition = self::getFullPath('app', 'Libs', 'Edition.php');
+        $edition = self::getFullPath('app', 'Libs', 'Support', 'Edition.php');
         if(is_file($edition))
         {
             require_once $edition;
 
-            return \ModulesGarden\TSSGGSModule\App\Libs\Edition::tablePrefix();
+            return \ModulesGarden\TSSGGSModule\App\Libs\Support\Edition::tablePrefix();
         }
 
         return self::getModuleName();

@@ -2,8 +2,8 @@
 
 namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Widgets;
 
-use ModulesGarden\TSSGGSModule\App\Libs\CronLauncher;
-use ModulesGarden\TSSGGSModule\App\Libs\Icons;
+use ModulesGarden\TSSGGSModule\App\Libs\Support\CronLauncher;
+use ModulesGarden\TSSGGSModule\App\Libs\Support\Icons;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Shared\CronStatus;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Forms\CronConfigurationForm;
 use ModulesGarden\TSSGGSModule\Components\Text\Text;

@@ -2,7 +2,7 @@
 
 namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Providers;
 
-use ModulesGarden\TSSGGSModule\App\Libs\Edition;
+use ModulesGarden\TSSGGSModule\App\Libs\Support\Edition;
 use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Forms\DownloadLogForm;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Shared\LogProvider;
@@ -139,7 +139,7 @@ class ReportingProvider extends CrudProvider
     /** the changed module files, one per line, or "No Files Modified..." */
     protected static function modifiedFiles(): string
     {
-        $compare = \ModulesGarden\TSSGGSModule\App\Libs\Helpers::compareChecksumData();
+        $compare = \ModulesGarden\TSSGGSModule\App\Libs\Support\Helpers::compareChecksumData();
         $lines   = [];
         foreach(['new', 'modified', 'deleted'] as $kind)
         {

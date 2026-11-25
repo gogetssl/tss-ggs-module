@@ -10,11 +10,11 @@ use ModulesGarden\Servers\TSSGGSModule\app\services\SSLStepOne;
 use ModulesGarden\Servers\TSSGGSModule\app\services\SSLStepTwo;
 use ModulesGarden\Servers\TSSGGSModule\app\services\SSLStepThree;
 use ModulesGarden\Servers\TSSGGSModule\app\services\SyncCertificate;
-use ModulesGarden\TSSGGSModule\App\Libs\AdminText;
-use ModulesGarden\TSSGGSModule\App\Libs\CertificateBundle;
-use ModulesGarden\TSSGGSModule\App\Libs\CertificateService;
-use ModulesGarden\TSSGGSModule\App\Libs\ClientText;
-use ModulesGarden\TSSGGSModule\App\Libs\GeneralSettings;
+use ModulesGarden\TSSGGSModule\App\Libs\Support\AdminText;
+use ModulesGarden\TSSGGSModule\App\Libs\Certificates\CertificateBundle;
+use ModulesGarden\TSSGGSModule\App\Libs\Certificates\CertificateService;
+use ModulesGarden\TSSGGSModule\App\Libs\Support\ClientText;
+use ModulesGarden\TSSGGSModule\App\Libs\Support\GeneralSettings;
 
 class Actions {
 
@@ -64,15 +64,15 @@ class Actions {
     private function codeGuardState($params, $suspend)
     {
         $serviceId = (int)$params['serviceid'];
-        if(!\ModulesGarden\TSSGGSModule\App\Libs\CodeGuardService::isCodeGuardService($serviceId))
+        if(!\ModulesGarden\TSSGGSModule\App\Libs\ProductLines\CodeGuardService::isCodeGuardService($serviceId))
         {
             return 'success';
         }
 
         return $this->run(function() use ($serviceId, $suspend) {
             $suspend
-                ? \ModulesGarden\TSSGGSModule\App\Libs\CodeGuardService::suspend($serviceId)
-                : \ModulesGarden\TSSGGSModule\App\Libs\CodeGuardService::activate($serviceId);
+                ? \ModulesGarden\TSSGGSModule\App\Libs\ProductLines\CodeGuardService::suspend($serviceId)
+                : \ModulesGarden\TSSGGSModule\App\Libs\ProductLines\CodeGuardService::activate($serviceId);
         });
     }
 
@@ -85,13 +85,13 @@ class Actions {
     public function ChangePackage($params)
     {
         $serviceId = (int)$params['serviceid'];
-        if(!\ModulesGarden\TSSGGSModule\App\Libs\CodeGuardService::isCodeGuardService($serviceId))
+        if(!\ModulesGarden\TSSGGSModule\App\Libs\ProductLines\CodeGuardService::isCodeGuardService($serviceId))
         {
             return 'success';
         }
 
         return $this->run(function() use ($serviceId, $params) {
-            \ModulesGarden\TSSGGSModule\App\Libs\CodeGuardService::changePlan($serviceId, (int)$params['pid']);
+            \ModulesGarden\TSSGGSModule\App\Libs\ProductLines\CodeGuardService::changePlan($serviceId, (int)$params['pid']);
         });
     }
 
@@ -103,7 +103,7 @@ class Actions {
         // the private keys go in any case, also when the vendor order is left open
         CertificateService::forgetPrivateKeys($params['serviceid']);
         // a certificate bought at payment whose details were never submitted is always cancelled: nothing was issued
-        if(!GeneralSettings::enabled('terminateCancelsOrder') && !\ModulesGarden\TSSGGSModule\App\Libs\IncompleteOrder::pending($params['serviceid']))
+        if(!GeneralSettings::enabled('terminateCancelsOrder') && !\ModulesGarden\TSSGGSModule\App\Libs\Certificates\IncompleteOrder::pending($params['serviceid']))
         {
             return 'success';
         }
@@ -398,7 +398,7 @@ class Actions {
     public function AdminCustomButtonArray($params = [])
     {
         $serviceId = isset($params['serviceid']) ? (int)$params['serviceid'] : 0;
-        $gatewayType = $serviceId ? \ModulesGarden\TSSGGSModule\App\Libs\GatewayOrderService::typeOfService($serviceId) : null;
+        $gatewayType = $serviceId ? \ModulesGarden\TSSGGSModule\App\Libs\ProductLines\GatewayOrderService::typeOfService($serviceId) : null;
         if($gatewayType)
         {
             // nothing to refresh or cancel before the client orders the certificate

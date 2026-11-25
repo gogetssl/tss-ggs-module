@@ -2,8 +2,8 @@
 
 namespace ModulesGarden\TSSGGSModule\App\Libs\Gateway\Endpoints;
 
-use ModulesGarden\TSSGGSModule\App\Libs\DocumentSigningService;
-use ModulesGarden\TSSGGSModule\App\Libs\SSLTrustCenterApi;
+use ModulesGarden\TSSGGSModule\App\Libs\ProductLines\DocumentSigningService;
+use ModulesGarden\TSSGGSModule\App\Libs\Gateway\SSLTrustCenterApi;
 
 /**
  * Orders of the other certificate products: S/MIME, code signing, document signing, PCI, LEI.

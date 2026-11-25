@@ -2,9 +2,9 @@
 
 namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index;
 
-use ModulesGarden\TSSGGSModule\App\Libs\AutomatedSsl;
-use ModulesGarden\TSSGGSModule\App\Libs\Edition;
-use ModulesGarden\TSSGGSModule\App\Libs\Helpers;
+use ModulesGarden\TSSGGSModule\App\Libs\Subscriptions\AutomatedSsl;
+use ModulesGarden\TSSGGSModule\App\Libs\Support\Edition;
+use ModulesGarden\TSSGGSModule\App\Libs\Support\Helpers;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Shared\Card;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Shared\SalesSummary;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Widgets\AnnouncementsWidget;

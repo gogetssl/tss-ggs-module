@@ -7,8 +7,8 @@ use ModulesGarden\TSSGGSModule\App\Http\Admin\Products as ProductsController;
 use ModulesGarden\TSSGGSModule\Components\Alert\AlertDanger;
 use ModulesGarden\TSSGGSModule\Components\Alert\AlertSuccess;
 use ModulesGarden\TSSGGSModule\Components\Container\Container;
-use ModulesGarden\TSSGGSModule\App\Libs\Icons;
-use ModulesGarden\TSSGGSModule\App\Libs\CatalogueSync;
+use ModulesGarden\TSSGGSModule\App\Libs\Support\Icons;
+use ModulesGarden\TSSGGSModule\App\Libs\Products\CatalogueSync;
 use ModulesGarden\TSSGGSModule\Components\Tab\Tab;
 use ModulesGarden\TSSGGSModule\Components\TabsWidget\TabsWidget;
 use ModulesGarden\TSSGGSModule\Components\Text\Text;
@@ -32,10 +32,10 @@ class ProductsContainer extends Container implements AdminAreaInterface
 
         $productsTab = new Tab();
         $productsTab->setTitle($this->translate('productsTab', [], ['admin.products']));
-        // the other vendor's exclusive products (App\Libs\CrossVendor): the banner shows until it is connected
-        if(\ModulesGarden\TSSGGSModule\App\Libs\Edition::connectedVendor() === '')
+        // the other vendor's exclusive products (App\Libs\Gateway\CrossVendor): the banner shows until it is connected
+        if(\ModulesGarden\TSSGGSModule\App\Libs\Support\Edition::connectedVendor() === '')
         {
-            $other  = \ModulesGarden\TSSGGSModule\App\Libs\Edition::otherVendor();
+            $other  = \ModulesGarden\TSSGGSModule\App\Libs\Support\Edition::otherVendor();
             $banner = new Text();
             $banner->setCss('tssggs-html');
             $banner->setText('<div class="tssggs-explain tssggs-explain--connect"><span class="tssggs-explain__icon">' . Icons::svg('package-variant-closed') . '</span><div>'
@@ -45,7 +45,7 @@ class ProductsContainer extends Container implements AdminAreaInterface
                 . htmlspecialchars((string)$this->translate('connect_link', [], ['admin.products']), ENT_QUOTES) . '</a></p></div></div>');
             $productsTab->addElement($banner);
         }
-        if(!\ModulesGarden\TSSGGSModule\App\Libs\GeneralSettings::enabled('hideInfoMessages'))
+        if(!\ModulesGarden\TSSGGSModule\App\Libs\Support\GeneralSettings::enabled('hideInfoMessages'))
         {
             $text = new Text();
             $text->setCss('tssggs-html');
@@ -170,9 +170,9 @@ class ProductsContainer extends Container implements AdminAreaInterface
         $t    = function($key, array $vars = []) { return htmlspecialchars((string)$this->translate($key, $vars, ['admin.products']), ENT_QUOTES); };
         $item = function($key, $text = null) use ($t) { return '<li><b>' . $t($key . '_name') . '</b>: ' . $t($text ?? $key) . '</li>'; };
 
-        // with the other vendor connected (App\Libs\CrossVendor) the list holds the products of both vendors
-        $connected = \ModulesGarden\TSSGGSModule\App\Libs\Edition::connectedVendor();
-        $intro     = $connected !== '' ? $t('about_intro_connected', [':brand' => \ModulesGarden\TSSGGSModule\App\Libs\Edition::brandOf($connected)]) : $t('about_intro');
+        // with the other vendor connected (App\Libs\Gateway\CrossVendor) the list holds the products of both vendors
+        $connected = \ModulesGarden\TSSGGSModule\App\Libs\Support\Edition::connectedVendor();
+        $intro     = $connected !== '' ? $t('about_intro_connected', [':brand' => \ModulesGarden\TSSGGSModule\App\Libs\Support\Edition::brandOf($connected)]) : $t('about_intro');
 
         return '<div class="tssggs-explain"><span class="tssggs-explain__icon">' . Icons::svg('information-outline') . '</span><div>'
             . '<h3>' . $t('about_title') . '</h3>'

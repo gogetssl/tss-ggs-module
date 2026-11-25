@@ -3,7 +3,7 @@
 namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Statistics\Index\Graphs;
 
 
-use ModulesGarden\TSSGGSModule\App\Libs\Helpers;
+use ModulesGarden\TSSGGSModule\App\Libs\Support\Helpers;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Reports\Index\DataTables\Shared\RecordsProvider;
 use ModulesGarden\TSSGGSModule\Components\Graph\GraphArea;
 use ModulesGarden\TSSGGSModule\Components\Graph\Models\DataSet;

@@ -2,9 +2,9 @@
 
 namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Products\Index\DataTables\Products\Providers;
 
-use ModulesGarden\TSSGGSModule\App\Libs\AcmeHelpers;
-use ModulesGarden\TSSGGSModule\App\Libs\FinancePolicy;
-use ModulesGarden\TSSGGSModule\App\Libs\Helpers;
+use ModulesGarden\TSSGGSModule\App\Libs\Subscriptions\AcmeHelpers;
+use ModulesGarden\TSSGGSModule\App\Libs\Billing\FinancePolicy;
+use ModulesGarden\TSSGGSModule\App\Libs\Support\Helpers;
 use ModulesGarden\TSSGGSModule\App\Models\RemoteProduct;
 use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\ProductRepository;
 use ModulesGarden\TSSGGSModule\Core\DataProviders\CrudProvider;
@@ -109,7 +109,7 @@ class ImportProvider extends CrudProvider
             $remoteProduct = RemoteProduct::find($localId);
 
             // an imported product is never created a second time (ticked again, or the form sent twice)
-            if(!$remoteProduct || !\ModulesGarden\TSSGGSModule\App\Libs\ProductCatalog::importable($remoteProduct) || $remoteProduct->getWhmcsProduct())
+            if(!$remoteProduct || !\ModulesGarden\TSSGGSModule\App\Libs\Products\ProductCatalog::importable($remoteProduct) || $remoteProduct->getWhmcsProduct())
             {
                 continue;
             }
@@ -152,7 +152,7 @@ class ImportProvider extends CrudProvider
                 {
                     $pricing[$currency->id][$billingPeriod] = FinancePolicy::sell($baseCost, $importMargin, (int)$remotePriceData['term'], $currency->id, true);
 
-                    if(\ModulesGarden\TSSGGSModule\App\Libs\SubscriptionBilling::isSubscriptionRemote($remoteProduct) && $billingPeriod == 'annually')
+                    if(\ModulesGarden\TSSGGSModule\App\Libs\Subscriptions\SubscriptionBilling::isSubscriptionRemote($remoteProduct) && $billingPeriod == 'annually')
                     {
                         $pricing[$currency->id]['monthly'] = FinancePolicy::sell($baseCost, $importMargin, (int)$remotePriceData['term'], $currency->id, true);
                     }
@@ -187,9 +187,9 @@ class ImportProvider extends CrudProvider
             }
 
             // code signing: the "Certificate Delivery" option (token shipping as a one-time fee)
-            if(strtolower((string)$remoteProduct->category) === \ModulesGarden\TSSGGSModule\App\Libs\CodeSigningService::CATEGORY)
+            if(strtolower((string)$remoteProduct->category) === \ModulesGarden\TSSGGSModule\App\Libs\ProductLines\CodeSigningService::CATEGORY)
             {
-                \ModulesGarden\TSSGGSModule\App\Libs\CodeSigningService::createDeliveryOption($productId, (array)$remoteProductData);
+                \ModulesGarden\TSSGGSModule\App\Libs\ProductLines\CodeSigningService::createDeliveryOption($productId, (array)$remoteProductData);
             }
 
             //create configOptions
@@ -197,7 +197,7 @@ class ImportProvider extends CrudProvider
             $product = Product::find($productId);
 
             // subscriptions: one-time products, the module bills the yearly renewal (SubscriptionRenewals)
-            if(\ModulesGarden\TSSGGSModule\App\Libs\SubscriptionBilling::isSubscriptionProduct($productId))
+            if(\ModulesGarden\TSSGGSModule\App\Libs\Subscriptions\SubscriptionBilling::isSubscriptionProduct($productId))
             {
                 $product->paytype = 'onetime';
                 $product->configoptionsupgrade = AcmeHelpers::isAcmeWhmcsProduct($productId) ? 1 : $product->configoptionsupgrade;
@@ -216,7 +216,7 @@ class ImportProvider extends CrudProvider
             {
                 $optionNames['single'] = [
                     'name'         => 'sans',
-                    'nameFriendly' => \ModulesGarden\TSSGGSModule\App\Libs\ProductCatalog::optionLabel('single', $includedSan),
+                    'nameFriendly' => \ModulesGarden\TSSGGSModule\App\Libs\Products\ProductCatalog::optionLabel('single', $includedSan),
                     'unit'         => 'SAN'
                 ];
             }
@@ -225,7 +225,7 @@ class ImportProvider extends CrudProvider
             {
                 $optionNames['wildcard'] = [
                     'name'         => 'sans_wildcard',
-                    'nameFriendly' => \ModulesGarden\TSSGGSModule\App\Libs\ProductCatalog::optionLabel('wildcard', $includedSanWildcard),
+                    'nameFriendly' => \ModulesGarden\TSSGGSModule\App\Libs\Products\ProductCatalog::optionLabel('wildcard', $includedSanWildcard),
                     'unit'         => 'SAN'
                 ];
             }
@@ -300,7 +300,7 @@ class ImportProvider extends CrudProvider
                         {
                             $pricingArray[$currency->id][$billingPeriod] = FinancePolicy::sell($baseCost, $importMargin, (int)$remotePriceData['term'], $currency->id, false);
 
-                            if(\ModulesGarden\TSSGGSModule\App\Libs\SubscriptionBilling::isSubscriptionRemote($remoteProduct) && $billingPeriod == 'annually')
+                            if(\ModulesGarden\TSSGGSModule\App\Libs\Subscriptions\SubscriptionBilling::isSubscriptionRemote($remoteProduct) && $billingPeriod == 'annually')
                             {
                                 $pricingArray[$currency->id]['monthly'] = FinancePolicy::sell($baseCost, $importMargin, (int)$remotePriceData['term'], $currency->id, false);
                             }
@@ -315,10 +315,10 @@ class ImportProvider extends CrudProvider
             }
 
             // FLEX products: the client chooses a standard or a wildcard main domain (the wildcard costs more)
-            \ModulesGarden\TSSGGSModule\App\Libs\MainDomain::ensureOption((int)$productId, (array)$remoteProductData, $importMargin, (float)$baseCurrencyRate);
+            \ModulesGarden\TSSGGSModule\App\Libs\Certificates\MainDomain::ensureOption((int)$productId, (array)$remoteProductData, $importMargin, (float)$baseCurrencyRate);
         }
 
         // CodeGuard plans can be upgraded to the dearer ones (the only product type that switches plans at the vendor)
-        \ModulesGarden\TSSGGSModule\App\Libs\CodeGuardService::linkUpgradePaths();
+        \ModulesGarden\TSSGGSModule\App\Libs\ProductLines\CodeGuardService::linkUpgradePaths();
     }
 }

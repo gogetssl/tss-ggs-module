@@ -20,7 +20,7 @@ class AppNavBar extends AbstractComponent
 
         $this->createNavbar();
         // the header shows the logo of this edition (ggs / tss)
-        $this->setSlot('edition', \ModulesGarden\TSSGGSModule\App\Libs\Edition::get());
+        $this->setSlot('edition', \ModulesGarden\TSSGGSModule\App\Libs\Support\Edition::get());
     }
 
     private function createNavbar()

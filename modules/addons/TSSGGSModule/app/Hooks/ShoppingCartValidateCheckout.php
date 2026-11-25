@@ -8,7 +8,7 @@ if(!defined('WHMCS'))
 }
 
 
-use ModulesGarden\TSSGGSModule\App\Libs\AcmeHelpers;
+use ModulesGarden\TSSGGSModule\App\Libs\Subscriptions\AcmeHelpers;
 use WHMCS\Database\Capsule;
 
 $hookManager->register(
@@ -21,7 +21,7 @@ $hookManager->register(
             $pid = isset($product['pid']) ? (int)$product['pid'] : 0;
 
             // code signing: 2 / 3 years only on an own HSM
-            $csError = $pid ? \ModulesGarden\TSSGGSModule\App\Libs\CodeSigningService::cartError($pid, $product['billingcycle'] ?? '', (array)($product['configoptions'] ?? [])) : null;
+            $csError = $pid ? \ModulesGarden\TSSGGSModule\App\Libs\ProductLines\CodeSigningService::cartError($pid, $product['billingcycle'] ?? '', (array)($product['configoptions'] ?? [])) : null;
             if ($csError)
             {
                 $errors[] = \ModulesGarden\TSSGGSModule\Core\translate($csError);

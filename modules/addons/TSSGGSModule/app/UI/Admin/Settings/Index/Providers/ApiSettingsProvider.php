@@ -2,9 +2,9 @@
 
 namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Providers;
 
-use ModulesGarden\TSSGGSModule\App\Libs\CrossVendor;
-use ModulesGarden\TSSGGSModule\App\Libs\Edition;
-use ModulesGarden\TSSGGSModule\App\Libs\SSLTrustCenterApi;
+use ModulesGarden\TSSGGSModule\App\Libs\Gateway\CrossVendor;
+use ModulesGarden\TSSGGSModule\App\Libs\Support\Edition;
+use ModulesGarden\TSSGGSModule\App\Libs\Gateway\SSLTrustCenterApi;
 use ModulesGarden\TSSGGSModule\App\Migration\Credentials;
 use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
 use ModulesGarden\TSSGGSModule\Core\Components\Actions\Redirect;

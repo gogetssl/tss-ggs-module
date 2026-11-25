@@ -33,5 +33,7 @@ parameters:
         - '#^Access to an undefined property (ModulesGarden\\[A-Za-z\\]+\\[Mm]odels\\[A-Za-z\\]+|Illuminate\\Database\\Eloquent\\Builder\|Illuminate\\Database\\Eloquent\\Model)::\$[a-zA-Z_]+\.$#'
         # the framework's facades: static calls forwarded to an instance
         - '#^Static call to instance method ModulesGarden\\TSSGGSModule\\(Core\\Support\\Facades|Packages\\[A-Za-z]+\\Support\\Facades)\\[A-Za-z]+::[a-zA-Z]+\(\)\.$#'
+        # WHMCS's own function files, loaded at runtime from the WHMCS root (ROOTDIR/includes/...)
+        - '#^Path in require_once\(\) "[^"]*/includes/[a-z]+\.php" is not a file or it does not exist\.$#'
     reportUnmatchedIgnoredErrors: false
     treatPhpDocTypesAsCertain: false

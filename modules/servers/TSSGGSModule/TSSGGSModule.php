@@ -9,9 +9,9 @@ require_once __DIR__.DS.'Loader.php';
 new \ModulesGarden\Servers\TSSGGSModule\Loader();
 
 // Edition name (GoGetSSL Module / TheSSLStore Plugin) - loaded directly, without booting the addon framework
-if(file_exists(dirname(__DIR__, 2).DS.'addons'.DS.'TSSGGSModule'.DS.'app'.DS.'Libs'.DS.'Edition.php'))
+if(file_exists(dirname(__DIR__, 2).DS.'addons'.DS.'TSSGGSModule'.DS.'app'.DS.'Libs'.DS.'Support'.DS.'Edition.php'))
 {
-    require_once dirname(__DIR__, 2).DS.'addons'.DS.'TSSGGSModule'.DS.'app'.DS.'Libs'.DS.'Edition.php';
+    require_once dirname(__DIR__, 2).DS.'addons'.DS.'TSSGGSModule'.DS.'app'.DS.'Libs'.DS.'Support'.DS.'Edition.php';
 }
 
 \ModulesGarden\Servers\TSSGGSModule\Server::I();
@@ -37,16 +37,16 @@ if (!defined("WHMCS")) {
 
 /**
  * The answer for a call the module must not run as an ordinary service; null for any other:
- *  - a WHMCS product addon (App\Libs\AddonCertificates): WHMCS passes the parent service, the certificate lives on the
+ *  - a WHMCS product addon (App\Libs\Certificates\AddonCertificates): WHMCS passes the parent service, the certificate lives on the
  *    addon's own certificate service
- *  - a certificate kept as a record of the legacy module (App\Libs\RecordOnly)
+ *  - a certificate kept as a record of the legacy module (App\Libs\Certificates\RecordOnly)
  */
 function TSSGGSModule_recordOnlyGuard($function, $params) {
-    if(!empty($params['addonId']) && class_exists('\ModulesGarden\TSSGGSModule\App\Libs\AddonCertificates')) {
-        return \ModulesGarden\TSSGGSModule\App\Libs\AddonCertificates::guard($function, (array)$params);
+    if(!empty($params['addonId']) && class_exists('\ModulesGarden\TSSGGSModule\App\Libs\Certificates\AddonCertificates')) {
+        return \ModulesGarden\TSSGGSModule\App\Libs\Certificates\AddonCertificates::guard($function, (array)$params);
     }
     try {
-        return class_exists('\ModulesGarden\TSSGGSModule\App\Libs\RecordOnly') ? \ModulesGarden\TSSGGSModule\App\Libs\RecordOnly::guard($function, $params) : null;
+        return class_exists('\ModulesGarden\TSSGGSModule\App\Libs\Certificates\RecordOnly') ? \ModulesGarden\TSSGGSModule\App\Libs\Certificates\RecordOnly::guard($function, $params) : null;
     } catch(\Throwable $e) {
         return null;
     }
@@ -54,7 +54,7 @@ function TSSGGSModule_recordOnlyGuard($function, $params) {
 
 function TSSGGSModule_MetaData() {
     return array(
-        'DisplayName' => class_exists('\ModulesGarden\TSSGGSModule\App\Libs\Edition', false) ? \ModulesGarden\TSSGGSModule\App\Libs\Edition::name() : 'GoGetSSL Module',
+        'DisplayName' => class_exists('\ModulesGarden\TSSGGSModule\App\Libs\Support\Edition', false) ? \ModulesGarden\TSSGGSModule\App\Libs\Support\Edition::name() : 'GoGetSSL Module',
         'APIVersion' => '1.0',
     );
 }

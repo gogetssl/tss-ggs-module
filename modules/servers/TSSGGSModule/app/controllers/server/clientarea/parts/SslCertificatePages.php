@@ -13,15 +13,15 @@ use ModulesGarden\Servers\TSSGGSModule\app\repository\whmcs\ProductConfigOptions
 use ModulesGarden\Servers\TSSGGSModule\app\services\InvoiceRenew;
 use ModulesGarden\Servers\TSSGGSModule\core\Lang;
 use ModulesGarden\Servers\TSSGGSModule\Server;
-use ModulesGarden\TSSGGSModule\App\Libs\AutoInstallHelpers;
-use ModulesGarden\TSSGGSModule\App\Libs\CertificateBundle;
-use ModulesGarden\TSSGGSModule\App\Libs\CertificateService;
-use ModulesGarden\TSSGGSModule\App\Libs\CertificateSyncHelpers;
-use ModulesGarden\TSSGGSModule\App\Libs\ClientText;
-use ModulesGarden\TSSGGSModule\App\Libs\Cpanel;
-use ModulesGarden\TSSGGSModule\App\Libs\IssuedMessage;
-use ModulesGarden\TSSGGSModule\App\Libs\ProductSettings;
-use ModulesGarden\TSSGGSModule\App\Libs\SSLTrustCenterApi;
+use ModulesGarden\TSSGGSModule\App\Libs\AutoInstall\AutoInstallHelpers;
+use ModulesGarden\TSSGGSModule\App\Libs\Certificates\CertificateBundle;
+use ModulesGarden\TSSGGSModule\App\Libs\Certificates\CertificateService;
+use ModulesGarden\TSSGGSModule\App\Libs\Certificates\CertificateSyncHelpers;
+use ModulesGarden\TSSGGSModule\App\Libs\Support\ClientText;
+use ModulesGarden\TSSGGSModule\App\Libs\AutoInstall\Cpanel;
+use ModulesGarden\TSSGGSModule\App\Libs\Certificates\IssuedMessage;
+use ModulesGarden\TSSGGSModule\App\Libs\Products\ProductSettings;
+use ModulesGarden\TSSGGSModule\App\Libs\Gateway\SSLTrustCenterApi;
 use ModulesGarden\TSSGGSModule\App\Models\RemoteProduct;
 use ModulesGarden\TSSGGSModule\App\Models\Request;
 use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
@@ -55,13 +55,13 @@ trait SslCertificatePages
         ];
 
         // a paid renewal waiting for these details: the client is told so, and until when the current certificate holds
-        $renewalUntil         = \ModulesGarden\TSSGGSModule\App\Libs\RenewalPolicy::pendingRenewalUntil((int)$serviceId);
+        $renewalUntil         = \ModulesGarden\TSSGGSModule\App\Libs\Billing\RenewalPolicy::pendingRenewalUntil((int)$serviceId);
         $vars['renewalNotice'] = $renewalUntil !== '' ? sprintf(Lang::absoluteT('sslRenewalPendingNotice'), $this->smimeDate($renewalUntil)) : '';
 
         // the certificate is bought already: its token completes the order here or in a hosting panel plugin (a
         // migrated order bought at payment: the token is read once)
-        \ModulesGarden\TSSGGSModule\App\Libs\IncompleteOrder::claimMigrated((int)$serviceId);
-        $vars['certificateToken'] = \ModulesGarden\TSSGGSModule\App\Libs\IncompleteOrder::token((int)$serviceId);
+        \ModulesGarden\TSSGGSModule\App\Libs\Certificates\IncompleteOrder::claimMigrated((int)$serviceId);
+        $vars['certificateToken'] = \ModulesGarden\TSSGGSModule\App\Libs\Certificates\IncompleteOrder::token((int)$serviceId);
         $vars['serviceid']        = (int)$serviceId;
 
         return ['tpl' => 'awaiting_configuration', 'vars' => $vars];
@@ -116,9 +116,9 @@ trait SslCertificatePages
         $vars['domain']                              = $service->domain;
         $vars['status']                              = $order['order']['status'];
         // the order waits at the vendor side (failed, unpaid, new order): an orange message, no API call
-        $vars['vendorNotice']                        = in_array(\ModulesGarden\TSSGGSModule\App\Libs\CertificateSyncHelpers::normalizeStatus($vars['status']), \ModulesGarden\TSSGGSModule\App\Libs\CertificateSyncHelpers::NOTICE_STATUSES, true)
-            ? Lang::absoluteT('vendor_notice_' . \ModulesGarden\TSSGGSModule\App\Libs\CertificateSyncHelpers::normalizeStatus($vars['status'])) : '';
-        $vars['statusLabel']                         = $vars['vendorNotice'] !== '' ? Lang::absoluteT('vendor_status_' . \ModulesGarden\TSSGGSModule\App\Libs\CertificateSyncHelpers::normalizeStatus($vars['status'])) : '';
+        $vars['vendorNotice']                        = in_array(\ModulesGarden\TSSGGSModule\App\Libs\Certificates\CertificateSyncHelpers::normalizeStatus($vars['status']), \ModulesGarden\TSSGGSModule\App\Libs\Certificates\CertificateSyncHelpers::NOTICE_STATUSES, true)
+            ? Lang::absoluteT('vendor_notice_' . \ModulesGarden\TSSGGSModule\App\Libs\Certificates\CertificateSyncHelpers::normalizeStatus($vars['status'])) : '';
+        $vars['statusLabel']                         = $vars['vendorNotice'] !== '' ? Lang::absoluteT('vendor_status_' . \ModulesGarden\TSSGGSModule\App\Libs\Certificates\CertificateSyncHelpers::normalizeStatus($vars['status'])) : '';
         $vars['valid_from']                          = '';
         $vars['valid_till']                          = '';
         $vars['subscribtion_starts']                 = '';
@@ -194,7 +194,7 @@ trait SslCertificatePages
         $vars['autoinstall']      = AutoInstallHelpers::getStatusForView($service->id);
         $vars['csrfToken']        = \generate_token('plain');
         $vars['processing_guide'] = ProductSettings::message($product->id, 'processingGuide');
-        // a CAA record that keeps the CA from issuing the names still waiting for validation (App\Libs\CaaCheck)
+        // a CAA record that keeps the CA from issuing the names still waiting for validation (App\Libs\Certificates\CaaCheck)
         $waiting = [];
         foreach($domains as $domain)
         {
@@ -426,9 +426,9 @@ trait SslCertificatePages
         $vars['sans_wildcard']     += (int)$params['configoption8'];
         $vars['serviceid']         = $input['id'];
 
-        // a certificate for public IPs (App\Libs\IpCertificate): CSR without common name, the main name stays and
+        // a certificate for public IPs (App\Libs\Certificates\IpCertificate): CSR without common name, the main name stays and
         // uses one of the product's SANs - the field takes the other names only
-        $vars['ipProduct'] = \ModulesGarden\TSSGGSModule\App\Libs\IpCertificate::isProduct($params['packageid']);
+        $vars['ipProduct'] = \ModulesGarden\TSSGGSModule\App\Libs\Certificates\IpCertificate::isProduct($params['packageid']);
         if($vars['ipProduct'])
         {
             $vars['sans']          = max(0, (int)$vars['sans'] - 1);
@@ -506,8 +506,8 @@ trait SslCertificatePages
 
             $decode  = $this->decodeCSR($input['csr']);
             $mainName = (string)($decode['CN'] ?? '');
-            // a certificate for public IPs (App\Libs\IpCertificate): CSR without common name, the main name stays
-            $ipCertificate = \ModulesGarden\TSSGGSModule\App\Libs\IpCertificate::isProduct($input['params']['packageid']);
+            // a certificate for public IPs (App\Libs\Certificates\IpCertificate): CSR without common name, the main name stays
+            $ipCertificate = \ModulesGarden\TSSGGSModule\App\Libs\Certificates\IpCertificate::isProduct($input['params']['packageid']);
             if($ipCertificate)
             {
                 if($mainName !== '')
@@ -596,7 +596,7 @@ trait SslCertificatePages
 
             // CN first - for a certificate for public IPs (CSR without CN) the current main name
             $commonName = (string)(openssl_csr_get_subject($input['csr'])['CN'] ?? '');
-            if($commonName === '' && \ModulesGarden\TSSGGSModule\App\Libs\IpCertificate::isProduct($input['params']['packageid']))
+            if($commonName === '' && \ModulesGarden\TSSGGSModule\App\Libs\Certificates\IpCertificate::isProduct($input['params']['packageid']))
             {
                 $commonName = strtolower(trim((string)$input['params']['domain']));
             }
@@ -749,7 +749,7 @@ trait SslCertificatePages
         // cancelled / terminated: the page stays readable, but no downloads, sending, reissue or install
         $vars['certificateUsable']                  = CertificateService::usable((int)$params['service']->id);
         // a product addon's certificate: billed on the addon, no upgrades or extra SANs on the free service (M-14)
-        $vars['addonNotice']                        = \ModulesGarden\TSSGGSModule\App\Libs\AddonCertificates::clientNotice((int)$params['service']->id);
+        $vars['addonNotice']                        = \ModulesGarden\TSSGGSModule\App\Libs\Certificates\AddonCertificates::clientNotice((int)$params['service']->id);
         $vars['order_details']['registration_date'] = date('F j, Y', strtotime($params['service']->regdate));
         $vars['order_details']['expiration_date']   = $params['service']->nextduedate != '0000-00-00' ? date('F j, Y', strtotime($params['service']->nextduedate)) : "";
         $vars['order_details']['reccuring_amount']  = formatCurrency($params['service']->amount, $params['client']->currency);
@@ -855,7 +855,7 @@ trait SslCertificatePages
         $vars['install_domain']      = !empty($aiState['domain']) ? $aiState['domain'] : (CertificateService::installTarget($params['service']->id) ?: ltrim((string)$params['service']->domain, '*.'));
         // a certificate for public IPs is not installed on a cPanel account by domain
         $vars['install_available']   = !empty($vars['cpanel_services']) && (empty($vars['autoinstall']) || $vars['autoinstall']['status'] !== 'installed')
-            && !\ModulesGarden\TSSGGSModule\App\Libs\IpCertificate::isProduct((int)$params['service']->packageid);
+            && !\ModulesGarden\TSSGGSModule\App\Libs\Certificates\IpCertificate::isProduct((int)$params['service']->packageid);
 
         // Subscription status bar at the top of the page (same rules as the my.gogetssl.com SSL page)
         $vars['progress'] = $vars['certificateUsable'] ? self::subscriptionProgress(
@@ -1074,8 +1074,8 @@ trait SslCertificatePages
             $privateKey = openssl_pkey_new(["private_key_bits" => 2048, "private_key_type" => OPENSSL_KEYTYPE_RSA]);
             openssl_pkey_export($privateKey, $pKeyOut);
 
-            // a certificate for public IPs (App\Libs\IpCertificate): the CSR has no common name
-            $ipProduct = \ModulesGarden\TSSGGSModule\App\Libs\IpCertificate::isProduct($input['params']['packageid'] ?? 0);
+            // a certificate for public IPs (App\Libs\Certificates\IpCertificate): the CSR has no common name
+            $ipProduct = \ModulesGarden\TSSGGSModule\App\Libs\Certificates\IpCertificate::isProduct($input['params']['packageid'] ?? 0);
             $csr = openssl_csr_new(array_filter([
                 'countryName' => strtoupper((string)$input['country']),
                 'stateOrProvinceName' => (string)$input['state'],
@@ -1093,7 +1093,7 @@ trait SslCertificatePages
 
             openssl_csr_export($csr, $csrOut);
 
-            return ['json' => ['status' => 'success', 'data' => ['csr' => $csrOut, 'private_key' => \ModulesGarden\TSSGGSModule\App\Libs\PrivateKeyDownload::store((int)$input['id'], $pKeyOut)]]];
+            return ['json' => ['status' => 'success', 'data' => ['csr' => $csrOut, 'private_key' => \ModulesGarden\TSSGGSModule\App\Libs\Certificates\PrivateKeyDownload::store((int)$input['id'], $pKeyOut)]]];
 
         }
         catch(\Exception $e)
@@ -1111,7 +1111,7 @@ trait SslCertificatePages
         try
         {
             $this->requireCsrfToken();
-            $decodeKey = \ModulesGarden\TSSGGSModule\App\Libs\PrivateKeyDownload::fetch((int)$input['id'], (string)($_POST['handle'] ?? ''));
+            $decodeKey = \ModulesGarden\TSSGGSModule\App\Libs\Certificates\PrivateKeyDownload::fetch((int)$input['id'], (string)($_POST['handle'] ?? ''));
             if($decodeKey === null)
             {
                 throw new \Exception(Lang::absoluteT('private_key_expired'));
@@ -1155,7 +1155,7 @@ trait SslCertificatePages
             CertificateService::cancel((int)$input['id'], 'Cancelled by customer');
             Service::where('id', (int)$input['id'])->update(['domainstatus' => 'Cancelled']);
             // a product addon's certificate: the addon is billed no more either (M-14)
-            \ModulesGarden\TSSGGSModule\App\Libs\AddonCertificates::followEnd((int)$input['id'], 'Cancelled');
+            \ModulesGarden\TSSGGSModule\App\Libs\Certificates\AddonCertificates::followEnd((int)$input['id'], 'Cancelled');
             CertificateService::forgetPrivateKeys((int)$input['id']);
         }
         catch(\Exception $e)
@@ -1419,7 +1419,7 @@ trait SslCertificatePages
         }, $current);
 
         // IP addresses have no approver mailboxes (IP certificates validate by file only)
-        $approvers         = \ModulesGarden\TSSGGSModule\App\Libs\IpCertificate::isProduct((int)\WHMCS\Database\Capsule::table('tblhosting')->where('id', (int)$serviceId)->value('packageid'))
+        $approvers         = \ModulesGarden\TSSGGSModule\App\Libs\Certificates\IpCertificate::isProduct((int)\WHMCS\Database\Capsule::table('tblhosting')->where('id', (int)$serviceId)->value('packageid'))
             ? array_map(function($name) { return ['domain' => $name, 'emails' => []]; }, $domains)
             : $api->getDomainEmails($domains);
         $vars['approvers'] = $this->approversToOptions($approvers);
@@ -1428,7 +1428,7 @@ trait SslCertificatePages
     }
 
     /**
-     * Message shown once the certificate is issued (App\Libs\IssuedMessage): the administrator's text, else the built-in
+     * Message shown once the certificate is issued (App\Libs\Certificates\IssuedMessage): the administrator's text, else the built-in
      * one of the certificate family in the client's language, with the installation guide of the authority
      */
     private function issuedMessage($productId)

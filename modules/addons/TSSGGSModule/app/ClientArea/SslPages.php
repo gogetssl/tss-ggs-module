@@ -3,8 +3,8 @@
 namespace ModulesGarden\TSSGGSModule\App\ClientArea;
 
 use ModulesGarden\Servers\TSSGGSModule\core\Lang;
-use ModulesGarden\TSSGGSModule\App\Libs\ClientSslSummary;
-use ModulesGarden\TSSGGSModule\App\Libs\GeneralSettings;
+use ModulesGarden\TSSGGSModule\App\Libs\Certificates\ClientSslSummary;
+use ModulesGarden\TSSGGSModule\App\Libs\Support\GeneralSettings;
 
 /**
  * Client area pages of the addon (index.php?m=TSSGGSModule): the client's SSL certificates filtered like the
@@ -101,11 +101,11 @@ class SslPages
             $vars['form']     = array_merge($vars['form'], array_map('strval', array_filter($_POST, 'is_scalar')));
             try
             {
-                if(!\ModulesGarden\TSSGGSModule\App\Libs\CsrfToken::valid(isset($_POST['token']) ? $_POST['token'] : ''))
+                if(!\ModulesGarden\TSSGGSModule\App\Libs\Support\CsrfToken::valid(isset($_POST['token']) ? $_POST['token'] : ''))
                 {
-                    throw new \Exception(\ModulesGarden\TSSGGSModule\App\Libs\ClientText::get('toolsPageExpired', 'The page expired - reload it and try again.'));
+                    throw new \Exception(\ModulesGarden\TSSGGSModule\App\Libs\Support\ClientText::get('toolsPageExpired', 'The page expired - reload it and try again.'));
                 }
-                $tools = '\ModulesGarden\TSSGGSModule\App\Libs\SslTools';
+                $tools = '\ModulesGarden\TSSGGSModule\App\Libs\Certificates\SslTools';
                 switch($action)
                 {
                     case 'decodeCsr':
@@ -138,7 +138,7 @@ class SslPages
                         echo $converted['content'];
                         exit;
                     default:
-                        throw new \Exception(\ModulesGarden\TSSGGSModule\App\Libs\ClientText::get('toolsChooseTool', 'Choose a tool.'));
+                        throw new \Exception(\ModulesGarden\TSSGGSModule\App\Libs\Support\ClientText::get('toolsChooseTool', 'Choose a tool.'));
                 }
             }
             catch(\Exception $e)

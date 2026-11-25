@@ -13,7 +13,7 @@ use ModulesGarden\TSSGGSModule\Core\Contracts\Components\AdminAreaInterface;
 use ModulesGarden\TSSGGSModule\Core\Contracts\Components\AjaxComponentInterface;
 
 /**
- * Client area, messages, logging and lifecycle settings (App\Libs\GeneralSettings)
+ * Client area, messages, logging and lifecycle settings (App\Libs\Support\GeneralSettings)
  */
 class GeneralSettingsForm extends Form implements AdminAreaInterface, AjaxComponentInterface
 {
@@ -40,7 +40,7 @@ class GeneralSettingsForm extends Form implements AdminAreaInterface, AjaxCompon
         $this->builder->addFieldInContainer($clientArea, (new Switcher())->setName('sslTools')->addClass('switcher-revert'), true);
         // where to see these client area pages with examples: the edition's Wiki
         $clientArea->addElement((new \ModulesGarden\TSSGGSModule\Components\Text\Text())->setText(
-            '<div class="tssggs-note">' . htmlspecialchars($this->translate('clientAreaWiki')) . ' <a href="' . htmlspecialchars(\ModulesGarden\TSSGGSModule\App\Libs\Edition::wiki()) . '" target="_blank" rel="noopener">'
+            '<div class="tssggs-note">' . htmlspecialchars($this->translate('clientAreaWiki')) . ' <a href="' . htmlspecialchars(\ModulesGarden\TSSGGSModule\App\Libs\Support\Edition::wiki()) . '" target="_blank" rel="noopener">'
             . htmlspecialchars($this->translate('clientAreaWikiLink')) . '</a></div>'
         ));
 
@@ -54,14 +54,14 @@ class GeneralSettingsForm extends Form implements AdminAreaInterface, AjaxCompon
 
         // LEI codes (GoGetSSL): the company search of the order form. A saved token is never sent back to the page: the
         // field shows a mask as its placeholder, and an empty field keeps the saved token
-        if(in_array('ggs', \ModulesGarden\TSSGGSModule\App\Libs\Edition::vendors(), true))
+        if(in_array('ggs', \ModulesGarden\TSSGGSModule\App\Libs\Support\Edition::vendors(), true))
         {
             $lei   = $this->section('lei', 'getlei');
             // Company Register Search on: the token field appears (resources/assets/js/custom/switchFields.js)
             $this->builder->addFieldInContainer($lei, (new Switcher())->setName('openCorporates')->addClass('switcher-revert'), true);
             $lei->addElement((new \ModulesGarden\TSSGGSModule\Components\Text\Text())->setText('<span class="tssggs-depends" data-switch="openCorporates" data-fields="openCorporatesToken" hidden></span>'));
             $token = (new FormInputPassword())->setName('openCorporatesToken');
-            if(\ModulesGarden\TSSGGSModule\App\Libs\GeneralSettings::get('openCorporatesToken'))
+            if(\ModulesGarden\TSSGGSModule\App\Libs\Support\GeneralSettings::get('openCorporatesToken'))
             {
                 $token->setPlaceholder('************');
             }

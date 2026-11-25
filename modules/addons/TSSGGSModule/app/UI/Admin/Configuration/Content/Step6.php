@@ -68,7 +68,7 @@ class Step6 extends Widget implements AjaxComponentInterface
             \ModulesGarden\TSSGGSModule\App\Migration\Store::createTables();
 
             return \WHMCS\Database\Capsule::table(\ModulesGarden\TSSGGSModule\App\Migration\Store::runsTable())
-                ->where('source', \ModulesGarden\TSSGGSModule\App\Libs\Edition::get())->where('status', \ModulesGarden\TSSGGSModule\App\Migration\Store::RUN_COMPLETED)->exists();
+                ->where('source', \ModulesGarden\TSSGGSModule\App\Libs\Support\Edition::get())->where('status', \ModulesGarden\TSSGGSModule\App\Migration\Store::RUN_COMPLETED)->exists();
         }
         catch(\Throwable $e)
         {

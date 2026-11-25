@@ -11,11 +11,11 @@ use ModulesGarden\Servers\TSSGGSModule\app\repository\whmcs\Domain;
 use ModulesGarden\Servers\TSSGGSModule\app\services\SSLStepThree;
 use ModulesGarden\Servers\TSSGGSModule\core\Lang;
 use ModulesGarden\Servers\TSSGGSModule\Server;
-use ModulesGarden\TSSGGSModule\App\Libs\AutoInstallHelpers;
-use ModulesGarden\TSSGGSModule\App\Libs\CertificateService;
-use ModulesGarden\TSSGGSModule\App\Libs\Cpanel;
-use ModulesGarden\TSSGGSModule\App\Libs\SslProductHelpers;
-use ModulesGarden\TSSGGSModule\App\Libs\SSLTrustCenterApi;
+use ModulesGarden\TSSGGSModule\App\Libs\AutoInstall\AutoInstallHelpers;
+use ModulesGarden\TSSGGSModule\App\Libs\Certificates\CertificateService;
+use ModulesGarden\TSSGGSModule\App\Libs\AutoInstall\Cpanel;
+use ModulesGarden\TSSGGSModule\App\Libs\Products\SslProductHelpers;
+use ModulesGarden\TSSGGSModule\App\Libs\Gateway\SSLTrustCenterApi;
 use ModulesGarden\TSSGGSModule\App\Models\RemoteProduct;
 use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
 use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\ProductRepository;
@@ -198,7 +198,7 @@ trait SslConfigurationActions
         $vars['assetsURL']          = Server::I()->getAssetsURL();
         $vars['productName']        = $settings['productName'];
         // a certificate for public IPs (CSR without common name): its names are entered as a list, no AutoInstall
-        $vars['ipProduct']          = \ModulesGarden\TSSGGSModule\App\Libs\IpCertificate::isProduct($params['packageid']);
+        $vars['ipProduct']          = \ModulesGarden\TSSGGSModule\App\Libs\Certificates\IpCertificate::isProduct($params['packageid']);
         $vars['domainGroups']       = $vars['ipProduct'] ? [] : $domainGroups;
         $vars['hasCpanel']          = !$vars['ipProduct'] && !empty($domainGroups);
         $vars['dcvMethods']         = $settings['dcvMethods'];
@@ -217,7 +217,7 @@ trait SslConfigurationActions
         $vars['productDomain']      = isset($params['domain']) ? $params['domain'] : '';
         // the free www name of the main domain (www.example.com / example.com), tested 2026-11-17: a product without
         // SAN support gets it from the vendor; a SAN-capable product does not - there the www names can be picked as
-        // additional domains (App\Libs\FreeName)
+        // additional domains (App\Libs\Certificates\FreeName)
         $vars['wwwAlwaysFree']      = $this->productWithoutSans($params['packageid']);
         $vars['wwwInSanList']       = !$vars['wwwAlwaysFree'] && $settings['sansLimit'] > 0;
         if($vars['wwwInSanList'])
@@ -254,7 +254,7 @@ trait SslConfigurationActions
         ] : [];
 
         // a paid renewal waiting for these details: the client is told so, and until when the current certificate holds
-        $renewalUntil          = \ModulesGarden\TSSGGSModule\App\Libs\RenewalPolicy::pendingRenewalUntil((int)$serviceId);
+        $renewalUntil          = \ModulesGarden\TSSGGSModule\App\Libs\Billing\RenewalPolicy::pendingRenewalUntil((int)$serviceId);
         $vars['renewalNotice'] = $renewalUntil !== '' ? sprintf(Lang::absoluteT('sslRenewalPendingNotice'), $this->smimeDate($renewalUntil)) : '';
 
         return [
@@ -365,7 +365,7 @@ trait SslConfigurationActions
         $userId    = (int)$params['userid'];
 
         // a migrated order bought at payment: completed with its token (read once)
-        \ModulesGarden\TSSGGSModule\App\Libs\IncompleteOrder::claimMigrated($serviceId);
+        \ModulesGarden\TSSGGSModule\App\Libs\Certificates\IncompleteOrder::claimMigrated($serviceId);
         $ssl = SSL::getByServiceId($serviceId);
         if(!$ssl || $ssl->status !== 'Awaiting Configuration' || !empty($ssl->remoteid))
         {
@@ -379,8 +379,8 @@ trait SslConfigurationActions
 
         $settings    = $this->getSslConfigurationSettings($params);
         $installType = (isset($input['install_type']) && $input['install_type'] === 'autoinstall') ? 'autoinstall' : 'manual';
-        // a certificate for public IPs (CSR without common name, App\Libs\IpCertificate): manual enrollment only
-        $ipProduct = \ModulesGarden\TSSGGSModule\App\Libs\IpCertificate::isProduct($params['packageid']);
+        // a certificate for public IPs (CSR without common name, App\Libs\Certificates\IpCertificate): manual enrollment only
+        $ipProduct = \ModulesGarden\TSSGGSModule\App\Libs\Certificates\IpCertificate::isProduct($params['packageid']);
         if($ipProduct)
         {
             $installType = 'manual';
@@ -583,9 +583,9 @@ trait SslConfigurationActions
                 : [];
         }
 
-        \ModulesGarden\TSSGGSModule\App\Libs\SanUpgrade::assertWithinLimits($serviceId, $commonName, $allDomains, \ModulesGarden\TSSGGSModule\App\Libs\SanUpgrade::paidQuantities($params));
+        \ModulesGarden\TSSGGSModule\App\Libs\Billing\SanUpgrade::assertWithinLimits($serviceId, $commonName, $allDomains, \ModulesGarden\TSSGGSModule\App\Libs\Billing\SanUpgrade::paidQuantities($params));
         // *. only on a wildcard product, or a FLEX product with the Wildcard choice paid
-        \ModulesGarden\TSSGGSModule\App\Libs\MainDomain::assertCommonName((int)$serviceId, (string)$commonName);
+        \ModulesGarden\TSSGGSModule\App\Libs\Certificates\MainDomain::assertCommonName((int)$serviceId, (string)$commonName);
 
         foreach($allDomains as $domain)
         {
@@ -733,7 +733,7 @@ trait SslConfigurationActions
         if($installType === 'manual' && !empty($privateKey))
         {
             $response['private_key']     = $privateKey;
-            $response['private_key_handle'] = \ModulesGarden\TSSGGSModule\App\Libs\PrivateKeyDownload::store((int)$serviceId, $privateKey);
+            $response['private_key_handle'] = \ModulesGarden\TSSGGSModule\App\Libs\Certificates\PrivateKeyDownload::store((int)$serviceId, $privateKey);
         }
 
         return $response;

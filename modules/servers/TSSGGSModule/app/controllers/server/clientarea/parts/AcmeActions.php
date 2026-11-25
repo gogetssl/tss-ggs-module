@@ -11,9 +11,9 @@ use ModulesGarden\Servers\TSSGGSModule\app\repository\whmcs\Domain;
 use ModulesGarden\Servers\TSSGGSModule\app\repository\whmcs\ProductConfigOptions;
 use ModulesGarden\Servers\TSSGGSModule\core\Lang;
 use ModulesGarden\Servers\TSSGGSModule\Server;
-use ModulesGarden\TSSGGSModule\App\Libs\AcmeHelpers;
-use ModulesGarden\TSSGGSModule\App\Libs\CertificateService;
-use ModulesGarden\TSSGGSModule\App\Libs\Helpers;
+use ModulesGarden\TSSGGSModule\App\Libs\Subscriptions\AcmeHelpers;
+use ModulesGarden\TSSGGSModule\App\Libs\Certificates\CertificateService;
+use ModulesGarden\TSSGGSModule\App\Libs\Support\Helpers;
 use ModulesGarden\TSSGGSModule\App\Models\AcmeSubscription;
 use ModulesGarden\TSSGGSModule\App\Models\AcmeSubscriptionDomain;
 use ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Invoice;
@@ -129,7 +129,7 @@ trait AcmeActions
 
         // when each domain was added, and - while it is still inside the refund window of its own addition - until
         // when removing it gives the money back (the slot is then free to be given back as well)
-        $refundDays = \ModulesGarden\TSSGGSModule\App\Libs\SubscriptionBilling::REFUND_DAYS;
+        $refundDays = \ModulesGarden\TSSGGSModule\App\Libs\Subscriptions\SubscriptionBilling::REFUND_DAYS;
         foreach($domains as $domainRow)
         {
             $added = (string)($domainRow->added_at ?: $domainRow->created_at);
@@ -176,10 +176,10 @@ trait AcmeActions
         // auto renewal stopped: the subscription ends with its period and a cancel is refused (GGS-3, both vendors) -
         // the page shows the end date instead of the Cancel button
         $vars['endsAtPeriodEnd']        = $this->endsAtPeriodEnd($serviceId, $subscription);
-        $vars['endsAtPeriodEndNote']    = $vars['endsAtPeriodEnd'] ? str_replace(':date:', \ModulesGarden\TSSGGSModule\App\Libs\SubscriptionState::periodEndText($subscription), Lang::absoluteT('serverCA', 'home', 'acmeEndsAtPeriodEnd')) : '';
+        $vars['endsAtPeriodEndNote']    = $vars['endsAtPeriodEnd'] ? str_replace(':date:', \ModulesGarden\TSSGGSModule\App\Libs\Subscriptions\SubscriptionState::periodEndText($subscription), Lang::absoluteT('serverCA', 'home', 'acmeEndsAtPeriodEnd')) : '';
         // the EAB keys work only once the ACME account is active; a renewal the vendor could not charge stops new certificates
-        $vars['acmeKeysUsable']         = \ModulesGarden\TSSGGSModule\App\Libs\SubscriptionState::keysUsable($subscription);
-        $vars['renewalUnpaid']          = \ModulesGarden\TSSGGSModule\App\Libs\SubscriptionState::renewalUnpaid($subscription);
+        $vars['acmeKeysUsable']         = \ModulesGarden\TSSGGSModule\App\Libs\Subscriptions\SubscriptionState::keysUsable($subscription);
+        $vars['renewalUnpaid']          = \ModulesGarden\TSSGGSModule\App\Libs\Subscriptions\SubscriptionState::renewalUnpaid($subscription);
         $vars['configurationStatus']    = $sslService ? $sslService->status : null;
         $vars['configurationURL']       = 'clientarea.php?action=productdetails&id=' . $serviceId . '&acmeconfig=1';
 
@@ -568,14 +568,14 @@ trait AcmeActions
         // time, however long ago it was paid for; a slot holding a domain only while the vendor would still refund that
         // domain (within the refund window of the day THAT domain was added). So the check is how many slots are
         // refundable right now, per type.
-        $refundable = \ModulesGarden\TSSGGSModule\App\Libs\SubscriptionBilling::refundableSlots($serviceId);
+        $refundable = \ModulesGarden\TSSGGSModule\App\Libs\Subscriptions\SubscriptionBilling::refundableSlots($serviceId);
         foreach([['single', $hasSingle, $newSingle, $domainLimits['singleFromOption']], ['wildcard', $hasWildcard, $newWildcard, $domainLimits['wildcardFromOption']]] as $check)
         {
             list($type, $sent, $wanted, $current) = $check;
             $given = $sent ? (int)$current - (int)$wanted : 0;
             if($given > 0 && $given > $refundable[$type])
             {
-                throw new \Exception(sprintf(Lang::absoluteT('acme_downgrade_refund_window_passed'), \ModulesGarden\TSSGGSModule\App\Libs\SubscriptionBilling::REFUND_DAYS));
+                throw new \Exception(sprintf(Lang::absoluteT('acme_downgrade_refund_window_passed'), \ModulesGarden\TSSGGSModule\App\Libs\Subscriptions\SubscriptionBilling::REFUND_DAYS));
             }
         }
 
@@ -590,7 +590,7 @@ trait AcmeActions
                                 ->whereIn('tblinvoices.status', ['Unpaid', 'Overdue'])
                                 ->first();
 
-        if($unpaidInvoice || \ModulesGarden\TSSGGSModule\App\Libs\SubscriptionBilling::pendingSlotPurchase($serviceId))
+        if($unpaidInvoice || \ModulesGarden\TSSGGSModule\App\Libs\Subscriptions\SubscriptionBilling::pendingSlotPurchase($serviceId))
         {
             throw new \Exception(Lang::absoluteT('acme_upgrade_unpaid_invoice_exists'));
         }
@@ -690,7 +690,7 @@ trait AcmeActions
         $message = Lang::absoluteT('acme_upgrade_success');
         if($bought)
         {
-            $invoiceId = \ModulesGarden\TSSGGSModule\App\Libs\SubscriptionBilling::createSlotPurchaseInvoice($serviceId, $bought);
+            $invoiceId = \ModulesGarden\TSSGGSModule\App\Libs\Subscriptions\SubscriptionBilling::createSlotPurchaseInvoice($serviceId, $bought);
             if($invoiceId > 0)
             {
                 global $CONFIG;
@@ -774,7 +774,7 @@ trait AcmeActions
         }
 
         // acme_id is the CaaS item ID (items[0].id), not the order ID; within the refund window the vendor refunds the order
-        $refundable = \ModulesGarden\TSSGGSModule\App\Libs\SubscriptionBilling::orderRefundable($serviceId);
+        $refundable = \ModulesGarden\TSSGGSModule\App\Libs\Subscriptions\SubscriptionBilling::orderRefundable($serviceId);
         CertificateService::api($serviceId)->cancelItem((int)$subscription->acme_id, 'Cancelled by client', 'caas', $refundable);
 
         $subscription->status       = 'cancelled';
@@ -786,7 +786,7 @@ trait AcmeActions
                                                                           'domainstatus' => 'Cancelled'
                                                                       ]);
 
-        $refundedCreditsAmount = \ModulesGarden\TSSGGSModule\App\Libs\SubscriptionBilling::refundOnCancel($serviceId, 'Subscription cancelled by the client');
+        $refundedCreditsAmount = \ModulesGarden\TSSGGSModule\App\Libs\Subscriptions\SubscriptionBilling::refundOnCancel($serviceId, 'Subscription cancelled by the client');
         $message               = Lang::absoluteT('acme_subscription_cancelled');
         if($refundedCreditsAmount > 0)
         {
@@ -831,7 +831,7 @@ trait AcmeActions
      */
     private function endsAtPeriodEnd($serviceId, $subscription)
     {
-        return \ModulesGarden\TSSGGSModule\App\Libs\SubscriptionState::endsAtPeriodEnd($subscription);
+        return \ModulesGarden\TSSGGSModule\App\Libs\Subscriptions\SubscriptionState::endsAtPeriodEnd($subscription);
     }
 
     /**

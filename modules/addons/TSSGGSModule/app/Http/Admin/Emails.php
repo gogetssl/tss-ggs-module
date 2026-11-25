@@ -2,9 +2,9 @@
 
 namespace ModulesGarden\TSSGGSModule\App\Http\Admin;
 
-use ModulesGarden\TSSGGSModule\App\Libs\CsrfToken;
-use ModulesGarden\TSSGGSModule\App\Libs\EmailCatalog;
-use ModulesGarden\TSSGGSModule\App\Libs\EmailManager;
+use ModulesGarden\TSSGGSModule\App\Libs\Support\CsrfToken;
+use ModulesGarden\TSSGGSModule\App\Libs\Emails\EmailCatalog;
+use ModulesGarden\TSSGGSModule\App\Libs\Emails\EmailManager;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Emails\Index\EmailsContainer;
 use ModulesGarden\TSSGGSModule\Core\Contracts\Controllers\AdminAreaInterface;
 use ModulesGarden\TSSGGSModule\Core\Helper;

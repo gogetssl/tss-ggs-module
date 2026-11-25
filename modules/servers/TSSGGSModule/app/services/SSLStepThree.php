@@ -4,10 +4,10 @@ namespace ModulesGarden\Servers\TSSGGSModule\app\services;
 
 use ModulesGarden\Servers\TSSGGSModule\app\models\whmcs\Service;
 use ModulesGarden\Servers\TSSGGSModule\app\models\whmcs\SSL;
-use ModulesGarden\TSSGGSModule\App\Libs\CertificateService;
-use ModulesGarden\TSSGGSModule\App\Libs\ProductSettings;
-use ModulesGarden\TSSGGSModule\App\Libs\SanUpgrade;
-use ModulesGarden\TSSGGSModule\App\Libs\SSLTrustCenterApi;
+use ModulesGarden\TSSGGSModule\App\Libs\Certificates\CertificateService;
+use ModulesGarden\TSSGGSModule\App\Libs\Products\ProductSettings;
+use ModulesGarden\TSSGGSModule\App\Libs\Billing\SanUpgrade;
+use ModulesGarden\TSSGGSModule\App\Libs\Gateway\SSLTrustCenterApi;
 use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
 use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\ProductRepository;
 use ModulesGarden\TSSGGSModule\App\Models\Request;
@@ -22,7 +22,7 @@ class SSLStepThree
 
             $serviceDetails = $params['model']->toArray();
             // a product addon's certificate: its term follows the addon's billing cycle (the service itself is free)
-            $serviceDetails['billingcycle'] = \ModulesGarden\TSSGGSModule\App\Libs\AddonCertificates::billingCycleOf((int)$params['serviceid']) ?? $serviceDetails['billingcycle'];
+            $serviceDetails['billingcycle'] = \ModulesGarden\TSSGGSModule\App\Libs\Certificates\AddonCertificates::billingCycleOf((int)$params['serviceid']) ?? $serviceDetails['billingcycle'];
 
             $billingCycle = 12;
             switch ($serviceDetails['billingcycle']) {
@@ -67,13 +67,13 @@ class SSLStepThree
             $api = SSLTrustCenterApi::forVendor($configProduct['provider'], $configProduct['category']);
             $decode = openssl_csr_get_subject($params['csr']);
             // the order's main name: the CSR's common name, or - for a CSR without one (IP certificates,
-            // App\Libs\IpCertificate) - the name the configuration gave
+            // App\Libs\Certificates\IpCertificate) - the name the configuration gave
             $commonName = !empty($params['common_name']) ? (string)$params['common_name'] : (string)($decode['CN'] ?? '');
             $mainMethod = $params['method'][$commonName] == 'email' ? $params['approver'][$commonName] : $params['method'][$commonName];
 
             SanUpgrade::assertWithinLimits($params['serviceid'], $commonName, array_keys($params['method']), SanUpgrade::paidQuantities($params));
             // *. only on a wildcard product, or a FLEX product with the Wildcard choice paid
-            \ModulesGarden\TSSGGSModule\App\Libs\MainDomain::assertCommonName((int)$params['serviceid'], $commonName);
+            \ModulesGarden\TSSGGSModule\App\Libs\Certificates\MainDomain::assertCommonName((int)$params['serviceid'], $commonName);
 
             $san = [];
             // a CSR without common name (IP certificates): every name is a SAN of the order, the main name too - the
@@ -108,7 +108,7 @@ class SSLStepThree
             }
 
             // chosen by the admin (settings), the client is not asked
-            $webServer = trim((string)\ModulesGarden\TSSGGSModule\App\Libs\GeneralSettings::get('defaultWebServer'));
+            $webServer = trim((string)\ModulesGarden\TSSGGSModule\App\Libs\Support\GeneralSettings::get('defaultWebServer'));
             if($webServer !== '')
             {
                 $orderParams['webserver_type'] = $webServer;
@@ -120,8 +120,8 @@ class SSLStepThree
             }
 
             // a paid renewal that waited for these details: placed as the renewal of the previous order, so the
-            // vendor carries its days over (App\Libs\RenewalPolicy)
-            $renewal = \ModulesGarden\TSSGGSModule\App\Libs\RenewalPolicy::pendingRenewal((int)$params['serviceid']);
+            // vendor carries its days over (App\Libs\Billing\RenewalPolicy)
+            $renewal = \ModulesGarden\TSSGGSModule\App\Libs\Billing\RenewalPolicy::pendingRenewal((int)$params['serviceid']);
             if($renewal)
             {
                 $orderParams['renewal'] = $renewal;
@@ -134,7 +134,7 @@ class SSLStepThree
             $sameRenewal  = $renewal && (int)($pendingData['prior_service'] ?? 0) === (int)$params['serviceid'];
 
             // a certificate bought at payment (IncompleteOrder): its details complete that order with the token
-            $incomplete = \ModulesGarden\TSSGGSModule\App\Libs\IncompleteOrder::pending($params['serviceid']);
+            $incomplete = \ModulesGarden\TSSGGSModule\App\Libs\Certificates\IncompleteOrder::pending($params['serviceid']);
             $place      = function(array $orderParams) use ($api, $params, $incomplete, $sameRenewal) {
                 if($incomplete)
                 {
@@ -152,9 +152,9 @@ class SSLStepThree
             catch(\Exception $renewalRefused)
             {
                 // the token was used meanwhile (a plugin submitted the details): the service follows that order
-                if($incomplete && \ModulesGarden\TSSGGSModule\App\Libs\IncompleteOrder::adoptIfCompleted($params['serviceid']))
+                if($incomplete && \ModulesGarden\TSSGGSModule\App\Libs\Certificates\IncompleteOrder::adoptIfCompleted($params['serviceid']))
                 {
-                    return ['adopted' => true, 'error' => \ModulesGarden\TSSGGSModule\App\Libs\ClientText::get('orderCompletedElsewhere', 'The details of this certificate were already submitted with its token (for example by a hosting panel plugin). Reload the page to follow the order.')];
+                    return ['adopted' => true, 'error' => \ModulesGarden\TSSGGSModule\App\Libs\Support\ClientText::get('orderCompletedElsewhere', 'The details of this certificate were already submitted with its token (for example by a hosting panel plugin). Reload the page to follow the order.')];
                 }
                 if(!$renewal)
                 {
@@ -165,16 +165,16 @@ class SSLStepThree
                 // themselves comes back from this second attempt and is shown to the client as before
                 unset($orderParams['renewal']);
                 $newOrder = $place($orderParams);
-                \ModulesGarden\TSSGGSModule\App\Libs\CertificateService::event($params['serviceid'], 'info', '[Renewal] The vendor did not take it as a renewal of the previous order (' . $renewalRefused->getMessage() . '): ordered as a new certificate');
+                \ModulesGarden\TSSGGSModule\App\Libs\Certificates\CertificateService::event($params['serviceid'], 'info', '[Renewal] The vendor did not take it as a renewal of the previous order (' . $renewalRefused->getMessage() . '): ordered as a new certificate');
             }
             if($renewal)
             {
-                \ModulesGarden\TSSGGSModule\App\Libs\RenewalPolicy::renewalPlaced((int)$params['serviceid']);
+                \ModulesGarden\TSSGGSModule\App\Libs\Billing\RenewalPolicy::renewalPlaced((int)$params['serviceid']);
             }
             $itemId   = SSLTrustCenterApi::getItemId($newOrder, $incomplete ? $incomplete['item_id'] : null);
             if($incomplete)
             {
-                \ModulesGarden\TSSGGSModule\App\Libs\IncompleteOrder::markCompleted($params['serviceid']);
+                \ModulesGarden\TSSGGSModule\App\Libs\Certificates\IncompleteOrder::markCompleted($params['serviceid']);
             }
             SSL::where('serviceid', $params['serviceid'])->update(['remoteid' => $itemId]);
             Service::where('id', $params['serviceid'])->update(['domain' => $commonName]);
@@ -196,7 +196,7 @@ class SSLStepThree
             }
             // a product addon's certificate: the client pays the addon, the service itself is free
             $sellingPrice = (float)$params['model']->amount;
-            $addonBilling = \ModulesGarden\TSSGGSModule\App\Libs\AddonCertificates::billing((int)$params['serviceid']);
+            $addonBilling = \ModulesGarden\TSSGGSModule\App\Libs\Certificates\AddonCertificates::billing((int)$params['serviceid']);
             if($addonBilling)
             {
                 $sellingPrice = $addonBilling['amount'];
@@ -239,7 +239,7 @@ class SSLStepThree
                 . ' (order #' . ($newOrder['order']['id'] ?? ($incomplete['order_id'] ?? '')) . ', ' . (count($san) + 1) . ' domain(s))', $params['userid']);
 
             // OV / EV: tell the client the certificate authority now verifies the organization
-            \ModulesGarden\TSSGGSModule\App\Libs\OrganizationValidation::notify((int)$params['serviceid'], $itemId, (bool)$renewal);
+            \ModulesGarden\TSSGGSModule\App\Libs\Certificates\OrganizationValidation::notify((int)$params['serviceid'], $itemId, (bool)$renewal);
 
             // Integrator hook; SSLCenter_StepThree keeps hooks written for the GoGetSSL module working after the migration
             $hookParams = [

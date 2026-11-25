@@ -1,6 +1,6 @@
 /**
  * Settings > SSL certificates > Client Messages: "Issued SSL Message for" + "Language" show only the boxes of the chosen
- * certificate family (its "Show this message" switch and its text in that language - App\Libs\IssuedMessage).
+ * certificate family (its "Show this message" switch and its text in that language - App\Libs\Certificates\IssuedMessage).
  * The selectors have no name, so they are not saved.
  */
 // leading semicolon: the module joins every script into one bundle

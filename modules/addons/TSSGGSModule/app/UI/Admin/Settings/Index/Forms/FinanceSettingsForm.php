@@ -3,13 +3,13 @@
 namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Forms;
 
 
-use ModulesGarden\TSSGGSModule\App\Libs\BalanceMonitor;
-use ModulesGarden\TSSGGSModule\App\Libs\Edition;
-use ModulesGarden\TSSGGSModule\App\Libs\FinancePolicy;
-use ModulesGarden\TSSGGSModule\App\Libs\Markups;
-use ModulesGarden\TSSGGSModule\App\Libs\Helpers;
-use ModulesGarden\TSSGGSModule\App\Libs\PricingService;
-use ModulesGarden\TSSGGSModule\App\Libs\ProductSettings;
+use ModulesGarden\TSSGGSModule\App\Libs\Billing\BalanceMonitor;
+use ModulesGarden\TSSGGSModule\App\Libs\Support\Edition;
+use ModulesGarden\TSSGGSModule\App\Libs\Billing\FinancePolicy;
+use ModulesGarden\TSSGGSModule\App\Libs\Billing\Markups;
+use ModulesGarden\TSSGGSModule\App\Libs\Support\Helpers;
+use ModulesGarden\TSSGGSModule\App\Libs\Billing\PricingService;
+use ModulesGarden\TSSGGSModule\App\Libs\Products\ProductSettings;
 use ModulesGarden\TSSGGSModule\Components\Text\Text;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Concerns\SettingsLayout;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Providers\FinanceSettingsProvider;
@@ -24,7 +24,7 @@ use ModulesGarden\TSSGGSModule\Core\Contracts\Components\AdminAreaInterface;
 use ModulesGarden\TSSGGSModule\Core\Contracts\Components\AjaxComponentInterface;
 
 /**
- * Settings > Finance: how prices are made from the reseller cost (App\Libs\FinancePolicy), what happens when a price
+ * Settings > Finance: how prices are made from the reseller cost (App\Libs\Billing\FinancePolicy), what happens when a price
  * falls below cost, renewal prices of existing services, currency, billing rules and the reseller balance alert.
  * The margin and the exchange rate are stored in "financeSettings", the rest in the general settings.
  */
@@ -86,7 +86,7 @@ class FinanceSettingsForm extends Form implements AdminAreaInterface, AjaxCompon
         $balance = $this->section('balance', 'hand-coin-outline');
         $this->builder->addFieldInContainer($balance, (new Switcher())->setName('balanceAlert')->addClass('switcher-revert'), true);
         // not read within the last hour (or never): read now, so the page shows the balance before the first cron run
-        BalanceMonitor::run(false, \ModulesGarden\TSSGGSModule\App\Libs\SSLTrustCenterApi::PAGE_TIMEOUT);
+        BalanceMonitor::run(false, \ModulesGarden\TSSGGSModule\App\Libs\Gateway\SSLTrustCenterApi::PAGE_TIMEOUT);
         $vendors = Edition::vendors();
         foreach($vendors as $vendor)
         {

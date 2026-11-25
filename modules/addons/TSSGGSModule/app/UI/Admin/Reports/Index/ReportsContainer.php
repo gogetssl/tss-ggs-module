@@ -21,7 +21,7 @@ class ReportsContainer extends Container implements AdminAreaInterface
 {
     public function loadHtml(): void
     {
-        if(!\ModulesGarden\TSSGGSModule\App\Libs\GeneralSettings::enabled('hideInfoMessages'))
+        if(!\ModulesGarden\TSSGGSModule\App\Libs\Support\GeneralSettings::enabled('hideInfoMessages'))
         {
             $alert = new AlertInfo();
             $alert->setText($this->translate('reportsInfo'));

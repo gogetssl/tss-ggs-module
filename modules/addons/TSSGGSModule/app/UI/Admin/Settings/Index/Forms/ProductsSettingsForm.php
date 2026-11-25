@@ -12,7 +12,7 @@ use ModulesGarden\TSSGGSModule\Core\Contracts\Components\AdminAreaInterface;
 use ModulesGarden\TSSGGSModule\Core\Contracts\Components\AjaxComponentInterface;
 
 /**
- * Settings > Products: how the WHMCS product list follows the provider's catalogue (App\Libs\CatalogueSync). The
+ * Settings > Products: how the WHMCS product list follows the provider's catalogue (App\Libs\Products\CatalogueSync). The
  * changes themselves are listed on the Products page, tab "Catalogue changes". Stored in the general settings.
  */
 class ProductsSettingsForm extends Form implements AdminAreaInterface, AjaxComponentInterface

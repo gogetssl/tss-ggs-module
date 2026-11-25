@@ -135,58 +135,10 @@ parameters:
 			path: modules/addons/TSSGGSModule/app/Http/Admin/Migration.php
 
 		-
-			message: '#^Used function ModulesGarden\\TSSGGSModule\\Core\\Helper not found\.$#'
-			identifier: function.notFound
-			count: 1
-			path: modules/addons/TSSGGSModule/app/Http/Admin/Statistics.php
-
-		-
-			message: '#^Path in require_once\(\) "/home/whmcs/qa/src/includes/modulefunctions\.php" is not a file or it does not exist\.$#'
-			identifier: requireOnce.fileNotFound
-			count: 1
-			path: modules/addons/TSSGGSModule/app/Libs/AddonCertificates.php
-
-		-
-			message: '#^Path in require_once\(\) "/home/whmcs/qa/src/includes/clientfunctions\.php" is not a file or it does not exist\.$#'
-			identifier: requireOnce.fileNotFound
-			count: 1
-			path: modules/addons/TSSGGSModule/app/Libs/RenewalPrices.php
-
-		-
-			message: '#^Path in require_once\(\) "/home/whmcs/qa/src/includes/configoptionsfunctions\.php" is not a file or it does not exist\.$#'
-			identifier: requireOnce.fileNotFound
-			count: 1
-			path: modules/addons/TSSGGSModule/app/Libs/RenewalPrices.php
-
-		-
-			message: '#^Path in require_once\(\) "/home/whmcs/qa/src/includes/invoicefunctions\.php" is not a file or it does not exist\.$#'
-			identifier: requireOnce.fileNotFound
-			count: 1
-			path: modules/addons/TSSGGSModule/app/Libs/RenewalPrices.php
-
-		-
-			message: '#^Path in require_once\(\) "/home/whmcs/qa/src/includes/orderfunctions\.php" is not a file or it does not exist\.$#'
-			identifier: requireOnce.fileNotFound
-			count: 1
-			path: modules/addons/TSSGGSModule/app/Libs/RenewalPrices.php
-
-		-
 			message: '#^Cannot cast ModulesGarden\\TSSGGSModule\\Core\\Support\\Facades\\Config to string\.$#'
 			identifier: cast.string
 			count: 1
 			path: modules/addons/TSSGGSModule/app/Libs/Update/State.php
-
-		-
-			message: '#^Path in require_once\(\) "/home/whmcs/qa/src/includes/invoicefunctions\.php" is not a file or it does not exist\.$#'
-			identifier: requireOnce.fileNotFound
-			count: 1
-			path: modules/addons/TSSGGSModule/app/Libs/UpgradePricing.php
-
-		-
-			message: '#^Path in require_once\(\) "/home/whmcs/qa/src/includes/invoicefunctions\.php" is not a file or it does not exist\.$#'
-			identifier: requireOnce.fileNotFound
-			count: 1
-			path: modules/addons/TSSGGSModule/app/Libs/ZeroInvoice.php
 
 		-
 			message: '#^Call to an undefined method ModulesGarden\\TSSGGSModule\\App\\Migration\\Readers\\LegacyReaderInterface\:\:filesPresent\(\)\.$#'
@@ -205,12 +157,6 @@ parameters:
 			identifier: method.notFound
 			count: 1
 			path: modules/addons/TSSGGSModule/app/Migration/Detector.php
-
-		-
-			message: '#^Path in require_once\(\) "/home/whmcs/qa/src/includes/modulefunctions\.php" is not a file or it does not exist\.$#'
-			identifier: requireOnce.fileNotFound
-			count: 1
-			path: modules/addons/TSSGGSModule/app/Migration/LegacyBlock.php
 
 		-
 			message: '#^Call to an undefined method ModulesGarden\\TSSGGSModule\\Core\\Components\\FormFields\\FormField\:\:setDefaultValueAsFirstOption\(\)\.$#'
@@ -445,42 +391,6 @@ parameters:
 			identifier: variable.undefined
 			count: 1
 			path: modules/servers/TSSGGSModule/app/controllers/server/clientarea/home.php
-
-		-
-			message: '#^Class Illuminate\\Database\\Eloquent\\Model referenced with incorrect case\: Illuminate\\Database\\Eloquent\\model\.$#'
-			identifier: class.nameCase
-			count: 1
-			path: modules/servers/TSSGGSModule/app/models/whmcs/Client.php
-
-		-
-			message: '#^Class Illuminate\\Database\\Eloquent\\Model referenced with incorrect case\: Illuminate\\Database\\Eloquent\\model\.$#'
-			identifier: class.nameCase
-			count: 1
-			path: modules/servers/TSSGGSModule/app/models/whmcs/Order.php
-
-		-
-			message: '#^Class Illuminate\\Database\\Eloquent\\Model referenced with incorrect case\: Illuminate\\Database\\Eloquent\\model\.$#'
-			identifier: class.nameCase
-			count: 1
-			path: modules/servers/TSSGGSModule/app/models/whmcs/Product.php
-
-		-
-			message: '#^Class Illuminate\\Database\\Eloquent\\Model referenced with incorrect case\: Illuminate\\Database\\Eloquent\\model\.$#'
-			identifier: class.nameCase
-			count: 1
-			path: modules/servers/TSSGGSModule/app/models/whmcs/ProductConfigOption.php
-
-		-
-			message: '#^Class Illuminate\\Database\\Eloquent\\Model referenced with incorrect case\: Illuminate\\Database\\Eloquent\\model\.$#'
-			identifier: class.nameCase
-			count: 1
-			path: modules/servers/TSSGGSModule/app/models/whmcs/SSL.php
-
-		-
-			message: '#^Class Illuminate\\Database\\Eloquent\\Model referenced with incorrect case\: Illuminate\\Database\\Eloquent\\model\.$#'
-			identifier: class.nameCase
-			count: 1
-			path: modules/servers/TSSGGSModule/app/models/whmcs/Service.php
 
 		-
 			message: '#^Call to static method factory\(\) on an unknown class MultibrandFunctionality\\app\\models\\Brand\.$#'

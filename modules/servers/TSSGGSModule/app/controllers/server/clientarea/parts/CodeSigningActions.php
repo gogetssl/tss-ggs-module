@@ -7,8 +7,8 @@ use ModulesGarden\Servers\TSSGGSModule\app\models\whmcs\Order;
 use ModulesGarden\Servers\TSSGGSModule\app\models\whmcs\Service;
 use ModulesGarden\Servers\TSSGGSModule\app\models\whmcs\SSL;
 use ModulesGarden\Servers\TSSGGSModule\core\Lang;
-use ModulesGarden\TSSGGSModule\App\Libs\CertificateService;
-use ModulesGarden\TSSGGSModule\App\Libs\CodeSigningService;
+use ModulesGarden\TSSGGSModule\App\Libs\Certificates\CertificateService;
+use ModulesGarden\TSSGGSModule\App\Libs\ProductLines\CodeSigningService;
 use WHMCS\Database\Capsule;
 
 /**
@@ -189,7 +189,7 @@ trait CodeSigningActions
                 'shipping'      => is_array($input['ship'] ?? null) ? $input['ship'] : [],
             ]);
         }
-        catch(\ModulesGarden\TSSGGSModule\App\Libs\CodeSigningInputException $e)
+        catch(\ModulesGarden\TSSGGSModule\App\Libs\ProductLines\CodeSigningInputException $e)
         {
             $argument = (string)$e->argument;
             $argument = strpos($argument, 'cs') === 0 ? Lang::absoluteT('serverCA', 'home', $argument) : htmlspecialchars($argument);

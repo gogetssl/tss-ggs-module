@@ -18,9 +18,9 @@ class Logs extends AbstractController implements AdminAreaInterface
     /** Ends debug mode before its time runs out (link with the admin token) */
     public function stopDebug()
     {
-        if(\ModulesGarden\TSSGGSModule\App\Libs\CsrfToken::valid($_REQUEST['token'] ?? ''))
+        if(\ModulesGarden\TSSGGSModule\App\Libs\Support\CsrfToken::valid($_REQUEST['token'] ?? ''))
         {
-            \ModulesGarden\TSSGGSModule\App\Libs\GeneralSettings::save(['debugServices' => '', 'debugUntil' => 0]);
+            \ModulesGarden\TSSGGSModule\App\Libs\Support\GeneralSettings::save(['debugServices' => '', 'debugUntil' => 0]);
         }
 
         return Helper\redirect('logs', 'index');

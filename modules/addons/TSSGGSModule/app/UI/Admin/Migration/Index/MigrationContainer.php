@@ -91,7 +91,7 @@ class MigrationContainer extends Container implements AdminAreaInterface
      */
     protected function loadWizard(): void
     {
-        $source = \ModulesGarden\TSSGGSModule\App\Libs\Edition::get();
+        $source = \ModulesGarden\TSSGGSModule\App\Libs\Support\Edition::get();
         $active = Store::activeRun();
         if($active)
         {

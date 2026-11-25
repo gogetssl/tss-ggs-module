@@ -139,7 +139,7 @@ class Migration extends AbstractController implements AdminAreaInterface
     {
         $id = (int)($_REQUEST['id'] ?? 0);
         header('Content-Type: text/plain; charset=utf-8');
-        header('Content-Disposition: attachment; filename="' . strtolower(str_replace(' ', '-', \ModulesGarden\TSSGGSModule\App\Libs\Edition::name())) . '-migration-' . $id . '-error-report.txt"');
+        header('Content-Disposition: attachment; filename="' . strtolower(str_replace(' ', '-', \ModulesGarden\TSSGGSModule\App\Libs\Support\Edition::name())) . '-migration-' . $id . '-error-report.txt"');
         header('X-Content-Type-Options: nosniff');
         echo Engine::errorReport($id);
         exit;
@@ -190,7 +190,7 @@ class Migration extends AbstractController implements AdminAreaInterface
     protected function source(): string
     {
         $source = strtolower((string)($_REQUEST['source'] ?? ''));
-        if(!in_array($source, [\ModulesGarden\TSSGGSModule\App\Libs\Edition::get()], true))
+        if(!in_array($source, [\ModulesGarden\TSSGGSModule\App\Libs\Support\Edition::get()], true))
         {
             throw new \InvalidArgumentException('Unknown legacy source');
         }
@@ -214,7 +214,7 @@ class Migration extends AbstractController implements AdminAreaInterface
     protected function requireToken(): void
     {
         // WHMCS admin links carry the token in the query string (generate_token('link')); the runner posts it
-        if(!\ModulesGarden\TSSGGSModule\App\Libs\CsrfToken::valid($_REQUEST['token'] ?? ''))
+        if(!\ModulesGarden\TSSGGSModule\App\Libs\Support\CsrfToken::valid($_REQUEST['token'] ?? ''))
         {
             throw new \RuntimeException('Invalid or expired security token. Reload the page and try again.');
         }

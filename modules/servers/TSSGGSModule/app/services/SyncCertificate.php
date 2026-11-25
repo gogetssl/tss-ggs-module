@@ -2,7 +2,7 @@
 
 namespace ModulesGarden\Servers\TSSGGSModule\app\services;
 
-use ModulesGarden\TSSGGSModule\App\Libs\CertificateSyncHelpers;
+use ModulesGarden\TSSGGSModule\App\Libs\Certificates\CertificateSyncHelpers;
 use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
 
 /**
@@ -13,7 +13,7 @@ class SyncCertificate
 {
     public function run($params)
     {
-        $gatewayType = \ModulesGarden\TSSGGSModule\App\Libs\GatewayOrderService::typeOfService($params['serviceid']);
+        $gatewayType = \ModulesGarden\TSSGGSModule\App\Libs\ProductLines\GatewayOrderService::typeOfService($params['serviceid']);
         if($gatewayType)
         {
             $gatewayType::refresh($params['serviceid']);

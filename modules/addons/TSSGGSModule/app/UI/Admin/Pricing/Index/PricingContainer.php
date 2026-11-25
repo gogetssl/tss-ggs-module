@@ -3,9 +3,9 @@
 namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Pricing\Index;
 
 use ModulesGarden\TSSGGSModule\App\Http\Admin\Pricing as PricingController;
-use ModulesGarden\TSSGGSModule\App\Libs\Markups;
-use ModulesGarden\TSSGGSModule\App\Libs\Helpers;
-use ModulesGarden\TSSGGSModule\App\Libs\PricingService;
+use ModulesGarden\TSSGGSModule\App\Libs\Billing\Markups;
+use ModulesGarden\TSSGGSModule\App\Libs\Support\Helpers;
+use ModulesGarden\TSSGGSModule\App\Libs\Billing\PricingService;
 use ModulesGarden\TSSGGSModule\Components\Container\Container;
 use ModulesGarden\TSSGGSModule\Components\Text\Text;
 use ModulesGarden\TSSGGSModule\Core\Contracts\Components\AdminAreaInterface;
@@ -34,7 +34,7 @@ class PricingContainer extends Container implements AdminAreaInterface
         // notes sit right under the page header, the grid in its own card
         $notes = new Text();
         $notes->setCss('tssggs-html tssggs-notes');
-        $notes->setText($this->notices($session) . $this->markupNote() . (\ModulesGarden\TSSGGSModule\App\Libs\GeneralSettings::enabled('hideInfoMessages') ? '' : '<div class="tssggs-note">' . $this->e($this->t('grid_help')) . '</div>'));
+        $notes->setText($this->notices($session) . $this->markupNote() . (\ModulesGarden\TSSGGSModule\App\Libs\Support\GeneralSettings::enabled('hideInfoMessages') ? '' : '<div class="tssggs-note">' . $this->e($this->t('grid_help')) . '</div>'));
         $this->addElement($notes);
         unset($_SESSION[PricingController::SESSION]['notice'], $_SESSION[PricingController::SESSION]['error']);
 

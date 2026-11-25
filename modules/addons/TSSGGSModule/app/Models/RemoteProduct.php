@@ -2,9 +2,9 @@
 
 namespace ModulesGarden\TSSGGSModule\App\Models;
 
-use ModulesGarden\TSSGGSModule\App\Libs\CatalogueSync;
-use ModulesGarden\TSSGGSModule\App\Libs\Helpers;
-use ModulesGarden\TSSGGSModule\App\Libs\ProductCatalog;
+use ModulesGarden\TSSGGSModule\App\Libs\Products\CatalogueSync;
+use ModulesGarden\TSSGGSModule\App\Libs\Support\Helpers;
+use ModulesGarden\TSSGGSModule\App\Libs\Products\ProductCatalog;
 use ModulesGarden\TSSGGSModule\Core\Models\ExtendedEloquentModel;
 use ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Product;
 

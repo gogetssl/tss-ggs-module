@@ -3,8 +3,8 @@
 namespace ModulesGarden\TSSGGSModule\App\Cron;
 
 use Exception;
-use ModulesGarden\TSSGGSModule\App\Libs\CertificateSyncHelpers;
-use ModulesGarden\TSSGGSModule\App\Libs\SSLTrustCenterApi;
+use ModulesGarden\TSSGGSModule\App\Libs\Certificates\CertificateSyncHelpers;
+use ModulesGarden\TSSGGSModule\App\Libs\Gateway\SSLTrustCenterApi;
 use ModulesGarden\TSSGGSModule\App\Models\CronCheck;
 use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
 use ModulesGarden\TSSGGSModule\Core\CommandLine\AbstractCommand;
@@ -119,7 +119,7 @@ class SSLCertificates extends AbstractCommand
         // product addons and their certificate services ended outside the module's own calls (M-14)
         try
         {
-            foreach(\ModulesGarden\TSSGGSModule\App\Libs\AddonCertificates::reconcile() as $change)
+            foreach(\ModulesGarden\TSSGGSModule\App\Libs\Certificates\AddonCertificates::reconcile() as $change)
             {
                 Logger::info('Product addon certificates: ' . $change);
             }
@@ -178,7 +178,7 @@ class SSLCertificates extends AbstractCommand
                 $failed[$certificate['id']] = $e->getMessage();
                 $io->write('Error: ' . $e->getMessage());
 
-                Logger::error($e->getMessage(), \ModulesGarden\TSSGGSModule\App\Libs\LogContext::exception($e, ['service' => $certificate['id']]));
+                Logger::error($e->getMessage(), \ModulesGarden\TSSGGSModule\App\Libs\Support\LogContext::exception($e, ['service' => $certificate['id']]));
 
                 continue;
 
@@ -188,19 +188,19 @@ class SSLCertificates extends AbstractCommand
         }
 
         // certificates bought at payment and completed with their token outside WHMCS (a hosting panel plugin): the
-        // services waiting for their details take those orders over (App\Libs\IncompleteOrder)
-        foreach(\ModulesGarden\TSSGGSModule\App\Libs\IncompleteOrder::adoptReported(array_keys($reported)) as $serviceId => $message)
+        // services waiting for their details take those orders over (App\Libs\Certificates\IncompleteOrder)
+        foreach(\ModulesGarden\TSSGGSModule\App\Libs\Certificates\IncompleteOrder::adoptReported(array_keys($reported)) as $serviceId => $message)
         {
             $failed[$serviceId] = $message;
         }
         // orders migrated from the legacy TheSSLStore module that were bought at payment: their token is read once
-        foreach(\ModulesGarden\TSSGGSModule\App\Libs\IncompleteOrder::claimMigratedBatch() as $serviceId => $message)
+        foreach(\ModulesGarden\TSSGGSModule\App\Libs\Certificates\IncompleteOrder::claimMigratedBatch() as $serviceId => $message)
         {
             $failed[$serviceId] = $message;
         }
 
         // S/MIME and code signing orders (own order data, not in the /services/updates handling above)
-        foreach(\ModulesGarden\TSSGGSModule\App\Libs\GatewayOrderService::TYPES as $type)
+        foreach(\ModulesGarden\TSSGGSModule\App\Libs\ProductLines\GatewayOrderService::TYPES as $type)
         {
             try
             {
@@ -219,7 +219,7 @@ class SSLCertificates extends AbstractCommand
         // one line that says how many orders failed and which, instead of the message of the last one
         if($failed)
         {
-            $errorToDB = \ModulesGarden\TSSGGSModule\App\Libs\CronErrors::summary($failed, count($toCheck));
+            $errorToDB = \ModulesGarden\TSSGGSModule\App\Libs\Support\CronErrors::summary($failed, count($toCheck));
         }
 
         // ACME subscriptions waiting for their certificate (were refreshed by the retired SSLCertificatesProcessing)
@@ -227,7 +227,7 @@ class SSLCertificates extends AbstractCommand
         {
             try
             {
-                \ModulesGarden\TSSGGSModule\App\Libs\AcmeHelpers::refreshAcmeCertificateDetails($subscription->service_id);
+                \ModulesGarden\TSSGGSModule\App\Libs\Subscriptions\AcmeHelpers::refreshAcmeCertificateDetails($subscription->service_id);
             }
             catch(\Throwable $e)
             {

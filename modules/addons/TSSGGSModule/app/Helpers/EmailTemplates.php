@@ -2,7 +2,7 @@
 
 namespace ModulesGarden\TSSGGSModule\App\Helpers;
 
-use ModulesGarden\TSSGGSModule\App\Libs\Edition;
+use ModulesGarden\TSSGGSModule\App\Libs\Support\Edition;
 use ModulesGarden\TSSGGSModule\Core\WHMCS\Models\EmailTemplate;
 
 class EmailTemplates
@@ -277,7 +277,7 @@ class EmailTemplates
 
     /**
      * Sent when an OV / EV order (SSL, S/MIME, code signing, document signing) has been placed: the certificate
-     * authority now verifies the organization and contacts the administrator - see App\Libs\OrganizationValidation
+     * authority now verifies the organization and contacts the administrator - see App\Libs\Certificates\OrganizationValidation
      */
     const ORG_VALIDATION_TEMPLATE = 'Organization Validation Required';
     const ORG_VALIDATION_SUBJECT  = 'Organization validation for your order - {$service_product_name}';
@@ -304,7 +304,7 @@ class EmailTemplates
                              <p>Order details: {$order_url}</p>
                              <p>{$signature}</p>';
 
-    /** Sent when the certificate authority revoked the certificate: the service is cancelled (App\Libs\CertificateEnd) */
+    /** Sent when the certificate authority revoked the certificate: the service is cancelled (App\Libs\Certificates\CertificateEnd) */
     const CERT_REVOKED_TEMPLATE = 'Certificate Revoked';
     const CERT_REVOKED_SUBJECT  = 'Important: your certificate has been revoked - {$service_product_name}';
     const CERT_REVOKED_MESSAGE  = '<p>Dear {$client_name},</p>
@@ -320,7 +320,7 @@ class EmailTemplates
                              <p>Order details: {$order_url}</p>
                              <p>{$signature}</p>';
 
-    /** Sent when the certificate expired and was not renewed: the service is terminated (App\Libs\CertificateEnd) */
+    /** Sent when the certificate expired and was not renewed: the service is terminated (App\Libs\Certificates\CertificateEnd) */
     const CERT_EXPIRED_TEMPLATE = 'Certificate Expired';
     const CERT_EXPIRED_SUBJECT  = 'Your certificate has expired - {$service_product_name}';
     const CERT_EXPIRED_MESSAGE  = '<p>Dear {$client_name},</p>

@@ -8,9 +8,9 @@ use ModulesGarden\Servers\TSSGGSModule\app\models\whmcs\Product;
 use ModulesGarden\Servers\TSSGGSModule\app\models\whmcs\SSL;
 use ModulesGarden\Servers\TSSGGSModule\core\Lang;
 use ModulesGarden\Servers\TSSGGSModule\Server;
-use ModulesGarden\TSSGGSModule\App\Libs\AisHelpers;
-use ModulesGarden\TSSGGSModule\App\Libs\CertificateService;
-use ModulesGarden\TSSGGSModule\App\Libs\Helpers;
+use ModulesGarden\TSSGGSModule\App\Libs\Subscriptions\AisHelpers;
+use ModulesGarden\TSSGGSModule\App\Libs\Certificates\CertificateService;
+use ModulesGarden\TSSGGSModule\App\Libs\Support\Helpers;
 use ModulesGarden\TSSGGSModule\App\Models\AisSubscription;
 use WHMCS\Database\Capsule;
 
@@ -56,10 +56,10 @@ trait AisActions
         $vars['configurationStatus'] = $sslService ? $sslService->status : null;
         $vars['configurationURL']   = 'clientarea.php?action=productdetails&id=' . $serviceId . '&aisconfig=1';
         // auto renewal stopped: the subscription ends with its period, a cancel is refused (GGS-3) - the end date is shown
-        $vars['endsAtPeriodEnd']     = \ModulesGarden\TSSGGSModule\App\Libs\SubscriptionState::endsAtPeriodEnd($subscription);
-        $vars['endsAtPeriodEndNote'] = $vars['endsAtPeriodEnd'] ? str_replace(':date:', \ModulesGarden\TSSGGSModule\App\Libs\SubscriptionState::periodEndText($subscription), Lang::absoluteT('serverCA', 'home', 'acmeEndsAtPeriodEnd')) : '';
-        $vars['acmeKeysUsable']      = \ModulesGarden\TSSGGSModule\App\Libs\SubscriptionState::keysUsable($subscription);
-        $vars['renewalUnpaid']       = \ModulesGarden\TSSGGSModule\App\Libs\SubscriptionState::renewalUnpaid($subscription);
+        $vars['endsAtPeriodEnd']     = \ModulesGarden\TSSGGSModule\App\Libs\Subscriptions\SubscriptionState::endsAtPeriodEnd($subscription);
+        $vars['endsAtPeriodEndNote'] = $vars['endsAtPeriodEnd'] ? str_replace(':date:', \ModulesGarden\TSSGGSModule\App\Libs\Subscriptions\SubscriptionState::periodEndText($subscription), Lang::absoluteT('serverCA', 'home', 'acmeEndsAtPeriodEnd')) : '';
+        $vars['acmeKeysUsable']      = \ModulesGarden\TSSGGSModule\App\Libs\Subscriptions\SubscriptionState::keysUsable($subscription);
+        $vars['renewalUnpaid']       = \ModulesGarden\TSSGGSModule\App\Libs\Subscriptions\SubscriptionState::renewalUnpaid($subscription);
 
         if($vars['configurationStatus'] === 'Awaiting Configuration')
         {
@@ -109,7 +109,7 @@ trait AisActions
         $api = CertificateService::api($serviceId);
 
         // TheSSLStore product ids are codes (rapidssl_automate), GoGetSSL ids are numbers
-        $apiProductId = isset($input['params']['configoption2']) ? \ModulesGarden\TSSGGSModule\App\Libs\SSLTrustCenterApi::productId($input['params']['configoption2']) : '';
+        $apiProductId = isset($input['params']['configoption2']) ? \ModulesGarden\TSSGGSModule\App\Libs\Gateway\SSLTrustCenterApi::productId($input['params']['configoption2']) : '';
         if($apiProductId === '' || $apiProductId === 0)
         {
             throw new \Exception(Lang::absoluteT('aisMissingProductId'));
@@ -221,7 +221,7 @@ trait AisActions
         {
             throw new \Exception(Lang::absoluteT('subscriptionAlreadyCancelled'));
         }
-        if(\ModulesGarden\TSSGGSModule\App\Libs\SubscriptionState::endsAtPeriodEnd($subscription))
+        if(\ModulesGarden\TSSGGSModule\App\Libs\Subscriptions\SubscriptionState::endsAtPeriodEnd($subscription))
         {
             throw new \Exception(Lang::absoluteT('acmeCancelledAtPeriodEnd'));
         }
@@ -233,7 +233,7 @@ trait AisActions
             throw new \Exception(Lang::absoluteT('sslConfigOrderFailedCancel'));
         }
         // within the refund window the vendor refunds the order and the client is credited
-        $refundable = \ModulesGarden\TSSGGSModule\App\Libs\SubscriptionBilling::orderRefundable($serviceId);
+        $refundable = \ModulesGarden\TSSGGSModule\App\Libs\Subscriptions\SubscriptionBilling::orderRefundable($serviceId);
         CertificateService::api($serviceId)->cancelItem((int)$subscription->ais_item_id, 'Cancelled by client', 'ais', $refundable);
 
         $subscription->status       = 'cancelled';
@@ -243,7 +243,7 @@ trait AisActions
 
         Capsule::table('tblhosting')->where('id', $serviceId)->update(['domainstatus' => 'Cancelled']);
 
-        $credited = \ModulesGarden\TSSGGSModule\App\Libs\SubscriptionBilling::refundOnCancel($serviceId, 'Subscription cancelled by the client');
+        $credited = \ModulesGarden\TSSGGSModule\App\Libs\Subscriptions\SubscriptionBilling::refundOnCancel($serviceId, 'Subscription cancelled by the client');
         $message  = Lang::absoluteT('aisSubscriptionCancelled');
         if($credited > 0)
         {

@@ -2,11 +2,11 @@
 
 namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Providers;
 
-use ModulesGarden\TSSGGSModule\App\Libs\AutoInstallHelpers;
-use ModulesGarden\TSSGGSModule\App\Libs\GeneralSettings;
-use ModulesGarden\TSSGGSModule\App\Libs\IssuedMessage;
-use ModulesGarden\TSSGGSModule\App\Libs\RenewalPolicy;
-use ModulesGarden\TSSGGSModule\App\Libs\Helpers;
+use ModulesGarden\TSSGGSModule\App\Libs\AutoInstall\AutoInstallHelpers;
+use ModulesGarden\TSSGGSModule\App\Libs\Support\GeneralSettings;
+use ModulesGarden\TSSGGSModule\App\Libs\Certificates\IssuedMessage;
+use ModulesGarden\TSSGGSModule\App\Libs\Billing\RenewalPolicy;
+use ModulesGarden\TSSGGSModule\App\Libs\Support\Helpers;
 use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Home\Index\Widgets\NextStepsWidget;
 use ModulesGarden\TSSGGSModule\Core\DataProviders\CrudProvider;
@@ -28,7 +28,7 @@ class SslSettingsProvider extends CrudProvider
             $this->data[$key] = $value;
         }
 
-        // renewal invoices (App\Libs\RenewalPolicy): created 1 to 30 days before the order end, due a payment term
+        // renewal invoices (App\Libs\Billing\RenewalPolicy): created 1 to 30 days before the order end, due a payment term
         // later. What is shown is what applies - a lead saved above 30 before 1.5.0 works as 30.
         foreach([RenewalPolicy::CERTIFICATE, RenewalPolicy::SUBSCRIPTION] as $type)
         {
@@ -46,11 +46,11 @@ class SslSettingsProvider extends CrudProvider
         }
         if(empty($this->data['sanUpgradePricing']))
         {
-            $this->data['sanUpgradePricing'] = \ModulesGarden\TSSGGSModule\App\Libs\SanUpgrade::PRICING_FULL;
+            $this->data['sanUpgradePricing'] = \ModulesGarden\TSSGGSModule\App\Libs\Billing\SanUpgrade::PRICING_FULL;
         }
         if(empty($this->data['subscriptionSlotPricing']))
         {
-            $this->data['subscriptionSlotPricing'] = \ModulesGarden\TSSGGSModule\App\Libs\SubscriptionBilling::SLOT_PRICING_PRORATED;
+            $this->data['subscriptionSlotPricing'] = \ModulesGarden\TSSGGSModule\App\Libs\Subscriptions\SubscriptionBilling::SLOT_PRICING_PRORATED;
         }
 
         if(!isset($this->data['wildcardDnsTimeoutMinutes']) || $this->data['wildcardDnsTimeoutMinutes'] === '')
@@ -88,12 +88,12 @@ class SslSettingsProvider extends CrudProvider
         }
         $this->availableValues['pendingPaymentWaitSubscription']        = $pendingWait;
         $this->availableValues['sanUpgradePricing']                     = [
-            \ModulesGarden\TSSGGSModule\App\Libs\SanUpgrade::PRICING_FULL     => $this->translate('sanUpgradePricing_full'),
-            \ModulesGarden\TSSGGSModule\App\Libs\SanUpgrade::PRICING_PRORATED => $this->translate('sanUpgradePricing_prorated'),
+            \ModulesGarden\TSSGGSModule\App\Libs\Billing\SanUpgrade::PRICING_FULL     => $this->translate('sanUpgradePricing_full'),
+            \ModulesGarden\TSSGGSModule\App\Libs\Billing\SanUpgrade::PRICING_PRORATED => $this->translate('sanUpgradePricing_prorated'),
         ];
         $this->availableValues['subscriptionSlotPricing']               = [
-            \ModulesGarden\TSSGGSModule\App\Libs\SubscriptionBilling::SLOT_PRICING_PRORATED => $this->translate('subscriptionSlotPricing_prorated'),
-            \ModulesGarden\TSSGGSModule\App\Libs\SubscriptionBilling::SLOT_PRICING_FULL     => $this->translate('subscriptionSlotPricing_full'),
+            \ModulesGarden\TSSGGSModule\App\Libs\Subscriptions\SubscriptionBilling::SLOT_PRICING_PRORATED => $this->translate('subscriptionSlotPricing_prorated'),
+            \ModulesGarden\TSSGGSModule\App\Libs\Subscriptions\SubscriptionBilling::SLOT_PRICING_FULL     => $this->translate('subscriptionSlotPricing_full'),
         ];
         $this->availableValues['recurringDaysBeforeExpiry']             = $this->dayOptions(RenewalPolicy::LEAD_OPTIONS, 'recurringDaysBeforeExpiry');
         $this->availableValues['recurringPaymentTerm']                  = $this->dayOptions(RenewalPolicy::TERM_OPTIONS, 'recurringPaymentTerm');
@@ -122,11 +122,11 @@ class SslSettingsProvider extends CrudProvider
         // the module template, the administrator's own Product/Service templates (CertificateService::certificateTemplates)
         // and the saved one, so a choice made before stays visible
         $templates = ['' => $this->translate('moduleTemplate')];
-        foreach(\ModulesGarden\TSSGGSModule\App\Libs\CertificateService::certificateTemplates() as $name)
+        foreach(\ModulesGarden\TSSGGSModule\App\Libs\Certificates\CertificateService::certificateTemplates() as $name)
         {
             $templates[$name] = $name;
         }
-        $saved = trim((string)\ModulesGarden\TSSGGSModule\App\Libs\GeneralSettings::get('certificateEmailTemplate'));
+        $saved = trim((string)\ModulesGarden\TSSGGSModule\App\Libs\Support\GeneralSettings::get('certificateEmailTemplate'));
         if($saved !== '' && !isset($templates[$saved]))
         {
             $templates[$saved] = $saved;
@@ -210,9 +210,9 @@ class SslSettingsProvider extends CrudProvider
         foreach($general as $key => $value)
         {
             // WHMCS posts the fields HTML-encoded; the client messages allow HTML and are shown as written
-            if(in_array($key, \ModulesGarden\TSSGGSModule\App\Libs\MessageHtml::KEYS, true) || IssuedMessage::isTextKey($key))
+            if(in_array($key, \ModulesGarden\TSSGGSModule\App\Libs\Support\MessageHtml::KEYS, true) || IssuedMessage::isTextKey($key))
             {
-                $general[$key] = $value = \ModulesGarden\TSSGGSModule\App\Libs\MessageHtml::posted($value);
+                $general[$key] = $value = \ModulesGarden\TSSGGSModule\App\Libs\Support\MessageHtml::posted($value);
             }
             if(IssuedMessage::isTextKey($key) && preg_match('/^issuedMessage_([a-z]+)_(.+)$/', $key, $match))
             {

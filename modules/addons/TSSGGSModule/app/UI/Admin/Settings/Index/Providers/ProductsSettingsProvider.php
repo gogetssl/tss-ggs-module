@@ -2,8 +2,8 @@
 
 namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Settings\Index\Providers;
 
-use ModulesGarden\TSSGGSModule\App\Libs\CatalogueSync;
-use ModulesGarden\TSSGGSModule\App\Libs\GeneralSettings;
+use ModulesGarden\TSSGGSModule\App\Libs\Products\CatalogueSync;
+use ModulesGarden\TSSGGSModule\App\Libs\Support\GeneralSettings;
 use ModulesGarden\TSSGGSModule\Core\DataProviders\CrudProvider;
 
 /**

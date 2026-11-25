@@ -12,7 +12,7 @@ use ModulesGarden\TSSGGSModule\Components\Form\Form;
 use ModulesGarden\TSSGGSModule\Components\FormInputText\FormInputText;
 use ModulesGarden\TSSGGSModule\Components\Switcher\Switcher;
 use ModulesGarden\TSSGGSModule\Components\Text\Text;
-use ModulesGarden\TSSGGSModule\App\Libs\RenewalPolicy;
+use ModulesGarden\TSSGGSModule\App\Libs\Billing\RenewalPolicy;
 use ModulesGarden\TSSGGSModule\Components\TextArea\TextArea;
 use ModulesGarden\TSSGGSModule\Core\Components\Actions\Collapse;
 use ModulesGarden\TSSGGSModule\Core\Contracts\Components\AdminAreaInterface;
@@ -147,7 +147,7 @@ class SslSettingsForm extends Form implements AdminAreaInterface, AjaxComponentI
         {
             $this->builder->addFieldInContainer($widget, (new Dropdown())->setName('autoReissueDaysBeforeExpire'), true);
         }
-        // daily e-mail to the administrators: installed, failed and long-waiting AutoInstall jobs (App\Libs\AutoInstallReport)
+        // daily e-mail to the administrators: installed, failed and long-waiting AutoInstall jobs (App\Libs\AutoInstall\AutoInstallReport)
         $this->builder->addFieldInContainer($widget, (new Switcher())->setName('autoInstallReportEmail')->addClass('switcher-revert'), true);
     }
 
@@ -207,7 +207,7 @@ class SslSettingsForm extends Form implements AdminAreaInterface, AjaxComponentI
 
         // the detailed descriptions with examples: the edition's Wiki
         $widget->addElement((new Text())->setText(
-            '<div class="tssggs-note">' . htmlspecialchars($this->translate('renewalsWiki')) . ' <a href="' . htmlspecialchars(\ModulesGarden\TSSGGSModule\App\Libs\Edition::wiki()) . '" target="_blank" rel="noopener">'
+            '<div class="tssggs-note">' . htmlspecialchars($this->translate('renewalsWiki')) . ' <a href="' . htmlspecialchars(\ModulesGarden\TSSGGSModule\App\Libs\Support\Edition::wiki()) . '" target="_blank" rel="noopener">'
             . htmlspecialchars($this->translate('wikiLink')) . '</a></div>'
         ));
 
@@ -218,7 +218,7 @@ class SslSettingsForm extends Form implements AdminAreaInterface, AjaxComponentI
      */
     protected function orderFields($widget)
     {
-        // price of additional SANs bought after the order (App\Libs\UpgradePricing): every billing type, so a heading
+        // price of additional SANs bought after the order (App\Libs\Billing\UpgradePricing): every billing type, so a heading
         // of its own before the recurring / one-time ones
         $allOrdersWidget = $this->subSection('allOrders', $widget);
         $this->builder->addFieldInContainer($allOrdersWidget, (new Dropdown())->setName('sanUpgradePricing')->setDefaultValueAsFirstOption(), true);
@@ -317,7 +317,7 @@ class SslSettingsForm extends Form implements AdminAreaInterface, AjaxComponentI
         $this->builder->addFieldInContainer($widget, (new Switcher())->setName('requireAgreement')->addClass('switcher-revert'), true);
 
         // one agreement per certificate authority, picked automatically from the product's brand
-        foreach(array_keys(\ModulesGarden\TSSGGSModule\App\Libs\CertificateService::AUTHORITIES) as $authority)
+        foreach(array_keys(\ModulesGarden\TSSGGSModule\App\Libs\Certificates\CertificateService::AUTHORITIES) as $authority)
         {
             $sub = $this->subSection('agreement_' . $authority, $widget);
             $this->builder->addFieldInContainer($sub, (new FormInputText())->setName('agreementUrl_' . $authority), true);
@@ -338,10 +338,10 @@ class SslSettingsForm extends Form implements AdminAreaInterface, AjaxComponentI
     protected function messageFields($widget)
     {
         $this->builder->addFieldInContainer($widget, (new TextArea())->setName('processingGuide'), true);
-        // "Issued SSL Message for": a certificate family (App\Libs\IssuedMessage) and a language. Only the
+        // "Issued SSL Message for": a certificate family (App\Libs\Certificates\IssuedMessage) and a language. Only the
         // chosen boxes are shown (resources/assets/js/custom/issuedMessageFor.js); the selectors have no name, so they
         // are never saved. Each family / language box is prefilled with the built-in text (SslSettingsProvider::read)
-        $issued    = \ModulesGarden\TSSGGSModule\App\Libs\IssuedMessage::class;
+        $issued    = \ModulesGarden\TSSGGSModule\App\Libs\Certificates\IssuedMessage::class;
         $languages = $issued::languages();
         $options   = '';
         foreach($issued::FAMILIES as $family => $info)
@@ -379,7 +379,7 @@ class SslSettingsForm extends Form implements AdminAreaInterface, AjaxComponentI
 
     /**
      * What the lead and the payment term mean together, in words: a summary line and, when something is at risk, a
-     * warning (App\Libs\RenewalPolicy::warning). Shown as saved; resources/assets/js/custom/renewalCheck.js redraws
+     * warning (App\Libs\Billing\RenewalPolicy::warning). Shown as saved; resources/assets/js/custom/renewalCheck.js redraws
      * it while the administrator changes the two fields. Every text is given here, translated - the script only puts
      * the numbers in.
      */

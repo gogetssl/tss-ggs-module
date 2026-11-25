@@ -3,7 +3,7 @@
 namespace ModulesGarden\__MODULE__\App\Cron;
 
 use ModulesGarden\__MODULE__\App\Database\Schema;
-use ModulesGarden\__MODULE__\App\Libs\Edition;
+use ModulesGarden\__MODULE__\App\Libs\Support\Edition;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;

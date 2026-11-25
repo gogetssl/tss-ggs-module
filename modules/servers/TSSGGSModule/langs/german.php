@@ -970,7 +970,7 @@ $_LANG['addonCertificate']['managed_elsewhere'] = 'Dieses Zertifikat wird über 
 $_LANG['addonCertificate']['service_notice'] = 'Dieses Zertifikat wird mit dem Produkt-Addon ":addon:" von :service: abgerechnet. Es wird dort verlängert und gekündigt.';
 $_LANG['addonCertificate']['upgrade_blocked'] = 'Dieses Zertifikat wird mit einem Produkt-Addon abgerechnet: Es kann nicht hochgestuft werden und es lassen sich keine Domains hinzufügen. Bestellen Sie stattdessen ein Zertifikat mit mehr Domains.';
 
-// CAA DNS record warning (App\Libs\CaaCheck)
+// CAA DNS record warning (App\Libs\Certificates\CaaCheck)
 $_LANG['caa_title'] = 'Ein CAA-DNS-Eintrag erlaubt dieses Zertifikat nicht';
 $_LANG['caa_intro'] = '%s stellt das Zertifikat für diese Domains nicht aus: ihr CAA-DNS-Eintrag erlaubt nur andere Zertifizierungsstellen.';
 $_LANG['caa_inherited'] = 'Eintrag auf %s';
@@ -979,7 +979,7 @@ $_LANG['caa_add'] = 'Diesen Eintrag hinzufügen';
 $_LANG['caa_fix'] = 'Fügen Sie den Eintrag in der DNS-Zone der Domain hinzu (oder entfernen Sie ihre CAA-Einträge). DNS-Änderungen können bis zu einer Stunde dauern.';
 $_LANG['caa_gateway'] = 'Die Zertifizierungsstelle meldet, dass ihre CAA-Prüfung für diese Bestellung fehlgeschlagen ist. Sie prüft erneut, sobald der CAA-Eintrag es erlaubt.';
 $_LANG['caa_gateway_fix'] = 'Zur Behebung fügen Sie %s in der DNS-Zone der Domain hinzu (oder entfernen Sie ihre CAA-Einträge). DNS-Änderungen können bis zu einer Stunde dauern.';
-// IP certificates: CSR without common name (App\Libs\IpCertificate)
+// IP certificates: CSR without common name (App\Libs\Certificates\IpCertificate)
 $_LANG['serverCA']['home']['sslConfigIpCsrHint'] = 'Fügen Sie eine CSR ohne Common Name ein: Dieses Zertifikat sichert die unten eingegebenen IP-Adressen und Domainnamen. Oder wählen Sie „CSR automatisch erzeugen“.';
 $_LANG['sslConfigIpCsrHint'] = 'Fügen Sie eine CSR ohne Common Name ein: Dieses Zertifikat sichert die unten eingegebenen IP-Adressen und Domainnamen. Oder wählen Sie „CSR automatisch erzeugen“.';
 $_LANG['serverCA']['home']['sslConfigIpNames'] = 'Öffentliche IP-Adressen oder Domainnamen, einer pro Zeile';

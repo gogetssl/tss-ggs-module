@@ -2,7 +2,7 @@
 
 namespace ModulesGarden\TSSGGSModule\App\Database;
 
-use ModulesGarden\TSSGGSModule\App\Libs\Edition;
+use ModulesGarden\TSSGGSModule\App\Libs\Support\Edition;
 use WHMCS\Database\Capsule;
 
 /**

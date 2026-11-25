@@ -4,8 +4,8 @@ namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Import\Index\Providers;
 
 use ModulesGarden\TSSGGSModule\Core\WHMCS\Models\Service;
 use WHMCS\Database\Capsule;
-use ModulesGarden\TSSGGSModule\App\Libs\Helpers;
-use ModulesGarden\TSSGGSModule\App\Libs\SSLTrustCenterApi;
+use ModulesGarden\TSSGGSModule\App\Libs\Support\Helpers;
+use ModulesGarden\TSSGGSModule\App\Libs\Gateway\SSLTrustCenterApi;
 use ModulesGarden\TSSGGSModule\App\Models\RemoteProduct;
 use ModulesGarden\TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
 use ModulesGarden\TSSGGSModule\Core\DataProviders\CrudProvider;
@@ -204,7 +204,7 @@ class ImportProvider extends CrudProvider
                 }
                 catch(\Throwable $e)
                 {
-                    Logger::error($e->getMessage(), \ModulesGarden\TSSGGSModule\App\Libs\LogContext::exception($e, $localOrderData));
+                    Logger::error($e->getMessage(), \ModulesGarden\TSSGGSModule\App\Libs\Support\LogContext::exception($e, $localOrderData));
                     $errorsCount++;
                     continue;
                 }
@@ -243,7 +243,7 @@ class ImportProvider extends CrudProvider
                 }
                 catch(\Throwable $e)
                 {
-                    Logger::error($e->getMessage(), \ModulesGarden\TSSGGSModule\App\Libs\LogContext::exception($e, $localOrderData));
+                    Logger::error($e->getMessage(), \ModulesGarden\TSSGGSModule\App\Libs\Support\LogContext::exception($e, $localOrderData));
                     $errorsCount++;
                     continue;
                 }

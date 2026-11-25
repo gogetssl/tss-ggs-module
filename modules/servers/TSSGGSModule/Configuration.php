@@ -15,7 +15,7 @@ class Configuration extends AbstractConfiguration
     public $version = '1.18.0';
     public $author = 'GoGetSSL';
 
-    /** Tables are named by the edition - see App\Libs\Edition::table() */
+    /** Tables are named by the edition - see App\Libs\Support\Edition::table() */
     public $tablePrefix = false;
     public $modelRegister = [];
 
@@ -25,14 +25,14 @@ class Configuration extends AbstractConfiguration
         // The name is the edition's own: it is read here even where nothing has loaded the addon yet, so that
         // neither edition can ever show the other one's name.
         $edition = dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . 'addons' . DIRECTORY_SEPARATOR . basename(__DIR__)
-            . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'Libs' . DIRECTORY_SEPARATOR . 'Edition.php';
-        if(!class_exists('\ModulesGarden\TSSGGSModule\App\Libs\Edition', false) && is_file($edition))
+            . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'Libs' . DIRECTORY_SEPARATOR . 'Support' . DIRECTORY_SEPARATOR . 'Edition.php';
+        if(!class_exists('\ModulesGarden\TSSGGSModule\App\Libs\Support\Edition', false) && is_file($edition))
         {
             require_once $edition;
         }
-        if(class_exists('\ModulesGarden\TSSGGSModule\App\Libs\Edition', false))
+        if(class_exists('\ModulesGarden\TSSGGSModule\App\Libs\Support\Edition', false))
         {
-            $this->name           = \ModulesGarden\TSSGGSModule\App\Libs\Edition::name();
+            $this->name           = \ModulesGarden\TSSGGSModule\App\Libs\Support\Edition::name();
             $this->clientareaName = $this->name;
         }
     }

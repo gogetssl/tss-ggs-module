@@ -3,7 +3,7 @@
 namespace ModulesGarden\TSSGGSModule\App\UI\Admin\ModuleUpdate;
 
 use ModulesGarden\TSSGGSModule\App\Http\Admin\ModuleUpdate;
-use ModulesGarden\TSSGGSModule\App\Libs\Edition;
+use ModulesGarden\TSSGGSModule\App\Libs\Support\Edition;
 use ModulesGarden\TSSGGSModule\App\Libs\Update\Installer;
 use ModulesGarden\TSSGGSModule\App\Libs\Update\Preflight;
 use ModulesGarden\TSSGGSModule\App\Libs\Update\Release;

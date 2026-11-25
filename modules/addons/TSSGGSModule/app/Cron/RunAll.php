@@ -41,7 +41,7 @@ class RunAll extends AbstractCommand
         // the reseller balance: read once an hour, the administrators are warned when it is low
         try
         {
-            \ModulesGarden\TSSGGSModule\App\Libs\BalanceMonitor::run();
+            \ModulesGarden\TSSGGSModule\App\Libs\Billing\BalanceMonitor::run();
         }
         catch(\Throwable $e)
         {

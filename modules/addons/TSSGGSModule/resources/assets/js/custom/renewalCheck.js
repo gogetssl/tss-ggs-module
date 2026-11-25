@@ -2,7 +2,7 @@
  * Settings > SSL certificates: what the renewal invoice lead and payment term mean together, redrawn while the
  * administrator changes either field. The box is drawn by SslSettingsForm::renewalCheck() with every text already
  * translated in its data-text-* attributes; this script only puts the numbers in. Same rules as
- * App\Libs\RenewalPolicy::warning() and SslSettingsForm::renewalCheckBody().
+ * App\Libs\Billing\RenewalPolicy::warning() and SslSettingsForm::renewalCheckBody().
  */
 // the leading semicolon matters: the module joins every script into one bundle, and the file before this one may end
 // without a semicolon - "{...}(function () {...})()" would then call the object and stop the whole bundle

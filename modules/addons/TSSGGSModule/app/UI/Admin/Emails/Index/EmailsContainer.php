@@ -3,9 +3,9 @@
 namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Emails\Index;
 
 use ModulesGarden\TSSGGSModule\App\Http\Admin\Emails as EmailsController;
-use ModulesGarden\TSSGGSModule\App\Libs\EmailCatalog;
-use ModulesGarden\TSSGGSModule\App\Libs\EmailManager;
-use ModulesGarden\TSSGGSModule\App\Libs\Icons;
+use ModulesGarden\TSSGGSModule\App\Libs\Emails\EmailCatalog;
+use ModulesGarden\TSSGGSModule\App\Libs\Emails\EmailManager;
+use ModulesGarden\TSSGGSModule\App\Libs\Support\Icons;
 use ModulesGarden\TSSGGSModule\Components\Container\Container;
 use ModulesGarden\TSSGGSModule\Components\Text\Text;
 use ModulesGarden\TSSGGSModule\Core\Contracts\Components\AdminAreaInterface;
@@ -64,7 +64,7 @@ class EmailsContainer extends Container implements AdminAreaInterface
             $html .= '<div class="tssggs-note is-ok">' . $this->e($this->t('notice_' . $session['notice'], ['count' => (int)($session['count'] ?? 0)])) . '</div>';
         }
 
-        return $html . (\ModulesGarden\TSSGGSModule\App\Libs\GeneralSettings::enabled('hideInfoMessages') ? '' : $this->explanation())
+        return $html . (\ModulesGarden\TSSGGSModule\App\Libs\Support\GeneralSettings::enabled('hideInfoMessages') ? '' : $this->explanation())
             . '<div class="em-layout"><div class="em-card em-nav">' . $this->nav($overview, $key) . '</div>'
             . '<div class="em-card">' . $this->editor($overview[$key], $language, $languages, $session) . '</div></div>';
     }

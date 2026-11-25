@@ -2,8 +2,8 @@
 
 namespace ModulesGarden\TSSGGSModule\App\UI\Admin\CertificateLog\Index;
 
-use ModulesGarden\TSSGGSModule\App\Libs\Icons;
-use ModulesGarden\TSSGGSModule\App\Libs\AutoInstallQueue;
+use ModulesGarden\TSSGGSModule\App\Libs\Support\Icons;
+use ModulesGarden\TSSGGSModule\App\Libs\AutoInstall\AutoInstallQueue;
 use ModulesGarden\TSSGGSModule\Components\Container\Container;
 use ModulesGarden\TSSGGSModule\Components\Text\Text;
 use ModulesGarden\TSSGGSModule\Core\Contracts\Components\AdminAreaInterface;
@@ -73,7 +73,7 @@ class CertificateLogContainer extends Container implements AdminAreaInterface
     /** What the page is for and what the entries mean, then a separate note on what is not logged here */
     protected function explanation()
     {
-        if(\ModulesGarden\TSSGGSModule\App\Libs\GeneralSettings::enabled('hideInfoMessages'))
+        if(\ModulesGarden\TSSGGSModule\App\Libs\Support\GeneralSettings::enabled('hideInfoMessages'))
         {
             return '';
         }

@@ -59,7 +59,7 @@
         <div class="alert alert-warning tssggs-vendor-notice" role="alert">{$vendorNotice|escape}</div>
     {/if}
 
-    {* a CAA DNS record keeps the certificate authority from issuing (App\Libs\CaaCheck) *}
+    {* a CAA DNS record keeps the certificate authority from issuing (App\Libs\Certificates\CaaCheck) *}
     {if $caa_warning}{$caa_warning}{/if}
 
     <div class="tssggs-grid">

@@ -2,7 +2,7 @@
 
 namespace ModulesGarden\TSSGGSModule\Components\SidebarItem;
 
-use ModulesGarden\TSSGGSModule\App\Libs\Icons;
+use ModulesGarden\TSSGGSModule\App\Libs\Support\Icons;
 use ModulesGarden\TSSGGSModule\Core\Components\AbstractComponent;
 use ModulesGarden\TSSGGSModule\Core\Components\Traits\ComponentsContainerTrait;
 use ModulesGarden\TSSGGSModule\Core\Components\Traits\CssContainerTrait;

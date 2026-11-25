@@ -3,8 +3,8 @@
 namespace ModulesGarden\TSSGGSModule\Packages\Logs\Services;
 
 use DateTime;
-use ModulesGarden\TSSGGSModule\App\Libs\GeneralSettings;
-use ModulesGarden\TSSGGSModule\App\Libs\LogPolicy;
+use ModulesGarden\TSSGGSModule\App\Libs\Support\GeneralSettings;
+use ModulesGarden\TSSGGSModule\App\Libs\Support\LogPolicy;
 use ModulesGarden\TSSGGSModule\Packages\Logs\Models\Logs as Log;
 use ModulesGarden\TSSGGSModule\Packages\ModuleSettings\Support\Facades\ModuleSettings;
 use Psr\Log\LoggerInterface;

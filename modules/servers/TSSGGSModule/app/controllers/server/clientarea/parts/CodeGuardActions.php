@@ -6,7 +6,7 @@ use ModulesGarden\Servers\TSSGGSModule\app\models\whmcs\Product;
 use ModulesGarden\Servers\TSSGGSModule\app\models\whmcs\SSL;
 use ModulesGarden\Servers\TSSGGSModule\core\Lang;
 use ModulesGarden\Servers\TSSGGSModule\Server;
-use ModulesGarden\TSSGGSModule\App\Libs\CodeGuardService;
+use ModulesGarden\TSSGGSModule\App\Libs\ProductLines\CodeGuardService;
 use WHMCS\Database\Capsule;
 
 /**

@@ -2,8 +2,8 @@
 
 namespace ModulesGarden\TSSGGSModule\App\Migration;
 
-use ModulesGarden\TSSGGSModule\App\Libs\AddonCertificates;
-use ModulesGarden\TSSGGSModule\App\Libs\ProductAddons;
+use ModulesGarden\TSSGGSModule\App\Libs\Certificates\AddonCertificates;
+use ModulesGarden\TSSGGSModule\App\Libs\Products\ProductAddons;
 use ModulesGarden\TSSGGSModule\App\Models\Request;
 use WHMCS\Database\Capsule;
 

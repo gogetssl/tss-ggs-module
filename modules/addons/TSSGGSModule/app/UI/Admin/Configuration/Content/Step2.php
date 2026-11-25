@@ -2,7 +2,7 @@
 
 namespace ModulesGarden\TSSGGSModule\App\UI\Admin\Configuration\Content;
 
-use ModulesGarden\TSSGGSModule\App\Libs\SystemRequirements;
+use ModulesGarden\TSSGGSModule\App\Libs\Support\SystemRequirements;
 use ModulesGarden\TSSGGSModule\App\UI\Admin\Configuration\Shared\WizardLayout;
 use ModulesGarden\TSSGGSModule\Components\Button\ButtonSuccess;
 use ModulesGarden\TSSGGSModule\Components\Text\Text;
@@ -12,7 +12,7 @@ use ModulesGarden\TSSGGSModule\Core\Components\Action;
 use ModulesGarden\TSSGGSModule\Core\Translation\TranslatorTrait;
 
 /**
- * System compatibility check - see App\Libs\SystemRequirements
+ * System compatibility check - see App\Libs\Support\SystemRequirements
  */
 class Step2 extends Widget implements AjaxComponentInterface
 {

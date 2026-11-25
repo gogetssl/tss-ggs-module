@@ -24,14 +24,14 @@ function TSSGGSModule_config()
  */
 function TSSGGSModule_adoptAnOlderInstall()
 {
-    $libs = dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . 'Libs' . DIRECTORY_SEPARATOR;
+    $libs = dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . 'Libs' . DIRECTORY_SEPARATOR . 'Support' . DIRECTORY_SEPARATOR;
     require_once $libs . 'Edition.php';
     require_once $libs . 'TablePrefix.php';
     require_once $libs . 'ModuleRename.php';
     require_once dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . 'Database' . DIRECTORY_SEPARATOR . 'Schema.php';
 
     // older names first, then the database changes since schema.sql (App\Database\Schema)
-    foreach (['\\ModulesGarden\\TSSGGSModule\\App\\Libs\\TablePrefix', '\\ModulesGarden\\TSSGGSModule\\App\\Libs\\ModuleRename', '\\ModulesGarden\\TSSGGSModule\\App\\Database\\Schema'] as $step)
+    foreach (['\\ModulesGarden\\TSSGGSModule\\App\\Libs\\Support\\TablePrefix', '\\ModulesGarden\\TSSGGSModule\\App\\Libs\\Support\\ModuleRename', '\\ModulesGarden\\TSSGGSModule\\App\\Database\\Schema'] as $step)
     {
         try
         {
