@@ -1,3 +1,10 @@
+2.0.2 (2026-11-26)
+Client area: neutral names in templates and scripts
+- The language variable of the client area and product configuration
+  templates is now MODLANG, and the page helpers of their scripts are
+  ModAlerts, ModLoader, ModGetForms, ModModalActions and
+  ModNextIsWHMCSConfig. No change in what the pages show or do.
+
 2.0.1 (2026-11-25)
 Setup wizard and migration fixes, security hardening
 - Setup wizard, API connection step: only the account of the module's own
