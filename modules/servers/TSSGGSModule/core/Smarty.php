@@ -66,7 +66,7 @@ class Smarty {
 
         $this->clear();
 
-        self::I()->_smarty->assign('MGLANG', Lang::getInstance());
+        self::I()->_smarty->assign('MODLANG', Lang::getInstance());
 
         if(is_array($vars))
         {

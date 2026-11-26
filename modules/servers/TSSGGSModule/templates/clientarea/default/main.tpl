@@ -1,7 +1,7 @@
 <div class="mod-module">
     <link rel="stylesheet" href="{$assetsURL}/css/theme.css">
     <div id="mod-wrapper" class="module-container">
-        <div class="row" id="MGAlerts" style="display: block;">
+        <div class="row" id="ModAlerts" style="display: block;">
             {if $error}
                 <div class="alert alert-danger">
                     <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only"></span></button>

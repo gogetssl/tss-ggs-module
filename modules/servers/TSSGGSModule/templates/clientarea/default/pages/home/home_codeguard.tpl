@@ -17,7 +17,7 @@
                 {if $codeGuardOrdered}
                     <span class="tssggs-badge tssggs-badge--{$codeGuardTone}">{$codeGuardStatus|capitalize|escape}</span>
                 {else}
-                    <span class="tssggs-badge tssggs-badge--wait">{$MGLANG->T('codeGuardNotOrdered')}</span>
+                    <span class="tssggs-badge tssggs-badge--wait">{$MODLANG->T('codeGuardNotOrdered')}</span>
                 {/if}
                 <h3>{$productName|escape}</h3>
                 {if $codeGuardContact}
@@ -29,20 +29,20 @@
             </div>
         </div>
         <div class="tssggs-hero__foot">
-            {if !$codeGuardOrdered}<p>{$MGLANG->T('codeGuardOrderFailedHint')}</p>{/if}
+            {if !$codeGuardOrdered}<p>{$MODLANG->T('codeGuardOrderFailedHint')}</p>{/if}
             <div class="tssggs-actions">
                 {if $codeGuardUsable}
                     <button id="codeguard-dashboard" type="button" class="tssggs-btn tssggs-btn--primary">
                         <svg class="tssggs-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
-                        {$MGLANG->T('codeGuardOpenDashboard')}
+                        {$MODLANG->T('codeGuardOpenDashboard')}
                     </button>
                     <button id="codeguard-refresh" type="button" class="tssggs-btn">
                         <svg class="tssggs-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>
-                        {$MGLANG->T('codeGuardRefreshDetails')}
+                        {$MODLANG->T('codeGuardRefreshDetails')}
                     </button>
-                    <button id="codeguard-edit-contact" type="button" class="tssggs-btn">{$MGLANG->T('codeGuardChangeContact')}</button>
+                    <button id="codeguard-edit-contact" type="button" class="tssggs-btn">{$MODLANG->T('codeGuardChangeContact')}</button>
                 {elseif !$codeGuardOrdered}
-                    <button id="codeguard-order" type="button" class="tssggs-btn tssggs-btn--primary">{$MGLANG->T('codeGuardOrderNow')}</button>
+                    <button id="codeguard-order" type="button" class="tssggs-btn tssggs-btn--primary">{$MODLANG->T('codeGuardOrderNow')}</button>
                 {/if}
             </div>
         </div>
@@ -52,22 +52,22 @@
         <section class="tssggs-card">
             <h4 class="tssggs-card__title">
                 <svg class="tssggs-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8M16 13H8M16 17H8"/></svg>
-                {$MGLANG->T('codeGuardStatus')}
+                {$MODLANG->T('codeGuardStatus')}
             </h4>
             <dl class="tssggs-dl">
-                <dt>{$MGLANG->T('codeGuardProductName')}</dt><dd>{$productName|escape}</dd>
+                <dt>{$MODLANG->T('codeGuardProductName')}</dt><dd>{$productName|escape}</dd>
                 {if $codeGuardStart && $codeGuardEnd}
-                    <dt>{$MGLANG->T('codeGuardPeriod')}</dt><dd>{$codeGuardStart|escape} &ndash; {$codeGuardEnd|escape}</dd>
+                    <dt>{$MODLANG->T('codeGuardPeriod')}</dt><dd>{$codeGuardStart|escape} &ndash; {$codeGuardEnd|escape}</dd>
                 {/if}
                 {if $codeGuardContact}
-                    <dt>{$MGLANG->T('codeGuardContact')}</dt>
+                    <dt>{$MODLANG->T('codeGuardContact')}</dt>
                     <dd>{$codeGuardContact.first_name|escape} {$codeGuardContact.last_name|escape} &lt;{$codeGuardContact.email|escape}&gt;</dd>
                 {/if}
                 {if $codeGuardLicenseId}
-                    <dt>{$MGLANG->T('validation_page', 'StoreAPIOrder')}</dt><dd class="tssggs-mono">{$codeGuardLicenseId|escape}</dd>
+                    <dt>{$MODLANG->T('validation_page', 'StoreAPIOrder')}</dt><dd class="tssggs-mono">{$codeGuardLicenseId|escape}</dd>
                 {/if}
                 {if $codeGuardVendorId}
-                    <dt>{$MGLANG->T('validation_page', 'VendorOrderID')}</dt><dd class="tssggs-mono">{$codeGuardVendorId|escape}</dd>
+                    <dt>{$MODLANG->T('validation_page', 'VendorOrderID')}</dt><dd class="tssggs-mono">{$codeGuardVendorId|escape}</dd>
                 {/if}
             </dl>
         </section>
@@ -75,13 +75,13 @@
         <section class="tssggs-card">
             <h4 class="tssggs-card__title">
                 <svg class="tssggs-ic" viewBox="0 0 24 24" aria-hidden="true"><rect width="20" height="14" x="2" y="5" rx="2"/><path d="M2 10h20"/></svg>
-                {$MGLANG->T('validation_page', 'cardBilling')}
+                {$MODLANG->T('validation_page', 'cardBilling')}
             </h4>
             <dl class="tssggs-dl">
-                <dt>{$MGLANG->T('validation_page', 'RegistrationDate')}</dt><dd>{if $billing.registration}{$billing.registration}{else}-{/if}</dd>
-                <dt>{$MGLANG->T('smimeNextDue')}</dt><dd>{if $billing.nextDue}{$billing.nextDue}{else}-{/if}</dd>
-                <dt>{$MGLANG->T('validation_page', 'ReccuringAmount')}</dt><dd>{$billing.amount}</dd>
-                <dt>{$MGLANG->T('validation_page', 'BillingCycle')}</dt><dd>{$billing.cycle|escape}</dd>
+                <dt>{$MODLANG->T('validation_page', 'RegistrationDate')}</dt><dd>{if $billing.registration}{$billing.registration}{else}-{/if}</dd>
+                <dt>{$MODLANG->T('smimeNextDue')}</dt><dd>{if $billing.nextDue}{$billing.nextDue}{else}-{/if}</dd>
+                <dt>{$MODLANG->T('validation_page', 'ReccuringAmount')}</dt><dd>{$billing.amount}</dd>
+                <dt>{$MODLANG->T('validation_page', 'BillingCycle')}</dt><dd>{$billing.cycle|escape}</dd>
             </dl>
         </section>
     </div>
@@ -90,7 +90,7 @@
         <section class="tssggs-card">
             <h4 class="tssggs-card__title">
                 <svg class="tssggs-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
-                {$MGLANG->T('codeGuardStatus')}
+                {$MODLANG->T('codeGuardStatus')}
             </h4>
             <dl class="tssggs-dl">
                 {foreach from=$codeGuardLicense item=row}
@@ -107,26 +107,26 @@
         <div class="modal-content" style="text-align:left;">
             <div class="modal-header" style="display: block;">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="codeGuardContactModalLabel">{$MGLANG->T('codeGuardChangeContact')}</h4>
+                <h4 class="modal-title" id="codeGuardContactModalLabel">{$MODLANG->T('codeGuardChangeContact')}</h4>
             </div>
             <div class="modal-body">
-                <p>{$MGLANG->T('codeGuardContactHint')}</p>
+                <p>{$MODLANG->T('codeGuardContactHint')}</p>
                 <div class="form-group">
-                    <label for="cg_first_name">{$MGLANG->T('codeGuardFirstName')}</label>
+                    <label for="cg_first_name">{$MODLANG->T('codeGuardFirstName')}</label>
                     <input type="text" class="form-control" id="cg_first_name" value="{if $codeGuardContact}{$codeGuardContact.first_name|escape}{/if}">
                 </div>
                 <div class="form-group">
-                    <label for="cg_last_name">{$MGLANG->T('codeGuardLastName')}</label>
+                    <label for="cg_last_name">{$MODLANG->T('codeGuardLastName')}</label>
                     <input type="text" class="form-control" id="cg_last_name" value="{if $codeGuardContact}{$codeGuardContact.last_name|escape}{/if}">
                 </div>
                 <div class="form-group">
-                    <label for="cg_email">{$MGLANG->T('codeGuardEmail')}</label>
+                    <label for="cg_email">{$MODLANG->T('codeGuardEmail')}</label>
                     <input type="email" class="form-control" id="cg_email" value="{if $codeGuardContact}{$codeGuardContact.email|escape}{/if}">
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">{$MGLANG->T('Close')}</button>
-                <button type="button" class="btn btn-primary" id="codeGuardConfirmContact">{$MGLANG->T('codeGuardSaveContact')}</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">{$MODLANG->T('Close')}</button>
+                <button type="button" class="btn btn-primary" id="codeGuardConfirmContact">{$MODLANG->T('codeGuardSaveContact')}</button>
             </div>
         </div>
     </div>
@@ -155,7 +155,7 @@
                 // the JSON answer comes with an application/json header, so jQuery may already have parsed it
                 var payload = typeof ret === 'object' ? ret : JSON.parse(String(ret).replace('<JSONRESPONSE#', '').replace('#ENDJSONRESPONSE>', ''));
                 if (payload.result === 'error') {
-                    $('#MGAlerts').alerts('error', payload.error || 'Error');
+                    $('#ModAlerts').alerts('error', payload.error || 'Error');
                     return;
                 }
                 var msg = (payload.data && payload.data.message) ? payload.data.message : 'Done';
@@ -163,7 +163,7 @@
                     options.onSuccess(payload);
                     return;
                 }
-                $('#MGAlerts').alerts('success', msg);
+                $('#ModAlerts').alerts('success', msg);
                 window.setTimeout(function () { window.location.reload(); }, 1200);
             });
         }
@@ -179,7 +179,7 @@
                     if (link) {
                         window.open(link, '_blank', 'noopener');
                     } else {
-                        $('#MGAlerts').alerts('error', '{$MGLANG->T('codeGuardNoDashboardLink')}');
+                        $('#ModAlerts').alerts('error', '{$MODLANG->T('codeGuardNoDashboardLink')}');
                     }
                 }
             });

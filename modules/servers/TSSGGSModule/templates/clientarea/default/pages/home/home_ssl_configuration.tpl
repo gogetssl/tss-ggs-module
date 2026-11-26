@@ -51,7 +51,7 @@
             <div class="tssggs-hero__title">
                 <span class="tssggs-badge tssggs-badge--wait">
                     <svg class="tssggs-ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
-                    {$MGLANG->T('smimeAwaitingOrder')}
+                    {$MODLANG->T('smimeAwaitingOrder')}
                 </span>
                 <h3>{$productName|escape}</h3>
                 {if $productGroup || $serviceState}
@@ -63,15 +63,15 @@
         <div class="tssggs-steps">
             <span class="tssggs-step tssggs-step--done">
                 <span class="tssggs-step__n"><svg class="tssggs-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="m20 6-11 11-5-5"/></svg></span>
-                {$MGLANG->T('sslStepPaid')}
+                {$MODLANG->T('sslStepPaid')}
             </span>
-            <span class="tssggs-step tssggs-step--current"><span class="tssggs-step__n">2</span> {$MGLANG->T('sslStepDetails')}</span>
-            <span class="tssggs-step"><span class="tssggs-step__n">3</span> {$MGLANG->T('sslStepValidate')}</span>
-            <span class="tssggs-step"><span class="tssggs-step__n">4</span> {$MGLANG->T('sslStepIssued')}</span>
+            <span class="tssggs-step tssggs-step--current"><span class="tssggs-step__n">2</span> {$MODLANG->T('sslStepDetails')}</span>
+            <span class="tssggs-step"><span class="tssggs-step__n">3</span> {$MODLANG->T('sslStepValidate')}</span>
+            <span class="tssggs-step"><span class="tssggs-step__n">4</span> {$MODLANG->T('sslStepIssued')}</span>
         </div>
         <div class="tssggs-hero__foot">
             {if $renewalNotice}<p class="tssggs-renewal-notice"><strong>{$renewalNotice|escape}</strong></p>{/if}
-            <p>{$MGLANG->T('sslConfigIntro')}</p>
+            <p>{$MODLANG->T('sslConfigIntro')}</p>
         </div>
     </section>
 
@@ -79,17 +79,17 @@
     <section class="tssggs-card">
         <h4 class="tssggs-card__title">
             <svg class="tssggs-ic" viewBox="0 0 24 24" aria-hidden="true"><rect width="20" height="14" x="2" y="5" rx="2"/><path d="M2 10h20"/></svg>
-            {$MGLANG->T('validation_page', 'cardBilling')}
+            {$MODLANG->T('validation_page', 'cardBilling')}
         </h4>
         <div class="tssggs-grid tssggs-grid--flush">
             <dl class="tssggs-dl">
-                <dt>{$MGLANG->T('validation_page', 'RegistrationDate')}</dt><dd>{if $billing.registration}{$billing.registration}{else}-{/if}</dd>
-                <dt>{$MGLANG->T('validation_page', 'ReccuringAmount')}</dt><dd>{$billing.amount}</dd>
-                <dt>{$MGLANG->T('validation_page', 'PaymentMethod')}</dt><dd>{$billing.paymentMethod|escape}</dd>
+                <dt>{$MODLANG->T('validation_page', 'RegistrationDate')}</dt><dd>{if $billing.registration}{$billing.registration}{else}-{/if}</dd>
+                <dt>{$MODLANG->T('validation_page', 'ReccuringAmount')}</dt><dd>{$billing.amount}</dd>
+                <dt>{$MODLANG->T('validation_page', 'PaymentMethod')}</dt><dd>{$billing.paymentMethod|escape}</dd>
             </dl>
             <dl class="tssggs-dl">
-                <dt>{$MGLANG->T('smimeNextDue')}</dt><dd>{if $billing.nextDue}{$billing.nextDue}{else}-{/if}</dd>
-                <dt>{$MGLANG->T('validation_page', 'BillingCycle')}</dt><dd>{$billing.cycle|escape}</dd>
+                <dt>{$MODLANG->T('smimeNextDue')}</dt><dd>{if $billing.nextDue}{$billing.nextDue}{else}-{/if}</dd>
+                <dt>{$MODLANG->T('validation_page', 'BillingCycle')}</dt><dd>{$billing.cycle|escape}</dd>
             </dl>
         </div>
     </section>
@@ -100,23 +100,23 @@
     <section class="tssggs-card">
         <h4 class="tssggs-card__title">
             <svg class="tssggs-ic" viewBox="0 0 24 24" aria-hidden="true"><rect width="20" height="8" x="2" y="2" rx="2"/><rect width="20" height="8" x="2" y="14" rx="2"/><path d="M6 6h.01M6 18h.01"/></svg>
-            {$MGLANG->T('sslConfigInstallQuestion')}
+            {$MODLANG->T('sslConfigInstallQuestion')}
         </h4>
         <div class="tssggs-form">
             <div class="tssggs-choice">
                 <button type="button" id="btn-autoinstall" class="tssggs-choice__item is-selected">
                     <svg class="tssggs-ic" viewBox="0 0 24 24" aria-hidden="true"><rect width="20" height="8" x="2" y="2" rx="2"/><rect width="20" height="8" x="2" y="14" rx="2"/><path d="M6 6h.01M6 18h.01"/></svg>
                     <span class="tssggs-choice__body">
-                        <strong>{$MGLANG->T('sslConfigAutoinstall')}</strong>
-                        <span>{$MGLANG->T('sslConfigAutoinstallHint')}</span>
+                        <strong>{$MODLANG->T('sslConfigAutoinstall')}</strong>
+                        <span>{$MODLANG->T('sslConfigAutoinstallHint')}</span>
                     </span>
                     <span class="tssggs-choice__mark"><svg class="tssggs-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="m20 6-11 11-5-5"/></svg></span>
                 </button>
                 <button type="button" id="btn-manual" class="tssggs-choice__item">
                     <svg class="tssggs-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
                     <span class="tssggs-choice__body">
-                        <strong>{$MGLANG->T('sslConfigManual')}</strong>
-                        <span>{$MGLANG->T('sslConfigManualHint')}</span>
+                        <strong>{$MODLANG->T('sslConfigManual')}</strong>
+                        <span>{$MODLANG->T('sslConfigManualHint')}</span>
                     </span>
                     <span class="tssggs-choice__mark"><svg class="tssggs-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="m20 6-11 11-5-5"/></svg></span>
                 </button>
@@ -129,13 +129,13 @@
     {* ===== AUTOINSTALL SECTION ===== *}
     {if $hasCpanel}
     <div id="section-autoinstall">
-        <h3 class="ssl-section-title"><span class="tssggs-step__n">1</span> {$MGLANG->T('sslConfigServerInfoTitle')}</h3>
-        <p class="ssl-section-sub">{$MGLANG->T('sslConfigServerInfoText')}</p>
+        <h3 class="ssl-section-title"><span class="tssggs-step__n">1</span> {$MODLANG->T('sslConfigServerInfoTitle')}</h3>
+        <p class="ssl-section-sub">{$MODLANG->T('sslConfigServerInfoText')}</p>
 
         <div class="form-group">
-            <label>{$MGLANG->T('sslConfigDomainLabel')} <span class="text-danger">*</span></label>
+            <label>{$MODLANG->T('sslConfigDomainLabel')} <span class="text-danger">*</span></label>
             <select class="form-control" id="main_domain">
-                <option value="">{$MGLANG->T('sslConfigPleaseChoose')}</option>
+                <option value="">{$MODLANG->T('sslConfigPleaseChoose')}</option>
                 {foreach $domainGroups as $group}
                     <optgroup label="{$group.label|escape}">
                         {foreach $group.domains as $domain}
@@ -143,78 +143,78 @@
                         {/foreach}
                     </optgroup>
                 {/foreach}
-                <option value="__manual__">{$MGLANG->T('sslConfigDomainNotListed')}</option>
+                <option value="__manual__">{$MODLANG->T('sslConfigDomainNotListed')}</option>
             </select>
-            <small><a href="clientarea.php?action=productdetails&id={$serviceid}&configssl=1&refreshdomains=1">{$MGLANG->T('sslConfigRefreshDomains')}</a></small>
+            <small><a href="clientarea.php?action=productdetails&id={$serviceid}&configssl=1&refreshdomains=1">{$MODLANG->T('sslConfigRefreshDomains')}</a></small>
         </div>
 
         {if $isWildcard}
         <div class="form-group">
             <label class="normal">
                 <input type="checkbox" id="wildcard_selected_autoinstall" value="1">
-                {$MGLANG->T('sslConfigWildcardLabel')} <span id="wildcard_domain_preview_autoinstall" style="color:#2980b9;font-weight:600;"></span>
+                {$MODLANG->T('sslConfigWildcardLabel')} <span id="wildcard_domain_preview_autoinstall" style="color:#2980b9;font-weight:600;"></span>
             </label>
         </div>
         {else}
-        {if $wwwAlwaysFree}<p class="san-note" id="www-note">{$MGLANG->T('sslConfigWwwIncluded')}</p>{elseif $wwwInSanList}<p class="san-note" id="www-note">{$MGLANG->T('sslConfigWwwChoose')}</p>{/if}
+        {if $wwwAlwaysFree}<p class="san-note" id="www-note">{$MODLANG->T('sslConfigWwwIncluded')}</p>{elseif $wwwInSanList}<p class="san-note" id="www-note">{$MODLANG->T('sslConfigWwwChoose')}</p>{/if}
         {/if}
 
         {if $sansLimit > 0}
         <div class="form-group">
-            <label>{$MGLANG->T('sslConfigSanSection')} (max {$sansLimit|escape})</label>
+            <label>{$MODLANG->T('sslConfigSanSection')} (max {$sansLimit|escape})</label>
             <div id="san-rows-container"></div>
-            <p class="san-note">{$MGLANG->T('sslConfigSanNote')}</p>
+            <p class="san-note">{$MODLANG->T('sslConfigSanNote')}</p>
         </div>
         {/if}
 
         {if $wildcardSansLimit > 0}
         <div class="form-group">
-            <label>{$MGLANG->T('sslConfigSanWildcard')} (max {$wildcardSansLimit|escape})</label>
-            <p class="san-note" style="margin-bottom:8px;">{$MGLANG->T('sslConfigSanWildcardAutoNote')}</p>
+            <label>{$MODLANG->T('sslConfigSanWildcard')} (max {$wildcardSansLimit|escape})</label>
+            <p class="san-note" style="margin-bottom:8px;">{$MODLANG->T('sslConfigSanWildcardAutoNote')}</p>
             <div id="wildcard-san-rows-container"></div>
         </div>
         {/if}
 
         <div class="form-group">
-            <label>{$MGLANG->T('sslConfigValidationMethod')} <span class="text-danger">*</span></label>
+            <label>{$MODLANG->T('sslConfigValidationMethod')} <span class="text-danger">*</span></label>
             <select class="form-control dcv-select" id="dcv_method_autoinstall">
                 {foreach $dcvMethods as $method}
                     <option value="{$method|escape}" {if $method == 'http'}selected{/if}>
-                        {if $method == 'email'}{$MGLANG->T('sslConfigValidationEmail')}
-                        {elseif $method == 'http'}{$MGLANG->T('sslConfigValidationHttp')}
-                        {elseif $method == 'https'}{$MGLANG->T('sslConfigValidationHttps')}
-                        {elseif $method == 'dns'}{$MGLANG->T('sslConfigValidationDns')}
+                        {if $method == 'email'}{$MODLANG->T('sslConfigValidationEmail')}
+                        {elseif $method == 'http'}{$MODLANG->T('sslConfigValidationHttp')}
+                        {elseif $method == 'https'}{$MODLANG->T('sslConfigValidationHttps')}
+                        {elseif $method == 'dns'}{$MODLANG->T('sslConfigValidationDns')}
                         {else}{$method|escape}{/if}
                     </option>
                 {/foreach}
             </select>
-            <p class="dcv-note" id="dcv-note-autoinstall-http" style="display:none;">{$MGLANG->T('sslConfigHttpAutoNote')}</p>
-            <p class="dcv-note" id="dcv-note-autoinstall-dns" style="display:none;">{$MGLANG->T('sslConfigDnsNote')}</p>
+            <p class="dcv-note" id="dcv-note-autoinstall-http" style="display:none;">{$MODLANG->T('sslConfigHttpAutoNote')}</p>
+            <p class="dcv-note" id="dcv-note-autoinstall-dns" style="display:none;">{$MODLANG->T('sslConfigDnsNote')}</p>
         </div>
 
         <div id="approver-email-autoinstall-section" style="display:none;">
             <div id="approver-email-autoinstall-warning" style="display:none;" class="alert alert-warning">
-                {$MGLANG->T('sslConfigEmailDcvNeedsDomain')}
+                {$MODLANG->T('sslConfigEmailDcvNeedsDomain')}
             </div>
             <div id="approver-email-autoinstall-select-wrap" class="form-group" style="display:none;">
-                <label>{$MGLANG->T('sslConfigDcvEmailLabel')} <span class="text-danger">*</span></label>
+                <label>{$MODLANG->T('sslConfigDcvEmailLabel')} <span class="text-danger">*</span></label>
                 <select class="form-control" id="approver_email_autoinstall">
-                    <option value="">{$MGLANG->T('sslConfigFirstSelectDomain')}</option>
+                    <option value="">{$MODLANG->T('sslConfigFirstSelectDomain')}</option>
                 </select>
-                <p class="dcv-info">{$MGLANG->T('sslConfigDcvEmailFallback')}</p>
+                <p class="dcv-info">{$MODLANG->T('sslConfigDcvEmailFallback')}</p>
             </div>
         </div>
 
         <div id="dns-fallback-email-section" style="display:none;">
             <div id="dns-fallback-domain-warning" style="display:none;" class="alert alert-info">
-                {$MGLANG->T('sslConfigDnsFallbackNeedsDomain')}
+                {$MODLANG->T('sslConfigDnsFallbackNeedsDomain')}
             </div>
             <div id="dns-fallback-select-wrap" class="form-group" style="display:none;">
-                <label>{$MGLANG->T('sslConfigDnsFallbackLabel')}</label>
+                <label>{$MODLANG->T('sslConfigDnsFallbackLabel')}</label>
                 <select class="form-control" id="dns_fallback_email">
-                    <option value="">{$MGLANG->T('sslConfigDnsFallbackAutoSelect')}</option>
+                    <option value="">{$MODLANG->T('sslConfigDnsFallbackAutoSelect')}</option>
                 </select>
-                <p class="dcv-info">{$MGLANG->T('sslConfigDnsFallbackHint')}</p>
+                <p class="dcv-info">{$MODLANG->T('sslConfigDnsFallbackHint')}</p>
             </div>
         </div>
     </div>
@@ -222,34 +222,34 @@
 
     {* ===== MANUAL SECTION ===== *}
     <div id="section-manual" {if $hasCpanel}style="display:none;"{/if}>
-        <p class="ssl-section-sub muted">{$MGLANG->T('sslConfigManualInfoText')}</p>
+        <p class="ssl-section-sub muted">{$MODLANG->T('sslConfigManualInfoText')}</p>
 
         <div class="form-group" id="manual-own-csr-group">
-            <label>{$MGLANG->T('sslConfigOwnCsrLabel')} <span class="text-danger">*</span></label>
+            <label>{$MODLANG->T('sslConfigOwnCsrLabel')} <span class="text-danger">*</span></label>
             <textarea class="form-control" id="manual_own_csr" rows="8"
                 placeholder="-----BEGIN CERTIFICATE REQUEST-----&#10;...&#10;-----END CERTIFICATE REQUEST-----"></textarea>
-            <span class="help-block" style="font-size:12px;color:#888;">{if $ipProduct}{$MGLANG->T('sslConfigIpCsrHint')}{else}{$MGLANG->T('sslConfigOwnCsrHint')}{/if}</span>
+            <span class="help-block" style="font-size:12px;color:#888;">{if $ipProduct}{$MODLANG->T('sslConfigIpCsrHint')}{else}{$MODLANG->T('sslConfigOwnCsrHint')}{/if}</span>
         </div>
 
         {if $enableCsrGenerator}
         <div class="form-group">
             <label class="normal">
                 <input type="checkbox" id="manual_auto_generate_csr" style="margin-right:6px;">
-                {$MGLANG->T('sslConfigAutoGenerateCsr')}
+                {$MODLANG->T('sslConfigAutoGenerateCsr')}
             </label>
         </div>
         {if !$ipProduct}
         <div class="form-group" id="manual-domain-group" style="display:none;">
-            <label>{$MGLANG->T('sslConfigCsrCommonName')} <span class="text-danger">*</span></label>
+            <label>{$MODLANG->T('sslConfigCsrCommonName')} <span class="text-danger">*</span></label>
             <input type="text" class="form-control" id="manual_domain" placeholder="{$productDomain|escape}" value="{$productDomain|escape}">
-            <span class="help-block" style="font-size:12px;color:#888;">{$MGLANG->T('sslConfigCsrCommonNameHint')}</span>
+            <span class="help-block" style="font-size:12px;color:#888;">{$MODLANG->T('sslConfigCsrCommonNameHint')}</span>
         </div>
 
         {if $isWildcard}
         <div class="form-group" id="manual-wildcard-group" style="display:none;">
             <label class="normal">
                 <input type="checkbox" id="wildcard_selected_manual" value="1">
-                {$MGLANG->T('sslConfigWildcardLabel')} <span id="wildcard_domain_preview_manual" style="color:#2980b9;font-weight:600;"></span>
+                {$MODLANG->T('sslConfigWildcardLabel')} <span id="wildcard_domain_preview_manual" style="color:#2980b9;font-weight:600;"></span>
             </label>
         </div>
         {/if}
@@ -259,34 +259,34 @@
         {if $ipProduct}
         {* a certificate for public IPs: every name is entered here, the first one becomes the main name *}
         <div class="form-group">
-            <label>{$MGLANG->T('sslConfigIpNames')} (max {if $sansLimit > 0}{$sansLimit|escape}{else}1{/if}) <span class="text-danger">*</span></label>
+            <label>{$MODLANG->T('sslConfigIpNames')} (max {if $sansLimit > 0}{$sansLimit|escape}{else}1{/if}) <span class="text-danger">*</span></label>
             <textarea class="form-control" id="san_domains_manual" rows="4" placeholder="203.0.113.10&#10;example.com"></textarea>
-            <span class="help-block" style="font-size:12px;color:#888;">{$MGLANG->T('sslConfigIpNamesHint')}</span>
+            <span class="help-block" style="font-size:12px;color:#888;">{$MODLANG->T('sslConfigIpNamesHint')}</span>
         </div>
         {elseif $sansLimit > 0}
         <div class="form-group">
-            <label>{$MGLANG->T('sslConfigSanSingle')} (max {$sansLimit|escape})</label>
+            <label>{$MODLANG->T('sslConfigSanSingle')} (max {$sansLimit|escape})</label>
             <textarea class="form-control" id="san_domains_manual" rows="4" placeholder="domain1.com&#10;domain2.com"></textarea>
         </div>
         {/if}
         {if $wildcardSansLimit > 0 && !$ipProduct}
         <div class="form-group">
-            <label>{$MGLANG->T('sslConfigSanWildcard')} (max {$wildcardSansLimit|escape})</label>
+            <label>{$MODLANG->T('sslConfigSanWildcard')} (max {$wildcardSansLimit|escape})</label>
             <textarea class="form-control" id="wildcard_san_manual" rows="4" placeholder="*.domain1.com&#10;*.domain2.com"></textarea>
         </div>
         {/if}
 
         <div class="form-group">
-            <label>{$MGLANG->T('sslConfigValidationMethod')} <span class="text-danger">*</span></label>
+            <label>{$MODLANG->T('sslConfigValidationMethod')} <span class="text-danger">*</span></label>
             <select class="form-control dcv-select" id="dcv_method_manual">
                 {foreach $dcvMethodsManual as $method}
                     <option value="{$method|escape}" {if $method == 'http'}selected{/if}>
-                        {if $method == 'email'}{$MGLANG->T('sslConfigValidationEmail')}
-                        {elseif $method == 'http'}{$MGLANG->T('sslConfigValidationHttp')}
-                        {elseif $method == 'https'}{$MGLANG->T('sslConfigValidationHttps')}
-                        {elseif $method == 'dns'}{$MGLANG->T('sslConfigValidationDns')}
-                        {elseif $method == 'dns-cname'}{$MGLANG->T('sslConfigValidationDnsCname')}
-                        {elseif $method == 'dns-txt'}{$MGLANG->T('sslConfigValidationDnsTxt')}
+                        {if $method == 'email'}{$MODLANG->T('sslConfigValidationEmail')}
+                        {elseif $method == 'http'}{$MODLANG->T('sslConfigValidationHttp')}
+                        {elseif $method == 'https'}{$MODLANG->T('sslConfigValidationHttps')}
+                        {elseif $method == 'dns'}{$MODLANG->T('sslConfigValidationDns')}
+                        {elseif $method == 'dns-cname'}{$MODLANG->T('sslConfigValidationDnsCname')}
+                        {elseif $method == 'dns-txt'}{$MODLANG->T('sslConfigValidationDnsTxt')}
                         {else}{$method|escape}{/if}
                     </option>
                 {/foreach}
@@ -296,22 +296,22 @@
         <div id="approver-email-manual-section" style="display:none;">
             <div id="approver-email-manual-warning" style="display:none;" class="alert alert-warning"></div>
             <div id="approver-email-manual-select-wrap" class="form-group" style="display:none;">
-                <label>{$MGLANG->T('sslConfigDcvEmailLabel')} <span class="text-danger">*</span></label>
+                <label>{$MODLANG->T('sslConfigDcvEmailLabel')} <span class="text-danger">*</span></label>
                 <select class="form-control" id="approver_email_manual">
-                    <option value="">{$MGLANG->T('sslConfigFirstSelectDomain')}</option>
+                    <option value="">{$MODLANG->T('sslConfigFirstSelectDomain')}</option>
                 </select>
-                <p class="dcv-info">{$MGLANG->T('sslConfigDcvEmailFallback')}</p>
+                <p class="dcv-info">{$MODLANG->T('sslConfigDcvEmailFallback')}</p>
             </div>
         </div>
     </div>
 
     {* ===== CSR DETAILS (only when the CSR is generated by the module) ===== *}
     <div class="ssl-csr-section" id="ssl-csr-section" {if !$hasCpanel}style="display:none;"{/if}>
-        <h3><span class="tssggs-step__n">2</span> {$MGLANG->T('sslConfigCsrSection')}</h3>
-        <p class="csr-sub">{$MGLANG->T('sslConfigCsrSubtext')}</p>
+        <h3><span class="tssggs-step__n">2</span> {$MODLANG->T('sslConfigCsrSection')}</h3>
+        <p class="csr-sub">{$MODLANG->T('sslConfigCsrSubtext')}</p>
 
         <div class="form-group">
-            <label>{$MGLANG->T('sslConfigCsrCountry')} <span class="text-danger">*</span></label>
+            <label>{$MODLANG->T('sslConfigCsrCountry')} <span class="text-danger">*</span></label>
             <select class="form-control" id="csr_country">
                 {foreach $countries as $code => $name}
                     <option value="{$code|escape}" {if $code == $csrDefaults.country}selected{/if}>{$name|escape}</option>
@@ -319,23 +319,23 @@
             </select>
         </div>
         <div class="form-group">
-            <label>{$MGLANG->T('sslConfigCsrState')} <span class="text-danger">*</span></label>
+            <label>{$MODLANG->T('sslConfigCsrState')} <span class="text-danger">*</span></label>
             <input type="text" class="form-control" id="csr_state" value="{$csrDefaults.state|escape}">
         </div>
         <div class="form-group">
-            <label>{$MGLANG->T('sslConfigCsrCity')} <span class="text-danger">*</span></label>
+            <label>{$MODLANG->T('sslConfigCsrCity')} <span class="text-danger">*</span></label>
             <input type="text" class="form-control" id="csr_city" value="{$csrDefaults.city|escape}">
         </div>
         <div class="form-group">
-            <label>{$MGLANG->T('sslConfigCsrOrg')}</label>
+            <label>{$MODLANG->T('sslConfigCsrOrg')}</label>
             <input type="text" class="form-control" id="csr_org" value="{$csrDefaults.org|escape}">
         </div>
         <div class="form-group">
-            <label>{$MGLANG->T('sslConfigCsrOrgUnit')}</label>
+            <label>{$MODLANG->T('sslConfigCsrOrgUnit')}</label>
             <input type="text" class="form-control" id="csr_org_unit" value="">
         </div>
         <div class="form-group">
-            <label>{$MGLANG->T('sslConfigCsrEmail')}</label>
+            <label>{$MODLANG->T('sslConfigCsrEmail')}</label>
             <input type="email" class="form-control" id="csr_email" value="{$csrDefaults.email|escape}">
         </div>
     </div>
@@ -343,49 +343,49 @@
     {* ===== ADMIN CONTACT ===== *}
     {if !$adminFormHidden}
     <div class="ssl-contact-section">
-        <h3 style="margin-bottom:15px;"><span class="tssggs-step__n">3</span> {$MGLANG->T('sslConfigAdminContact')}</h3>
+        <h3 style="margin-bottom:15px;"><span class="tssggs-step__n">3</span> {$MODLANG->T('sslConfigAdminContact')}</h3>
         <div class="row">
             <div class="col-md-6">
                 <div class="form-group">
-                    <label>{$MGLANG->T('sslConfigFirstname')} <span class="text-danger">*</span></label>
+                    <label>{$MODLANG->T('sslConfigFirstname')} <span class="text-danger">*</span></label>
                     <input type="text" class="form-control" id="admin_firstname" value="{if $client}{$client->firstname|escape}{/if}">
                 </div>
                 <div class="form-group">
-                    <label>{$MGLANG->T('sslConfigLastname')} <span class="text-danger">*</span></label>
+                    <label>{$MODLANG->T('sslConfigLastname')} <span class="text-danger">*</span></label>
                     <input type="text" class="form-control" id="admin_lastname" value="{if $client}{$client->lastname|escape}{/if}">
                 </div>
                 <div class="form-group">
-                    <label>{$MGLANG->T('sslConfigEmail')} <span class="text-danger">*</span></label>
+                    <label>{$MODLANG->T('sslConfigEmail')} <span class="text-danger">*</span></label>
                     <input type="email" class="form-control" id="admin_email" value="{if $client}{$client->email|escape}{/if}">
                 </div>
                 <div class="form-group">
-                    <label>{$MGLANG->T('sslConfigPhone')} <span class="text-danger">*</span></label>
+                    <label>{$MODLANG->T('sslConfigPhone')} <span class="text-danger">*</span></label>
                     <input type="text" class="form-control" id="admin_phone" value="{if $client}{$client->phonenumber|escape}{/if}">
                 </div>
                 <div class="form-group">
-                    <label>{$MGLANG->T('sslConfigTitle')}</label>
+                    <label>{$MODLANG->T('sslConfigTitle')}</label>
                     <input type="text" class="form-control" id="admin_title" value="">
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="form-group">
-                    <label>{$MGLANG->T('sslConfigAddress')}</label>
+                    <label>{$MODLANG->T('sslConfigAddress')}</label>
                     <input type="text" class="form-control" id="admin_addressline1" value="{if $client}{$client->address1|escape}{/if}">
                 </div>
                 <div class="form-group">
-                    <label>{$MGLANG->T('sslConfigCity')}</label>
+                    <label>{$MODLANG->T('sslConfigCity')}</label>
                     <input type="text" class="form-control" id="admin_city" value="{if $client}{$client->city|escape}{/if}">
                 </div>
                 <div class="form-group">
-                    <label>{$MGLANG->T('sslConfigRegion')}</label>
+                    <label>{$MODLANG->T('sslConfigRegion')}</label>
                     <input type="text" class="form-control" id="admin_region" value="{if $client}{$client->state|escape}{/if}">
                 </div>
                 <div class="form-group">
-                    <label>{$MGLANG->T('sslConfigPostalcode')}</label>
+                    <label>{$MODLANG->T('sslConfigPostalcode')}</label>
                     <input type="text" class="form-control" id="admin_postalcode" value="{if $client}{$client->postcode|escape}{/if}">
                 </div>
                 <div class="form-group">
-                    <label>{$MGLANG->T('sslConfigCountry')}</label>
+                    <label>{$MODLANG->T('sslConfigCountry')}</label>
                     <select class="form-control" id="admin_country">
                         {foreach $countries as $code => $name}
                             <option value="{$code|escape}" {if $code == $clientCountry}selected{/if}>{$name|escape}</option>
@@ -402,16 +402,16 @@
         {if $agreement.text}<div style="margin-bottom:8px;">{$agreement.text}</div>{/if}
         <label style="font-weight:normal;">
             <input type="checkbox" id="tssggs_agreement" value="1">
-            {$MGLANG->T('sslConfigAgreement')} {if $agreement.url}<a href="{$agreement.url|escape}" target="_blank" rel="noopener">{$agreement.name|escape}</a>{else}{$agreement.name|escape}{/if}
+            {$MODLANG->T('sslConfigAgreement')} {if $agreement.url}<a href="{$agreement.url|escape}" target="_blank" rel="noopener">{$agreement.name|escape}</a>{else}{$agreement.name|escape}{/if}
         </label>
     </div>
     {/if}
 
     <div style="margin-top:25px; padding-top:15px; border-top:1px solid #e0e0e0;">
-        <button type="button" class="tssggs-btn tssggs-btn--primary" id="btn-submit-ssl-config">{$MGLANG->T('sslConfigSubmit')}</button>
+        <button type="button" class="tssggs-btn tssggs-btn--primary" id="btn-submit-ssl-config">{$MODLANG->T('sslConfigSubmit')}</button>
         <span class="tssggs-required">
             <svg class="tssggs-ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
-            {$MGLANG->T('sslConfigRequiredNote')}
+            {$MODLANG->T('sslConfigRequiredNote')}
         </span>
     </div>
 </div>
@@ -422,47 +422,47 @@
     {* AutoInstall submitted *}
     <div id="ssl-thankyou-autoinstall" class="panel panel-default" style="display:none;">
         <div class="panel-heading" style="background:#f0f7ff;border-color:#b3d4f5;">
-            <strong>{$MGLANG->T('autoinstallStatusTitle')}</strong>
+            <strong>{$MODLANG->T('autoinstallStatusTitle')}</strong>
         </div>
         <div class="panel-body" style="font-size:13px;color:#444;">
             {if $certTypeConfig == 'DV'}
-                {if !$isWildcard}<p><strong>{$MGLANG->T('thankYou')}</strong></p>{/if}
-                <p>{if $isWildcard}{$MGLANG->T('autoinstallWildcardDvIntro')}{else}{$MGLANG->T('autoinstallSingleDvMsg')}{/if}</p>
+                {if !$isWildcard}<p><strong>{$MODLANG->T('thankYou')}</strong></p>{/if}
+                <p>{if $isWildcard}{$MODLANG->T('autoinstallWildcardDvIntro')}{else}{$MODLANG->T('autoinstallSingleDvMsg')}{/if}</p>
             {else}
-                <p>{$MGLANG->T('autoinstallOvIntro')}</p>
-                <p><strong>{$MGLANG->T('autoinstallOvNextStep')}</strong><br>{$MGLANG->T('autoinstallOvMsg')}</p>
+                <p>{$MODLANG->T('autoinstallOvIntro')}</p>
+                <p><strong>{$MODLANG->T('autoinstallOvNextStep')}</strong><br>{$MODLANG->T('autoinstallOvMsg')}</p>
             {/if}
-            <p class="ssl-ty-email-row" style="display:none;">{$MGLANG->T('autoinstallEmailMsg')} <strong class="ssl-ty-email"></strong></p>
+            <p class="ssl-ty-email-row" style="display:none;">{$MODLANG->T('autoinstallEmailMsg')} <strong class="ssl-ty-email"></strong></p>
             {if $certTypeConfig == 'DV'}
-                {if $isWildcard}<p>{$MGLANG->T('autoinstallOutroDomain')}</p>{/if}
+                {if $isWildcard}<p>{$MODLANG->T('autoinstallOutroDomain')}</p>{/if}
             {else}
-                <p>{$MGLANG->T('autoinstallOutroDomainOrg')}</p>
+                <p>{$MODLANG->T('autoinstallOutroDomainOrg')}</p>
             {/if}
         </div>
         <div class="panel-footer">
-            <a href="clientarea.php?action=productdetails&id={$serviceid}" class="btn btn-primary">{$MGLANG->T('goToCertificateDetails')}</a>
+            <a href="clientarea.php?action=productdetails&id={$serviceid}" class="btn btn-primary">{$MODLANG->T('goToCertificateDetails')}</a>
         </div>
     </div>
 
     {* Manual enrollment with a generated CSR - private key has to be saved by the client *}
     <div id="ssl-thankyou-manual-key" class="panel panel-default" style="display:none;">
         <div class="panel-heading" style="background:#fff8e1;border-color:#f8e7aa;">
-            <strong>{$MGLANG->T('manualPrivateKeyTitle')}</strong>
+            <strong>{$MODLANG->T('manualPrivateKeyTitle')}</strong>
         </div>
         <div class="panel-body" style="font-size:13px;color:#444;">
-            <p>{$MGLANG->T('manualPrivateKeyMsg')}</p>
+            <p>{$MODLANG->T('manualPrivateKeyMsg')}</p>
             <textarea class="form-control" id="ssl-private-key" rows="10" readonly></textarea>
         </div>
         <div class="panel-footer">
-            <a href="#" id="ssl-private-key-download" class="btn btn-success">{$MGLANG->T('manualPrivateKeyDownload')}</a>
-            <a href="clientarea.php?action=productdetails&id={$serviceid}" class="btn btn-primary">{$MGLANG->T('goToCertificateDetails')}</a>
+            <a href="#" id="ssl-private-key-download" class="btn btn-success">{$MODLANG->T('manualPrivateKeyDownload')}</a>
+            <a href="clientarea.php?action=productdetails&id={$serviceid}" class="btn btn-primary">{$MODLANG->T('goToCertificateDetails')}</a>
         </div>
     </div>
 </div>
 
 {* Hidden templates for SAN rows (autoinstall) *}
 <select id="san-domain-template" style="display:none;">
-    <option value="">{$MGLANG->T('sslConfigPleaseChoose')}</option>
+    <option value="">{$MODLANG->T('sslConfigPleaseChoose')}</option>
     {foreach $domainGroups as $group}
         <optgroup label="{$group.label|escape}">
             {foreach $group.domains as $domain}
@@ -474,7 +474,7 @@
     {/foreach}
 </select>
 <select id="wildcard-san-domain-template" style="display:none;">
-    <option value="">{$MGLANG->T('sslConfigPleaseChoose')}</option>
+    <option value="">{$MODLANG->T('sslConfigPleaseChoose')}</option>
     {foreach $domainGroups as $group}
         <optgroup label="{$group.label|escape}">
             {foreach $group.domains as $domain}
@@ -493,17 +493,17 @@
     var hasCsrGenerator  = {if $enableCsrGenerator}true{else}false{/if};
     var ipProduct        = {if $ipProduct}true{else}false{/if};
     var lang = {
-        loading:          '{$MGLANG->T('sslConfigLoading')|escape:'javascript'}',
-        firstSelect:      '{$MGLANG->T('sslConfigFirstSelectDomain')|escape:'javascript'}',
-        needsCsr:         '{$MGLANG->T('sslConfigEmailDcvNeedsCsr')|escape:'javascript'}',
-        csrNoCn:          '{$MGLANG->T('sslConfigEmailDcvCsrNoCn')|escape:'javascript'}',
-        needsCn:          '{$MGLANG->T('sslConfigEmailDcvNeedsCn')|escape:'javascript'}',
-        ownCsrRequired:   '{$MGLANG->T('sslConfigOwnCsrRequired')|escape:'javascript'}',
-        domainRequired:   '{$MGLANG->T('sslConfigDomainRequired')|escape:'javascript'}',
-        ipNamesRequired:  '{$MGLANG->T('sslConfigIpNamesRequired')|escape:'javascript'}',
-        approverRequired: '{$MGLANG->T('sslConfigApproverEmailRequired')|escape:'javascript'}',
-        error:            '{$MGLANG->T('sslConfigAnErrorOccurred')|escape:'javascript'}',
-        dnsFallbackAuto:  '{$MGLANG->T('sslConfigDnsFallbackAutoSelect')|escape:'javascript'}'
+        loading:          '{$MODLANG->T('sslConfigLoading')|escape:'javascript'}',
+        firstSelect:      '{$MODLANG->T('sslConfigFirstSelectDomain')|escape:'javascript'}',
+        needsCsr:         '{$MODLANG->T('sslConfigEmailDcvNeedsCsr')|escape:'javascript'}',
+        csrNoCn:          '{$MODLANG->T('sslConfigEmailDcvCsrNoCn')|escape:'javascript'}',
+        needsCn:          '{$MODLANG->T('sslConfigEmailDcvNeedsCn')|escape:'javascript'}',
+        ownCsrRequired:   '{$MODLANG->T('sslConfigOwnCsrRequired')|escape:'javascript'}',
+        domainRequired:   '{$MODLANG->T('sslConfigDomainRequired')|escape:'javascript'}',
+        ipNamesRequired:  '{$MODLANG->T('sslConfigIpNamesRequired')|escape:'javascript'}',
+        approverRequired: '{$MODLANG->T('sslConfigApproverEmailRequired')|escape:'javascript'}',
+        error:            '{$MODLANG->T('sslConfigAnErrorOccurred')|escape:'javascript'}',
+        dnsFallbackAuto:  '{$MODLANG->T('sslConfigDnsFallbackAutoSelect')|escape:'javascript'}'
     };
 
     function parseResponse(ret) {
@@ -752,8 +752,8 @@
     // ---- Submit ----
     function showError(message) {
         // only the current problem: earlier messages no longer apply after the client changed the form
-        $('#MGAlerts').alerts('clear');
-        $('#MGAlerts').alerts('error', message || lang.error);
+        $('#ModAlerts').alerts('clear');
+        $('#ModAlerts').alerts('error', message || lang.error);
         $('html, body').animate({ scrollTop: 0 }, 300);
     }
 
@@ -775,7 +775,7 @@
         }
 
         if ($('#tssggs_agreement').length && !$('#tssggs_agreement').is(':checked')) {
-            showError('{$MGLANG->T('sslConfigAgreementRequired')|escape:'javascript'}');
+            showError('{$MODLANG->T('sslConfigAgreementRequired')|escape:'javascript'}');
             return;
         }
 

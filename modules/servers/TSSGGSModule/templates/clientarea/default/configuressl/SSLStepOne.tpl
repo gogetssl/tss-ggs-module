@@ -122,7 +122,7 @@
             else
             {
                 $('#csrGeneration .modal-body .alert-danger').remove();
-                $('#csrGeneration .modal-body').prepend('<div class="alert alert-danger">{$MGLANG->T('stepone', 'please_fill')}</div>');
+                $('#csrGeneration .modal-body').prepend('<div class="alert alert-danger">{$MODLANG->T('stepone', 'please_fill')}</div>');
             }
 
             return false;
@@ -157,7 +157,7 @@
                     email_address: EA
                 },
                 beforeSend: function () {
-                    $('#generateCSRFunc').html('{$MGLANG->T('stepone_modal', 'loading')}');
+                    $('#generateCSRFunc').html('{$MODLANG->T('stepone_modal', 'loading')}');
                     $('#generateCSRFunc').prop('disabled', true);
                 }
             })
@@ -178,7 +178,7 @@
                         $('#csrGeneration .modal-body').prepend('<div class="alert alert-danger">'+res.data.json.message+'</div>');
                     }
 
-                    $('#generateCSRFunc').html('{$MGLANG->T('stepone_modal', 'generate')}');
+                    $('#generateCSRFunc').html('{$MODLANG->T('stepone_modal', 'generate')}');
                     $('#generateCSRFunc').prop('disabled', false);
 
                 });
@@ -254,69 +254,69 @@
 
         {/if}
 
-        $('<div class="alert alert-warning csr_validation_error" style="margin-top:10px;display:none">{$MGLANG->T('csr_details', 'error')}</div>' +
+        $('<div class="alert alert-warning csr_validation_error" style="margin-top:10px;display:none">{$MODLANG->T('csr_details', 'error')}</div>' +
             '<div class="csr_details_validation" style="display:none">' +
-            '<h4>{$MGLANG->T('csr_details', 'title')}</h4>' +
+            '<h4>{$MODLANG->T('csr_details', 'title')}</h4>' +
             '<div class="row">' +
             '<div class="col-sm-6 col-xs-12">' +
-            '<p>{$MGLANG->T('csr_details', 'commonName')} <span class="commonName"></span></p>' +
-            '<p>{$MGLANG->T('csr_details', 'company')} <span class="companyName"></span></p>' +
-            '<p>{$MGLANG->T('csr_details', 'state')} <span class="stateName"></span></p>' +
-            '<p style="border:0;">{$MGLANG->T('csr_details', 'country')} <span class="countryName"></span></p>' +
+            '<p>{$MODLANG->T('csr_details', 'commonName')} <span class="commonName"></span></p>' +
+            '<p>{$MODLANG->T('csr_details', 'company')} <span class="companyName"></span></p>' +
+            '<p>{$MODLANG->T('csr_details', 'state')} <span class="stateName"></span></p>' +
+            '<p style="border:0;">{$MODLANG->T('csr_details', 'country')} <span class="countryName"></span></p>' +
             '</div>' +
             '<div class="col-sm-6 col-xs-12">' +
-            '<p>{$MGLANG->T('csr_details', 'email')} <span class="emailName"></span></p>' +
-            '<p>{$MGLANG->T('csr_details', 'division')} <span class="divisionName"></span></p>' +
-            '<p>{$MGLANG->T('csr_details', 'city')} <span class="cityName"></span></p>' +
+            '<p>{$MODLANG->T('csr_details', 'email')} <span class="emailName"></span></p>' +
+            '<p>{$MODLANG->T('csr_details', 'division')} <span class="divisionName"></span></p>' +
+            '<p>{$MODLANG->T('csr_details', 'city')} <span class="cityName"></span></p>' +
             '</div>' +
             '</div>' +
             '</div>').insertAfter("#inputCsr");
 
         {if $enable_csr}
 
-        $('<button type="button" data-toggle="modal" data-target="#csrGeneration" class="btn btn-primary" style="margin-top:10px;">{$MGLANG->T('stepone', 'generate_csr')}</button>'+
-            '<button type="button" id="downloadPkey" class="btn btn-default" style="margin-left:10px;margin-top:10px;display:none;">{$MGLANG->T('stepone', 'download_pkey')}</button>'+
+        $('<button type="button" data-toggle="modal" data-target="#csrGeneration" class="btn btn-primary" style="margin-top:10px;">{$MODLANG->T('stepone', 'generate_csr')}</button>'+
+            '<button type="button" id="downloadPkey" class="btn btn-default" style="margin-left:10px;margin-top:10px;display:none;">{$MODLANG->T('stepone', 'download_pkey')}</button>'+
             '<input type="hidden" id="pkeyField" value="">'+
             '<div class="modal fade" id="csrGeneration" tabindex="-1" role="dialog">'+
                 '<div class="modal-dialog" role="document">'+
                 '<div class="modal-content">'+
                     '<div class="modal-header" style="display:block;">'+
                         '<button style="float:right;" type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>'+
-                        '<h4 style="float:left;" class="modal-title">{$MGLANG->T('stepone_modal', 'generate_csr')}</h4>'+
+                        '<h4 style="float:left;" class="modal-title">{$MODLANG->T('stepone_modal', 'generate_csr')}</h4>'+
                     '</div>'+
                     '<div class="modal-body">'+
                         '<div class="form-group">'+
-                            '<label class="control-label" for="C">{$MGLANG->T('stepone_modal', 'country')}</label>'+
+                            '<label class="control-label" for="C">{$MODLANG->T('stepone_modal', 'country')}</label>'+
                             '<select class="form-control generateCsrInput" id="countryName" name="C">'+countryOptions+'</select>'+
                         '</div>'+
                         '<div class="form-group">'+
-                              '<label class="control-label" for="ST">{$MGLANG->T('stepone_modal', 'state')}</label>'+
-                              '<input {if $use_profile_data}value="{$client.state}"{/if} class="form-control generateCsrInput" id="stateOrProvinceName" placeholder="{$MGLANG->T('stepone_modal', 'state_p')}" name="ST" type="text">'+
+                              '<label class="control-label" for="ST">{$MODLANG->T('stepone_modal', 'state')}</label>'+
+                              '<input {if $use_profile_data}value="{$client.state}"{/if} class="form-control generateCsrInput" id="stateOrProvinceName" placeholder="{$MODLANG->T('stepone_modal', 'state_p')}" name="ST" type="text">'+
                         '</div>'+
                         '<div class="form-group">'+
-                            '<label class="control-label" for="L">{$MGLANG->T('stepone_modal', 'locality')}</label>'+
-                            '<input {if $use_profile_data}value="{$client.city}"{/if} class="form-control generateCsrInput" value="" id="localityName" placeholder="{$MGLANG->T('stepone_modal', 'locality_p')}" name="L" value="" type="text">'+
+                            '<label class="control-label" for="L">{$MODLANG->T('stepone_modal', 'locality')}</label>'+
+                            '<input {if $use_profile_data}value="{$client.city}"{/if} class="form-control generateCsrInput" value="" id="localityName" placeholder="{$MODLANG->T('stepone_modal', 'locality_p')}" name="L" value="" type="text">'+
                         '</div>'+
                         '<div class="form-group">'+
-                            '<label class="control-label" for="O">{$MGLANG->T('stepone_modal', 'organization')}</label>'+
-                            '<input {if $use_profile_data}value="{$client.companyname}"{/if} class="form-control generateCsrInput" id="organizationName" placeholder="{$MGLANG->T('stepone_modal', 'organization_p')}" name="O" value="" type="text">'+
+                            '<label class="control-label" for="O">{$MODLANG->T('stepone_modal', 'organization')}</label>'+
+                            '<input {if $use_profile_data}value="{$client.companyname}"{/if} class="form-control generateCsrInput" id="organizationName" placeholder="{$MODLANG->T('stepone_modal', 'organization_p')}" name="O" value="" type="text">'+
                         '</div>'+
                         '<div class="form-group">'+
-                            '<label class="control-label" for="OU">{$MGLANG->T('stepone_modal', 'org_unit')}</label>'+
-                            '<input {if $use_profile_data}value="IT"{/if} class="form-control generateCsrInput" id="organizationalUnitName" placeholder="{$MGLANG->T('stepone_modal', 'org_unit_p')}" value="" type="text">'+
+                            '<label class="control-label" for="OU">{$MODLANG->T('stepone_modal', 'org_unit')}</label>'+
+                            '<input {if $use_profile_data}value="IT"{/if} class="form-control generateCsrInput" id="organizationalUnitName" placeholder="{$MODLANG->T('stepone_modal', 'org_unit_p')}" value="" type="text">'+
                         '</div>'+
                         '<div class="form-group">'+
-                            '<label class="control-label" for="CN">{$MGLANG->T('stepone_modal', 'common_name')}</label>'+
-                            '<input {if $use_profile_data}value="{$domain}"{/if} class="form-control generateCsrInput" autocomplete="off" id="commonName" placeholder="{$MGLANG->T('stepone_modal', 'common_name_p')}" name="CN" value="" type="text">'+
+                            '<label class="control-label" for="CN">{$MODLANG->T('stepone_modal', 'common_name')}</label>'+
+                            '<input {if $use_profile_data}value="{$domain}"{/if} class="form-control generateCsrInput" autocomplete="off" id="commonName" placeholder="{$MODLANG->T('stepone_modal', 'common_name_p')}" name="CN" value="" type="text">'+
                         '</div>'+
                         '<div class="form-group">'+
-                            '<label class="control-label" for="EA">{$MGLANG->T('stepone_modal', 'email')}</label>'+
-                            '<input {if $use_profile_data}value="{$client.email}"{/if} class="form-control generateCsrInput" id="emailAddress" placeholder="{$MGLANG->T('stepone_modal', 'email_p')}" name="EA" value="" type="text">'+
+                            '<label class="control-label" for="EA">{$MODLANG->T('stepone_modal', 'email')}</label>'+
+                            '<input {if $use_profile_data}value="{$client.email}"{/if} class="form-control generateCsrInput" id="emailAddress" placeholder="{$MODLANG->T('stepone_modal', 'email_p')}" name="EA" value="" type="text">'+
                         '</div>'+
                     '</div>'+
                     '<div class="modal-footer">'+
-                        '<button type="button" class="btn btn-default" data-dismiss="modal">{$MGLANG->T('stepone_modal', 'close')}</button>'+
-                        '<button type="button" id="generateCSRFunc" class="btn btn-primary">{$MGLANG->T('stepone_modal', 'generate')}</button>'+
+                        '<button type="button" class="btn btn-default" data-dismiss="modal">{$MODLANG->T('stepone_modal', 'close')}</button>'+
+                        '<button type="button" id="generateCSRFunc" class="btn btn-primary">{$MODLANG->T('stepone_modal', 'generate')}</button>'+
                     '</div>'+
                 '</div>'+
             '</div>'+
@@ -339,7 +339,7 @@
         $('input[name="fields[js_custom]"]').hide();
         $('textarea[name="fields[sans_domains]"]').addClass("form-control");
         $('textarea[name="fields[wildcard_san]"]').addClass("form-control");
-        $("#inputCsr").parents(".card-body").find(".alert-info").text("{$MGLANG->T('csr_details', 'description')}");
+        $("#inputCsr").parents(".card-body").find(".alert-info").text("{$MODLANG->T('csr_details', 'description')}");
         {if !$ask_webserver}
         $("#inputServerType").parent(".form-group").hide();
         $("#inputServerType").val("1000");

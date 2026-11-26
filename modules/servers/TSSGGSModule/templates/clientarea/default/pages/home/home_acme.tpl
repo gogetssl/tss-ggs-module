@@ -23,32 +23,32 @@
                 <h3>{$productName|escape}</h3>
                 <p class="tssggs-hero__domain">
                     <svg class="tssggs-ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/><path d="M2 12h20"/></svg>
-                    {$MGLANG->T('acmeSingleDomainsLabel')}: {$singleSansCurrent|intval} / {$singleSansPurchased|intval}{if $wildcardSansPurchased} &middot; {$MGLANG->T('acmeWildcardDomainsLabel')}: {$wildcardSansCurrent|intval} / {$wildcardSansPurchased|intval}{/if}
+                    {$MODLANG->T('acmeSingleDomainsLabel')}: {$singleSansCurrent|intval} / {$singleSansPurchased|intval}{if $wildcardSansPurchased} &middot; {$MODLANG->T('acmeWildcardDomainsLabel')}: {$wildcardSansCurrent|intval} / {$wildcardSansPurchased|intval}{/if}
                 </p>
             </div>
         </div>
         <div class="tssggs-hero__foot">
             <div class="tssggs-actions">
                 {if !$subscription || !$subscription->api_order_id}
-                    <button class="tssggs-btn tssggs-btn--primary acme-action" data-action="createSubscription">{$MGLANG->T('acmeCreateSubscription')}</button>
+                    <button class="tssggs-btn tssggs-btn--primary acme-action" data-action="createSubscription">{$MODLANG->T('acmeCreateSubscription')}</button>
                 {else}
                     {if $canAddDomains}
-                        <button class="tssggs-btn tssggs-btn--primary acme-action" data-action="addDomain">{$MGLANG->T('acmeAddDomainButton')}</button>
+                        <button class="tssggs-btn tssggs-btn--primary acme-action" data-action="addDomain">{$MODLANG->T('acmeAddDomainButton')}</button>
                     {/if}
-                    <button class="tssggs-btn acme-action" data-action="openUpgradeDomains">{$MGLANG->T('acmeBuyMoreDomains')}</button>
+                    <button class="tssggs-btn acme-action" data-action="openUpgradeDomains">{$MODLANG->T('acmeBuyMoreDomains')}</button>
                     {if !$subscription->status || $subscription->status|lower != 'active'}
-                        <button class="tssggs-btn acme-action" data-action="checkCertificateDetails">{$MGLANG->T('acmeCheckCertificateDetails')}</button>
+                        <button class="tssggs-btn acme-action" data-action="checkCertificateDetails">{$MODLANG->T('acmeCheckCertificateDetails')}</button>
                     {/if}
                     {if $subscription->auto_renew}
-                        <button class="tssggs-btn acme-action" data-action="stopAutoRenewal">{$MGLANG->T('acmeStopAutoRenewal')}</button>
+                        <button class="tssggs-btn acme-action" data-action="stopAutoRenewal">{$MODLANG->T('acmeStopAutoRenewal')}</button>
                     {/if}
                     {if !$endsAtPeriodEnd}
-                        <button class="tssggs-btn tssggs-btn--danger acme-action" data-action="cancelSubscription">{$MGLANG->T('acmeCancelSubscription')}</button>
+                        <button class="tssggs-btn tssggs-btn--danger acme-action" data-action="cancelSubscription">{$MODLANG->T('acmeCancelSubscription')}</button>
                     {/if}
                 {/if}
             </div>
             {if $endsAtPeriodEnd}<p class="tssggs-note" id="acme-ends-note">{$endsAtPeriodEndNote}</p>{/if}
-            {if $renewalUnpaid}<p class="tssggs-note" id="acme-renewal-unpaid">{$MGLANG->T('subscriptionRenewalUnpaid')}</p>{/if}
+            {if $renewalUnpaid}<p class="tssggs-note" id="acme-renewal-unpaid">{$MODLANG->T('subscriptionRenewalUnpaid')}</p>{/if}
         </div>
     </section>
 
@@ -56,20 +56,20 @@
         <section class="tssggs-card">
             <h4 class="tssggs-card__title">
                 <svg class="tssggs-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8M16 13H8M16 17H8"/></svg>
-                {$MGLANG->T('acmeOrderStatus')}
+                {$MODLANG->T('acmeOrderStatus')}
             </h4>
             <dl class="tssggs-dl">
-                <dt>{$MGLANG->T('acmeProductName')}</dt><dd>{$productName|escape}</dd>
+                <dt>{$MODLANG->T('acmeProductName')}</dt><dd>{$productName|escape}</dd>
                 {if $subscription}
-                    <dt>{$MGLANG->T('acmeRenewalDate')}</dt><dd>{if $subscription->renewal_date}{$subscription->renewal_date|escape}{else}-{/if}</dd>
-                    <dt>{$MGLANG->T('acmeAutoRenew')}</dt>
-                    <dd>{if $subscription->auto_renew}<span class="tssggs-badge">{$MGLANG->T('acmeStatusActive')}</span>{else}<span class="tssggs-badge tssggs-badge--off">{$MGLANG->T('acmeStatusRemoved')}</span>{/if}</dd>
+                    <dt>{$MODLANG->T('acmeRenewalDate')}</dt><dd>{if $subscription->renewal_date}{$subscription->renewal_date|escape}{else}-{/if}</dd>
+                    <dt>{$MODLANG->T('acmeAutoRenew')}</dt>
+                    <dd>{if $subscription->auto_renew}<span class="tssggs-badge">{$MODLANG->T('acmeStatusActive')}</span>{else}<span class="tssggs-badge tssggs-badge--off">{$MODLANG->T('acmeStatusRemoved')}</span>{/if}</dd>
                 {/if}
-                <dt>{$MGLANG->T('acmeTotalSans')}</dt>
+                <dt>{$MODLANG->T('acmeTotalSans')}</dt>
                 <dd>
-                    {$MGLANG->T('acmeSingleDomainsLabel')}: {$singleSansCurrent|intval} / {$singleSansPurchased|intval}
-                    {if $wildcardSansPurchased}<br>{$MGLANG->T('acmeWildcardDomainsLabel')}: {$wildcardSansCurrent|intval} / {$wildcardSansPurchased|intval}
-                    <br>{$MGLANG->T('acmeBothTypesLabel')}: {$totalSansCurrent|intval} / {$totalSansPurchased|intval}{/if}
+                    {$MODLANG->T('acmeSingleDomainsLabel')}: {$singleSansCurrent|intval} / {$singleSansPurchased|intval}
+                    {if $wildcardSansPurchased}<br>{$MODLANG->T('acmeWildcardDomainsLabel')}: {$wildcardSansCurrent|intval} / {$wildcardSansPurchased|intval}
+                    <br>{$MODLANG->T('acmeBothTypesLabel')}: {$totalSansCurrent|intval} / {$totalSansPurchased|intval}{/if}
                 </dd>
             </dl>
         </section>
@@ -78,17 +78,17 @@
         <section class="tssggs-card">
             <h4 class="tssggs-card__title">
                 <svg class="tssggs-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 18v3h3l11-11-3-3L2 18z"/><path d="m15 5 4 4"/><circle cx="18" cy="6" r="3"/></svg>
-                {$MGLANG->T('acmeAccountSection')}
+                {$MODLANG->T('acmeAccountSection')}
             </h4>
             <dl class="tssggs-dl">
-                <dt>{$MGLANG->T('acmeAccountId')}</dt><dd class="tssggs-mono">{$subscription->acme_account_id|escape}</dd>
+                <dt>{$MODLANG->T('acmeAccountId')}</dt><dd class="tssggs-mono">{$subscription->acme_account_id|escape}</dd>
                 {if $acmeKeysUsable}
-                <dt>{$MGLANG->T('acmeEabKid')}</dt><dd class="tssggs-mono">{$subscription->eab_kid|escape}</dd>
-                <dt>{$MGLANG->T('acmeEabHmacKey')}</dt><dd class="tssggs-mono" style="word-break:break-all;">{$subscription->eab_hmac_key|escape}</dd>
+                <dt>{$MODLANG->T('acmeEabKid')}</dt><dd class="tssggs-mono">{$subscription->eab_kid|escape}</dd>
+                <dt>{$MODLANG->T('acmeEabHmacKey')}</dt><dd class="tssggs-mono" style="word-break:break-all;">{$subscription->eab_hmac_key|escape}</dd>
                 {else}
-                <dt>{$MGLANG->T('acmeEabKid')}</dt><dd>{$MGLANG->T('acmeKeysPending')}</dd>
+                <dt>{$MODLANG->T('acmeEabKid')}</dt><dd>{$MODLANG->T('acmeKeysPending')}</dd>
                 {/if}
-                <dt>{$MGLANG->T('acmeServerUrl')}</dt><dd class="tssggs-mono" style="word-break:break-all;">{$subscription->server_url|escape}</dd>
+                <dt>{$MODLANG->T('acmeServerUrl')}</dt><dd class="tssggs-mono" style="word-break:break-all;">{$subscription->server_url|escape}</dd>
             </dl>
         </section>
         {/if}
@@ -97,16 +97,16 @@
     <section class="tssggs-card">
         <h4 class="tssggs-card__title">
             <svg class="tssggs-ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/><path d="M2 12h20"/></svg>
-            {$MGLANG->T('acmeDomains')}
+            {$MODLANG->T('acmeDomains')}
         </h4>
                     <table class="table table-condensed">
                         <thead>
                         <tr>
-                            <th>{$MGLANG->T('domain')}</th>
-                            <th>{$MGLANG->T('acmeDomainType')}</th>
-                            <th>{$MGLANG->T('acmeDomainStatus')}</th>
-                            <th>{$MGLANG->T('acmeDateAdded')}</th>
-                            <th>{$MGLANG->T('Actions')}</th>
+                            <th>{$MODLANG->T('domain')}</th>
+                            <th>{$MODLANG->T('acmeDomainType')}</th>
+                            <th>{$MODLANG->T('acmeDomainStatus')}</th>
+                            <th>{$MODLANG->T('acmeDateAdded')}</th>
+                            <th>{$MODLANG->T('Actions')}</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -118,9 +118,9 @@
                                     <td>
                                         {assign var=acmeDomainStatus value=$domainRow->status|lower}
                                         {if $acmeDomainStatus == 'added'}
-                                            <span class="label label-success">{$MGLANG->T('acmeStatusActive')}</span>
+                                            <span class="label label-success">{$MODLANG->T('acmeStatusActive')}</span>
                                         {elseif $acmeDomainStatus == 'removed'}
-                                            <span class="label label-default">{$MGLANG->T('acmeStatusRemoved')}</span>
+                                            <span class="label label-default">{$MODLANG->T('acmeStatusRemoved')}</span>
                                         {else}
                                             <span class="label label-info">{$acmeDomainStatus|capitalize|escape}</span>
                                         {/if}
@@ -128,19 +128,19 @@
                                     <td>
                                         {if $domainRow->addedOn}{$domainRow->addedOn|escape}{else}{$domainRow->added_at|escape}{/if}
                                         {if $domainRow->refundableTill}
-                                            <br><small class="text-muted">{$MGLANG->T('acmeRefundableTill')|sprintf:$domainRow->refundableTill}</small>
+                                            <br><small class="text-muted">{$MODLANG->T('acmeRefundableTill')|sprintf:$domainRow->refundableTill}</small>
                                         {/if}
                                     </td>
                                     <td>
                                         {if $domainRow->status == 'added' && $subscription}
-                                            <button class="btn btn-xs btn-default acme-action" data-action="removeDomain" data-domain="{$domainRow->domain|escape:'htmlall'}">{$MGLANG->T('acmeRemoveDomain')}</button>
+                                            <button class="btn btn-xs btn-default acme-action" data-action="removeDomain" data-domain="{$domainRow->domain|escape:'htmlall'}">{$MODLANG->T('acmeRemoveDomain')}</button>
                                         {/if}
                                     </td>
                                 </tr>
                             {/foreach}
                         {else}
                             <tr>
-                                <td colspan="5">{$MGLANG->T('acmeNoDomains')}</td>
+                                <td colspan="5">{$MODLANG->T('acmeNoDomains')}</td>
                             </tr>
                         {/if}
                         </tbody>
@@ -148,33 +148,33 @@
                 </td>
             </tr>
             <tr>
-                <td class="text-left">{$MGLANG->T('acmeTotalSans')}</td>
+                <td class="text-left">{$MODLANG->T('acmeTotalSans')}</td>
                 <td class="text-left">
-                    <span class="label label-default">{$MGLANG->T('acmeSingleDomainsLabel')}: {$singleSansCurrent|intval} / {$singleSansPurchased|intval}</span>
+                    <span class="label label-default">{$MODLANG->T('acmeSingleDomainsLabel')}: {$singleSansCurrent|intval} / {$singleSansPurchased|intval}</span>
                     {if $wildcardSansPurchased}
-                    <span class="label label-info">{$MGLANG->T('acmeWildcardDomainsLabel')}: {$wildcardSansCurrent|intval} / {$wildcardSansPurchased|intval}</span>
-                    <span class="label label-success">{$MGLANG->T('acmeBothTypesLabel')}: {$totalSansCurrent|intval} / {$totalSansPurchased|intval}</span>
+                    <span class="label label-info">{$MODLANG->T('acmeWildcardDomainsLabel')}: {$wildcardSansCurrent|intval} / {$wildcardSansPurchased|intval}</span>
+                    <span class="label label-success">{$MODLANG->T('acmeBothTypesLabel')}: {$totalSansCurrent|intval} / {$totalSansPurchased|intval}</span>
                     {/if}
                 </td>
             </tr>
             <tr>
-                <td class="text-left">{$MGLANG->T('Actions')}</td>
+                <td class="text-left">{$MODLANG->T('Actions')}</td>
                 <td class="text-left">
                     {if !$subscription || !$subscription->api_order_id}
-                        <button style="margin-bottom: 10px;" class="btn btn-default acme-action" data-action="createSubscription">{$MGLANG->T('acmeCreateSubscription')}</button>
+                        <button style="margin-bottom: 10px;" class="btn btn-default acme-action" data-action="createSubscription">{$MODLANG->T('acmeCreateSubscription')}</button>
                     {else}
                         {if $canAddDomains}
-                            <button style="margin-bottom: 10px;" class="btn btn-primary acme-action" data-action="addDomain">{$MGLANG->T('acmeAddDomainButton')}</button>
+                            <button style="margin-bottom: 10px;" class="btn btn-primary acme-action" data-action="addDomain">{$MODLANG->T('acmeAddDomainButton')}</button>
                         {/if}
-                        <button style="margin-bottom: 10px;" class="btn btn-default acme-action" data-action="openUpgradeDomains">{$MGLANG->T('acmeBuyMoreDomains')}</button>
+                        <button style="margin-bottom: 10px;" class="btn btn-default acme-action" data-action="openUpgradeDomains">{$MODLANG->T('acmeBuyMoreDomains')}</button>
                         {if !$subscription->status || $subscription->status|lower != 'active'}
-                            <button style="margin-bottom: 10px;" class="btn btn-default acme-action" data-action="checkCertificateDetails">{$MGLANG->T('acmeCheckCertificateDetails')}</button>
+                            <button style="margin-bottom: 10px;" class="btn btn-default acme-action" data-action="checkCertificateDetails">{$MODLANG->T('acmeCheckCertificateDetails')}</button>
                         {/if}
                         {if $subscription->auto_renew}
-                            <button style="margin-bottom: 10px;" class="btn btn-default acme-action" data-action="stopAutoRenewal">{$MGLANG->T('acmeStopAutoRenewal')}</button>
+                            <button style="margin-bottom: 10px;" class="btn btn-default acme-action" data-action="stopAutoRenewal">{$MODLANG->T('acmeStopAutoRenewal')}</button>
                         {/if}
                         {if !$endsAtPeriodEnd}
-                            <button style="margin-bottom: 10px;" class="btn btn-danger acme-action" data-action="cancelSubscription">{$MGLANG->T('acmeCancelSubscription')}</button>
+                            <button style="margin-bottom: 10px;" class="btn btn-danger acme-action" data-action="cancelSubscription">{$MODLANG->T('acmeCancelSubscription')}</button>
                         {else}
                             <p>{$endsAtPeriodEndNote}</p>
                         {/if}
@@ -188,32 +188,32 @@
             <div class="modal-content" style="text-align: left;">
                 <div class="modal-header" style="display: block;">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title" id="acmeUpgradeDomainsModalLabel">{$MGLANG->T('acmeBuyMoreDomains')}</h4>
+                    <h4 class="modal-title" id="acmeUpgradeDomainsModalLabel">{$MODLANG->T('acmeBuyMoreDomains')}</h4>
                 </div>
                 <div class="modal-body">
                     <div id="acmeUpgradeDomainsError" class="alert alert-danger" style="display:none;"></div>
                     <div class="alert alert-info">
-                        {$MGLANG->T('acmeSingleDomainsLabel')}: {$MGLANG->T('acmeCurrentlyActive')}: <strong>{$singleSansCurrent|intval}</strong> / {$MGLANG->T('acmePurchased')}: <strong>{$singleSansPurchased|intval}</strong>
+                        {$MODLANG->T('acmeSingleDomainsLabel')}: {$MODLANG->T('acmeCurrentlyActive')}: <strong>{$singleSansCurrent|intval}</strong> / {$MODLANG->T('acmePurchased')}: <strong>{$singleSansPurchased|intval}</strong>
                         {if $allowWildcard}
-                            <br>{$MGLANG->T('acmeWildcardDomainsLabel')}: {$MGLANG->T('acmeCurrentlyActive')}: <strong>{$wildcardSansCurrent|intval}</strong> / {$MGLANG->T('acmePurchased')}: <strong>{$wildcardSansPurchased|intval}</strong>
+                            <br>{$MODLANG->T('acmeWildcardDomainsLabel')}: {$MODLANG->T('acmeCurrentlyActive')}: <strong>{$wildcardSansCurrent|intval}</strong> / {$MODLANG->T('acmePurchased')}: <strong>{$wildcardSansPurchased|intval}</strong>
                         {/if}
                     </div>
                     <div class="form-group">
-                        <label for="acmeUpgradeSingleInput">{$MGLANG->T('acmeSingleDomainsLabel')} ({$MGLANG->T('acmeNewLimit')})</label>
+                        <label for="acmeUpgradeSingleInput">{$MODLANG->T('acmeSingleDomainsLabel')} ({$MODLANG->T('acmeNewLimit')})</label>
                         <input type="number" id="acmeUpgradeSingleInput" class="form-control" min="{$singleSansCurrent|intval}" value="{$singleSansPurchased|intval}">
-                        <span class="help-block">{$MGLANG->T('acmeMinimumValue')}: {$singleSansCurrent|intval} ({$MGLANG->T('acmeCurrentlyActive')})</span>
+                        <span class="help-block">{$MODLANG->T('acmeMinimumValue')}: {$singleSansCurrent|intval} ({$MODLANG->T('acmeCurrentlyActive')})</span>
                     </div>
                     {if $allowWildcard}
                         <div class="form-group">
-                            <label for="acmeUpgradeWildcardInput">{$MGLANG->T('acmeWildcardDomainsLabel')} ({$MGLANG->T('acmeNewLimit')})</label>
+                            <label for="acmeUpgradeWildcardInput">{$MODLANG->T('acmeWildcardDomainsLabel')} ({$MODLANG->T('acmeNewLimit')})</label>
                             <input type="number" id="acmeUpgradeWildcardInput" class="form-control" min="{$wildcardSansCurrent|intval}" value="{$wildcardSansPurchased|intval}">
-                            <span class="help-block">{$MGLANG->T('acmeMinimumValue')}: {$wildcardSansCurrent|intval} ({$MGLANG->T('acmeCurrentlyActive')})</span>
+                            <span class="help-block">{$MODLANG->T('acmeMinimumValue')}: {$wildcardSansCurrent|intval} ({$MODLANG->T('acmeCurrentlyActive')})</span>
                         </div>
                     {/if}
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">{$MGLANG->T('Close')}</button>
-                    <button type="button" class="btn btn-primary" id="acmeConfirmUpgradeDomains">{$MGLANG->T('acmeConfirmUpgrade')}</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">{$MODLANG->T('Close')}</button>
+                    <button type="button" class="btn btn-primary" id="acmeConfirmUpgradeDomains">{$MODLANG->T('acmeConfirmUpgrade')}</button>
                 </div>
             </div>
         </div>
@@ -224,14 +224,14 @@
             <div class="modal-content">
                 <div class="modal-header" style="display: block;">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title" id="acmeRemoveDomainModalLabel">{$MGLANG->T('acmeRemoveDomain')}</h4>
+                    <h4 class="modal-title" id="acmeRemoveDomainModalLabel">{$MODLANG->T('acmeRemoveDomain')}</h4>
                 </div>
                 <div class="modal-body">
-                    {$MGLANG->T('acmeRemoveDomainConfirm')} <strong id="acmeRemoveDomainName"></strong>
+                    {$MODLANG->T('acmeRemoveDomainConfirm')} <strong id="acmeRemoveDomainName"></strong>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">{$MGLANG->T('Close')}</button>
-                    <button type="button" class="btn btn-danger" id="acmeConfirmRemoveDomain">{$MGLANG->T('acmeRemoveDomain')}</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">{$MODLANG->T('Close')}</button>
+                    <button type="button" class="btn btn-danger" id="acmeConfirmRemoveDomain">{$MODLANG->T('acmeRemoveDomain')}</button>
                 </div>
             </div>
         </div>
@@ -242,33 +242,33 @@
             <div class="modal-content" style="text-align: left;">
                 <div class="modal-header" style="display: block;">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title" id="acmeAddDomainModalLabel">{$MGLANG->T('acmeAddDomainButton')}</h4>
+                    <h4 class="modal-title" id="acmeAddDomainModalLabel">{$MODLANG->T('acmeAddDomainButton')}</h4>
                 </div>
                 <div class="modal-body">
                     <div id="acmeAddDomainError" class="alert alert-danger" style="display:none;"></div>
                     <div class="alert alert-info">
-                        {$MGLANG->T('acmeAvailableSlots')}
-                        {$MGLANG->T('acmeSingleDomainsLabel')}: {$availableSingleSlots|intval}
+                        {$MODLANG->T('acmeAvailableSlots')}
+                        {$MODLANG->T('acmeSingleDomainsLabel')}: {$availableSingleSlots|intval}
                         {if $allowWildcard}
-                            | {$MGLANG->T('acmeWildcardDomainsLabel')}: {$availableWildcardSlots|intval}
+                            | {$MODLANG->T('acmeWildcardDomainsLabel')}: {$availableWildcardSlots|intval}
                         {/if}
                     </div>
                     {if $availableSingleSlots > 0}
                         <div class="form-group">
-                            <label for="acmeAddSingleDomainsInput">{$MGLANG->T('acmeSingleDomainsLabel')} ({$availableSingleSlots|intval})</label>
+                            <label for="acmeAddSingleDomainsInput">{$MODLANG->T('acmeSingleDomainsLabel')} ({$availableSingleSlots|intval})</label>
                             <textarea id="acmeAddSingleDomainsInput" rows="4" class="form-control"></textarea>
                         </div>
                     {/if}
                     {if $allowWildcard && $availableWildcardSlots > 0}
                         <div class="form-group">
-                            <label for="acmeAddWildcardDomainsInput">{$MGLANG->T('acmeWildcardDomainsLabel')} ({$availableWildcardSlots|intval})</label>
+                            <label for="acmeAddWildcardDomainsInput">{$MODLANG->T('acmeWildcardDomainsLabel')} ({$availableWildcardSlots|intval})</label>
                             <textarea id="acmeAddWildcardDomainsInput" rows="4" class="form-control"></textarea>
                         </div>
                     {/if}
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">{$MGLANG->T('Close')}</button>
-                    <button type="button" class="btn btn-primary" id="acmeConfirmAddDomain">{$MGLANG->T('acmeAddDomainButton')}</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">{$MODLANG->T('Close')}</button>
+                    <button type="button" class="btn btn-primary" id="acmeConfirmAddDomain">{$MODLANG->T('acmeAddDomainButton')}</button>
                 </div>
             </div>
         </div>
@@ -276,7 +276,7 @@
 
     </div>
 
-<span id="acmeTexts" hidden data-error="{$MGLANG->T('anErrorOccurred')}" data-done="{$MGLANG->T('acmeDone')}" data-cancel-confirm="{$MGLANG->T('acmeCancelConfirm')}"></span>
+<span id="acmeTexts" hidden data-error="{$MODLANG->T('anErrorOccurred')}" data-done="{$MODLANG->T('acmeDone')}" data-cancel-confirm="{$MODLANG->T('acmeCancelConfirm')}"></span>
 <script type="text/javascript">
     $(document).ready(function () {
         var clone = $('.validate-ssl-unified').clone();
@@ -306,7 +306,7 @@
                         if (typeof options.onError === 'function') {
                             options.onError(errorMessage, payload);
                         } else {
-                            $('#MGAlerts').alerts('error', errorMessage);
+                            $('#ModAlerts').alerts('error', errorMessage);
                         }
                         return;
                     }
@@ -314,7 +314,7 @@
                     if (typeof options.onSuccess === 'function') {
                         options.onSuccess(payload);
                     }
-                    $('#MGAlerts').alerts('success', msg);
+                    $('#ModAlerts').alerts('success', msg);
                     window.setTimeout(function () { window.location.reload(); }, 1200);
                 });
             }

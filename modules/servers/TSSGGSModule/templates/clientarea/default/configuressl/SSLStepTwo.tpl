@@ -67,13 +67,13 @@
         }
 
         $('.step2-validation-certificate').append('<div class="alert alert-info" role="alert">' +
-            '<p>{/literal}{$MGLANG->T('validaion_page', 'description')}{literal}' +
+            '<p>{/literal}{$MODLANG->T('validaion_page', 'description')}{literal}' +
             '<p></p>' +
-            '<p><b>{/literal}{$MGLANG->T('validaion_page', 'email')}{literal} </b>{/literal}{$MGLANG->T('validaion_page', 'email_desc')}{literal}</p>' +
+            '<p><b>{/literal}{$MODLANG->T('validaion_page', 'email')}{literal} </b>{/literal}{$MODLANG->T('validaion_page', 'email_desc')}{literal}</p>' +
             '<p></p>' +
-            '<p><b>{/literal}{$MGLANG->T('validaion_page', 'dns')}{literal} </b>{/literal}{$MGLANG->T('validaion_page', 'dns_desc')}{literal}</p>' +
+            '<p><b>{/literal}{$MODLANG->T('validaion_page', 'dns')}{literal} </b>{/literal}{$MODLANG->T('validaion_page', 'dns_desc')}{literal}</p>' +
             '<p></p>' +
-            '<p><b>{/literal}{$MGLANG->T('validaion_page', 'http')}{literal} </b>{/literal}{$MGLANG->T('validaion_page', 'http_desc')}{literal}</p>' +
+            '<p><b>{/literal}{$MODLANG->T('validaion_page', 'http')}{literal} </b>{/literal}{$MODLANG->T('validaion_page', 'http_desc')}{literal}</p>' +
             '</div>');
 
         $('<style>.label-text{position: absolute;width: 200px;left: 70px;top: 5px;cursor: pointer;}.switch{position:relative;display:block;width:60px;height:34px}.switch input{opacity:0;width:0;height:0}.slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background-color:#ccc;-webkit-transition:.4s;transition:.4s}.slider:before{position:absolute;content:"";height:26px;width:26px;left:4px;bottom:4px;background-color:#fff;-webkit-transition:.4s;transition:.4s}input:checked+.slider{background-color:#369}input:focus+.slider{box-shadow:0 0 1px #2196f3}input:checked+.slider:before{-webkit-transform:translateX(26px);-ms-transform:translateX(26px);transform:translateX(26px)}.slider.round{border-radius:34px}.slider.round:before{border-radius:50%}</style>').appendTo("head");
@@ -82,22 +82,22 @@
 
         if(availableMethod.indexOf('email') >= 0)
         {
-            $('.step2-validation-certificate .switch-row').append('<div class="col-md-3 col-sm-6 col-sx-12"><label class="switch"><input class="change-dcv-method" value="email" type="checkbox"><span class="slider round"></span><span class="label-text">{/literal}{$MGLANG->T('validaion_page', 'switch_email')}{literal}</span></label></div>');
+            $('.step2-validation-certificate .switch-row').append('<div class="col-md-3 col-sm-6 col-sx-12"><label class="switch"><input class="change-dcv-method" value="email" type="checkbox"><span class="slider round"></span><span class="label-text">{/literal}{$MODLANG->T('validaion_page', 'switch_email')}{literal}</span></label></div>');
         }
         if(availableMethod.indexOf('http') >= 0)
         {
-            $('.step2-validation-certificate .switch-row').append('<div class="col-md-3 col-sm-6 col-sx-12"><label class="switch"><input class="change-dcv-method" value="http" type="checkbox"><span class="slider round"></span><span class="label-text">{/literal}{$MGLANG->T('validaion_page', 'switch_http')}{literal}</span></label></div>');
+            $('.step2-validation-certificate .switch-row').append('<div class="col-md-3 col-sm-6 col-sx-12"><label class="switch"><input class="change-dcv-method" value="http" type="checkbox"><span class="slider round"></span><span class="label-text">{/literal}{$MODLANG->T('validaion_page', 'switch_http')}{literal}</span></label></div>');
         }
         if(availableMethod.indexOf('https') >= 0)
         {
-            $('.step2-validation-certificate .switch-row').append('<div class="col-md-3 col-sm-6 col-sx-12"><label class="switch"><input class="change-dcv-method" value="https" type="checkbox"><span class="slider round"></span><span class="label-text">{/literal}{$MGLANG->T('validaion_page', 'switch_https')}{literal}</span></label></div>');
+            $('.step2-validation-certificate .switch-row').append('<div class="col-md-3 col-sm-6 col-sx-12"><label class="switch"><input class="change-dcv-method" value="https" type="checkbox"><span class="slider round"></span><span class="label-text">{/literal}{$MODLANG->T('validaion_page', 'switch_https')}{literal}</span></label></div>');
         }
         if(availableMethod.indexOf('dns') >= 0)
         {
-            $('.step2-validation-certificate .switch-row').append('<div class="col-md-3 col-sm-6 col-sx-12"><label class="switch"><input class="change-dcv-method" value="dns" type="checkbox"><span class="slider round"></span><span class="label-text">{/literal}{$MGLANG->T('validaion_page', 'switch_dns')}{literal}</span></label></div>');
+            $('.step2-validation-certificate .switch-row').append('<div class="col-md-3 col-sm-6 col-sx-12"><label class="switch"><input class="change-dcv-method" value="dns" type="checkbox"><span class="slider round"></span><span class="label-text">{/literal}{$MODLANG->T('validaion_page', 'switch_dns')}{literal}</span></label></div>');
         }
 
-        $('.step2-validation-certificate').append('<table class="table"><thead><tr><th>{/literal}{$MGLANG->T('validaion_page', 'domain')}{literal}</th><th>{/literal}{$MGLANG->T('validaion_page', 'dcv_method')}{literal}</th><th>{/literal}{$MGLANG->T('validaion_page', 'email')}{literal}</th></tr></thead><tbody></tbody></table>');
+        $('.step2-validation-certificate').append('<table class="table"><thead><tr><th>{/literal}{$MODLANG->T('validaion_page', 'domain')}{literal}</th><th>{/literal}{$MODLANG->T('validaion_page', 'dcv_method')}{literal}</th><th>{/literal}{$MODLANG->T('validaion_page', 'email')}{literal}</th></tr></thead><tbody></tbody></table>');
 
         {/literal}{foreach $approvers as $domain => $emails}{literal}
 

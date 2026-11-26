@@ -5,7 +5,7 @@
                 <svg class="tssggs-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>
             </span>
             <div class="tssggs-hero__title">
-                <h3>{$MGLANG->T('change_approval', 'Change a Validation Method')}</h3>
+                <h3>{$MODLANG->T('change_approval', 'Change a Validation Method')}</h3>
             </div>
         </div>
     </section>
@@ -15,20 +15,20 @@
         <div class="tab-content pt-3">
             <div class="step2-validation-certificate">
                 <div class="alert alert-info" role="alert">
-                    <p>{$MGLANG->T('change_approval', 'desc1')}</p>
+                    <p>{$MODLANG->T('change_approval', 'desc1')}</p>
                     <p></p>
-                    <p><b>{$MGLANG->T('change_approval', 'Email Address')}: </b>{$MGLANG->T('change_approval', 'desc2')}</p>
+                    <p><b>{$MODLANG->T('change_approval', 'Email Address')}: </b>{$MODLANG->T('change_approval', 'desc2')}</p>
                     <p></p>
-                    <p><b>{$MGLANG->T('change_approval', 'DNS')}: </b>{$MGLANG->T('change_approval', 'desc3')}</p>
+                    <p><b>{$MODLANG->T('change_approval', 'DNS')}: </b>{$MODLANG->T('change_approval', 'desc3')}</p>
                     <p></p>
-                    <p><b>{$MGLANG->T('change_approval', 'HTTP FILE')}: </b>{$MGLANG->T('change_approval', 'desc4')}</p>
+                    <p><b>{$MODLANG->T('change_approval', 'HTTP FILE')}: </b>{$MODLANG->T('change_approval', 'desc4')}</p>
                 </div>
                 <div class="row switch-row" style="margin:20px 0;">
                     {if 'email'|in_array:$available_method_validation}
                     <div class="col-md-3 col-sm-6 col-sx-12">
                         <label class="switch"><input class="change-dcv-method" value="email" type="checkbox">
                             <span class="slider round"></span>
-                            <span class="label-text">{$MGLANG->T('change_approval', 'EMAIL for all')}</span>
+                            <span class="label-text">{$MODLANG->T('change_approval', 'EMAIL for all')}</span>
                         </label>
                     </div>
                     {/if}
@@ -36,7 +36,7 @@
                     <div class="col-md-3 col-sm-6 col-sx-12">
                         <label class="switch"><input class="change-dcv-method" value="http" type="checkbox">
                             <span class="slider round"></span>
-                            <span class="label-text">{$MGLANG->T('change_approval', 'HTTP for all')}</span>
+                            <span class="label-text">{$MODLANG->T('change_approval', 'HTTP for all')}</span>
                         </label>
                     </div>
                     {/if}
@@ -44,7 +44,7 @@
                     <div class="col-md-3 col-sm-6 col-sx-12">
                         <label class="switch"><input class="change-dcv-method" value="https" type="checkbox">
                             <span class="slider round"></span>
-                            <span class="label-text">{$MGLANG->T('change_approval', 'HTTPs for all')}</span>
+                            <span class="label-text">{$MODLANG->T('change_approval', 'HTTPs for all')}</span>
                         </label>
                     </div>
                     {/if}
@@ -52,7 +52,7 @@
                     <div class="col-md-3 col-sm-6 col-sx-12">
                         <label class="switch"><input class="change-dcv-method" value="dns" type="checkbox">
                             <span class="slider round"></span>
-                            <span class="label-text">{$MGLANG->T('change_approval', 'DNS for all')}</span>
+                            <span class="label-text">{$MODLANG->T('change_approval', 'DNS for all')}</span>
                         </label>
                     </div>
                     {/if}
@@ -61,9 +61,9 @@
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>{$MGLANG->T('change_approval', 'Domain')}</th>
-                            <th>{$MGLANG->T('change_approval', 'DCV Method')}</th>
-                            <th>{$MGLANG->T('change_approval', 'Email Address')}</th>
+                            <th>{$MODLANG->T('change_approval', 'Domain')}</th>
+                            <th>{$MODLANG->T('change_approval', 'DCV Method')}</th>
+                            <th>{$MODLANG->T('change_approval', 'Email Address')}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -92,7 +92,7 @@
                 </table>
             </div>
         </div>
-        <button type="submit" class="btn btn-primary">{$MGLANG->T('change_approval', 'Change')}</button>
+        <button type="submit" class="btn btn-primary">{$MODLANG->T('change_approval', 'Change')}</button>
     </form>
 </div>
 

@@ -1,4 +1,4 @@
-<div class="mod-wrapper body" data-target=".body" data-spy="scroll" data-twttr-rendered="true" id="MGNextIsWHMCSConfig">
+<div class="mod-wrapper body" data-target=".body" data-spy="scroll" data-twttr-rendered="true" id="ModNextIsWHMCSConfig">
     <!--
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,300,600&subset=all" rel="stylesheet" type="text/css"/>
      
@@ -43,7 +43,7 @@
                                             {if $category.label}
                                                 {$subpage.label}
                                             {else}
-                                                {$MGLANG->T('pagesLabels',$catName,'label')}
+                                                {$MODLANG->T('pagesLabels',$catName,'label')}
                                             {/if}
                                             <i class="fa fa-angle-down dropdown-angle"></i>
                                         </a>
@@ -55,7 +55,7 @@
                                                         {if $subCategory.label}
                                                             {$subCategory.label}
                                                         {else}
-                                                            {$MGLANG->T('pagesLabels',$catName,$subCatName)}
+                                                            {$MODLANG->T('pagesLabels',$catName,$subCatName)}
                                                         {/if}
                                                     </a>
                                                 </li>
@@ -69,7 +69,7 @@
                                             {if $category.label}
                                                 {$subpage.label}
                                             {else}
-                                                {$MGLANG->T('pagesLabels',$catName,'label')}
+                                                {$MODLANG->T('pagesLabels',$catName,'label')}
                                             {/if}
                                         </a>
                                     </li>
@@ -80,7 +80,7 @@
                     {if $searchAction}
                       <form class="navbar-form navbar-left" role="search" method="post" action="{$searchAction}">
                         <div class="form-group">
-                          <input name="searchMigration" type="text" class="form-control" placeholder="{$MGLANG->T('searchMigration')}" value="{$smarty.post.searchMigration}">
+                          <input name="searchMigration" type="text" class="form-control" placeholder="{$MODLANG->T('searchMigration')}" value="{$smarty.post.searchMigration}">
                         </div>
                         <button type="submit" class="btn btn-default"><i style="font-size:20px" class="glyphicon glyphicon-search"></i></button>
                       </form>
@@ -89,7 +89,7 @@
               </div><!-- /.container-fluid -->
             </nav>
         </div>      
-        <div class="row" id="MGAlerts">
+        <div class="row" id="ModAlerts">
                 {if $error}
                     <div class="alert alert-danger">
                         <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only"></span></button>
@@ -119,7 +119,7 @@
         <div class="row">
             {$content}
         </div>
-        <div id="MGLoader" style="display:none;" >
+        <div id="ModLoader" style="display:none;" >
             <div>
                 <img src="{$assetsURL}/img/ajax-loader.gif" alt="Loading ..." />
             </div>

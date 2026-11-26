@@ -9,7 +9,7 @@
             <div class="alert alert-danger" role="alert">{$flashError|escape}</div>
         {/if}
         {if $refreshError}
-            <div class="alert alert-warning" role="alert">{$MGLANG->T('smimeRefreshFailed')} {$refreshError|escape}</div>
+            <div class="alert alert-warning" role="alert">{$MODLANG->T('smimeRefreshFailed')} {$refreshError|escape}</div>
         {/if}
     </div>
 
@@ -31,31 +31,31 @@
         </div>
         <div class="tssggs-hero__foot">
             <p>
-                {if $dsEnrollmentLink}{$MGLANG->T('dsInfoEnroll')}
-                {elseif $dsStatus == 'invited'}{$MGLANG->T('dsInfoEnrollEmail')}
-                {elseif $dsTokenSetupLink}{$MGLANG->T('dsInfoTokenSetup')}
+                {if $dsEnrollmentLink}{$MODLANG->T('dsInfoEnroll')}
+                {elseif $dsStatus == 'invited'}{$MODLANG->T('dsInfoEnrollEmail')}
+                {elseif $dsTokenSetupLink}{$MODLANG->T('dsInfoTokenSetup')}
                 {elseif $dsStatus == 'active'}
-                    {if $dsMethod == 'ship-token'}{$MGLANG->T('dsInfoActiveShipToken')}{else}{$MGLANG->T('dsInfoActiveExistingToken')}{/if}
-                {elseif $dsTone == 'wait'}{$MGLANG->T('dsInfoPending')}
-                {elseif $dsTone == 'off'}{$MGLANG->T('smimeInfoClosed')}
-                {else}{$MGLANG->T('smimeInfoContactSupport')}{/if}
+                    {if $dsMethod == 'ship-token'}{$MODLANG->T('dsInfoActiveShipToken')}{else}{$MODLANG->T('dsInfoActiveExistingToken')}{/if}
+                {elseif $dsTone == 'wait'}{$MODLANG->T('dsInfoPending')}
+                {elseif $dsTone == 'off'}{$MODLANG->T('smimeInfoClosed')}
+                {else}{$MODLANG->T('smimeInfoContactSupport')}{/if}
             </p>
             <div class="tssggs-actions">
                 {if $dsEnrollmentLink || $dsTokenSetupLink}
                     <a class="tssggs-btn tssggs-btn--primary" href="{if $dsEnrollmentLink}{$dsEnrollmentLink|escape}{else}{$dsTokenSetupLink|escape}{/if}" target="_blank" rel="noopener">
                         <svg class="tssggs-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
-                        {if $dsEnrollmentLink}{$MGLANG->T('smimeEnrollButton')}{else}{$MGLANG->T('dsTokenSetupButton')}{/if}
+                        {if $dsEnrollmentLink}{$MODLANG->T('smimeEnrollButton')}{else}{$MODLANG->T('dsTokenSetupButton')}{/if}
                     </a>
                 {/if}
                 {if $renewOpen}
                     <button type="button" class="tssggs-btn tssggs-btn--primary" data-toggle="modal" data-target="#tssggsRenewModal">
                         <svg class="tssggs-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>
-                        {$MGLANG->T('renewButton')}
+                        {$MODLANG->T('renewButton')}
                     </button>
                 {/if}
                 <button id="tssggs-ds-refresh" type="button" class="tssggs-btn{if $dsTone == 'wait' && !$dsEnrollmentLink} tssggs-btn--primary{/if}">
                     <svg class="tssggs-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>
-                    <span>{$MGLANG->T('smimeRefreshDetails')}</span>
+                    <span>{$MODLANG->T('smimeRefreshDetails')}</span>
                 </button>
             </div>
         </div>
@@ -65,29 +65,29 @@
         <section class="tssggs-card">
             <h4 class="tssggs-card__title">
                 <svg class="tssggs-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8M16 13H8M16 17H8"/></svg>
-                {$MGLANG->T('validation_page', 'cardCertificate')}
+                {$MODLANG->T('validation_page', 'cardCertificate')}
             </h4>
             <dl class="tssggs-dl">
-                <dt>{$MGLANG->T('dsOrganization')}</dt><dd>{if $dsOrganization}{$dsOrganization|escape}{else}{$MGLANG->T('validation_page', 'NA')}{/if}</dd>
-                <dt>{$MGLANG->T('dsDelivery')}</dt><dd>{if $dsDelivery}{$dsDelivery|escape}{else}{$MGLANG->T('validation_page', 'NA')}{/if}</dd>
-                <dt>{$MGLANG->T('validation_page', 'ValidFrom')}</dt><dd>{if $dsValidFrom}{$dsValidFrom}{else}{$MGLANG->T('validation_page', 'NA')}{/if}</dd>
-                <dt>{$MGLANG->T('validation_page', 'ValidTill')}</dt><dd>{if $dsValidTill}{$dsValidTill}{else}{$MGLANG->T('validation_page', 'NA')}{/if}</dd>
-                <dt>{$MGLANG->T('smimeOrderedAt')}</dt><dd>{if $dsOrderedAt}{$dsOrderedAt}{else}{$MGLANG->T('validation_page', 'NA')}{/if}</dd>
-                <dt>{$MGLANG->T('validation_page', 'StoreAPIOrder')}</dt><dd class="tssggs-mono">{$dsItemId|escape}</dd>
-                <dt>{$MGLANG->T('validation_page', 'VendorOrderID')}</dt><dd class="tssggs-mono">{if $dsVendorOrderId}{$dsVendorOrderId|escape}{else}{$MGLANG->T('validation_page', 'NA')}{/if}</dd>
+                <dt>{$MODLANG->T('dsOrganization')}</dt><dd>{if $dsOrganization}{$dsOrganization|escape}{else}{$MODLANG->T('validation_page', 'NA')}{/if}</dd>
+                <dt>{$MODLANG->T('dsDelivery')}</dt><dd>{if $dsDelivery}{$dsDelivery|escape}{else}{$MODLANG->T('validation_page', 'NA')}{/if}</dd>
+                <dt>{$MODLANG->T('validation_page', 'ValidFrom')}</dt><dd>{if $dsValidFrom}{$dsValidFrom}{else}{$MODLANG->T('validation_page', 'NA')}{/if}</dd>
+                <dt>{$MODLANG->T('validation_page', 'ValidTill')}</dt><dd>{if $dsValidTill}{$dsValidTill}{else}{$MODLANG->T('validation_page', 'NA')}{/if}</dd>
+                <dt>{$MODLANG->T('smimeOrderedAt')}</dt><dd>{if $dsOrderedAt}{$dsOrderedAt}{else}{$MODLANG->T('validation_page', 'NA')}{/if}</dd>
+                <dt>{$MODLANG->T('validation_page', 'StoreAPIOrder')}</dt><dd class="tssggs-mono">{$dsItemId|escape}</dd>
+                <dt>{$MODLANG->T('validation_page', 'VendorOrderID')}</dt><dd class="tssggs-mono">{if $dsVendorOrderId}{$dsVendorOrderId|escape}{else}{$MODLANG->T('validation_page', 'NA')}{/if}</dd>
             </dl>
         </section>
 
         <section class="tssggs-card">
             <h4 class="tssggs-card__title">
                 <svg class="tssggs-ic" viewBox="0 0 24 24" aria-hidden="true"><rect width="20" height="14" x="2" y="5" rx="2"/><path d="M2 10h20"/></svg>
-                {$MGLANG->T('validation_page', 'cardBilling')}
+                {$MODLANG->T('validation_page', 'cardBilling')}
             </h4>
             <dl class="tssggs-dl">
-                <dt>{$MGLANG->T('validation_page', 'RegistrationDate')}</dt><dd>{if $billing.registration}{$billing.registration}{else}{$MGLANG->T('validation_page', 'NA')}{/if}</dd>
-                <dt>{$MGLANG->T('smimeNextDue')}</dt><dd>{if $billing.nextDue}{$billing.nextDue}{else}{$MGLANG->T('validation_page', 'NA')}{/if}</dd>
-                <dt>{$MGLANG->T('validation_page', 'ReccuringAmount')}</dt><dd>{$billing.amount}</dd>
-                <dt>{$MGLANG->T('validation_page', 'BillingCycle')}</dt><dd>{$billing.cycle|escape}</dd>
+                <dt>{$MODLANG->T('validation_page', 'RegistrationDate')}</dt><dd>{if $billing.registration}{$billing.registration}{else}{$MODLANG->T('validation_page', 'NA')}{/if}</dd>
+                <dt>{$MODLANG->T('smimeNextDue')}</dt><dd>{if $billing.nextDue}{$billing.nextDue}{else}{$MODLANG->T('validation_page', 'NA')}{/if}</dd>
+                <dt>{$MODLANG->T('validation_page', 'ReccuringAmount')}</dt><dd>{$billing.amount}</dd>
+                <dt>{$MODLANG->T('validation_page', 'BillingCycle')}</dt><dd>{$billing.cycle|escape}</dd>
             </dl>
         </section>
     </div>
@@ -100,18 +100,18 @@
                     <input type="hidden" name="token" value="{$csrfToken}">
                     <div class="modal-header" style="display:block;">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title" id="tssggsRenewLabel" style="text-align:left;">{$MGLANG->T('renewTitle')}</h4>
+                        <h4 class="modal-title" id="tssggsRenewLabel" style="text-align:left;">{$MODLANG->T('renewTitle')}</h4>
                     </div>
                     <div class="modal-body tssggs-cert" style="text-align:left;">
-                        <p>{$MGLANG->T('renewIntro')}</p>
+                        <p>{$MODLANG->T('renewIntro')}</p>
                         {if $renewSame}
                             <label class="tssggs-check">
                                 <input type="radio" name="renew_same" value="1" checked data-tssggs-renew>
-                                <span><strong>{$MGLANG->T('renewSame')}</strong><br><small>{if $renewIsDs}{$MGLANG->T('renewSameHintCs')}{else}{$MGLANG->T('renewSameHintSmime')}{/if}</small></span>
+                                <span><strong>{$MODLANG->T('renewSame')}</strong><br><small>{if $renewIsDs}{$MODLANG->T('renewSameHintCs')}{else}{$MODLANG->T('renewSameHintSmime')}{/if}</small></span>
                             </label>
                             {if $renewNeedsModel}
                                 <div class="tssggs-field" data-tssggs-renew-same style="margin:8px 0 0 24px;">
-                                    <label for="tssggs-renew-model">{$MGLANG->T('renewModelLabel')} <span class="tssggs-req">*</span></label>
+                                    <label for="tssggs-renew-model">{$MODLANG->T('renewModelLabel')} <span class="tssggs-req">*</span></label>
                                     <select id="tssggs-renew-model" name="renew_model" class="form-control" required>
                                         <option value="">-</option>
                                         {foreach from=$renewModels key=code item=name}<option value="{$code|escape:'htmlall'}">{$name|escape}</option>{/foreach}
@@ -121,21 +121,21 @@
                             {if $renewAgreement}
                                 <label class="tssggs-check" data-tssggs-renew-same style="margin:8px 0 0 24px;">
                                     <input type="checkbox" name="agreement" value="1" required>
-                                    <span>{$MGLANG->T('sslConfigAgreement')} {if $renewAgreement.url}<a href="{$renewAgreement.url|escape}" target="_blank" rel="noopener">{$renewAgreement.name|escape}</a>{else}{$renewAgreement.name|escape}{/if}</span>
+                                    <span>{$MODLANG->T('sslConfigAgreement')} {if $renewAgreement.url}<a href="{$renewAgreement.url|escape}" target="_blank" rel="noopener">{$renewAgreement.name|escape}</a>{else}{$renewAgreement.name|escape}{/if}</span>
                                 </label>
                             {/if}
                             <label class="tssggs-check" style="margin-top:12px;">
                                 <input type="radio" name="renew_same" value="0" data-tssggs-renew>
-                                <span><strong>{$MGLANG->T('renewNew')}</strong><br><small>{$MGLANG->T('renewNewHint')}</small></span>
+                                <span><strong>{$MODLANG->T('renewNew')}</strong><br><small>{$MODLANG->T('renewNewHint')}</small></span>
                             </label>
                         {else}
                             <input type="hidden" name="renew_same" value="0">
-                            <p class="tssggs-note tssggs-note--plain">{if $renewIsDs}{$MGLANG->T('renewNoSameCs')}{else}{$MGLANG->T('renewNewHint')}{/if}</p>
+                            <p class="tssggs-note tssggs-note--plain">{if $renewIsDs}{$MODLANG->T('renewNoSameCs')}{else}{$MODLANG->T('renewNewHint')}{/if}</p>
                         {/if}
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">{$MGLANG->T('validation_page', 'Close')}</button>
-                        <button type="submit" class="btn btn-success">{$MGLANG->T('renewCreateInvoice')}</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">{$MODLANG->T('validation_page', 'Close')}</button>
+                        <button type="submit" class="btn btn-success">{$MODLANG->T('renewCreateInvoice')}</button>
                     </div>
                 </form>
             </div>
@@ -171,13 +171,13 @@
                 payload = {ldelim}result: 'error'{rdelim};
             }
             if (payload.result === 'error') {
-                alerts.html($('<div class="alert alert-danger" role="alert"></div>').html(payload.error || '{$MGLANG->T('smimeErrorOccurred')|escape:'javascript'}'));
+                alerts.html($('<div class="alert alert-danger" role="alert"></div>').html(payload.error || '{$MODLANG->T('smimeErrorOccurred')|escape:'javascript'}'));
                 btn.prop('disabled', false);
                 return;
             }
             window.location.reload();
         }).fail(function () {
-            alerts.html($('<div class="alert alert-danger" role="alert"></div>').text('{$MGLANG->T('smimeErrorOccurred')|escape:'javascript'}'));
+            alerts.html($('<div class="alert alert-danger" role="alert"></div>').text('{$MODLANG->T('smimeErrorOccurred')|escape:'javascript'}'));
             btn.prop('disabled', false);
         });
     });

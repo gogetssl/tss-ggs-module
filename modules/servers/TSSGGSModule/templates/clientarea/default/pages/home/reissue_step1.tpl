@@ -5,7 +5,7 @@
                 <svg class="tssggs-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>
             </span>
             <div class="tssggs-hero__title">
-                <h3>{$MGLANG->T('reissue_page', 'Reissue Certificate')}</h3>
+                <h3>{$MODLANG->T('reissue_page', 'Reissue Certificate')}</h3>
             </div>
         </div>
     </section>
@@ -23,11 +23,11 @@
         <form method="post" action="clientarea.php?action=productdetails&id={$serviceid}&mod-action=reissueSSL&step=two">
 
     
-            <div class="alert alert-info">{$MGLANG->T('reissue_page', 'desc_page')}</div>
+            <div class="alert alert-info">{$MODLANG->T('reissue_page', 'desc_page')}</div>
             {if $ipProduct}<div class="alert alert-warning">{$ip_csr_hint|escape}</div>{/if}
 
             <div class="form-group">
-                <label for="inputCsr" class="text-md-right">{$MGLANG->T('reissue_page', 'Certificate Signing Request')}</label>
+                <label for="inputCsr" class="text-md-right">{$MODLANG->T('reissue_page', 'Certificate Signing Request')}</label>
 
                 {if $post_csr}
                     <textarea name="csr" id="inputCsr" rows="7" class="form-control">{$post_csr|escape}</textarea>
@@ -38,8 +38,8 @@
                 {/if}
 
                 {if $enable_csr}
-                    <button type="button" data-toggle="modal" data-target="#csrGeneration" class="btn btn-primary" style="margin-top:10px;">{$MGLANG->T('reissue_page', 'Generate CSR')}</button>
-                    <button type="button" id="downloadPkey" class="btn btn-default" style="margin-left:10px;margin-top:10px;display:none;">{$MGLANG->T('reissue_page', 'Download Private Key')}</button>
+                    <button type="button" data-toggle="modal" data-target="#csrGeneration" class="btn btn-primary" style="margin-top:10px;">{$MODLANG->T('reissue_page', 'Generate CSR')}</button>
+                    <button type="button" id="downloadPkey" class="btn btn-default" style="margin-left:10px;margin-top:10px;display:none;">{$MODLANG->T('reissue_page', 'Download Private Key')}</button>
                     <input type="hidden" id="pkeyField" value="">
 
                     <div class="modal fade" id="csrGeneration" tabindex="-1" role="dialog">
@@ -47,11 +47,11 @@
                             <div class="modal-content">
                                 <div class="modal-header" style="display:block;">
                                     <button style="float:right;" type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-                                    <h4 style="float:left;" class="modal-title">{$MGLANG->T('reissue_page', 'Generate CSR')}</h4>
+                                    <h4 style="float:left;" class="modal-title">{$MODLANG->T('reissue_page', 'Generate CSR')}</h4>
                                 </div>
                                 <div class="modal-body">
                                     <div class="form-group">
-                                        <label class="control-label" for="C">{$MGLANG->T('reissue_page', 'Country')}</label>
+                                        <label class="control-label" for="C">{$MODLANG->T('reissue_page', 'Country')}</label>
                                         <select class="form-control generateCsrInput" id="countryName" name="C">
                                             {foreach $countries as $code => $data}
                                                 <option value="{$code}">{$data.name}</option>
@@ -59,33 +59,33 @@
                                         </select>
                                     </div>
                                     <div class="form-group">
-                                        <label class="control-label" for="ST">{$MGLANG->T('reissue_page', 'State or Province')}</label>
-                                        <input {if $use_profile_data}value="{$client.state}"{/if} class="form-control generateCsrInput" id="stateOrProvinceName" placeholder="{$MGLANG->T('reissue_page', 'State or Province')}" name="ST" type="text">
+                                        <label class="control-label" for="ST">{$MODLANG->T('reissue_page', 'State or Province')}</label>
+                                        <input {if $use_profile_data}value="{$client.state}"{/if} class="form-control generateCsrInput" id="stateOrProvinceName" placeholder="{$MODLANG->T('reissue_page', 'State or Province')}" name="ST" type="text">
                                     </div>
                                     <div class="form-group">
-                                        <label class="control-label" for="L">{$MGLANG->T('reissue_page', 'Locality')}</label>
-                                        <input {if $use_profile_data}value="{$client.city}"{/if} class="form-control generateCsrInput" id="localityName" placeholder="{$MGLANG->T('reissue_page', 'Locality')}" name="L" type="text">
+                                        <label class="control-label" for="L">{$MODLANG->T('reissue_page', 'Locality')}</label>
+                                        <input {if $use_profile_data}value="{$client.city}"{/if} class="form-control generateCsrInput" id="localityName" placeholder="{$MODLANG->T('reissue_page', 'Locality')}" name="L" type="text">
                                     </div>
                                     <div class="form-group">
-                                        <label class="control-label" for="O">{$MGLANG->T('reissue_page', 'Organization')}</label>
-                                        <input {if $use_profile_data}value="{$client.companyname}"{/if} class="form-control generateCsrInput" id="organizationName" placeholder="{$MGLANG->T('reissue_page', 'Organization')}" name="O" type="text">
+                                        <label class="control-label" for="O">{$MODLANG->T('reissue_page', 'Organization')}</label>
+                                        <input {if $use_profile_data}value="{$client.companyname}"{/if} class="form-control generateCsrInput" id="organizationName" placeholder="{$MODLANG->T('reissue_page', 'Organization')}" name="O" type="text">
                                     </div>
                                     <div class="form-group">
-                                        <label class="control-label" for="OU">{$MGLANG->T('reissue_page', 'Organization Unit')}</label>
-                                        <input {if $use_profile_data}value="IT"{/if} class="form-control generateCsrInput" id="organizationalUnitName" placeholder="{$MGLANG->T('reissue_page', 'Organization Unit')}" type="text">
+                                        <label class="control-label" for="OU">{$MODLANG->T('reissue_page', 'Organization Unit')}</label>
+                                        <input {if $use_profile_data}value="IT"{/if} class="form-control generateCsrInput" id="organizationalUnitName" placeholder="{$MODLANG->T('reissue_page', 'Organization Unit')}" type="text">
                                     </div>
                                     <div class="form-group"{if $ipProduct} style="display:none;"{/if}>
-                                        <label class="control-label" for="CN">{$MGLANG->T('reissue_page', 'Common Name')}</label>
-                                        <input {if $use_profile_data}value="{$domain}"{/if} class="form-control generateCsrInput" autocomplete="off" id="commonName" placeholder="{$MGLANG->T('reissue_page', 'Common Name')}" name="CN" type="text">
+                                        <label class="control-label" for="CN">{$MODLANG->T('reissue_page', 'Common Name')}</label>
+                                        <input {if $use_profile_data}value="{$domain}"{/if} class="form-control generateCsrInput" autocomplete="off" id="commonName" placeholder="{$MODLANG->T('reissue_page', 'Common Name')}" name="CN" type="text">
                                     </div>
                                     <div class="form-group">
-                                        <label class="control-label" for="EA">{$MGLANG->T('reissue_page', 'Email')}</label>
-                                        <input {if $use_profile_data}value="{$client.email}"{/if} class="form-control generateCsrInput" id="emailAddress" placeholder="{$MGLANG->T('reissue_page', 'Email')}" name="EA" type="text">
+                                        <label class="control-label" for="EA">{$MODLANG->T('reissue_page', 'Email')}</label>
+                                        <input {if $use_profile_data}value="{$client.email}"{/if} class="form-control generateCsrInput" id="emailAddress" placeholder="{$MODLANG->T('reissue_page', 'Email')}" name="EA" type="text">
                                     </div>
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-default" data-dismiss="modal">{$MGLANG->T('reissue_page', 'Close')}</button>
-                                    <button type="button" id="generateCSRFunc" class="btn btn-primary">{$MGLANG->T('reissue_page', 'Generate')}</button>
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">{$MODLANG->T('reissue_page', 'Close')}</button>
+                                    <button type="button" id="generateCSRFunc" class="btn btn-primary">{$MODLANG->T('reissue_page', 'Generate')}</button>
                                 </div>
                             </div>
                         </div>
@@ -93,20 +93,20 @@
 
                 {/if}
 
-                <div class="alert alert-warning csr_validation_error" style="margin-top:10px;display:none">{$MGLANG->T('reissue_page', 'CSR is invalid. Please check your CSR and try again')}</div>
+                <div class="alert alert-warning csr_validation_error" style="margin-top:10px;display:none">{$MODLANG->T('reissue_page', 'CSR is invalid. Please check your CSR and try again')}</div>
                 <div class="csr_details_validation" style="display:none">
-                    <h4>{$MGLANG->T('reissue_page', 'CSR Details')}</h4>
+                    <h4>{$MODLANG->T('reissue_page', 'CSR Details')}</h4>
                     <div class="row">
                         <div class="col-sm-6 col-xs-12">
-                            <p>{$MGLANG->T('reissue_page', 'Common Name (CN)')}: <span class="commonName"></span></p>
-                            <p>{$MGLANG->T('reissue_page', 'Company')}: <span class="companyName"></span></p>
-                            <p>{$MGLANG->T('reissue_page', 'State')}: <span class="stateName"></span></p>
-                            <p style="border:0;">{$MGLANG->T('reissue_page', 'Country')}: <span class="countryName"></span></p>
+                            <p>{$MODLANG->T('reissue_page', 'Common Name (CN)')}: <span class="commonName"></span></p>
+                            <p>{$MODLANG->T('reissue_page', 'Company')}: <span class="companyName"></span></p>
+                            <p>{$MODLANG->T('reissue_page', 'State')}: <span class="stateName"></span></p>
+                            <p style="border:0;">{$MODLANG->T('reissue_page', 'Country')}: <span class="countryName"></span></p>
                         </div>
                         <div class="col-sm-6 col-xs-12">
-                            <p>{$MGLANG->T('reissue_page', 'Email')}: <span class="emailName"></span></p>
-                            <p>{$MGLANG->T('reissue_page', 'Division')}: <span class="divisionName"></span></p>
-                            <p>{$MGLANG->T('reissue_page', 'City')}: <span class="cityName"></span></p>
+                            <p>{$MODLANG->T('reissue_page', 'Email')}: <span class="emailName"></span></p>
+                            <p>{$MODLANG->T('reissue_page', 'Division')}: <span class="divisionName"></span></p>
+                            <p>{$MODLANG->T('reissue_page', 'City')}: <span class="cityName"></span></p>
                         </div>
                     </div>
                 </div>
@@ -118,19 +118,19 @@
                 <div class="checkbox tssggs-reissue-autoinstall" style="margin:10px 0 20px;">
                     <label>
                         <input type="checkbox" name="use_autoinstall_key" value="1" checked onchange="document.getElementById('inputCsr').closest('.form-group').style.display = this.checked ? 'none' : '';">
-                        {$MGLANG->T('reissue_page', 'reissue_autoinstall_key')}
+                        {$MODLANG->T('reissue_page', 'reissue_autoinstall_key')}
                     </label>
-                    <small class="text-muted" style="display:block;">{$MGLANG->T('reissue_page', 'reissue_autoinstall_key_desc')}</small>
+                    <small class="text-muted" style="display:block;">{$MODLANG->T('reissue_page', 'reissue_autoinstall_key_desc')}</small>
                 </div>
                 <script>document.addEventListener('DOMContentLoaded', function () { var f = document.getElementById('inputCsr'); if (f) { f.closest('.form-group').style.display = 'none'; } });</script>
             {/if}
 
             {if $buy_sans_url}
-                <p style="margin:10px 0 20px;">{$MGLANG->T('reissue_page', 'reissue_buy_sans_desc')} <a href="{$buy_sans_url}" class="btn btn-default btn-sm">{$MGLANG->T('reissue_page', 'reissue_buy_sans')}</a></p>
+                <p style="margin:10px 0 20px;">{$MODLANG->T('reissue_page', 'reissue_buy_sans_desc')} <a href="{$buy_sans_url}" class="btn btn-default btn-sm">{$MODLANG->T('reissue_page', 'reissue_buy_sans')}</a></p>
             {/if}
 
             {if $sans || $sans_wildcard}
-                <div><strong>{$MGLANG->T('reissue_page', 'Subject Alternative Names (SANs)')}</strong></div>
+                <div><strong>{$MODLANG->T('reissue_page', 'Subject Alternative Names (SANs)')}</strong></div>
             {/if}
 
             {if $sans}
@@ -138,7 +138,7 @@
                     <div class="form-group row">
                         <label class="col-md-4 col-form-label text-md-right" for="inputAdditionalField">{$lang_san}</label>
                         <div class="col-md-8">
-                            <textarea name="fields[sans_domains]" cols="60" rows="" class="form-control">{$post_san|escape}</textarea> {$MGLANG->T('reissue_page', 'desc_san')}
+                            <textarea name="fields[sans_domains]" cols="60" rows="" class="form-control">{$post_san|escape}</textarea> {$MODLANG->T('reissue_page', 'desc_san')}
                         </div>
                     </div>
                 </fieldset>
@@ -149,7 +149,7 @@
                     <div class="form-group row">
                         <label class="col-md-4 col-form-label text-md-right" for="inputAdditionalField">{$lang_san_wildcard}</label>
                         <div class="col-md-8">
-                            <textarea name="fields[sans_domains_wildcard]" cols="60" rows="" class="form-control">{$post_san_wildcard|escape}</textarea> {$MGLANG->T('reissue_page', 'desc_san_wildcard')}
+                            <textarea name="fields[sans_domains_wildcard]" cols="60" rows="" class="form-control">{$post_san_wildcard|escape}</textarea> {$MODLANG->T('reissue_page', 'desc_san_wildcard')}
                         </div>
                     </div>
                 </fieldset>
@@ -157,7 +157,7 @@
 
             <div class="text-center">
                 <button type="submit" class="btn btn-primary">
-                    {$MGLANG->T('reissue_page', 'Click to Continue')}
+                    {$MODLANG->T('reissue_page', 'Click to Continue')}
                 </button>
             </div>
 

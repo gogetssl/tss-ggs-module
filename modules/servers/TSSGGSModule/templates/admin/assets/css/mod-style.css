@@ -76,7 +76,7 @@
     background: url("../images/ajax-loader.gif") no-repeat scroll 0 0 rgba(0, 0, 0, 0);
 }
 
-#MGLoader{
+#ModLoader{
     background-color: rgba(0,0,0,0.5);
     position:absolute;
     top:0;
@@ -86,7 +86,7 @@
     z-index: 60000;
 }
 
-#MGLoader img{
+#ModLoader img{
     position:absolute;
     top:50%;
     left:50%;

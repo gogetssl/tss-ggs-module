@@ -1,9 +1,9 @@
 jQuery(document).ready(function(){
-    jQuery('#MGNextIsWHMCSConfig').next().hide();
+    jQuery('#ModNextIsWHMCSConfig').next().hide();
     
     var relation = {};
     
-    jQuery('#MGNextIsWHMCSConfig').next().find('input').each(function(){
+    jQuery('#ModNextIsWHMCSConfig').next().find('input').each(function(){
         
         var name = jQuery(this).parent().prev().text();
         
@@ -16,12 +16,12 @@ jQuery(document).ready(function(){
     });
     
     $('*[data-is-form] button[name="mod-action"]').click(function(){
-        data = jQuery(this).closest('*[data-is-form]').MGGetForms();
+        data = jQuery(this).closest('*[data-is-form]').ModGetForms();
         JSONParser.request(jQuery(this).val(),data,function(result){
             if(result.success){
-                jQuery('#MGAlerts').alerts('success',result.success);
+                jQuery('#ModAlerts').alerts('success',result.success);
             }else{
-                jQuery('#MGAlerts').alerts('danger',result.error);
+                jQuery('#ModAlerts').alerts('danger',result.error);
             }
         });
     });

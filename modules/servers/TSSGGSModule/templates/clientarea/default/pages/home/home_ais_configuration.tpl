@@ -9,8 +9,8 @@
                 <svg class="tssggs-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
             </span>
             <div class="tssggs-hero__title">
-                <span class="tssggs-badge tssggs-badge--wait">{$MGLANG->T('Awaiting Configuration')}</span>
-                <h3>{$MGLANG->T('aisConfigurationTitle')}</h3>
+                <span class="tssggs-badge tssggs-badge--wait">{$MODLANG->T('Awaiting Configuration')}</span>
+                <h3>{$MODLANG->T('aisConfigurationTitle')}</h3>
             </div>
         </div>
     </section>
@@ -20,22 +20,22 @@
     <section class="tssggs-card">
         <h4 class="tssggs-card__title">
             <svg class="tssggs-ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/><path d="M2 12h20"/></svg>
-            {$MGLANG->T('aisDomainLabel')}
+            {$MODLANG->T('aisDomainLabel')}
         </h4>
         <div class="tssggs-form">
             <div class="tssggs-field">
-                <label for="ais-domain">{$MGLANG->T('aisDomainLabel')} <span class="tssggs-req">*</span></label>
+                <label for="ais-domain">{$MODLANG->T('aisDomainLabel')} <span class="tssggs-req">*</span></label>
                 <input type="text" id="ais-domain" class="form-control" placeholder="example.com" value="{$serviceDomain|escape:'htmlall'}">
-                <small>{$MGLANG->T('aisDomainHint')}</small>
+                <small>{$MODLANG->T('aisDomainHint')}</small>
             </div>
             {if $aisCanSwitch}
                 <div class="tssggs-field">
-                    <label for="ais-install-method">{$MGLANG->T('aisInstallMethod')}</label>
+                    <label for="ais-install-method">{$MODLANG->T('aisInstallMethod')}</label>
                     <select id="ais-install-method" class="form-control">
-                        <option value="autoinstall">{$MGLANG->T('aisMethod_autoinstall')}</option>
-                        <option value="acme">{$MGLANG->T('aisMethod_acme')}</option>
+                        <option value="autoinstall">{$MODLANG->T('aisMethod_autoinstall')}</option>
+                        <option value="acme">{$MODLANG->T('aisMethod_acme')}</option>
                     </select>
-                    <small>{$MGLANG->T('aisInstallMethodHint')}</small>
+                    <small>{$MODLANG->T('aisInstallMethodHint')}</small>
                 </div>
             {/if}
         </div>
@@ -44,7 +44,7 @@
     <div class="tssggs-actions tssggs-actions--end">
         <button id="ais-submit" type="button" class="tssggs-btn tssggs-btn--primary">
             <svg class="tssggs-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>
-            {$MGLANG->T('aisSubmitConfiguration')}
+            {$MODLANG->T('aisSubmitConfiguration')}
         </button>
     </div>
 </div>
@@ -72,7 +72,7 @@
             $('#ais-alerts').html('');
 
             if (!domain) {
-                $('#MGAlerts').alerts('error', '{$MGLANG->T('aisDomainRequired')}');
+                $('#ModAlerts').alerts('error', '{$MODLANG->T('aisDomainRequired')}');
                 return;
             }
 
@@ -82,11 +82,11 @@
                 // the JSON answer comes with an application/json header, so jQuery may already have parsed it
                 var payload = typeof ret === 'object' ? ret : JSON.parse(String(ret).replace('<JSONRESPONSE#', '').replace('#ENDJSONRESPONSE>', ''));
                 if (payload.result === 'error') {
-                    $('#MGAlerts').alerts('error', payload.error || '{$MGLANG->T('anErrorOccurred')}');
-                    btn.prop('disabled', false).text('{$MGLANG->T('aisSubmitConfiguration')}');
+                    $('#ModAlerts').alerts('error', payload.error || '{$MODLANG->T('anErrorOccurred')}');
+                    btn.prop('disabled', false).text('{$MODLANG->T('aisSubmitConfiguration')}');
                 } else {
-                    var msg = (payload.data && payload.data.message) ? payload.data.message : '{$MGLANG->T('aisCreatedSuccessfully')}';
-                    $('#MGAlerts').alerts('success', msg);
+                    var msg = (payload.data && payload.data.message) ? payload.data.message : '{$MODLANG->T('aisCreatedSuccessfully')}';
+                    $('#ModAlerts').alerts('success', msg);
                     window.setTimeout(function () {
                         window.location.href = 'clientarea.php?action=productdetails&id={$serviceid}';
                     }, 1200);

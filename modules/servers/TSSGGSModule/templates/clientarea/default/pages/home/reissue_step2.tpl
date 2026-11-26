@@ -5,7 +5,7 @@
                 <svg class="tssggs-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>
             </span>
             <div class="tssggs-hero__title">
-                <h3>{$MGLANG->T('reissue_page', 'Reissue - Select a Validation Method')}</h3>
+                <h3>{$MODLANG->T('reissue_page', 'Reissue - Select a Validation Method')}</h3>
             </div>
         </div>
     </section>
@@ -26,50 +26,50 @@
             <div class="pt-3">
                 <div class="step2-validation-certificate">
                     <div class="alert alert-info" role="alert">
-                        <p>{$MGLANG->T('reissue_page', 'desc_validation')}</p>
+                        <p>{$MODLANG->T('reissue_page', 'desc_validation')}</p>
                         <p></p>
-                        <p><b>{$MGLANG->T('reissue_page', 'Email Address')} </b>{$MGLANG->T('reissue_page', 'The email to send the validation to is generated from a default list of addresses.')}</p>
+                        <p><b>{$MODLANG->T('reissue_page', 'Email Address')} </b>{$MODLANG->T('reissue_page', 'The email to send the validation to is generated from a default list of addresses.')}</p>
                         <p></p>
-                        <p><b>{$MGLANG->T('reissue_page', 'DNS')}: </b>{$MGLANG->T('reissue_page', 'Add a DNS CNAME record using the hash-values provided.')}</p>
+                        <p><b>{$MODLANG->T('reissue_page', 'DNS')}: </b>{$MODLANG->T('reissue_page', 'Add a DNS CNAME record using the hash-values provided.')}</p>
                         <p></p>
-                        <p><b>{$MGLANG->T('reissue_page', 'HTTP FILE')}: </b>{$MGLANG->T('reissue_page', 'Create a text file to be served from the domain name requested.')}</p>
+                        <p><b>{$MODLANG->T('reissue_page', 'HTTP FILE')}: </b>{$MODLANG->T('reissue_page', 'Create a text file to be served from the domain name requested.')}</p>
                     </div>
                     <div class="row switch-row" style="margin:20px 0;">
                         {if in_array('email', $dcv_methods)}<div class="col-md-3 col-sm-6 col-sx-12">
                             <label class="switch">
                                 <input class="change-dcv-method" value="email" type="checkbox">
                                 <span class="slider round"></span>
-                                <span class="label-text">{$MGLANG->T('reissue_page', 'EMAIL for all')}</span>
+                                <span class="label-text">{$MODLANG->T('reissue_page', 'EMAIL for all')}</span>
                             </label>
                         </div>{/if}
                         {if in_array('http', $dcv_methods)}<div class="col-md-3 col-sm-6 col-sx-12">
                             <label class="switch">
                                 <input class="change-dcv-method" value="http" type="checkbox">
                                 <span class="slider round"></span>
-                                <span class="label-text">{$MGLANG->T('reissue_page', 'HTTP for all')}</span>
+                                <span class="label-text">{$MODLANG->T('reissue_page', 'HTTP for all')}</span>
                             </label>
                         </div>{/if}
                         {if in_array('https', $dcv_methods)}<div class="col-md-3 col-sm-6 col-sx-12">
                             <label class="switch">
                                 <input class="change-dcv-method" value="https" type="checkbox">
                                 <span class="slider round"></span>
-                                <span class="label-text">{$MGLANG->T('reissue_page', 'HTTPs for all')}</span>
+                                <span class="label-text">{$MODLANG->T('reissue_page', 'HTTPs for all')}</span>
                             </label>
                         </div>{/if}
                         {if in_array('dns', $dcv_methods)}<div class="col-md-3 col-sm-6 col-sx-12">
                             <label class="switch">
                                 <input class="change-dcv-method" value="dns" type="checkbox">
                                 <span class="slider round"></span>
-                                <span class="label-text">{$MGLANG->T('reissue_page', 'DNS for all')}</span>
+                                <span class="label-text">{$MODLANG->T('reissue_page', 'DNS for all')}</span>
                             </label>
                         </div>{/if}
                     </div>
                     <table class="table">
                         <thead>
                             <tr>
-                                <th>{$MGLANG->T('reissue_page', 'Domain')}</th>
-                                <th>{$MGLANG->T('reissue_page', 'DCV Method')}</th>
-                                <th>{$MGLANG->T('reissue_page', 'Email Address')}</th>
+                                <th>{$MODLANG->T('reissue_page', 'Domain')}</th>
+                                <th>{$MODLANG->T('reissue_page', 'DCV Method')}</th>
+                                <th>{$MODLANG->T('reissue_page', 'Email Address')}</th>
                             </tr>
                             </thead>
                         <tbody>
@@ -95,7 +95,7 @@
 
             <div class="text-center">
                 <button type="submit" class="btn btn-primary" id="btnOrderContinue">
-                    {$MGLANG->T('reissue_page', 'Click to Continue')}
+                    {$MODLANG->T('reissue_page', 'Click to Continue')}
                 </button>
             </div>
 
