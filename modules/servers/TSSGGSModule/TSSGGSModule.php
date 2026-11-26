@@ -1,20 +1,9 @@
 <?php
 
-use TSSGGSModule\Server\app\controllers\server\admin\Actions;
-use TSSGGSModule\Server\Server;
+use TSSGGSModule\Server\app\Admin\Actions;
+use TSSGGSModule\Server\ClientArea;
 
-if(!defined('DS'))define('DS',DIRECTORY_SEPARATOR);
-
-require_once __DIR__.DS.'Loader.php';
-new \TSSGGSModule\Server\Loader();
-
-// Edition name (GoGetSSL Module / TheSSLStore Plugin) - loaded directly, without booting the addon framework
-if(file_exists(dirname(__DIR__, 2).DS.'addons'.DS.'TSSGGSModule'.DS.'app'.DS.'Libs'.DS.'Support'.DS.'Edition.php'))
-{
-    require_once dirname(__DIR__, 2).DS.'addons'.DS.'TSSGGSModule'.DS.'app'.DS.'Libs'.DS.'Support'.DS.'Edition.php';
-}
-
-\TSSGGSModule\Server\Server::I();
+require_once __DIR__ . DIRECTORY_SEPARATOR . 'Boot.php';
 
 // files updated by copying, without the addon upgrade: the database changes (App\Database\Schema) are applied here
 // too; once current it is one query per request
@@ -54,7 +43,7 @@ function TSSGGSModule_recordOnlyGuard($function, $params) {
 
 function TSSGGSModule_MetaData() {
     return array(
-        'DisplayName' => class_exists('\TSSGGSModule\App\Libs\Support\Edition', false) ? \TSSGGSModule\App\Libs\Support\Edition::name() : 'GoGetSSL Module',
+        'DisplayName' => class_exists('\TSSGGSModule\App\Libs\Support\Edition') ? \TSSGGSModule\App\Libs\Support\Edition::name() : 'GoGetSSL Module',
         'APIVersion' => '1.0',
     );
 }
@@ -187,13 +176,12 @@ function TSSGGSModule_ClientArea(array $params) {
     
     if(!empty($_REQUEST['json']))
     {
-        // Response is always a json_encode()d string (see Server::getJSONClientAreaPage), never HTML
+        // the answer is always JSON (ClientArea::json), never HTML
         header('Content-Type: application/json; charset=utf-8');
         header('X-Content-Type-Options: nosniff');
-        $jsonResponse = Server::getJSONClientAreaPage($params, $_REQUEST);
-        echo $jsonResponse;
+        echo ClientArea::json($params, $_REQUEST);
         die();
     }
 
-    return Server::getHTMLClientAreaPage($params, $_REQUEST);
+    return ClientArea::page($params, $_REQUEST);
 }

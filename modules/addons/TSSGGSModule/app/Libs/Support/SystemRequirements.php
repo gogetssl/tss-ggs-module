@@ -24,7 +24,7 @@ class SystemRequirements
     /**
      * Folders the module writes to, relative to the addon root
      */
-    const STORAGE_DIRS = ['storage', 'storage/app', 'storage/crons', 'storage/logs'];
+    const STORAGE_DIRS = ['storage', 'storage/app'];
 
     const GATEWAY_TIMEOUT = 5;
 

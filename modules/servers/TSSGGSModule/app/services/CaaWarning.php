@@ -2,7 +2,7 @@
 
 namespace TSSGGSModule\Server\app\services;
 
-use TSSGGSModule\Server\core\Lang;
+use TSSGGSModule\Server\Text;
 use TSSGGSModule\App\Libs\Certificates\CaaCheck;
 
 /** The CAA warning box on the client's pending certificate page (texts in the client's language) - see App\Libs\Certificates\CaaCheck */
@@ -28,7 +28,7 @@ class CaaWarning
         $texts = [];
         foreach(['title', 'intro', 'inherited', 'now', 'add', 'fix', 'gateway', 'gateway_fix'] as $key)
         {
-            $texts[$key] = Lang::absoluteT('caa_' . $key);
+            $texts[$key] = Text::get('caa_' . $key);
         }
 
         return $texts;

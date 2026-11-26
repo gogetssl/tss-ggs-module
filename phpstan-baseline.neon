@@ -166,16 +166,16 @@ parameters:
 			message: '#^Call to an undefined method WHMCS\\Utility\\Country\:\:getCountryNameArray\(\)\.$#'
 			identifier: method.notFound
 			count: 5
-			path: modules/servers/TSSGGSModule/app/controllers/server/clientarea/home.php
+			path: modules/servers/TSSGGSModule/app/Client/Home.php
 
 		-
 			message: '#^Variable \$approverEmail might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
-			path: modules/servers/TSSGGSModule/app/controllers/server/clientarea/home.php
+			path: modules/servers/TSSGGSModule/app/Client/Home.php
 
 		-
 			message: '#^Variable \$decodeKey might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
-			path: modules/servers/TSSGGSModule/app/controllers/server/clientarea/home.php
+			path: modules/servers/TSSGGSModule/app/Client/Home.php

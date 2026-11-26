@@ -1,0 +1,939 @@
+<script type="text/javascript" src="{$assetsURL}/js/client.js"></script>
+
+{if $allOk === true}
+<style>
+#ssl-config-wrap { max-width: 700px; margin: 0 auto; text-align: left; }
+
+#ssl-config-wrap h2 { font-size: 22px; font-weight: 400; text-align: center; margin-bottom: 20px; }
+#ssl-config-wrap .ssl-install-toggle { text-align: center; margin-bottom: 25px; }
+#ssl-config-wrap .ssl-install-toggle .btn { min-width: 160px; }
+#ssl-config-wrap .ssl-section-title { font-size: 18px; font-weight: 400; margin: 0 0 5px; }
+#ssl-config-wrap .ssl-section-sub { font-size: 13px; color: #c0392b; margin-bottom: 15px; }
+#ssl-config-wrap .ssl-section-sub.muted { color: #555; }
+#ssl-config-wrap .form-group label { font-weight: 700; margin-bottom: 4px; display: block; }
+#ssl-config-wrap .form-group label.normal { font-weight: 400; }
+#ssl-config-wrap .san-row { display: flex; align-items: center; margin-bottom: 6px; }
+#ssl-config-wrap .san-row select { flex: 1; min-width: 0; }
+#ssl-config-wrap .san-row .san-btns { margin-left: 6px; white-space: nowrap; }
+#ssl-config-wrap .san-row .san-btns .btn { border-radius: 50%; width: 28px; height: 28px; padding: 0; line-height: 26px; font-size: 18px; }
+#ssl-config-wrap .san-note { font-style: italic; font-size: 12px; color: #555; margin: 4px 0 10px; }
+#ssl-config-wrap .dcv-info { color: #c0392b; font-weight: 700; font-size: 13px; margin-top: 5px; }
+#ssl-config-wrap .dcv-note { font-size: 12px; color: #555; margin-top: 5px; }
+#ssl-config-wrap .ssl-csr-section,
+#ssl-config-wrap .ssl-contact-section { margin-top: 25px; border-top: 1px solid #e0e0e0; padding-top: 20px; }
+#ssl-config-wrap .ssl-csr-section h3,
+#ssl-config-wrap .ssl-contact-section h3 { font-size: 18px; font-weight: 400; margin-bottom: 4px; }
+#ssl-config-wrap .ssl-csr-section .csr-sub { font-size: 13px; color: #555; margin-bottom: 15px; }
+#ssl-config-wrap select optgroup { font-weight: 700; font-style: normal; }
+#ssl-config-wrap select optgroup option { font-weight: 400; padding-left: 12px; }
+#ssl-config-wrap #manual_own_csr { font-family: monospace; font-size: 12px; resize: vertical; }
+#ssl-result-wrap { max-width: 700px; margin: 0 auto; text-align: left; }
+#ssl-result-wrap #ssl-private-key { font-family: monospace; font-size: 12px; }
+/* the form keeps its fields; its sections get the card look of the other product pages */
+#ssl-config-wrap { max-width: 860px; }
+#ssl-config-wrap #section-autoinstall, #ssl-config-wrap #section-manual, #ssl-config-wrap .ssl-csr-section,
+#ssl-config-wrap .ssl-contact-section, #ssl-config-wrap .ssl-agreement-section {
+    background: #fff; border: 1px solid #e6e8eb; border-radius: 10px; padding: 18px 20px; margin-bottom: 16px;
+    box-shadow: 0 1px 2px rgba(16,24,40,.04);
+}
+#ssl-config-wrap .ssl-section-title, #ssl-config-wrap .ssl-contact-section h3, #ssl-config-wrap .ssl-csr-section h3 {
+    font-size: 15px; font-weight: 600; letter-spacing: .01em; margin: 0 0 10px; padding-bottom: 10px;
+    border-bottom: 1px solid #eef0f2;
+}
+</style>
+
+<div id="ssl-config-wrap" class="validate-ssl-unified tssggs-cert tssggs-smime">
+    <section class="tssggs-card tssggs-hero tssggs-hero--wait">
+        <div class="tssggs-hero__head">
+            <span class="tssggs-hero__icon">
+                <svg class="tssggs-ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+            </span>
+            <div class="tssggs-hero__title">
+                <span class="tssggs-badge tssggs-badge--wait">
+                    <svg class="tssggs-ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+                    {$text->t('smimeAwaitingOrder')}
+                </span>
+                <h3>{$productName|escape}</h3>
+                {if $productGroup || $serviceState}
+                    <p class="tssggs-hero__domain">{if $productGroup}{$productGroup|escape}{/if}{if $productGroup && $serviceState} &middot; {/if}{if $serviceState}{$serviceState|escape}{/if}</p>
+                {/if}
+            </div>
+        </div>
+        {* where the order stands: paid, the client's details, then the certificate authority's part *}
+        <div class="tssggs-steps">
+            <span class="tssggs-step tssggs-step--done">
+                <span class="tssggs-step__n"><svg class="tssggs-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="m20 6-11 11-5-5"/></svg></span>
+                {$text->t('sslStepPaid')}
+            </span>
+            <span class="tssggs-step tssggs-step--current"><span class="tssggs-step__n">2</span> {$text->t('sslStepDetails')}</span>
+            <span class="tssggs-step"><span class="tssggs-step__n">3</span> {$text->t('sslStepValidate')}</span>
+            <span class="tssggs-step"><span class="tssggs-step__n">4</span> {$text->t('sslStepIssued')}</span>
+        </div>
+        <div class="tssggs-hero__foot">
+            {if $renewalNotice}<p class="tssggs-renewal-notice"><strong>{$renewalNotice|escape}</strong></p>{/if}
+            <p>{$text->t('sslConfigIntro')}</p>
+        </div>
+    </section>
+
+    {if $billing}
+    <section class="tssggs-card">
+        <h4 class="tssggs-card__title">
+            <svg class="tssggs-ic" viewBox="0 0 24 24" aria-hidden="true"><rect width="20" height="14" x="2" y="5" rx="2"/><path d="M2 10h20"/></svg>
+            {$text->t('validation_page', 'cardBilling')}
+        </h4>
+        <div class="tssggs-grid tssggs-grid--flush">
+            <dl class="tssggs-dl">
+                <dt>{$text->t('validation_page', 'RegistrationDate')}</dt><dd>{if $billing.registration}{$billing.registration}{else}-{/if}</dd>
+                <dt>{$text->t('validation_page', 'ReccuringAmount')}</dt><dd>{$billing.amount}</dd>
+                <dt>{$text->t('validation_page', 'PaymentMethod')}</dt><dd>{$billing.paymentMethod|escape}</dd>
+            </dl>
+            <dl class="tssggs-dl">
+                <dt>{$text->t('smimeNextDue')}</dt><dd>{if $billing.nextDue}{$billing.nextDue}{else}-{/if}</dd>
+                <dt>{$text->t('validation_page', 'BillingCycle')}</dt><dd>{$billing.cycle|escape}</dd>
+            </dl>
+        </div>
+    </section>
+    {/if}
+
+    {* How the certificate is installed - only when the client has a reachable cPanel account *}
+    {if $hasCpanel}
+    <section class="tssggs-card">
+        <h4 class="tssggs-card__title">
+            <svg class="tssggs-ic" viewBox="0 0 24 24" aria-hidden="true"><rect width="20" height="8" x="2" y="2" rx="2"/><rect width="20" height="8" x="2" y="14" rx="2"/><path d="M6 6h.01M6 18h.01"/></svg>
+            {$text->t('sslConfigInstallQuestion')}
+        </h4>
+        <div class="tssggs-form">
+            <div class="tssggs-choice">
+                <button type="button" id="btn-autoinstall" class="tssggs-choice__item is-selected">
+                    <svg class="tssggs-ic" viewBox="0 0 24 24" aria-hidden="true"><rect width="20" height="8" x="2" y="2" rx="2"/><rect width="20" height="8" x="2" y="14" rx="2"/><path d="M6 6h.01M6 18h.01"/></svg>
+                    <span class="tssggs-choice__body">
+                        <strong>{$text->t('sslConfigAutoinstall')}</strong>
+                        <span>{$text->t('sslConfigAutoinstallHint')}</span>
+                    </span>
+                    <span class="tssggs-choice__mark"><svg class="tssggs-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="m20 6-11 11-5-5"/></svg></span>
+                </button>
+                <button type="button" id="btn-manual" class="tssggs-choice__item">
+                    <svg class="tssggs-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+                    <span class="tssggs-choice__body">
+                        <strong>{$text->t('sslConfigManual')}</strong>
+                        <span>{$text->t('sslConfigManualHint')}</span>
+                    </span>
+                    <span class="tssggs-choice__mark"><svg class="tssggs-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="m20 6-11 11-5-5"/></svg></span>
+                </button>
+            </div>
+        </div>
+    </section>
+    {/if}
+    <input type="hidden" id="install_type" value="{if $hasCpanel}autoinstall{else}manual{/if}">
+
+    {* ===== AUTOINSTALL SECTION ===== *}
+    {if $hasCpanel}
+    <div id="section-autoinstall">
+        <h3 class="ssl-section-title"><span class="tssggs-step__n">1</span> {$text->t('sslConfigServerInfoTitle')}</h3>
+        <p class="ssl-section-sub">{$text->t('sslConfigServerInfoText')}</p>
+
+        <div class="form-group">
+            <label>{$text->t('sslConfigDomainLabel')} <span class="text-danger">*</span></label>
+            <select class="form-control" id="main_domain">
+                <option value="">{$text->t('sslConfigPleaseChoose')}</option>
+                {foreach $domainGroups as $group}
+                    <optgroup label="{$group.label|escape}">
+                        {foreach $group.domains as $domain}
+                            <option value="{$domain|escape}">{$domain|escape}</option>
+                        {/foreach}
+                    </optgroup>
+                {/foreach}
+                <option value="__manual__">{$text->t('sslConfigDomainNotListed')}</option>
+            </select>
+            <small><a href="clientarea.php?action=productdetails&id={$serviceid}&configssl=1&refreshdomains=1">{$text->t('sslConfigRefreshDomains')}</a></small>
+        </div>
+
+        {if $isWildcard}
+        <div class="form-group">
+            <label class="normal">
+                <input type="checkbox" id="wildcard_selected_autoinstall" value="1">
+                {$text->t('sslConfigWildcardLabel')} <span id="wildcard_domain_preview_autoinstall" style="color:#2980b9;font-weight:600;"></span>
+            </label>
+        </div>
+        {else}
+        {if $wwwAlwaysFree}<p class="san-note" id="www-note">{$text->t('sslConfigWwwIncluded')}</p>{elseif $wwwInSanList}<p class="san-note" id="www-note">{$text->t('sslConfigWwwChoose')}</p>{/if}
+        {/if}
+
+        {if $sansLimit > 0}
+        <div class="form-group">
+            <label>{$text->t('sslConfigSanSection')} (max {$sansLimit|escape})</label>
+            <div id="san-rows-container"></div>
+            <p class="san-note">{$text->t('sslConfigSanNote')}</p>
+        </div>
+        {/if}
+
+        {if $wildcardSansLimit > 0}
+        <div class="form-group">
+            <label>{$text->t('sslConfigSanWildcard')} (max {$wildcardSansLimit|escape})</label>
+            <p class="san-note" style="margin-bottom:8px;">{$text->t('sslConfigSanWildcardAutoNote')}</p>
+            <div id="wildcard-san-rows-container"></div>
+        </div>
+        {/if}
+
+        <div class="form-group">
+            <label>{$text->t('sslConfigValidationMethod')} <span class="text-danger">*</span></label>
+            <select class="form-control dcv-select" id="dcv_method_autoinstall">
+                {foreach $dcvMethods as $method}
+                    <option value="{$method|escape}" {if $method == 'http'}selected{/if}>
+                        {if $method == 'email'}{$text->t('sslConfigValidationEmail')}
+                        {elseif $method == 'http'}{$text->t('sslConfigValidationHttp')}
+                        {elseif $method == 'https'}{$text->t('sslConfigValidationHttps')}
+                        {elseif $method == 'dns'}{$text->t('sslConfigValidationDns')}
+                        {else}{$method|escape}{/if}
+                    </option>
+                {/foreach}
+            </select>
+            <p class="dcv-note" id="dcv-note-autoinstall-http" style="display:none;">{$text->t('sslConfigHttpAutoNote')}</p>
+            <p class="dcv-note" id="dcv-note-autoinstall-dns" style="display:none;">{$text->t('sslConfigDnsNote')}</p>
+        </div>
+
+        <div id="approver-email-autoinstall-section" style="display:none;">
+            <div id="approver-email-autoinstall-warning" style="display:none;" class="alert alert-warning">
+                {$text->t('sslConfigEmailDcvNeedsDomain')}
+            </div>
+            <div id="approver-email-autoinstall-select-wrap" class="form-group" style="display:none;">
+                <label>{$text->t('sslConfigDcvEmailLabel')} <span class="text-danger">*</span></label>
+                <select class="form-control" id="approver_email_autoinstall">
+                    <option value="">{$text->t('sslConfigFirstSelectDomain')}</option>
+                </select>
+                <p class="dcv-info">{$text->t('sslConfigDcvEmailFallback')}</p>
+            </div>
+        </div>
+
+        <div id="dns-fallback-email-section" style="display:none;">
+            <div id="dns-fallback-domain-warning" style="display:none;" class="alert alert-info">
+                {$text->t('sslConfigDnsFallbackNeedsDomain')}
+            </div>
+            <div id="dns-fallback-select-wrap" class="form-group" style="display:none;">
+                <label>{$text->t('sslConfigDnsFallbackLabel')}</label>
+                <select class="form-control" id="dns_fallback_email">
+                    <option value="">{$text->t('sslConfigDnsFallbackAutoSelect')}</option>
+                </select>
+                <p class="dcv-info">{$text->t('sslConfigDnsFallbackHint')}</p>
+            </div>
+        </div>
+    </div>
+    {/if}
+
+    {* ===== MANUAL SECTION ===== *}
+    <div id="section-manual" {if $hasCpanel}style="display:none;"{/if}>
+        <p class="ssl-section-sub muted">{$text->t('sslConfigManualInfoText')}</p>
+
+        <div class="form-group" id="manual-own-csr-group">
+            <label>{$text->t('sslConfigOwnCsrLabel')} <span class="text-danger">*</span></label>
+            <textarea class="form-control" id="manual_own_csr" rows="8"
+                placeholder="-----BEGIN CERTIFICATE REQUEST-----&#10;...&#10;-----END CERTIFICATE REQUEST-----"></textarea>
+            <span class="help-block" style="font-size:12px;color:#888;">{if $ipProduct}{$text->t('sslConfigIpCsrHint')}{else}{$text->t('sslConfigOwnCsrHint')}{/if}</span>
+        </div>
+
+        {if $enableCsrGenerator}
+        <div class="form-group">
+            <label class="normal">
+                <input type="checkbox" id="manual_auto_generate_csr" style="margin-right:6px;">
+                {$text->t('sslConfigAutoGenerateCsr')}
+            </label>
+        </div>
+        {if !$ipProduct}
+        <div class="form-group" id="manual-domain-group" style="display:none;">
+            <label>{$text->t('sslConfigCsrCommonName')} <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" id="manual_domain" placeholder="{$productDomain|escape}" value="{$productDomain|escape}">
+            <span class="help-block" style="font-size:12px;color:#888;">{$text->t('sslConfigCsrCommonNameHint')}</span>
+        </div>
+
+        {if $isWildcard}
+        <div class="form-group" id="manual-wildcard-group" style="display:none;">
+            <label class="normal">
+                <input type="checkbox" id="wildcard_selected_manual" value="1">
+                {$text->t('sslConfigWildcardLabel')} <span id="wildcard_domain_preview_manual" style="color:#2980b9;font-weight:600;"></span>
+            </label>
+        </div>
+        {/if}
+        {/if}
+        {/if}
+
+        {if $ipProduct}
+        {* a certificate for public IPs: every name is entered here, the first one becomes the main name *}
+        <div class="form-group">
+            <label>{$text->t('sslConfigIpNames')} (max {if $sansLimit > 0}{$sansLimit|escape}{else}1{/if}) <span class="text-danger">*</span></label>
+            <textarea class="form-control" id="san_domains_manual" rows="4" placeholder="203.0.113.10&#10;example.com"></textarea>
+            <span class="help-block" style="font-size:12px;color:#888;">{$text->t('sslConfigIpNamesHint')}</span>
+        </div>
+        {elseif $sansLimit > 0}
+        <div class="form-group">
+            <label>{$text->t('sslConfigSanSingle')} (max {$sansLimit|escape})</label>
+            <textarea class="form-control" id="san_domains_manual" rows="4" placeholder="domain1.com&#10;domain2.com"></textarea>
+        </div>
+        {/if}
+        {if $wildcardSansLimit > 0 && !$ipProduct}
+        <div class="form-group">
+            <label>{$text->t('sslConfigSanWildcard')} (max {$wildcardSansLimit|escape})</label>
+            <textarea class="form-control" id="wildcard_san_manual" rows="4" placeholder="*.domain1.com&#10;*.domain2.com"></textarea>
+        </div>
+        {/if}
+
+        <div class="form-group">
+            <label>{$text->t('sslConfigValidationMethod')} <span class="text-danger">*</span></label>
+            <select class="form-control dcv-select" id="dcv_method_manual">
+                {foreach $dcvMethodsManual as $method}
+                    <option value="{$method|escape}" {if $method == 'http'}selected{/if}>
+                        {if $method == 'email'}{$text->t('sslConfigValidationEmail')}
+                        {elseif $method == 'http'}{$text->t('sslConfigValidationHttp')}
+                        {elseif $method == 'https'}{$text->t('sslConfigValidationHttps')}
+                        {elseif $method == 'dns'}{$text->t('sslConfigValidationDns')}
+                        {elseif $method == 'dns-cname'}{$text->t('sslConfigValidationDnsCname')}
+                        {elseif $method == 'dns-txt'}{$text->t('sslConfigValidationDnsTxt')}
+                        {else}{$method|escape}{/if}
+                    </option>
+                {/foreach}
+            </select>
+        </div>
+
+        <div id="approver-email-manual-section" style="display:none;">
+            <div id="approver-email-manual-warning" style="display:none;" class="alert alert-warning"></div>
+            <div id="approver-email-manual-select-wrap" class="form-group" style="display:none;">
+                <label>{$text->t('sslConfigDcvEmailLabel')} <span class="text-danger">*</span></label>
+                <select class="form-control" id="approver_email_manual">
+                    <option value="">{$text->t('sslConfigFirstSelectDomain')}</option>
+                </select>
+                <p class="dcv-info">{$text->t('sslConfigDcvEmailFallback')}</p>
+            </div>
+        </div>
+    </div>
+
+    {* ===== CSR DETAILS (only when the CSR is generated by the module) ===== *}
+    <div class="ssl-csr-section" id="ssl-csr-section" {if !$hasCpanel}style="display:none;"{/if}>
+        <h3><span class="tssggs-step__n">2</span> {$text->t('sslConfigCsrSection')}</h3>
+        <p class="csr-sub">{$text->t('sslConfigCsrSubtext')}</p>
+
+        <div class="form-group">
+            <label>{$text->t('sslConfigCsrCountry')} <span class="text-danger">*</span></label>
+            <select class="form-control" id="csr_country">
+                {foreach $countries as $code => $name}
+                    <option value="{$code|escape}" {if $code == $csrDefaults.country}selected{/if}>{$name|escape}</option>
+                {/foreach}
+            </select>
+        </div>
+        <div class="form-group">
+            <label>{$text->t('sslConfigCsrState')} <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" id="csr_state" value="{$csrDefaults.state|escape}">
+        </div>
+        <div class="form-group">
+            <label>{$text->t('sslConfigCsrCity')} <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" id="csr_city" value="{$csrDefaults.city|escape}">
+        </div>
+        <div class="form-group">
+            <label>{$text->t('sslConfigCsrOrg')}</label>
+            <input type="text" class="form-control" id="csr_org" value="{$csrDefaults.org|escape}">
+        </div>
+        <div class="form-group">
+            <label>{$text->t('sslConfigCsrOrgUnit')}</label>
+            <input type="text" class="form-control" id="csr_org_unit" value="">
+        </div>
+        <div class="form-group">
+            <label>{$text->t('sslConfigCsrEmail')}</label>
+            <input type="email" class="form-control" id="csr_email" value="{$csrDefaults.email|escape}">
+        </div>
+    </div>
+
+    {* ===== ADMIN CONTACT ===== *}
+    {if !$adminFormHidden}
+    <div class="ssl-contact-section">
+        <h3 style="margin-bottom:15px;"><span class="tssggs-step__n">3</span> {$text->t('sslConfigAdminContact')}</h3>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>{$text->t('sslConfigFirstname')} <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="admin_firstname" value="{if $client}{$client->firstname|escape}{/if}">
+                </div>
+                <div class="form-group">
+                    <label>{$text->t('sslConfigLastname')} <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="admin_lastname" value="{if $client}{$client->lastname|escape}{/if}">
+                </div>
+                <div class="form-group">
+                    <label>{$text->t('sslConfigEmail')} <span class="text-danger">*</span></label>
+                    <input type="email" class="form-control" id="admin_email" value="{if $client}{$client->email|escape}{/if}">
+                </div>
+                <div class="form-group">
+                    <label>{$text->t('sslConfigPhone')} <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="admin_phone" value="{if $client}{$client->phonenumber|escape}{/if}">
+                </div>
+                <div class="form-group">
+                    <label>{$text->t('sslConfigTitle')}</label>
+                    <input type="text" class="form-control" id="admin_title" value="">
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>{$text->t('sslConfigAddress')}</label>
+                    <input type="text" class="form-control" id="admin_addressline1" value="{if $client}{$client->address1|escape}{/if}">
+                </div>
+                <div class="form-group">
+                    <label>{$text->t('sslConfigCity')}</label>
+                    <input type="text" class="form-control" id="admin_city" value="{if $client}{$client->city|escape}{/if}">
+                </div>
+                <div class="form-group">
+                    <label>{$text->t('sslConfigRegion')}</label>
+                    <input type="text" class="form-control" id="admin_region" value="{if $client}{$client->state|escape}{/if}">
+                </div>
+                <div class="form-group">
+                    <label>{$text->t('sslConfigPostalcode')}</label>
+                    <input type="text" class="form-control" id="admin_postalcode" value="{if $client}{$client->postcode|escape}{/if}">
+                </div>
+                <div class="form-group">
+                    <label>{$text->t('sslConfigCountry')}</label>
+                    <select class="form-control" id="admin_country">
+                        {foreach $countries as $code => $name}
+                            <option value="{$code|escape}" {if $code == $clientCountry}selected{/if}>{$name|escape}</option>
+                        {/foreach}
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+    {/if}
+
+    {if $agreement}
+    <div class="tssggs-agreement" style="margin-top:25px;">
+        {if $agreement.text}<div style="margin-bottom:8px;">{$agreement.text}</div>{/if}
+        <label style="font-weight:normal;">
+            <input type="checkbox" id="tssggs_agreement" value="1">
+            {$text->t('sslConfigAgreement')} {if $agreement.url}<a href="{$agreement.url|escape}" target="_blank" rel="noopener">{$agreement.name|escape}</a>{else}{$agreement.name|escape}{/if}
+        </label>
+    </div>
+    {/if}
+
+    <div style="margin-top:25px; padding-top:15px; border-top:1px solid #e0e0e0;">
+        <button type="button" class="tssggs-btn tssggs-btn--primary" id="btn-submit-ssl-config">{$text->t('sslConfigSubmit')}</button>
+        <span class="tssggs-required">
+            <svg class="tssggs-ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+            {$text->t('sslConfigRequiredNote')}
+        </span>
+    </div>
+</div>
+
+{* ===== RESULT PANELS ===== *}
+<div id="ssl-result-wrap">
+
+    {* AutoInstall submitted *}
+    <div id="ssl-thankyou-autoinstall" class="panel panel-default" style="display:none;">
+        <div class="panel-heading" style="background:#f0f7ff;border-color:#b3d4f5;">
+            <strong>{$text->t('autoinstallStatusTitle')}</strong>
+        </div>
+        <div class="panel-body" style="font-size:13px;color:#444;">
+            {if $certTypeConfig == 'DV'}
+                {if !$isWildcard}<p><strong>{$text->t('thankYou')}</strong></p>{/if}
+                <p>{if $isWildcard}{$text->t('autoinstallWildcardDvIntro')}{else}{$text->t('autoinstallSingleDvMsg')}{/if}</p>
+            {else}
+                <p>{$text->t('autoinstallOvIntro')}</p>
+                <p><strong>{$text->t('autoinstallOvNextStep')}</strong><br>{$text->t('autoinstallOvMsg')}</p>
+            {/if}
+            <p class="ssl-ty-email-row" style="display:none;">{$text->t('autoinstallEmailMsg')} <strong class="ssl-ty-email"></strong></p>
+            {if $certTypeConfig == 'DV'}
+                {if $isWildcard}<p>{$text->t('autoinstallOutroDomain')}</p>{/if}
+            {else}
+                <p>{$text->t('autoinstallOutroDomainOrg')}</p>
+            {/if}
+        </div>
+        <div class="panel-footer">
+            <a href="clientarea.php?action=productdetails&id={$serviceid}" class="btn btn-primary">{$text->t('goToCertificateDetails')}</a>
+        </div>
+    </div>
+
+    {* Manual enrollment with a generated CSR - private key has to be saved by the client *}
+    <div id="ssl-thankyou-manual-key" class="panel panel-default" style="display:none;">
+        <div class="panel-heading" style="background:#fff8e1;border-color:#f8e7aa;">
+            <strong>{$text->t('manualPrivateKeyTitle')}</strong>
+        </div>
+        <div class="panel-body" style="font-size:13px;color:#444;">
+            <p>{$text->t('manualPrivateKeyMsg')}</p>
+            <textarea class="form-control" id="ssl-private-key" rows="10" readonly></textarea>
+        </div>
+        <div class="panel-footer">
+            <a href="#" id="ssl-private-key-download" class="btn btn-success">{$text->t('manualPrivateKeyDownload')}</a>
+            <a href="clientarea.php?action=productdetails&id={$serviceid}" class="btn btn-primary">{$text->t('goToCertificateDetails')}</a>
+        </div>
+    </div>
+</div>
+
+{* Hidden templates for SAN rows (autoinstall) *}
+<select id="san-domain-template" style="display:none;">
+    <option value="">{$text->t('sslConfigPleaseChoose')}</option>
+    {foreach $domainGroups as $group}
+        <optgroup label="{$group.label|escape}">
+            {foreach $group.domains as $domain}
+                <option value="{$domain|escape}">{$domain|escape}</option>
+                {* a SAN-capable product gets no free www name: offer it as an additional domain *}
+                {if isset($group.www[$domain])}<option value="{$group.www[$domain]|escape}">{$group.www[$domain]|escape}</option>{/if}
+            {/foreach}
+        </optgroup>
+    {/foreach}
+</select>
+<select id="wildcard-san-domain-template" style="display:none;">
+    <option value="">{$text->t('sslConfigPleaseChoose')}</option>
+    {foreach $domainGroups as $group}
+        <optgroup label="{$group.label|escape}">
+            {foreach $group.domains as $domain}
+                <option value="{$domain|escape}">*.{$domain|escape}</option>
+            {/foreach}
+        </optgroup>
+    {/foreach}
+</select>
+
+<script type="text/javascript">
+(function ($) {
+    var serviceUrl       = 'clientarea.php?action=productdetails&id={$serviceid}&json=1';
+    var sanLimit         = {$sansLimit|intval};
+    var wildcardSanLimit = {$wildcardSansLimit|intval};
+    var hasCpanel        = {if $hasCpanel}true{else}false{/if};
+    var hasCsrGenerator  = {if $enableCsrGenerator}true{else}false{/if};
+    var ipProduct        = {if $ipProduct}true{else}false{/if};
+    var lang = {
+        loading:          '{$text->t('sslConfigLoading')|escape:'javascript'}',
+        firstSelect:      '{$text->t('sslConfigFirstSelectDomain')|escape:'javascript'}',
+        needsCsr:         '{$text->t('sslConfigEmailDcvNeedsCsr')|escape:'javascript'}',
+        csrNoCn:          '{$text->t('sslConfigEmailDcvCsrNoCn')|escape:'javascript'}',
+        needsCn:          '{$text->t('sslConfigEmailDcvNeedsCn')|escape:'javascript'}',
+        ownCsrRequired:   '{$text->t('sslConfigOwnCsrRequired')|escape:'javascript'}',
+        domainRequired:   '{$text->t('sslConfigDomainRequired')|escape:'javascript'}',
+        ipNamesRequired:  '{$text->t('sslConfigIpNamesRequired')|escape:'javascript'}',
+        approverRequired: '{$text->t('sslConfigApproverEmailRequired')|escape:'javascript'}',
+        error:            '{$text->t('sslConfigAnErrorOccurred')|escape:'javascript'}',
+        dnsFallbackAuto:  '{$text->t('sslConfigDnsFallbackAutoSelect')|escape:'javascript'}'
+    };
+
+    function parseResponse(ret) {
+        // the JSON answer comes with an application/json header, so jQuery may already have parsed it
+        if (ret && typeof ret === 'object') {
+            return ret;
+        }
+        ret = String(ret).replace('<JSONRESPONSE#', '').replace('#ENDJSONRESPONSE>', '');
+        return JSON.parse(ret);
+    }
+
+    function decodeEntities(text) {
+        return $('<textarea>').html(text).text();
+    }
+
+    // ---- Install type toggle ----
+    function isManualCsrGenerated() {
+        return hasCsrGenerator && $('#manual_auto_generate_csr').is(':checked');
+    }
+
+    function switchToAutoinstall() {
+        $('#install_type').val('autoinstall');
+        // the two choices are cards now: the selected one is marked
+        $('#btn-autoinstall').addClass('is-selected');
+        $('#btn-manual').removeClass('is-selected');
+        $('#section-autoinstall').show();
+        $('#section-manual').hide();
+        $('#ssl-csr-section').show();
+    }
+
+    function switchToManual() {
+        $('#install_type').val('manual');
+        $('#btn-manual').addClass('is-selected');
+        $('#btn-autoinstall').removeClass('is-selected');
+        $('#section-autoinstall').hide();
+        $('#section-manual').show();
+        if ($('#main_domain').val() === '__manual__') {
+            $('#main_domain').val('');
+        }
+        updateManualCsrMode();
+    }
+
+    $('#btn-autoinstall').on('click', switchToAutoinstall);
+    $('#btn-manual').on('click', switchToManual);
+
+    // ---- Own CSR / generated CSR (manual) ----
+    function updateManualCsrMode() {
+        if (isManualCsrGenerated()) {
+            $('#manual-own-csr-group').hide();
+            $('#manual-domain-group, #manual-wildcard-group').show();
+            $('#ssl-csr-section').show();
+        } else {
+            $('#manual-own-csr-group').show();
+            $('#manual-domain-group, #manual-wildcard-group').hide();
+            $('#ssl-csr-section').hide();
+        }
+        refreshManualEmailSection();
+    }
+    $('#manual_auto_generate_csr').on('change', updateManualCsrMode);
+
+    // ---- Approver emails ----
+    function loadApproverEmails(domain, $select, $wrap, emptyOptionText) {
+        $wrap.show();
+        $select.html($('<option>').val('').text(lang.loading));
+        $.post(serviceUrl, { 'mod-action': 'getApproverEmails', 'domain': domain }, function (ret) {
+            var emails = [];
+            try {
+                var payload = parseResponse(ret);
+                emails = (payload.data && payload.data.emails) ? payload.data.emails : [];
+            } catch (e) {}
+            $select.empty();
+            if (emptyOptionText) {
+                $select.append($('<option>').val('').text(decodeEntities(emptyOptionText)));
+                $.each(emails, function (i, email) {
+                    $select.append($('<option>').val(email).text(email));
+                });
+            } else if (emails.length) {
+                $.each(emails, function (i, email) {
+                    $select.append($('<option>').val(email).text(email));
+                });
+            } else {
+                $select.append($('<option>').val('').text(lang.firstSelect));
+            }
+        });
+    }
+
+    function refreshAutoinstallDcv() {
+        var method = $('#dcv_method_autoinstall').val();
+        $('#dcv-note-autoinstall-http').toggle(method === 'http' || method === 'https');
+        $('#dcv-note-autoinstall-dns').toggle(method === 'dns');
+
+        var domain = $('#main_domain').val();
+
+        if (method === 'dns') {
+            $('#dns-fallback-email-section').show();
+            if (!domain || domain === '__manual__') {
+                $('#dns-fallback-domain-warning').show();
+                $('#dns-fallback-select-wrap').hide();
+            } else {
+                $('#dns-fallback-domain-warning').hide();
+                loadApproverEmails(domain, $('#dns_fallback_email'), $('#dns-fallback-select-wrap'), lang.dnsFallbackAuto);
+            }
+        } else {
+            $('#dns-fallback-email-section').hide();
+        }
+
+        if (method !== 'email') {
+            $('#approver-email-autoinstall-section').hide();
+            return;
+        }
+        $('#approver-email-autoinstall-section').show();
+        if (!domain || domain === '__manual__') {
+            $('#approver-email-autoinstall-warning').show();
+            $('#approver-email-autoinstall-select-wrap').hide();
+        } else {
+            $('#approver-email-autoinstall-warning').hide();
+            loadApproverEmails(domain, $('#approver_email_autoinstall'), $('#approver-email-autoinstall-select-wrap'));
+        }
+    }
+
+    function extractCnFromCsr(pem) {
+        try {
+            var b64    = pem.replace(/-----[^-]+-----/g, '').replace(/\s+/g, '');
+            var binary = atob(b64);
+            var bytes  = new Uint8Array(binary.length);
+            for (var i = 0; i < binary.length; i++) { bytes[i] = binary.charCodeAt(i); }
+            // CN OID: 55 04 03
+            for (var j = 0; j < bytes.length - 5; j++) {
+                if (bytes[j] === 0x55 && bytes[j + 1] === 0x04 && bytes[j + 2] === 0x03) {
+                    var tag = bytes[j + 3];
+                    // PrintableString(0x13), UTF8String(0x0c), IA5String(0x16)
+                    if (tag === 0x13 || tag === 0x0c || tag === 0x16) {
+                        var len = bytes[j + 4];
+                        if (len > 0 && len < 128 && j + 5 + len <= bytes.length) {
+                            var cn = '';
+                            for (var k = 0; k < len; k++) { cn += String.fromCharCode(bytes[j + 5 + k]); }
+                            return cn.toLowerCase();
+                        }
+                    }
+                }
+            }
+        } catch (e) {}
+        return null;
+    }
+
+    function refreshManualEmailSection() {
+        if ($('#dcv_method_manual').val() !== 'email') {
+            $('#approver-email-manual-section').hide();
+            return;
+        }
+        $('#approver-email-manual-section').show();
+
+        var cn = null, warning = null;
+        if (isManualCsrGenerated()) {
+            cn = $.trim($('#manual_domain').val());
+            if (!cn) { warning = lang.needsCn; }
+        } else {
+            var csrText = $.trim($('#manual_own_csr').val());
+            if (!csrText) {
+                warning = lang.needsCsr;
+            } else {
+                cn = extractCnFromCsr(csrText);
+                if (!cn) { warning = lang.csrNoCn; }
+            }
+        }
+
+        if (warning) {
+            $('#approver-email-manual-warning').text(decodeEntities(warning)).show();
+            $('#approver-email-manual-select-wrap').hide();
+        } else {
+            $('#approver-email-manual-warning').hide();
+            loadApproverEmails(cn, $('#approver_email_manual'), $('#approver-email-manual-select-wrap'));
+        }
+    }
+
+    $('#main_domain').on('change', function () {
+        if ($(this).val() === '__manual__') {
+            switchToManual();
+            return;
+        }
+        refreshAutoinstallDcv();
+        updateWildcardPreview('wildcard_selected_autoinstall', 'main_domain', 'wildcard_domain_preview_autoinstall');
+    });
+    $('#dcv_method_autoinstall').on('change', refreshAutoinstallDcv);
+    $('#dcv_method_manual').on('change', refreshManualEmailSection);
+    $('#manual_domain').on('change blur', function () {
+        refreshManualEmailSection();
+        updateWildcardPreview('wildcard_selected_manual', 'manual_domain', 'wildcard_domain_preview_manual');
+    });
+    $('#manual_own_csr').on('blur', refreshManualEmailSection);
+
+    // ---- SAN rows (autoinstall) ----
+    function addSanRow(containerId, templateId, inputName, limit) {
+        var $container = $('#' + containerId);
+        if ($container.children('.san-row').length >= limit) return;
+
+        var $row  = $('<div class="san-row">');
+        var $sel  = $('<select class="form-control">').attr('name', inputName).html($('#' + templateId).html());
+        var $btns = $('<div class="san-btns">');
+        var $add  = $('<button type="button" class="btn btn-success san-btn-add">+</button>');
+        var $rem  = $('<button type="button" class="btn btn-danger">&minus;</button>');
+
+        $add.on('click', function () { addSanRow(containerId, templateId, inputName, limit); });
+        $rem.on('click', function () {
+            $row.remove();
+            if (!$container.children('.san-row').length) {
+                addSanRow(containerId, templateId, inputName, limit);
+            }
+            updateSanButtons($container, limit);
+        });
+
+        $btns.append($add).append(' ').append($rem);
+        $row.append($sel).append($btns);
+        $container.append($row);
+        updateSanButtons($container, limit);
+    }
+
+    function updateSanButtons($container, limit) {
+        $container.find('.san-btn-add').toggle($container.children('.san-row').length < limit);
+    }
+
+    if (hasCpanel && sanLimit > 0) {
+        addSanRow('san-rows-container', 'san-domain-template', 'san_domains[]', sanLimit);
+    }
+    if (hasCpanel && wildcardSanLimit > 0) {
+        addSanRow('wildcard-san-rows-container', 'wildcard-san-domain-template', 'wildcard_san_domains[]', wildcardSanLimit);
+    }
+
+    // ---- Wildcard preview ----
+    function updateWildcardPreview(checkboxId, domainId, previewId) {
+        var checked = $('#' + checkboxId).is(':checked');
+        var domain  = $('#' + domainId).val();
+        if (checked && domain && domain !== '__manual__') {
+            $('#' + previewId).text('(*.' + domain.replace(/^\*\./, '') + ')');
+        } else {
+            $('#' + previewId).text('');
+        }
+    }
+    $('#wildcard_selected_autoinstall').on('change', function () {
+        updateWildcardPreview('wildcard_selected_autoinstall', 'main_domain', 'wildcard_domain_preview_autoinstall');
+    });
+    $('#wildcard_selected_manual').on('change', function () {
+        updateWildcardPreview('wildcard_selected_manual', 'manual_domain', 'wildcard_domain_preview_manual');
+    });
+
+    // ---- Submit ----
+    function showError(message) {
+        // only the current problem: earlier messages no longer apply after the client changed the form
+        $('#ModAlerts').alerts('clear');
+        $('#ModAlerts').alerts('error', message || lang.error);
+        $('html, body').animate({ scrollTop: 0 }, 300);
+    }
+
+    $('#btn-submit-ssl-config').on('click', function () {
+        var btn         = $(this);
+        var installType = $('#install_type').val();
+        var dcvMethod, approverEmail;
+
+        if (installType === 'autoinstall') {
+            dcvMethod     = $('#dcv_method_autoinstall').val();
+            approverEmail = dcvMethod === 'email' ? ($('#approver_email_autoinstall').val() || '') : '';
+        } else {
+            dcvMethod     = $('#dcv_method_manual').val();
+            approverEmail = dcvMethod === 'email' ? ($('#approver_email_manual').val() || '') : '';
+        }
+        if (dcvMethod === 'email' && !approverEmail) {
+            showError(lang.approverRequired);
+            return;
+        }
+
+        if ($('#tssggs_agreement').length && !$('#tssggs_agreement').is(':checked')) {
+            showError('{$text->t('sslConfigAgreementRequired')|escape:'javascript'}');
+            return;
+        }
+
+        var postData = {
+            'mod-action':          'submitSslConfiguration',
+            'token':              '{$csrfToken}',
+            'install_type':       installType,
+            'dcv_method':         dcvMethod,
+            'approver_email':     approverEmail,
+            'csr_country':        $('#csr_country').val(),
+            'csr_state':          $('#csr_state').val(),
+            'csr_city':           $('#csr_city').val(),
+            'csr_org':            $('#csr_org').val(),
+            'csr_org_unit':       $('#csr_org_unit').val(),
+            'csr_email':          $('#csr_email').val(),
+            'admin_firstname':    $('#admin_firstname').val(),
+            'admin_lastname':     $('#admin_lastname').val(),
+            'admin_email':        $('#admin_email').val(),
+            'admin_phone':        $('#admin_phone').val(),
+            'admin_title':        $('#admin_title').val(),
+            'admin_addressline1': $('#admin_addressline1').val(),
+            'admin_city':         $('#admin_city').val(),
+            'admin_region':       $('#admin_region').val(),
+            'admin_postalcode':   $('#admin_postalcode').val(),
+            'admin_country':      $('#admin_country').val(),
+            'agreement':          $('#tssggs_agreement').is(':checked') ? 1 : 0
+        };
+
+        if (installType === 'autoinstall') {
+            var mainDomain = $('#main_domain').val();
+            if (!mainDomain || mainDomain === '__manual__') {
+                showError(lang.domainRequired);
+                return;
+            }
+            if ($('#wildcard_selected_autoinstall').is(':checked') && mainDomain.indexOf('*.') !== 0) {
+                mainDomain = '*.' + mainDomain;
+            }
+            postData['main_domain'] = mainDomain;
+
+            var sans = [];
+            $('select[name="san_domains[]"]').each(function () {
+                var v = $(this).val();
+                if (v) sans.push(v);
+            });
+            postData['san_domains'] = sans.join("\n");
+
+            var wildcardSans = [];
+            $('select[name="wildcard_san_domains[]"]').each(function () {
+                var v = $(this).val();
+                if (v) wildcardSans.push(v.indexOf('*.') === 0 ? v : '*.' + v);
+            });
+            postData['wildcard_san'] = wildcardSans.join("\n");
+
+            if (dcvMethod === 'dns') {
+                postData['dns_fallback_email'] = $('#dns_fallback_email').val() || '';
+            }
+        } else {
+            if (ipProduct && !$.trim($('#san_domains_manual').val())) {
+                showError(lang.ipNamesRequired);
+                return;
+            }
+            if (isManualCsrGenerated() && ipProduct) {
+                // the generated CSR of an IP certificate has no common name: the names are the list above
+            } else if (isManualCsrGenerated()) {
+                var manualDomain = $.trim($('#manual_domain').val());
+                if (!manualDomain) {
+                    showError(lang.domainRequired);
+                    return;
+                }
+                if ($('#wildcard_selected_manual').is(':checked') && manualDomain.indexOf('*.') !== 0) {
+                    manualDomain = '*.' + manualDomain;
+                }
+                postData['manual_domain'] = manualDomain;
+            } else {
+                var ownCsr = $.trim($('#manual_own_csr').val());
+                if (!ownCsr) {
+                    showError(lang.ownCsrRequired);
+                    return;
+                }
+                postData['own_csr'] = ownCsr;
+            }
+            postData['san_domains']  = $('#san_domains_manual').val() || '';
+            postData['wildcard_san'] = $('#wildcard_san_manual').val() || '';
+        }
+
+        btn.prop('disabled', true);
+
+        $.post(serviceUrl, postData, function (ret) {
+            var payload;
+            try {
+                payload = parseResponse(ret);
+            } catch (e) {
+                btn.prop('disabled', false);
+                showError(lang.error);
+                return;
+            }
+
+            if (payload.result !== 'success' || !payload.data) {
+                btn.prop('disabled', false);
+                showError(payload.error);
+                return;
+            }
+
+            var data = payload.data;
+            if (data.install_type === 'autoinstall') {
+                if (data.approver_email) {
+                    $('.ssl-ty-email').text(data.approver_email);
+                    $('.ssl-ty-email-row').show();
+                }
+                $('#ssl-config-wrap').hide();
+                $('#ssl-thankyou-autoinstall').show();
+                $('html, body').animate({ scrollTop: 0 }, 300);
+            } else if (data.private_key) {
+                $('#ssl-private-key').val(data.private_key);
+                var keyHandle = data.private_key_handle;
+                $('#ssl-private-key-download').attr('href', '#').off('click').on('click', function (e) {
+                    e.preventDefault();
+                    var f = $('<form></form>').attr({ method: 'post', target: '_blank' }).attr('action', 'clientarea.php?action=productdetails&id={$serviceid}');
+                    f.append($('<input type="hidden" name="mod-action" value="downloadKey">'));
+                    f.append($('<input type="hidden" name="token">').val('{$csrfToken}'));
+                    f.append($('<input type="hidden" name="handle">').val(keyHandle));
+                    f.appendTo('body').submit().remove();
+                });
+                $('#ssl-config-wrap').hide();
+                $('#ssl-thankyou-manual-key').show();
+                $('html, body').animate({ scrollTop: 0 }, 300);
+            } else {
+                window.location.href = 'clientarea.php?action=productdetails&id={$serviceid}';
+            }
+        }).fail(function () {
+            btn.prop('disabled', false);
+            showError(lang.error);
+        });
+    });
+
+    // ---- Init ----
+    if (hasCpanel) {
+        refreshAutoinstallDcv();
+    } else {
+        updateManualCsrMode();
+    }
+
+}(jQuery));
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        var block  = $('#mod-wrapper');
+        var target = $('.product-details');
+        if (!block.length || !target.length) {
+            return;
+        }
+        // the module's stylesheet sits outside the block and has to survive the clean-up below
+        $('head').append($('link[href*="theme.css"]').first());
+        // the whole block is moved, not copied, so every handler bound above stays on its node
+        target.empty().append(block);
+        // WHMCS's own tab strip under the page: the module shows everything above it
+        target.closest('.tab-pane').find('> .nav-tabs, > .tab-content').remove();
+    });
+</script>
+{/if}

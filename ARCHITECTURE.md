@@ -33,7 +33,10 @@ modules/addons/TSSGGSModule/          addon module (admin pages, settings, crons
 modules/servers/TSSGGSModule/         server (provisioning) module: WHMCS product actions and the client area
   TSSGGSModule.php                    entry points WHMCS calls (CreateAccount, ClientArea, ...)
   hooks.php                           registers the WHMCS hooks; each hook is a class in app/hooks
-  app/controllers/server/clientarea/  client area: one trait per product line in parts/
+  Boot.php                            loader of the server module's classes (and the addon's, through its Boot.php)
+  ClientArea.php                      the client area service page: app/Client/Home.php, one trait per product line
+                                      in app/Client/Parts; templates in templates/client, texts langs/ (Text, View)
+  app/Admin/Actions.php               the product actions WHMCS calls (create, renew, terminate, buttons ...)
   app/services/                       provisioning steps (SSLStepOne/Two/Three, Renew, ...)
 tests/                                Unit/ (PHPUnit, no WHMCS), Smoke/ (run inside a WHMCS install), stubs/
 tools/qa.sh                           runs the checks (below)
@@ -49,7 +52,8 @@ callers always use the class name.
 The module has no third-party PHP code of its own: Eloquent, Symfony Console and Smarty are the ones WHMCS ships.
 
 - `app/Kernel/Boot.php` registers the autoloader: `TSSGGSModule\App\X\Y` is `app/X/Y.php`. It does
-  nothing else. The server module has its own loader for its own namespace and reaches `App\...` through this one.
+  nothing else. The server module's `Boot.php` loads `TSSGGSModule\Server\X` (`X.php` under the server module) and
+  requires this one for `App\...`.
 - `app/Kernel/Lifecycle.php`: what WHMCS asks an addon for - description, activate (e-mail templates, tables),
   deactivate (keeps everything), upgrade (tables). Tables: `app/Database/schema.sql` (run by `Database/SqlFile`), then
   the numbered changes in `Database/Schema.php`.

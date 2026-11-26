@@ -10,6 +10,9 @@ parameters:
     paths:
         - modules/addons/TSSGGSModule/app
         - modules/servers/TSSGGSModule/app
+        - modules/servers/TSSGGSModule/ClientArea.php
+        - modules/servers/TSSGGSModule/Text.php
+        - modules/servers/TSSGGSModule/View.php
     excludePaths:
         analyse:
             # thin wrappers of WHMCS's own (encoded) model classes: read for their names, not analysed
@@ -17,16 +20,12 @@ parameters:
     bootstrapFiles:
         - tests/phpstan-bootstrap.php
     scanDirectories:
-        - modules/servers/TSSGGSModule/core
         # WHMCS's own libraries that are plain PHP (WHMCS root from QA_WHMCS, see tools/qa.sh)
         - %env.QA_WHMCS%/vendor/illuminate
         - %env.QA_WHMCS%/vendor/symfony/console
         - %env.QA_WHMCS%/vendor/nesbot/carbon
     scanFiles:
         - tests/stubs/whmcs.php
-        - modules/servers/TSSGGSModule/Configuration.php
-        - modules/servers/TSSGGSModule/Loader.php
-        - modules/servers/TSSGGSModule/Server.php
         # global functions the hook classes call (unifiedSslLabelBlock is shared by both editions)
         - modules/servers/TSSGGSModule/hooks.php
     ignoreErrors:
@@ -34,8 +33,6 @@ parameters:
         # plain PHPStan can not see them (Larastan would, but needs Composer)
         - '#^Call to an undefined static method (TSSGGSModule\\[A-Za-z\\]+\\[Mm]odels\\[A-Za-z\\]+|WHMCS\\Database\\Capsule|WHMCS\\(Service|User|Mail)\\[A-Za-z]+)::[a-zA-Z]+\(\)\.$#'
         - '#^Access to an undefined property (TSSGGSModule\\[A-Za-z\\]+\\[Mm]odels\\[A-Za-z\\]+|Illuminate\\Database\\Eloquent\\Builder\|Illuminate\\Database\\Eloquent\\Model)::\$[a-zA-Z_]+\.$#'
-        # the framework's facades: static calls forwarded to an instance
-        - '#^Static call to instance method TSSGGSModule\\(Core\\Support\\Facades|Packages\\[A-Za-z]+\\Support\\Facades)\\[A-Za-z]+::[a-zA-Z]+\(\)\.$#'
         # WHMCS's own function files, loaded at runtime from the WHMCS root (ROOTDIR/includes/...)
         - '#^Path in require_once\(\) "[^"]*/includes/[a-z]+\.php" is not a file or it does not exist\.$#'
     reportUnmatchedIgnoredErrors: false

@@ -2,7 +2,7 @@
 
 namespace TSSGGSModule\Server\app\repository\whmcs;
 
-use TSSGGSModule\Server\core\Lang;
+use TSSGGSModule\Server\Text;
 
 class Domain {
 
@@ -31,10 +31,10 @@ class Domain {
 
             if($wildcard === true)
             {
-                throw new \Exception(Lang::absoluteT('invalid_wildcard_domain'));
+                throw new \Exception(Text::get('invalid_wildcard_domain'));
             }
 
-            throw new \Exception(sprintf(Lang::absoluteT('invalid_domain'), $domain));
+            throw new \Exception(sprintf(Text::get('invalid_domain'), $domain));
         }
 
         return true;

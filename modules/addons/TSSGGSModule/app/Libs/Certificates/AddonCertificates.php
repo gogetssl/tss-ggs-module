@@ -445,16 +445,16 @@ class AddonCertificates
         $text = '';
         try
         {
-            if(class_exists('\TSSGGSModule\Server\core\Lang'))
+            if(class_exists('\TSSGGSModule\Server\Text'))
             {
-                $text = html_entity_decode((string)\TSSGGSModule\Server\core\Lang::absoluteT('addonCertificate', $key), ENT_QUOTES, 'UTF-8');
+                $text = (string)\TSSGGSModule\Server\Text::plain('addonCertificate', $key);
             }
         }
         catch(\Throwable $e)
         {
             $text = '';
         }
-        if($text === '' || $text === $key || strpos($text, 'addonCertificate') !== false || strpos($text, '_LANG[') !== false)
+        if($text === '')
         {
             $text = self::ENGLISH[$key] ?? $key;
         }

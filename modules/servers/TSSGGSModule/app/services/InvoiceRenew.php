@@ -109,7 +109,7 @@ class InvoiceRenew {
             $message = 'This service is billed once and cannot be renewed here. Please place a new order.';
             try
             {
-                $translated = (string)\TSSGGSModule\Server\core\Lang::absoluteT('renew_not_recurring');
+                $translated = (string)\TSSGGSModule\Server\Text::get('renew_not_recurring');
                 $message    = $translated !== '' && $translated !== 'renew_not_recurring' ? $translated : $message;
             }
             catch(\Throwable $e)

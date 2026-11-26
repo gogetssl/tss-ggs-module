@@ -23,7 +23,7 @@ unset($moduleUpdateRecover);
 
 use WHMCS\Database\Capsule;
 use TSSGGSModule\App\Models\Request;
-use TSSGGSModule\Server\core\Lang;
+use TSSGGSModule\Server\Text;
 
 // Loaded by WHMCS (ModuleHooks) and by the addon's hooks.php - WHMCS lists the server module in ModuleHooks only
 // after a product using it was saved in the admin area, so the addon makes sure the client hooks always run
@@ -33,11 +33,7 @@ if(defined('TSSGGSMODULE_SERVER_HOOKS'))
 }
 define('TSSGGSMODULE_SERVER_HOOKS', true);
 
-if(!defined('DS')) define('DS', DIRECTORY_SEPARATOR);
-
-require_once __DIR__ . DS . 'Loader.php';
-new \TSSGGSModule\Server\Loader();
-\TSSGGSModule\Server\Server::I();
+require_once __DIR__ . DIRECTORY_SEPARATOR . 'Boot.php';
 
 
 // Admin downloads (certificate ZIP, validation file) from the module tab of the service page: a normal request, not

@@ -2,7 +2,7 @@
 
 namespace TSSGGSModule\Server\app\hooks;
 
-use TSSGGSModule\Server\core\Lang;
+use TSSGGSModule\Server\Text;
 
 /**
  * WHMCS hook ClientAreaPrimarySidebar (registered in hooks.php).
@@ -32,7 +32,7 @@ class ClientPrimarySidebar
                     {
                         $myAccount->addChild('DownloadCRT', [
                             'name'  => 'DownloadCRT',
-                            'label' => Lang::absoluteT('Download CRT'),
+                            'label' => Text::get('Download CRT'),
                             'uri'   => 'clientarea.php?action=productdetails&id=' . $serviceId . '&mod-action=download&format=crt',
                             'order' => 10,
                             'icon'  => 'fas fa-cogs',
@@ -42,7 +42,7 @@ class ClientPrimarySidebar
                     {
                         $myAccount->addChild('DownloadICRT', [
                             'name'  => 'DownloadICRT',
-                            'label' => Lang::absoluteT('Download Intermediate CRT'),
+                            'label' => Text::get('Download Intermediate CRT'),
                             'uri'   => 'clientarea.php?action=productdetails&id=' . $serviceId . '&mod-action=download&format=ca',
                             'order' => 20,
                             'icon'  => 'fas fa-cogs',
@@ -52,7 +52,7 @@ class ClientPrimarySidebar
                     {
                         $myAccount->addChild('DownloadSSL', [
                             'name'  => 'DownloadSSL',
-                            'label' => Lang::absoluteT('Download SSL'),
+                            'label' => Text::get('Download SSL'),
                             'uri'   => 'clientarea.php?action=productdetails&id=' . $serviceId . '&mod-action=download&format=zip',
                             'order' => 30,
                             'icon'  => 'fas fa-cogs',
@@ -60,14 +60,14 @@ class ClientPrimarySidebar
                     }
                     $myAccount->addChild('ReissueSSL', [
                         'name'  => 'ReissueSSL',
-                        'label' => Lang::absoluteT('Reissue SSL'),
+                        'label' => Text::get('Reissue SSL'),
                         'uri'   => 'clientarea.php?action=productdetails&id=' . $serviceId . '&mod-action=reissueSSL',
                         'order' => 40,
                         'icon'  => 'fas fa-cogs',
                     ]);
     //                $myAccount->addChild('RenewSSL', [
     //                    'name' => 'RenewSSL',
-    //                    'label' => Lang::absoluteT('Renew SSL'),
+    //                    'label' => Text::get('Renew SSL'),
     //                    'uri' => 'clientarea.php',
     //                    'order' => 50,
     //                    'icon' => 'fas fa-cogs',
@@ -77,7 +77,7 @@ class ClientPrimarySidebar
 
     //                $myAccount->addChild('ExtraSANs', [
     //                    'name' => 'ExtraSANs',
-    //                    'label' => Lang::absoluteT('Buy Extra SANs'),
+    //                    'label' => Text::get('Buy Extra SANs'),
     //                    'uri' => 'clientarea.php',
     //                    'order' => 70,
     //                    'icon' => 'fas fa-cogs',
@@ -93,7 +93,7 @@ class ClientPrimarySidebar
                 {
                     $myAccount->addChild('DownloadCSR', [
                         'name'  => 'DownloadCSR',
-                        'label' => Lang::absoluteT('Download CSR'),
+                        'label' => Text::get('Download CSR'),
                         'uri'   => 'clientarea.php?action=productdetails&id=' . $serviceId . '&mod-action=downloadCSR',
                         'order' => 10,
                         'icon'  => 'fas fa-cogs'
@@ -102,7 +102,7 @@ class ClientPrimarySidebar
                     {
                         $myAccount->addChild('DownloadAuthFile', [
                             'name'  => 'DownloadAuthFile',
-                            'label' => Lang::absoluteT('Download Auth File'),
+                            'label' => Text::get('Download Auth File'),
                             'uri'   => 'clientarea.php?action=productdetails&id=' . $serviceId . '&mod-action=downloadAuthFile',
                             'order' => 20,
                             'icon'  => 'fas fa-cogs'
@@ -110,7 +110,7 @@ class ClientPrimarySidebar
                     }
                     $myAccount->addChild('ChangeApprovalMethod', [
                         'name'  => 'ChangeApprovalMethod',
-                        'label' => Lang::absoluteT('Change Approval Method'),
+                        'label' => Text::get('Change Approval Method'),
                         'uri'   => 'clientarea.php?action=productdetails&id=' . $serviceId . '&mod-action=changeApprovalMethod',
                         'order' => 30,
                         'icon'  => 'fas fa-cogs'

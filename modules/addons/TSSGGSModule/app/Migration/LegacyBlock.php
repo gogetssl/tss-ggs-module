@@ -422,17 +422,16 @@ class LegacyBlock
         $text = '';
         try
         {
-            if(class_exists('\TSSGGSModule\Server\core\Lang'))
+            if(class_exists('\TSSGGSModule\Server\Text'))
             {
-                // absoluteT returns HTML entities; the callers escape for themselves
-                $text = html_entity_decode((string)\TSSGGSModule\Server\core\Lang::absoluteT('migrationPause', $key), ENT_QUOTES, 'UTF-8');
+                $text = (string)\TSSGGSModule\Server\Text::plain('migrationPause', $key);
             }
         }
         catch(\Throwable $e)
         {
             $text = '';
         }
-        if($text === '' || $text === $key || strpos($text, 'migrationPause') !== false || strpos($text, '_LANG[') !== false)
+        if($text === '')
         {
             $text = self::ENGLISH[$key] ?? $key;
         }

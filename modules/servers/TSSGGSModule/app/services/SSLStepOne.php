@@ -2,8 +2,8 @@
 
 namespace TSSGGSModule\Server\app\services;
 
-use TSSGGSModule\Server\core\Lang;
-use TSSGGSModule\Server\core\Smarty;
+use TSSGGSModule\Server\Text;
+use TSSGGSModule\Server\View;
 use TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository;
 
 class SSLStepOne
@@ -30,22 +30,22 @@ class SSLStepOne
 
         if($sans > 0)
         {
-            $fields['additionalfields'][Lang::absoluteT('sans_title')]['sans_domains'] = [
-                'FriendlyName' => sprintf(Lang::absoluteT('additional_san'), $sans),
+            $fields['additionalfields'][Text::get('sans_title')]['sans_domains'] = [
+                'FriendlyName' => sprintf(Text::get('additional_san'), $sans),
                 'Type' => 'textarea',
                 'Size' => '30',
-                'Description' => Lang::absoluteT('additional_san_desc'),
+                'Description' => Text::get('additional_san_desc'),
                 'Required' => false
 
             ];
         }
         if($sans_wildcard > 0)
         {
-            $fields['additionalfields'][Lang::absoluteT('sans_title')]['wildcard_san'] = [
-                'FriendlyName' => sprintf(Lang::absoluteT('additional_san_wildcard'), $sans_wildcard),
+            $fields['additionalfields'][Text::get('sans_title')]['wildcard_san'] = [
+                'FriendlyName' => sprintf(Text::get('additional_san_wildcard'), $sans_wildcard),
                 'Type' => 'textarea',
                 'Size' => '30',
-                'Description' => Lang::absoluteT('additional_san_wildcard_desc'),
+                'Description' => Text::get('additional_san_wildcard_desc'),
                 'Required' => false
             ];
         }
@@ -82,8 +82,8 @@ class SSLStepOne
             $configuration['sslSettings']['defaultCsrCountry'] = false;
         }
 
-        $countries = file_get_contents(dirname(dirname(dirname(dirname(dirname(__DIR__))))).DS.'resources'.DS.'country'.DS.'dist.countries.json');
-        return Smarty::buildTemplate('configuressl/SSLStepOne', [
+        $countries = file_get_contents(dirname(dirname(dirname(dirname(dirname(__DIR__))))).DIRECTORY_SEPARATOR.'resources'.DIRECTORY_SEPARATOR.'country'.DIRECTORY_SEPARATOR.'dist.countries.json');
+        return View::render('configuressl/SSLStepOne', [
             'countries' => $countries,
             'serviceId' => $serviceId,
             'enable_csr' => isset($configuration['sslSettings']['enableCsrGenerator']) ? $configuration['sslSettings']['enableCsrGenerator'] : false,

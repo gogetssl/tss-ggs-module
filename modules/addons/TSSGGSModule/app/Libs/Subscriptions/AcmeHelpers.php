@@ -4,7 +4,7 @@ namespace TSSGGSModule\App\Libs\Subscriptions;
 
 
 use TSSGGSModule\Server\app\models\whmcs\SSL;
-use TSSGGSModule\Server\core\Lang;
+use TSSGGSModule\Server\Text;
 use TSSGGSModule\App\Models\AcmeSubscription;
 use TSSGGSModule\App\Models\RemoteProduct;
 use TSSGGSModule\App\Models\Whmcs\Product;
@@ -192,7 +192,7 @@ class AcmeHelpers
 
         if(!$subscription || (int)$subscription->api_order_id <= 0)
         {
-            throw new \Exception(Lang::absoluteT('subscription_was_not_created_yet'));
+            throw new \Exception(Text::get('subscription_was_not_created_yet'));
         }
 
         $wasUnpaid  = SubscriptionState::renewalUnpaid($subscription);

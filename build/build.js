@@ -129,7 +129,6 @@ function build(edition) {
     if (edition.author) {
         const authorFiles = [
             [path.join('modules', 'addons', name, 'app', 'Config', 'configuration.yml'), /^author:.*$/m, "author: '" + edition.author + "'"],
-            [path.join('modules', 'servers', name, 'Configuration.php'), /public \$author = '[^']*';/, "public $author = '" + edition.author + "';"],
         ];
         for (const [rel, pattern, replacement] of authorFiles) {
             const file = path.join(dir, rel);

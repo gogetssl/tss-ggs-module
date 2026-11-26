@@ -52,7 +52,7 @@ class SecurityRulesTest extends TestCase
     /** Every client action that changes something asks for the token first, and the subscription actions for their product */
     public function testClientActionsCheckBeforeTheyAct(): void
     {
-        $parts = dirname(__DIR__, 3) . '/modules/servers/TSSGGSModule/app/controllers/server/clientarea/parts';
+        $parts = dirname(__DIR__, 3) . '/modules/servers/TSSGGSModule/app/Client/Parts';
         $acme  = (string)file_get_contents($parts . '/AcmeActions.php');
         foreach(['createSubscriptionJSON', 'buyMoreDomainsJSON', 'upgradeConfigOptionsJSON'] as $action)
         {
@@ -69,7 +69,10 @@ class SecurityRulesTest extends TestCase
     /** The service a client action works on is the one WHMCS checked the owner of */
     public function testClientRequestsUseTheServiceWhmcsChecked(): void
     {
-        $this->assertSame(2, substr_count(self::source('servers/TSSGGSModule/Server.php'), "\$input['id']     = (int)\$params['serviceid'];"));
+        $clientArea = self::source('servers/TSSGGSModule/ClientArea.php');
+        $this->assertSame(1, substr_count($clientArea, "\$input['id']     = (int)\$params['serviceid'];"));
+        // both the page and the background call go through run(), which sets it
+        $this->assertSame(2, substr_count($clientArea, 'self::run(self::action($input)'));
     }
 
     /** An admin address is an instance method without arguments: a public helper of a page is not one */

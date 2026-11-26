@@ -15,7 +15,7 @@ class AwaitingConfigurationNotice
         if($params['clientareaaction'] == 'services' || $params['clientareaaction'] == 'products')
         {
 
-            $moduleName = (new \TSSGGSModule\Server\Configuration())->systemName;
+            $moduleName = basename(dirname(__DIR__, 2));
             $services   = Capsule::table('tblhosting')
                                  ->select(['tblhosting.id'])
                                  ->join('tblproducts', 'tblproducts.id', '=', 'tblhosting.packageid')
