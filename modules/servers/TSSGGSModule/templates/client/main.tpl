@@ -3,7 +3,8 @@
 <div class="mod-module">
     <link rel="stylesheet" href="{$assetsURL}/css/theme.css">
     <section id="mod-wrapper" class="module-container">
-        <div id="ModAlerts" class="row">
+        {* one message under the other: the theme's "row" would put them side by side *}
+        <div id="ModAlerts" class="row" style="display: block;">
             {if $error}
                 <div class="alert alert-danger" role="alert">
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
