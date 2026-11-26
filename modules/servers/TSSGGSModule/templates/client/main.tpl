@@ -42,6 +42,23 @@
     </section>
     {literal}
     <script>
+        // A page that shows itself in the theme's Overview panel moves its top block there and then removes the
+        // module's own block below it: this moves the rest of the page (validation details, dialogs) and the
+        // messages along. Native moves, so the scripts in the moved nodes do not run a second time.
+        window.modPageRestToOverview = function () {
+            var target = document.querySelector('.product-details'),
+                page   = document.querySelector('.mod-module #mod-container'),
+                alerts = document.querySelector('.mod-module #ModAlerts');
+            if (!target) {
+                return;
+            }
+            if (alerts) {
+                target.insertBefore(alerts, target.firstChild);
+            }
+            while (page && page.firstChild) {
+                target.appendChild(page.firstChild);
+            }
+        };
         jQuery(function ($) {
             // the service page of some client area themes keeps the module output in its "domain" tab
             $('#domain').html($('.mod-module').parent('div').clone());

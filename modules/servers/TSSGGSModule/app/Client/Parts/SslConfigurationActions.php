@@ -52,12 +52,19 @@ trait SslConfigurationActions
 
         $dcvMethods = array_values(array_filter(array_map('trim', explode(',', strtolower((string)$configProduct['dcv'])))));
 
-        // Manual orders can pick the DNS record type (CNAME / TXT) when the CA offers both; AutoInstall creates
-        // the record the CA asks for, so it keeps the single DNS method
+        // Manual orders name the DNS record type (CNAME / TXT); AutoInstall creates the record the CA asks for, so it
+        // keeps the single DNS method
         $manualMethods = array_values(array_intersect(['email', 'http', 'https', 'dns-cname', 'dns-txt'], $dcvMethods));
         if(!array_intersect(['dns-cname', 'dns-txt'], $manualMethods) && in_array('dns', $dcvMethods, true))
         {
             $manualMethods[] = 'dns';
+        }
+        // A product that offers both DNS record types (DigiCert brands) takes only TXT when it is ordered: the gateway
+        // refuses "dns-cname" there ("order with dns-txt and change the validation method afterwards"). CNAME stays
+        // available afterwards on Change Approval Method.
+        if(in_array('dns-txt', $manualMethods, true))
+        {
+            $manualMethods = array_values(array_diff($manualMethods, ['dns-cname']));
         }
         if(!empty($sslSettings['disableEmailValidation']))
         {
