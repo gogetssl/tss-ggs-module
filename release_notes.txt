@@ -1,3 +1,20 @@
+2.0.5 (2026-11-27)
+Renewal switches, setup wizard and admin screen fixes
+- Settings > SSL Certificates: "Create Automatic Renewal Invoice" and
+  "Renew Order Via Existing Order" show how they work. Both are on until
+  turned off, but a new install showed them as No, and saving the screen
+  as shown turned renewal invoices off. Check both switches if you saved
+  this screen on 2.0.0 to 2.0.4.
+- Setup wizard on a new install: step 5 (Choose products) no longer goes
+  back to step 1, and the Import dialog is shown.
+- The renewal task no longer fails on a new install whose SSL settings
+  were never saved.
+- Admin screens: help hints show their text (they showed an empty black
+  box), the Logs section has its own icon, pages no longer jump while the
+  styles load, and the e-mail settings list is easier to read.
+- Settings save bar: a value changed and put back no longer counts as an
+  unsaved change.
+
 2.0.4 (2026-11-27)
 Domain validation: details on the client page, approver e-mail, DNS TXT
 - Client area, themes that show the service in their Overview panel: the
