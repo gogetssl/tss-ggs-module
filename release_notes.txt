@@ -1,3 +1,21 @@
+2.0.4 (2026-11-27)
+Domain validation: details on the client page, approver e-mail, DNS TXT
+- Client area, themes that show the service in their Overview panel: the
+  validation details (DNS record, file, e-mail), the dialogs (view,
+  install, cancel, renew) and the messages are shown again. Only the top
+  block of the page was moved into the panel; the rest was lost.
+- The approver e-mail address chosen for e-mail validation is kept with
+  the service: when the order is placed, when the validation method is
+  changed (by the client, the admin or AutoInstall) and on a reissue.
+  The client's order page and the admin service tab show
+  "EMAIL (address)" for every name, also when the certificate authority
+  reports only "email". Orders placed before this version show the
+  address sent with the order. The www name a vendor adds by itself shows
+  the address of its main domain.
+- TheSSLStore DigiCert products offer only DNS TXT on the order form;
+  the vendor refuses DNS CNAME when ordering. GoGetSSL products keep both
+  DNS types.
+
 2.0.3 (2026-11-26)
 Client area on the module's own code (includes the unpublished 2.0.2)
 - The client area service pages, the SSL configuration steps and the
