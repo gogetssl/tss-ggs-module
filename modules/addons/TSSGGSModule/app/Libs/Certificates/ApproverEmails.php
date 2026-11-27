@@ -101,6 +101,11 @@ class ApproverEmails
         {
             $raw  = Capsule::table('tblsslorders')->where('serviceid', (int)$serviceId)->value('configdata');
             $data = json_decode((string)$raw, true);
+            // data in another format (a legacy module's) is never overwritten: the list then falls back to the order data
+            if(!is_array($data) && trim((string)$raw) !== '')
+            {
+                return;
+            }
             $data = is_array($data) ? $data : [];
             $data[self::KEY] = $list;
             Capsule::table('tblsslorders')->where('serviceid', (int)$serviceId)->update(['configdata' => json_encode($data)]);
