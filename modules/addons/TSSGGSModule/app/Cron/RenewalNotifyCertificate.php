@@ -65,12 +65,13 @@ class RenewalNotifyCertificate extends Command
         $errorToDB = '';
 
         $addonConfig = (new AddonModuleRepository())->getModuleConfiguration();
-        $sslSettings = $addonConfig['sslSettings'];
+        // a new install has no saved SSL settings yet (Settings > SSL Certificates never saved): nothing is enabled
+        $sslSettings = is_array($addonConfig['sslSettings'] ?? null) ? $addonConfig['sslSettings'] : [];
 
         // renewal invoices: from N days before the order end (App\Libs\Billing\RenewalPolicy); the module is the only one
         // that creates them, whichever way a paid renewal is placed
         $auto_renew_invoice_reccuring           = \TSSGGSModule\App\Libs\Billing\RenewalPolicy::invoicing(\TSSGGSModule\App\Libs\Billing\RenewalPolicy::CERTIFICATE);
-        $send_expiration_notification_reccuring = $sslSettings['recurringSendExpirationNotifications'];
+        $send_expiration_notification_reccuring = (string)($sslSettings['recurringSendExpirationNotifications'] ?? '');
 
         $daysNotify = explode(',', $send_expiration_notification_reccuring);
 
