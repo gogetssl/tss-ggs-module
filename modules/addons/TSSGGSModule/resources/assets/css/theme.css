@@ -675,7 +675,7 @@
 #mod-root .tssggs-manage { white-space: nowrap; font-size: 12px; }
 /* the "?" beside a field label: its text shows on hover or focus */
 #mod-root .tssggs-tip { position: relative; cursor: help; }
-#mod-root .tssggs-tip:hover::after, #mod-root .tssggs-tip:focus::after { content: attr(data-title); position: absolute; z-index: 30; left: 50%; bottom: calc(100% + 8px); transform: translateX(-50%); width: max-content; max-width: 320px; padding: 8px 10px; border-radius: 6px; background: #25282d; color: #fff; font: 400 12px/1.45 inherit; font-style: normal; text-align: left; white-space: normal; box-shadow: 0 4px 14px rgba(0,0,0,.18); }
+#mod-root .tssggs-tip:hover::after, #mod-root .tssggs-tip:focus::after { content: attr(data-title); position: absolute; z-index: 30; left: 50%; bottom: calc(100% + 8px); transform: translateX(-50%); width: max-content; max-width: 320px; padding: 8px 10px; border-radius: 6px; background: #25282d; color: #fff; font-family: inherit; font-size: 12px; font-weight: 400; line-height: 1.45; letter-spacing: normal; font-style: normal; text-align: left; white-space: normal; box-shadow: 0 4px 14px rgba(0,0,0,.18); }
 /* the "Actions" menu of a list (admin/logs/toolbar.tpl): opens under its button, right edges aligned */
 #mod-root .tssggs-menu { position: relative; }
 #mod-root .tssggs-menu__drop { top: 100%; right: 0; left: auto; z-index: 1000; margin-top: 6px; }
