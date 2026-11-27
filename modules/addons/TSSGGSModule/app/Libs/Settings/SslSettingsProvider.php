@@ -39,6 +39,10 @@ class SslSettingsProvider extends Provider
             $this->data[$leadKey]  = RenewalPolicy::lead($type);
             $this->data[$termKey]  = RenewalPolicy::term($type);
         }
+        // certificates: show the switches as they work - renewal invoices and "renew via the existing order" are on
+        // unless turned off (RenewalPolicy::invoicing / sameService). Shown as No while unset, a save left them off.
+        $this->data['recurringCreateAutomaticRenewalInvoice'] = RenewalPolicy::invoicing(RenewalPolicy::CERTIFICATE) ? '1' : '0';
+        $this->data['renewOrderViaExistingOrder']             = RenewalPolicy::sameService() ? '1' : '0';
         // subscriptions: the renewal invoice and the termination of unpaid renewals are on unless turned off
         foreach(['recurringCreateAutomaticRenewalInvoiceSubscription', 'terminateUnpaidSubscriptions'] as $key)
         {
