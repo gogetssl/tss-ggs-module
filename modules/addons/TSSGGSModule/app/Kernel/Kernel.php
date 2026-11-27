@@ -85,7 +85,10 @@ final class Kernel
 
         try
         {
-            $response = in_array($page->name(), self::SETUP_FIRST, true) && !self::connected()
+            $setupFirst = in_array($page->name(), self::SETUP_FIRST, true) && !self::connected()
+                // the wizard's "Choose products" step loads the Products page: open as soon as step 4 saved credentials
+                && !($page->name() === 'products' && self::credentialsSaved());
+            $response = $setupFirst
                 ? Response::redirect(Page::pageUrl('configuration', 'step1'))
                 : self::dispatch($page, $request);
         }
@@ -107,6 +110,18 @@ final class Kernel
         $configuration = (new \TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository())->getModuleConfiguration();
 
         return !empty($configuration) && ($configuration['test_connection'] ?? 'error') !== 'error';
+    }
+
+    /**
+     * API credentials of the edition's own vendor are stored (the wizard's API step saves them only after a successful
+     * connection test); the wizard itself is finished only later, so connected() is still false during its last steps
+     */
+    public static function credentialsSaved(): bool
+    {
+        $stored = (new \TSSGGSModule\App\Repositories\Whmcs\AddonModuleRepository())->storedCredentials();
+        $own    = $stored[\TSSGGSModule\App\Libs\Support\Edition::primaryVendor()] ?? [];
+
+        return trim((string)($own['AuthToken'] ?? '')) !== '' || trim((string)($own['TestAuthToken'] ?? '')) !== '';
     }
 
     protected static function dispatch(Page $page, Request $request): Response
