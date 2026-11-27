@@ -261,6 +261,7 @@ trait AutoInstallValidation
             }
 
             self::updateStoredValidationMethods($serviceId, $api, $apiOrderId, $switched);
+            \TSSGGSModule\App\Libs\Certificates\ApproverEmails::change($serviceId, $switched);
 
             $taskData['dns_switched_to_email'] = true;
             $taskData['dns_switch_time']       = time();
