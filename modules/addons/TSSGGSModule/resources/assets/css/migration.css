@@ -135,7 +135,8 @@
 .tssggs-emails .em-tag.is-on { background: var(--tw-primary-soft); color: var(--tw-primary); border-color: rgba(0,113,54,.3); }
 /* Settings > Email notifications */
 /* separate, not collapse: a collapsed table ignores border-radius on the section titles */
-.tssggs-emails table.em-list { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 13px; }
+.tssggs-emails table.em-list { width: 100%; font-size: 13px; }
+#mod-root .tssggs-emails table.em-list { border-collapse: separate; border-spacing: 0; }
 .tssggs-emails table.em-list th { text-align: left; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--tw-muted); padding: 6px 10px; border-bottom: 0; }
 .tssggs-emails table.em-list td { padding: 8px 10px; border-bottom: 1px solid var(--tw-border); vertical-align: top; }
 .tssggs-emails table.em-list td.tssggs-muted { margin: 0; font-size: 12px; }
