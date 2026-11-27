@@ -157,7 +157,7 @@
 .tssggs-emails table.em-list tr.is-last td { border-bottom: 0; }
 .tssggs-emails table.em-list tr.em-group td {
     padding: 11px 14px; background: var(--em-soft, var(--tw-surface-alt));
-    border-top: 1px solid var(--tw-border); border-left: 4px solid var(--em-c, var(--tw-muted));
+    border-top: 0; border-bottom: 0; border-left: 4px solid var(--em-c, var(--tw-muted));
 }
 #mod-root .tssggs-emails table.em-list .em-group__dot { display: inline-block; flex: none; width: 8px !important; min-width: 8px; height: 8px; margin-right: 8px; border-radius: 50%; background: var(--em-c); vertical-align: 1px; }
 #mod-root .tssggs-emails table.em-list .em-group__title { margin-right: 10px; color: var(--em-c); font-size: 14px; font-weight: 700 !important; }
