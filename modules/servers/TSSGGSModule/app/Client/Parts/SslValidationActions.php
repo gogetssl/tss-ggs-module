@@ -186,6 +186,12 @@ trait SslValidationActions
                 $certificate['orderData']['order']     = $newData['order'];
                 $certificate['orderData']['items']     = $newData['items'];
                 Request::updateOrderData($serviceId, $certificate);
+                $changed = [];
+                foreach($domainChanges as $domainChange)
+                {
+                    $changed[$domainChange['domain']['name']] = $domainChange['domain']['validation_method'];
+                }
+                \TSSGGSModule\App\Libs\Certificates\ApproverEmails::change($serviceId, $changed);
                 CertificateService::event($serviceId, 'info', '[Validation] Validation method changed by the client');
                 $_SESSION['mod-success'] = Text::get('validation_method_changed');
 

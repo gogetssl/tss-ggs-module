@@ -526,6 +526,8 @@ class AdminServicesTabFields
 
         $html = '<table class="table table-condensed" style="margin:0;max-width:760px;"><tr><th>' . self::t('domain', 'Domain') . '</th><th>' . self::t('method', 'Method') . '</th><th>' . self::t('status', 'Status') . '</th></tr>';
         $listed = [];
+        // the approver address of e-mail validation (the gateway may report only "email")
+        $approverEmails = \TSSGGSModule\App\Libs\Certificates\ApproverEmails::forService((int)$params['serviceid']);
         foreach(isset($item['domains']) ? (array)$item['domains'] : [] as $domain)
         {
             $name     = (string)($domain['name'] ?? '');
@@ -538,8 +540,9 @@ class AdminServicesTabFields
             $method   = (string)($domain['method'] ?? '');
             $approved = !empty($domain['approved']);
             $isEmail  = strpos($method, '@') !== false || $method === 'email';
+            $approver = \TSSGGSModule\App\Libs\Certificates\ApproverEmails::addressFor($approverEmails, $name, $method);
 
-            $methodCell = htmlspecialchars($isEmail ? 'email' . ($method !== 'email' ? ' (' . $method . ')' : '') : $method);
+            $methodCell = htmlspecialchars($isEmail ? 'email' . ($approver !== '' ? ' (' . $approver . ')' : '') : $method);
             if(!$approved && in_array($status, ['pending', 'processing'], true))
             {
                 $key        = htmlspecialchars($name);

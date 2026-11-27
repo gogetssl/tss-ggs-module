@@ -178,6 +178,8 @@ class SSLStepThree
             }
             SSL::where('serviceid', $params['serviceid'])->update(['remoteid' => $itemId]);
             Service::where('id', $params['serviceid'])->update(['domain' => $commonName]);
+            // the approver addresses of e-mail validation, shown on the client's order page and the admin tab
+            \TSSGGSModule\App\Libs\Certificates\ApproverEmails::replace($params['serviceid'], array_merge([$commonName => $mainMethod], array_column($san, 'validation_method', 'name')));
 
             // this order's row: the one bought at payment (addOrder, or renewOrder for a renewal on this service) or
             // the one placed just now

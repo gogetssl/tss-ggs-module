@@ -137,6 +137,8 @@ trait SslStatusPages
         $vars['additional_names'] = [];
 
         $vars['hasEmailValidation'] = false;
+        // the approver address of e-mail validation (the gateway may report only "email")
+        $approverEmails = \TSSGGSModule\App\Libs\Certificates\ApproverEmails::forService($service->id);
 
         foreach($domains as $domain)
         {
@@ -145,8 +147,9 @@ trait SslStatusPages
                 $vars['hasEmailValidation'] = true;
             }
 
-            $domain['dns']         = self::dnsRecord($domain['name'], $domain['method'], $domain['validation'] ?? [], (string)($order['orderData']['csr'] ?? ''));
-            $domain['methodLabel'] = self::methodLabel($domain['method']);
+            $domain['dns']           = self::dnsRecord($domain['name'], $domain['method'], $domain['validation'] ?? [], (string)($order['orderData']['csr'] ?? ''));
+            $domain['approverEmail'] = \TSSGGSModule\App\Libs\Certificates\ApproverEmails::addressFor($approverEmails, $domain['name'], $domain['method']);
+            $domain['methodLabel']   = $domain['approverEmail'] !== '' ? 'EMAIL (' . $domain['approverEmail'] . ')' : self::methodLabel($domain['method']);
             $domain['method']      = strtolower((string)$domain['method']);
             $domain['approved']    = !empty($domain['approved']);
 

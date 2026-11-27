@@ -122,6 +122,7 @@ trait CertificateValidation
         $stored['orderData']['order'] = $fresh['order'];
         $stored['orderData']['items'] = $fresh['items'];
         Request::updateOrderData($serviceId, $stored);
+        \TSSGGSModule\App\Libs\Certificates\ApproverEmails::change($serviceId, $methods);
 
         self::event($serviceId, 'info', '[Validation] Validation method changed: ' . implode(', ', array_map(function($d, $m) {
             return $d . ' => ' . $m;

@@ -186,6 +186,7 @@ trait CertificateReissue
         $itemId = SSLTrustCenterApi::getItemId($reissue, (int)$ssl->remoteid);
         // SANs bought before a reissue can no longer be given back for a refund
         SanUpgrade::noteReissue((int)$serviceId);
+        \TSSGGSModule\App\Libs\Certificates\ApproverEmails::replace($serviceId, $methods);
 
         $requestOrder['csr']               = trim($csr);
         $requestOrder['common_name']       = ['name' => $commonName, 'validation_method' => $methods[$commonName]];
