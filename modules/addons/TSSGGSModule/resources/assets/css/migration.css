@@ -151,8 +151,10 @@
 .tssggs-emails table.em-list tr.em-group--issued     { --em-c: var(--em-green);  --em-soft: var(--em-green-soft); }
 .tssggs-emails table.em-list tr.em-group--renewals   { --em-c: var(--em-violet); --em-soft: var(--em-violet-soft); }
 .tssggs-emails table.em-list tr.em-group--problems   { --em-c: var(--em-red);    --em-soft: var(--em-red-soft); }
-.tssggs-emails table.em-list tr.em-gap td { height: 14px; padding: 0; border: 0; background: transparent; }
+.tssggs-emails table.em-list tr.em-gap td { height: 25px; padding: 0; border: 0; background: transparent; }
 .tssggs-emails table.em-list tbody tr.em-gap:first-child td { height: 4px; }
+/* the last e-mail of a section has no line under it: the gap separates the sections */
+.tssggs-emails table.em-list tr.is-last td { border-bottom: 0; }
 .tssggs-emails table.em-list tr.em-group td {
     padding: 11px 14px; background: var(--em-soft, var(--tw-surface-alt));
     border-top: 1px solid var(--tw-border); border-left: 4px solid var(--em-c, var(--tw-muted));
