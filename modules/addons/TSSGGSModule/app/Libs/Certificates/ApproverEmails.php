@@ -73,7 +73,17 @@ class ApproverEmails
             return '';
         }
 
-        return (string)($list[strtolower(trim((string)$name))] ?? '');
+        $name = strtolower(trim((string)$name));
+        if(isset($list[$name]))
+        {
+            return (string)$list[$name];
+        }
+
+        // the free name a vendor adds itself (www.<domain> or the base domain of www.<domain>, FreeName) is never sent
+        // with the order: it is validated together with its pair, so it shows the pair's address
+        $pair = strpos($name, 'www.') === 0 ? substr($name, 4) : 'www.' . $name;
+
+        return (string)($list[$pair] ?? '');
     }
 
     public static function isAddress($method): bool
