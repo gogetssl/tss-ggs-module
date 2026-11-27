@@ -39,8 +39,9 @@
     padding: 0;
 }
 
+/* the wizard hides the module's header and menu; not the dialog container (step 5's Import dialog opens in it) */
 .contentarea:has(.tssggs-wizard) h1,
-.mod-shell:has(.tssggs-wizard) > :not(.mod-main),
+.mod-shell:has(.tssggs-wizard) > :not(.mod-main):not(#tssggs-dialog),
 .mod-main-body:has(.tssggs-wizard) > .mod-main-top {
     display: none;
 }
