@@ -134,7 +134,8 @@
 .tssggs-emails .em-tag.is-off { background: var(--tw-danger-soft); color: var(--tw-danger); border-color: rgba(231,0,11,.3); }
 .tssggs-emails .em-tag.is-on { background: var(--tw-primary-soft); color: var(--tw-primary); border-color: rgba(0,113,54,.3); }
 /* Settings > Email notifications */
-.tssggs-emails table.em-list { width: 100%; border-collapse: collapse; font-size: 13px; }
+/* separate, not collapse: a collapsed table ignores border-radius on the section titles */
+.tssggs-emails table.em-list { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 13px; }
 .tssggs-emails table.em-list th { text-align: left; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--tw-muted); padding: 6px 10px; border-bottom: 0; }
 .tssggs-emails table.em-list td { padding: 8px 10px; border-bottom: 1px solid var(--tw-border); vertical-align: top; }
 .tssggs-emails table.em-list td.tssggs-muted { margin: 0; font-size: 12px; }
@@ -157,7 +158,7 @@
 .tssggs-emails table.em-list tr.is-last td { border-bottom: 0; }
 .tssggs-emails table.em-list tr.em-group td {
     padding: 11px 14px; background: var(--em-soft, var(--tw-surface-alt));
-    border-top: 0; border-bottom: 0; border-left: 4px solid var(--em-c, var(--tw-muted));
+    border-top: 0; border-bottom: 0; border-left: 4px solid var(--em-c, var(--tw-muted)); border-radius: 8px;
 }
 #mod-root .tssggs-emails table.em-list .em-group__dot { display: inline-block; flex: none; width: 8px !important; min-width: 8px; height: 8px; margin-right: 8px; border-radius: 50%; background: var(--em-c); vertical-align: 1px; }
 #mod-root .tssggs-emails table.em-list .em-group__title { margin-right: 10px; color: var(--em-c); font-size: 14px; font-weight: 700 !important; }
