@@ -169,6 +169,8 @@
     color: var(--em-c); font-size: 11px; font-style: normal; font-weight: 600;
 }
 .tssggs-emails table.em-list tr.is-off td strong { color: var(--tw-muted); }
+/* the e-mail names a step darker than the description beside them (disabled ones stay grey) */
+#mod-root .tssggs-emails table.em-list tr:not(.is-off) td:first-child strong { color: #26364a; }
 .tssggs-emails table.em-list td.em-actions { white-space: nowrap; text-align: right; }
 .tssggs-emails table.em-list .mod-btn--success { background: var(--tw-primary); border-color: var(--tw-primary); color: #fff; }
 .tssggs-emails .em-head h3 { margin: 0 0 6px !important; font-size: 20px !important; line-height: 1.25 !important; }
