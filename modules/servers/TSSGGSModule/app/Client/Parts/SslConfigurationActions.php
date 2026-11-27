@@ -59,10 +59,10 @@ trait SslConfigurationActions
         {
             $manualMethods[] = 'dns';
         }
-        // A product that offers both DNS record types (DigiCert brands) takes only TXT when it is ordered: the gateway
-        // refuses "dns-cname" there ("order with dns-txt and change the validation method afterwards"). CNAME stays
-        // available afterwards on Change Approval Method.
-        if(in_array('dns-txt', $manualMethods, true))
+        // TheSSLStore: a product that offers both DNS record types (DigiCert brands) takes only TXT when it is ordered,
+        // "dns-cname" is refused there ("order with dns-txt and change the validation method afterwards"). CNAME stays
+        // available afterwards on Change Approval Method. GoGetSSL lists both types for every brand and is left as is.
+        if(strtoupper((string)$configProduct['provider']) === 'TSS' && in_array('dns-txt', $manualMethods, true))
         {
             $manualMethods = array_values(array_diff($manualMethods, ['dns-cname']));
         }
