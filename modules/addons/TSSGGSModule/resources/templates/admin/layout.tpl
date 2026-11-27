@@ -2,6 +2,10 @@
     Admin layout of the module: header, main menu, page title, then the page's own template in {$body}.
     To change it, copy this file to overrides/templates/admin/layout.tpl and edit the copy.
 *}
+{* The stylesheet and the font come BEFORE the module's markup: linked after it, the page showed unstyled first and
+   jumped into place when they arrived *}
+<link rel="preload" href="{$assets}/assets/fonts/ibm-plex-sans-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="{$assets}/build/css.php?v={$version}&amp;type=module&amp;isAdminArea=1">
 <div id="mod-root" data-token="{$token}">
     <div class="mod-shell">
         {if $chrome}
@@ -75,7 +79,6 @@
 
 <div class="clear"></div>
 
-<link rel="stylesheet" href="{$assets}/build/css.php?v={$version}&amp;type=module&amp;isAdminArea=1">
 <script src="{$assets}/assets/js/vendor/htmx.js?v={$version}"></script>
 <script src="{$assets}/assets/js/app.js?v={$version}"></script>
 <script src="{$assets}/assets/js/dropdown.js?v={$version}"></script>
