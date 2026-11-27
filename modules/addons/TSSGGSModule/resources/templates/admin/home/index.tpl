@@ -35,11 +35,12 @@
     </div>
 {/if}
 
-{include file='admin/partials/lazy.tpl' url={url action='panel' name='kpis'}}
+{* height: about each panel's own, so the dashboard does not jump down as the panels arrive *}
+{include file='admin/partials/lazy.tpl' url={url action='panel' name='kpis'} height=140}
 
 <div class="tssggs-dash__row">
     {if $showPipeline}
-        {include file='admin/partials/lazy.tpl' url={url action='panel' name='pipeline'}}
+        {include file='admin/partials/lazy.tpl' url={url action='panel' name='pipeline'} height=280}
     {else}
         {include file='admin/home/banner.tpl'}
     {/if}
@@ -47,20 +48,20 @@
 </div>
 
 <div class="tssggs-dash__row">
-    {include file='admin/partials/lazy.tpl' url={url action='panel' name='attention'}}
-    {include file='admin/partials/lazy.tpl' url={url action='panel' name='gateway'}}
+    {include file='admin/partials/lazy.tpl' url={url action='panel' name='attention'} height=320}
+    {include file='admin/partials/lazy.tpl' url={url action='panel' name='gateway'} height=320}
 </div>
 
 <div class="tssggs-dash__row{if !$migration} is-single{/if}">
-    {include file='admin/partials/lazy.tpl' url={url action='panel' name='overview'}}
+    {include file='admin/partials/lazy.tpl' url={url action='panel' name='overview'} height=220}
     {if $migration}
         {include file='admin/home/migration.tpl'}
     {/if}
 </div>
 
 <div class="tssggs-dash__row">
-    {include file='admin/partials/lazy.tpl' url={url action='panel' name='announcements'}}
-    {include file='admin/partials/lazy.tpl' url={url action='panel' name='support'}}
+    {include file='admin/partials/lazy.tpl' url={url action='panel' name='announcements'} height=320}
+    {include file='admin/partials/lazy.tpl' url={url action='panel' name='support'} height=320}
 </div>
 
 <span class="tssggs-html">

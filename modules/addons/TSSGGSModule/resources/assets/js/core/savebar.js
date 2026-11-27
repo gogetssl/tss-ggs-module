@@ -1,10 +1,52 @@
 /**
  * Sticky Save bar of the settings screens (.tssggs-savebar, built by Settings\Index\Concerns\SettingsLayout).
- * One bar saves the whole screen: any change in the form enables "Save changes" and switches the status to
+ * One bar saves the whole screen: a change in the form enables "Save changes" and switches the status to
  * "Unsaved changes"; a successful save clears it; leaving the page with unsaved changes asks first.
+ * "Changed" means: the form's values differ from the ones it had when shown (or last saved). A field changed and put
+ * back (a select switched back and forth) leaves the screen clean.
  */
 ;(function () {
     var dirty = false;
+    var saved = typeof WeakMap === 'function' ? new WeakMap() : null;   // form -> its values when shown / last saved
+
+    function screenForm(el) {
+        var form = el && el.closest ? el.closest('form') : null;
+        return form && form.querySelector('.tssggs-savebar') ? form : null;
+    }
+
+    // the form's values as one string; fields in the bar or in [data-savebar-ignore] are not saved and do not count
+    function values(form) {
+        var out = [];
+        Array.prototype.forEach.call(form.elements, function (el) {
+            if (!el.name || el.disabled || (el.closest && el.closest('.tssggs-savebar, [data-savebar-ignore]'))) {
+                return;
+            }
+            if (el.type === 'checkbox' || el.type === 'radio') {
+                out.push(el.name + '=' + (el.checked ? el.value : ''));
+            } else if (el.type === 'select-multiple') {
+                out.push(el.name + '=' + Array.prototype.filter.call(el.options, function (o) { return o.selected; })
+                    .map(function (o) { return o.value; }).join(','));
+            } else if (el.type !== 'submit' && el.type !== 'button' && el.type !== 'file') {
+                out.push(el.name + '=' + el.value);
+            }
+        });
+        return out.join('\n');
+    }
+
+    function remember(form) {
+        if (saved && form) {
+            saved.set(form, values(form));
+        }
+    }
+
+    // after a change: dirty only when the values differ from the remembered ones
+    function evaluate(form) {
+        if (saved && form && saved.has(form) && values(form) === saved.get(form)) {
+            setState('clean');
+        } else {
+            setState('dirty');
+        }
+    }
 
     function bars() {
         return document.querySelectorAll('.tssggs-savebar');
@@ -43,6 +85,9 @@
             if (!bar.getAttribute('data-sb')) {
                 bar.setAttribute('data-sb', '1');
                 render(bar, dirty ? 'dirty' : 'clean');
+                if (!dirty) {
+                    remember(screenForm(bar));
+                }
             }
         });
     }
@@ -55,7 +100,7 @@
         document.addEventListener(type, function (e) {
             // [data-savebar-ignore]: view controls that are not saved (e.g. the Issued SSL Message selector)
             if (inScreen(e.target) && !(e.target.closest && e.target.closest('.tssggs-savebar, [data-savebar-ignore]'))) {
-                setState('dirty');
+                evaluate(screenForm(e.target));
             }
         }, true);
     });
@@ -64,16 +109,27 @@
     if (window.jQuery) {
         window.jQuery(document).on('change', 'form select', function () {
             if (inScreen(this) && !this.closest('[data-savebar-ignore]')) {
-                setState('dirty');
+                evaluate(screenForm(this));
             }
         });
     }
+
+    // the page's scripts (Alpine) may fill fields after the bar was first seen: remember the form as it is once they
+    // are done, as long as nothing was changed yet
+    window.addEventListener('load', function () {
+        if (!dirty) {
+            bars().forEach(function (bar) { remember(screenForm(bar)); });
+        }
+    });
 
     document.addEventListener('tssggs-form-result', function (e) {
         if (!bars().length || (e.detail && e.detail.custom)) {
             return;
         }
         setState(e.detail && e.detail.ok ? 'clean' : 'failed');
+        if (e.detail && e.detail.ok) {
+            bars().forEach(function (bar) { remember(screenForm(bar)); });
+        }
         if (e.detail && !e.detail.ok) {
             bars().forEach(function (bar) { var b = saveButton(bar); if (b) { b.disabled = false; } });
         }

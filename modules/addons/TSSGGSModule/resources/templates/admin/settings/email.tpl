@@ -27,7 +27,7 @@
                             </td>
                         </tr>
                         {foreach $info.rows as $row}
-                            <tr{if $row.disabled} class="is-off"{/if}>
+                            <tr class="{if $row.disabled}is-off{/if}{if $row@last} is-last{/if}">
                                 <td><strong>{t key="admin.emails.name_{$row.slug}"}</strong></td>
                                 <td class="tssggs-muted">{t key="admin.emails.when_{$row.slug}"}</td>
                                 <td>

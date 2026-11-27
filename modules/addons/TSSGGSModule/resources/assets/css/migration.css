@@ -134,8 +134,10 @@
 .tssggs-emails .em-tag.is-off { background: var(--tw-danger-soft); color: var(--tw-danger); border-color: rgba(231,0,11,.3); }
 .tssggs-emails .em-tag.is-on { background: var(--tw-primary-soft); color: var(--tw-primary); border-color: rgba(0,113,54,.3); }
 /* Settings > Email notifications */
-.tssggs-emails table.em-list { width: 100%; border-collapse: collapse; font-size: 13px; }
-.tssggs-emails table.em-list th { text-align: left; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--tw-muted); padding: 6px 10px; border-bottom: 1px solid var(--tw-border); }
+/* separate, not collapse: a collapsed table ignores border-radius on the section titles */
+.tssggs-emails table.em-list { width: 100%; font-size: 13px; }
+#mod-root .tssggs-emails table.em-list { border-collapse: separate; border-spacing: 0; }
+.tssggs-emails table.em-list th { text-align: left; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--tw-muted); padding: 6px 10px; border-bottom: 0; }
 .tssggs-emails table.em-list td { padding: 8px 10px; border-bottom: 1px solid var(--tw-border); vertical-align: top; }
 .tssggs-emails table.em-list td.tssggs-muted { margin: 0; font-size: 12px; }
 /* section titles: green stays the brand; blue / amber / violet / red only mark the sections (each 4.5:1 on its tint) */
@@ -151,11 +153,13 @@
 .tssggs-emails table.em-list tr.em-group--issued     { --em-c: var(--em-green);  --em-soft: var(--em-green-soft); }
 .tssggs-emails table.em-list tr.em-group--renewals   { --em-c: var(--em-violet); --em-soft: var(--em-violet-soft); }
 .tssggs-emails table.em-list tr.em-group--problems   { --em-c: var(--em-red);    --em-soft: var(--em-red-soft); }
-.tssggs-emails table.em-list tr.em-gap td { height: 14px; padding: 0; border: 0; background: transparent; }
+.tssggs-emails table.em-list tr.em-gap td { height: 25px; padding: 0; border: 0; background: transparent; }
 .tssggs-emails table.em-list tbody tr.em-gap:first-child td { height: 4px; }
+/* the last e-mail of a section has no line under it: the gap separates the sections */
+.tssggs-emails table.em-list tr.is-last td { border-bottom: 0; }
 .tssggs-emails table.em-list tr.em-group td {
     padding: 11px 14px; background: var(--em-soft, var(--tw-surface-alt));
-    border-top: 1px solid var(--tw-border); border-left: 4px solid var(--em-c, var(--tw-muted));
+    border-top: 0; border-bottom: 0; border-left: 4px solid var(--em-c, var(--tw-muted)); border-radius: 8px;
 }
 #mod-root .tssggs-emails table.em-list .em-group__dot { display: inline-block; flex: none; width: 8px !important; min-width: 8px; height: 8px; margin-right: 8px; border-radius: 50%; background: var(--em-c); vertical-align: 1px; }
 #mod-root .tssggs-emails table.em-list .em-group__title { margin-right: 10px; color: var(--em-c); font-size: 14px; font-weight: 700 !important; }
@@ -165,6 +169,8 @@
     color: var(--em-c); font-size: 11px; font-style: normal; font-weight: 600;
 }
 .tssggs-emails table.em-list tr.is-off td strong { color: var(--tw-muted); }
+/* the e-mail names a step darker than the description beside them (disabled ones stay grey) */
+#mod-root .tssggs-emails table.em-list tr:not(.is-off) td:first-child strong { color: #26364a; }
 .tssggs-emails table.em-list td.em-actions { white-space: nowrap; text-align: right; }
 .tssggs-emails table.em-list .mod-btn--success { background: var(--tw-primary); border-color: var(--tw-primary); color: #fff; }
 .tssggs-emails .em-head h3 { margin: 0 0 6px !important; font-size: 20px !important; line-height: 1.25 !important; }
